@@ -1,6 +1,7 @@
 import * as person from '$lib/zero/mutate/person';
 import * as personNote from '$lib/zero/mutate/person_note';
 import * as eventSignup from '$lib/zero/mutate/event_signup';
+import * as event from '$lib/zero/mutate/event';
 export default function createMutators() {
 	return {
 		person: {
@@ -19,6 +20,10 @@ export default function createMutators() {
 		},
 		eventSignup: {
 			create: eventSignup.createEventSignup()
+		},
+		event: {
+			create: event.createEvent(),
+			update: event.updateEvent()
 		}
 	};
 }

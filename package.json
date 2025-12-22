@@ -97,6 +97,7 @@
 		"jwt-decode": "^4.0.0",
 		"lru-cache": "^11.2.2",
 		"melt": "^0.42.0",
+		"nanoid": "^5.1.6",
 		"postgres": "^3.4.7",
 		"stripe": "^20.0.0",
 		"svelte-easy-crop": "^5.0.0",

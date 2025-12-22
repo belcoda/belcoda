@@ -413,6 +413,14 @@ export default drizzleZeroConfig(drizzleSchema, {
 			responseBody: true,
 			attemptNumber: true,
 			createdAt: true
+		},
+		actionCode: {
+			id: true,
+			organizationId: true,
+			referenceId: true,
+			type: true,
+			createdAt: true,
+			deletedAt: true
 		}
 	},
 	manyToMany: {

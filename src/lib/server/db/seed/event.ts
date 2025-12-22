@@ -1,18 +1,24 @@
 import { faker } from '@faker-js/faker';
-import { type CreateEvent } from '$lib/schema/event';
+import { generateUniqueNanoids } from '$lib/server/db/seed/utils';
 import { slugifyUnderscore } from '$lib/utils/slug';
 import { generateRandomDatePairs, selectOneOfArray } from '$lib/server/db/seed/utils';
 import { countryCodes } from '$lib/utils/country';
-import { event as eventTable } from '$lib/schema/drizzle';
+import { event as eventTable, actionCode as actionCodeTable } from '$lib/schema/drizzle';
+import { v7 as uuidv7 } from 'uuid';
 export function generateEvents(
 	count: number = 50,
 	options: { organizationId: string; teamId?: string; pointPersonId?: string }
-): (typeof eventTable.$inferInsert)[] {
+): {
+	events: (typeof eventTable.$inferInsert)[];
+	actionCodes: (typeof actionCodeTable.$inferInsert)[];
+} {
 	const [startDates, endDates] = generateRandomDatePairs(count);
+	const ids = new Array(count).fill(0).map(() => uuidv7());
+	const eventSignupActionCodeIds = generateUniqueNanoids(count);
+	const eventAttendedActionCodeIds = generateUniqueNanoids(count);
 	const events: (typeof eventTable.$inferInsert)[] = [];
 	const usedNames = new Set<string>();
 	const usedSlugs = new Set<string>();
-
 	for (let i = 0; i < count; i++) {
 		let eventName: string;
 		let slug: string;
@@ -37,7 +43,7 @@ export function generateEvents(
 		usedSlugs.add(slug);
 
 		const event: typeof eventTable.$inferInsert = {
-			id: faker.string.uuid(),
+			id: ids[i],
 			title: eventName,
 			slug: slug,
 			description: null,
@@ -72,7 +78,25 @@ export function generateEvents(
 		};
 		events.push(event);
 	}
-	return events;
+	const actionCodes: (typeof actionCodeTable.$inferInsert)[] = [];
+	for (let i = 0; i < events.length; i++) {
+		const event = events[i];
+		actionCodes.push({
+			id: eventSignupActionCodeIds[i],
+			organizationId: options.organizationId,
+			referenceId: event.id,
+			type: 'event_signup',
+			createdAt: event.createdAt
+		});
+		actionCodes.push({
+			id: eventAttendedActionCodeIds[i],
+			organizationId: options.organizationId,
+			referenceId: event.id,
+			type: 'event_attended',
+			createdAt: event.createdAt
+		});
+	}
+	return { events, actionCodes };
 }
 
 export const eventNames = [

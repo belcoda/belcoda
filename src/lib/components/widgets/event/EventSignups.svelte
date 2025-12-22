@@ -11,6 +11,15 @@
 	const eventSignups = $derived.by(() => {
 		return z.createQuery(listEventSignups(appState.queryContext, filter));
 	});
+	import { listActionCodes } from '$lib/zero/query/action_code/list';
+	const actionCodes = $derived.by(() => {
+		return z.createQuery(
+			listActionCodes(appState.queryContext, {
+				organizationId: appState.organizationId,
+				referenceId: eventId
+			})
+		);
+	});
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
@@ -78,6 +87,13 @@
 							<Table.Cell class="font-medium">{signup.personId}</Table.Cell>
 							<Table.Cell>{signup.status}</Table.Cell>
 							<Table.Cell class="text-end">{signup.details.channel.type}</Table.Cell>
+						</Table.Row>
+					{/each}
+					{#each actionCodes.data as actionCode}
+						<Table.Row>
+							<Table.Cell>{actionCode.id}</Table.Cell>
+							<Table.Cell>{actionCode.type}</Table.Cell>
+							<Table.Cell>{actionCode.createdAt}</Table.Cell>
 						</Table.Row>
 					{/each}
 				</Table.Body>

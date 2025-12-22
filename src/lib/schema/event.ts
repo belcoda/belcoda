@@ -93,6 +93,7 @@ export const createEvent = v.object({
 	settings: eventSchema.entries.settings,
 	signupTag: v.optional(eventSchema.entries.signupTag, null),
 	attendanceTag: v.optional(eventSchema.entries.attendanceTag, null),
+	teamId: v.optional(eventSchema.entries.teamId, null),
 	sendReminderHoursBefore: v.optional(eventSchema.entries.sendReminderHoursBefore, null)
 });
 export type CreateEvent = v.InferInput<typeof createEvent>;
@@ -120,7 +121,8 @@ export type UpdateEventZero = v.InferOutput<typeof updateEventZero>;
 
 export const mutatorMetadata = v.object({
 	organizationId: eventSchema.entries.organizationId,
-	eventId: eventSchema.entries.id
+	eventId: eventSchema.entries.id,
+	teamId: v.optional(eventSchema.entries.teamId, null)
 });
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
