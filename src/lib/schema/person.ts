@@ -1,0 +1,212 @@
+import * as v from 'valibot';
+import * as helpers from '$lib/schema/helpers';
+import { socialMedia, personAddedFrom, DEFAULT_SOCIAL_MEDIA } from '$lib/schema/person/meta';
+import { activityPreviewPayloads } from '$lib/schema/activity/types';
+
+export type Gender = v.InferOutput<typeof helpers.gender>;
+
+export const personSchema = v.object({
+	id: helpers.uuid,
+	organizationId: helpers.uuid,
+	familyName: v.nullable(helpers.shortString),
+	givenName: v.nullable(helpers.shortString),
+
+	addressLine1: v.nullable(helpers.mediumStringEmpty),
+	addressLine2: v.nullable(helpers.mediumStringEmpty),
+	locality: v.nullable(helpers.mediumStringEmpty),
+	region: v.nullable(helpers.mediumStringEmpty),
+	postcode: v.nullable(helpers.mediumStringEmpty),
+
+	country: helpers.countryCode,
+	preferredLanguage: helpers.languageCode,
+
+	workplace: v.nullable(helpers.mediumStringEmpty),
+	position: v.nullable(helpers.mediumStringEmpty),
+	gender: v.nullable(helpers.gender),
+	dateOfBirth: v.nullable(helpers.pastDate),
+
+	emailAddress: v.nullable(helpers.email),
+	subscribed: v.boolean(),
+	doNotContact: v.boolean(),
+	phoneNumber: v.nullable(helpers.phoneNumber),
+	whatsAppUsername: v.nullable(helpers.mediumString),
+
+	socialMedia: socialMedia,
+	externalId: v.nullable(helpers.mediumString),
+
+	mostRecentActivityAt: helpers.date,
+	mostRecentActivityPreview: v.nullable(activityPreviewPayloads),
+
+	profilePicture: v.nullable(helpers.url),
+	addedFrom: personAddedFrom,
+
+	createdAt: helpers.date,
+	updatedAt: helpers.date,
+	deletedAt: v.nullable(helpers.date)
+});
+export type PersonSchema = v.InferOutput<typeof personSchema>;
+
+export const readPersonRest = v.object({
+	...v.omit(personSchema, ['organizationId']).entries,
+	dateOfBirth: v.nullable(helpers.timestampToDate),
+	mostRecentActivityAt: helpers.timestampToDate,
+	createdAt: helpers.timestampToDate,
+	updatedAt: helpers.timestampToDate,
+	deletedAt: v.nullable(helpers.timestampToDate)
+});
+export type ReadPersonRest = v.InferOutput<typeof readPersonRest>;
+
+export const readPersonZero = v.object({
+	...personSchema.entries,
+	dateOfBirth: v.nullable(helpers.dateToTimestamp),
+	mostRecentActivityAt: helpers.dateToTimestamp,
+	createdAt: helpers.dateToTimestamp,
+	updatedAt: helpers.dateToTimestamp,
+	deletedAt: v.nullable(helpers.dateToTimestamp)
+});
+export type ReadPersonZero = v.InferOutput<typeof readPersonZero>;
+
+export const createPerson = v.object({
+	familyName: v.optional(personSchema.entries.familyName),
+	givenName: v.optional(personSchema.entries.givenName),
+
+	addressLine1: v.optional(personSchema.entries.addressLine1),
+	addressLine2: v.optional(personSchema.entries.addressLine2),
+	locality: v.optional(personSchema.entries.locality),
+	region: v.optional(personSchema.entries.region),
+	postcode: v.optional(personSchema.entries.postcode),
+
+	country: personSchema.entries.country,
+	preferredLanguage: personSchema.entries.preferredLanguage,
+
+	workplace: v.optional(personSchema.entries.workplace),
+	position: v.optional(personSchema.entries.position),
+	gender: v.optional(personSchema.entries.gender),
+	dateOfBirth: v.optional(personSchema.entries.dateOfBirth),
+
+	emailAddress: v.optional(personSchema.entries.emailAddress),
+	subscribed: v.optional(personSchema.entries.subscribed, true),
+	doNotContact: v.optional(personSchema.entries.doNotContact, false),
+	phoneNumber: v.optional(personSchema.entries.phoneNumber),
+	whatsAppUsername: v.optional(personSchema.entries.whatsAppUsername),
+
+	socialMedia: v.optional(personSchema.entries.socialMedia, DEFAULT_SOCIAL_MEDIA),
+	externalId: v.optional(personSchema.entries.externalId),
+	profilePicture: v.optional(personSchema.entries.profilePicture)
+});
+export type CreatePerson = v.InferInput<typeof createPerson>;
+export const createPersonZero = v.object({
+	...createPerson.entries,
+	dateOfBirth: v.optional(v.nullable(helpers.unixTimestamp), null)
+});
+export type CreatePersonZero = v.InferOutput<typeof createPersonZero>;
+export const createPersonRest = v.object({
+	...createPerson.entries,
+	dateOfBirth: v.optional(v.nullable(helpers.dateToTimestamp), null)
+});
+export type CreatePersonRest = v.InferOutput<typeof createPersonRest>;
+
+export const updatePerson = v.partial(createPerson);
+export type UpdatePerson = v.InferInput<typeof updatePerson>;
+
+export const updatePersonZero = v.object({
+	...updatePerson.entries,
+	dateOfBirth: v.optional(v.nullable(helpers.timestampToDate))
+});
+export type UpdatePersonZero = v.InferOutput<typeof updatePersonZero>;
+export const updatePersonRest = v.object({
+	...updatePerson.entries,
+	dateOfBirth: v.nullable(helpers.dateStringToDate)
+});
+export type UpdatePersonRest = v.InferOutput<typeof updatePersonRest>;
+
+export const mutatorMetadata = v.object({
+	organizationId: personSchema.entries.organizationId,
+	personId: personSchema.entries.id,
+	teamId: v.optional(helpers.uuid),
+	addedFrom: personSchema.entries.addedFrom
+});
+export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
+
+export const createMutatorSchema = v.object({
+	input: createPerson,
+	metadata: mutatorMetadata
+});
+export const createMutatorSchemaZero = v.object({
+	input: createPersonZero,
+	metadata: mutatorMetadata
+});
+export const createMutatorSchemaRest = v.object({
+	input: createPersonRest,
+	metadata: mutatorMetadata
+});
+export type CreateMutatorSchemaInput = v.InferInput<typeof createMutatorSchema>;
+export type CreateMutatorSchemaOutput = v.InferOutput<typeof createMutatorSchema>;
+export type CreateMutatorSchemaZeroInput = v.InferInput<typeof createMutatorSchemaZero>;
+export type CreateMutatorSchemaZeroOutput = v.InferOutput<typeof createMutatorSchemaZero>;
+export type CreateMutatorSchemaRestInput = v.InferInput<typeof createMutatorSchemaRest>;
+export type CreateMutatorSchemaRestOutput = v.InferOutput<typeof createMutatorSchemaRest>;
+
+export const updateMutatorSchema = v.object({
+	input: updatePerson,
+	metadata: v.omit(mutatorMetadata, ['addedFrom'])
+});
+export const updateMutatorSchemaZero = v.object({
+	input: updatePersonZero,
+	metadata: v.omit(mutatorMetadata, ['addedFrom'])
+});
+export const updateMutatorSchemaRest = v.object({
+	input: updatePersonRest,
+	metadata: v.omit(mutatorMetadata, ['addedFrom'])
+});
+export type UpdateMutatorSchemaInput = v.InferInput<typeof updateMutatorSchema>;
+export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+export type UpdateMutatorSchemaZeroInput = v.InferInput<typeof updateMutatorSchemaZero>;
+export type UpdateMutatorSchemaZeroOutput = v.InferOutput<typeof updateMutatorSchemaZero>;
+export type UpdateMutatorSchemaRestInput = v.InferInput<typeof updateMutatorSchemaRest>;
+export type UpdateMutatorSchemaRestOutput = v.InferOutput<typeof updateMutatorSchemaRest>;
+
+export const deleteMutatorSchemaZero = v.object({
+	metadata: v.omit(mutatorMetadata, ['addedFrom'])
+});
+export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;
+
+export const personTeamMutatorMetadata = v.object({
+	organizationId: helpers.uuid,
+	personId: helpers.uuid,
+	teamId: helpers.uuid
+});
+export type PersonTeamMutatorMetadata = v.InferOutput<typeof personTeamMutatorMetadata>;
+
+export const addPersonToTeamMutatorSchemaZero = v.object({
+	metadata: personTeamMutatorMetadata
+});
+export type AddPersonToTeamMutatorSchemaZero = v.InferOutput<
+	typeof addPersonToTeamMutatorSchemaZero
+>;
+
+export const removePersonFromTeamMutatorSchemaZero = v.object({
+	metadata: personTeamMutatorMetadata
+});
+export type RemovePersonFromTeamMutatorSchemaZero = v.InferOutput<
+	typeof removePersonFromTeamMutatorSchemaZero
+>;
+
+export const personTagMutatorMetadata = v.object({
+	organizationId: helpers.uuid,
+	personId: helpers.uuid,
+	tagId: helpers.uuid
+});
+export type PersonTagMutatorMetadata = v.InferOutput<typeof personTagMutatorMetadata>;
+
+export const addPersonTagMutatorSchemaZero = v.object({
+	metadata: personTagMutatorMetadata
+});
+export type AddPersonTagMutatorSchemaZero = v.InferOutput<typeof addPersonTagMutatorSchemaZero>;
+
+export const removePersonTagMutatorSchemaZero = v.object({
+	metadata: personTagMutatorMetadata
+});
+export type RemovePersonTagMutatorSchemaZero = v.InferOutput<
+	typeof removePersonTagMutatorSchemaZero
+>;

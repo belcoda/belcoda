@@ -1,0 +1,2768 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-25T14:56:29.062Z\n"
+"PO-Revision-Date: 2025-09-29T18:48:31.264Z\n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: \n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
+"MIME-Version: 1.0\n"
+
+#~ msgid "Welcome to SvelteKit"
+#~ msgstr "Welcome to SvelteKit"
+
+#~ msgid "Visit <0>svelte.dev/docs/kit</0> to read the documentation"
+#~ msgstr "Visit <0>svelte.dev/docs/kit</0> to read the documentation"
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Loading..."
+msgstr "Loading..."
+
+#: src/lib/components/ui/sidebar/sidebar-trigger.svelte
+#: src/lib/components/ui/sidebar/sidebar-rail.svelte
+#: src/lib/components/ui/sidebar/sidebar-rail.svelte
+msgid "Toggle Sidebar"
+msgstr "Toggle Sidebar"
+
+#: src/lib/components/ui/sidebar/sidebar.svelte
+msgid "Sidebar"
+msgstr "Sidebar"
+
+#: src/lib/components/ui/sidebar/sidebar.svelte
+msgid "Displays the mobile sidebar."
+msgstr "Displays the mobile sidebar."
+
+#: src/lib/components/layouts/app/action-menus/person/notes/Drawer.svelte
+#: src/lib/components/ui/dialog/dialog-content.svelte
+#: src/lib/components/ui/sheet/sheet-content.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Close"
+msgstr "Close"
+
+#~ msgid "<0/> <1/> dsds"
+#~ msgstr "<0/> <1/> dsds"
+
+#~ msgid "Acme Inc"
+#~ msgstr "Acme Inc"
+
+#~ msgid "Enterprise"
+#~ msgstr "Enterprise"
+
+#~ msgid "Unreads"
+#~ msgstr "Unreads"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Type to search..."
+msgstr "Type to search..."
+
+#: src/lib/components/layouts/nav/UserNavbar.svelte
+#: src/lib/components/layouts/nav/UserNavbar.svelte
+msgid "CN"
+msgstr "CN"
+
+#: src/lib/components/layouts/nav/UserNavbar.svelte
+msgid "<0/> Upgrade to Pro"
+msgstr "<0/> Upgrade to Pro"
+
+#: src/lib/components/layouts/nav/UserNavbar.svelte
+msgid "<0/> Account"
+msgstr "<0/> Account"
+
+#: src/lib/components/layouts/nav/UserNavbar.svelte
+msgid "<0/> Billing"
+msgstr "<0/> Billing"
+
+#: src/lib/components/layouts/nav/UserNavbar.svelte
+msgid "<0/> Notifications"
+msgstr "<0/> Notifications"
+
+#: src/lib/components/layouts/app/navigation/UserMenu.svelte
+#: src/lib/components/layouts/nav/UserMenu.svelte
+#: src/lib/components/layouts/nav/UserNavbar.svelte
+msgid "<0/> Log out"
+msgstr "<0/> Log out"
+
+#~ msgid "dssdsds"
+#~ msgstr "dssdsds"
+
+#~ msgid "<0/> <1/> <2/> dsds"
+#~ msgstr "<0/> <1/> <2/> dsds"
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Settings"
+msgstr "Settings"
+
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/nav/SideNav.svelte
+#: src/lib/components/layouts/nav/SideNav.svelte
+#: src/routes/(app)/community/+page.svelte
+msgid "Community"
+msgstr "Community"
+
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/nav/SideNav.svelte
+#: src/lib/components/layouts/nav/SideNav.svelte
+msgid "Communications"
+msgstr "Communications"
+
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+#: src/lib/components/layouts/nav/SideNav.svelte
+#: src/lib/components/layouts/nav/SideNav.svelte
+#: src/routes/(app)/events/+page.svelte
+msgid "Events"
+msgstr "Events"
+
+#~ msgid "Beltest"
+#~ msgstr "Beltest"
+
+#~ msgid "<0/> Acme Inc."
+#~ msgstr "<0/> Acme Inc."
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+msgid "Welcome back"
+msgstr "Welcome back"
+
+#~ msgid "Login with your Apple or Google account"
+#~ msgstr "Login with your Apple or Google account"
+
+#~ msgid "<0/> Login with Apple"
+#~ msgstr "<0/> Login with Apple"
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+msgid "<0/> Login with Google"
+msgstr "<0/> Login with Google"
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+msgid "Or continue with"
+msgstr "Or continue with"
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/routes/(app)/community/[personId]/profile/ProfileInfo.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/ForgotPasswordForm.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Email"
+msgstr "Email"
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Password"
+msgstr "Password"
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/ForgotPasswordForm.svelte
+msgid "Forgot your password?"
+msgstr "Forgot your password?"
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+msgid "Login"
+msgstr "Login"
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+msgid "Don't have an account? <0>Sign up</0>"
+msgstr "Don't have an account? <0>Sign up</0>"
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "By clicking continue, you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
+msgstr "By clicking continue, you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
+
+#: src/lib/components/widgets/AuthLayout.svelte
+#: src/routes/(auth)/organization/+layout.svelte
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "<0/> Belcoda"
+msgstr "<0/> Belcoda"
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+msgid "Login with your Google account"
+msgstr "Login with your Google account"
+
+#: src/routes/(auth)/logout/+page.svelte
+msgid "Logging out..."
+msgstr "Logging out..."
+
+#~ msgid "dsds <0/>"
+#~ msgstr "dsds <0/>"
+
+#~ msgid "dsdsaaaa <0/>"
+#~ msgstr "dsdsaaaa <0/>"
+
+#~ msgid "Deleted"
+#~ msgstr "Deleted"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Inbox"
+msgstr "Inbox"
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Drafts"
+msgstr "Drafts"
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Sent"
+msgstr "Sent"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Junk"
+msgstr "Junk"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Trash"
+msgstr "Trash"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "William Smith"
+msgstr "William Smith"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Meeting Tomorrow"
+msgstr "Meeting Tomorrow"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"Hi team, just a reminder about our meeting tomorrow at 10 AM.\n"
+"Please come prepared with your project updates."
+msgstr ""
+"Hi team, just a reminder about our meeting tomorrow at 10 AM.\n"
+"Please come prepared with your project updates."
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Alice Smith"
+msgstr "Alice Smith"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Re: Project Update"
+msgstr "Re: Project Update"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Yesterday"
+msgstr "Yesterday"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"Thanks for the update. The progress looks great so far.\n"
+"Let's schedule a call to discuss the next steps."
+msgstr ""
+"Thanks for the update. The progress looks great so far.\n"
+"Let's schedule a call to discuss the next steps."
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Bob Johnson"
+msgstr "Bob Johnson"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Weekend Plans"
+msgstr "Weekend Plans"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"Hey everyone! I'm thinking of organizing a team outing this weekend.\n"
+"Would you be interested in a hiking trip or a beach day?"
+msgstr ""
+"Hey everyone! I'm thinking of organizing a team outing this weekend.\n"
+"Would you be interested in a hiking trip or a beach day?"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Emily Davis"
+msgstr "Emily Davis"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Re: Question about Budget"
+msgstr "Re: Question about Budget"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"I've reviewed the budget numbers you sent over.\n"
+"Can we set up a quick call to discuss some potential adjustments?"
+msgstr ""
+"I've reviewed the budget numbers you sent over.\n"
+"Can we set up a quick call to discuss some potential adjustments?"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Michael Wilson"
+msgstr "Michael Wilson"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Important Announcement"
+msgstr "Important Announcement"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"Please join us for an all-hands meeting this Friday at 3 PM.\n"
+"We have some exciting news to share about the company's future."
+msgstr ""
+"Please join us for an all-hands meeting this Friday at 3 PM.\n"
+"We have some exciting news to share about the company's future."
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Sarah Brown"
+msgstr "Sarah Brown"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Re: Feedback on Proposal"
+msgstr "Re: Feedback on Proposal"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"Thank you for sending over the proposal. I've reviewed it and have some thoughts.\n"
+"Could we schedule a meeting to discuss my feedback in detail?"
+msgstr ""
+"Thank you for sending over the proposal. I've reviewed it and have some thoughts.\n"
+"Could we schedule a meeting to discuss my feedback in detail?"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "David Lee"
+msgstr "David Lee"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "New Project Idea"
+msgstr "New Project Idea"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"I've been brainstorming and came up with an interesting project concept.\n"
+"Do you have time this week to discuss its potential impact and feasibility?"
+msgstr ""
+"I've been brainstorming and came up with an interesting project concept.\n"
+"Do you have time this week to discuss its potential impact and feasibility?"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Olivia Wilson"
+msgstr "Olivia Wilson"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Vacation Plans"
+msgstr "Vacation Plans"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"Just a heads up that I'll be taking a two-week vacation next month.\n"
+"I'll make sure all my projects are up to date before I leave."
+msgstr ""
+"Just a heads up that I'll be taking a two-week vacation next month.\n"
+"I'll make sure all my projects are up to date before I leave."
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "James Martin"
+msgstr "James Martin"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Re: Conference Registration"
+msgstr "Re: Conference Registration"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"I've completed the registration for the upcoming tech conference.\n"
+"Let me know if you need any additional information from my end."
+msgstr ""
+"I've completed the registration for the upcoming tech conference.\n"
+"Let me know if you need any additional information from my end."
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Sophia White"
+msgstr "Sophia White"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Team Dinner"
+msgstr "Team Dinner"
+
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid ""
+"To celebrate our recent project success, I'd like to organize a team dinner.\n"
+"Are you available next Friday evening? Please let me know your preferences."
+msgstr ""
+"To celebrate our recent project success, I'd like to organize a team dinner.\n"
+"Are you available next Friday evening? Please let me know your preferences."
+
+#: src/routes/(auth)/organization/+layout.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Welcome to Belcoda"
+msgstr "Welcome to Belcoda"
+
+#~ msgid "Sign up with your Google account"
+#~ msgstr "Sign up with your Google account"
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "<0/> Sign up with Google"
+msgstr "<0/> Sign up with Google"
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Or create an account using email and password"
+msgstr "Or create an account using email and password"
+
+#~ msgid "Please fill in all fields"
+#~ msgstr "Please fill in all fields"
+
+#: src/routes/(auth)/organization/+layout.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Create an account to get started"
+msgstr "Create an account to get started"
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Check your email"
+msgstr "Check your email"
+
+#~ msgid ""
+#~ "We've sent a verification link to <0/>. Please click the link in\n"
+#~ "the email to verify your account before signing in."
+#~ msgstr ""
+#~ "We've sent a verification link to <0/>. Please click the link in\n"
+#~ "the email to verify your account before signing in."
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "Go to Login"
+msgstr "Go to Login"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Name"
+msgstr "Name"
+
+#~ msgid "John Doe"
+#~ msgstr "John Doe"
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Creating account..."
+msgstr "Creating account..."
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Create account"
+msgstr "Create account"
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Already have an account? <0>Sign in</0>"
+msgstr "Already have an account? <0>Sign in</0>"
+
+#~ msgid "Passwords do not match"
+#~ msgstr "Passwords do not match"
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Confirm Password"
+msgstr "Confirm Password"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Error"
+msgstr "Error"
+
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "Email Verified"
+msgstr "Email Verified"
+
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "Your email has been successfully verified"
+msgstr "Your email has been successfully verified"
+
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "Your email address has been verified. You can now sign in to your account."
+msgstr "Your email address has been verified. You can now sign in to your account."
+
+#: src/lib/form.svelte.ts
+msgid "Are you sure you want to discard your changes?"
+msgstr "Are you sure you want to discard your changes?"
+
+#: src/lib/components/ui/form/custom/error.svelte
+msgid "There are some errors that need to be fixed"
+msgstr "There are some errors that need to be fixed"
+
+#~ msgid "Errors:"
+#~ msgstr "Errors:"
+
+#~ msgid ""
+#~ "We've sent a verification link to <0/>. Please click the\n"
+#~ "link in the email to verify your account before signing in."
+#~ msgstr ""
+#~ "We've sent a verification link to <0/>. Please click the\n"
+#~ "link in the email to verify your account before signing in."
+
+#: src/lib/components/ui/spinner/spinner.svelte
+msgid "Loading"
+msgstr "Loading"
+
+#~ msgid ""
+#~ "We've sent a verification link to <0/>. Please\n"
+#~ "click the link in the email to verify your account before signing in."
+#~ msgstr ""
+#~ "We've sent a verification link to <0/>. Please\n"
+#~ "click the link in the email to verify your account before signing in."
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/_components/LoginForm.svelte
+msgid "Logging in..."
+msgstr "Logging in..."
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid "Your full name"
+msgstr "Your full name"
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/ForgotPasswordForm.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Reset password"
+msgstr "Reset password"
+
+#~ msgid "Back to login"
+#~ msgstr "Back to login"
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/ForgotPasswordForm.svelte
+msgid "Password reset email sent"
+msgstr "Password reset email sent"
+
+#~ msgid ""
+#~ "We've sent a password reset email to {0}. Please check your email and follow the\n"
+#~ "instructions to reset your password."
+#~ msgstr ""
+#~ "We've sent a password reset email to {0}. Please check your email and follow the\n"
+#~ "instructions to reset your password."
+
+#~ msgid "Enter your email address and we'll send you a reset link"
+#~ msgstr "Enter your email address and we'll send you a reset link"
+
+#~ msgid "Remember your password? <0>Sign in</0>"
+#~ msgstr "Remember your password? <0>Sign in</0>"
+
+#~ msgid "Sending..."
+#~ msgstr "Sending..."
+
+#~ msgid ""
+#~ "We've sent a password reset link to <0/>. Please check your\n"
+#~ "email and follow the instructions to reset your password."
+#~ msgstr ""
+#~ "We've sent a password reset link to <0/>. Please check your\n"
+#~ "email and follow the instructions to reset your password."
+
+#~ msgid "Back to Login"
+#~ msgstr "Back to Login"
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/ForgotPasswordForm.svelte
+msgid "Enter your email to reset your password"
+msgstr "Enter your email to reset your password"
+
+#~ msgid "Remember your password? <0>Back to login</0>"
+#~ msgstr "Remember your password? <0>Back to login</0>"
+
+#~ msgid "Remember your password? <0>login</0>"
+#~ msgstr "Remember your password? <0>login</0>"
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/ForgotPasswordForm.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Remember your password? <0>Login</0>"
+msgstr "Remember your password? <0>Login</0>"
+
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/signup/_components/SignupForm.svelte
+msgid ""
+"We've sent a verification link to <0/>. Please click\n"
+"the link in the email to verify your account before signing in."
+msgstr ""
+"We've sent a verification link to <0/>. Please click\n"
+"the link in the email to verify your account before signing in."
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/ForgotPasswordForm.svelte
+msgid ""
+"We've sent a password reset email to the email address you provided. Please check your email\n"
+"and follow the instructions to reset your password."
+msgstr ""
+"We've sent a password reset email to the email address you provided. Please check your email\n"
+"and follow the instructions to reset your password."
+
+#~ msgid "Belcoda logo"
+#~ msgstr "Belcoda logo"
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Reset token is missing. Please use the link from your email."
+msgstr "Reset token is missing. Please use the link from your email."
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Reset your password"
+msgstr "Reset your password"
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Enter your new password below"
+msgstr "Enter your new password below"
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "New Password"
+msgstr "New Password"
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Resetting password..."
+msgstr "Resetting password..."
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Password reset successfully"
+msgstr "Password reset successfully"
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Your password has been reset. You can now sign in with your new password."
+msgstr "Your password has been reset. You can now sign in with your new password."
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Invalid or expired token"
+msgstr "Invalid or expired token"
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "The password reset link is invalid or has expired. Please request a new password reset link."
+msgstr "The password reset link is invalid or has expired. Please request a new password reset link."
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/ResetPasswordForm.svelte
+msgid "Request new reset link"
+msgstr "Request new reset link"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Create Organization"
+msgstr "Create Organization"
+
+#~ msgid "Create an organization to get started"
+#~ msgstr "Create an organization to get started"
+
+#~ msgid "dsdsds"
+#~ msgstr "dsdsds"
+
+#~ msgid "sdds"
+#~ msgstr "sdds"
+
+#~ msgid "dsdsds <0/>"
+#~ msgstr "dsdsds <0/>"
+
+#~ msgid "dsds<0/>"
+#~ msgstr "dsds<0/>"
+
+#~ msgid "asaaaa"
+#~ msgstr "asaaaa"
+
+#: src/routes/(auth)/logout/+page.svelte
+msgid "Please wait while we log you out..."
+msgstr "Please wait while we log you out..."
+
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/layouts/nav/OrgMenu.svelte
+msgid "Organizations"
+msgstr "Organizations"
+
+#~ msgid "Manage your organizations"
+#~ msgstr "Manage your organizations"
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Back to dashboard"
+msgstr "Back to dashboard"
+
+#~ msgid "Switch between your organizations"
+#~ msgstr "Switch between your organizations"
+
+#~ msgid "Organizations are the way to group your users and resources"
+#~ msgstr "Organizations are the way to group your users and resources"
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "My Organizations"
+msgstr "My Organizations"
+
+#~ msgid "Midnight City Lights"
+#~ msgstr "Midnight City Lights"
+
+#~ msgid "Neon Dreams"
+#~ msgstr "Neon Dreams"
+
+#~ msgid "Electric Nights"
+#~ msgstr "Electric Nights"
+
+#~ msgid "Coffee Shop Conversations"
+#~ msgstr "Coffee Shop Conversations"
+
+#~ msgid "The Morning Brew"
+#~ msgstr "The Morning Brew"
+
+#~ msgid "Urban Stories"
+#~ msgstr "Urban Stories"
+
+#~ msgid "Digital Rain"
+#~ msgstr "Digital Rain"
+
+#~ msgid "Cyber Symphony"
+#~ msgstr "Cyber Symphony"
+
+#~ msgid "Binary Beats"
+#~ msgstr "Binary Beats"
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Each organization is a separate entity with its own resources and users"
+msgstr "Each organization is a separate entity with its own resources and users"
+
+#~ msgid "New Organization"
+#~ msgstr "New Organization"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Create a new organization to get started"
+msgstr "Create a new organization to get started"
+
+#: src/routes/(auth)/organization/+page.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Create a new organization"
+msgstr "Create a new organization"
+
+#~ msgid "New"
+#~ msgstr "New"
+
+#~ msgid "Create new organization"
+#~ msgstr "Create new organization"
+
+#~ msgid "Foo bar foo"
+#~ msgstr "Foo bar foo"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/form/Email.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/form/Gender.svelte
+#: src/routes/(app)/events/new/+page.svelte
+msgid "Cancel"
+msgstr "Cancel"
+
+#~ msgid "No organizations found"
+#~ msgstr "No organizations found"
+
+#~ msgid "No organizations"
+#~ msgstr "No organizations"
+
+#~ msgid "You're not a member of any organization"
+#~ msgstr "You're not a member of any organization"
+
+#~ msgid "Start a new organization"
+#~ msgstr "Start a new organization"
+
+#~ msgid "You're not a member of any organization yet & don't have any pending invitations"
+#~ msgstr "You're not a member of any organization yet & don't have any pending invitations"
+
+#~ msgid "You're not a member of any organization yet & don't have any pending invitations."
+#~ msgstr "You're not a member of any organization yet & don't have any pending invitations."
+
+#~ msgid "Error loading invitations"
+#~ msgstr "Error loading invitations"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/routes/(auth)/organization/+page.svelte
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Unknown error"
+msgstr "Unknown error"
+
+#. placeholder {0}: error?.message ?? 'Unknown error'
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Error loading invitations: {0}"
+msgstr "Error loading invitations: {0}"
+
+#~ msgid "dss"
+#~ msgstr "dss"
+
+#. placeholder {0}: invitation.data?.inviterEmail
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Invited by {0}"
+msgstr "Invited by {0}"
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Accept / Reject"
+msgstr "Accept / Reject"
+
+#. placeholder {0}: error?.message ?? 'Unknown error'
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Error loading invitation: {0}"
+msgstr "Error loading invitation: {0}"
+
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+msgid "dsdsd"
+msgstr "dsdsd"
+
+#~ msgid "The name of your organization. You cannot change it later."
+#~ msgstr "The name of your organization. You cannot change it later."
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "The name of your organization. You <0>cannot</0> change it later."
+msgstr "The name of your organization. You <0>cannot</0> change it later."
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Slug"
+msgstr "Slug"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Country"
+msgstr "Country"
+
+#~ msgid "The country of your organization."
+#~ msgstr "The country of your organization."
+
+#~ msgid "Default Language"
+#~ msgstr "Default Language"
+
+#~ msgid "The default language of your organization."
+#~ msgstr "The default language of your organization."
+
+#~ msgid "Default Timezone"
+#~ msgstr "Default Timezone"
+
+#: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Back"
+msgstr "Back"
+
+#~ msgid "dss <0/>"
+#~ msgstr "dss <0/>"
+
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/layouts/nav/OrgMenu.svelte
+msgid "<0/> New Organization"
+msgstr "<0/> New Organization"
+
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/layouts/nav/OrgMenu.svelte
+msgid "<0/> Settings"
+msgstr "<0/> Settings"
+
+#: src/routes/+layout.svelte
+msgid "Belcoda"
+msgstr "Belcoda"
+
+#~ msgid "<0/> Loading organizations..."
+#~ msgstr "<0/> Loading organizations..."
+
+#~ msgid "<0/> dsds"
+#~ msgstr "<0/> dsds"
+
+#~ msgid "Error loading organizations: {0}"
+#~ msgstr "Error loading organizations: {0}"
+
+#~ msgid "Error loading organization: {0}"
+#~ msgstr "Error loading organization: {0}"
+
+#~ msgid "No organization selected"
+#~ msgstr "No organization selected"
+
+#~ msgid "Error loading app: {0}"
+#~ msgstr "Error loading app: {0}"
+
+#. placeholder {0}: users.data.length
+#: src/lib/components/layouts/nav/OrgMenu.svelte
+msgid "{0} users"
+msgstr "{0} users"
+
+#~ msgid "Error loading persons: {0}"
+#~ msgstr "Error loading persons: {0}"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/nav/AppSidebar.svelte
+msgid "Error loading persons"
+msgstr "Error loading persons"
+
+#: src/lib/components/layouts/nav/TestLayout.svelte
+msgid "dsds"
+msgstr "dsds"
+
+#~ msgid "dsdsd <0/> <1/> sdsd"
+#~ msgstr "dsdsd <0/> <1/> sdsd"
+
+#: src/lib/components/layouts/app/navigation/UserMenu.svelte
+#: src/lib/components/layouts/nav/UserMenu.svelte
+msgid "<0/> Preferences"
+msgstr "<0/> Preferences"
+
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
+#: src/lib/components/layouts/nav/SideNav.svelte
+#: src/lib/components/layouts/nav/SideNav.svelte
+msgid "Actions"
+msgstr "Actions"
+
+#~ msgid "{0} <0/> <1/> sdsd"
+#~ msgstr "{0} <0/> <1/> sdsd"
+
+#~ msgid "{0} {1} <0/> <1/> sdsd"
+#~ msgstr "{0} {1} <0/> <1/> sdsd"
+
+#: src/lib/components/layouts/nav/AppSidebarDropdown.svelte
+msgid "My Account"
+msgstr "My Account"
+
+#: src/lib/components/layouts/nav/AppSidebarDropdown.svelte
+msgid "Profile"
+msgstr "Profile"
+
+#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
+#: src/lib/components/layouts/nav/AppSidebarDropdown.svelte
+msgid "Billing"
+msgstr "Billing"
+
+#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
+#: src/lib/components/layouts/nav/AppSidebarDropdown.svelte
+msgid "Team"
+msgstr "Team"
+
+#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
+#: src/lib/components/layouts/nav/AppSidebarDropdown.svelte
+msgid "Subscription"
+msgstr "Subscription"
+
+#~ msgid "Person"
+#~ msgstr "Person"
+
+#: src/lib/components/layouts/nav/TestLayout.svelte
+msgid "Family Name"
+msgstr "Family Name"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/nav/TestLayout.svelte
+msgid "Create Person"
+msgstr "Create Person"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/nav/TestLayout.svelte
+#: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
+msgid "Given name"
+msgstr "Given name"
+
+#~ msgid "Comms"
+#~ msgstr "Comms"
+
+#: src/routes/(app)/test/+page.svelte
+#: src/routes/(app)/test/+page.svelte
+#: src/routes/(app)/test/+page.svelte
+#: src/routes/(app)/test/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+msgid "Click me"
+msgstr "Click me"
+
+#: src/routes/(app)/preferences/+page.svelte
+#: src/routes/(app)/settings/+page.svelte
+#: src/routes/(app)/test/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+msgid "Test"
+msgstr "Test"
+
+#: src/routes/(app)/preferences/+page.svelte
+#: src/routes/(app)/settings/+page.svelte
+#: src/routes/(app)/test/+page.svelte
+#: src/routes/(app)/test/next/+page.svelte
+msgid "Footer"
+msgstr "Footer"
+
+#~ msgid "<0/>dsdsds"
+#~ msgstr "<0/>dsdsds"
+
+#~ msgid "Home"
+#~ msgstr "Home"
+
+#~ msgid "Wallet"
+#~ msgstr "Wallet"
+
+#: src/routes/(app)/preferences/+page.svelte
+#: src/routes/(app)/settings/+page.svelte
+msgid "sws"
+msgstr "sws"
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilter.svelte
+#: src/lib/components/layouts/app/sidebars/preferences/PreferencesSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+#: src/lib/components/widgets/person/filter/Filter.svelte
+msgid "Search..."
+msgstr "Search..."
+
+#~ msgid "12 results"
+#~ msgstr "12 results"
+
+#: src/lib/components/layouts/app/sidebars/preferences/PreferencesSidebar.svelte
+msgid "Preferences"
+msgstr "Preferences"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/Email.svelte
+msgid "Subscribed"
+msgstr "Subscribed"
+
+#~ msgid "Unsubscribed"
+#~ msgstr "Unsubscribed"
+
+#~ msgid "dsdd"
+#~ msgstr "dsdd"
+
+#~ msgid "Avatar"
+#~ msgstr "Avatar"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Status"
+msgstr "Status"
+
+#~ msgid "Last Activity"
+#~ msgstr "Last Activity"
+
+#~ msgid "Status dsds ds sd sd sd sds ds d"
+#~ msgstr "Status dsds ds sd sd sd sds ds d"
+
+#~ msgid ""
+#~ "Status dsds ds sd sd sd sds ds d Status dsds ds sd sd sd sds ds dStatus dsds ds sd sd sd\n"
+#~ "sds ds d"
+#~ msgstr ""
+#~ "Status dsds ds sd sd sd sds ds d Status dsds ds sd sd sd sds ds dStatus dsds ds sd sd sd\n"
+#~ "sds ds d"
+
+#~ msgid "No results found"
+#~ msgstr "No results found"
+
+#~ msgid "Try adjusting your search terms."
+#~ msgstr "Try adjusting your search terms."
+
+#~ msgid "<0>No Projects YetYou haven't created any projects yet. Get started by creating your first project.Create ProjectImport ProjectLearn More <0/></0> Copy"
+#~ msgstr "<0>No Projects YetYou haven't created any projects yet. Get started by creating your first project.Create ProjectImport ProjectLearn More <0/></0> Copy"
+
+#: src/routes/(app)/communications/+page.svelte
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "No Projects Yet"
+msgstr "No Projects Yet"
+
+#: src/routes/(app)/communications/+page.svelte
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "You haven't created any projects yet. Get started by creating your first project."
+msgstr "You haven't created any projects yet. Get started by creating your first project."
+
+#: src/routes/(app)/communications/+page.svelte
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Create Project"
+msgstr "Create Project"
+
+#: src/routes/(app)/communications/+page.svelte
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Import Project"
+msgstr "Import Project"
+
+#: src/routes/(app)/communications/+page.svelte
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Learn More <0/>"
+msgstr "Learn More <0/>"
+
+#: src/lib/components/widgets/render/RenderPerson.svelte
+msgid "Error loading person"
+msgstr "Error loading person"
+
+#~ msgid "Add a comment"
+#~ msgstr "Add a comment"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Send"
+msgstr "Send"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Ask, Search or Chat..."
+msgstr "Ask, Search or Chat..."
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Auto"
+msgstr "Auto"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Agent"
+msgstr "Agent"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Manual"
+msgstr "Manual"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "52% used"
+msgstr "52% used"
+
+#~ msgid "events"
+#~ msgstr "events"
+
+#: src/lib/components/widgets/utils/CopyButton.svelte
+msgid "Copy"
+msgstr "Copy"
+
+#~ msgid "Item 1 Title"
+#~ msgstr "Item 1 Title"
+
+#~ msgid "Toggle calendar"
+#~ msgstr "Toggle calendar"
+
+#~ msgid "Event Details"
+#~ msgstr "Event Details"
+
+#~ msgid "New Event"
+#~ msgstr "New Event"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Date"
+msgstr "Date"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Select date"
+msgstr "Select date"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "From"
+msgstr "From"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "To"
+msgstr "To"
+
+#~ msgid "Line 1, Column 1"
+#~ msgstr "Line 1, Column 1"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Description"
+msgstr "Description"
+
+#~ msgid "Account"
+#~ msgstr "Account"
+
+#~ msgid "Make changes to your account here."
+#~ msgstr "Make changes to your account here."
+
+#~ msgid "Change your password here."
+#~ msgstr "Change your password here."
+
+#: src/routes/(app)/events/new/+page.svelte
+msgid "New event"
+msgstr "New event"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Title"
+msgstr "Title"
+
+#~ msgid "#PAGE: https://belcoda.com/events/{0}"
+#~ msgstr "#PAGE: https://belcoda.com/events/{0}"
+
+#~ msgid "Card Title"
+#~ msgstr "Card Title"
+
+#~ msgid "Card Description"
+#~ msgstr "Card Description"
+
+#~ msgid "Card Footer"
+#~ msgstr "Card Footer"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Basic information"
+msgstr "Basic information"
+
+#~ msgid "Enter the basic information for your event."
+#~ msgstr "Enter the basic information for your event."
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/form/Email.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/form/Gender.svelte
+#: src/routes/(app)/events/new/+page.svelte
+msgid "Save"
+msgstr "Save"
+
+#~ msgid "Location settings"
+#~ msgstr "Location settings"
+
+#~ msgid "Configure the location settings for your event."
+#~ msgstr "Configure the location settings for your event."
+
+#~ msgid "phisiocal event"
+#~ msgstr "phisiocal event"
+
+#~ msgid "dsdds"
+#~ msgstr "dsdds"
+
+#~ msgid "Online event"
+#~ msgstr "Online event"
+
+#~ msgid "passsowrd"
+#~ msgstr "passsowrd"
+
+#~ msgid "In person"
+#~ msgstr "In person"
+
+#~ msgid "Virtual"
+#~ msgstr "Virtual"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "<0/> In person"
+msgstr "<0/> In person"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "<0/> Virtual"
+msgstr "<0/> Virtual"
+
+#~ msgid "Can I use this in my project?"
+#~ msgstr "Can I use this in my project?"
+
+#~ msgid "Yes. Free to use for personal and commercial projects. No attribution required."
+#~ msgstr "Yes. Free to use for personal and commercial projects. No attribution required."
+
+#~ msgid "@huntabyte starred 3 repositories"
+#~ msgstr "@huntabyte starred 3 repositories"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Toggle"
+msgstr "Toggle"
+
+#~ msgid "@huntabyte/bits-ui"
+#~ msgstr "@huntabyte/bits-ui"
+
+#~ msgid "@melt-ui/melt-ui"
+#~ msgstr "@melt-ui/melt-ui"
+
+#~ msgid "@sveltejs/svelte"
+#~ msgstr "@sveltejs/svelte"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Date and time"
+msgstr "Date and time"
+
+#~ msgid "Time"
+#~ msgstr "Time"
+
+#~ msgid "Enable notifications"
+#~ msgstr "Enable notifications"
+
+#~ msgid "You can enable or disable notifications at any time."
+#~ msgstr "You can enable or disable notifications at any time."
+
+#~ msgid "<0/> Toggle calendar"
+#~ msgstr "<0/> Toggle calendar"
+
+#~ msgid "Username"
+#~ msgstr "Username"
+
+#~ msgid "Display timezone"
+#~ msgstr "Display timezone"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Display timezone on signup page and notifications"
+msgstr "Display timezone on signup page and notifications"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "This will display the timezone on the signup page and notifications."
+msgstr "This will display the timezone on the signup page and notifications."
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Timezone"
+msgstr "Timezone"
+
+#~ msgid "Select a framework..."
+#~ msgstr "Select a framework..."
+
+#: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+msgid "Search framework..."
+msgstr "Search framework..."
+
+#: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+msgid "No framework found."
+msgstr "No framework found."
+
+#: src/lib/components/ui/command/command-dialog.svelte
+msgid "Command Palette"
+msgstr "Command Palette"
+
+#: src/lib/components/ui/command/command-dialog.svelte
+msgid "Search for a command to run"
+msgstr "Search for a command to run"
+
+#~ msgid "All day event"
+#~ msgstr "All day event"
+
+#~ msgid "Start and end at midnight."
+#~ msgstr "Start and end at midnight."
+
+#~ msgid "Multi-day event"
+#~ msgstr "Multi-day event"
+
+#~ msgid "Start and end on different days."
+#~ msgstr "Start and end on different days."
+
+#~ msgid "Standard event"
+#~ msgstr "Standard event"
+
+#~ msgid "Start and end at a specific time on the same day."
+#~ msgstr "Start and end at a specific time on the same day."
+
+#~ msgid "Start and end at midnight on the same day (all day)."
+#~ msgstr "Start and end at midnight on the same day (all day)."
+
+#~ msgid "Run the event as an all day event."
+#~ msgstr "Run the event as an all day event."
+
+#~ msgid "Run the event as an all day event (no start time or end time)."
+#~ msgstr "Run the event as an all day event (no start time or end time)."
+
+#~ msgid "Event details"
+#~ msgstr "Event details"
+
+#~ msgid "ds"
+#~ msgstr "ds"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Multi-day event <0>Start and end on different days.</0>"
+msgstr "Multi-day event <0>Start and end on different days.</0>"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Standard event <0>Start and end at a specific time on the same day.</0>"
+msgstr "Standard event <0>Start and end at a specific time on the same day.</0>"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "All day event <0>Start and end at midnight on the same day (all day).</0>"
+msgstr "All day event <0>Start and end at midnight on the same day (all day).</0>"
+
+#. placeholder {0}: startsAt ? new Date(startsAt).toUTCString() : ''
+#: src/lib/components/forms/event/DateTimeControl.svelte
+msgid "start: {0}"
+msgstr "start: {0}"
+
+#. placeholder {0}: endsAt ? new Date(endsAt).toUTCString() : ''
+#: src/lib/components/forms/event/DateTimeControl.svelte
+msgid "end: {0}"
+msgstr "end: {0}"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "End date"
+msgstr "End date"
+
+#: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Start date"
+msgstr "Start date"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Start date must be before end date"
+msgstr "Start date must be before end date"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "End date must be after start date"
+msgstr "End date must be after start date"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
+msgid "Address line 1"
+msgstr "Address line 1"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
+msgid "Address line 2 (optional)"
+msgstr "Address line 2 (optional)"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Address line 2"
+msgstr "Address line 2"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
+msgid "City/town"
+msgstr "City/town"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
+msgid "Postcode"
+msgstr "Postcode"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
+msgid "Region/state"
+msgstr "Region/state"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Online link"
+msgstr "Online link"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Event page"
+msgstr "Event page"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Preview"
+msgstr "Preview"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Too large!"
+msgstr "Too large!"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Wrong file type!"
+msgstr "Wrong file type!"
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Allowed: .png, .jpg, .jpeg"
+msgstr "Allowed: .png, .jpg, .jpeg"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Validation error!"
+msgstr "Validation error!"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Please try again."
+msgstr "Please try again."
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Upload error!"
+msgstr "Upload error!"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Upload an image"
+msgstr "Upload an image"
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Upload Image"
+msgstr "Upload Image"
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Upload an image to your workspace"
+msgstr "Upload an image to your workspace"
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Upload"
+msgstr "Upload"
+
+#~ msgid "<0/> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal... // <1/> <2/>"
+#~ msgstr "<0/> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal... // <1/> <2/>"
+
+#~ msgid "Cropping canvas"
+#~ msgstr "Cropping canvas"
+
+#~ msgid "<0/> <1/> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal... // <2/> <3/>"
+#~ msgstr "<0/> <1/> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal... // <2/> <3/>"
+
+#~ msgid ""
+#~ "<0/> <1/> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal...\n"
+#~ "// <2/> <3/>"
+#~ msgstr ""
+#~ "<0/> <1/> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal...\n"
+#~ "// <2/> <3/>"
+
+#~ msgid ""
+#~ "<0>CancelUpload</0> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal...\n"
+#~ "// <1/> <2/>"
+#~ msgstr ""
+#~ "<0>CancelUpload</0> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal...\n"
+#~ "// <1/> <2/>"
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Uploaded result"
+msgstr "Uploaded result"
+
+#~ msgid ""
+#~ "<0>CancelUpload</0> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal...\n"
+#~ "// <1/> <2/> <3/>"
+#~ msgstr ""
+#~ "<0>CancelUpload</0> // file upload area // upload is triggered, get the file... // trigger opening the cropper modal...\n"
+#~ "// <1/> <2/> <3/>"
+
+#~ msgid "<0/> Uploading..."
+#~ msgstr "<0/> Uploading..."
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Click or drag to upload image"
+msgstr "Click or drag to upload image"
+
+#. placeholder {0}: errorState
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Error: {0}"
+msgstr "Error: {0}"
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Max size: 2MB"
+msgstr "Max size: 2MB"
+
+#. placeholder {0}: HUMAN_READABLE_MAX_FILE_SIZE
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "File too large. Max size is {0}."
+msgstr "File too large. Max size is {0}."
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "File type not allowed. Allowed types are .png, .jpg, .jpeg."
+msgstr "File type not allowed. Allowed types are .png, .jpg, .jpeg."
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "File validation error. Please try again."
+msgstr "File validation error. Please try again."
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "File upload error. Please try again."
+msgstr "File upload error. Please try again."
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Unknown error. Please try again."
+msgstr "Unknown error. Please try again."
+
+#. placeholder {0}: HUMAN_READABLE_MAX_FILE_SIZE
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Max size: {0}"
+msgstr "Max size: {0}"
+
+#: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+msgid "Replace image"
+msgstr "Replace image"
+
+#~ msgid "Add the details of your event."
+#~ msgstr "Add the details of your event."
+
+#~ msgid "Set the date and time of your event."
+#~ msgstr "Set the date and time of your event."
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Location"
+msgstr "Location"
+
+#~ msgid "Set the location of your event."
+#~ msgstr "Set the location of your event."
+
+#~ msgid "Image"
+#~ msgstr "Image"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Feature image"
+msgstr "Feature image"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "This event will be displayed on the event page and in notifications and shared links."
+msgstr "This event will be displayed on the event page and in notifications and shared links."
+
+#~ msgid "<0/> https://belcoda.com/events/{0}"
+#~ msgstr "<0/> https://belcoda.com/events/{0}"
+
+#~ msgid "<0/>https://belcoda.com/events/{0}"
+#~ msgstr "<0/>https://belcoda.com/events/{0}"
+
+#~ msgid "Event page URL"
+#~ msgstr "Event page URL"
+
+#~ msgid "The URL of the event page"
+#~ msgstr "The URL of the event page"
+
+#~ msgid "dsddsdsdsdsdsdsds <0/>"
+#~ msgstr "dsddsdsdsdsdsdsds <0/>"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/routes/(app)/community/[personId]/profile/ProfileRow.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Name.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/ItemShell.svelte
+msgid "Edit"
+msgstr "Edit"
+
+#~ msgid "<0/> Edit"
+#~ msgstr "<0/> Edit"
+
+#~ msgid "<0/>http{0}://{1}.{2}/events/{3}"
+#~ msgstr "<0/>http{0}://{1}.{2}/events/{3}"
+
+#~ msgid "<0/>http{0}://{1}.{2}/events/{3} > <1>EditSaveCancel</1>"
+#~ msgstr "<0/>http{0}://{1}.{2}/events/{3} > <1>EditSaveCancel</1>"
+
+#~ msgid "<0/>http{0}://{1}.{2}/events/{3} <1>EditSaveCancel</1>"
+#~ msgstr "<0/>http{0}://{1}.{2}/events/{3} <1>EditSaveCancel</1>"
+
+#. placeholder {0}: dev ? '' : 's'
+#. placeholder {1}: appState.activeOrganization.data ?.slug
+#. placeholder {2}: PUBLIC_ROOT_DOMAIN
+#. placeholder {3}: $data.slug
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "http{0}://{1}.{2}/events/{3}"
+msgstr "http{0}://{1}.{2}/events/{3}"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Edit Person"
+msgstr "Edit Person"
+
+#~ msgid "sddsds"
+#~ msgstr "sddsds"
+
+#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
+msgid "New person"
+msgstr "New person"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
+msgid "Family name"
+msgstr "Family name"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Preferred language"
+msgstr "Preferred language"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Address.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/+page.svelte
+msgid "Address"
+msgstr "Address"
+
+#~ msgid "The address of the person."
+#~ msgstr "The address of the person."
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Contact details"
+msgstr "Contact details"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/Email.svelte
+msgid "Email address"
+msgstr "Email address"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+#: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+#: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+msgid "Phone number"
+msgstr "Phone number"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid ""
+"If the person is subscribed, they will be able to receive notifications\n"
+"and messages."
+msgstr ""
+"If the person is subscribed, they will be able to receive notifications\n"
+"and messages."
+
+#: src/lib/components/ui/custom-select/timezone/timezone.svelte
+msgid "Select a timezone..."
+msgstr "Select a timezone..."
+
+#: src/lib/components/ui/custom-select/timezone/timezone.svelte
+msgid "Search timezone..."
+msgstr "Search timezone..."
+
+#: src/lib/components/ui/custom-select/country/country.svelte
+#: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+#: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+msgid "Select a country"
+msgstr "Select a country"
+
+#: src/lib/components/ui/custom-select/country/country.svelte
+msgid "Search country..."
+msgstr "Search country..."
+
+#: src/lib/components/ui/custom-select/language/language.svelte
+msgid "Select a language"
+msgstr "Select a language"
+
+#: src/lib/components/ui/custom-select/language/language.svelte
+msgid "Search language..."
+msgstr "Search language..."
+
+#: src/lib/components/ui/custom-select/country/country.svelte
+msgid "No countries found."
+msgstr "No countries found."
+
+#: src/lib/components/ui/custom-select/timezone/timezone.svelte
+msgid "No timezones found."
+msgstr "No timezones found."
+
+#: src/lib/components/ui/custom-select/language/language.svelte
+msgid "No languages found."
+msgstr "No languages found."
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Personal details"
+msgstr "Personal details"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Date of birth"
+msgstr "Date of birth"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/Gender.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/form/Gender.svelte
+msgid "Gender"
+msgstr "Gender"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Workplace.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+msgid "Workplace"
+msgstr "Workplace"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+msgid "Position"
+msgstr "Position"
+
+#~ msgid "Male"
+#~ msgstr "Male"
+
+#~ msgid "Female"
+#~ msgstr "Female"
+
+#~ msgid "Other"
+#~ msgstr "Other"
+
+#: src/routes/(app)/community/[personId]/profile4/items/Gender.svelte
+msgid "Not Specified"
+msgstr "Not Specified"
+
+#: src/lib/components/ui/custom-select/gender/gender.svelte
+msgid "Select a gender"
+msgstr "Select a gender"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Social media"
+msgstr "Social media"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Facebook"
+msgstr "Facebook"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Twitter"
+msgstr "Twitter"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Instagram"
+msgstr "Instagram"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "TikTok"
+msgstr "TikTok"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Website"
+msgstr "Website"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Language"
+msgstr "Language"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilter.svelte
+#: src/lib/components/widgets/person/filter/Filter.svelte
+msgid "Filter"
+msgstr "Filter"
+
+#~ msgid "Copy path"
+#~ msgstr "Copy path"
+
+#~ msgid "Open location"
+#~ msgstr "Open location"
+
+#~ msgid "Is deleted"
+#~ msgstr "Is deleted"
+
+#: src/lib/components/layouts/app/sidebars/community/PersonFilter.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/PersonFilter.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
+msgid "Teams"
+msgstr "Teams"
+
+#: src/lib/components/layouts/app/sidebars/community/PersonFilter.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/PersonFilter.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Tags"
+msgstr "Tags"
+
+#~ msgid "Rounded avatar"
+#~ msgstr "Rounded avatar"
+
+#: src/lib/components/ui/custom-badge/dismissable-avatar-badge.svelte
+#: src/lib/components/ui/custom-badge/dismissable-avatar-badge.svelte
+msgid "Remove"
+msgstr "Remove"
+
+#~ msgid "Filter label..."
+#~ msgstr "Filter label..."
+
+#~ msgid "No label found."
+#~ msgstr "No label found."
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/community/PersonFilter.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/PersonFilter.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
+msgid "Filter tags..."
+msgstr "Filter tags..."
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/community/PersonFilter.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/PersonFilter.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
+msgid "No tags found."
+msgstr "No tags found."
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/community/PersonFilter.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/PersonFilter.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/AddTeam.svelte
+msgid "Filter teams..."
+msgstr "Filter teams..."
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/community/PersonFilter.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/PersonFilter.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/AddTeam.svelte
+msgid "No teams found."
+msgstr "No teams found."
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+msgid "Tabs"
+msgstr "Tabs"
+
+#~ msgid "Company"
+#~ msgstr "Company"
+
+#~ msgid "Messages"
+#~ msgstr "Messages"
+
+#~ msgid "Templates"
+#~ msgstr "Templates"
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+msgid "All drafts"
+msgstr "All drafts"
+
+#~ msgid "<0/> New message"
+#~ msgstr "<0/> New message"
+
+#~ msgid "Dashboard"
+#~ msgstr "Dashboard"
+
+#~ msgid "Contacts"
+#~ msgstr "Contacts"
+
+#~ msgid "Disabled"
+#~ msgstr "Disabled"
+
+#~ msgid "Select a tab"
+#~ msgstr "Select a tab"
+
+#~ msgid "Team Members"
+#~ msgstr "Team Members"
+
+#~ msgid "<0>WhatsAppEmail</0> dsdss"
+#~ msgstr "<0>WhatsAppEmail</0> dsdss"
+
+#~ msgid "<0/> New Email"
+#~ msgstr "<0/> New Email"
+
+#~ msgid "<0/> New WhatsApp"
+#~ msgstr "<0/> New WhatsApp"
+
+#~ msgid "<0/> New"
+#~ msgstr "<0/> New"
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+msgid "<0/> Compose WhatsApp"
+msgstr "<0/> Compose WhatsApp"
+
+#~ msgid "<0/> Compose Email"
+#~ msgstr "<0/> Compose Email"
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+msgid "<0/> Compose email"
+msgstr "<0/> Compose email"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/person/AddPersonModal.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+#: src/routes/(app)/community/+page.svelte
+msgid "Add Person"
+msgstr "Add Person"
+
+#: src/lib/components/widgets/person/AddPersonModal.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Add a new person to the community"
+msgstr "Add a new person to the community"
+
+#~ msgid "Add"
+#~ msgstr "Add"
+
+#~ msgid "Add Selected"
+#~ msgstr "Add Selected"
+
+#~ msgid "Add {0} people"
+#~ msgstr "Add {0} people"
+
+#. placeholder {0}: selectedPersonIds.length
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Add to event ({0})"
+msgstr "Add to event ({0})"
+
+#~ msgid "Clear"
+#~ msgstr "Clear"
+
+#. placeholder {0}: selectedPeople.data.length
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Selected ({0})"
+msgstr "Selected ({0})"
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "No people found"
+msgstr "No people found"
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Error loading people"
+msgstr "Error loading people"
+
+#~ msgid "No data"
+#~ msgstr "No data"
+
+#~ msgid "No data found"
+#~ msgstr "No data found"
+
+#~ msgid "Add data"
+#~ msgstr "Add data"
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Create new person?"
+msgstr "Create new person?"
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+#: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+msgid "Create person"
+msgstr "Create person"
+
+#~ msgid "dsdsdddsds <0/>"
+#~ msgstr "dsdsdddsds <0/>"
+
+#~ msgid "dsdsdddsds"
+#~ msgstr "dsdsdddsds"
+
+#~ msgid "Given Name"
+#~ msgstr "Given Name"
+
+#: src/routes/(app)/community/[personId]/profile4/items/form/Email.svelte
+msgid "Email Address"
+msgstr "Email Address"
+
+#: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+msgid "Phone Number"
+msgstr "Phone Number"
+
+#~ msgid "Address Line 1"
+#~ msgstr "Address Line 1"
+
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+msgid "Admin"
+msgstr "Admin"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/Drawer.svelte
+#: src/lib/components/layouts/app/action-menus/person/notes/Drawer.svelte
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+msgid "User"
+msgstr "User"
+
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+msgid "Owner"
+msgstr "Owner"
+
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+msgid "Unknown"
+msgstr "Unknown"
+
+#. placeholder {0}: count
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+msgid "<0/> {0} users"
+msgstr "<0/> {0} users"
+
+#~ msgid "Invite?"
+#~ msgstr "Invite?"
+
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+msgid "<0/> Invite?"
+msgstr "<0/> Invite?"
+
+#: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+msgid "Member"
+msgstr "Member"
+
+#: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+msgid "Person created"
+msgstr "Person created"
+
+#~ msgid "Person ID: {0}"
+#~ msgstr "Person ID: {0}"
+
+#~ msgid "Failed to create person"
+#~ msgstr "Failed to create person"
+
+#. placeholder {0}: foo.data.id
+#. placeholder {1}: foo.data.givenName
+#. placeholder {2}: foo.data.familyName
+#: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+msgid "Person ID: {0} {1} {2}"
+msgstr "Person ID: {0} {1} {2}"
+
+#~ msgid "dsdsdds"
+#~ msgstr "dsdsdds"
+
+#~ msgid "lorem ipsum dolor sit amet"
+#~ msgstr "lorem ipsum dolor sit amet"
+
+#~ msgid "lorem ipsum dolor sit amet {0}px"
+#~ msgstr "lorem ipsum dolor sit amet {0}px"
+
+#~ msgid "{0}px <0/> <1/>"
+#~ msgstr "{0}px <0/> <1/>"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "No events found"
+msgstr "No events found"
+
+#~ msgid "Loading events..."
+#~ msgstr "Loading events..."
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Error loading events"
+msgstr "Error loading events"
+
+#~ msgid "Fooo"
+#~ msgstr "Fooo"
+
+#~ msgid "dsdssd"
+#~ msgstr "dsdssd"
+
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Published"
+msgstr "Published"
+
+#~ msgid "Unpublished"
+#~ msgstr "Unpublished"
+
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Draft"
+msgstr "Draft"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "No events found. Create a new event to get started."
+msgstr "No events found. Create a new event to get started."
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Create Event"
+msgstr "Create Event"
+
+#~ msgid "Summary"
+#~ msgstr "Summary"
+
+#~ msgid "Amount"
+#~ msgstr "Amount"
+
+#~ msgid "Paid"
+#~ msgstr "Paid"
+
+#~ msgid "Client"
+#~ msgstr "Client"
+
+#~ msgid "Alex Curren"
+#~ msgstr "Alex Curren"
+
+#~ msgid "Due date"
+#~ msgstr "Due date"
+
+#~ msgid "January 31, 2023"
+#~ msgstr "January 31, 2023"
+
+#~ msgid "Paid with MasterCard"
+#~ msgstr "Paid with MasterCard"
+
+#~ msgid "Download receipt <0/>"
+#~ msgstr "Download receipt <0/>"
+
+#~ msgid "View and manage your profile information."
+#~ msgstr "View and manage your profile information."
+
+#~ msgid "dsd"
+#~ msgstr "dsd"
+
+#~ msgid "Foo"
+#~ msgstr "Foo"
+
+#~ msgid "Filter events..."
+#~ msgstr "Filter events..."
+
+#~ msgid "No events found."
+#~ msgstr "No events found."
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "Activity"
+msgstr "Activity"
+
+#~ msgid "Appearance"
+#~ msgstr "Appearance"
+
+#~ msgid "Status Bar"
+#~ msgstr "Status Bar"
+
+#~ msgid "Activity Bar"
+#~ msgstr "Activity Bar"
+
+#~ msgid "Panel"
+#~ msgstr "Panel"
+
+#~ msgid "Has activity in the last 7 days"
+#~ msgstr "Has activity in the last 7 days"
+
+#~ msgid "Has activity in the last 30 days"
+#~ msgstr "Has activity in the last 30 days"
+
+#~ msgid "Has activity in the last 90 days"
+#~ msgstr "Has activity in the last 90 days"
+
+#~ msgid "Has activity in the last 1 year"
+#~ msgstr "Has activity in the last 1 year"
+
+#~ msgid "No activity in the last 7 days"
+#~ msgstr "No activity in the last 7 days"
+
+#~ msgid "No activity in the last 30 days"
+#~ msgstr "No activity in the last 30 days"
+
+#~ msgid "No activity in the last 90 days"
+#~ msgstr "No activity in the last 90 days"
+
+#~ msgid "No activity in the last 1 year"
+#~ msgstr "No activity in the last 1 year"
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "Recent activity: 7 days"
+msgstr "Recent activity: 7 days"
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "Recent activity: 30 days"
+msgstr "Recent activity: 30 days"
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "Recent activity: 90 days"
+msgstr "Recent activity: 90 days"
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "Recent activity: 1 year"
+msgstr "Recent activity: 1 year"
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "No activity: 7 days"
+msgstr "No activity: 7 days"
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "No activity: 30 days"
+msgstr "No activity: 30 days"
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "No activity: 90 days"
+msgstr "No activity: 90 days"
+
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+msgid "No activity: 1 year"
+msgstr "No activity: 1 year"
+
+#: src/lib/components/widgets/person/filter/display/DisplayActivityFilter.svelte
+msgid "Unknown activity filter"
+msgstr "Unknown activity filter"
+
+#~ msgid "<0/> <1/> dsdsdds <2/>"
+#~ msgstr "<0/> <1/> dsdsdds <2/>"
+
+#~ msgid "dssd"
+#~ msgstr "dssd"
+
+#~ msgid "{0} {1}dsds ds dsd sd sd ds"
+#~ msgstr "{0} {1}dsds ds dsd sd sd ds"
+
+#~ msgid "<0>Contact details</0> <1/> dssds"
+#~ msgstr "<0>Contact details</0> <1/> dssds"
+
+#~ msgid "<0/> dssds"
+#~ msgstr "<0/> dssds"
+
+#~ msgid "<0>Contact details</0> <1>@huntabyte starred 3 repositoriesToggle@huntabyte/bits-ui@melt-ui/melt-ui@sveltejs/svelte</1> Copy"
+#~ msgstr "<0>Contact details</0> <1>@huntabyte starred 3 repositoriesToggle@huntabyte/bits-ui@melt-ui/melt-ui@sveltejs/svelte</1> Copy"
+
+#~ msgid "More details"
+#~ msgstr "More details"
+
+#: src/routes/(app)/community/[personId]/profile/ProfileInfo.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/+page.svelte
+msgid "Phone"
+msgstr "Phone"
+
+#. placeholder {0}: text
+#: src/lib/components/widgets/utils/CopyButton.svelte
+msgid "Copied \"{0}\" to clipboard"
+msgstr "Copied \"{0}\" to clipboard"
+
+#: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile2/+page.svelte
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+#: src/routes/(app)/community/[personId]/profile3/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/+page.svelte
+#: src/routes/(app)/community/[personId]/profile4/items/Email.svelte
+msgid "Do not contact"
+msgstr "Do not contact"
+
+#~ msgid "Review"
+#~ msgstr "Review"
+
+#: src/lib/components/widgets/utils/CopyButton.svelte
+msgid "Copied!"
+msgstr "Copied!"
+
+#: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Add Tag"
+msgstr "Add Tag"
+
+#~ msgid "bar"
+#~ msgstr "bar"
+
+#~ msgid "foo"
+#~ msgstr "foo"
+
+#: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/PersonalInfo.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/PersonalInfo.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Workplace.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/Workplace.svelte
+msgid "Not specified"
+msgstr "Not specified"
+
+#~ msgid "hero"
+#~ msgstr "hero"
+
+#~ msgid "<0/> (getDialingCode(selectedCountry))"
+#~ msgstr "<0/> (getDialingCode(selectedCountry))"
+
+#: src/routes/(app)/community/[personId]/profile/rows/PersonalInfo.svelte
+msgid "Personal information"
+msgstr "Personal information"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/Drawer.svelte
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+msgid "Notes"
+msgstr "Notes"
+
+#~ msgid "Mute Conversation"
+#~ msgstr "Mute Conversation"
+
+#~ msgid "Mark as Read"
+#~ msgstr "Mark as Read"
+
+#~ msgid "Report Conversation"
+#~ msgstr "Report Conversation"
+
+#~ msgid "Block User"
+#~ msgstr "Block User"
+
+#~ msgid "Share Conversation"
+#~ msgstr "Share Conversation"
+
+#~ msgid "Copy Conversation"
+#~ msgstr "Copy Conversation"
+
+#~ msgid "Delete Conversation"
+#~ msgstr "Delete Conversation"
+
+#~ msgid "Are you sure absolutely sure?"
+#~ msgstr "Are you sure absolutely sure?"
+
+#~ msgid "This action cannot be undone."
+#~ msgstr "This action cannot be undone."
+
+#~ msgid "Submit"
+#~ msgstr "Submit"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "View profile"
+msgstr "View profile"
+
+#~ msgid "<0>dsdsdsdsd</0> <1>dsdsdsdsd</1> <2>dsdsdsdsd</2> <3>dsdsdsdsd</3> <4>dsdsdsdsd</4> <5>dsdsdsdsd</5> <6>dsdsdsdsd</6> <7>dsdsdsdsd</7> <8>dsdsdsdsd</8> <9>dsdsdsdsd</9> <10>dsdsdsdsd</10> <11>dsdsdsdsd</11> <12>dsdsdsdsd</12> <13>dsdsdsdsd</13> <14>dsdsdsdsd</14> <15>dsdsdsdsd</15> <16>dsdsdsdsd</16> <17>dsdsdsdsd</17> <18>dsdsdsdsd</18> <19>dsdsdsdsd</19> v <20>dsdsdsdsd</20> <21>dsdsdsdsd</21> <22>dsdsdsdsd</22> <23>dsdsdsdsd</23> <24>dsdsdsdsd</24> v <25>dsdsdsdsd</25> <26>dsdsdsdsd</26> <27>dsdsdsdsd</27> <28>dsdsdsdsd</28> <29>dsdsdsdsd</29> <30>dsdsdsdsd</30> <31>dsdsdsdsd</31> <32>dsdsdsdsd</32> <33>dsdsdsdsd</33> <34>dsdsdsdsd</34> <35>dsdsdsdsd</35> <36>dsdsdsdsd</36> <37>dsdsdsdsd</37> <38>dsdsdsdsd</38> <39>dsdsdsdsd</39> <40>dsdsdsdsd</40> <41>dsdsdsdsd</41> <42>dsdsdsdsd</42> <43>dsdsdsdsd</43> <44>dsdsdsdsd</44> <45>dsdsdsdsd</45> <46>dsdsdsdsd</46> <47>dsdsdsdsd</47> <48>dsdsdsdsd</48> <49>dsdsdsdsd</49>"
+#~ msgstr "<0>dsdsdsdsd</0> <1>dsdsdsdsd</1> <2>dsdsdsdsd</2> <3>dsdsdsdsd</3> <4>dsdsdsdsd</4> <5>dsdsdsdsd</5> <6>dsdsdsdsd</6> <7>dsdsdsdsd</7> <8>dsdsdsdsd</8> <9>dsdsdsdsd</9> <10>dsdsdsdsd</10> <11>dsdsdsdsd</11> <12>dsdsdsdsd</12> <13>dsdsdsdsd</13> <14>dsdsdsdsd</14> <15>dsdsdsdsd</15> <16>dsdsdsdsd</16> <17>dsdsdsdsd</17> <18>dsdsdsdsd</18> <19>dsdsdsdsd</19> v <20>dsdsdsdsd</20> <21>dsdsdsdsd</21> <22>dsdsdsdsd</22> <23>dsdsdsdsd</23> <24>dsdsdsdsd</24> v <25>dsdsdsdsd</25> <26>dsdsdsdsd</26> <27>dsdsdsdsd</27> <28>dsdsdsdsd</28> <29>dsdsdsdsd</29> <30>dsdsdsdsd</30> <31>dsdsdsdsd</31> <32>dsdsdsdsd</32> <33>dsdsdsdsd</33> <34>dsdsdsdsd</34> <35>dsdsdsdsd</35> <36>dsdsdsdsd</36> <37>dsdsdsdsd</37> <38>dsdsdsdsd</38> <39>dsdsdsdsd</39> <40>dsdsdsdsd</40> <41>dsdsdsdsd</41> <42>dsdsdsdsd</42> <43>dsdsdsdsd</43> <44>dsdsdsdsd</44> <45>dsdsdsdsd</45> <46>dsdsdsdsd</46> <47>dsdsdsdsd</47> <48>dsdsdsdsd</48> <49>dsdsdsdsd</49>"
+
+#~ msgid "<0>Are you sure absolutely sure?This action cannot be undone.</0> <1>dsdsdsdsd</1> <2>dsdsdsdsd</2> <3>dsdsdsdsd</3> <4>dsdsdsdsd</4> <5>dsdsdsdsd</5> <6>dsdsdsdsd</6> <7>dsdsdsdsd</7> <8>dsdsdsdsd</8> <9>dsdsdsdsd</9> <10>dsdsdsdsd</10> <11>dsdsdsdsd</11> <12>dsdsdsdsd</12> <13>dsdsdsdsd</13> <14>dsdsdsdsd</14> <15>dsdsdsdsd</15> <16>dsdsdsdsd</16> <17>dsdsdsdsd</17> <18>dsdsdsdsd</18> <19>dsdsdsdsd</19> <20>dsdsdsdsd</20> v <21>dsdsdsdsd</21> <22>dsdsdsdsd</22> <23>dsdsdsdsd</23> <24>dsdsdsdsd</24> <25>dsdsdsdsd</25> v <26>dsdsdsdsd</26> <27>dsdsdsdsd</27> <28>dsdsdsdsd</28> <29>dsdsdsdsd</29> <30>dsdsdsdsd</30> <31>dsdsdsdsd</31> <32>dsdsdsdsd</32> <33>dsdsdsdsd</33> <34>dsdsdsdsd</34> <35>dsdsdsdsd</35> <36>dsdsdsdsd</36> <37>dsdsdsdsd</37> <38>dsdsdsdsd</38> <39>dsdsdsdsd</39> <40>dsdsdsdsd</40> <41>dsdsdsdsd</41> <42>dsdsdsdsd</42> <43>dsdsdsdsd</43> <44>dsdsdsdsd</44> <45>dsdsdsdsd</45> <46>dsdsdsdsd</46> <47>dsdsdsdsd</47> <48>dsdsdsdsd</48> <49>dsdsdsdsd</49> <50>dsdsdsdsd</50> <51>SubmitCancel</51>"
+#~ msgstr "<0>Are you sure absolutely sure?This action cannot be undone.</0> <1>dsdsdsdsd</1> <2>dsdsdsdsd</2> <3>dsdsdsdsd</3> <4>dsdsdsdsd</4> <5>dsdsdsdsd</5> <6>dsdsdsdsd</6> <7>dsdsdsdsd</7> <8>dsdsdsdsd</8> <9>dsdsdsdsd</9> <10>dsdsdsdsd</10> <11>dsdsdsdsd</11> <12>dsdsdsdsd</12> <13>dsdsdsdsd</13> <14>dsdsdsdsd</14> <15>dsdsdsdsd</15> <16>dsdsdsdsd</16> <17>dsdsdsdsd</17> <18>dsdsdsdsd</18> <19>dsdsdsdsd</19> <20>dsdsdsdsd</20> v <21>dsdsdsdsd</21> <22>dsdsdsdsd</22> <23>dsdsdsdsd</23> <24>dsdsdsdsd</24> <25>dsdsdsdsd</25> v <26>dsdsdsdsd</26> <27>dsdsdsdsd</27> <28>dsdsdsdsd</28> <29>dsdsdsdsd</29> <30>dsdsdsdsd</30> <31>dsdsdsdsd</31> <32>dsdsdsdsd</32> <33>dsdsdsdsd</33> <34>dsdsdsdsd</34> <35>dsdsdsdsd</35> <36>dsdsdsdsd</36> <37>dsdsdsdsd</37> <38>dsdsdsdsd</38> <39>dsdsdsdsd</39> <40>dsdsdsdsd</40> <41>dsdsdsdsd</41> <42>dsdsdsdsd</42> <43>dsdsdsdsd</43> <44>dsdsdsdsd</44> <45>dsdsdsdsd</45> <46>dsdsdsdsd</46> <47>dsdsdsdsd</47> <48>dsdsdsdsd</48> <49>dsdsdsdsd</49> <50>dsdsdsdsd</50> <51>SubmitCancel</51>"
+
+#~ msgid "Add note"
+#~ msgstr "Add note"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
+msgid "<0/> Add note"
+msgstr "<0/> Add note"
+
+#~ msgid "{0}/1000 characters"
+#~ msgstr "{0}/1000 characters"
+
+#~ msgid "Note 1"
+#~ msgstr "Note 1"
+
+#~ msgid "Note 1 description"
+#~ msgstr "Note 1 description"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+msgid "Delete"
+msgstr "Delete"
+
+#~ msgid "Note {0}"
+#~ msgstr "Note {0}"
+
+#~ msgid "Note {0} description"
+#~ msgstr "Note {0} description"
+
+#~ msgid "Note {0} description <0>EditDelete</0>"
+#~ msgstr "Note {0} description <0>EditDelete</0>"
+
+#~ msgid ""
+#~ "Note {0} description lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,\n"
+#~ "quos."
+#~ msgstr ""
+#~ "Note {0} description lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,\n"
+#~ "quos."
+
+#~ msgid "Posted at foo X days ago"
+#~ msgstr "Posted at foo X days ago"
+
+#~ msgid "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."
+#~ msgstr "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."
+
+#~ msgid "<0/>Delete"
+#~ msgstr "<0/>Delete"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "View timeline"
+msgstr "View timeline"
+
+#~ msgid "Send email"
+#~ msgstr "Send email"
+
+#~ msgid "Call"
+#~ msgstr "Call"
+
+#~ msgid "Send WhatsApp message"
+#~ msgstr "Send WhatsApp message"
+
+#~ msgid "Lorem ipsum dolor sit amet a ds elit. Quisq uam, quos."
+#~ msgstr "Lorem ipsum dolor sit amet a ds elit. Quisq uam, quos."
+
+#~ msgid "Lorem ipsum dolor sit amet conse aactetur aad sfasdf elit. Quisqu am, quos."
+#~ msgstr "Lorem ipsum dolor sit amet conse aactetur aad sfasdf elit. Quisqu am, quos."
+
+#: src/lib/components/layouts/app/action-menus/person/notes/Drawer.svelte
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+msgid "No notes found"
+msgstr "No notes found"
+
+#~ msgid "{0}/{1} characters"
+#~ msgstr "{0}/{1} characters"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
+msgid "Enter"
+msgstr "Enter"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+msgid "Note updated"
+msgstr "Note updated"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+msgid "<0/> Update note"
+msgstr "<0/> Update note"
+
+#~ msgid "Add a note or comment.."
+#~ msgstr "Add a note or comment.."
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
+msgid "Add a note or comment..."
+msgstr "Add a note or comment..."
+
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+msgid "Edit note..."
+msgstr "Edit note..."
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+msgid "Note deleted"
+msgstr "Note deleted"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+msgid "Are you sure you want to delete this note?"
+msgstr "Are you sure you want to delete this note?"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "<0/> Notes"
+msgstr "<0/> Notes"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "Send email <0/>"
+msgstr "Send email <0/>"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "Call <0/>"
+msgstr "Call <0/>"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "WhatsApp <0/>"
+msgstr "WhatsApp <0/>"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "Add to team"
+msgstr "Add to team"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "Person added to team"
+msgstr "Person added to team"
+
+#~ msgid "Heads up!"
+#~ msgstr "Heads up!"
+
+#~ msgid "You can add components and dependencies to your app using the cli."
+#~ msgstr "You can add components and dependencies to your app using the cli."
+
+#: src/routes/(app)/community/[personId]/profile/+page.svelte
+msgid "Danger zone!"
+msgstr "Danger zone!"
+
+#~ msgid ""
+#~ "Delete this person record permanently along with all associated data. Be careful, this\n"
+#~ "action cannot be undone."
+#~ msgstr ""
+#~ "Delete this person record permanently along with all associated data. Be careful, this\n"
+#~ "action cannot be undone."
+
+#: src/routes/(app)/community/[personId]/profile/+page.svelte
+msgid ""
+"Delete this person record permanently along with all associated data. Be careful, this\n"
+"action cannot be undone. <0>Delete</0>"
+msgstr ""
+"Delete this person record permanently along with all associated data. Be careful, this\n"
+"action cannot be undone. <0>Delete</0>"
+
+#: src/routes/(app)/community/[personId]/profile/+page.svelte
+msgid "Are you sure you want to delete this person?"
+msgstr "Are you sure you want to delete this person?"
+
+#: src/routes/(app)/community/[personId]/profile/+page.svelte
+msgid "Person deleted"
+msgstr "Person deleted"
+
+#~ msgid ""
+#~ "Delete this person record permanently along with all associated data. Be careful, this\n"
+#~ "action cannot be undone. <0>Delete</0> <1>Delete</1>"
+#~ msgstr ""
+#~ "Delete this person record permanently along with all associated data. Be careful, this\n"
+#~ "action cannot be undone. <0>Delete</0> <1>Delete</1>"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "Add tag"
+msgstr "Add tag"
+
+#: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+msgid "Added tag"
+msgstr "Added tag"
+
+#~ msgid "<0>Notes</0> x"
+#~ msgstr "<0>Notes</0> x"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "Add a note to get started"
+#~ msgstr "Add a note to get started"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+msgid "Add a note to share information with the team"
+msgstr "Add a note to share information with the team"
+
+#: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
+msgid "Are you sure you want to remove this tag?"
+msgstr "Are you sure you want to remove this tag?"
+
+#: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
+msgid "Are you sure you want to remove this team?"
+msgstr "Are you sure you want to remove this team?"
+
+#: src/routes/(app)/events/+page.svelte
+msgid "Create event"
+msgstr "Create event"
+
+#: src/routes/(app)/events/+page.svelte
+msgid "Create events to track your team's activities and progress."
+msgstr "Create events to track your team's activities and progress."
+
+#: src/routes/(app)/events/+page.svelte
+msgid "Learn more about events <0/>"
+msgstr "Learn more about events <0/>"
+
+#~ msgid "Add tag <0/>"
+#~ msgstr "Add tag <0/>"
+
+#~ msgid "Add tag <0/> <1>Add tag</1>"
+#~ msgstr "Add tag <0/> <1>Add tag</1>"
+
+#: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
+#: src/routes/(app)/community/[personId]/profile/rows/form/AddTeam.svelte
+msgid "Add <0/>"
+msgstr "Add <0/>"
+
+#: src/routes/(app)/community/+page.svelte
+msgid "All your people and teams in one place."
+msgstr "All your people and teams in one place."
+
+#: src/routes/(app)/community/+page.svelte
+msgid "Learn more about Belcoda's community module <0/>"
+msgstr "Learn more about Belcoda's community module <0/>"
+
+#~ msgid "<0/> Date range"
+#~ msgstr "<0/> Date range"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Online"
+msgstr "Online"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "In-person"
+msgstr "In-person"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Event type"
+msgstr "Event type"
+
+#: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventTypeFilter.svelte
+msgid "Unknown event status filter"
+msgstr "Unknown event status filter"
+
+#~ msgid "sdddsdsds"
+#~ msgstr "sdddsdsds"
+
+#~ msgid "dsdsdsdsd"
+#~ msgstr "dsdsdsdsd"
+
+#~ msgid "Signups"
+#~ msgstr "Signups"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "A list of your recent invoices."
+msgstr "A list of your recent invoices."
+
+#~ msgid "Invoice"
+#~ msgstr "Invoice"
+
+#~ msgid "Method"
+#~ msgstr "Method"
+
+#~ msgid "INV001"
+#~ msgstr "INV001"
+
+#~ msgid "Credit Card"
+#~ msgstr "Credit Card"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "No signups found"
+msgstr "No signups found"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "No signups found. Create a new signup to get started."
+msgstr "No signups found. Create a new signup to get started."
+
+#~ msgid "Signups ({0})"
+#~ msgstr "Signups ({0})"
+
+#~ msgid "Signups ({0}) <0/> <1/>"
+#~ msgstr "Signups ({0}) <0/> <1/>"
+
+#. placeholder {0}: eventSignups.data.length
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Signups ({0}) <0/>"
+msgstr "Signups ({0}) <0/>"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Signup location"
+msgstr "Signup location"

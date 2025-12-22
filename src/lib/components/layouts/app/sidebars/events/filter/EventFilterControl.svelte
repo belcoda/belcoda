@@ -1,0 +1,155 @@
+<script lang="ts">
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Command from '$lib/components/ui/command/index.js';
+	import { type Snippet } from 'svelte';
+	import { type ListPersonsInput } from '$lib/zero/query/person/list';
+	let {
+		trigger,
+		filter = $bindable()
+	}: { trigger: Snippet<[{ props: Record<string, unknown> }]>; filter: EventListFilter } = $props();
+
+	import { listTeams } from '$lib/zero/query/team/list';
+	import type { ListFilter } from '$lib/schema/helpers';
+	import { listTags } from '$lib/zero/query/tag/list';
+	import { listEvents, type EventListFilter } from '$lib/zero/query/event/list';
+	import { z } from '$lib/zero.svelte';
+	import { appState, getListFilter } from '$lib/state.svelte';
+	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
+
+	const teamList = $derived.by(() =>
+		z.createQuery(listTeams(appState.queryContext, teamsListFilter))
+	);
+
+	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
+
+	const tagList = $derived.by(() => z.createQuery(listTags(appState.queryContext, tagListFilter)));
+
+	import { tick } from 'svelte';
+	let open = $state(false);
+	let triggerRef = $state<HTMLButtonElement>(null!);
+	// We want to refocus the trigger button when the user selects
+	// an item from the list so users can continue navigating the
+	// rest of the form with the keyboard.
+	function closeAndFocusTrigger() {
+		open = false;
+		tick().then(() => {
+			triggerRef.focus();
+		});
+	}
+
+	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
+</script>
+
+<DropdownMenu.Root bind:open>
+	<DropdownMenu.Trigger bind:ref={triggerRef}>
+		{#snippet child({ props })}
+			{@render trigger({ props })}
+		{/snippet}
+	</DropdownMenu.Trigger>
+	<DropdownMenu.Content align="end">
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger>Teams</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubContent>
+				<Command.Root value={filter.teamId ?? ''}>
+					<Command.Input autofocus placeholder="Filter teams..." />
+					<Command.List>
+						<Command.Empty class="text-sm text-muted-foreground">No teams found.</Command.Empty>
+						<Command.Group>
+							{#each teamList.data as team (team.id)}
+								<Command.Item
+									keywords={[team.name]}
+									value={team.id}
+									onSelect={() => {
+										filter.teamId = team.id;
+										closeAndFocusTrigger();
+									}}
+								>
+									<Avatar src={null} name1={team.name} class="size-4 rounded-full text-xs" />
+									{team.name}
+								</Command.Item>
+							{/each}
+						</Command.Group>
+					</Command.List>
+				</Command.Root>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger>Tags</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubContent>
+				<Command.Root value={filter.tagId ?? ''}>
+					<Command.Input autofocus placeholder="Filter tags..." />
+					<Command.List>
+						<Command.Empty class="text-sm text-muted-foreground">No tags found.</Command.Empty>
+						<Command.Group>
+							{#each tagList.data as tag (tag.id)}
+								<Command.Item
+									keywords={[tag.name]}
+									value={tag.id}
+									onSelect={() => {
+										filter.tagId = tag.id;
+										closeAndFocusTrigger();
+									}}
+								>
+									<Avatar
+										src={null}
+										name1={'#'}
+										class="size-4 rounded-full from-yellow-500 to-yellow-800 text-xs"
+									/>
+									{tag.name}
+								</Command.Item>
+							{/each}
+						</Command.Group>
+					</Command.List>
+				</Command.Root>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.Label>Event type</DropdownMenu.Label>
+			<DropdownMenu.CheckboxItem
+				checked={filter.eventType === 'online'}
+				onCheckedChange={(checked) => {
+					if (checked) {
+						filter.eventType = 'online';
+					} else {
+						filter.eventType = null;
+					}
+				}}>Online</DropdownMenu.CheckboxItem
+			>
+			<DropdownMenu.CheckboxItem
+				checked={filter.eventType === 'in-person'}
+				onCheckedChange={(checked) => {
+					if (checked) {
+						filter.eventType = 'in-person';
+					} else {
+						filter.eventType = null;
+					}
+				}}>In-person</DropdownMenu.CheckboxItem
+			>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.Label>Status</DropdownMenu.Label>
+			<DropdownMenu.CheckboxItem
+				checked={filter.status === 'draft'}
+				onCheckedChange={(checked) => {
+					if (checked) {
+						filter.status = 'draft';
+					} else {
+						filter.status = null;
+					}
+				}}>Draft</DropdownMenu.CheckboxItem
+			>
+			<DropdownMenu.CheckboxItem
+				checked={filter.status === 'published'}
+				onCheckedChange={(checked) => {
+					if (checked) {
+						filter.status = 'published';
+					} else {
+						filter.status = null;
+					}
+				}}>Published</DropdownMenu.CheckboxItem
+			>
+		</DropdownMenu.Group>
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
