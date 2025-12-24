@@ -27,7 +27,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
@@ -78,20 +78,44 @@
 		const formattedDate = formatShortTimestamp(date, appState.locale, getLocalTimeZone());
 		switch (channel.type) {
 			case 'eventPage':
-				return `Signed up via event page (${formattedDate})`;
+				return `Signed up via event page [${formattedDate}]`;
 			case 'adminPanel':
-				return `Added manually (${formattedDate})`;
+				return `Added manually [${formattedDate}]`;
 			case 'whatsapp':
-				return `Signed up via WhatsApp (${formattedDate})`;
+				return `Signed up via WhatsApp [${formattedDate}]`;
 		}
 	}
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
+	import * as InputGroup from '$lib/components/ui/input-group/index.js';
+	import SearchIcon from '@lucide/svelte/icons/search';
 </script>
 
 <Card.Root>
 	{#if eventSignups.details.type === 'complete' && eventSignups.data && eventSignups.data.length > 0}
 		<Card.Header>
-			<Card.Title class="flex items-center justify-between"
-				>Signups ({eventSignups.data.length})
+			<Card.Title class="flex items-center justify-between gap-2 font-normal">
+				<div class="grow">
+					<InputGroup.Root>
+						<InputGroup.Input placeholder="Search..." />
+						<InputGroup.Addon>
+							<SearchIcon />
+						</InputGroup.Addon>
+					</InputGroup.Root>
+				</div>
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<Button variant="outline" size="sm">All signups <ChevronDownIcon /></Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content>
+						<DropdownMenu.CheckboxItem>All signups</DropdownMenu.CheckboxItem>
+						<DropdownMenu.CheckboxItem>Attended</DropdownMenu.CheckboxItem>
+						<DropdownMenu.CheckboxItem>No show</DropdownMenu.CheckboxItem>
+						<DropdownMenu.CheckboxItem>Cancelled</DropdownMenu.CheckboxItem>
+						<DropdownMenu.CheckboxItem>Signed up</DropdownMenu.CheckboxItem>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
 				<AddPersonModal
 					trigger={addPersonTrigger}
 					personIdsToExclude={eventSignups.data.map((signup) => signup.personId)}
@@ -101,7 +125,7 @@
 				/>
 			</Card.Title>
 		</Card.Header>
-		{#snippet addPersonTrigger()}<Button>Add Person</Button>{/snippet}
+		{#snippet addPersonTrigger()}<Button>Add signup</Button>{/snippet}
 
 		<Card.Content>
 			<Table.Root>
@@ -124,12 +148,14 @@
 						{#if signup}
 							<Table.Row>
 								<Table.Cell>
-									{@render personItem(person)}
+									{@render personItem(person, signup)}
 								</Table.Cell>
 								<Table.Cell>
 									{@render statusTooltip({ signup, person })}
 								</Table.Cell>
-								<Table.Cell class="text-end">{signup.details.channel.type}</Table.Cell>
+								<Table.Cell class="text-end">
+									{@render actionButton(person, signup)}
+								</Table.Cell>
 							</Table.Row>
 						{/if}
 					{/each}
@@ -167,7 +193,7 @@
 	{/if}
 </Card.Root>
 
-{#snippet personItem(person: ReadPersonZero)}
+{#snippet personItem(person: ReadPersonZero, signup: ReadEventSignupZero)}
 	<div class="border-b border-b-accent/70 px-2 py-1.5 last:border-b-0">
 		<label for={`person-${person.id}`} class="flex items-center gap-2">
 			<Checkbox
@@ -182,12 +208,12 @@
 					}
 				}}
 			/>
-			{@render renderPersonItem(person)}
+			{@render renderPersonItem(person, signup)}
 		</label>
 	</div>
 {/snippet}
 
-{#snippet renderPersonItem(person: ReadPersonZero)}
+{#snippet renderPersonItem(person: ReadPersonZero, signup: ReadEventSignupZero)}
 	<div class="flex grow items-center gap-2">
 		<Avatar
 			src={person.profilePicture}
@@ -197,13 +223,9 @@
 		/>
 		<div class="flex flex-col">
 			<div class="text-sm font-medium">{person.givenName} {person.familyName}</div>
-			{#if person.emailAddress || person.phoneNumber}
-				<div class="line-clamp-1 max-w-full text-xs text-muted-foreground">
-					{person.emailAddress}
-					{#if person.phoneNumber && person.emailAddress}{` • `}{/if}
-					{person.phoneNumber}
-				</div>
-			{/if}
+			<div class="line-clamp-1 max-w-full text-xs text-muted-foreground">
+				{renderSignupChannel(signup.details.channel, signup.createdAt)}
+			</div>
 		</div>
 	</div>
 {/snippet}
@@ -225,23 +247,46 @@
 	signup: ReadEventSignupZero;
 	person: ReadPersonZero;
 })}
-	<Tooltip.Root>
-		<Tooltip.Trigger>
-			{#if signup.status === 'attended'}
-				<Badge variant="default">Attended</Badge>
-			{:else if signup.status === 'noshow'}
-				<Badge variant="destructive">No show</Badge>
-			{:else if signup.status === 'cancelled'}
-				<Badge variant="outline">Cancelled</Badge>
-			{:else}
-				<Badge variant="outline">Signed up</Badge>
-			{/if}
-		</Tooltip.Trigger>
-		<Tooltip.Content
-			class="border bg-background text-foreground shadow-md"
-			arrowClasses="bg-background text-foreground shadow-md border-r border-b"
-		>
-			<div>{renderSignupChannel(signup.details.channel, signup.createdAt)}</div>
-		</Tooltip.Content>
-	</Tooltip.Root>
+	{#if signup.status === 'attended'}
+		<Badge variant="default">Attended</Badge>
+	{:else if signup.status === 'noshow'}
+		<Badge variant="destructive">No show</Badge>
+	{:else if signup.status === 'cancelled'}
+		<Badge variant="outline">Cancelled</Badge>
+	{:else}
+		<Badge variant="outline">Signed up</Badge>
+	{/if}
+{/snippet}
+
+{#snippet actionButtonBeforeEvent(person: ReadPersonZero, signup: ReadEventSignupZero)}
+	{#if signup.status === 'attended'}
+		<Badge variant="default">Attended</Badge>
+	{:else if signup.status === 'noshow'}
+		<Badge variant="destructive">No show</Badge>
+	{:else if signup.status === 'cancelled'}
+		<Badge variant="outline">Cancelled</Badge>
+	{:else}
+		<Badge variant="outline">Signed up</Badge>
+	{/if}
+{/snippet}
+
+{#snippet actionButton(person: ReadPersonZero, signup: ReadEventSignupZero)}
+	<ButtonGroup.Root class="flex w-full items-center justify-end">
+		{#if signup.status === 'attended'}
+			<Button variant="outline" size="sm">Attended</Button>
+		{:else if signup.status === 'noshow'}
+			<Button variant="outline" size="sm">No show</Button>
+		{:else if signup.status === 'signup'}
+			<Button variant="outline" size="sm">Attended</Button>
+			<Button variant="outline" size="sm">No show</Button>
+		{/if}
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger class={buttonVariants({ variant: 'outline', size: 'icon-sm' })}>
+				<ChevronDownIcon />
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content>
+				<DropdownMenu.Item>Mark as attended</DropdownMenu.Item>
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
+	</ButtonGroup.Root>
 {/snippet}
