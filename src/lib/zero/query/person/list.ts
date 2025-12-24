@@ -42,7 +42,7 @@ export function listPersonsQuery({
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input, userId: ctx.userId }))
-		.orderBy('mostRecentActivityAt', 'DESC')
+		.orderBy('mostRecentActivityAt', 'desc')
 		.limit(input.pageSize || 50);
 	if (input.startAfter) {
 		q = q.start({ id: input.startAfter });
