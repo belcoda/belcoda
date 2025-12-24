@@ -4,7 +4,7 @@ import type { Transaction } from '$lib/server/db/zeroDrizzle';
 import {
 	type CreateMutatorSchemaOutput,
 	type UpdateMutatorSchemaOutput,
-	updateEvent
+	updateEvent as updateEventSchema
 } from '$lib/schema/event';
 import { parse } from 'valibot';
 
@@ -93,7 +93,7 @@ export function updateEvent(params: MutatorParams) {
 			throw new Error('Event not found');
 		}
 
-		const parseUpdateParams = parse(updateEvent, input.input);
+		const parseUpdateParams = parse(updateEventSchema, input.input);
 
 		await tx.dbTransaction.wrappedTransaction
 			.update(event)
