@@ -2,6 +2,8 @@ import type { Handle, ServerInit, RequestEvent } from '@sveltejs/kit';
 
 import { env } from '$env/dynamic/public';
 const { PUBLIC_ROOT_DOMAIN } = env;
+import { env as privateEnv } from '$env/dynamic/private';
+const { EASYCRON_SECRET } = privateEnv;
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
 import { error, redirect } from '@sveltejs/kit';
@@ -45,7 +47,7 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 		event.url.pathname.startsWith('/api/docs') ||
 		event.url.pathname.startsWith('/verify-email') ||
 		event.url.pathname.startsWith('/api/utils/zero') ||
-		event.url.pathname.startsWith('/api/auth') || //this is for the better-auth api
+		event.url.pathname.startsWith('/api/auth') || //this is for the better-auth api which handles its own authentication
 		event.url.pathname.startsWith('/webhooks')
 	) {
 		log.debug(`Handling public route: ${event.url.pathname}`);
@@ -57,6 +59,14 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 			}
 		}
 		return resolve(event);
+	}
+
+	if (event.url.pathname.startsWith('/api/cron')) {
+		if (event.request.headers.get('x-api-key') == EASYCRON_SECRET) {
+			return resolve(event);
+		} else {
+			return error(401, 'Unauthorized: API key not valid for cron');
+		}
 	}
 
 	// Handle the page routes (eg: event pages, etc) which should always be on a subdomain and don't need to be authenticated...
