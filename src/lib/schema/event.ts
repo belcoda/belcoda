@@ -88,6 +88,7 @@ export const createEvent = v.object({
 	postcode: v.optional(eventSchema.entries.postcode, null),
 	country: eventSchema.entries.country,
 	timezone: eventSchema.entries.timezone,
+	published: eventSchema.entries.published,
 	maxSignups: v.optional(eventSchema.entries.maxSignups, null),
 	featureImage: v.optional(eventSchema.entries.featureImage, null),
 	settings: eventSchema.entries.settings,
