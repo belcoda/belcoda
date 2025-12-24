@@ -1155,6 +1155,10 @@ msgstr ""
 #~ msgid "events"
 #~ msgstr ""
 
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
 msgid "Copy"
 msgstr ""
@@ -1295,6 +1299,7 @@ msgstr ""
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
 msgid "Toggle"
 msgstr ""
 
@@ -2163,6 +2168,7 @@ msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Published"
 msgstr ""
 
@@ -2676,9 +2682,8 @@ msgstr ""
 #~ msgid "Signups"
 #~ msgstr ""
 
-#: src/lib/components/widgets/event/EventSignups.svelte
-msgid "A list of your recent invoices."
-msgstr ""
+#~ msgid "A list of your recent invoices."
+#~ msgstr ""
 
 #~ msgid "Invoice"
 #~ msgstr ""
@@ -2700,8 +2705,10 @@ msgstr ""
 msgid "No signups found. Create a new signup to get started."
 msgstr ""
 
-#~ msgid "Signups ({0})"
-#~ msgstr ""
+#. placeholder {0}: eventSignups.data.length
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Signups ({0})"
+msgstr ""
 
 #~ msgid "Signups ({0}) <0/> <1/>"
 #~ msgstr ""
@@ -2713,4 +2720,391 @@ msgstr ""
 
 #: src/lib/components/widgets/event/EventSignups.svelte
 msgid "Signup location"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Open"
+msgstr ""
+
+#~ msgid "Profile <0>⇧⌘P</0>"
+#~ msgstr ""
+
+#~ msgid "Billing <0>⌘B</0>"
+#~ msgstr ""
+
+#~ msgid "Settings <0>⌘S</0>"
+#~ msgstr ""
+
+#~ msgid "Keyboard shortcuts <0>⌘K</0>"
+#~ msgstr ""
+
+#~ msgid "Invite users"
+#~ msgstr ""
+
+#~ msgid "Message"
+#~ msgstr ""
+
+#~ msgid "More..."
+#~ msgstr ""
+
+#~ msgid "New Team <0>⌘+T</0>"
+#~ msgstr ""
+
+#~ msgid "GitHub"
+#~ msgstr ""
+
+#~ msgid "Support"
+#~ msgstr ""
+
+#~ msgid "API"
+#~ msgstr ""
+
+#~ msgid "Log out <0>⇧⌘Q</0>"
+#~ msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Share Event"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EventShareModal.svelte
+msgid "Share"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EventShareModal.svelte
+msgid "Embed"
+msgstr ""
+
+#~ msgid "Checkin"
+#~ msgstr ""
+
+#~ msgid "Embed your event here."
+#~ msgstr ""
+
+#~ msgid "Checkin your event here."
+#~ msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "<0/> Share"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EventShareModal.svelte
+msgid "Check-in"
+msgstr ""
+
+#~ msgid "Tap send to join us at {0} [{1}] (do not edit this message)"
+#~ msgstr ""
+
+#~ msgid "Tap send to check in to {0} [{1}] (do not edit this message)"
+#~ msgstr ""
+
+#~ msgid "TODO: Generated embeddable iframe code for event {0}"
+#~ msgstr ""
+
+#~ msgid "Embed code"
+#~ msgstr ""
+
+#~ msgid "Copy embed code"
+#~ msgstr ""
+
+#~ msgid "Copty this embed code to share your event with your audience. <0>Copy embed code</0>"
+#~ msgstr ""
+
+#~ msgid "Copy this embed code to share your event with your audience."
+#~ msgstr ""
+
+#~ msgid "Iframe embed code"
+#~ msgstr ""
+
+#~ msgid "Copy and paste this embed code to your website"
+#~ msgstr ""
+
+#~ msgid "Copy and paste this iframe embed code to your website"
+#~ msgstr ""
+
+#: src/lib/components/widgets/event/share/EmbedCode.svelte
+msgid "Copy to embed in your website"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EmbedCode.svelte
+msgid "Default theme"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+#: src/lib/components/widgets/event/share/EmbedCode.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Copied to clipboard"
+msgstr ""
+
+#~ msgid "Tap send to check in to {0} [#{1}] (do not edit this message)"
+#~ msgstr ""
+
+#~ msgid "Follow"
+#~ msgstr ""
+
+#. placeholder {0}: event.title
+#. placeholder {1}: actionCode.id
+#. placeholder {0}: event.title
+#. placeholder {1}: actionCode.id
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Send to check in to {0} [#{1}] (do not edit this message)"
+msgstr ""
+
+#~ msgid "<0/> Copy WhatsApp checkin link to clipboard"
+#~ msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+msgid "<0/> Copied!"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "WhatsApp checkin link"
+msgstr ""
+
+#~ msgid "The following QR code can be used to check in to the event:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Scanning this QR code will open WhatsApp with a predefined message. Ask participants to scan\n"
+#~ "this QR code to check in to the event."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Scanning this QR code will open WhatsApp with a predefined message. Ask participants to scan\n"
+#~ "this QR code and send the message. They will be marked as having attended the event."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Scanning this QR code will open WhatsApp with a predefined message. Ask participants to scan\n"
+#~ "this QR code and send the message."
+#~ msgstr ""
+
+#~ msgid "They will be marked as having attended the event."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Scanning this QR code will open WhatsApp with a predefined event check-in message. Ask\n"
+#~ "participants to scan the QR code, and send the message. They will be marked as having attended\n"
+#~ "the event."
+#~ msgstr ""
+
+#~ msgid "Download QR code"
+#~ msgstr ""
+
+#~ msgid "<0/> Detailed signups table"
+#~ msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Detailed signups table"
+msgstr ""
+
+#~ msgid "Download CSV of signups"
+#~ msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Preview event page"
+msgstr ""
+
+#~ msgid "Hide event page from public"
+#~ msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Event published"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Event unpublished"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "View event page"
+msgstr ""
+
+#~ msgid "<0/> Copy WhatsApp checkin link"
+#~ msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+msgid "<0/>Copy WhatsApp checkin link"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "<0/> Download QR code"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+msgid "Scan this QR code to mark attendance via WhatsApp"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Share this event with your audience"
+msgstr ""
+
+#~ msgid "<0>@huntabyte starred 3 repositoriesToggle@huntabyte/bits-ui@melt-ui/melt-ui@sveltejs/svelte</0> Copy"
+#~ msgstr ""
+
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "View WhatsApp signup QR code"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "WhatsApp signup link"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Event signup page link"
+msgstr ""
+
+#. placeholder {0}: selectedPersonIds.length
+#. placeholder {1}: eventSignups.data.length
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Signups ({0}/{1})"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Mark as attended"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Signed up"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "No show"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Attended"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Cancelled"
+msgstr ""
+
+#~ msgid "Signed up via {0}"
+#~ msgstr ""
+
+#~ msgid "snippet renderActivityPreview(person.mostRecentActivityPreview)}"
+#~ msgstr ""
+
+#. placeholder {0}: activityPreview.tagName
+#. placeholder {0}: activityPreview.teamName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added to {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.tagName
+#. placeholder {0}: activityPreview.teamName
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Removed from {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed up for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Email sent for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Reminder email sent for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Attended {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No show for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Apology for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.petitionName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed petition {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.petitionName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Removed petition {0}"
+msgstr ""
+
+#~ msgid "Added note {0}"
+#~ msgstr ""
+
+#. placeholder {0}: activityPreview.type
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Unknown activity {0}"
+msgstr ""
+
+#~ msgid "Added from {0}"
+#~ msgstr ""
+
+#~ msgid "Added from seeds"
+#~ msgstr ""
+
+#~ msgid "Added from import"
+#~ msgstr ""
+
+#~ msgid "Added from manually"
+#~ msgstr ""
+
+#~ msgid "Added from event"
+#~ msgstr ""
+
+#~ msgid "Added from petition"
+#~ msgstr ""
+
+#~ msgid "Added from an unknown source ({0})"
+#~ msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added from seed data (should only appear in dev)"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Imported from CSV"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added to the organization"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Joined through an event"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed a petition"
+msgstr ""
+
+#. placeholder {0}: JSON.stringify(addedFrom)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added from an unknown source [{0}]"
+msgstr ""
+
+#~ msgid "Added note: {0}"
+#~ msgstr ""
+
+#~ msgid "{0} added note: <0/>"
+#~ msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "<0/> added note: <1/>"
 msgstr ""
