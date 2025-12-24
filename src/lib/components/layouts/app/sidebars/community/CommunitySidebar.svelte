@@ -7,11 +7,13 @@
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import { page } from '$app/state';
 	import { type ReadPersonZero } from '$lib/schema/person';
+	import { type PersonAddedFrom } from '$lib/schema/person/meta';
 	import { z } from '$lib/zero.svelte';
 	import { listPersons } from '$lib/zero/query/person/list';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
+	import { type ActivityPreviewPayload } from '$lib/schema/activity/types';
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		tagId: null,
@@ -76,7 +78,7 @@
 					{person.familyName}
 				</div>
 				<div class="line-clamp-1 text-xs text-muted-foreground">
-					{person.emailAddress}
+					{@render renderActivityPreview(person.mostRecentActivityPreview, person.addedFrom)}
 				</div>
 			</div>
 		</div>
@@ -86,4 +88,87 @@
 			</div>
 		</div>
 	</a>
+{/snippet}
+
+{#snippet renderActivityPreview(
+	activityPreview: ActivityPreviewPayload | null,
+	addedFrom: PersonAddedFrom
+)}
+	{#if activityPreview}
+		{#if activityPreview.type === 'tag_added'}
+			<div>
+				{`Added to ${activityPreview.tagName}`}
+			</div>
+		{:else if activityPreview.type === 'tag_removed'}
+			<div>
+				{`Removed from ${activityPreview.tagName}`}
+			</div>
+		{:else if activityPreview.type === 'team_added'}
+			<div>
+				{`Added to ${activityPreview.teamName}`}
+			</div>
+		{:else if activityPreview.type === 'team_removed'}
+			<div>
+				{`Removed from ${activityPreview.teamName}`}
+			</div>
+		{:else if activityPreview.type === 'event_signup'}
+			<div>
+				{`Signed up for ${activityPreview.eventName}`}
+			</div>
+		{:else if activityPreview.type === 'event_signup_email_sent'}
+			<div>
+				{`Email sent for ${activityPreview.eventName}`}
+			</div>
+		{:else if activityPreview.type === 'event_reminder_email_sent'}
+			<div>
+				{`Reminder email sent for ${activityPreview.eventName}`}
+			</div>
+		{:else if activityPreview.type === 'event_attended'}
+			<div>
+				{`Attended ${activityPreview.eventName}`}
+			</div>
+		{:else if activityPreview.type === 'event_noshow'}
+			<div>
+				{`No show for ${activityPreview.eventName}`}
+			</div>
+		{:else if activityPreview.type === 'event_apology'}
+			<div>
+				{`Apology for ${activityPreview.eventName}`}
+			</div>
+		{:else if activityPreview.type === 'event_removed'}
+			<div>
+				{`Removed from ${activityPreview.eventName}`}
+			</div>
+		{:else if activityPreview.type === 'petition_signed'}
+			<div>
+				{`Signed petition ${activityPreview.petitionName}`}
+			</div>
+		{:else if activityPreview.type === 'petition_removed'}
+			<div>
+				{`Removed petition ${activityPreview.petitionName}`}
+			</div>
+		{:else if activityPreview.type === 'note_added'}
+			<div>
+				<span class="font-medium">{activityPreview.userName}</span> added note:
+				<span class="italic">{activityPreview.notePreview}</span>
+			</div>
+		{:else}
+			{`Unknown activity ${activityPreview.type}`}
+		{/if}
+	{:else}
+		<!-- No ativity preview... Let's just say when the person was added-->
+		{#if addedFrom.type === 'seeds'}
+			<div class="italic">Added from seed data (should only appear in dev)</div>
+		{:else if addedFrom.type === 'import'}
+			<div class="italic">Imported from CSV</div>
+		{:else if addedFrom.type === 'added_manually'}
+			<div class="italic">Added to the organization</div>
+		{:else if addedFrom.type === 'added_from_event'}
+			<div class="italic">Joined through an event</div>
+		{:else if addedFrom.type === 'added_from_petition'}
+			<div class="italic">Signed a petition</div>
+		{:else}
+			<div class="italic">Added from an unknown source [{JSON.stringify(addedFrom)}]</div>
+		{/if}
+	{/if}
 {/snippet}
