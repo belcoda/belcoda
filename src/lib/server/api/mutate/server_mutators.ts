@@ -25,7 +25,8 @@ export function createMutators(params: MutatorParams) {
 			update: event.updateEvent(params)
 		},
 		eventSignup: {
-			create: eventSignup.createEventSignup(params)
+			create: eventSignup.createEventSignup(params),
+			update: eventSignup.updateEventSignup(params)
 		}
 	};
 }

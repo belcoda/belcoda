@@ -1,13 +1,19 @@
 import type { Transaction } from '$lib/server/db/zeroDrizzle';
 import { type MutatorParams } from '$lib/zero/schema';
 
-import { type CreateMutatorSchemaOutput } from '$lib/schema/event-signup';
+import {
+	type CreateMutatorSchemaOutput,
+	type UpdateMutatorSchemaOutput
+} from '$lib/schema/event-signup';
 import { getQueue } from '$lib/server/queue';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
+import { eventSignupReadPermissions } from '$lib/zero/query/event_signup/permissions';
+import { eventSignup } from '$lib/schema/drizzle';
 import { clampLocale } from '$lib/utils/language';
+import { eq, and } from 'drizzle-orm';
 export function createEventSignup(params: MutatorParams) {
 	return async function (tx: Transaction, args: CreateMutatorSchemaOutput) {
 		const organization = await tx.query.organization
@@ -63,5 +69,36 @@ export function createEventSignup(params: MutatorParams) {
 				});
 			});
 		}
+	};
+}
+
+export function updateEventSignup(params: MutatorParams) {
+	return async function (tx: Transaction, args: UpdateMutatorSchemaOutput) {
+		const eventSignupRecord = await tx.query.eventSignup
+			.where('id', args.metadata.eventSignupId)
+			.where('organizationId', args.metadata.organizationId)
+			.where((expr) => eventSignupReadPermissions(expr, params.queryContext))
+			.one()
+			.run();
+		if (!eventSignupRecord) {
+			throw new Error('Event signup not found');
+		}
+		const [result] = await tx.dbTransaction.wrappedTransaction
+			.update(eventSignup)
+			.set({
+				status: args.input.status,
+				updatedAt: new Date()
+			})
+			.where(
+				and(
+					eq(eventSignup.id, args.metadata.eventSignupId),
+					eq(eventSignup.organizationId, args.metadata.organizationId)
+				)
+			)
+			.returning();
+		if (!result) {
+			throw new Error('Unable to update event signup');
+		}
+		params.result?.push(result);
 	};
 }
