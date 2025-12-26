@@ -115,7 +115,7 @@
 	}
 </script>
 
-<form use:form.enhance class="mx-auto flex w-full max-w-4xl flex-col gap-4">
+<form use:form.enhance class="mx-auto flex w-full max-w-4xl flex-col gap-4" id="event-form">
 	<Errors {errors} />
 	<Card.Root>
 		<Card.Header>
