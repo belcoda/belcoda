@@ -63,6 +63,11 @@
 						</div>
 					{/snippet}
 				</DropdownMenu.Item>
+				<DropdownMenu.Item>
+					{#snippet child({ props })}
+						<a {...props} href={`/events/${event.id}/edit`}>Edit event</a>
+					{/snippet}
+				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>

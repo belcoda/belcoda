@@ -16,7 +16,7 @@
 
 <ContentLayout rootLink="/events" {header}>
 	{#if event.details.type === 'complete' && event.data}
-		<EventSignups eventId={event.data.id} />
+		<EventSignups event={event.data} />
 	{:else}
 		<!-- TODO: Add a loading state -->
 		<Skeleton class="h-48 w-full" />
