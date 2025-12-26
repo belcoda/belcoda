@@ -19,7 +19,8 @@ export default function createMutators() {
 			delete: personNote.deletePersonNote()
 		},
 		eventSignup: {
-			create: eventSignup.createEventSignup()
+			create: eventSignup.createEventSignup(),
+			update: eventSignup.updateEventSignup()
 		},
 		event: {
 			create: event.createEvent(),
