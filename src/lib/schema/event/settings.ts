@@ -49,6 +49,6 @@ export const eventSignupDetails = object({
 });
 export type EventSignupDetails = InferOutput<typeof eventSignupDetails>;
 
-export const eventSignupStatusList = ['signup', 'attended', 'cancelled', 'noshow'] as const;
+export const eventSignupStatusList = ['signup', 'attended', 'noshow', 'notattending'] as const;
 export const eventSignupStatus = picklist(eventSignupStatusList);
 export type EventSignupStatus = (typeof eventSignupStatusList)[number];

@@ -2,6 +2,7 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { eventSignupDetails, eventSignupStatus } from '$lib/schema/event/settings';
+import { readPersonZero } from '$lib/schema/person';
 
 export const eventSignupSchema = v.object({
 	id: helpers.uuid,
@@ -38,6 +39,11 @@ export const readEventSignupZero = v.object({
 });
 export type ReadEventSignupZero = v.InferOutput<typeof readEventSignupZero>;
 
+export const readEventSignupZeroWithPerson = v.object({
+	...readEventSignupZero.entries,
+	person: readPersonZero
+});
+export type ReadEventSignupZeroWithPerson = v.InferOutput<typeof readEventSignupZeroWithPerson>;
 export const createEventSignup = v.object({
 	eventId: eventSignupSchema.entries.eventId,
 	personId: eventSignupSchema.entries.personId,
