@@ -109,36 +109,44 @@ export type CreateEventZero = v.InferOutput<typeof createEventZero>;
 
 export function generateCreateEventZeroAsyncSchema(organizationId: string) {
 	const createEventZeroAsync = v.objectAsync({
-		...createEvent.entries,
+		...createEventZero.entries,
 		title: v.pipeAsync(
 			createEventZero.entries.title,
 			v.checkAsync(async (value) => {
-				const result = await get({
-					path: `/api/utils/check/event/title?title=${value}&organizationId=${organizationId}`,
-					schema: v.object({ result: v.boolean() })
-				});
-				if (result.result) {
-					//event exists, that's an error, title must be unique
+				try {
+					const result = await get({
+						path: `/api/utils/check/event/title?title=${value}&organizationId=${organizationId}`,
+						schema: v.object({ result: v.boolean() })
+					});
+					if (result.result) {
+						//event exists, that's an error, title must be unique
+						return false;
+					} else {
+						return true;
+					}
+				} catch (error) {
 					return false;
-				} else {
-					return true;
 				}
-			}, 'Title must be unique')
+			}, 'Another event exists with this title')
 		),
 		slug: v.pipeAsync(
 			createEventZero.entries.slug,
 			v.checkAsync(async (value) => {
-				const result = await get({
-					path: `/api/utils/check/event/slug?slug=${value}&organizationId=${organizationId}`,
-					schema: v.object({ result: v.boolean() })
-				});
-				if (result.result) {
-					//event exists, that's an error, slug must be unique
+				try {
+					const result = await get({
+						path: `/api/utils/check/event/slug?slug=${value}&organizationId=${organizationId}`,
+						schema: v.object({ result: v.boolean() })
+					});
+					if (result.result) {
+						//event exists, that's an error, slug must be unique
+						return false;
+					} else {
+						return true;
+					}
+				} catch (error) {
 					return false;
-				} else {
-					return true;
 				}
-			}, 'Slug must be unique')
+			}, 'Another event exists with this slug')
 		)
 	});
 	return createEventZeroAsync;
@@ -171,6 +179,17 @@ export const createMutatorSchema = v.object({
 });
 export type CreateMutatorSchema = v.InferInput<typeof createMutatorSchema>;
 export type CreateMutatorSchemaOutput = v.InferOutput<typeof createMutatorSchema>;
+
+export const createEventZeroMutatorSchema = v.object({
+	input: v.object({
+		...createEventZero.entries,
+		startsAt: helpers.timestampToDate,
+		endsAt: helpers.timestampToDate
+	}),
+	metadata: mutatorMetadata
+});
+export type CreateEventZeroMutatorSchema = v.InferInput<typeof createEventZeroMutatorSchema>;
+export type CreateEventZeroMutatorSchemaOutput = v.InferOutput<typeof createEventZeroMutatorSchema>;
 
 export const updateMutatorSchema = v.object({
 	input: updateEvent,
