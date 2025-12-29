@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { generateUniqueNanoids } from '$lib/server/db/seed/utils';
-import { slugifyUnderscore } from '$lib/utils/slug';
+import { slugify } from '$lib/utils/slug';
 import { generateRandomDatePairs, selectOneOfArray } from '$lib/server/db/seed/utils';
 import { countryCodes } from '$lib/utils/country';
 import { event as eventTable, actionCode as actionCodeTable } from '$lib/schema/drizzle';
@@ -28,13 +28,13 @@ export function generateEvents(
 		let attempts = 0;
 		do {
 			eventName = selectOneOfArray(eventNames);
-			slug = slugifyUnderscore(eventName);
+			slug = slugify(eventName);
 			attempts++;
 
 			// If we've tried too many times with the same name, add a suffix
 			if (attempts > 5) {
 				eventName = `${eventName} ${faker.number.int({ min: 1, max: 999 })}`;
-				slug = slugifyUnderscore(eventName);
+				slug = slugify(eventName);
 			}
 		} while (usedNames.has(eventName) || usedSlugs.has(slug));
 
