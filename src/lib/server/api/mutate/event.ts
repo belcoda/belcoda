@@ -2,7 +2,7 @@ import type { MutatorParams } from '$lib/zero/schema';
 import type { Transaction } from '$lib/server/db/zeroDrizzle';
 
 import {
-	type CreateEventZeroMutatorSchemaOutput,
+	type CreateEventZeroMutatorSchema,
 	type UpdateMutatorSchemaOutput,
 	updateEvent as updateEventSchema,
 	createEventZeroMutatorSchema
@@ -16,7 +16,7 @@ import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { unsafeInsertActionCode } from './action_code';
 
 export function createEvent(params: MutatorParams) {
-	return async function (tx: Transaction, input: CreateEventZeroMutatorSchemaOutput) {
+	return async function (tx: Transaction, input: CreateEventZeroMutatorSchema) {
 		const parsedInput = parse(createEventZeroMutatorSchema, input);
 		const [organizationRecord] = await tx.dbTransaction.wrappedTransaction
 			.select()
