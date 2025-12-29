@@ -2,9 +2,10 @@ import type { MutatorParams } from '$lib/zero/schema';
 import type { Transaction } from '$lib/server/db/zeroDrizzle';
 
 import {
-	type CreateMutatorSchemaOutput,
+	type CreateEventZeroMutatorSchemaOutput,
 	type UpdateMutatorSchemaOutput,
-	updateEvent as updateEventSchema
+	updateEvent as updateEventSchema,
+	createEventZeroMutatorSchema
 } from '$lib/schema/event';
 import { parse } from 'valibot';
 
@@ -15,11 +16,12 @@ import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { unsafeInsertActionCode } from './action_code';
 
 export function createEvent(params: MutatorParams) {
-	return async function (tx: Transaction, input: CreateMutatorSchemaOutput) {
+	return async function (tx: Transaction, input: CreateEventZeroMutatorSchemaOutput) {
+		const parsedInput = parse(createEventZeroMutatorSchema, input);
 		const [organizationRecord] = await tx.dbTransaction.wrappedTransaction
 			.select()
 			.from(organization)
-			.where(eq(organization.id, input.metadata.organizationId))
+			.where(eq(organization.id, parsedInput.metadata.organizationId))
 			.limit(1);
 		if (!organizationRecord) {
 			throw new Error('Organization not found');
@@ -29,16 +31,16 @@ export function createEvent(params: MutatorParams) {
 			![...params.queryContext.adminOrgs, ...params.queryContext.ownerOrgs].includes(
 				organizationRecord.id
 			) &&
-			!input.metadata.teamId
+			!parsedInput.metadata.teamId
 		) {
 			throw new Error('You are not authorized to create an event in this organization');
 		}
 
-		if (input.metadata.teamId) {
+		if (parsedInput.metadata.teamId) {
 			const [teamRecord] = await tx.dbTransaction.wrappedTransaction
 				.select()
 				.from(team)
-				.where(eq(team.id, input.metadata.teamId))
+				.where(eq(team.id, parsedInput.metadata.teamId))
 				.limit(1);
 			if (!teamRecord) {
 				throw new Error('Team not found');
@@ -49,25 +51,57 @@ export function createEvent(params: MutatorParams) {
 		}
 
 		const eventToCreate: typeof event.$inferInsert = {
-			...input.input,
-			...(input.input.teamId ? { teamId: input.input.teamId } : {}),
-			id: input.metadata.eventId,
-			organizationId: input.metadata.organizationId,
+			...parsedInput.input,
+			...(parsedInput.input.teamId ? { teamId: parsedInput.input.teamId } : {}),
+			id: parsedInput.metadata.eventId,
+			organizationId: parsedInput.metadata.organizationId,
 			published: false,
 			createdAt: new Date(),
 			updatedAt: new Date()
 		};
 
 		await unsafeInsertActionCode(tx, {
-			organizationId: input.metadata.organizationId,
+			organizationId: parsedInput.metadata.organizationId,
 			type: 'event_signup',
-			referenceId: input.metadata.eventId
+			referenceId: parsedInput.metadata.eventId
 		});
 		await unsafeInsertActionCode(tx, {
-			organizationId: input.metadata.organizationId,
+			organizationId: parsedInput.metadata.organizationId,
 			type: 'event_attended',
-			referenceId: input.metadata.eventId
+			referenceId: parsedInput.metadata.eventId
 		});
+
+		async function getNextSlug(slug: string, count: number = 0): Promise<string> {
+			const slugToCheck = `${slug}${count > 0 ? `-${count}` : ''}`;
+			const result = await tx.query.event
+				.where('organizationId', '=', parsedInput.metadata.organizationId)
+				.where('slug', '=', slugToCheck)
+				.where('deletedAt', 'IS', null)
+				.run({ type: 'complete' });
+			if (result.length > 0) {
+				return await getNextSlug(slug, count + 1);
+			}
+			return slugToCheck;
+		}
+
+		async function getNextTitle(title: string, count: number = 0): Promise<string> {
+			const titleToCheck = `${title}${count > 0 ? ` ${count}` : ''}`;
+			const result = await tx.query.event
+				.where('organizationId', '=', parsedInput.metadata.organizationId)
+				.where('title', '=', titleToCheck)
+				.where('deletedAt', 'IS', null)
+				.run({ type: 'complete' });
+			if (result.length > 0) {
+				return await getNextTitle(title, count + 1);
+			}
+			return titleToCheck;
+		}
+
+		const uniqueSlug = await getNextSlug(eventToCreate.slug);
+		const uniqueTitle = await getNextTitle(eventToCreate.title);
+
+		eventToCreate.slug = uniqueSlug;
+		eventToCreate.title = uniqueTitle;
 
 		const [result] = await tx.dbTransaction.wrappedTransaction
 			.insert(event)
