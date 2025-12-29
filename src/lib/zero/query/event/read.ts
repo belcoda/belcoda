@@ -5,7 +5,7 @@ import type { Query } from '$lib/server/db/zeroDrizzle';
 import { object, type InferOutput } from 'valibot';
 import { uuid, parseSchema } from '$lib/schema/helpers';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
-import { readEventZero } from '$lib/schema/event';
+import { readEventRest } from '$lib/schema/event';
 
 export const inputSchema = object({
 	eventId: uuid
@@ -36,4 +36,4 @@ export const readEvent = syncedQueryWithContext(
 	}
 );
 
-export const outputSchema = readEventZero;
+export const outputSchema = readEventRest;
