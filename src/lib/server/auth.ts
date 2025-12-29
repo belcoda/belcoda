@@ -12,10 +12,12 @@ import { getRequestEvent } from '$app/server';
 import { createAuthMiddleware } from 'better-auth/api';
 import { createJwt } from '$lib/server/utils/security/jwt';
 import { openAPI, apiKey, organization } from 'better-auth/plugins';
+import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
 import { dev } from '$app/environment';
 
 import { stripe } from '@better-auth/stripe';
+
 import Stripe from 'stripe';
 const stripeClient = new Stripe(env.STRIPE_SECRET_KEY, {
 	apiVersion: '2025-11-17.clover' // Latest API version as of Stripe SDK v20.0.0
@@ -70,7 +72,8 @@ export function buildBetterAuth(localeInput: string) {
 			'https://app.belcoda.com',
 			'https://staging.belcoda.com',
 			'http://localhost:5173',
-			'https://belcoda-zero.fly.dev'
+			'https://belcoda-zero.fly.dev',
+			`.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 		],
 		session: {
 			storeSessionInDatabase: true,
@@ -138,7 +141,8 @@ export function buildBetterAuth(localeInput: string) {
 				stripeClient,
 				stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
 				createCustomerOnSignUp: true
-			})
+			}),
+			oneTimeToken()
 		],
 		emailVerification: {
 			autoSignInAfterVerification: true,
