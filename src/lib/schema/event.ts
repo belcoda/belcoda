@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
+import { get } from '$lib/utils/http';
 
 import { eventSettingsSchema } from '$lib/schema/event/settings';
 
@@ -105,6 +106,43 @@ export const createEventZero = v.object({
 	endsAt: helpers.unixTimestamp
 });
 export type CreateEventZero = v.InferOutput<typeof createEventZero>;
+
+export function generateCreateEventZeroAsyncSchema(organizationId: string) {
+	const createEventZeroAsync = v.objectAsync({
+		...createEvent.entries,
+		title: v.pipeAsync(
+			createEventZero.entries.title,
+			v.checkAsync(async (value) => {
+				const result = await get({
+					path: `/api/utils/check/event/title?title=${value}&organizationId=${organizationId}`,
+					schema: v.object({ result: v.boolean() })
+				});
+				if (result.result) {
+					//event exists, that's an error, title must be unique
+					return false;
+				} else {
+					return true;
+				}
+			}, 'Title must be unique')
+		),
+		slug: v.pipeAsync(
+			createEventZero.entries.slug,
+			v.checkAsync(async (value) => {
+				const result = await get({
+					path: `/api/utils/check/event/slug?slug=${value}&organizationId=${organizationId}`,
+					schema: v.object({ result: v.boolean() })
+				});
+				if (result.result) {
+					//event exists, that's an error, slug must be unique
+					return false;
+				} else {
+					return true;
+				}
+			}, 'Slug must be unique')
+		)
+	});
+	return createEventZeroAsync;
+}
 
 export const updateEvent = v.partial(
 	v.object({
