@@ -210,3 +210,39 @@ export const removePersonTagMutatorSchemaZero = v.object({
 export type RemovePersonTagMutatorSchemaZero = v.InferOutput<
 	typeof removePersonTagMutatorSchemaZero
 >;
+
+export const personActionHelper = v.pipe(
+	v.object({
+		organizationId: helpers.uuid,
+		givenName: v.optional(v.nullable(personSchema.entries.givenName)),
+		familyName: v.optional(v.nullable(personSchema.entries.familyName)),
+		emailAddress: v.optional(v.nullable(personSchema.entries.emailAddress)),
+		phoneNumber: v.optional(v.nullable(personSchema.entries.phoneNumber)),
+		subscribed: v.optional(personSchema.entries.subscribed, true),
+		profilePicture: v.optional(v.nullable(personSchema.entries.profilePicture)),
+		addressLine1: v.optional(v.nullable(personSchema.entries.addressLine1)),
+		addressLine2: v.optional(v.nullable(personSchema.entries.addressLine2)),
+		locality: v.optional(v.nullable(personSchema.entries.locality)),
+		region: v.optional(v.nullable(personSchema.entries.region)),
+		postcode: v.optional(v.nullable(personSchema.entries.postcode)),
+		country: personSchema.entries.country,
+		preferredLanguage: v.optional(v.nullable(personSchema.entries.preferredLanguage)),
+		gender: v.optional(v.nullable(personSchema.entries.gender)),
+		dateOfBirth: v.optional(v.nullable(personSchema.entries.dateOfBirth)),
+		workplace: v.optional(v.nullable(personSchema.entries.workplace)),
+		position: v.optional(v.nullable(personSchema.entries.position))
+	}),
+	v.check((input) => {
+		if (!input.emailAddress && !input.phoneNumber) {
+			return false;
+		}
+		return true;
+	}, 'Either one of email or phone number is required'),
+	v.check((input) => {
+		if (!input.givenName && !input.familyName) {
+			return false;
+		}
+		return true;
+	}, 'Either one of given name or family name is required')
+);
+export type PersonActionHelper = v.InferOutput<typeof personActionHelper>;

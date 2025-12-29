@@ -72,7 +72,6 @@ export function createPerson(params: MutatorParams) {
 			throw new Error('Unable to create person');
 		}
 
-		//TODO: add teamId if provided
 		if (input.metadata.teamId) {
 			await tx.dbTransaction.wrappedTransaction.insert(personTeam).values({
 				personId: result.id,

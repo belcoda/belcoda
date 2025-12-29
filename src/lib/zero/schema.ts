@@ -32,6 +32,6 @@ export type MutatorResult = Array<InferOutput<ObjectSchema<any, any>> | null>;
 export type MutatorAsyncTasks = Array<() => Promise<void>>;
 export type MutatorParams = {
 	queryContext: QueryContext;
-	asyncTasks?: MutatorAsyncTasks;
-	result?: MutatorResult;
+	asyncTasks: MutatorAsyncTasks;
+	result: MutatorResult;
 };

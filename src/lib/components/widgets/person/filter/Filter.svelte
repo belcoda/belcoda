@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { type ListPersonsInput } from '$lib/zero/query/person/list';
-	let { filter = $bindable() }: { filter: ListPersonsInput } = $props();
+	let {
+		filter = $bindable(),
+		hideActivityFilter = false
+	}: { filter: ListPersonsInput; hideActivityFilter?: boolean } = $props();
 
 	import DisplayTeamFilter from '$lib/components/widgets/person/filter/display/DisplayTeamFilter.svelte';
 	import DisplayTagFilter from '$lib/components/widgets/person/filter/display/DisplayTagFilter.svelte';
@@ -25,7 +28,7 @@
 		<SearchIcon />
 	</InputGroup.Addon>
 	<InputGroup.Addon align="inline-end">
-		<FilterControls {trigger} bind:filter />
+		<FilterControls {trigger} bind:filter {hideActivityFilter} />
 	</InputGroup.Addon>
 </InputGroup.Root>
 

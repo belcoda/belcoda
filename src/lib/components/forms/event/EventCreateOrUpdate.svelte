@@ -24,11 +24,6 @@
 		generateTimeString,
 		dateTimeToNewTimeZone,
 		updateTimestampTime,
-		updateTimestampDate,
-		convertDateToTimeAtTimezone,
-		createDateTwoWeeksFromNow,
-		addDays,
-		timestampToNewTimeZone,
 		renderDate
 	} from '$lib/components/forms/event/actions';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
@@ -46,21 +41,23 @@
 	import createForm from '$lib/form.svelte';
 	import { type ReadEventZero, createEventZero, updateEventZero } from '$lib/schema/event';
 	const { event }: { event?: ReadEventZero } = $props();
-	const { form, data, errors, Errors, Debug, helpers } = event
-		? createForm({
-				schema: updateEventZero,
-				initialData: event,
-				onSubmit: async (data) => {
-					console.log(data);
-				}
-			})
-		: createForm({
-				schema: createEventZero,
-				validateOnLoad: false,
-				onSubmit: async (data) => {
-					console.log(data);
-				}
-			});
+	let { form, data, errors, Errors, Debug, helpers } = $state(
+		event
+			? createForm({
+					schema: updateEventZero,
+					initialData: event,
+					onSubmit: async (data) => {
+						console.log(data);
+					}
+				})
+			: createForm({
+					schema: createEventZero,
+					validateOnLoad: false,
+					onSubmit: async (data) => {
+						console.log(data);
+					}
+				})
+	);
 	import * as Form from '$lib/components/ui/form/index.js';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	const startZonedDateTime = $derived(
@@ -113,9 +110,10 @@
 			$data.endsAt = newEndsAt;
 		}
 	}
+	import DateTimeSelect from '$lib/components/forms/event/DateTimeSelect.svelte';
 </script>
 
-<form use:form.enhance class="mx-auto flex w-full max-w-4xl flex-col gap-4">
+<form use:form.enhance class="mx-auto flex w-full max-w-4xl flex-col gap-4" id="event-form">
 	<Errors {errors} />
 	<Card.Root>
 		<Card.Header>
@@ -131,7 +129,8 @@
 			<Card.Title>Date and time</Card.Title>
 		</Card.Header>
 		<Card.Content class="space-y-6">
-			{@render dateTimeSelect()}
+			<!-- {@render dateTimeSelect()} -->
+			<DateTimeSelect bind:form bind:data bind:errors />
 		</Card.Content>
 	</Card.Root>
 	<Card.Root>

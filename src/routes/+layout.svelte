@@ -8,6 +8,7 @@
 
 	const { data, children } = $props();
 	appState.setLocale(data.locale);
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 </script>
 
 <svelte:head>
@@ -24,7 +25,9 @@
 			<span class="icon-[lucide--loader] size-10 animate-spin"></span>
 		</div>
 	{:then}
-		<Toaster position="top-center" />
-		{@render children?.()}
+		<Tooltip.Provider>
+			<Toaster position="top-center" />
+			{@render children?.()}
+		</Tooltip.Provider>
 	{/await}
 </main>

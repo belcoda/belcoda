@@ -1,110 +1,98 @@
 <script lang="ts">
-	const { eventId }: { eventId: string } = $props();
+	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
+
+	import { type ReadEventZero } from '$lib/schema/event';
+	const { event }: { event: ReadEventZero } = $props();
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { listEventSignups, type ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
-	import { v7 as uuidv7 } from 'uuid';
+	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	let filter: ListEventSignupsInput = $state({
 		...getListFilter(appState.organizationId),
-		eventId
+		eventId: event.id
 	});
 	const eventSignups = $derived.by(() => {
 		return z.createQuery(listEventSignups(appState.queryContext, filter));
 	});
-	import * as Table from '$lib/components/ui/table/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Empty from '$lib/components/ui/empty/index.js';
-	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import * as Badge from '$lib/components/ui/badge/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
-	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
+	let selectedEventSignups = $state<ReadEventSignupZeroWithPerson[]>([]);
 
-	function handleAddPerson(personIds: string[]) {
-		personIds.forEach((personId) => {
-			z.mutate.eventSignup.create({
-				input: {
-					eventId,
-					personId,
-					details: {
-						channel: {
-							type: 'eventPage'
-						}
-					},
-					status: 'signup'
-				},
-				metadata: {
-					eventSignupId: uuidv7(),
-					organizationId: appState.organizationId,
-					eventId,
-					personId
-				}
-			});
-		});
-	}
+	import { handleAddPerson } from './signups/actions';
+
+	import SignupTable from './signups/SignupTable.svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
+	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
 </script>
 
 <Card.Root>
-	{#if eventSignups.details.type === 'complete' && eventSignups.data && eventSignups.data.length > 0}
-		<Card.Header>
-			<Card.Title class="flex items-center justify-between"
-				>Signups ({eventSignups.data.length})
+	<Card.Header>
+		<Card.Title class="flex items-start justify-between gap-2 font-normal">
+			<div class="grow space-y-3">
+				<PersonFilter bind:filter hideActivityFilter={true} />
+			</div>
+			<div class="flex items-center gap-2">
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<Button variant="outline" size="sm">
+							{#if !filter.status}
+								All signups
+							{/if}
+							{#if filter.status === 'attended'}
+								Attended
+							{/if}
+							{#if filter.status === 'noshow'}
+								No show
+							{/if}
+							{#if filter.status === 'notattending'}
+								Not attending
+							{/if}
+							{#if filter.status === 'signup'}
+								Signed up
+							{/if}
+							<ChevronDownIcon /></Button
+						>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content>
+						<DropdownMenu.CheckboxItem onclick={() => (filter.status = undefined)}
+							>All signups</DropdownMenu.CheckboxItem
+						>
+						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'attended')}
+							>Attended</DropdownMenu.CheckboxItem
+						>
+						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'noshow')}
+							>No show</DropdownMenu.CheckboxItem
+						>
+						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'notattending')}
+							>Not attending</DropdownMenu.CheckboxItem
+						>
+						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'signup')}
+							>Signed up</DropdownMenu.CheckboxItem
+						>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
 				<AddPersonModal
 					trigger={addPersonTrigger}
 					personIdsToExclude={eventSignups.data.map((signup) => signup.personId)}
 					onSelected={(personIds) => {
-						handleAddPerson(personIds);
+						handleAddPerson({ eventId: event.id, personIds });
 					}}
 				/>
-			</Card.Title>
-		</Card.Header>
-		{#snippet addPersonTrigger()}<Button>Add Person</Button>{/snippet}
+			</div>
+		</Card.Title>
+	</Card.Header>
 
-		<Card.Content>
-			<Table.Root>
-				<Table.Caption>A list of your recent invoices.</Table.Caption>
-				<Table.Header>
-					<Table.Row>
-						<Table.Head></Table.Head>
-						<Table.Head>Status</Table.Head>
-						<Table.Head class="text-end">Signup location</Table.Head>
-					</Table.Row>
-				</Table.Header>
-				<Table.Body>
-					{#each eventSignups.data as signup}
-						<Table.Row>
-							<Table.Cell class="font-medium">{signup.personId}</Table.Cell>
-							<Table.Cell>{signup.status}</Table.Cell>
-							<Table.Cell class="text-end">{signup.details.channel.type}</Table.Cell>
-						</Table.Row>
-					{/each}
-				</Table.Body>
-			</Table.Root>
-		</Card.Content>
-	{:else if eventSignups.details.type === 'complete' && (!eventSignups.data || eventSignups.data.length === 0)}
-		<Empty.Root>
-			<Empty.Header>
-				<Empty.Media variant="icon">
-					<UserPlusIcon />
-				</Empty.Media>
-				<Empty.Title>No signups found</Empty.Title>
-				<Empty.Description>No signups found. Create a new signup to get started.</Empty.Description>
-			</Empty.Header>
-			<Empty.Content>
-				<div class="flex gap-2">
-					<AddPersonModal
-						trigger={emptyAddPersonTrigger}
-						personIdsToExclude={[]}
-						onSelected={handleAddPerson}
-					/>
-					{#snippet emptyAddPersonTrigger()}<Button>Add Person</Button>{/snippet}
-				</div>
-			</Empty.Content>
-		</Empty.Root>
-	{:else if eventSignups.details.type === 'unknown'}
-		<Skeleton class="h-48 w-full" />
-		<Skeleton class="h-48 w-full" />
-	{/if}
+	<Card.Content>
+		<SignupTable
+			signups={eventSignups.data as ReadEventSignupZeroWithPerson[]}
+			{event}
+			bind:selectedSignups={selectedEventSignups}
+			queryIsCompleted={eventSignups.details.type === 'complete'}
+		/>
+	</Card.Content>
 </Card.Root>
+
+{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> Add signup</Button
+	>{/snippet}

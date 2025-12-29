@@ -13,6 +13,47 @@ import { createBuilder } from "@rocicorp/zero";
 import type { ZeroCustomType } from "drizzle-zero";
 import type { default as zeroSchema } from "./drizzle-zero.config";
 
+const actionCodeTable = {
+  name: "actionCode",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    referenceId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "reference_id",
+    },
+    type: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as "event_signup" | "event_attended",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "action_code",
+} as const;
 const activityTable = {
   name: "activity",
   columns: {
@@ -52,13 +93,14 @@ const activityTable = {
         | "team_added"
         | "team_removed"
         | "event_signup"
+        | "event_signup_email_sent"
+        | "event_reminder_email_sent"
         | "event_attended"
         | "event_noshow"
         | "event_apology"
         | "event_removed"
         | "petition_signed"
         | "petition_removed"
-        | "status_updated"
         | "note_added",
     },
     unread: {
@@ -856,7 +898,7 @@ const eventSignupTable = {
         | "signup"
         | "attended"
         | "noshow"
-        | "cancelled",
+        | "notattending",
     },
     signupNotificationSentAt: {
       type: "number",
@@ -1752,15 +1794,27 @@ const personTable = {
         | { type: "team_added"; teamName: string; teamId: string }
         | { type: "team_removed"; teamName: string; teamId: string }
         | { type: "event_signup"; eventName: string; eventId: string }
+        | {
+            type: "event_signup_email_sent";
+            eventName: string;
+            eventId: string;
+          }
+        | {
+            type: "event_reminder_email_sent";
+            eventName: string;
+            eventId: string;
+          }
         | { type: "event_attended"; eventName: string; eventId: string }
         | { type: "event_noshow"; eventName: string; eventId: string }
         | { type: "event_apology"; eventName: string; eventId: string }
         | { type: "event_removed"; eventName: string; eventId: string }
         | { type: "petition_signed"; petitionName: string; petitionId: string }
+        | { type: "petition_removed"; petitionName: string; petitionId: string }
         | {
-            type: "petition_removed";
-            petitionName: string;
-            petitionId: string;
+            type: "note_added";
+            notePreview: string;
+            userName: string;
+            noteId: string;
           },
       serverName: "most_recent_activity_preview",
     },
@@ -3451,6 +3505,7 @@ const whatsappThreadRelationships = {
  */
 export const schema = {
   tables: {
+    actionCode: actionCodeTable,
     activity: activityTable,
     apiKey: apiKeyTable,
     emailFromSignature: emailFromSignatureTable,
@@ -3514,6 +3569,11 @@ export const schema = {
  * This type is auto-generated from your Drizzle schema definition.
  */
 export type Schema = typeof schema;
+/**
+ * Represents a row from the "actionCode" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type ActionCode = Row<typeof actionCodeTable>;
 /**
  * Represents a row from the "activity" table.
  * This type is auto-generated from your Drizzle schema definition.

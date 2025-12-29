@@ -6,9 +6,13 @@
 	import { type ListPersonsInput } from '$lib/zero/query/person/list';
 	let {
 		trigger,
-		filter = $bindable()
-	}: { trigger: Snippet<[{ props: Record<string, unknown> }]>; filter: ListPersonsInput } =
-		$props();
+		filter = $bindable(),
+		hideActivityFilter = false
+	}: {
+		trigger: Snippet<[{ props: Record<string, unknown> }]>;
+		filter: ListPersonsInput;
+		hideActivityFilter?: boolean;
+	} = $props();
 
 	import { listTeams } from '$lib/zero/query/team/list';
 	import { listTags } from '$lib/zero/query/tag/list';
@@ -126,55 +130,57 @@
 				</Command.Root>
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>
-		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>Activity</DropdownMenu.SubTrigger>
-			<DropdownMenu.SubContent>
-				<DropdownMenu.Group>
-					<DropdownMenu.Item
-						onclick={() => {
-							filter.mostRecentActivity = '7days';
-						}}>Recent activity: 7 days</DropdownMenu.Item
-					>
-					<DropdownMenu.Item
-						onclick={() => {
-							filter.mostRecentActivity = '30days';
-						}}>Recent activity: 30 days</DropdownMenu.Item
-					>
-					<DropdownMenu.Item
-						onclick={() => {
-							filter.mostRecentActivity = '90days';
-						}}>Recent activity: 90 days</DropdownMenu.Item
-					>
-					<DropdownMenu.Item
-						onclick={() => {
-							filter.mostRecentActivity = '1year';
-						}}>Recent activity: 1 year</DropdownMenu.Item
-					>
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator />
-				<DropdownMenu.Group>
-					<DropdownMenu.Item
-						onclick={() => {
-							filter.mostRecentActivity = 'noactivity7days';
-						}}>No activity: 7 days</DropdownMenu.Item
-					>
-					<DropdownMenu.Item
-						onclick={() => {
-							filter.mostRecentActivity = 'noactivity30days';
-						}}>No activity: 30 days</DropdownMenu.Item
-					>
-					<DropdownMenu.Item
-						onclick={() => {
-							filter.mostRecentActivity = 'noactivity90days';
-						}}>No activity: 90 days</DropdownMenu.Item
-					>
-					<DropdownMenu.Item
-						onclick={() => {
-							filter.mostRecentActivity = 'noactivity1year';
-						}}>No activity: 1 year</DropdownMenu.Item
-					>
-				</DropdownMenu.Group>
-			</DropdownMenu.SubContent>
-		</DropdownMenu.Sub>
+		{#if !hideActivityFilter}
+			<DropdownMenu.Sub>
+				<DropdownMenu.SubTrigger>Activity</DropdownMenu.SubTrigger>
+				<DropdownMenu.SubContent>
+					<DropdownMenu.Group>
+						<DropdownMenu.Item
+							onclick={() => {
+								filter.mostRecentActivity = '7days';
+							}}>Recent activity: 7 days</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							onclick={() => {
+								filter.mostRecentActivity = '30days';
+							}}>Recent activity: 30 days</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							onclick={() => {
+								filter.mostRecentActivity = '90days';
+							}}>Recent activity: 90 days</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							onclick={() => {
+								filter.mostRecentActivity = '1year';
+							}}>Recent activity: 1 year</DropdownMenu.Item
+						>
+					</DropdownMenu.Group>
+					<DropdownMenu.Separator />
+					<DropdownMenu.Group>
+						<DropdownMenu.Item
+							onclick={() => {
+								filter.mostRecentActivity = 'noactivity7days';
+							}}>No activity: 7 days</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							onclick={() => {
+								filter.mostRecentActivity = 'noactivity30days';
+							}}>No activity: 30 days</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							onclick={() => {
+								filter.mostRecentActivity = 'noactivity90days';
+							}}>No activity: 90 days</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							onclick={() => {
+								filter.mostRecentActivity = 'noactivity1year';
+							}}>No activity: 1 year</DropdownMenu.Item
+						>
+					</DropdownMenu.Group>
+				</DropdownMenu.SubContent>
+			</DropdownMenu.Sub>
+		{/if}
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

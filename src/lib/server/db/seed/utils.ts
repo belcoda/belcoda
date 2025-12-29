@@ -44,3 +44,17 @@ export function selectOneOfArray<T>(array: T[]): T {
 export function randomOrNull<T>(chance: number, value: T): T | null {
 	return Math.random() < chance ? value : null;
 }
+
+import { nanoid, type Nanoid } from '$lib/schema/helpers';
+
+export function generateUniqueNanoids(count: number): Nanoid[] {
+	const nanoids: Nanoid[] = [];
+	// generate as many as needed until we have count unique ones
+	while (nanoids.length < count) {
+		const newNanoid = nanoid();
+		if (!nanoids.includes(newNanoid)) {
+			nanoids.push(newNanoid);
+		}
+	}
+	return nanoids;
+}

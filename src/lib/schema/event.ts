@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
+import { get } from '$lib/utils/http';
 
 import { eventSettingsSchema } from '$lib/schema/event/settings';
 
@@ -48,28 +49,28 @@ export const eventSchema = v.object({
 export type EventSchema = v.InferOutput<typeof eventSchema>;
 
 export const readEventRest = v.object({
-	...v.omit(eventSchema, ['organizationId']).entries,
-	startsAt: helpers.dateToString,
-	endsAt: helpers.dateToString,
-	reminderSentAt: v.nullable(helpers.dateToString),
-	createdAt: helpers.dateToString,
-	updatedAt: helpers.dateToString,
-	deletedAt: v.nullable(helpers.dateToString),
-	archivedAt: v.nullable(helpers.dateToString),
-	cancelledAt: v.nullable(helpers.dateToString)
+	...eventSchema.entries,
+	startsAt: helpers.unixTimestamp,
+	endsAt: helpers.unixTimestamp,
+	reminderSentAt: v.nullable(helpers.unixTimestamp),
+	createdAt: helpers.unixTimestamp,
+	updatedAt: helpers.unixTimestamp,
+	deletedAt: v.nullable(helpers.unixTimestamp),
+	archivedAt: v.nullable(helpers.unixTimestamp),
+	cancelledAt: v.nullable(helpers.unixTimestamp)
 });
 export type ReadEventRest = v.InferOutput<typeof readEventRest>;
 
 export const readEventZero = v.object({
 	...eventSchema.entries,
-	startsAt: helpers.dateToTimestamp,
-	endsAt: helpers.dateToTimestamp,
-	reminderSentAt: v.nullable(helpers.dateToTimestamp),
-	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp,
-	deletedAt: v.nullable(helpers.dateToTimestamp),
-	archivedAt: v.nullable(helpers.dateToTimestamp),
-	cancelledAt: v.nullable(helpers.dateToTimestamp)
+	startsAt: helpers.unixTimestamp,
+	endsAt: helpers.unixTimestamp,
+	reminderSentAt: v.nullable(helpers.unixTimestamp),
+	createdAt: helpers.unixTimestamp,
+	updatedAt: helpers.unixTimestamp,
+	deletedAt: v.nullable(helpers.unixTimestamp),
+	archivedAt: v.nullable(helpers.unixTimestamp),
+	cancelledAt: v.nullable(helpers.unixTimestamp)
 });
 export type ReadEventZero = v.InferOutput<typeof readEventZero>;
 
@@ -88,11 +89,13 @@ export const createEvent = v.object({
 	postcode: v.optional(eventSchema.entries.postcode, null),
 	country: eventSchema.entries.country,
 	timezone: eventSchema.entries.timezone,
+	published: eventSchema.entries.published,
 	maxSignups: v.optional(eventSchema.entries.maxSignups, null),
 	featureImage: v.optional(eventSchema.entries.featureImage, null),
 	settings: eventSchema.entries.settings,
 	signupTag: v.optional(eventSchema.entries.signupTag, null),
 	attendanceTag: v.optional(eventSchema.entries.attendanceTag, null),
+	teamId: v.optional(eventSchema.entries.teamId, null),
 	sendReminderHoursBefore: v.optional(eventSchema.entries.sendReminderHoursBefore, null)
 });
 export type CreateEvent = v.InferInput<typeof createEvent>;
@@ -103,6 +106,51 @@ export const createEventZero = v.object({
 	endsAt: helpers.unixTimestamp
 });
 export type CreateEventZero = v.InferOutput<typeof createEventZero>;
+
+export function generateCreateEventZeroAsyncSchema(organizationId: string) {
+	const createEventZeroAsync = v.objectAsync({
+		...createEventZero.entries,
+		title: v.pipeAsync(
+			createEventZero.entries.title,
+			v.checkAsync(async (value) => {
+				try {
+					const result = await get({
+						path: `/api/utils/check/event/title?title=${value}&organizationId=${organizationId}`,
+						schema: v.object({ result: v.boolean() })
+					});
+					if (result.result) {
+						//event exists, that's an error, title must be unique
+						return false;
+					} else {
+						return true;
+					}
+				} catch (error) {
+					return false;
+				}
+			}, 'Another event exists with this title')
+		),
+		slug: v.pipeAsync(
+			createEventZero.entries.slug,
+			v.checkAsync(async (value) => {
+				try {
+					const result = await get({
+						path: `/api/utils/check/event/slug?slug=${value}&organizationId=${organizationId}`,
+						schema: v.object({ result: v.boolean() })
+					});
+					if (result.result) {
+						//event exists, that's an error, slug must be unique
+						return false;
+					} else {
+						return true;
+					}
+				} catch (error) {
+					return false;
+				}
+			}, 'Another event exists with this slug')
+		)
+	});
+	return createEventZeroAsync;
+}
 
 export const updateEvent = v.partial(
 	v.object({
@@ -120,7 +168,8 @@ export type UpdateEventZero = v.InferOutput<typeof updateEventZero>;
 
 export const mutatorMetadata = v.object({
 	organizationId: eventSchema.entries.organizationId,
-	eventId: eventSchema.entries.id
+	eventId: eventSchema.entries.id,
+	teamId: v.optional(eventSchema.entries.teamId, null)
 });
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
@@ -130,6 +179,17 @@ export const createMutatorSchema = v.object({
 });
 export type CreateMutatorSchema = v.InferInput<typeof createMutatorSchema>;
 export type CreateMutatorSchemaOutput = v.InferOutput<typeof createMutatorSchema>;
+
+export const createEventZeroMutatorSchema = v.object({
+	input: v.object({
+		...createEventZero.entries,
+		startsAt: helpers.timestampToDate,
+		endsAt: helpers.timestampToDate
+	}),
+	metadata: mutatorMetadata
+});
+export type CreateEventZeroMutatorSchema = v.InferInput<typeof createEventZeroMutatorSchema>;
+export type CreateEventZeroMutatorSchemaOutput = v.InferOutput<typeof createEventZeroMutatorSchema>;
 
 export const updateMutatorSchema = v.object({
 	input: updateEvent,

@@ -44,6 +44,7 @@ import type { EmailMessageSchema } from '$lib/schema/email-message';
 import type { EventSchema } from '$lib/schema/event';
 import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
+import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode } from '$lib/utils/language';
@@ -840,6 +841,28 @@ type PersonNoteDrizzleMatchesValibot = IsTrue<
 	typeof personNote.$inferSelect extends PersonNoteSchema ? true : false
 >;
 
+export const actionCode = pgTable(
+	'action_code',
+	{
+		id: text('id').primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		referenceId: uuid('reference_id').notNull(),
+		type: text('type').$type<ActionCodeType>().notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [unique('action_code_unique').on(table.organizationId, table.referenceId, table.type)]
+);
+
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type ActionCodeValibotMatchesDrizzle = IsTrue<
+	ActionCodeSchema extends typeof actionCode.$inferSelect ? true : false
+>;
+type ActionCodeDrizzleMatchesValibot = IsTrue<
+	typeof actionCode.$inferSelect extends ActionCodeSchema ? true : false
+>;
 export const account = pgTable('account', {
 	id: uuid('id').primaryKey(),
 	userId: uuid('user_id')

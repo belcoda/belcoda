@@ -2,14 +2,17 @@ import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
-import { array, type InferOutput, object, optional, nullable } from 'valibot';
+import { array, type InferOutput, object, optional, picklist } from 'valibot';
 import { listFilter, parseSchema, uuid } from '$lib/schema/helpers';
 import { eventSignupReadPermissions } from '$lib/zero/query/event_signup/permissions';
 import { readEventSignupZero } from '$lib/schema/event-signup';
+import { eventSignupDetails, eventSignupStatus } from '$lib/schema/event/settings';
 
 export const inputSchema = object({
 	...listFilter.entries,
-	eventId: optional(uuid)
+	eventId: optional(uuid),
+	tagId: optional(uuid),
+	status: optional(eventSignupStatus)
 });
 export type ListEventSignupsInput = InferOutput<typeof inputSchema>;
 
@@ -24,6 +27,7 @@ export function listEventSignupsQuery({
 }) {
 	const zero = tx || builder;
 	let q = zero.eventSignup
+		.related('person')
 		.where((expr) => eventSignupReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
@@ -51,10 +55,37 @@ function whereClause(
 	if (filter.eventId) {
 		filterArr.push(cmp('eventId', '=', filter.eventId!));
 	}
+	if (filter.status) {
+		filterArr.push(cmp('status', '=', filter.status!));
+	}
+	if (filter.tagId) {
+		filterArr.push(
+			exists('person', (p) => {
+				return p.whereExists('personTags', (pt) => {
+					return pt.where('tagId', '=', filter.tagId!);
+				});
+			})
+		);
+	}
 	if (filter.teamId) {
 		filterArr.push(
 			exists('event', (e) => {
 				return e.where('teamId', '=', filter.teamId!);
+			})
+		);
+	}
+
+	if (filter.searchString) {
+		filterArr.push(
+			exists('person', (p) => {
+				return p.where(({ or, cmp }) => {
+					return or(
+						cmp('givenName', 'ILIKE', `%${filter.searchString}%`),
+						cmp('familyName', 'ILIKE', `%${filter.searchString}%`),
+						cmp('emailAddress', 'ILIKE', `%${filter.searchString}%`),
+						cmp('phoneNumber', 'ILIKE', `%${filter.searchString}%`)
+					);
+				});
 			})
 		);
 	}

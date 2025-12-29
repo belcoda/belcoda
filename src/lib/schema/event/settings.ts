@@ -6,9 +6,11 @@ import {
 	type InferOutput,
 	string,
 	nullable,
-	boolean
+	boolean,
+	fallback
 } from 'valibot';
 const fieldTypeSchema = picklist(['text', 'number', 'date', 'boolean', 'select', 'multi-select']);
+import { url, shortString } from '$lib/schema/helpers';
 
 export const signupFieldsSchema = object({
 	standard: array(string()),
@@ -25,7 +27,17 @@ export const signupFieldsSchema = object({
 
 export const eventSettingsSchema = object({
 	displayTimezone: boolean(),
-	signupFields: signupFieldsSchema
+	signupFields: signupFieldsSchema,
+	attachments: optional(
+		array(
+			object({
+				link: url,
+				title: shortString,
+				caption: fallback(nullable(string()), null),
+				thumbnail: fallback(nullable(url), null)
+			})
+		)
+	)
 });
 
 export type EventSettings = InferOutput<typeof eventSettingsSchema>;
@@ -37,6 +49,6 @@ export const eventSignupDetails = object({
 });
 export type EventSignupDetails = InferOutput<typeof eventSignupDetails>;
 
-export const eventSignupStatusList = ['signup', 'attended', 'cancelled', 'noshow'] as const;
+export const eventSignupStatusList = ['signup', 'attended', 'noshow', 'notattending'] as const;
 export const eventSignupStatus = picklist(eventSignupStatusList);
 export type EventSignupStatus = (typeof eventSignupStatusList)[number];

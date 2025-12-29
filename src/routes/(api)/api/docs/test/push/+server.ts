@@ -6,7 +6,7 @@ import {
 	type CreateMutatorSchemaRestInput,
 	readPersonRest
 } from '$lib/schema/person';
-import { getOrganization } from '$lib/server/api/utils/organization';
+import { getOrganization } from '$lib/server/api/data/organization';
 import { faker } from '@faker-js/faker';
 import { parse } from 'valibot';
 export const GET = async (event) => {

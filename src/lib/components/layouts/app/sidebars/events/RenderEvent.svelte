@@ -13,11 +13,13 @@
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
 	const time = renderEventTime(event.startsAt, event.endsAt, appState.locale, event.timezone);
 	import RenderEventDetails from './RenderEventDetails.svelte';
+	import { page } from '$app/state';
 </script>
 
 <a
 	href={`/events/${event.id}`}
 	class="flex w-full items-center justify-start gap-3 border-b px-2 py-3 last:border-b-0 hover:bg-muted"
+	class:bg-muted={page.url.pathname.startsWith(`/events/${event.id}`)}
 >
 	<div class="w-12">
 		<Avatar

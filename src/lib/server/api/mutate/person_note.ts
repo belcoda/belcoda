@@ -6,13 +6,13 @@ import { eq, and } from 'drizzle-orm';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
 
-import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
-
 import {
 	type CreateMutatorSchemaZero,
 	type UpdateMutatorSchemaZero,
 	type DeleteMutatorSchemaZero
 } from '$lib/schema/person-note';
+
+import { getQueue } from '$lib/server/queue';
 
 export function createPersonNote(params: MutatorParams) {
 	return async function (tx: Transaction, args: CreateMutatorSchemaZero) {
@@ -46,6 +46,18 @@ export function createPersonNote(params: MutatorParams) {
 		}
 
 		params.result?.push(result);
+
+		params.asyncTasks.push(async () => {
+			const queue = await getQueue();
+			queue.insertActivity({
+				organizationId: args.metadata.organizationId,
+				personId: result.personId,
+				userId: params.queryContext.userId,
+				type: 'note_added',
+				referenceId: args.metadata.personNoteId,
+				unread: false
+			});
+		});
 	};
 }
 

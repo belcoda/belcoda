@@ -393,3 +393,16 @@ export const listFilter = v.object({
 	excludedIds: v.fallback(v.array(uuid), [])
 });
 export type ListFilter = v.InferOutput<typeof listFilter>;
+
+import { customAlphabet } from 'nanoid';
+export const nanoidAlphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
+export const nanoidLength = 6;
+export const nanoid = customAlphabet(nanoidAlphabet, nanoidLength);
+
+export const nanoidSchema = v.pipe(
+	v.string(),
+	v.minLength(nanoidLength, 'Must be exactly 6 characters long'),
+	v.maxLength(nanoidLength, 'Must be exactly 6 characters long'),
+	v.regex(new RegExp(`^[${nanoidAlphabet}]+$`), 'Must contain only lowercase letters and numbers')
+);
+export type Nanoid = v.InferOutput<typeof nanoidSchema>;

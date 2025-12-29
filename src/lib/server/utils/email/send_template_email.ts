@@ -12,6 +12,7 @@ export default async function (options: {
 	template: string;
 	stream: 'broadcast' | 'outbound';
 	context: JsonSchemaObject;
+	replyTo?: string;
 	//returnPath: string;
 }): Promise<string> {
 	log.debug(options, 'Sending template email with Postmark');
@@ -26,6 +27,7 @@ export default async function (options: {
 		body: JSON.stringify({
 			From: options.from,
 			To: options.to,
+			ReplyTo: options.replyTo,
 			TemplateAlias: options.template,
 			TemplateModel: options.context,
 			MessageStream: options.stream

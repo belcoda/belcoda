@@ -2,6 +2,10 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { eventSignupDetails, eventSignupStatus } from '$lib/schema/event/settings';
+import { readPersonZero } from '$lib/schema/person';
+import { personAddedFrom } from '$lib/schema/person/meta';
+
+import { personActionHelper } from '$lib/schema/person';
 
 export const eventSignupSchema = v.object({
 	id: helpers.uuid,
@@ -38,6 +42,11 @@ export const readEventSignupZero = v.object({
 });
 export type ReadEventSignupZero = v.InferOutput<typeof readEventSignupZero>;
 
+export const readEventSignupZeroWithPerson = v.object({
+	...readEventSignupZero.entries,
+	person: readPersonZero
+});
+export type ReadEventSignupZeroWithPerson = v.InferOutput<typeof readEventSignupZeroWithPerson>;
 export const createEventSignup = v.object({
 	eventId: eventSignupSchema.entries.eventId,
 	personId: eventSignupSchema.entries.personId,
@@ -73,3 +82,11 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const eventSignupHelper = v.object({
+	person: personActionHelper,
+	addedFrom: personAddedFrom,
+	eventId: helpers.uuid,
+	details: eventSignupDetails
+});
+export type EventSignupHelper = v.InferOutput<typeof eventSignupHelper>;
