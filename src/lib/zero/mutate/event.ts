@@ -1,35 +1,41 @@
 import { type Transaction } from '@rocicorp/zero';
 import { type Schema } from '$lib/zero/schema';
 
-import { type CreateMutatorSchemaOutput, type UpdateMutatorSchemaOutput } from '$lib/schema/event';
+import {
+	type CreateEventZeroMutatorSchemaOutput,
+	type UpdateMutatorSchemaOutput,
+	createEventZeroMutatorSchema
+} from '$lib/schema/event';
+import { parse } from 'valibot';
 
 export function createEvent() {
-	return async function (tx: Transaction<Schema>, args: CreateMutatorSchemaOutput) {
+	return async function (tx: Transaction<Schema>, args: CreateEventZeroMutatorSchemaOutput) {
+		const parsedArgs = parse(createEventZeroMutatorSchema, args);
 		tx.mutate.event.insert({
-			id: args.metadata.eventId,
-			organizationId: args.metadata.organizationId,
-			teamId: args.metadata.teamId,
-			slug: args.input.slug,
-			title: args.input.title,
-			shortDescription: args.input.shortDescription,
-			description: args.input.description,
+			id: parsedArgs.metadata.eventId,
+			organizationId: parsedArgs.metadata.organizationId,
+			teamId: parsedArgs.metadata.teamId,
+			slug: parsedArgs.input.slug,
+			title: parsedArgs.input.title,
+			shortDescription: parsedArgs.input.shortDescription,
+			description: parsedArgs.input.description,
 			published: false,
-			startsAt: args.input.startsAt.getTime(),
-			endsAt: args.input.endsAt.getTime(),
-			onlineLink: args.input.onlineLink,
-			addressLine1: args.input.addressLine1,
-			addressLine2: args.input.addressLine2,
-			locality: args.input.locality,
-			region: args.input.region,
-			postcode: args.input.postcode,
-			country: args.input.country,
-			timezone: args.input.timezone,
-			maxSignups: args.input.maxSignups,
-			featureImage: args.input.featureImage,
-			signupTag: args.input.signupTag,
-			attendanceTag: args.input.attendanceTag,
-			sendReminderHoursBefore: args.input.sendReminderHoursBefore,
-			settings: args.input.settings,
+			startsAt: parsedArgs.input.startsAt.getTime(),
+			endsAt: parsedArgs.input.endsAt.getTime(),
+			onlineLink: parsedArgs.input.onlineLink,
+			addressLine1: parsedArgs.input.addressLine1,
+			addressLine2: parsedArgs.input.addressLine2,
+			locality: parsedArgs.input.locality,
+			region: parsedArgs.input.region,
+			postcode: parsedArgs.input.postcode,
+			country: parsedArgs.input.country,
+			timezone: parsedArgs.input.timezone,
+			maxSignups: parsedArgs.input.maxSignups,
+			featureImage: parsedArgs.input.featureImage,
+			signupTag: parsedArgs.input.signupTag,
+			attendanceTag: parsedArgs.input.attendanceTag,
+			sendReminderHoursBefore: parsedArgs.input.sendReminderHoursBefore,
+			settings: parsedArgs.input.settings,
 			reminderSentAt: null,
 			createdAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
