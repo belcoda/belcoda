@@ -2,14 +2,14 @@ import { type Transaction } from '@rocicorp/zero';
 import { type Schema } from '$lib/zero/schema';
 
 import {
-	type CreateEventZeroMutatorSchemaOutput,
+	type CreateEventZeroMutatorSchema,
 	type UpdateMutatorSchemaOutput,
 	createEventZeroMutatorSchema
 } from '$lib/schema/event';
 import { parse } from 'valibot';
 
 export function createEvent() {
-	return async function (tx: Transaction<Schema>, args: CreateEventZeroMutatorSchemaOutput) {
+	return async function (tx: Transaction<Schema>, args: CreateEventZeroMutatorSchema) {
 		const parsedArgs = parse(createEventZeroMutatorSchema, args);
 		tx.mutate.event.insert({
 			id: parsedArgs.metadata.eventId,
