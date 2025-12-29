@@ -68,6 +68,13 @@
 						<a {...props} href={`/events/${event.id}/edit`}>Edit event</a>
 					{/snippet}
 				</DropdownMenu.Item>
+				<DropdownMenu.Item>
+					{#snippet child({ props })}
+						<a data-sveltekit-preload-data="off" {...props} href={`/events/${event.id}/preview`}
+							>Preview event page</a
+						>
+					{/snippet}
+				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>
