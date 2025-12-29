@@ -28,6 +28,7 @@ loadLocales(js.key, js.loadIDs, js.loadCatalog, locales);
 
 const handleRequest: Handle = async ({ event, resolve }) => {
 	event.locals.requestId = uuidv4();
+	const subdomainOrFalse = detectSubdomain(event.url.host, PUBLIC_ROOT_DOMAIN);
 	log.debug(
 		{
 			path: event.url.pathname,
@@ -35,7 +36,9 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 			locale: event.locals.locale,
 			method: event.request.method,
 			requestId: event.locals.requestId,
-			host: event.url.host
+			host: event.url.host,
+			subdomain: subdomainOrFalse,
+			searchParams: event.url.searchParams.toString()
 		},
 		'Incoming request'
 	);
@@ -70,9 +73,17 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 	}
 
 	// Handle the page routes (eg: event pages, etc) which should always be on a subdomain and don't need to be authenticated...
-	const subdomainOrFalse = detectSubdomain(event.url.host, PUBLIC_ROOT_DOMAIN);
 	if (subdomainOrFalse) {
-		return resolve(event);
+		log.debug(
+			{ url: event.url.toString() },
+			'Handling page route on subdomain: ' + subdomainOrFalse
+		);
+		const resolved = await resolve(event);
+		log.debug(
+			{ url: event.url.toString(), session: event.locals.session?.session.id },
+			'[DEBUG] Page route resolved'
+		);
+		return resolved; //Note: There *may* be a valid session here, but not for sure...
 	}
 
 	// check API key if it's an API route
@@ -102,6 +113,33 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 	event.locals.session = await auth.api.getSession({
 		headers: event.request.headers
 	});
+	log.debug(
+		{ session: event.locals.session?.session.id, time: new Date().getTime() },
+		'[DEBUG] Session fetched from Better Auth'
+	);
+	if (event.url.searchParams.get('authToken')) {
+		const token = event.url.searchParams.get('authToken');
+		if (token) {
+			try {
+				log.debug({ token, url: event.url.toString() }, 'Token found in search params on route');
+				const session = await auth.api.verifyOneTimeToken({
+					body: {
+						token: token
+					}
+				});
+				/* event.url.searchParams.delete('authToken'); //kill the token so it can't be used again
+				log.debug({ url: event.url.toString() }, '[DEBUG] Token deleted from search params'); */
+				log.debug(
+					{ session, time: new Date().getTime() },
+					'[DEBUG] Session verified from one time token'
+				);
+				event.locals.session = session;
+			} catch (error) {
+				log.error(error, 'Error verifying one time token');
+			}
+		}
+	}
+
 	event.locals.authorizedApiUser = null;
 	if (event.request.headers.get('x-api-key')) {
 		const key = await auth.api.verifyApiKey({
@@ -119,6 +157,7 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 };
 
 function detectLocale(event: RequestEvent): Locale {
+	log.debug({ url: event.url.toString() }, 'New incoming request');
 	if (event.cookies.get('BELCODA_LOCALE')) {
 		if (LOCALES.includes(event.cookies.get('BELCODA_LOCALE')! as Locale)) {
 			//check if url param overrides cookie
