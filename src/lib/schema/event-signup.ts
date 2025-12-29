@@ -3,6 +3,9 @@ import * as helpers from '$lib/schema/helpers';
 
 import { eventSignupDetails, eventSignupStatus } from '$lib/schema/event/settings';
 import { readPersonZero } from '$lib/schema/person';
+import { personAddedFrom } from '$lib/schema/person/meta';
+
+import { personActionHelper } from '$lib/schema/person';
 
 export const eventSignupSchema = v.object({
 	id: helpers.uuid,
@@ -79,3 +82,11 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const eventSignupHelper = v.object({
+	person: personActionHelper,
+	addedFrom: personAddedFrom,
+	eventId: helpers.uuid,
+	details: eventSignupDetails
+});
+export type EventSignupHelper = v.InferOutput<typeof eventSignupHelper>;

@@ -48,28 +48,28 @@ export const eventSchema = v.object({
 export type EventSchema = v.InferOutput<typeof eventSchema>;
 
 export const readEventRest = v.object({
-	...v.omit(eventSchema, ['organizationId']).entries,
-	startsAt: helpers.dateToString,
-	endsAt: helpers.dateToString,
-	reminderSentAt: v.nullable(helpers.dateToString),
-	createdAt: helpers.dateToString,
-	updatedAt: helpers.dateToString,
-	deletedAt: v.nullable(helpers.dateToString),
-	archivedAt: v.nullable(helpers.dateToString),
-	cancelledAt: v.nullable(helpers.dateToString)
+	...eventSchema.entries,
+	startsAt: helpers.unixTimestamp,
+	endsAt: helpers.unixTimestamp,
+	reminderSentAt: v.nullable(helpers.unixTimestamp),
+	createdAt: helpers.unixTimestamp,
+	updatedAt: helpers.unixTimestamp,
+	deletedAt: v.nullable(helpers.unixTimestamp),
+	archivedAt: v.nullable(helpers.unixTimestamp),
+	cancelledAt: v.nullable(helpers.unixTimestamp)
 });
 export type ReadEventRest = v.InferOutput<typeof readEventRest>;
 
 export const readEventZero = v.object({
 	...eventSchema.entries,
-	startsAt: helpers.dateToTimestamp,
-	endsAt: helpers.dateToTimestamp,
-	reminderSentAt: v.nullable(helpers.dateToTimestamp),
-	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp,
-	deletedAt: v.nullable(helpers.dateToTimestamp),
-	archivedAt: v.nullable(helpers.dateToTimestamp),
-	cancelledAt: v.nullable(helpers.dateToTimestamp)
+	startsAt: helpers.unixTimestamp,
+	endsAt: helpers.unixTimestamp,
+	reminderSentAt: v.nullable(helpers.unixTimestamp),
+	createdAt: helpers.unixTimestamp,
+	updatedAt: helpers.unixTimestamp,
+	deletedAt: v.nullable(helpers.unixTimestamp),
+	archivedAt: v.nullable(helpers.unixTimestamp),
+	cancelledAt: v.nullable(helpers.unixTimestamp)
 });
 export type ReadEventZero = v.InferOutput<typeof readEventZero>;
 
