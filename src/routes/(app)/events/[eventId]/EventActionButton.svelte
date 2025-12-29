@@ -9,13 +9,14 @@
 	import ShareIcon from '@lucide/svelte/icons/share';
 	import EventShareModal from '$lib/components/widgets/event/share/EventShareModal.svelte';
 	let openShareModal = $state(false);
+	let openMakeACopyModal = $state(false);
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	const id = $props.id();
 	import { toast } from 'svelte-sonner';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
-	import { onMount } from 'svelte';
+	import EventMakeACopy from './EventMakeACopy.svelte';
 	function updatePublished(checked: boolean) {
 		z.mutate.event.update({
 			metadata: {
@@ -94,6 +95,12 @@
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Group>
+				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
+					Make a copy
+				</DropdownMenu.Item>
+			</DropdownMenu.Group>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 </ButtonGroup.Root>
@@ -101,3 +108,4 @@
 <ResponsiveModal title="Share Event" bind:open={openShareModal}>
 	<EventShareModal eventId={event.id} />
 </ResponsiveModal>
+<EventMakeACopy {event} bind:open={openMakeACopyModal} />
