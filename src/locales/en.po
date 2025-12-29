@@ -790,6 +790,7 @@ msgstr "Create a new organization"
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
 #: src/routes/(app)/community/[personId]/profile4/items/form/Email.svelte
 #: src/routes/(app)/community/[personId]/profile4/items/form/Gender.svelte
+#: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
 msgid "Cancel"
 msgstr "Cancel"
@@ -947,6 +948,7 @@ msgstr "<0/> Preferences"
 #: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
 #: src/lib/components/layouts/nav/SideNav.svelte
 #: src/lib/components/layouts/nav/SideNav.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
 msgid "Actions"
 msgstr "Actions"
 
@@ -1100,7 +1102,7 @@ msgstr "Subscribed"
 #~ msgstr "Avatar"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
 msgid "Status"
 msgstr "Status"
 
@@ -1212,23 +1214,28 @@ msgstr "Copy"
 #~ msgstr "New Event"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Date"
 msgstr "Date"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Select date"
 msgstr "Select date"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "From"
 msgstr "From"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "To"
 msgstr "To"
@@ -1288,6 +1295,7 @@ msgstr "Basic information"
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
 #: src/routes/(app)/community/[personId]/profile4/items/form/Email.svelte
 #: src/routes/(app)/community/[personId]/profile4/items/form/Gender.svelte
+#: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
 msgid "Save"
 msgstr "Save"
@@ -1334,6 +1342,7 @@ msgstr "<0/> Virtual"
 #~ msgstr "@huntabyte starred 3 repositories"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 msgid "Toggle"
@@ -1371,16 +1380,19 @@ msgstr "Date and time"
 #~ msgstr "Display timezone"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Display timezone on signup page and notifications"
 msgstr "Display timezone on signup page and notifications"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "This will display the timezone on the signup page and notifications."
 msgstr "This will display the timezone on the signup page and notifications."
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Timezone"
 msgstr "Timezone"
@@ -1438,16 +1450,19 @@ msgstr "Search for a command to run"
 #~ msgstr "ds"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Multi-day event <0>Start and end on different days.</0>"
 msgstr "Multi-day event <0>Start and end on different days.</0>"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Standard event <0>Start and end at a specific time on the same day.</0>"
 msgstr "Standard event <0>Start and end at a specific time on the same day.</0>"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "All day event <0>Start and end at midnight on the same day (all day).</0>"
 msgstr "All day event <0>Start and end at midnight on the same day (all day).</0>"
@@ -1463,20 +1478,25 @@ msgid "end: {0}"
 msgstr "end: {0}"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "End date"
 msgstr "End date"
 
 #: src/lib/components/forms/event/DateTimeControl.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Start date"
 msgstr "Start date"
 
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Start date must be before end date"
 msgstr "Start date must be before end date"
 
+#: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "End date must be after start date"
 msgstr "End date must be after start date"
@@ -2044,8 +2064,7 @@ msgstr "<0/> Compose WhatsApp"
 msgid "<0/> Compose email"
 msgstr "<0/> Compose email"
 
-#: src/lib/components/widgets/event/EventSignups.svelte
-#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
 #: src/lib/components/widgets/person/AddPersonModal.svelte
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/routes/(app)/community/+page.svelte
@@ -2594,6 +2613,7 @@ msgid "Call <0/>"
 msgstr "Call <0/>"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 msgid "WhatsApp <0/>"
 msgstr "WhatsApp <0/>"
 
@@ -2749,30 +2769,27 @@ msgstr "Unknown event status filter"
 #~ msgid "Credit Card"
 #~ msgstr "Credit Card"
 
-#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
 msgid "No signups found"
 msgstr "No signups found"
 
-#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
 msgid "No signups found. Create a new signup to get started."
 msgstr "No signups found. Create a new signup to get started."
 
-#. placeholder {0}: eventSignups.data.length
-#: src/lib/components/widgets/event/EventSignups.svelte
+#. placeholder {0}: signups.length
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
 msgid "Signups ({0})"
 msgstr "Signups ({0})"
 
 #~ msgid "Signups ({0}) <0/> <1/>"
 #~ msgstr "Signups ({0}) <0/> <1/>"
 
-#. placeholder {0}: eventSignups.data.length
-#: src/lib/components/widgets/event/EventSignups.svelte
-msgid "Signups ({0}) <0/>"
-msgstr "Signups ({0}) <0/>"
+#~ msgid "Signups ({0}) <0/>"
+#~ msgstr "Signups ({0}) <0/>"
 
-#: src/lib/components/widgets/event/EventSignups.svelte
-msgid "Signup location"
-msgstr "Signup location"
+#~ msgid "Signup location"
+#~ msgstr "Signup location"
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Open"
@@ -2965,6 +2982,7 @@ msgstr "Detailed signups table"
 #~ msgstr "Download CSV of signups"
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Preview event page"
 msgstr "Preview event page"
 
@@ -3018,31 +3036,36 @@ msgstr "WhatsApp signup link"
 msgid "Event signup page link"
 msgstr "Event signup page link"
 
-#. placeholder {0}: selectedPersonIds.length
-#. placeholder {1}: eventSignups.data.length
-#: src/lib/components/widgets/event/EventSignups.svelte
+#. placeholder {0}: selectedSignups.length
+#. placeholder {1}: signups.length
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
 msgid "Signups ({0}/{1})"
 msgstr "Signups ({0}/{1})"
 
-#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 msgid "Mark as attended"
 msgstr "Mark as attended"
 
 #: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
 msgid "Signed up"
 msgstr "Signed up"
 
 #: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
 msgid "No show"
 msgstr "No show"
 
 #: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
 msgid "Attended"
 msgstr "Attended"
 
-#: src/lib/components/widgets/event/EventSignups.svelte
-msgid "Cancelled"
-msgstr "Cancelled"
+#~ msgid "Cancelled"
+#~ msgstr "Cancelled"
 
 #~ msgid "Signed up via {0}"
 #~ msgstr "Signed up via {0}"
@@ -3169,3 +3192,154 @@ msgstr "Added from an unknown source [{0}]"
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "<0/> added note: <1/>"
 msgstr "<0/> added note: <1/>"
+
+#~ msgid "Booo"
+#~ msgstr "Booo"
+
+#~ msgid "Not attended"
+#~ msgstr "Not attended"
+
+#~ msgid "Not noshow"
+#~ msgstr "Not noshow"
+
+#~ msgid "Not apology"
+#~ msgstr "Not apology"
+
+#~ msgid "Apology"
+#~ msgstr "Apology"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "All signups"
+msgstr "All signups"
+
+#~ msgid "Add signup"
+#~ msgstr "Add signup"
+
+#~ msgid "All signups <0/>"
+#~ msgstr "All signups <0/>"
+
+#~ msgid "<0/> Mark as attended"
+#~ msgstr "<0/> Mark as attended"
+
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "<0/>Mark as attended"
+msgstr "<0/>Mark as attended"
+
+#~ msgid "<0/>Attended"
+#~ msgstr "<0/>Attended"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "<0/> No show"
+msgstr "<0/> No show"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "<0/> Attended"
+msgstr "<0/> Attended"
+
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "<0/>Mark as no show"
+msgstr "<0/>Mark as no show"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Mark as no show"
+msgstr "Mark as no show"
+
+#~ msgid "Mark as apology"
+#~ msgstr "Mark as apology"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Cancel signup"
+msgstr "Cancel signup"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
+msgid "Not attending"
+msgstr "Not attending"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "<0/> Not attending"
+msgstr "<0/> Not attending"
+
+#~ msgid "Change status"
+#~ msgstr "Change status"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Quick contact"
+msgstr "Quick contact"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Phone <0/>"
+msgstr "Phone <0/>"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Email <0/>"
+msgstr "Email <0/>"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "<0/> Add signup"
+msgstr "<0/> Add signup"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+#: src/routes/(app)/events/[eventId]/edit/+page.svelte
+msgid "Edit event"
+msgstr "Edit event"
+
+#: src/routes/(app)/events/[eventId]/preview/+page.server.ts
+msgid "Unauthorized"
+msgstr "Unauthorized"
+
+#: src/routes/(app)/events/[eventId]/preview/+page.server.ts
+msgid "Event not found"
+msgstr "Event not found"
+
+#: src/routes/(app)/events/[eventId]/preview/+page.ts
+#: src/routes/(app)/events/[eventId]/preview/+page.ts
+msgid "Error generating one time token"
+msgstr "Error generating one time token"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "Belcoda icon"
+msgstr "Belcoda icon"
+
+#~ msgid "dsds dsds"
+#~ msgstr "dsds dsds"
+
+#~ msgid "Loading event page"
+#~ msgstr "Loading event page"
+
+#: src/routes/(page)/page/[organizationSlug]/events/[eventSlug]/+page.svelte
+msgid "Event Page"
+msgstr "Event Page"
+
+#. placeholder {0}: data.session?.user.id
+#: src/routes/(page)/page/[organizationSlug]/events/[eventSlug]/+page.svelte
+msgid "Session: {0}"
+msgstr "Session: {0}"
+
+#~ msgid "Session"
+#~ msgstr "Session"
+
+#~ msgid "DateTimeSelect"
+#~ msgstr "DateTimeSelect"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+#: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
+msgid "Make a copy"
+msgstr "Make a copy"
+
+#. placeholder {0}: event.title
+#: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
+msgid "Copy of {0}"
+msgstr "Copy of {0}"
+
+#~ msgid "Create"
+#~ msgstr "Create"
+
+#: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
+#: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
+msgid "Event title"
+msgstr "Event title"
