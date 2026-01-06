@@ -40,12 +40,9 @@
 </script>
 
 <!-- This is an important check to ensure that we always have a valid userId and active organization Id. These will be used with confidence throughout the rest of the application interface -->
-{#if appState.user.details.type === 'complete' && appState.activeOrganization.details.type === 'complete' && appState.organizations.details.type === 'complete'}
+{#if appState.user?.details.type === 'complete' && appState.activeOrganization?.details.type === 'complete' && appState.organizations?.details.type === 'complete'}
 	{@render children()}
 {:else}
-	{JSON.stringify(appState.user.details)}
-	{JSON.stringify(appState.activeOrganization.details)}
-	{JSON.stringify(appState.organizations.details)}
 	<div class="flex h-screen w-screen items-center justify-center">
 		<Spinner />
 	</div>
