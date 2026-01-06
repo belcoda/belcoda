@@ -42,7 +42,10 @@ async function getToken() {
 function getAuthData() {
 	const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
 	if (!jwt) {
-		throw new Error('No JWT found');
+		// Return a placeholder user ID when not authenticated
+		// This allows the app to load without throwing .
+		// The actual JWT is verified server side anyway
+		return 'anonymous';
 	}
 	const decoded = jwtDecode(jwt);
 	if (!decoded.sub) {
