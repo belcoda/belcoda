@@ -3,6 +3,7 @@ import * as helpers from '$lib/schema/helpers';
 import { get } from '$lib/utils/http';
 
 import { eventSettingsSchema } from '$lib/schema/event/settings';
+import { generateEventTitleAsyncSchema } from './event/helpers';
 
 export const eventSchema = v.object({
 	id: helpers.uuid,
@@ -108,46 +109,11 @@ export const createEventZero = v.object({
 export type CreateEventZero = v.InferOutput<typeof createEventZero>;
 
 export function generateCreateEventZeroAsyncSchema(organizationId: string) {
+	const { title, slug } = generateEventTitleAsyncSchema(organizationId);
 	const createEventZeroAsync = v.objectAsync({
 		...createEventZero.entries,
-		title: v.pipeAsync(
-			createEventZero.entries.title,
-			v.checkAsync(async (value) => {
-				try {
-					const result = await get({
-						path: `/api/utils/check/event/title?title=${value}&organizationId=${organizationId}`,
-						schema: v.object({ result: v.boolean() })
-					});
-					if (result.result) {
-						//event exists, that's an error, title must be unique
-						return false;
-					} else {
-						return true;
-					}
-				} catch (error) {
-					return false;
-				}
-			}, 'Another event exists with this title')
-		),
-		slug: v.pipeAsync(
-			createEventZero.entries.slug,
-			v.checkAsync(async (value) => {
-				try {
-					const result = await get({
-						path: `/api/utils/check/event/slug?slug=${value}&organizationId=${organizationId}`,
-						schema: v.object({ result: v.boolean() })
-					});
-					if (result.result) {
-						//event exists, that's an error, slug must be unique
-						return false;
-					} else {
-						return true;
-					}
-				} catch (error) {
-					return false;
-				}
-			}, 'Another event exists with this slug')
-		)
+		title: title,
+		slug: slug
 	});
 	return createEventZeroAsync;
 }
@@ -197,3 +163,14 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const updateEventZeroMutatorSchema = v.object({
+	input: v.object({
+		...updateEventZero.entries,
+		startsAt: helpers.timestampToDate,
+		endsAt: helpers.timestampToDate
+	}),
+	metadata: mutatorMetadata
+});
+export type UpdateEventZeroMutatorSchema = v.InferInput<typeof updateEventZeroMutatorSchema>;
+export type UpdateEventZeroMutatorSchemaOutput = v.InferOutput<typeof updateEventZeroMutatorSchema>;
