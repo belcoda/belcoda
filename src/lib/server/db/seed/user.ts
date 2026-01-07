@@ -44,9 +44,7 @@ export function generateUsers(): (typeof userTable.$inferInsert)[] {
 			image: PROFILE_PICTURE[i],
 			stripeCustomerId: null,
 			twoFactorEnabled: false,
-			preferences: {
-				preferredLanguage: 'en'
-			},
+			preferredLanguage: 'en',
 			createdAt: new Date(),
 			updatedAt: new Date()
 		};
