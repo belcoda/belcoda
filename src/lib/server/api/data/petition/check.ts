@@ -1,0 +1,47 @@
+import { db } from '$lib/server/db';
+import { eq, isNull, and, not } from 'drizzle-orm';
+import { petition } from '$lib/schema/drizzle';
+export async function checkPetitionSlug({
+	slug,
+	organizationId,
+	excludePetitionId
+}: {
+	slug: string;
+	organizationId: string;
+	excludePetitionId?: string;
+}) {
+	const where = [
+		eq(petition.organizationId, organizationId),
+		isNull(petition.deletedAt),
+		eq(petition.slug, slug)
+	];
+	if (excludePetitionId) {
+		where.push(not(eq(petition.id, excludePetitionId)));
+	}
+	const result = await db.query.petition.findFirst({
+		where: and(...where)
+	});
+	return result ? true : false;
+}
+export async function checkPetitionTitle({
+	title,
+	organizationId,
+	excludePetitionId
+}: {
+	title: string;
+	organizationId: string;
+	excludePetitionId?: string;
+}) {
+	const where = [
+		eq(petition.organizationId, organizationId),
+		isNull(petition.deletedAt),
+		eq(petition.title, title)
+	];
+	if (excludePetitionId) {
+		where.push(not(eq(petition.id, excludePetitionId)));
+	}
+	const result = await db.query.petition.findFirst({
+		where: and(...where)
+	});
+	return result ? true : false;
+}
