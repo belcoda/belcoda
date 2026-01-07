@@ -3,6 +3,7 @@ import * as helpers from '$lib/schema/helpers';
 import { get } from '$lib/utils/http';
 
 import { petitionSettingsSchema } from './settings';
+import { generatePetitionTitleAsyncSchema } from './helpers';
 
 export const petitionSchema = v.object({
 	id: helpers.uuid,
@@ -72,46 +73,11 @@ export const createPetitionZero = v.object({
 export type CreatePetitionZero = v.InferOutput<typeof createPetitionZero>;
 
 export function generateCreatePetitionZeroAsyncSchema(organizationId: string) {
+	const { title, slug } = generatePetitionTitleAsyncSchema(organizationId);
 	const createPetitionZeroAsync = v.objectAsync({
 		...createPetitionZero.entries,
-		title: v.pipeAsync(
-			createPetitionZero.entries.title,
-			v.checkAsync(async (value) => {
-				try {
-					const result = await get({
-						path: `/api/utils/check/petition/title?title=${value}&organizationId=${organizationId}`,
-						schema: v.object({ result: v.boolean() })
-					});
-					if (result.result) {
-						//petition exists, that's an error, title must be unique
-						return false;
-					} else {
-						return true;
-					}
-				} catch (error) {
-					return false;
-				}
-			}, 'Another petition exists with this title')
-		),
-		slug: v.pipeAsync(
-			createPetitionZero.entries.slug,
-			v.checkAsync(async (value) => {
-				try {
-					const result = await get({
-						path: `/api/utils/check/petition/slug?slug=${value}&organizationId=${organizationId}`,
-						schema: v.object({ result: v.boolean() })
-					});
-					if (result.result) {
-						//petition exists, that's an error, slug must be unique
-						return false;
-					} else {
-						return true;
-					}
-				} catch (error) {
-					return false;
-				}
-			}, 'Another petition exists with this slug')
-		)
+		title: title,
+		slug: slug
 	});
 	return createPetitionZeroAsync;
 }
@@ -157,6 +123,15 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const updatePetitionZeroMutatorSchema = v.object({
+	input: updatePetitionZero,
+	metadata: mutatorMetadata
+});
+export type UpdatePetitionZeroMutatorSchema = v.InferInput<typeof updatePetitionZeroMutatorSchema>;
+export type UpdatePetitionZeroMutatorSchemaOutput = v.InferOutput<
+	typeof updatePetitionZeroMutatorSchema
+>;
 
 // Petition Signature Schemas
 export const petitionSignatureInputSchema = v.pipe(
