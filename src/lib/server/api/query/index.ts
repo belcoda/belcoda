@@ -18,6 +18,12 @@ export { readEvent } from '$lib/zero/query/event/read';
 export { listEventSignups } from '$lib/zero/query/event_signup/list';
 export { readEventSignup } from '$lib/zero/query/event_signup/read';
 
+export { listPetitions } from '$lib/zero/query/petition/list';
+export { readPetition } from '$lib/zero/query/petition/read';
+
+export { listPetitionSignatures } from '$lib/zero/query/petition_signature/list';
+export { readPetitionSignature } from '$lib/zero/query/petition_signature/read';
+
 export { listTags } from '$lib/zero/query/tag/list';
 export { readTag } from '$lib/zero/query/tag/read';
 

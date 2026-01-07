@@ -3,21 +3,26 @@
 	import DesktopNavSidebar from '$lib/components/layouts/app/navigation/DesktopNavSidebar.svelte';
 	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 	const isMobile = new IsMobile();
-	import { appState } from '$lib/state.svelte';
+	import { appState, getListFilter } from '$lib/state.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { z } from '$lib/zero.svelte';
+	import { listPetitions, type PetitionListFilter } from '$lib/zero/query/petition/list';
+	import { page } from '$app/state';
+	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
+	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
 
-	// TODO: Add petition queries and types when petition schema is implemented
-	// const petitionList = $derived.by(() =>
-	// 	z.createQuery(listPetitions(appState.queryContext, petitionListFilter))
-	// );
+	let petitionListFilter: PetitionListFilter = $state({
+		...getListFilter(appState.organizationId),
+		status: null
+	});
 
-	// Placeholder data structure. will be replaced with actual petition queries
-	let petitions = $state<any[]>([]);
-	let isLoading = $state(false);
+	const petitionList = $derived.by(() =>
+		z.createQuery(listPetitions(appState.queryContext, petitionListFilter))
+	);
 </script>
 
 <Sidebar.Root
@@ -41,31 +46,43 @@
 			<Sidebar.Group class="p-0">
 				<Sidebar.GroupContent class="h-full p-0">
 					<div class="flex flex-col">
-						{#if isLoading}
-							{@render petitionItemSkeleton()}
-							{@render petitionItemSkeleton()}
-							{@render petitionItemSkeleton()}
-						{:else if petitions.length > 0}
-							{#each petitions as petition (petition.id)}
-								<!-- TODO: Create RenderPetition component -->
+						{#if petitionList.data && petitionList.data.length > 0}
+							{#each petitionList.data as petition (petition.id)}
 								<a
 									href={`/petitions/${petition.id}`}
 									class="flex w-full items-center justify-start gap-3 border-b px-2 py-3 last:border-b-0 hover:bg-muted"
+									class:bg-muted={page.url.pathname.startsWith(`/petitions/${petition.id}`)}
 								>
 									<div class="w-12">
-										<div class="flex size-12 items-center justify-center rounded-lg bg-muted">
-											<FileTextIcon class="size-6 text-muted-foreground" />
-										</div>
+										<Avatar
+											src={petition.featureImage}
+											name1={petition.title}
+											class="size-12 rounded-lg"
+											imageClass="rounded-lg object-cover"
+										/>
 									</div>
 									<div class="grow">
-										<div class="line-clamp-1 text-sm font-medium">{petition.title}</div>
+										<div class="flex w-full items-center justify-start gap-2">
+											<div class="line-clamp-1 text-sm font-medium">{petition.title}</div>
+										</div>
 										<div class="text-xs text-muted-foreground">
-											{petition.signatureCount || 0} signatures
+											{petition.petitionTarget || 'No target specified'}
 										</div>
 									</div>
+									<ColorBadge color={petition.published ? 'green' : 'gray'}>
+										{petition.published ? 'Published' : 'Draft'}
+									</ColorBadge>
 								</a>
 							{/each}
-						{:else}
+						{/if}
+						{#if petitionList.details.type === 'unknown'}
+							{@render petitionItemSkeleton()}
+							{@render petitionItemSkeleton()}
+							{@render petitionItemSkeleton()}
+						{:else if petitionList.details.type === 'error'}
+							<div>Error loading petitions</div>
+						{/if}
+						{#if petitionList.details.type === 'complete' && (!petitionList.data || petitionList.data.length === 0)}
 							<Empty.Root>
 								<Empty.Header>
 									<Empty.Media variant="icon">
