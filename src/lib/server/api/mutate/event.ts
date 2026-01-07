@@ -3,9 +3,9 @@ import type { Transaction } from '$lib/server/db/zeroDrizzle';
 
 import {
 	type CreateEventZeroMutatorSchema,
-	type UpdateMutatorSchemaOutput,
-	updateEvent as updateEventSchema,
-	createEventZeroMutatorSchema
+	type UpdateEventZeroMutatorSchema,
+	createEventZeroMutatorSchema,
+	updateEventZeroMutatorSchema
 } from '$lib/schema/event';
 import { parse } from 'valibot';
 
@@ -116,10 +116,11 @@ export function createEvent(params: MutatorParams) {
 }
 
 export function updateEvent(params: MutatorParams) {
-	return async function (tx: Transaction, input: UpdateMutatorSchemaOutput) {
+	return async function (tx: Transaction, input: UpdateEventZeroMutatorSchema) {
+		const parsed = parse(updateEventZeroMutatorSchema, input);
 		const eventRecord = await tx.query.event
-			.where('id', '=', input.metadata.eventId)
-			.where('organizationId', '=', input.metadata.organizationId)
+			.where('id', '=', parsed.metadata.eventId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
 			.where((expr) => eventReadPermissions(expr, params.queryContext))
 			.one()
 			.run();
@@ -127,18 +128,16 @@ export function updateEvent(params: MutatorParams) {
 			throw new Error('Event not found');
 		}
 
-		const parseUpdateParams = parse(updateEventSchema, input.input);
-
 		await tx.dbTransaction.wrappedTransaction
 			.update(event)
 			.set({
-				...parseUpdateParams,
+				...parsed.input,
 				updatedAt: new Date()
 			})
 			.where(
 				and(
-					eq(event.id, input.metadata.eventId),
-					eq(event.organizationId, input.metadata.organizationId)
+					eq(event.id, parsed.metadata.eventId),
+					eq(event.organizationId, parsed.metadata.organizationId)
 				)
 			);
 	};
