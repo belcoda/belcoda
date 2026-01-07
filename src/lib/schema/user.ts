@@ -3,21 +3,6 @@ import * as helpers from '$lib/schema/helpers';
 
 import { LOCALES } from '$lib/utils/language';
 
-export const DEFAULT_USER_PREFERENCES = {
-	preferredLanguage: 'en'
-} as const;
-
-export const userPreferencesSchema = v.optional(
-	v.object({
-		preferredLanguage: v.optional(
-			v.picklist(LOCALES, 'Invalid language code'),
-			DEFAULT_USER_PREFERENCES.preferredLanguage
-		)
-	}),
-	DEFAULT_USER_PREFERENCES
-);
-export type UserPreferencesSchema = v.InferOutput<typeof userPreferencesSchema>;
-
 export const userSchema = v.object({
 	id: helpers.uuid,
 	name: helpers.mediumString,
@@ -26,7 +11,7 @@ export const userSchema = v.object({
 	image: v.nullable(helpers.url),
 	twoFactorEnabled: v.boolean(),
 	stripeCustomerId: v.nullable(helpers.shortString),
-	preferences: v.nullable(userPreferencesSchema),
+	preferredLanguage: v.nullable(v.picklist(LOCALES, 'Invalid language code')),
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });
@@ -37,8 +22,8 @@ export const readUserRest = v.object({
 	name: userSchema.entries.name,
 	email: userSchema.entries.email,
 	image: userSchema.entries.image,
+	preferredLanguage: userSchema.entries.preferredLanguage,
 	twoFactorEnabled: userSchema.entries.twoFactorEnabled,
-	preferences: userSchema.entries.preferences,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString
 });
@@ -54,6 +39,7 @@ export type ReadUserZero = v.InferOutput<typeof readUserZero>;
 export const createUser = v.object({
 	name: userSchema.entries.name,
 	email: userSchema.entries.email,
+	preferredLanguage: v.optional(userSchema.entries.preferredLanguage),
 	image: v.optional(v.nullable(helpers.url), null)
 });
 export type CreateUser = v.InferInput<typeof createUser>;
@@ -62,7 +48,7 @@ export const updateUser = v.partial(
 	v.object({
 		name: userSchema.entries.name,
 		image: v.optional(v.nullable(helpers.url), null),
-		preferences: v.optional(userPreferencesSchema, DEFAULT_USER_PREFERENCES)
+		preferredLanguage: v.optional(userSchema.entries.preferredLanguage)
 	})
 );
 export type UpdateUser = v.InferInput<typeof updateUser>;
