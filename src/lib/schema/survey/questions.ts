@@ -2,35 +2,21 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 export const surveyQuestionTypes = [
-	'person.givenName',
-	'person.familyName',
-	'person.emailAddress',
-	'person.phoneNumber',
 	'person.dateOfBirth',
 	'person.gender',
-	'person.country',
 	'person.preferredLanguage',
 	'person.workplace',
 	'person.position',
-	'person.addressLine1',
-	'person.addressLine2',
-	'person.locality',
-	'person.region',
-	'person.postcode',
+	'person.address',
 	'custom.textInput',
-	'custom.emailInput',
-	'custom.phoneInput',
-	'custom.numberInput',
-	'custom.dateInput',
 	'custom.textarea',
+	'custom.dateInput',
 	'custom.checkboxGroup',
-	'custom.imageUpload',
-	'custom.documentUpload',
 	'custom.radioGroup',
 	'custom.dropdown'
 ] as const;
 export const surveyQuestionTypeSchema = v.picklist(surveyQuestionTypes);
-
+export type SurveyQuestionType = v.InferOutput<typeof surveyQuestionTypeSchema>;
 export const surveyQuestionBase = v.object({
 	id: helpers.uuid,
 	type: surveyQuestionTypeSchema,
@@ -42,32 +28,13 @@ export const surveyQuestionBase = v.object({
 export const surveyQuestionTypeSchemas = [
 	v.object({
 		...surveyQuestionBase.entries,
-		type: v.literal('person.givenName')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('person.familyName')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('person.emailAddress')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('person.phoneNumber')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
 		type: v.literal('person.dateOfBirth')
 	}),
 	v.object({
 		...surveyQuestionBase.entries,
 		type: v.literal('person.gender')
 	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('person.country')
-	}),
+
 	v.object({
 		...surveyQuestionBase.entries,
 		type: v.literal('person.preferredLanguage')
@@ -82,44 +49,16 @@ export const surveyQuestionTypeSchemas = [
 	}),
 	v.object({
 		...surveyQuestionBase.entries,
-		type: v.literal('person.addressLine1')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('person.addressLine2')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('person.locality')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('person.region')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('person.postcode')
+		type: v.literal('person.address')
 	}),
 	v.object({
 		...surveyQuestionBase.entries,
 		type: v.literal('custom.textInput'),
+		format: v.picklist(['text', 'email', 'phone', 'number']),
 		placeholder: v.optional(helpers.shortString),
 		maxLength: v.optional(helpers.count),
 		minLength: v.optional(helpers.count),
-		regexp: v.optional(helpers.shortString),
 		customErrorMessage: v.optional(helpers.shortString)
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('custom.emailInput')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('custom.phoneInput')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('custom.numberInput')
 	}),
 	v.object({
 		...surveyQuestionBase.entries,
@@ -140,14 +79,6 @@ export const surveyQuestionTypeSchemas = [
 	}),
 	v.object({
 		...surveyQuestionBase.entries,
-		type: v.literal('custom.imageUpload')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
-		type: v.literal('custom.documentUpload')
-	}),
-	v.object({
-		...surveyQuestionBase.entries,
 		type: v.literal('custom.radioGroup'),
 		options: v.array(helpers.shortString)
 	}),
@@ -160,3 +91,34 @@ export const surveyQuestionTypeSchemas = [
 
 export const surveyQuestionSchema = v.variant('type', surveyQuestionTypeSchemas);
 export type SurveyQuestion = v.InferOutput<typeof surveyQuestionSchema>;
+
+export function renderQuestionTypeName(questionType: SurveyQuestionType, locale: Locale): string {
+	switch (questionType) {
+		case 'person.dateOfBirth':
+			return 'Date of Birth';
+		case 'person.gender':
+			return 'Gender';
+		case 'person.preferredLanguage':
+			return 'Preferred Language';
+		case 'person.workplace':
+			return 'Workplace';
+		case 'person.position':
+			return 'Position';
+		case 'person.address':
+			return 'Address';
+		case 'custom.textInput':
+			return 'Short text';
+		case 'custom.textarea':
+			return 'Long text';
+		case 'custom.dateInput':
+			return 'Date';
+		case 'custom.checkboxGroup':
+			return 'Checkboxes';
+		case 'custom.radioGroup':
+			return 'Multiple choice';
+		case 'custom.dropdown':
+			return 'Dropdown';
+		default:
+			return questionType;
+	}
+}
