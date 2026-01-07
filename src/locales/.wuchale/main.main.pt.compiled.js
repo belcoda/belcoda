@@ -1,5 +1,5 @@
 
-            export let c = ["Basic information","Date and time"]
+            export let c = ["Basic information","Date and time","Language","Languages"]
             // only during dev, for HMR
             let latestVersion = -1
             // @ts-ignore

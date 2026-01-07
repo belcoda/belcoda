@@ -19,3 +19,11 @@ msgstr ""
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Date and time"
 msgstr ""
+
+#: src/routes/(app)/preferences/language/+page.svelte
+msgid "Language"
+msgstr ""
+
+#: src/routes/(app)/preferences/language/+page.svelte
+msgid "Languages"
+msgstr ""
