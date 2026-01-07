@@ -19,39 +19,42 @@
 		appState.locale = locale;
 		document.cookie = `BELCODA_LOCALE=${locale}; path=/; max-age=31536000; samesite=strict`;
 	}
+	import * as Card from '$lib/components/ui/card/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 </script>
 
 <ContentLayout rootLink="/preferences" {header} {footer}>
-	{appState.locale}
-
-	{#await authClient.getSession()}
-		<div>Loading...</div>
-	{:then user}
-		{JSON.stringify(user)}
-	{/await}
-	<Select.Root
-		type="single"
-		bind:value
-		onValueChange={(value) => {
-			if (isSupportedLanguage(value)) {
-				setLocale(value);
-			}
-		}}
-	>
-		<Select.Trigger class="w-[180px]">
-			{getLocaleName(value)}
-		</Select.Trigger>
-		<Select.Content>
-			<Select.Group>
-				<Select.Label>{t`Languages`}</Select.Label>
-				{#each LOCALES as locale (locale)}
-					<Select.Item value={locale} label={getLocaleName(locale)}>
-						{getLocaleName(locale)}
-					</Select.Item>
-				{/each}
-			</Select.Group>
-		</Select.Content>
-	</Select.Root>
+	<Card.Root>
+		<Card.Content>
+			<Label class="ms-0.5 mb-3">Update your preferred language:</Label>
+			<Select.Root
+				type="single"
+				bind:value
+				onValueChange={(value) => {
+					if (isSupportedLanguage(value)) {
+						setLocale(value);
+					}
+				}}
+			>
+				<Select.Trigger class="w-[180px]">
+					{getLocaleName(value)}
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Group>
+						<Select.Label>{t`Languages`}</Select.Label>
+						{#each LOCALES as locale (locale)}
+							<Select.Item value={locale} label={getLocaleName(locale)}>
+								{getLocaleName(locale)}
+							</Select.Item>
+						{/each}
+					</Select.Group>
+				</Select.Content>
+			</Select.Root>
+			<p class="ms-0.5 mt-2 text-sm text-muted-foreground">
+				This will update your language for all the pages in the application.
+			</p>
+		</Card.Content>
+	</Card.Root>
 </ContentLayout>
 
 {#snippet header()}
