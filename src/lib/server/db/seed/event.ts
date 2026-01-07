@@ -62,7 +62,19 @@ export function generateEvents(
 			sendReminderHoursBefore: 24,
 			settings: {
 				displayTimezone: false,
-				signupFields: { standard: [], custom: [] }
+				survey: {
+					schemaVersion: '1.0.0',
+					collections: [
+						{
+							id: faker.string.uuid(),
+							title: 'Event information',
+							description: null,
+							questions: [],
+							nextCollectionId: null,
+							previousCollectionId: null
+						}
+					]
+				}
 			},
 			signupTag: null,
 			attendanceTag: null,
