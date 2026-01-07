@@ -65,6 +65,23 @@ export function createDateTwoWeeksFromNow() {
 	return twoWeeksFromNow.getTime();
 }
 
+export function defaultStartsAtEndsAt(timezone: string) {
+	const now = new Date();
+	const twoWeeksFromNow = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+	const dateValue = timestampToZonedDateTime(twoWeeksFromNow.getTime(), timezone);
+	const newStartsAtDate = dateValue.set({
+		hour: 18,
+		minute: 0,
+		second: 0,
+		millisecond: 0
+	});
+	const newEndsAtDate = newStartsAtDate.add({ hours: 2 });
+	return {
+		startsAt: newStartsAtDate.toDate().getTime(),
+		endsAt: newEndsAtDate.toDate().getTime()
+	};
+}
+
 export function convertDateToTimeAtTimezone({
 	date,
 	timezone,
@@ -134,6 +151,7 @@ import { type Locale } from '$lib/utils/language';
 export function renderDate(timestamp: number, timezone: string, locale: Locale) {
 	const dateTime = timestampToZonedDateTime(timestamp, timezone);
 	return dateTime.toDate().toLocaleDateString(locale, {
+		timeZone: timezone,
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric'
