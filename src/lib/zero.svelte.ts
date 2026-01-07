@@ -5,8 +5,6 @@ import { env as publicEnv } from '$env/dynamic/public';
 import { jwtDecode } from 'jwt-decode';
 import createMutators from '$lib/zero/mutate/client_mutators';
 
-export const z = new Z<Schema, ReturnType<typeof createMutators>>(get_z_options());
-
 function get_z_options() {
 	const userId = getAuthData();
 	return {
@@ -20,6 +18,8 @@ function get_z_options() {
 		}
 	} as const;
 }
+
+export const z = new Z<Schema, ReturnType<typeof createMutators>>(get_z_options());
 
 function getCookie(name: string): string | null {
 	const cookies = document.cookie.split('; ');
@@ -42,7 +42,10 @@ async function getToken() {
 function getAuthData() {
 	const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
 	if (!jwt) {
-		throw new Error('No JWT found');
+		// Return a placeholder user ID when not authenticated
+		// This allows the app to load without throwing .
+		// The actual JWT is verified server side anyway
+		return 'anonymous';
 	}
 	const decoded = jwtDecode(jwt);
 	if (!decoded.sub) {
