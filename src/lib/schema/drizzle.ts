@@ -62,6 +62,7 @@ import { type EventSettings } from '$lib/schema/event/settings';
 import { type EventSignupDetails, type EventSignupStatus } from '$lib/schema/event/settings';
 import { type SocialMedia, type PersonAddedFrom } from '$lib/schema/person/meta';
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
+import type { PetitionSettingsSchema, PetitionSignatureDetails } from './petition/settings';
 type Permissions = {
 	[resourceType: string]: ('read' | 'write' | 'delete')[];
 };
@@ -841,6 +842,62 @@ type PersonNoteDrizzleMatchesValibot = IsTrue<
 	typeof personNote.$inferSelect extends PersonNoteSchema ? true : false
 >;
 
+// petition schema
+export const petition = pgTable('petition', {
+	id: uuid('id').primaryKey(),
+	organizationId: uuid('organization_id')
+		.notNull()
+		.references(() => organization.id),
+	teamId: uuid('team_id').references(() => team.id),
+	pointPersonId: uuid('point_person_id').references(() => person.id),
+
+	slug: text('slug').notNull().unique(),
+	title: text('title').notNull(),
+	description: jsonb('description'),
+	shortDescription: text('short_description').notNull(),
+
+	published: boolean('published').notNull(),
+
+	petitionTarget: text('petition_target'),
+	petitionText: text('petition_text'),
+
+	featureImage: text('feature_image'),
+
+	settings: jsonb('settings').$type<PetitionSettingsSchema>().notNull(),
+	// TODO: Implement these once flows are ready
+	// flowQuestions: jsonb('flow_questions').$type<PetitionFlowQuestions>(),
+
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+	archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
+	deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
+});
+
+export const petitionSignature = pgTable(
+	'petition_signature',
+	{
+		id: uuid('id').primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		teamId: uuid('team_id').references(() => team.id),
+		petitionId: uuid('petition_id')
+			.notNull()
+			.references(() => petition.id),
+		personId: uuid('person_id')
+			.notNull()
+			.references(() => person.id),
+		details: jsonb('details').$type<PetitionSignatureDetails>().notNull(),
+		// TODO: Define response schema when flows are ready
+		responses: jsonb('responses'),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.$onUpdate(() => new Date())
+	},
+	(table) => [unique('petition_signature_unique').on(table.petitionId, table.personId)]
+);
+
 export const actionCode = pgTable(
 	'action_code',
 	{
@@ -1009,6 +1066,7 @@ export const personRelations = relations(person, ({ one, many }) => ({
 	teamMemberships: many(personTeam),
 	personTags: many(personTag),
 	eventSignups: many(eventSignup),
+	petitionSignatures: many(petitionSignature),
 	whatsappGroupMemberships: many(whatsappGroupMember),
 	notes: many(personNote)
 }));
@@ -1152,6 +1210,33 @@ export const eventSignupRelations = relations(eventSignup, ({ one }) => ({
 	}),
 	person: one(person, {
 		fields: [eventSignup.personId],
+		references: [person.id]
+	})
+}));
+
+export const petitionRelations = relations(petition, ({ one, many }) => ({
+	organization: one(organization, {
+		fields: [petition.organizationId],
+		references: [organization.id]
+	}),
+	team: one(team, {
+		fields: [petition.teamId],
+		references: [team.id]
+	}),
+	signatures: many(petitionSignature)
+}));
+
+export const petitionSignatureRelations = relations(petitionSignature, ({ one }) => ({
+	organization: one(organization, {
+		fields: [petitionSignature.organizationId],
+		references: [organization.id]
+	}),
+	petition: one(petition, {
+		fields: [petitionSignature.petitionId],
+		references: [petition.id]
+	}),
+	person: one(person, {
+		fields: [petitionSignature.personId],
 		references: [person.id]
 	})
 }));
