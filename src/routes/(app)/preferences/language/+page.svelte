@@ -23,10 +23,10 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 </script>
 
-<ContentLayout rootLink="/preferences" {header} {footer}>
+<ContentLayout rootLink="/preferences" {header}>
 	<Card.Root>
 		<Card.Content>
-			<Label class="ms-0.5 mb-3">Update your preferred language:</Label>
+			<Label class="ms-0.5 mb-3">{t`Update your preferred language:`}</Label>
 			<Select.Root
 				type="single"
 				bind:value
@@ -51,7 +51,7 @@
 				</Select.Content>
 			</Select.Root>
 			<p class="ms-0.5 mt-2 text-sm text-muted-foreground">
-				This will update your language for all the pages in the application.
+				{t`This will update your language for all the pages in the application.`}
 			</p>
 		</Card.Content>
 	</Card.Root>
@@ -60,11 +60,5 @@
 {#snippet header()}
 	<div class="flex items-center justify-between">
 		<H2>{t`Language`}</H2>
-	</div>
-{/snippet}
-
-{#snippet footer()}
-	<div class="flex w-full items-center justify-end">
-		<Button>Save</Button>
 	</div>
 {/snippet}
