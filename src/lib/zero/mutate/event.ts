@@ -3,8 +3,9 @@ import { type Schema } from '$lib/zero/schema';
 
 import {
 	type CreateEventZeroMutatorSchema,
-	type UpdateMutatorSchemaOutput,
-	createEventZeroMutatorSchema
+	type UpdateEventZeroMutatorSchema,
+	createEventZeroMutatorSchema,
+	updateEventZeroMutatorSchema
 } from '$lib/schema/event';
 import { parse } from 'valibot';
 
@@ -44,12 +45,13 @@ export function createEvent() {
 }
 
 export function updateEvent() {
-	return async function (tx: Transaction<Schema>, args: UpdateMutatorSchemaOutput) {
+	return async function (tx: Transaction<Schema>, args: UpdateEventZeroMutatorSchema) {
+		const parsed = parse(updateEventZeroMutatorSchema, args);
 		tx.mutate.event.update({
-			id: args.metadata.eventId,
-			...args.input,
-			startsAt: args.input.startsAt ? args.input.startsAt.getTime() : undefined,
-			endsAt: args.input.endsAt ? args.input.endsAt.getTime() : undefined,
+			id: parsed.metadata.eventId,
+			...parsed.input,
+			startsAt: parsed.input.startsAt ? parsed.input.startsAt.getTime() : undefined,
+			endsAt: parsed.input.endsAt ? parsed.input.endsAt.getTime() : undefined,
 			updatedAt: new Date().getTime()
 		});
 	};
