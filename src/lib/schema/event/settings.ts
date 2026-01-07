@@ -11,23 +11,11 @@ import {
 } from 'valibot';
 const fieldTypeSchema = picklist(['text', 'number', 'date', 'boolean', 'select', 'multi-select']);
 import { url, shortString } from '$lib/schema/helpers';
-
-export const signupFieldsSchema = object({
-	standard: array(string()),
-	custom: array(
-		object({
-			id: string(),
-			label: string(),
-			type: fieldTypeSchema,
-			required: boolean(),
-			options: nullable(array(string()))
-		})
-	)
-});
+import { surveySchema } from '$lib/schema/survey/collection';
 
 export const eventSettingsSchema = object({
 	displayTimezone: boolean(),
-	signupFields: signupFieldsSchema,
+	survey: surveySchema,
 	attachments: optional(
 		array(
 			object({
@@ -52,3 +40,25 @@ export type EventSignupDetails = InferOutput<typeof eventSignupDetails>;
 export const eventSignupStatusList = ['signup', 'attended', 'noshow', 'notattending'] as const;
 export const eventSignupStatus = picklist(eventSignupStatusList);
 export type EventSignupStatus = (typeof eventSignupStatusList)[number];
+
+import { v4 as uuidv4 } from 'uuid';
+
+export function defaultEventSettings(): EventSettings {
+	return {
+		displayTimezone: true,
+
+		survey: {
+			schemaVersion: '1.0.0',
+			collections: [
+				{
+					id: uuidv4(),
+					title: 'Event information',
+					description: null,
+					questions: [],
+					nextCollectionId: null,
+					previousCollectionId: null
+				}
+			]
+		}
+	};
+}
