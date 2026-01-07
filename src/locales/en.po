@@ -35,3 +35,21 @@ msgstr "Update your preferred language:"
 #: src/routes/(app)/preferences/language/+page.svelte
 msgid "This will update your language for all the pages in the application."
 msgstr "This will update your language for all the pages in the application."
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Settings"
+msgstr "Settings"
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid ""
+"Email from signatures are the names and email addresses that are used to send emails on behalf\n"
+"of the organization. You can add as many as you want, but they must be attached to a\n"
+"non-public email address that you control."
+msgstr ""
+"Email from signatures are the names and email addresses that are used to send emails on behalf\n"
+"of the organization. You can add as many as you want, but they must be attached to a\n"
+"non-public email address that you control."
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Email from signatures"
+msgstr "Email from signatures"
