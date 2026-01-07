@@ -39,7 +39,8 @@
 		generateTimeString,
 		dateTimeToNewTimeZone,
 		updateTimestampTime,
-		renderDate
+		renderDate,
+		defaultStartsAtEndsAt
 	} from '$lib/components/forms/event/actions';
 	const id = $props.id();
 	let startDateOpen = $state(false);
@@ -100,6 +101,15 @@
 			}
 			$data.endsAt = newEndsAt;
 		}
+	}
+
+	if (!$data.startsAt) {
+		const { startsAt } = defaultStartsAtEndsAt($data.timezone || getLocalTimeZone());
+		$data.startsAt = startsAt;
+	}
+	if (!$data.endsAt) {
+		const { endsAt } = defaultStartsAtEndsAt($data.timezone || getLocalTimeZone());
+		$data.endsAt = endsAt;
 	}
 </script>
 
@@ -196,6 +206,7 @@
 				</Popover.Root>
 			{/snippet}
 		</Form.Control>
+		<Form.FieldErrors />
 	</Form.Field>
 {/snippet}
 
@@ -344,7 +355,8 @@
 							} else {
 								$data.settings = {
 									displayTimezone: v,
-									signupFields: $data.settings?.signupFields ?? { standard: [], custom: [] }
+									signupFields: $data.settings?.signupFields ?? { standard: [], custom: [] },
+									survey: { schemaVersion: '1.0.0', collections: [] }
 								};
 							}
 						}}
@@ -384,6 +396,7 @@
 				/>
 			{/snippet}
 		</Form.Control>
+		<Form.FieldErrors />
 	</Form.Field>
 {/snippet}
 

@@ -1,27 +1,47 @@
 import { db } from '$lib/server/db';
+import { eq, isNull, and, not } from 'drizzle-orm';
+import { event } from '$lib/schema/drizzle';
 export async function checkEventSlug({
 	slug,
-	organizationId
+	organizationId,
+	excludeEventId
 }: {
 	slug: string;
 	organizationId: string;
+	excludeEventId?: string;
 }) {
+	const where = [
+		eq(event.organizationId, organizationId),
+		isNull(event.deletedAt),
+		eq(event.slug, slug)
+	];
+	if (excludeEventId) {
+		where.push(not(eq(event.id, excludeEventId)));
+	}
 	const result = await db.query.event.findFirst({
-		where: (row, { eq, and, isNull }) =>
-			and(eq(row.slug, slug), eq(row.organizationId, organizationId), isNull(row.deletedAt))
+		where: and(...where)
 	});
 	return result ? true : false;
 }
 export async function checkEventTitle({
 	title,
-	organizationId
+	organizationId,
+	excludeEventId
 }: {
 	title: string;
 	organizationId: string;
+	excludeEventId?: string;
 }) {
+	const where = [
+		eq(event.organizationId, organizationId),
+		isNull(event.deletedAt),
+		eq(event.title, title)
+	];
+	if (excludeEventId) {
+		where.push(not(eq(event.id, excludeEventId)));
+	}
 	const result = await db.query.event.findFirst({
-		where: (row, { eq, and, isNull }) =>
-			and(eq(row.title, title), eq(row.organizationId, organizationId), isNull(row.deletedAt))
+		where: and(...where)
 	});
 	return result ? true : false;
 }

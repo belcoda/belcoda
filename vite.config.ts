@@ -6,7 +6,7 @@ import { wuchale } from '@wuchale/vite-plugin';
 import { playwright } from '@vitest/browser-playwright';
 
 export default defineConfig({
-	plugins: [sveltekit(), tailwindcss(), wuchale(), devtoolsJson()],
+	plugins: [sveltekit(), tailwindcss(), wuchale('wuchale.config.ts'), devtoolsJson()],
 	test: {
 		expect: { requireAssertions: true },
 		projects: [
