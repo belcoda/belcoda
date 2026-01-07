@@ -1,5 +1,5 @@
 
-            export let c = ["Basic information","Date and time","Language","Languages"]
+            export let c = ["Basic information","Date and time","Language","Languages","Update your preferred language:","This will update your language for all the pages in the application."]
             // only during dev, for HMR
             let latestVersion = -1
             // @ts-ignore

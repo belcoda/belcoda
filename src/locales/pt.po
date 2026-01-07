@@ -27,3 +27,11 @@ msgstr ""
 #: src/routes/(app)/preferences/language/+page.svelte
 msgid "Languages"
 msgstr ""
+
+#: src/routes/(app)/preferences/language/+page.svelte
+msgid "Update your preferred language:"
+msgstr ""
+
+#: src/routes/(app)/preferences/language/+page.svelte
+msgid "This will update your language for all the pages in the application."
+msgstr ""
