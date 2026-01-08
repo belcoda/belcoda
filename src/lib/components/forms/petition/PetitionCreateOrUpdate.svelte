@@ -43,7 +43,6 @@
 					}),
 					initialData: petition,
 					onSubmit: async (data) => {
-						console.log(data);
 						onSubmit(data);
 					}
 				})
@@ -55,7 +54,6 @@
 					}),
 					validateOnLoad: false,
 					onSubmit: async (data) => {
-						console.log(data);
 						onSubmit(data);
 					}
 				})
