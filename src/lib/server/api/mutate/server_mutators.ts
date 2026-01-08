@@ -3,6 +3,8 @@ import * as person from '$lib/server/api/mutate/person';
 import * as personNote from '$lib/server/api/mutate/person_note';
 import * as eventSignup from '$lib/server/api/mutate/event_signup';
 import * as event from '$lib/server/api/mutate/event';
+import * as petition from '$lib/server/api/mutate/petition';
+import * as petitionSignature from '$lib/server/api/mutate/petition_signature';
 
 export function createMutators(params: MutatorParams) {
 	return {
@@ -27,6 +29,14 @@ export function createMutators(params: MutatorParams) {
 		eventSignup: {
 			create: eventSignup.createEventSignup(params),
 			update: eventSignup.updateEventSignup(params)
+		},
+		petition: {
+			create: petition.createPetition(params),
+			update: petition.updatePetition(params)
+		},
+		petitionSignature: {
+			create: petitionSignature.createPetitionSignature(params),
+			update: petitionSignature.updatePetitionSignature(params)
 		}
 	};
 }
