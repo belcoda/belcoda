@@ -12,10 +12,19 @@ export const organizationSettingsSchema = v.object({
 			replyTo: v.optional(v.nullable(helpers.email), null)
 		}),
 		defaultFromSignatureId: v.optional(v.nullable(helpers.uuid), null)
+	}),
+	display: v.object({
+		primaryColor: v.optional(v.nullable(helpers.hexColor), null),
+		secondaryColor: v.optional(v.nullable(helpers.hexColor), null)
 	})
 });
 
 export type OrganizationSettingsSchema = v.InferOutput<typeof organizationSettingsSchema>;
+
+export const defaultDisplaySettings = {
+	primaryColor: '#4f46e5',
+	secondaryColor: '#10b981'
+};
 
 export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 	return {
@@ -29,6 +38,10 @@ export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 				replyTo: null
 			},
 			defaultFromSignatureId: null
+		},
+		display: {
+			primaryColor: defaultDisplaySettings.primaryColor,
+			secondaryColor: defaultDisplaySettings.secondaryColor
 		}
 	};
 }

@@ -383,6 +383,13 @@ export function parseSchema<T extends v.ObjectSchema<any, any>>(schema: T) {
 	};
 }
 
+export const hexColor = v.pipe(
+	v.string(),
+	v.minLength(1, 'Color is required'),
+	v.maxLength(7, 'Color must be 7 characters long'),
+	v.regex(/^#([0-9a-fA-F]{6})$/, 'Invalid hex color format')
+);
+
 export const listFilter = v.object({
 	searchString: v.fallback(v.nullable(v.string()), null),
 	teamId: v.fallback(v.nullable(uuid), null),
