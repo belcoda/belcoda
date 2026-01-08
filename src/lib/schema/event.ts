@@ -167,8 +167,8 @@ export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema
 export const updateEventZeroMutatorSchema = v.object({
 	input: v.object({
 		...updateEventZero.entries,
-		startsAt: helpers.timestampToDate,
-		endsAt: helpers.timestampToDate
+		startsAt: v.optional(helpers.timestampToDate),
+		endsAt: v.optional(helpers.timestampToDate)
 	}),
 	metadata: mutatorMetadata
 });
