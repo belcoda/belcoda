@@ -33,16 +33,7 @@
 			<div class="grow space-y-3">
 				<PersonFilter bind:filter hideActivityFilter={true} />
 			</div>
-			<div class="flex items-center gap-2">
-				<!-- TODO: Add person to petition functionality -->
-				<!-- <AddPersonModal
-					trigger={addPersonTrigger}
-					personIdsToExclude={petitionSignatures.data.map((sig) => sig.personId)}
-					onSelected={(personIds) => {
-						handleAddPerson({ petitionId: petition.id, personIds });
-					}}
-				/> -->
-			</div>
+			<div class="flex items-center gap-2"></div>
 		</Card.Title>
 	</Card.Header>
 
@@ -58,4 +49,3 @@
 
 {#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> Add signature</Button
 	>{/snippet}
-
