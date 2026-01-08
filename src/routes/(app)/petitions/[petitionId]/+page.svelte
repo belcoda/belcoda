@@ -11,6 +11,7 @@
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import PetitionSignatures from '$lib/components/widgets/petition/PetitionSignatures.svelte';
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
+	import PetitionActionButton from './PetitionActionButton.svelte';
 </script>
 
 <ContentLayout rootLink="/petitions" {header}>
@@ -56,8 +57,7 @@
 		</div>
 		<div>
 			{#if petition.data}
-				<!-- TODO: Add petition action button -->
-				<!-- <PetitionActionButton petition={petition.data} /> -->
+				<PetitionActionButton petition={petition.data} />
 			{:else}
 				<Skeleton class="h-10 w-16 rounded-lg" />
 			{/if}
