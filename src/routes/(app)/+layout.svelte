@@ -43,9 +43,6 @@
 {#if appState.user.details.type === 'complete' && appState.activeOrganization.details.type === 'complete' && appState.organizations.details.type === 'complete'}
 	{@render children()}
 {:else}
-	{JSON.stringify(appState.user.details)}
-	{JSON.stringify(appState.activeOrganization.details)}
-	{JSON.stringify(appState.organizations.details)}
 	<div class="flex h-screen w-screen items-center justify-center">
 		<Spinner />
 	</div>
