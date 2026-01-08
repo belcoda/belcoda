@@ -42,3 +42,17 @@ export async function getOrganizationByIdUnsafe({
 	}
 	return result;
 }
+
+export async function _getOrganizationIdBySlugUnsafe({
+	organizationSlug
+}: {
+	organizationSlug: string;
+}): Promise<string> {
+	const result = await db.query.organization.findFirst({
+		where: eq(organization.slug, organizationSlug)
+	});
+	if (!result) {
+		throw new Error('Organization not found');
+	}
+	return result.id;
+}
