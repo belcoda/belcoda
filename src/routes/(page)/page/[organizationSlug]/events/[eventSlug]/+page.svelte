@@ -1,8 +1,6 @@
 <script lang="ts">
 	const { data } = $props();
+	import RenderEventPage from '$lib/components/layouts/public/event/RenderEventPage.svelte';
 </script>
 
-<div>
-	<h1>Event Page</h1>
-	<p>Session: {data.session?.user.id}</p>
-</div>
+<RenderEventPage event={data.event} organization={data.organization} />
