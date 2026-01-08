@@ -40,13 +40,17 @@ async function getToken() {
 }
 
 function getAuthData() {
-	const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
-	if (!jwt) {
-		throw new Error('No JWT found');
+	try {
+		const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
+		if (!jwt) {
+			throw new Error('No JWT found');
+		}
+		const decoded = jwtDecode(jwt);
+		if (!decoded.sub) {
+			throw new Error('No user ID found');
+		}
+		return decoded.sub;
+	} catch (error) {
+		return 'anonymous';
 	}
-	const decoded = jwtDecode(jwt);
-	if (!decoded.sub) {
-		throw new Error('No user ID found');
-	}
-	return decoded.sub;
 }
