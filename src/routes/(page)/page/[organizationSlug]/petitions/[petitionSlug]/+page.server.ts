@@ -1,7 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { petition, petitionSignature, organization } from '$lib/schema/drizzle';
-import { eq, and, isNull, count } from 'drizzle-orm';
+import { petition, petitionSignature, organization, person } from '$lib/schema/drizzle';
+import { eq, and, isNull, count, desc } from 'drizzle-orm';
 import pino from '$lib/pino';
 import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
 import { getTransaction } from '$lib/server/db/zeroDrizzle';
@@ -47,6 +47,20 @@ export async function load({ params, locals }) {
 		.from(petitionSignature)
 		.where(eq(petitionSignature.petitionId, petitionData.id));
 
+	// Get recent signatures with person details
+	const recentSignatures = await db
+		.select({
+			id: petitionSignature.id,
+			createdAt: petitionSignature.createdAt,
+			givenName: person.givenName,
+			familyName: person.familyName
+		})
+		.from(petitionSignature)
+		.innerJoin(person, eq(petitionSignature.personId, person.id))
+		.where(eq(petitionSignature.petitionId, petitionData.id))
+		.orderBy(desc(petitionSignature.createdAt))
+		.limit(10);
+
 	const session = locals.session;
 
 	// Check if user is admin/owner
@@ -61,10 +75,16 @@ export async function load({ params, locals }) {
 		archivedAt: petitionData.archivedAt ? new Date(petitionData.archivedAt).getTime() : null
 	};
 
+	const serializedSignatures = recentSignatures.map((sig) => ({
+		...sig,
+		createdAt: sig.createdAt ? new Date(sig.createdAt).getTime() : null
+	}));
+
 	return {
 		petition: serializedPetition,
 		organization: org,
 		signatureCount: signatureCount?.count || 0,
+		recentSignatures: serializedSignatures,
 		session,
 		isAdmin
 	};
