@@ -12,6 +12,7 @@
 	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { formatDate } from '$lib/utils/date';
 
 	const { data, form } = $props();
 
@@ -105,14 +106,41 @@
 				<Card.Root class="mt-8">
 					<Card.Header>
 						<Card.Title>Recent Signatures</Card.Title>
+						<p class="text-sm text-muted-foreground">
+							{formatNumber(data.signatureCount)} people have signed this petition
+						</p>
 					</Card.Header>
 					<Card.Content>
-						<div class="space-y-4">
-							<!-- TODO: Add actual signatures list -->
-							<p class="text-sm text-muted-foreground">
-								{formatNumber(data.signatureCount)} people have signed this petition
+						{#if data.recentSignatures && data.recentSignatures.length > 0}
+							<div class="space-y-3">
+								{#each data.recentSignatures as signature}
+									<div class="flex items-start gap-3 border-b pb-3 last:border-0 last:pb-0">
+										<Avatar
+											name1={signature.givenName || ''}
+											name2={signature.familyName}
+											class="mt-0.5 size-8"
+										/>
+										<div class="min-w-0 flex-1">
+											<div class="flex items-baseline justify-between gap-2">
+												<p class="text-sm font-medium">
+													{signature.givenName}
+													{signature.familyName}
+												</p>
+												{#if signature.createdAt}
+													<time class="text-xs whitespace-nowrap text-muted-foreground">
+														{formatDate(signature.createdAt)}
+													</time>
+												{/if}
+											</div>
+										</div>
+									</div>
+								{/each}
+							</div>
+						{:else}
+							<p class="py-4 text-center text-sm text-muted-foreground">
+								Be the first to sign this petition!
 							</p>
-						</div>
+						{/if}
 					</Card.Content>
 				</Card.Root>
 			</div>
