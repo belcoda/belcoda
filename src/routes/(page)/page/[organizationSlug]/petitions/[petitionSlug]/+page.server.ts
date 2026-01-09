@@ -1,8 +1,12 @@
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { petition, petitionSignature, organization } from '$lib/schema/drizzle';
 import { eq, and, isNull, count } from 'drizzle-orm';
 import pino from '$lib/pino';
+import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
+import { getTransaction } from '$lib/server/db/zeroDrizzle';
+import { parse } from 'valibot';
+import { signPetitionFormSchema } from '$lib/schema/petition/petition-signature';
 
 const log = pino(import.meta.url);
 
@@ -65,3 +69,87 @@ export async function load({ params, locals }) {
 		isAdmin
 	};
 }
+
+export const actions = {
+	sign: async ({ request, params, locals }) => {
+		const { organizationSlug, petitionSlug } = params;
+
+		//! NOTE: Using drizzle database operations for now because its a server page and we don't really
+		//! need zero permission checks here. Will change if we need zero for consistency or any other
+		//! reason.
+		try {
+			const [org] = await db
+				.select()
+				.from(organization)
+				.where(eq(organization.slug, organizationSlug))
+				.limit(1);
+
+			if (!org) {
+				return fail(404, { error: 'Organization not found', success: false });
+			}
+
+			const [petitionData] = await db
+				.select()
+				.from(petition)
+				.where(
+					and(
+						eq(petition.slug, petitionSlug),
+						eq(petition.organizationId, org.id),
+						isNull(petition.deletedAt)
+					)
+				)
+				.limit(1);
+
+			if (!petitionData) {
+				return fail(404, { error: 'Petition not found', success: false });
+			}
+
+			if (!petitionData.published) {
+				return fail(400, { error: 'This petition is not published', success: false });
+			}
+
+			const formData = await request.formData();
+			const data = {
+				givenName: formData.get('givenName')?.toString() || '',
+				familyName: formData.get('familyName')?.toString() || '',
+				emailAddress: formData.get('emailAddress')?.toString() || '',
+				phoneNumber: formData.get('phoneNumber')?.toString() || ''
+			};
+			const parsed = parse(signPetitionFormSchema, data);
+
+			await getTransaction().then(async (tx) => {
+				await signPetitionHelper({
+					tx,
+					petitionId: petitionData.id,
+					organizationId: org.id,
+					teamId: petitionData.teamId || undefined,
+					personAction: {
+						organizationId: org.id,
+						givenName: parsed.givenName || null,
+						familyName: parsed.familyName || null,
+						emailAddress: parsed.emailAddress || null,
+						phoneNumber: parsed.phoneNumber || null,
+						country: org.country,
+						subscribed: true
+					},
+					signatureDetails: {
+						channel: {
+							type: 'petitionPage'
+						}
+					}
+				});
+			});
+
+			return {
+				success: true,
+				message: 'Thank you for signing this petition!'
+			};
+		} catch (err) {
+			log.error({ err, organizationSlug, petitionSlug }, 'Error signing petition');
+			return fail(500, {
+				error: err instanceof Error ? err.message : 'An error occurred while signing the petition',
+				success: false
+			});
+		}
+	}
+};

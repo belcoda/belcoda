@@ -9,8 +9,11 @@
 	import PenLineIcon from '@lucide/svelte/icons/pen-line';
 	import EditIcon from '@lucide/svelte/icons/edit';
 	import ShareIcon from '@lucide/svelte/icons/share-2';
+	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 
-	const { data } = $props();
+	const { data, form } = $props();
 
 	// Calculate dynamic target (similar to change.org)
 	function calculateTarget(currentSignatures: number): number {
@@ -38,20 +41,14 @@
 	}
 
 	let signingInProgress = $state(false);
-	let formData = $state({
+	let formValues = $state({
 		givenName: '',
 		familyName: '',
 		emailAddress: '',
-		phoneNumber: '',
-		comment: ''
+		phoneNumber: ''
 	});
 
-	async function handleSignPetition() {
-		signingInProgress = true;
-		// TODO: Implement actual signing logic
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		signingInProgress = false;
-	}
+	const signatureSuccess = $derived(form?.success === true);
 </script>
 
 <div class="min-h-screen bg-background">
@@ -168,68 +165,118 @@
 						</Card.Header>
 
 						<Card.Content>
-							<form onsubmit={handleSignPetition} class="space-y-4">
-								<div class="space-y-2">
-									<Label for="givenName">First name</Label>
-									<Input
-										id="givenName"
-										bind:value={formData.givenName}
-										placeholder="First name"
-										required
-									/>
+							{#if signatureSuccess}
+								<div class="space-y-4 text-center">
+									<CheckCircleIcon class="mx-auto size-16 text-green-600" />
+									<div>
+										<h3 class="text-lg font-semibold">Thank you for signing!</h3>
+										<p class="text-sm text-muted-foreground">
+											Your signature has been recorded and you'll receive updates about this
+											petition.
+										</p>
+									</div>
+									<Button
+										variant="outline"
+										class="w-full"
+										onclick={() => {
+											window.location.reload();
+										}}
+									>
+										Return to petition
+									</Button>
 								</div>
+							{:else}
+								<form
+									method="POST"
+									action="?/sign"
+									class="space-y-4"
+									use:enhance={() => {
+										signingInProgress = true;
+										return async ({ result, update }) => {
+											await update();
+											signingInProgress = false;
 
-								<div class="space-y-2">
-									<Label for="familyName">Last name</Label>
-									<Input
-										id="familyName"
-										bind:value={formData.familyName}
-										placeholder="Last name"
-										required
-									/>
-								</div>
+											if (result.type === 'success' && result.data?.success) {
+												formValues = {
+													givenName: '',
+													familyName: '',
+													emailAddress: '',
+													phoneNumber: ''
+												};
+												// Refresh signature count
+												await invalidateAll();
+											}
+										};
+									}}
+								>
+									{#if form?.error}
+										<div
+											class="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
+										>
+											{form.error}
+										</div>
+									{/if}
 
-								<div class="space-y-2">
-									<Label for="emailAddress">Email</Label>
-									<Input
-										id="emailAddress"
-										type="email"
-										bind:value={formData.emailAddress}
-										placeholder="your@email.com"
-										required
-									/>
-								</div>
+									<div class="space-y-2">
+										<Label for="givenName">First name</Label>
+										<Input
+											id="givenName"
+											name="givenName"
+											bind:value={formValues.givenName}
+											placeholder="First name"
+											required
+											disabled={signingInProgress}
+										/>
+									</div>
 
-								<div class="space-y-2">
-									<Label for="phoneNumber">Phone (optional)</Label>
-									<Input
-										id="phoneNumber"
-										type="tel"
-										bind:value={formData.phoneNumber}
-										placeholder="+1234567890"
-									/>
-								</div>
+									<div class="space-y-2">
+										<Label for="familyName">Last name</Label>
+										<Input
+											id="familyName"
+											name="familyName"
+											bind:value={formValues.familyName}
+											placeholder="Last name"
+											required
+											disabled={signingInProgress}
+										/>
+									</div>
 
-								<div class="space-y-2">
-									<Label for="comment">Comment (optional)</Label>
-									<Textarea
-										id="comment"
-										bind:value={formData.comment}
-										placeholder="Why are you signing this petition?"
-										class="min-h-[80px]"
-									/>
-								</div>
+									<div class="space-y-2">
+										<Label for="emailAddress">Email</Label>
+										<Input
+											id="emailAddress"
+											name="emailAddress"
+											type="email"
+											bind:value={formValues.emailAddress}
+											placeholder="your@email.com"
+											required
+											disabled={signingInProgress}
+										/>
+									</div>
 
-								<Button type="submit" class="w-full" size="lg" disabled={signingInProgress}>
-									<PenLineIcon class="mr-2 size-5" />
-									{signingInProgress ? 'Signing...' : 'Sign this petition'}
-								</Button>
+									<div class="space-y-2">
+										<Label for="phoneNumber">Phone (optional)</Label>
+										<Input
+											id="phoneNumber"
+											name="phoneNumber"
+											type="tel"
+											bind:value={formValues.phoneNumber}
+											placeholder="+1234567890"
+											disabled={signingInProgress}
+										/>
+									</div>
 
-								<p class="text-xs text-muted-foreground">
-									By signing, you agree to receive updates about this petition and related
-									campaigns.
-								</p>
-							</form>
+									<Button type="submit" class="w-full" size="lg" disabled={signingInProgress}>
+										<PenLineIcon class="mr-2 size-5" />
+										{signingInProgress ? 'Signing...' : 'Sign this petition'}
+									</Button>
+
+									<p class="text-xs text-muted-foreground">
+										By signing, you agree to receive updates about this petition and related
+										campaigns.
+									</p>
+								</form>
+							{/if}
 						</Card.Content>
 					</Card.Root>
 
