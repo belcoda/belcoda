@@ -2270,10 +2270,11 @@ const userTable = {
       customType: null as unknown as boolean,
       serverName: "two_factor_enabled",
     },
-    preferences: {
-      type: "json",
+    preferredLanguage: {
+      type: "string",
       optional: true,
-      customType: null as unknown as { preferredLanguage: "en" | "pt" | "es" },
+      customType: null as unknown as "en" | "pt" | "es",
+      serverName: "preferred_language",
     },
     createdAt: {
       type: "number",

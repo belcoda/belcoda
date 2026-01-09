@@ -5,10 +5,10 @@ export const preferencesItems: {
 	permissions: 'admin' | 'owner' | 'member';
 }[] = [
 	{
-		title: 'Configuration',
-		url: '/settings/organization/settings',
-		keywords: ['organization', 'settings', 'preferences', 'config'],
-		permissions: 'admin'
+		title: 'Language',
+		url: '/preferences/language',
+		keywords: ['language', 'preferences', 'config'],
+		permissions: 'member'
 	},
 	{
 		title: 'Themes & colors',

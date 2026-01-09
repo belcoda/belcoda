@@ -175,8 +175,8 @@ export function buildBetterAuth(localeInput: string) {
 		},
 		user: {
 			additionalFields: {
-				preferences: {
-					type: 'json',
+				preferredLanguage: {
+					type: 'string',
 					input: true,
 					required: false
 				}
