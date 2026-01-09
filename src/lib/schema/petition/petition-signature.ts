@@ -86,3 +86,11 @@ export const petitionSignatureHelper = v.object({
 });
 export type PetitionSignatureHelper = v.InferOutput<typeof petitionSignatureHelper>;
 
+// Public form schema for petition signature page
+export const signPetitionFormSchema = v.object({
+	givenName: v.pipe(v.string(), v.minLength(1, 'First name is required')),
+	familyName: v.pipe(v.string(), v.minLength(1, 'Last name is required')),
+	emailAddress: v.pipe(v.string(), v.email('Invalid email address')),
+	phoneNumber: v.optional(v.pipe(v.string(), v.minLength(1)))
+});
+export type SignPetitionFormSchema = v.InferInput<typeof signPetitionFormSchema>;
