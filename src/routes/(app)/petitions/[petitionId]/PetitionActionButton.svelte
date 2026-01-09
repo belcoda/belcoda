@@ -15,10 +15,12 @@
 	import { appState } from '$lib/state.svelte';
 	import { env } from '$env/dynamic/public';
 	import { dev } from '$app/environment';
+	import PetitionMakeACopy from './PetitionMakeACopy.svelte';
 
 	const { PUBLIC_ROOT_DOMAIN } = env;
 
 	let openShareModal = $state(false);
+	let openMakeACopyModal = $state(false);
 
 	const petitionPageUrl = $derived(() => {
 		const orgSlug = appState.activeOrganization.data?.slug;
@@ -100,6 +102,12 @@
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Group>
+				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
+					Make a copy
+				</DropdownMenu.Item>
+			</DropdownMenu.Group>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 </ButtonGroup.Root>
@@ -110,3 +118,4 @@
 		<!-- TODO: Add petition share modal component -->
 	</div>
 </ResponsiveModal>
+<PetitionMakeACopy {petition} bind:open={openMakeACopyModal} />
