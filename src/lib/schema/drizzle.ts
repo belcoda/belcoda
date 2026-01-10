@@ -20,7 +20,7 @@ import {
 import type { OrganizationSchema } from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
-import type { UserSchema, UserPreferencesSchema } from '$lib/schema/user';
+import type { UserSchema } from '$lib/schema/user';
 import type { InvitationSchema } from '$lib/schema/invitation';
 import type { ApiKeySchema } from '$lib/schema/api-key';
 import type {
@@ -47,7 +47,7 @@ import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
 
 import { type CountryCode } from '$lib/utils/country';
-import { type LanguageCode } from '$lib/utils/language';
+import { type LanguageCode, type Locale } from '$lib/utils/language';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
@@ -142,7 +142,7 @@ export const user = pgTable('user', {
 	image: text('image'),
 	twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
 	stripeCustomerId: text('stripe_customer_id'),
-	preferences: jsonb('preferences').$type<UserPreferencesSchema>(),
+	preferredLanguage: text('preferred_language').$type<Locale>(),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 });

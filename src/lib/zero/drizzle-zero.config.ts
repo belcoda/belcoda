@@ -50,7 +50,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			emailVerified: true,
 			image: true,
 			name: true,
-			preferences: true,
+			preferredLanguage: true,
 			twoFactorEnabled: true,
 			stripeCustomerId: false,
 			createdAt: true,
