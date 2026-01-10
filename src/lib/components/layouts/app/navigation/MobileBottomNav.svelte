@@ -27,10 +27,10 @@
 				<div class="text-body group-hover:text-fg-brand mt-1 text-xs">Events</div>
 			</div>
 		</a>
-		<a href="/actions" class={navClass}>
+		<a href="/petitions" class={navClass}>
 			<div class="text-center">
 				<div class="icon-[mage--zap] size-6">&nbsp;</div>
-				<div class="text-body group-hover:text-fg-brand mt-1 text-xs">Actions</div>
+				<div class="text-body group-hover:text-fg-brand mt-1 text-xs">Petitions</div>
 			</div>
 		</a>
 	</div>
