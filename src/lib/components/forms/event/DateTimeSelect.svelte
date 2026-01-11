@@ -355,7 +355,6 @@
 							} else {
 								$data.settings = {
 									displayTimezone: v,
-									signupFields: $data.settings?.signupFields ?? { standard: [], custom: [] },
 									survey: { schemaVersion: '1.0.0', collections: [] }
 								};
 							}
