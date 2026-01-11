@@ -112,7 +112,7 @@ export type UpdatePerson = v.InferInput<typeof updatePerson>;
 
 export const updatePersonZero = v.object({
 	...updatePerson.entries,
-	dateOfBirth: v.optional(v.nullable(helpers.timestampToDate))
+	dateOfBirth: v.optional(v.nullable(helpers.unixTimestamp))
 });
 export type UpdatePersonZero = v.InferOutput<typeof updatePersonZero>;
 export const updatePersonRest = v.object({
