@@ -87,6 +87,12 @@
 				(_, index) => index !== optionIndex
 			);
 	}
+
+	function isChecked(field: SurveyQuestionType) {
+		return $data.settings?.survey?.collections[0].questions.some(
+			(question) => question.type === field
+		);
+	}
 </script>
 
 <div class="space-y-6">
@@ -101,6 +107,7 @@
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-address"
+					checked={isChecked('person.address')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.address', checked)}
 				/>
 				<Label for="standard-information-address" class="cursor-pointer font-normal">Address</Label>
@@ -108,6 +115,7 @@
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-gender"
+					checked={isChecked('person.gender')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.gender', checked)}
 				/>
 				<Label for="standard-information-gender" class="cursor-pointer font-normal">Gender</Label>
@@ -115,6 +123,7 @@
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-dob"
+					checked={isChecked('person.dateOfBirth')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.dateOfBirth', checked)}
 				/>
 				<Label for="standard-information-dob" class="cursor-pointer font-normal"
@@ -124,6 +133,7 @@
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-workplace"
+					checked={isChecked('person.workplace')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.workplace', checked)}
 				/>
 				<Label for="standard-information-workplace" class="cursor-pointer font-normal"
@@ -133,20 +143,11 @@
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-position"
+					checked={isChecked('person.position')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.position', checked)}
 				/>
 				<Label for="standard-information-position" class="cursor-pointer font-normal"
 					>Position</Label
-				>
-			</div>
-			<div class="flex items-center gap-3">
-				<Checkbox
-					id="standard-information-preferred-language"
-					onCheckedChange={(checked) =>
-						toggleStandardInformation('person.preferredLanguage', checked)}
-				/>
-				<Label for="standard-information-preferred-language" class="cursor-pointer font-normal"
-					>Preferred language</Label
 				>
 			</div>
 		</div>
@@ -314,6 +315,9 @@
 			<Dropdown.Item onclick={() => addQuestion('custom.radioGroup')}>Multiple choice</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => addQuestion('custom.dropdown')}>Dropdown</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.emailInput')}>Email</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.phoneInput')}>Phone</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.numberInput')}>Number</Dropdown.Item>
 		</Dropdown.Content>
 	</Dropdown.Root>
 {/snippet}
@@ -342,6 +346,15 @@
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.dropdown')}
 				>Dropdown</Dropdown.Item
+			>
+			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.emailInput')}
+				>Email</Dropdown.Item
+			>
+			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.phoneInput')}
+				>Phone</Dropdown.Item
+			>
+			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.numberInput')}
+				>Number</Dropdown.Item
 			>
 		</Dropdown.Content>
 	</Dropdown.Root>
