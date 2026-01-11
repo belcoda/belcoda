@@ -68,12 +68,6 @@ export function addQuestion(type: SurveyQuestionType, locale: Locale): SurveyQue
 				type: 'person.gender'
 			};
 
-		case 'person.preferredLanguage':
-			return {
-				...baseQuestion,
-				type: 'person.preferredLanguage'
-			};
-
 		case 'person.workplace':
 			return {
 				...baseQuestion,
@@ -95,10 +89,26 @@ export function addQuestion(type: SurveyQuestionType, locale: Locale): SurveyQue
 		case 'custom.textInput':
 			return {
 				...baseQuestion,
-				type: 'custom.textInput',
-				format: 'text'
+				type: 'custom.textInput'
 			};
 
+		case 'custom.emailInput':
+			return {
+				...baseQuestion,
+				type: 'custom.emailInput'
+			};
+
+		case 'custom.phoneInput':
+			return {
+				...baseQuestion,
+				type: 'custom.phoneInput'
+			};
+
+		case 'custom.numberInput':
+			return {
+				...baseQuestion,
+				type: 'custom.numberInput'
+			};
 		case 'custom.textarea':
 			return {
 				...baseQuestion,
