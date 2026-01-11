@@ -12,6 +12,7 @@ import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
+import { type SurveyQuestionResponse, surveyQuestionResponse } from '$lib/schema/survey/questions';
 
 export async function getEventByIdUnsafe({
 	eventId,
@@ -70,7 +71,7 @@ export async function signUpForEventHelper({
 	if (!eventResult) {
 		throw new Error('Event not found');
 	}
-	if (eventResult.published) {
+	if (!eventResult.published) {
 		throw new Error('Event is not published');
 	}
 	// We could check if the event has started, but tbh we don't want to block the signup if the event has started
@@ -106,6 +107,7 @@ export async function signUpForEventHelper({
 	return eventSignupResult;
 }
 
+// the actual process of signing up for an event, broken off into its own function
 export async function signUpForEventUnsafe({
 	eventSignupId,
 	eventRecord,
