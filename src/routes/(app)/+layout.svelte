@@ -40,7 +40,7 @@
 </script>
 
 <!-- This is an important check to ensure that we always have a valid userId and active organization Id. These will be used with confidence throughout the rest of the application interface -->
-{#if appState.user.details.type === 'complete' && appState.activeOrganization.details.type === 'complete' && appState.organizations.details.type === 'complete'}
+{#if appState.user?.details.type === 'complete' && appState.activeOrganization?.details.type === 'complete' && appState.organizations?.details.type === 'complete'}
 	{@render children()}
 {:else}
 	<div class="flex h-screen w-screen items-center justify-center">

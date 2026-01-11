@@ -2,6 +2,8 @@ import * as person from '$lib/zero/mutate/person';
 import * as personNote from '$lib/zero/mutate/person_note';
 import * as eventSignup from '$lib/zero/mutate/event_signup';
 import * as event from '$lib/zero/mutate/event';
+import * as petition from '$lib/zero/mutate/petition';
+import * as petitionSignature from '$lib/zero/mutate/petition_signature';
 export default function createMutators() {
 	return {
 		person: {
@@ -25,6 +27,14 @@ export default function createMutators() {
 		event: {
 			create: event.createEvent(),
 			update: event.updateEvent()
+		},
+		petition: {
+			create: petition.createPetition(),
+			update: petition.updatePetition()
+		},
+		petitionSignature: {
+			create: petitionSignature.createPetitionSignature(),
+			update: petitionSignature.updatePetitionSignature()
 		}
 	};
 }

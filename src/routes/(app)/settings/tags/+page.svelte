@@ -10,6 +10,7 @@
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
 </script>
 
 <ContentLayout rootLink="/settings">
@@ -22,7 +23,7 @@
 	</Card.Root>
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<h1>Tags</h1>
+			<H2>Tags</H2>
 			<ResponsiveModal>
 				<h1>Add Tag</h1>
 				{#snippet trigger()}

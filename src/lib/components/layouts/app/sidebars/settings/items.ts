@@ -20,6 +20,13 @@ export const settingsItems: {
 		permissions: 'admin'
 	},
 	{
+		title: 'Email from signatures',
+		group: 'Email',
+		url: '/settings/email/send_signatures',
+		keywords: ['email', 'from', 'address', 'send', 'signature'],
+		permissions: 'admin'
+	},
+	{
 		title: 'Tags',
 		group: 'Community',
 		url: '/settings/tags',

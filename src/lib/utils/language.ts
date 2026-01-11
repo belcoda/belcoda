@@ -159,6 +159,19 @@ export function getEnglishLanguageName(languageCode: LanguageCode): string {
 export const LOCALES = ['en', 'es', 'pt'] as const;
 export type Locale = (typeof LOCALES)[number];
 
+export const getLocaleName = (locale: Locale): string => {
+	switch (locale) {
+		case 'en':
+			return 'English';
+		case 'es':
+			return 'Español';
+		case 'pt':
+			return 'Português';
+		default:
+			return locale;
+	}
+};
+
 export function isSupportedLanguage(locale: string): locale is Locale {
 	return LOCALES.includes(locale as Locale);
 }

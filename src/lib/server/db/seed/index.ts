@@ -1,6 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { reset } from 'drizzle-seed';
 import { generateEvents } from '$lib/server/db/seed/event';
+import { generatePetitions } from '$lib/server/db/seed/petition';
 import { generateTeam } from '$lib/server/db/seed/team';
 import { generateUsers } from '$lib/server/db/seed/user';
 import { generateOrganization } from '$lib/server/db/seed/organization';
@@ -54,6 +55,16 @@ async function main() {
 	});
 	await db.insert(schema.event).values(events).execute();
 	await db.insert(schema.actionCode).values(actionCodes).execute();
+
+	//create petitions
+	const { petitions, actionCodes: petitionActionCodes } = await generatePetitions(15, {
+		organizationId: organization.id,
+		teamId: undefined,
+		pointPersonId: undefined
+	});
+	await db.insert(schema.petition).values(petitions).execute();
+	await db.insert(schema.actionCode).values(petitionActionCodes).execute();
+
 	// create people
 	const people = await generatePeople(50, organization.id);
 	await db.insert(schema.person).values(people).execute();

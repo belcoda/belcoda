@@ -44,6 +44,8 @@
 			return groupBy(filteredResults, 'group');
 		}
 	});
+	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import { t } from '$lib';
 </script>
 
 <Sidebar.Root
@@ -56,7 +58,7 @@
 	<Sidebar.Root collapsible="none" class="flex flex-1">
 		<Sidebar.Header class="gap-3.5 border-b p-4">
 			<div class="flex w-full items-center justify-between">
-				<div class="text-2xl font-bold text-foreground">Settings</div>
+				<H2>{t`Settings`}</H2>
 			</div>
 			<InputGroup.Root class="bg-background">
 				<InputGroup.Input placeholder="Search..." bind:value={searchString} />

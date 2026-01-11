@@ -93,12 +93,12 @@
 							class="flex size-12 items-center justify-center transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110"
 						>
 							{#snippet tooltipContent()}
-								<span class="text-base">Actions</span>
+								<span class="text-base">Petitions</span>
 							{/snippet}
 							{#snippet child({ props })}
-								<a href="/actions" {...props}>
+								<a href="/petitions" {...props}>
 									<span class="icon-[mage--zap] size-7 text-sidebar-primary-foreground"></span>
-									<span class="sr-only">Actions</span></a
+									<span class="sr-only">Petitions</span></a
 								>
 							{/snippet}
 						</Sidebar.MenuButton>

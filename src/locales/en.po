@@ -36,8 +36,9 @@ msgstr "Update your preferred language:"
 msgid "This will update your language for all the pages in the application."
 msgstr "This will update your language for all the pages in the application."
 
-#~ msgid "Settings"
-#~ msgstr "Settings"
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Settings"
+msgstr "Settings"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid ""
