@@ -31,16 +31,26 @@ export async function getOrganizationByIdUnsafe({
 	tx
 }: {
 	organizationId: string;
-	tx: Transaction;
+	tx?: Transaction;
 }): Promise<typeof organization.$inferSelect> {
-	const [result] = await tx.dbTransaction.wrappedTransaction
-		.select()
-		.from(organization)
-		.where(eq(organization.id, organizationId));
-	if (!result) {
-		throw new Error('Organization not found');
+	if (tx) {
+		const [result] = await tx.dbTransaction.wrappedTransaction
+			.select()
+			.from(organization)
+			.where(eq(organization.id, organizationId));
+		if (!result) {
+			throw new Error('Organization not found');
+		}
+		return result;
+	} else {
+		const result = await db.query.organization.findFirst({
+			where: eq(organization.id, organizationId)
+		});
+		if (!result) {
+			throw new Error('Organization not found');
+		}
+		return result;
 	}
-	return result;
 }
 
 export async function _getOrganizationIdBySlugUnsafe({
