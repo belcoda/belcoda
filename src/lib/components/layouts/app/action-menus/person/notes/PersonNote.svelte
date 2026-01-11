@@ -54,7 +54,8 @@
 					<div>{note.user?.name || 'User'}</div>
 				</Item.Title>
 				<Item.Description class="text-xs">
-					{timeAgo.format(note.createdAt, 'short')}
+					<!-- typescript has a problem with 'short' even though it is a valid format-->
+					{timeAgo.format(note.createdAt, 'short' as 'twitter')}
 				</Item.Description>
 			</div>
 			{#if canEditDelete}
