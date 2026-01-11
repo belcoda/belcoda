@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { type ReadEventZero } from '$lib/schema/event';
-	import { type ReadOrganizationZero } from '$lib/schema/organization';
-	import { type ReadPersonZero } from '$lib/schema/person';
+	import { type EventSchema } from '$lib/schema/event';
+	import { type OrganizationSchema } from '$lib/schema/organization';
+	import { type PersonSchema } from '$lib/schema/person';
 	import { renderEventTime } from '$lib/utils/date';
 	import { renderAddress } from '$lib/utils/string/address';
 	import { page } from '$app/state';
@@ -10,14 +10,27 @@
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import LinkIcon from '@lucide/svelte/icons/link';
-
+	import type { SurveySchema } from '$lib/schema/survey/questions';
+	import type { SuperValidated } from 'sveltekit-superforms';
+	import EventSignUpSuccess from '$lib/components/layouts/public/event/EventSignUpSuccess.svelte';
 	type Props = {
-		event: ReadEventZero;
-		organization: ReadOrganizationZero;
-		person?: ReadPersonZero | null;
+		event: EventSchema;
+		organization: OrganizationSchema;
+		person?: PersonSchema | null;
 		signupCount?: number;
+		form?: SuperValidated<SurveySchema>;
+		whatsAppSignupLink?: string;
+		success?: boolean;
 	};
-	const { event, organization, person, signupCount = 0 }: Props = $props();
+	const {
+		event,
+		organization,
+		person,
+		signupCount = 0,
+		whatsAppSignupLink,
+		form,
+		success = false
+	}: Props = $props();
 
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
 	const primaryColor = $derived(
@@ -25,10 +38,16 @@
 	);
 
 	const eventTimeData = $derived(
-		renderEventTime(event.startsAt, event.endsAt, page.data.locale, event.timezone)
+		renderEventTime(
+			event.startsAt.getTime(),
+			event.endsAt.getTime(),
+			page.data.locale,
+			event.timezone
+		)
 	);
 
 	const currentSignups = $derived(signupCount);
+	import EventSignupForm from './EventSignupForm.svelte';
 </script>
 
 <svelte:head>
@@ -179,7 +198,12 @@
 			<div class="lg:col-span-1">
 				<div class="sticky top-8">
 					<div class="rounded-lg bg-white p-6 shadow-sm">
-						<!-- <EventSignupForm {event} {workspace} {person} /> -->
+						{#if form && whatsAppSignupLink && !success}
+							<EventSignupForm {form} {event} {organization} {person} {whatsAppSignupLink} />
+						{/if}
+						{#if success}
+							<EventSignUpSuccess {event} {organization} />
+						{/if}
 					</div>
 				</div>
 			</div>
