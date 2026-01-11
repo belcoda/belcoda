@@ -46,6 +46,7 @@
 	let startDateOpen = $state(false);
 	let endDateOpen = $state(false);
 	import { appState } from '$lib/state.svelte';
+	import { locale } from '$lib/index.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 
 	import * as Item from '$lib/components/ui/item/index.js';
@@ -161,11 +162,7 @@
 						{#snippet child({ props })}
 							<Button {...props} variant="outline" class="w-full justify-between font-normal">
 								{$data.startsAt
-									? renderDate(
-											$data.startsAt,
-											$data.timezone || getLocalTimeZone(),
-											appState.locale
-										)
+									? renderDate($data.startsAt, $data.timezone || getLocalTimeZone(), locale.current)
 									: 'Select date'}
 								<ChevronDownIcon />
 							</Button>
@@ -220,7 +217,7 @@
 						{#snippet child({ props })}
 							<Button {...props} variant="outline" class="w-full justify-between font-normal">
 								{$data.endsAt
-									? renderDate($data.endsAt, $data.timezone || getLocalTimeZone(), appState.locale)
+									? renderDate($data.endsAt, $data.timezone || getLocalTimeZone(), locale.current)
 									: 'Select date'}
 								<ChevronDownIcon />
 							</Button>

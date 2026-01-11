@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { appState } from '$lib/state.svelte';
+	import { locale } from '$lib/index.svelte';
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type Readable } from 'svelte/store';
 	import { type CreateEventZero, type UpdateEventZero } from '$lib/schema/event';
@@ -35,7 +36,7 @@
 	function toggleStandardInformation(field: SurveyQuestionType, checked: boolean) {
 		if (!$data.settings?.survey) return;
 		if (checked) {
-			$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, field, appState.locale);
+			$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, field, locale.current);
 		} else {
 			$data.settings.survey = removeFieldTypeFromSurvey($data.settings.survey, field);
 		}
@@ -43,7 +44,7 @@
 
 	function addQuestion(type: SurveyQuestionType) {
 		if (!$data.settings?.survey) return;
-		$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, type, appState.locale);
+		$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, type, locale.current);
 	}
 
 	function removeQuestion(id: string) {
@@ -65,7 +66,7 @@
 			collectionIndex: 0,
 			questionIndex,
 			type,
-			locale: appState.locale
+			locale: locale.current
 		});
 	}
 
@@ -175,7 +176,7 @@
 								<div class="flex w-full items-center justify-between pr-4">
 									<span class="font-medium">{field.label || 'Untitled Question'}</span>
 									<span class="text-xs text-muted-foreground">
-										{renderQuestionTypeName(field.type, appState.locale)}
+										{renderQuestionTypeName(field.type, locale.current)}
 									</span>
 								</div>
 							</Accordion.Trigger>

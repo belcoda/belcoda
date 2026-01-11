@@ -2,7 +2,7 @@ import { z } from '$lib/zero.svelte';
 import { formatShortTimestamp } from '$lib/utils/date';
 import { getLocalTimeZone } from '@internationalized/date';
 import { appState } from '$lib/state.svelte';
-
+import { locale } from '$lib/index.svelte';
 import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 import { type ReadEventZero } from '$lib/schema/event';
 
@@ -43,7 +43,8 @@ export function handleAddPerson({ eventId, personIds }: { eventId: string; perso
 				details: {
 					channel: {
 						type: 'adminPanel'
-					}
+					},
+					customFields: {}
 				},
 				status: 'signup'
 			},
@@ -66,7 +67,7 @@ export function renderSignupChannel({
 	event: ReadEventZero;
 	date: number;
 }) {
-	const formattedDate = formatShortTimestamp(date, appState.locale, getLocalTimeZone());
+	const formattedDate = formatShortTimestamp(date, locale.current, getLocalTimeZone());
 	switch (channel.type) {
 		case 'eventPage':
 			return `Signed up via event page [${formattedDate}]`;

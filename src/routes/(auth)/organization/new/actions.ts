@@ -1,7 +1,7 @@
 import type { CountryCode } from '$lib/utils/country';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 import { authClient } from '$lib/auth-client';
-import { appState } from '$lib/state.svelte';
+import { locale } from '$lib/index.svelte';
 export async function getCurrentCountry(): Promise<CountryCode> {
 	try {
 		//get the country from the IP address of the user
@@ -16,7 +16,7 @@ export async function getCurrentCountry(): Promise<CountryCode> {
 
 export async function createOrganization(name: string, slug: string) {
 	const country = await getCurrentCountry();
-	const languageCode = appState.locale;
+	const languageCode = locale.current;
 	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 	const settings = defaultOrganizationSettings();
 	const balance = 1;

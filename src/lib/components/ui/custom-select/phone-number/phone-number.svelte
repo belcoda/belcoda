@@ -14,7 +14,7 @@
 		isValidInternationalPhoneNumber
 	} from '$lib/utils/phone';
 	import { appState } from '$lib/state.svelte';
-	const locale = appState.locale;
+	import { locale } from '$lib/index.svelte';
 	import { cn } from '$lib/utils.js';
 
 	import { tick } from 'svelte';
@@ -51,7 +51,7 @@
 		return {
 			value: item,
 			code: getDialingCode(item),
-			label: `${renderLocalizedCountryName(item, locale)}`
+			label: `${renderLocalizedCountryName(item, locale.current)}`
 		};
 	});
 	const options = [...unsortedOptions].sort((a, b) => a.label.localeCompare(b.label));

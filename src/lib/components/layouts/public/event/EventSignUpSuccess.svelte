@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { appState } from '$lib/state.svelte';
+	import { locale } from '$lib/index.svelte';
 	import { type EventSchema } from '$lib/schema/event';
 	import { type OrganizationSchema } from '$lib/schema/organization';
 
@@ -26,7 +27,7 @@
 		renderEventTime(
 			event.startsAt.getTime(),
 			event.endsAt.getTime(),
-			appState.locale,
+			locale.current,
 			event.timezone
 		)
 	);
@@ -61,7 +62,7 @@
 						region: event.region,
 						postcode: event.postcode,
 						country: event.country,
-						locale: appState.locale
+						locale: locale.current
 					})}
 				</span>
 			</div>
