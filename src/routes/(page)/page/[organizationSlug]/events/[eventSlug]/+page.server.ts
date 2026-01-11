@@ -1,13 +1,23 @@
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
-import { error } from '@sveltejs/kit';
+import { error, redirect, fail } from '@sveltejs/kit';
 import { _getEventBySlugUnsafe } from '$lib/server/api/data/event/event';
 import {
 	_getOrganizationIdBySlugUnsafe,
 	getOrganizationByIdUnsafe
 } from '$lib/server/api/data/organization';
+export const ssr = false;
+import { generateWhatsAppSignupLink } from '$lib/utils/events/link';
+import { _getEventActionCodeUnsafe } from '$lib/server/api/data/event/check';
+
+import { superValidate } from 'sveltekit-superforms';
+import { valibot } from 'sveltekit-superforms/adapters';
+import { parse } from 'valibot';
+import { getSurveySchema, type SurveySchema } from '$lib/schema/survey/questions';
+import { type EventSignupHelper, eventSignupHelper } from '$lib/schema/event-signup';
+import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db/zeroDrizzle';
-import { organization, event } from '$lib/schema/drizzle';
+
 export async function load({ locals, params, url }) {
 	log.debug(
 		{
@@ -19,37 +29,100 @@ export async function load({ locals, params, url }) {
 		},
 		'[DEBUG] Route started loading'
 	);
-	const session = locals.session;
-	let organizationObj: typeof organization.$inferSelect | null = null;
-	let eventObj: typeof event.$inferSelect | null | undefined = null;
-	await db.transaction(async (tx) => {
-		const organizationId = await _getOrganizationIdBySlugUnsafe({
-			organizationSlug: params.organizationSlug
-		});
-		if (!organizationId) {
-			return error(404, 'Organization not found');
-		}
 
-		organizationObj = await getOrganizationByIdUnsafe({
-			organizationId: organizationId,
-			tx
-		});
-		if (!organizationObj) {
-			return error(404, 'Organization not found');
-		}
+	const {
+		event: eventObj,
+		organization: organizationObj,
+		whatsAppSignupLink
+	} = await getDetails(params.eventSlug, params.organizationSlug);
 
-		eventObj = await _getEventBySlugUnsafe({
-			eventSlug: params.eventSlug,
-			organizationId: organizationId
-		});
+	const surveySchema = getSurveySchema(eventObj);
+	const form = await superValidate(valibot(surveySchema));
+	return { event: eventObj, organization: organizationObj, whatsAppSignupLink, form };
+}
 
-		if (!eventObj) {
-			return error(404, 'Event not found');
-		}
+export const actions = {
+	default: async ({ request, params }) => {
+		try {
+			const organizationId = await _getOrganizationIdBySlugUnsafe({
+				organizationSlug: params.organizationSlug
+			});
+			if (!organizationId) {
+				return error(404, 'Organization not found');
+			}
+			const eventObj = await _getEventBySlugUnsafe({
+				eventSlug: params.eventSlug,
+				organizationId: organizationId
+			});
+			if (!eventObj) {
+				throw new Error('Event not found');
+			}
+			const surveySchema = getSurveySchema(eventObj);
+			const form = await superValidate(request, valibot(surveySchema));
+			if (!form.valid) {
+				return fail(400, { form });
+			}
+			//sign up for the event
+			const helper: EventSignupHelper = {
+				organizationId: organizationId,
+				person: form.data.person,
+				addedFrom: {
+					type: 'added_from_event',
+					eventSignupId: eventObj.id
+				},
+				eventId: eventObj.id,
+				details: {
+					channel: { type: 'eventPage' },
+					customFields: form.data.customFields
+				}
+			};
 
-		if (eventObj.published === false) {
-			return error(404, 'Event not found');
+			await db.transaction(async (tx) => {
+				const eventSignup = await signUpForEventHelper({
+					tx,
+					eventId: eventObj.id,
+					personAction: form.data.person,
+					signupDetails: {
+						channel: { type: 'eventPage' },
+						customFields: form.data.customFields
+					},
+					organizationId
+				});
+			});
+
+			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`);
+		} catch (err) {
+			return fail(400, err);
 		}
+	}
+};
+
+async function getDetails(eventSlug: string, organizationSlug: string) {
+	const organizationId = await _getOrganizationIdBySlugUnsafe({
+		organizationSlug: organizationSlug
 	});
-	return { session, event: eventObj, organization: organizationObj };
+	if (!organizationId) {
+		return error(404, 'Organization not found');
+	}
+	const organizationObj = await getOrganizationByIdUnsafe({
+		organizationId: organizationId
+	});
+
+	const eventObj = await _getEventBySlugUnsafe({
+		eventSlug: eventSlug,
+		organizationId: organizationId
+	});
+
+	if (!eventObj) {
+		throw new Error('Event not found');
+	}
+
+	const actionCode = await _getEventActionCodeUnsafe({ eventId: eventObj.id });
+	if (!actionCode) {
+		throw new Error('Action code not found');
+	}
+
+	const whatsAppSignupLink = generateWhatsAppSignupLink(eventObj.title, actionCode.id);
+
+	return { event: eventObj, organization: organizationObj, whatsAppSignupLink, actionCode };
 }
