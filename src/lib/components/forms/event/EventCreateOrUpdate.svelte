@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import SvelteLexical from '$lib/components/ui/wysiwyg/SvelteLexical.svelte';
 
 	import { useDebounce } from 'runed';
