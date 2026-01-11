@@ -34,7 +34,12 @@
 		country = $bindable(),
 		class: className,
 		...rest
-	}: { value: string | undefined; valid: boolean; country: CountryCode; class?: string } = $props();
+	}: {
+		value: string | null | undefined;
+		valid?: boolean;
+		country: CountryCode;
+		class?: string;
+	} = $props();
 
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
