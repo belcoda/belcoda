@@ -217,6 +217,11 @@ export const isoPhoneNumber = v.pipe(
 	}, 'Invalid phone number format')
 );
 
+export const e164PhoneNumber = v.pipe(
+	v.string(),
+	v.regex(/^\+[1-9]\d{1,14}$/, 'Invalid phone number format')
+);
+
 export const url = v.pipe(
 	v.string(),
 	v.trim(),
@@ -413,3 +418,12 @@ export const nanoidSchema = v.pipe(
 	v.regex(new RegExp(`^[${nanoidAlphabet}]+$`), 'Must contain only lowercase letters and numbers')
 );
 export type Nanoid = v.InferOutput<typeof nanoidSchema>;
+
+export const address = v.object({
+	addressLine1: mediumStringEmpty,
+	addressLine2: v.optional(mediumStringEmpty),
+	locality: v.optional(mediumStringEmpty),
+	region: v.optional(mediumStringEmpty),
+	postcode: v.optional(mediumStringEmpty),
+	country: v.optional(countryCode)
+});

@@ -2,6 +2,7 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 import { socialMedia, personAddedFrom, DEFAULT_SOCIAL_MEDIA } from '$lib/schema/person/meta';
 import { activityPreviewPayloads } from '$lib/schema/activity/types';
+import type { SurveyQuestion } from '$lib/schema/survey/questions';
 
 export type Gender = v.InferOutput<typeof helpers.gender>;
 
@@ -213,7 +214,6 @@ export type RemovePersonTagMutatorSchemaZero = v.InferOutput<
 
 export const personActionHelper = v.pipe(
 	v.object({
-		organizationId: helpers.uuid,
 		givenName: v.optional(v.nullable(personSchema.entries.givenName)),
 		familyName: v.optional(v.nullable(personSchema.entries.familyName)),
 		emailAddress: v.optional(v.nullable(personSchema.entries.emailAddress)),
@@ -233,12 +233,14 @@ export const personActionHelper = v.pipe(
 		position: v.optional(v.nullable(personSchema.entries.position))
 	}),
 	v.check((input) => {
+		//console.log('checking email or phone number', input, !input.emailAddress && !input.phoneNumber);
 		if (!input.emailAddress && !input.phoneNumber) {
 			return false;
 		}
 		return true;
 	}, 'Either one of email or phone number is required'),
 	v.check((input) => {
+		//console.log('checking given name or family name', input, !input.givenName && !input.familyName);
 		if (!input.givenName && !input.familyName) {
 			return false;
 		}
@@ -246,3 +248,28 @@ export const personActionHelper = v.pipe(
 	}, 'Either one of given name or family name is required')
 );
 export type PersonActionHelper = v.InferOutput<typeof personActionHelper>;
+
+export function setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
+	schema: typeof personActionHelper,
+	questions: SurveyQuestion[]
+) {
+	const questionTypes = questions.map((question) => question.type);
+	const newSchema = v.object({
+		...schema.entries,
+		...(questionTypes.includes('person.dateOfBirth') ? { dateOfBirth: helpers.pastDate } : {}),
+		...(questionTypes.includes('person.gender') ? { gender: helpers.gender } : {}),
+		...(questionTypes.includes('person.workplace') ? { workplace: helpers.mediumStringEmpty } : {}),
+		...(questionTypes.includes('person.position') ? { position: helpers.mediumStringEmpty } : {}),
+		...(questionTypes.includes('person.address')
+			? {
+					addressLine1: helpers.mediumStringEmpty,
+					addressLine2: v.optional(helpers.mediumStringEmpty),
+					locality: v.optional(helpers.mediumStringEmpty),
+					region: v.optional(helpers.mediumStringEmpty),
+					postcode: v.optional(helpers.mediumStringEmpty),
+					country: helpers.countryCode
+				}
+			: {})
+	});
+	return newSchema;
+}
