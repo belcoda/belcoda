@@ -12,6 +12,11 @@ export const organizationSettingsSchema = v.object({
 			replyTo: v.optional(v.nullable(helpers.email), null)
 		}),
 		defaultFromSignatureId: v.optional(v.nullable(helpers.uuid), null)
+	}),
+	theme: v.object({
+		logo: v.optional(v.nullable(helpers.url), null),
+		primaryColor: v.optional(v.nullable(v.string()), null),
+		secondaryColor: v.optional(v.nullable(v.string()), null)
 	})
 });
 
@@ -29,6 +34,11 @@ export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 				replyTo: null
 			},
 			defaultFromSignatureId: null
+		},
+		theme: {
+			logo: null,
+			primaryColor: null,
+			secondaryColor: null
 		}
 	};
 }
