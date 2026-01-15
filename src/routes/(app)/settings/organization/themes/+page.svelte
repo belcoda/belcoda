@@ -43,6 +43,10 @@
 		}
 	}
 
+	if (organization.data?.settings) {
+		syncFormState();
+	}
+
 	async function handleSave() {
 		if (!appState.organizationId) {
 			error = 'Organization ID not found';
@@ -101,65 +105,62 @@
 
 <ContentLayout rootLink="/settings">
 	{#if organization.details.type === 'complete' && organization.data}
-		{#key organization.data.id}
-			{@const _ = syncFormState()}
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>{t`Display Settings`}</Card.Title>
-					<Card.Description>
-						{t`Customize how your workspace appears on public pages like event calendars and event signup pages.`}
-					</Card.Description>
-				</Card.Header>
-				<Card.Content class="space-y-6">
-					<div class="space-y-2">
-						<div class="text-sm font-medium">{t`Tab Icon URL`}</div>
-						<CroppedImageUpload
-							fileUrl={logo}
-							aspectRatio={1}
-							onUpload={async (url) => {
-								logo = url;
-							}}
-							class="max-w-xs"
-						/>
-						<p class="text-sm text-muted-foreground">
-							{t`URL to an icon that will appear in browser tabs for public pages. Recommended size: 32x32px or 64x64px.`}
-						</p>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Display Settings`}</Card.Title>
+				<Card.Description>
+					{t`Customize how your workspace appears on public pages like event calendars and event signup pages.`}
+				</Card.Description>
+			</Card.Header>
+			<Card.Content class="space-y-6">
+				<div class="space-y-2">
+					<div class="text-sm font-medium">{t`Tab Icon URL`}</div>
+					<CroppedImageUpload
+						fileUrl={logo}
+						aspectRatio={1}
+						onUpload={async (url) => {
+							logo = url;
+						}}
+						class="max-w-xs"
+					/>
+					<p class="text-sm text-muted-foreground">
+						{t`URL to an icon that will appear in browser tabs for public pages. Recommended size: 32x32px or 64x64px.`}
+					</p>
+				</div>
+
+				<ColorPicker
+					bind:value={primaryColor}
+					label={t`Primary Color`}
+					description={t`Main color for buttons, links, and primary accents on public pages.`}
+				/>
+
+				<ColorPicker
+					bind:value={secondaryColor}
+					label={t`Secondary Color`}
+					description={t`Accent color for success states and secondary elements on public pages.`}
+				/>
+
+				{#if error}
+					<div class="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+						{error}
 					</div>
+				{/if}
 
-					<ColorPicker
-						bind:value={primaryColor}
-						label={t`Primary Color`}
-						description={t`Main color for buttons, links, and primary accents on public pages.`}
-					/>
-
-					<ColorPicker
-						bind:value={secondaryColor}
-						label={t`Secondary Color`}
-						description={t`Accent color for success states and secondary elements on public pages.`}
-					/>
-
-					{#if error}
-						<div class="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-							{error}
-						</div>
-					{/if}
-
-					{#if success}
-						<div class="rounded-md bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400">
-							{t`Theme settings saved successfully.`}
-						</div>
-					{/if}
-				</Card.Content>
-				<Card.Footer class="flex justify-end gap-2">
-					<Button variant="outline" onclick={handleCancel} disabled={saving}>
-						{t`Cancel`}
-					</Button>
-					<Button onclick={handleSave} disabled={saving}>
-						{saving ? t`Saving...` : t`Save Changes`}
-					</Button>
-				</Card.Footer>
-			</Card.Root>
-		{/key}
+				{#if success}
+					<div class="rounded-md bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400">
+						{t`Theme settings saved successfully.`}
+					</div>
+				{/if}
+			</Card.Content>
+			<Card.Footer class="flex justify-end gap-2">
+				<Button variant="outline" onclick={handleCancel} disabled={saving}>
+					{t`Cancel`}
+				</Button>
+				<Button onclick={handleSave} disabled={saving}>
+					{saving ? t`Saving...` : t`Save Changes`}
+				</Button>
+			</Card.Footer>
+		</Card.Root>
 	{:else}
 		<div class="text-center text-muted-foreground">
 			<p>{t`Failed to load organization settings.`}</p>
