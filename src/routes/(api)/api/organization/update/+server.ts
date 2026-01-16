@@ -1,6 +1,8 @@
 import { json, error } from '@sveltejs/kit';
 import { parse } from 'valibot';
-import { updateOrganization } from '$lib/schema/organization';
+import * as v from 'valibot';
+import { updateOrganization, organizationSchema } from '$lib/schema/organization';
+import { organizationSettingsSchema } from '$lib/schema/organization/settings';
 import { getOrganization } from '$lib/server/api/data/organization';
 import { db } from '$lib/server/db';
 import { organization } from '$lib/schema/drizzle';
@@ -38,7 +40,32 @@ export async function POST(event) {
 		// Validate update data
 		let validatedUpdate;
 		try {
-			validatedUpdate = parse(updateOrganization, updateData);
+			// First validate the top-level fields (excluding settings)
+			const { settings, ...otherFields } = updateData;
+			const baseUpdate = parse(
+				v.partial(
+					v.object({
+						logo: organizationSchema.entries.logo,
+						icon: organizationSchema.entries.icon,
+						country: organizationSchema.entries.country,
+						defaultLanguage: organizationSchema.entries.defaultLanguage,
+						defaultTimezone: organizationSchema.entries.defaultTimezone
+					})
+				),
+				otherFields
+			);
+
+			// Validate settings separately if provided
+			let validatedSettings = undefined;
+			if (settings) {
+				// Validate settings as partial - allow any subset of settings
+				validatedSettings = parse(v.partial(organizationSettingsSchema), settings);
+			}
+
+			validatedUpdate = {
+				...baseUpdate,
+				...(validatedSettings !== undefined ? { settings: validatedSettings } : {})
+			};
 		} catch (err) {
 			log.warn({ error: err, updateData }, 'Error validating update data');
 			return json(
