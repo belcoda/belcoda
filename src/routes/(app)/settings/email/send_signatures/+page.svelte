@@ -5,8 +5,8 @@
 	import { getListFilter, appState } from '$lib/state.svelte';
 	import { listEmailFromSignatures } from '$lib/zero/query/email_from_signature/list';
 	import { readOrganization } from '$lib/zero/query/organizations/read';
-	import { env } from '$env/dynamic/private';
-	const { POSTMARK_SENDING_DOMAIN } = env;
+	import { page } from '$app/state';
+	const { postmarkSendingDomain } = page.data;
 	let emailFromSignatureListFilter = $state({
 		...getListFilter(appState.organizationId)
 	});
@@ -61,7 +61,7 @@
 	}
 
 	const systemEmailAddress = $derived(
-		organization.data ? `${organization.data.slug}@${POSTMARK_SENDING_DOMAIN}` : ''
+		organization.data ? `${organization.data.slug}@${postmarkSendingDomain}` : ''
 	);
 </script>
 
