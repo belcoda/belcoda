@@ -32,18 +32,38 @@
 	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-ccw';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 	import LoaderIcon from '@lucide/svelte/icons/loader';
+	import SystemSignature from './_components/SystemSignature.svelte';
+	import { toast } from 'svelte-sonner';
 
 	let loadingArr: string[] = $state([]);
 
 	async function verifyEmailFromSignature(emailFromSignatureId: string) {
 		loadingArr.push(emailFromSignatureId);
 		try {
-			await fetch(`/api/utils/postmark/verify_send_signature/${emailFromSignatureId}`, {
+			const response = await fetch(`/api/utils/postmark/verify_send_signature/${emailFromSignatureId}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				}
 			});
+
+			if (!response.ok) {
+				let errorMessage = `Failed to verify signature: ${response.statusText}`;
+				try {
+					const errorData = await response.json();
+					errorMessage = errorData.error || errorData.message || errorMessage;
+				} catch {
+					// If JSON parsing fails, try to get text
+					const text = await response.text().catch(() => '');
+					errorMessage = text || errorMessage;
+				}
+				throw new Error(errorMessage);
+			}
+
+			toast.success(t`Email signature verification status updated`);
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : t`Failed to verify email signature`;
+			toast.error(errorMessage);
 		} finally {
 			loadingArr = loadingArr.filter((id) => id !== emailFromSignatureId);
 		}
@@ -87,27 +107,12 @@
 				</Card.Description>
 			</Card.Header>
 			<Card.Content>
-				<div class="space-y-4">
-					<div>
-						<p class="text-sm font-medium">{t`Email address`}</p>
-						<p class="text-sm text-muted-foreground font-mono">{systemEmailAddress}</p>
-						<p class="text-xs text-muted-foreground mt-1">
-							{t`This email address cannot be changed.`}
-						</p>
-					</div>
-					<div>
-						<p class="text-sm font-medium">{t`Display name`}</p>
-						<p class="text-sm">
-							{organization.data.settings.email.systemFromIdentity.name || organization.data.name}
-						</p>
-					</div>
-					<div>
-						<p class="text-sm font-medium">{t`Reply-to address`}</p>
-						<p class="text-sm font-mono">
-							{organization.data.settings.email.systemFromIdentity.replyTo || systemEmailAddress}
-						</p>
-					</div>
-				</div>
+				<SystemSignature
+					organizationId={organization.data.id}
+					name={organization.data.settings.email.systemFromIdentity.name}
+					replyTo={organization.data.settings.email.systemFromIdentity.replyTo}
+					emailAddress={systemEmailAddress}
+				/>
 			</Card.Content>
 		</Card.Root>
 	{/if}
