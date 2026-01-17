@@ -16,7 +16,6 @@
 	const organization = $derived.by(() =>
 		z.createQuery(readOrganization(appState.queryContext, { organizationId: appState.organizationId }))
 	);
-	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
@@ -32,7 +31,11 @@
 	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-ccw';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 	import LoaderIcon from '@lucide/svelte/icons/loader';
+	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import SystemSignature from './_components/SystemSignature.svelte';
+	import CreateModal from './_components/CreateModal.svelte';
+	import EditModal from './_components/EditModal.svelte';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { toast } from 'svelte-sonner';
 
 	let loadingArr: string[] = $state([]);
@@ -83,6 +86,82 @@
 	const systemEmailAddress = $derived(
 		organization.data ? `${organization.data.slug}@${postmarkSendingDomain}` : ''
 	);
+
+	const defaultSignatureId = $derived(
+		organization.data?.settings.email.defaultFromSignatureId || null
+	);
+
+	const signatureOptions = $derived.by(() => {
+		const options: { value: string; label: string }[] = [
+			{
+				value: '__system__',
+				label: t`System (${organization.data?.settings.email.systemFromIdentity.name || systemEmailAddress})`
+			}
+		];
+
+		if (emailFromSignatureList.data) {
+			for (const sig of emailFromSignatureList.data) {
+				options.push({
+					value: sig.id,
+					label: `${sig.name} <${sig.emailAddress}>`
+				});
+			}
+		}
+
+		return options;
+	});
+
+	const computedSelectedValue = $derived(
+		organization.data ? (defaultSignatureId || '__system__') : '__system__'
+	);
+
+	let selectedSignatureValue = $state<string>('__system__');
+	let updatingDefault = $state(false);
+
+	async function updateDefaultSignature(signatureId: string) {
+		updatingDefault = true;
+		try {
+			const actualId = signatureId === '__system__' ? null : signatureId;
+			const response = await fetch(`/api/organization/settings`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					organizationId: appState.organizationId,
+					settings: {
+						email: {
+							defaultFromSignatureId: actualId
+						}
+					}
+				})
+			});
+
+			if (!response.ok) {
+				let errorMessage = `Failed to update: ${response.statusText}`;
+				try {
+					const errorData = await response.json();
+					errorMessage = errorData.error || errorData.message || errorMessage;
+				} catch {
+					const text = await response.text().catch(() => '');
+					errorMessage = text || errorMessage;
+				}
+				throw new Error(errorMessage);
+			}
+
+			toast.success(t`Default send signature updated successfully`);
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : t`Failed to update default send signature`;
+			toast.error(errorMessage);
+			// Revert to previous value on error
+			if (organization.data) {
+				const currentValue = organization.data.settings.email.defaultFromSignatureId || '__system__';
+				selectedSignatureValue = currentValue;
+			}
+		} finally {
+			updatingDefault = false;
+		}
+	}
 </script>
 
 <ContentLayout rootLink="/settings">
@@ -113,6 +192,45 @@
 					replyTo={organization.data.settings.email.systemFromIdentity.replyTo}
 					emailAddress={systemEmailAddress}
 				/>
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root class="mt-6">
+			<Card.Header>
+				<Card.Title>{t`Default send signature`}</Card.Title>
+				<Card.Description>
+					{t`Choose which email signature will be used by default when sending emails. You can override this for individual emails.`}
+				</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				<div class="space-y-2">
+					{#key organization.data?.settings.email.defaultFromSignatureId}
+						<Select.Root
+							type="single"
+							value={computedSelectedValue}
+							onValueChange={(value) => {
+								if (value) {
+									selectedSignatureValue = value;
+									updateDefaultSignature(value);
+								}
+							}}
+							disabled={updatingDefault}
+						>
+							<Select.Trigger class="w-full justify-between">
+								{signatureOptions.find((opt) => opt.value === (selectedSignatureValue || computedSelectedValue))?.label ||
+									t`Select default signature`}
+							</Select.Trigger>
+							<Select.Content>
+								{#each signatureOptions as option}
+									<Select.Item value={option.value} label={option.label} />
+								{/each}
+							</Select.Content>
+						</Select.Root>
+					{/key}
+					{#if updatingDefault}
+						<p class="text-sm text-muted-foreground">{t`Updating...`}</p>
+					{/if}
+				</div>
 			</Card.Content>
 		</Card.Root>
 	{/if}
@@ -204,6 +322,20 @@
 								<Table.Cell>
 									<div class="flex items-center gap-2">
 										{#if signature.externalId}
+											<EditModal signature={signature}>
+												{#snippet trigger()}
+													<Tooltip.Root>
+														<Tooltip.Trigger>
+															<Button variant="ghost" size="icon-sm">
+																<PencilIcon class="size-4" />
+															</Button>
+														</Tooltip.Trigger>
+														<Tooltip.Content>
+															{t`Edit signature`}
+														</Tooltip.Content>
+													</Tooltip.Root>
+												{/snippet}
+											</EditModal>
 											<Tooltip.Root>
 												<Tooltip.Trigger>
 													<Button
@@ -273,6 +405,13 @@
 									</div>
 									<div class="flex items-center gap-2">
 										{#if signature.externalId}
+											<EditModal signature={signature}>
+												{#snippet trigger()}
+													<Button variant="ghost" size="icon">
+														<PencilIcon class="size-4" />
+													</Button>
+												{/snippet}
+											</EditModal>
 											<Button
 												variant="ghost"
 												size="icon"
@@ -351,15 +490,14 @@
 	{#snippet header()}
 		<div class="flex items-center justify-between">
 			<H2>{t`Email from signatures`}</H2>
-			<ResponsiveModal>
-				<h1>{t`Add Email from signature`}</h1>
+			<CreateModal>
 				{#snippet trigger()}
 					<Button variant="outline">
 						<PlusIcon class="size-4" />
 						{t`New`}
 					</Button>
 				{/snippet}
-			</ResponsiveModal>
+			</CreateModal>
 		</div>
 	{/snippet}
 </ContentLayout>
