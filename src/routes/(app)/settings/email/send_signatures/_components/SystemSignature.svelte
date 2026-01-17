@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { t } from '$lib';
-	import { authClient } from '$lib/auth-client';
 	import { parse } from 'valibot';
 	import { renderValiError, shortString, email } from '$lib/schema/helpers';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -8,6 +7,7 @@
 	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import XIcon from '@lucide/svelte/icons/x';
 	import CheckIcon from '@lucide/svelte/icons/check';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		organizationId: string;
@@ -32,7 +32,7 @@
 	}) {
 		saving = true;
 		try {
-			const response = await fetch(`/api/v1/organization/settings`, {
+			const response = await fetch(`/api/organization/settings`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -51,8 +51,16 @@
 			});
 
 			if (!response.ok) {
-				const errorData = await response.json().catch(() => ({ error: 'Failed to update' }));
-				throw new Error(errorData.error || 'Failed to update organization');
+				let errorMessage = `Failed to update: ${response.statusText}`;
+				try {
+					const errorData = await response.json();
+					errorMessage = errorData.error || errorData.message || errorMessage;
+				} catch {
+					// If JSON parsing fails, try to get text
+					const text = await response.text().catch(() => '');
+					errorMessage = text || errorMessage;
+				}
+				throw new Error(errorMessage);
 			}
 
 			// Update local state
@@ -64,9 +72,11 @@
 				replyTo = updates.replyTo;
 				editingReplyTo = false;
 			}
+
+			toast.success(t`System signature updated successfully`);
 		} catch (err) {
-			console.error('Error updating organization settings:', err);
-			alert(t`Failed to update system signature. Please try again.`);
+			const errorMessage = err instanceof Error ? err.message : t`Failed to update system signature`;
+			toast.error(errorMessage);
 		} finally {
 			saving = false;
 		}
