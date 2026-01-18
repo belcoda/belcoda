@@ -265,7 +265,7 @@
 		{#snippet header()}
 			<div class="flex items-center justify-between">
 				<H2>API Keys</H2>
-				{#if appState.isAdmin}
+				{#if appState.isAdminOrOwner}
 					<ResponsiveModal bind:open={modalOpen} title="Create API Key">
 						{#snippet trigger()}
 							<Button variant="outline"><PlusIcon /> New</Button>
