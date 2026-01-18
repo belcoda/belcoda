@@ -94,38 +94,7 @@
 			<div class="flex flex-col items-center justify-center py-12 text-center">
 				<p class="text-muted-foreground mb-4">No webhooks configured</p>
 				{#if appState.isOwner}
-					<ResponsiveModal title="Create Webhook" bind:open={createModalOpen}>
-						{#snippet trigger()}
-							<Button>Create Webhook</Button>
-						{/snippet}
-						{#snippet children()}
-							<div class="space-y-2">
-								<Label for="webhook-name">Name</Label>
-								<Input
-									id="webhook-name"
-									bind:value={name}
-									placeholder="My Webhook"
-									required
-								/>
-							</div>
-							<div class="space-y-2">
-								<Label for="webhook-url">Target URL</Label>
-								<Input
-									id="webhook-url"
-									bind:value={targetUrl}
-									type="url"
-									placeholder="https://example.com/webhook"
-									required
-								/>
-							</div>
-						{/snippet}
-						{#snippet footer()}
-							<div class="flex justify-end gap-2">
-								<Button variant="outline" onclick={() => (createModalOpen = false)}>Cancel</Button>
-								<Button onclick={handleCreateWebhook}>Create</Button>
-							</div>
-						{/snippet}
-					</ResponsiveModal>
+					<Button onclick={() => (createModalOpen = true)}>Create Webhook</Button>
 				{/if}
 			</div>
 		{:else}
