@@ -120,6 +120,14 @@ export const createWebhook = v.object({
 });
 export type CreateWebhook = v.InferOutput<typeof createWebhook>;
 
+export const createWebhookZero = v.object({
+	name: webhookSchema.entries.name,
+	targetUrl: webhookSchema.entries.targetUrl,
+	eventTypes: webhookSchema.entries.eventTypes,
+	secret: webhookSchema.entries.secret
+});
+export type CreateWebhookZero = v.InferOutput<typeof createWebhookZero>;
+
 export const updateWebhook = v.partial(
 	v.object({
 		name: webhookSchema.entries.name,
@@ -141,3 +149,14 @@ export const createMutatorSchema = v.object({
 	input: createWebhook,
 	metadata: mutatorMetadata
 });
+export const createMutatorSchemaZero = v.object({
+	input: createWebhookZero,
+	metadata: mutatorMetadata
+});
+export type CreateMutatorSchemaZeroInput = v.InferInput<typeof createMutatorSchemaZero>;
+export type CreateMutatorSchemaZeroOutput = v.InferOutput<typeof createMutatorSchemaZero>;
+
+export const deleteMutatorSchemaZero = v.object({
+	metadata: mutatorMetadata
+});
+export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;

@@ -5,6 +5,7 @@ import * as eventSignup from '$lib/server/api/mutate/event_signup';
 import * as event from '$lib/server/api/mutate/event';
 import * as petition from '$lib/server/api/mutate/petition';
 import * as petitionSignature from '$lib/server/api/mutate/petition_signature';
+import * as webhook from '$lib/server/api/mutate/webhook';
 
 export function createMutators(params: MutatorParams) {
 	return {
@@ -37,6 +38,10 @@ export function createMutators(params: MutatorParams) {
 		petitionSignature: {
 			create: petitionSignature.createPetitionSignature(params),
 			update: petitionSignature.updatePetitionSignature(params)
+		},
+		webhook: {
+			create: webhook.createWebhook(params),
+			delete: webhook.deleteWebhook(params)
 		}
 	};
 }
