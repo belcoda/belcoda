@@ -161,7 +161,13 @@
 
 			apiKeys = apiKeys.filter((key) => key.id !== deletingKeyId);
 			toast.success('API key deleted successfully');
-			closeDeleteDialog();
+			
+			// Close dialog and reset state
+			showDeleteDialog = false;
+			setTimeout(() => {
+				deletingKeyId = null;
+				deleteError = null;
+			}, 300);
 		} catch (e: any) {
 			deleteError = e.message || 'An error occurred while deleting the API key';
 			console.error('Error deleting API key:', e);
