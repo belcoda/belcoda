@@ -14,6 +14,11 @@
 	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
 	import { formatApiKeyDate } from '$lib/utils/date';
 	import { maskApiKey, type ApiKeyDisplay } from '$lib/utils/api-key';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import * as Label from '$lib/components/ui/label/index.js';
+	import CheckIcon from '@lucide/svelte/icons/check';
+	import CopyIcon from '@lucide/svelte/icons/copy';
+	import { toast } from 'svelte-sonner';
 
 	// Permission check: only admins and owners can view API keys
 	const canView = $derived(appState.isAdminOrOwner);
@@ -22,6 +27,14 @@
 	let apiKeys = $state<ApiKeyDisplay[]>([]);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
+
+	// Create API Key Modal state
+	let modalOpen = $state(false);
+	let creating = $state(false);
+	let createError = $state<string | null>(null);
+	let newKeyName = $state('');
+	let newKeyExpiresAt = $state<string>('');
+	let createdKey = $state<string | null>(null);
 
 	// Load API keys
 	async function loadApiKeys() {
@@ -38,6 +51,72 @@
 			console.error('Error loading API keys:', e);
 		} finally {
 			loading = false;
+		}
+	}
+
+	async function handleCreateApiKey() {
+		if (!newKeyName.trim()) {
+			createError = 'Name is required';
+			return;
+		}
+
+		try {
+			creating = true;
+			createError = null;
+			
+			// Calculate expiresIn in seconds if expiration date is provided
+			let expiresIn: number | undefined = undefined;
+			if (newKeyExpiresAt) {
+				const expirationDate = new Date(newKeyExpiresAt);
+				const now = new Date();
+				const secondsUntilExpiration = Math.floor((expirationDate.getTime() - now.getTime()) / 1000);
+				if (secondsUntilExpiration > 0) {
+					expiresIn = secondsUntilExpiration;
+				}
+			}
+
+			const result = await authClient.apiKey.create({
+				name: newKeyName.trim(),
+				expiresIn: expiresIn || null
+			});
+
+			if (result.error) {
+				throw new Error(result.error.message || 'Failed to create API key');
+			}
+
+			// Store the full key (only shown once)
+			createdKey = result.data?.key || null;
+
+			// Reset form
+			newKeyName = '';
+			newKeyExpiresAt = '';
+
+			await loadApiKeys();
+		} catch (e: any) {
+			createError = e.message || 'An error occurred while creating the API key';
+			console.error('Error creating API key:', e);
+		} finally {
+			creating = false;
+		}
+	}
+
+	function handleModalClose() {
+		if (!creating) {
+			modalOpen = false;
+			// Reset state when modal closes
+			setTimeout(() => {
+				newKeyName = '';
+				newKeyExpiresAt = '';
+				createError = null;
+				createdKey = null;
+			}, 300); // Wait for animation
+		}
+	}
+
+	function copyKeyToClipboard() {
+		if (createdKey) {
+			navigator.clipboard.writeText(createdKey);
+			toast.success('API key copied to clipboard');
 		}
 	}
 
@@ -123,11 +202,98 @@
 			<div class="flex items-center justify-between">
 				<H2>API Keys</H2>
 				{#if appState.isAdmin}
-					<ResponsiveModal>
-						<h1>Create API Key</h1>
+					<ResponsiveModal bind:open={modalOpen} title="Create API Key">
 						{#snippet trigger()}
 							<Button variant="outline"><PlusIcon /> New</Button>
 						{/snippet}
+
+						{#if createdKey}
+							<div class="space-y-4">
+								<Alert.Root variant="default">
+									<AlertCircleIcon />
+									<Alert.Title>API Key Created</Alert.Title>
+									<Alert.Description>
+										This key will not be shown again. Please copy it now.
+									</Alert.Description>
+								</Alert.Root>
+
+								<div class="space-y-2">
+									<Label.Root>Your API Key</Label.Root>
+									<div class="flex items-center gap-2">
+										<Input
+											value={createdKey}
+											readonly
+											class="font-mono text-sm"
+											id="api-key-display"
+										/>
+										<Button
+											type="button"
+											variant="outline"
+											size="icon"
+											onclick={copyKeyToClipboard}
+											title="Copy to clipboard"
+										>
+											<CopyIcon class="h-4 w-4" />
+										</Button>
+									</div>
+								</div>
+
+								<div class="flex justify-end gap-2 pt-2">
+									<Button type="button" variant="outline" onclick={handleModalClose}>
+										Close
+									</Button>
+								</div>
+							</div>
+						{:else}
+							<div class="space-y-4">
+								{#if createError}
+									<Alert.Root variant="destructive">
+										<AlertCircleIcon />
+										<Alert.Title>Error</Alert.Title>
+										<Alert.Description>{createError}</Alert.Description>
+									</Alert.Root>
+								{/if}
+
+								<div class="space-y-2">
+									<Label.Root for="key-name">Name</Label.Root>
+									<Input
+										id="key-name"
+										bind:value={newKeyName}
+										placeholder="e.g., Production API Key"
+										required
+										disabled={creating}
+									/>
+								</div>
+
+								<div class="space-y-2">
+									<Label.Root for="key-expires">Expires At (Optional)</Label.Root>
+									<Input
+										id="key-expires"
+										type="datetime-local"
+										bind:value={newKeyExpiresAt}
+										disabled={creating}
+									/>
+									<p class="text-sm text-muted-foreground">
+										Leave empty for a key that never expires
+									</p>
+								</div>
+
+								<div class="flex justify-end gap-2 pt-2">
+									<Button type="button" variant="outline" onclick={handleModalClose} disabled={creating}>
+										Cancel
+									</Button>
+									<Button type="button" onclick={handleCreateApiKey} disabled={creating || !newKeyName.trim()}>
+										{#if creating}
+											<Spinner class="mr-2 h-4 w-4" />
+											Creating...
+										{:else}
+											<CheckIcon class="mr-2 h-4 w-4" />
+											Create
+										{/if}
+									</Button>
+								</div>
+							</div>
+						{/if}
 					</ResponsiveModal>
 				{/if}
 			</div>
