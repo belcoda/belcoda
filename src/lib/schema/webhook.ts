@@ -65,8 +65,8 @@ export const webhookEvents = [
 export const webhookEventsSchema = v.array(v.picklist(webhookEvents));
 export type WebhookEvents = v.InferOutput<typeof webhookEventsSchema>;
 
-// this is the type that is used in the database, it includes the 'any' event type so we're defining it
-export const webhookEventTypes = ['any', ...webhookEvents] as const;
+// this is the type that is used in the database, it includes the 'all' event type so we're defining it
+export const webhookEventTypes = ['all', ...webhookEvents] as const;
 export const webhookEventTypesSchema = v.array(v.picklist(webhookEventTypes));
 export type WebhookEventTypes = v.InferOutput<typeof webhookEventTypesSchema>;
 
