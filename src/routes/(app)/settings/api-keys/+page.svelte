@@ -18,7 +18,9 @@
 	import * as Label from '$lib/components/ui/label/index.js';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import CopyIcon from '@lucide/svelte/icons/copy';
+	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
 
 	// Permission check: only admins and owners can view API keys
 	const canView = $derived(appState.isAdminOrOwner);
@@ -35,6 +37,12 @@
 	let newKeyName = $state('');
 	let newKeyExpiresAt = $state<string>('');
 	let createdKey = $state<string | null>(null);
+
+	// Delete API Key state
+	let deletingKeyId = $state<string | null>(null);
+	let showDeleteDialog = $state(false);
+	let deleting = $state(false);
+	let deleteError = $state<string | null>(null);
 
 	// Load API keys
 	async function loadApiKeys() {
@@ -120,6 +128,51 @@
 		}
 	}
 
+	function openDeleteDialog(keyId: string) {
+		deletingKeyId = keyId;
+		showDeleteDialog = true;
+		deleteError = null;
+	}
+
+	function closeDeleteDialog() {
+		if (!deleting) {
+			showDeleteDialog = false;
+			setTimeout(() => {
+				deletingKeyId = null;
+				deleteError = null;
+			}, 300);
+		}
+	}
+
+	async function handleDeleteApiKey() {
+		if (!deletingKeyId || deleting) return;
+
+		try {
+			deleting = true;
+			deleteError = null;
+
+			const result = await authClient.apiKey.delete({
+				keyId: deletingKeyId as string
+			});
+
+			if (result.error) {
+				throw new Error(result.error.message || 'Failed to delete API key');
+			}
+
+			apiKeys = apiKeys.filter((key) => key.id !== deletingKeyId);
+			toast.success('API key deleted successfully');
+			closeDeleteDialog();
+		} catch (e: any) {
+			deleteError = e.message || 'An error occurred while deleting the API key';
+			console.error('Error deleting API key:', e);
+		} finally {
+			deleting = false;
+		}
+	}
+
+	// Check if user can delete (admins and owners)
+	const canDelete = $derived(appState.isAdminOrOwner);
+
 	onMount(() => {
 		if (canView) {
 			loadApiKeys();
@@ -189,6 +242,17 @@
 									<Table.Cell>{formatApiKeyDate(key.createdAt)}</Table.Cell>
 									<Table.Cell>{formatApiKeyDate(key.expiresAt)}</Table.Cell>
 									<Table.Cell class="text-right">
+										{#if canDelete}
+											<Button
+												variant="ghost"
+												size="icon"
+												onclick={() => openDeleteDialog(key.id)}
+												title="Delete API key"
+												class="text-destructive hover:text-destructive"
+											>
+												<TrashIcon class="h-4 w-4" />
+											</Button>
+										{/if}
 									</Table.Cell>
 								</Table.Row>
 							{/each}
@@ -299,4 +363,41 @@
 			</div>
 		{/snippet}
 	</ContentLayout>
+
+	<!-- Delete Confirmation Dialog -->
+	<Dialog.Root bind:open={showDeleteDialog}>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title>Delete API Key</Dialog.Title>
+				<Dialog.Description>
+					Are you sure you want to delete this API key? This action cannot be undone and any applications using this key will lose access immediately.
+				</Dialog.Description>
+			</Dialog.Header>
+
+			{#if deleteError}
+				<Alert.Root variant="destructive" class="mt-4">
+					<AlertCircleIcon />
+					<Alert.Title>Error</Alert.Title>
+					<Alert.Description>{deleteError}</Alert.Description>
+				</Alert.Root>
+			{/if}
+
+			<Dialog.Footer>
+				<div class="flex gap-2 justify-end">
+					<Button variant="outline" onclick={closeDeleteDialog} disabled={deleting}>
+						Cancel
+					</Button>
+					<Button variant="destructive" onclick={handleDeleteApiKey} disabled={deleting}>
+						{#if deleting}
+							<Spinner class="mr-2 h-4 w-4" />
+							Deleting...
+						{:else}
+							<TrashIcon class="mr-2 h-4 w-4" />
+							Delete
+						{/if}
+					</Button>
+				</div>
+			</Dialog.Footer>
+		</Dialog.Content>
+	</Dialog.Root>
 {/if}
