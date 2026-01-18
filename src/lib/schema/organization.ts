@@ -49,6 +49,29 @@ export const createOrganization = v.object({
 });
 export type CreateOrganization = v.InferInput<typeof createOrganization>;
 
+// Partial settings schema for updates - allows partial updates to nested objects
+const partialOrganizationSettingsSchema = v.partial(
+	v.object({
+		whatsApp: v.partial(
+			v.object({
+				wabaId: v.optional(v.nullable(helpers.shortString), null),
+				number: v.optional(v.nullable(helpers.phoneNumber), null)
+			})
+		),
+		email: v.partial(
+			v.object({
+				systemFromIdentity: v.partial(
+					v.object({
+						name: v.optional(v.nullable(helpers.shortString), null),
+						replyTo: v.optional(v.nullable(helpers.email), null)
+					})
+				),
+				defaultFromSignatureId: v.optional(v.nullable(helpers.uuid), null)
+			})
+		)
+	})
+);
+
 export const updateOrganization = v.partial(
 	v.object({
 		logo: organizationSchema.entries.logo,
@@ -56,7 +79,7 @@ export const updateOrganization = v.partial(
 		country: organizationSchema.entries.country,
 		defaultLanguage: organizationSchema.entries.defaultLanguage,
 		defaultTimezone: organizationSchema.entries.defaultTimezone,
-		settings: organizationSettingsSchema
+		settings: partialOrganizationSettingsSchema
 	})
 );
 export type UpdateOrganization = v.InferInput<typeof updateOrganization>;
