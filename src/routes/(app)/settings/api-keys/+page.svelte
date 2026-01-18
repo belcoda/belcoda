@@ -36,7 +36,7 @@
 					</Table.Header>
 					<Table.Body>
 						<Table.Row>
-							<Table.Cell colspan="5" class="text-center text-muted-foreground">
+							<Table.Cell colspan={5} class="text-center text-muted-foreground">
 								No API keys found
 							</Table.Cell>
 						</Table.Row>
