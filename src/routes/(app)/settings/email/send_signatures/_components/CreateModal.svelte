@@ -46,7 +46,8 @@
 
 			try {
 				const parsed = parse(createMutatorSchemaZero, toCreate);
-				await z.mutate.emailFromSignature.create(parsed);
+				const response = z.mutate.emailFromSignature.create(parsed);
+				await response.server;
 				toast.success(t`Email signature created successfully`);
 				isOpen = false;
 				onCreated?.();

@@ -52,7 +52,8 @@
 
 			try {
 				const parsed = parse(updateMutatorSchemaZero, toUpdate);
-				await z.mutate.emailFromSignature.update(parsed);
+				const response = z.mutate.emailFromSignature.update(parsed);
+				await response.server;
 				toast.success(t`Email signature updated successfully`);
 				isOpen = false;
 				onUpdated?.();
