@@ -112,7 +112,8 @@ export function updateEmailFromSignature(params: MutatorParams) {
 					emailSignatureExternalId: parseInt(emailFromSignatureRecord.externalId),
 					signatureBody: {
 						Name: parseUpdateParams.name,
-						ReplyToEmail: parseUpdateParams.replyTo || undefined
+						ReplyToEmail: parseUpdateParams.replyTo || undefined,
+						ReturnPathDomain: parseUpdateParams.returnPathDomain || undefined
 					}
 				});
 

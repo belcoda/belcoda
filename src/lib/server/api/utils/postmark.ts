@@ -34,7 +34,8 @@ export type PostmarkCreateSendSignatureBody = InferOutput<
 
 export const postmarkUpdateSendSignatureBodySchema = object({
 	ReplyToEmail: optional(email),
-	Name: optional(shortString)
+	Name: optional(shortString),
+	ReturnPathDomain: optional(nullable(domainName))
 });
 export type PostmarkUpdateSendSignatureBody = InferOutput<
 	typeof postmarkUpdateSendSignatureBodySchema
