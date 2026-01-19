@@ -112,16 +112,16 @@ export const actions = {
 				return fail(404, { error: 'Organization not found', success: false });
 			}
 
+			const petitionFilters = [
+				eq(petition.slug, petitionSlug),
+				eq(petition.organizationId, org.id),
+				isNull(petition.deletedAt)
+			];
+
 			const [petitionData] = await db
 				.select()
 				.from(petition)
-				.where(
-					and(
-						eq(petition.slug, petitionSlug),
-						eq(petition.organizationId, org.id),
-						isNull(petition.deletedAt)
-					)
-				)
+				.where(and(...petitionFilters))
 				.limit(1);
 
 			if (!petitionData) {
