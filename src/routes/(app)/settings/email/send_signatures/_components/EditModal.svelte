@@ -11,6 +11,7 @@
 	} from '$lib/schema/email-from-signature';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib';
@@ -96,9 +97,11 @@
 			</Form.Field>
 
 			<div>
-				<Form.Label>{t`Email address`}</Form.Label>
+				<Label>{t`Email address`}</Label>
 				<p class="text-sm text-muted-foreground font-mono mt-1">{signature.emailAddress}</p>
-				<Form.Description>{t`The email address cannot be changed.`}</Form.Description>
+				<p class="text-sm text-muted-foreground mt-1">
+					{t`The email address cannot be changed.`}
+				</p>
 			</div>
 
 			<Form.Field {form} name="replyTo">
