@@ -116,7 +116,7 @@ export const createWebhook = v.object({
 	name: webhookSchema.entries.name,
 	targetUrl: webhookSchema.entries.targetUrl,
 	eventTypes: webhookSchema.entries.eventTypes,
-	secret: webhookSchema.entries.secret
+	secret: v.optional(webhookSchema.entries.secret)
 });
 export type CreateWebhook = v.InferOutput<typeof createWebhook>;
 
@@ -124,7 +124,7 @@ export const createWebhookZero = v.object({
 	name: webhookSchema.entries.name,
 	targetUrl: webhookSchema.entries.targetUrl,
 	eventTypes: webhookSchema.entries.eventTypes,
-	secret: webhookSchema.entries.secret
+	secret: v.optional(webhookSchema.entries.secret)
 });
 export type CreateWebhookZero = v.InferOutput<typeof createWebhookZero>;
 

@@ -38,8 +38,7 @@
 			const parsed = parse(createWebhookZero, {
 				name: name.trim(),
 				targetUrl: targetUrl.trim(),
-				eventTypes: ['all'] as const,
-				secret: '' // Will be generated server-side
+				eventTypes: ['all'] as const
 			});
 
 			const response = z.mutate.webhook.create({
