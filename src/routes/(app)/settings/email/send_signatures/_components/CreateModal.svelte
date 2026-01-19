@@ -16,6 +16,7 @@
 	import { v7 as uuidv7 } from 'uuid';
 	import { t } from '$lib';
 	import { toast } from 'svelte-sonner';
+	import { isSubdomain } from '$lib/utils/string/domain';
 
 	type Props = {
 		trigger: Snippet;
@@ -45,6 +46,15 @@
 			};
 
 			try {
+				if (toCreate.input.returnPathDomain) {
+					const emailDomain = toCreate.input.emailAddress.split('@')[1]?.toLowerCase();
+					const returnDomain = toCreate.input.returnPathDomain.toLowerCase();
+					if (!emailDomain || !isSubdomain(returnDomain, emailDomain)) {
+						throw new Error(
+							`Return path domain must be a subdomain of ${emailDomain || 'the email domain'}.`
+						);
+					}
+				}
 				const parsed = parse(createMutatorSchemaZero, toCreate);
 				const response = z.mutate.emailFromSignature.create(parsed);
 				await response.server;

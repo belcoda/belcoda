@@ -16,6 +16,7 @@
 	import { t } from '$lib';
 	import { toast } from 'svelte-sonner';
 	import type { ReadEmailFromSignatureZero } from '$lib/schema/email-from-signature';
+	import { isSubdomain } from '$lib/utils/string/domain';
 
 	type Props = {
 		trigger: Snippet;
@@ -51,6 +52,15 @@
 			};
 
 			try {
+				if (toUpdate.input.returnPathDomain) {
+					const emailDomain = signature.emailAddress.split('@')[1]?.toLowerCase();
+					const returnDomain = toUpdate.input.returnPathDomain.toLowerCase();
+					if (!emailDomain || !isSubdomain(returnDomain, emailDomain)) {
+						throw new Error(
+							`Return path domain must be a subdomain of ${emailDomain || 'the email domain'}.`
+						);
+					}
+				}
 				const parsed = parse(updateMutatorSchemaZero, toUpdate);
 				const response = z.mutate.emailFromSignature.update(parsed);
 				await response.server;
