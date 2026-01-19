@@ -7,6 +7,7 @@ import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
 import { getTransaction } from '$lib/server/db/zeroDrizzle';
 import { parse } from 'valibot';
 import { signPetitionFormSchema } from '$lib/schema/petition/petition-signature';
+import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
 
 const log = pino(import.meta.url);
 
@@ -62,9 +63,12 @@ export async function load({ params, locals }) {
 		.limit(10);
 
 	const session = locals.session;
-
-	// Check if user is admin/owner
-	const isAdmin = session?.user?.id ? true : false; // TODO: Implement proper admin check
+	const userId = session?.user?.id;
+	let isAdmin = false;
+	if (userId) {
+		const { admin, owner } = await getAdminOwnerOrgs(userId);
+		isAdmin = admin.includes(org.id) || owner.includes(org.id);
+	}
 
 	// Serialize dates to avoid serialization issues
 	const serializedPetition = {
