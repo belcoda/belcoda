@@ -129,11 +129,12 @@ export const actions = {
 			}
 
 			const formData = await request.formData();
+			const phoneValue = formData.get('phoneNumber')?.toString().trim() || '';
 			const data = {
 				givenName: formData.get('givenName')?.toString() || '',
 				familyName: formData.get('familyName')?.toString() || '',
 				emailAddress: formData.get('emailAddress')?.toString() || '',
-				phoneNumber: formData.get('phoneNumber')?.toString() || ''
+				phoneNumber: phoneValue.length ? phoneValue : undefined
 			};
 			const parsed = parse(signPetitionFormSchema, data);
 
