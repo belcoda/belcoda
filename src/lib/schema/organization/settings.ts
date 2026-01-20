@@ -1,6 +1,22 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
+export const themeSettingsSchema = v.object({
+	logo: v.optional(v.nullable(helpers.url), null),
+	primaryColor: v.optional(v.nullable(helpers.hexColor), null),
+	secondaryColor: v.optional(v.nullable(helpers.hexColor), null)
+});
+
+export type ThemeSettingsSchema = v.InferOutput<typeof themeSettingsSchema>;
+
+export function defaultThemeSettings(): ThemeSettingsSchema {
+	return {
+		logo: null,
+		primaryColor: null,
+		secondaryColor: null
+	};
+}
+
 export const organizationSettingsSchema = v.object({
 	whatsApp: v.object({
 		wabaId: v.optional(v.nullable(helpers.shortString), null),
@@ -12,7 +28,8 @@ export const organizationSettingsSchema = v.object({
 			replyTo: v.optional(v.nullable(helpers.email), null)
 		}),
 		defaultFromSignatureId: v.optional(v.nullable(helpers.uuid), null)
-	})
+	}),
+	theme: themeSettingsSchema
 });
 
 export type OrganizationSettingsSchema = v.InferOutput<typeof organizationSettingsSchema>;
@@ -29,6 +46,7 @@ export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 				replyTo: null
 			},
 			defaultFromSignatureId: null
-		}
+		},
+		theme: defaultThemeSettings()
 	};
 }
