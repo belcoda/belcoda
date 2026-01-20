@@ -182,6 +182,11 @@ export const ownedDomainEmail = v.pipe(
 	)
 );
 
+export const hexColor = v.pipe(
+	v.string(),
+	v.regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color format (e.g., #FFFFFF or #FFF)')
+);
+
 import { countryCodes as countryCodeArr } from '$lib/utils/country';
 export const countryCode = v.picklist([...countryCodeArr], 'Invalid country code');
 export type CountryCode = v.InferOutput<typeof countryCode>;
