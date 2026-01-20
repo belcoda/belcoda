@@ -56,7 +56,7 @@ export const updateOrganization = v.partial(
 		country: organizationSchema.entries.country,
 		defaultLanguage: organizationSchema.entries.defaultLanguage,
 		defaultTimezone: organizationSchema.entries.defaultTimezone,
-		settings: v.partial(organizationSettingsSchema)
+		settings: organizationSettingsSchema
 	})
 );
 export type UpdateOrganization = v.InferInput<typeof updateOrganization>;
