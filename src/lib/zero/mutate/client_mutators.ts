@@ -4,6 +4,7 @@ import * as eventSignup from '$lib/zero/mutate/event_signup';
 import * as event from '$lib/zero/mutate/event';
 import * as petition from '$lib/zero/mutate/petition';
 import * as petitionSignature from '$lib/zero/mutate/petition_signature';
+import * as organization from '$lib/zero/mutate/organization';
 export default function createMutators() {
 	return {
 		person: {
@@ -35,6 +36,10 @@ export default function createMutators() {
 		petitionSignature: {
 			create: petitionSignature.createPetitionSignature(),
 			update: petitionSignature.updatePetitionSignature()
+		},
+		organization: {
+			update: organization.updateOrganization(),
+			updateTheme: organization.updateTheme()
 		}
 	};
 }

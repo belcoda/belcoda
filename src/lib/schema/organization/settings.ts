@@ -50,3 +50,11 @@ export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 		theme: defaultThemeSettings()
 	};
 }
+
+export const updateThemeZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid
+	}),
+	input: themeSettingsSchema
+});
+export type UpdateThemeZeroMutatorSchema = v.InferOutput<typeof updateThemeZeroMutatorSchema>;

@@ -1,6 +1,5 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-
 import {
 	organizationSettingsSchema,
 	defaultOrganizationSettings
@@ -55,8 +54,17 @@ export const updateOrganization = v.partial(
 		icon: organizationSchema.entries.icon,
 		country: organizationSchema.entries.country,
 		defaultLanguage: organizationSchema.entries.defaultLanguage,
-		defaultTimezone: organizationSchema.entries.defaultTimezone,
-		settings: organizationSettingsSchema
+		defaultTimezone: organizationSchema.entries.defaultTimezone
 	})
 );
 export type UpdateOrganization = v.InferInput<typeof updateOrganization>;
+
+export const updateOrganizationZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid
+	}),
+	input: updateOrganization
+});
+export type UpdateOrganizationZeroMutatorSchema = v.InferOutput<
+	typeof updateOrganizationZeroMutatorSchema
+>;
