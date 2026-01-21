@@ -127,8 +127,8 @@ export type SetDefaultSignatureMutatorSchemaZero = v.InferOutput<
 
 export const updateSystemFromIdentityMutatorSchemaZero = v.object({
 	input: v.object({
-		name: v.optional(v.nullable(helpers.shortString), null),
-		replyTo: v.optional(v.nullable(helpers.email), null)
+		name: v.optional(v.nullable(helpers.shortString)),
+		replyTo: v.optional(v.nullable(helpers.email))
 	}),
 	metadata: v.object({
 		organizationId: emailFromSignatureSchema.entries.organizationId

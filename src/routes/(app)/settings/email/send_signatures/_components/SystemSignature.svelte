@@ -48,13 +48,10 @@
 			const response = z.mutate.emailFromSignature.updateSystemFromIdentity(parsed);
 			await response.server;
 
-			// Update local state
 			if (updates.name !== undefined) {
-				name = updates.name;
 				editingName = false;
 			}
 			if (updates.replyTo !== undefined) {
-				replyTo = updates.replyTo;
 				editingReplyTo = false;
 			}
 
