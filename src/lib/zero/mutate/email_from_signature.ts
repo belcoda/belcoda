@@ -105,7 +105,8 @@ export function updateSystemFromIdentity() {
 					...currentOrg.settings?.email,
 					systemFromIdentity: {
 						...currentOrg.settings?.email?.systemFromIdentity,
-						...args.input
+						...(args.input.name !== undefined && { name: args.input.name }),
+						...(args.input.replyTo !== undefined && { replyTo: args.input.replyTo })
 					}
 				}
 			},
