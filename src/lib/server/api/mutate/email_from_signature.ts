@@ -5,6 +5,7 @@ import {
 	type CreateMutatorSchemaZeroOutput,
 	type UpdateMutatorSchemaZeroOutput,
 	type DeleteMutatorSchemaZero,
+	type VerifyMutatorSchemaZero,
 	updateEmailFromSignatureZero
 } from '$lib/schema/email-from-signature';
 import { parse } from 'valibot';
@@ -15,6 +16,7 @@ import { emailFromSignatureReadPermissions } from '$lib/zero/query/email_from_si
 import {
 	createSendSignature,
 	updateSendSignature,
+	verifySendSignature,
 	type PostmarkReadSendSignatureBody
 } from '$lib/server/api/utils/postmark';
 import pino from '$lib/pino';
@@ -181,6 +183,58 @@ export function deleteEmailFromSignature(params: MutatorParams) {
 			.update(emailFromSignature)
 			.set({
 				deletedAt: new Date(),
+				updatedAt: new Date()
+			})
+			.where(
+				and(
+					eq(emailFromSignature.id, input.metadata.emailFromSignatureId),
+					eq(emailFromSignature.organizationId, input.metadata.organizationId)
+				)
+			);
+	};
+}
+
+export function verifyEmailFromSignature(params: MutatorParams) {
+	return async function (tx: Transaction, input: VerifyMutatorSchemaZero) {
+		const emailFromSignatureRecord = await tx.query.emailFromSignature
+			.where('id', '=', input.metadata.emailFromSignatureId)
+			.where('organizationId', '=', input.metadata.organizationId)
+			.where((expr) => emailFromSignatureReadPermissions(expr, params.queryContext))
+			.where('deletedAt', 'IS', null)
+			.one()
+			.run();
+		if (!emailFromSignatureRecord) {
+			throw new Error('Email from signature not found');
+		}
+
+		if (
+			![...params.queryContext.adminOrgs, ...params.queryContext.ownerOrgs].includes(
+				input.metadata.organizationId
+			)
+		) {
+			throw new Error('You are not authorized to verify this email signature');
+		}
+
+		if (!emailFromSignatureRecord.externalId) {
+			throw new Error(
+				'Email from signature is not referenced in external email provider. Only external signatures can be verified.'
+			);
+		}
+
+		const result = await verifySendSignature({
+			organizationId: emailFromSignatureRecord.organizationId,
+			emailSignatureExternalId: parseInt(emailFromSignatureRecord.externalId)
+		});
+
+		const verified = result.Confirmed === true;
+		const returnPathDomainVerified = result.ReturnPathDomainVerified === true;
+
+		await tx.dbTransaction.wrappedTransaction
+			.update(emailFromSignature)
+			.set({
+				verified,
+				returnPathDomainVerified,
+				returnPathDomain: result.ReturnPathDomain || emailFromSignatureRecord.returnPathDomain,
 				updatedAt: new Date()
 			})
 			.where(

@@ -42,7 +42,8 @@ export function createMutators(params: MutatorParams) {
 		emailFromSignature: {
 			create: emailFromSignature.createEmailFromSignature(params),
 			update: emailFromSignature.updateEmailFromSignature(params),
-			delete: emailFromSignature.deleteEmailFromSignature(params)
+			delete: emailFromSignature.deleteEmailFromSignature(params),
+			verify: emailFromSignature.verifyEmailFromSignature(params)
 		}
 	};
 }

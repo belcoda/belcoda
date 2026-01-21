@@ -40,7 +40,8 @@ export default function createMutators() {
 		emailFromSignature: {
 			create: emailFromSignature.createEmailFromSignature(),
 			update: emailFromSignature.updateEmailFromSignature(),
-			delete: emailFromSignature.deleteEmailFromSignature()
+			delete: emailFromSignature.deleteEmailFromSignature(),
+			verify: emailFromSignature.verifyEmailFromSignature()
 		}
 	};
 }

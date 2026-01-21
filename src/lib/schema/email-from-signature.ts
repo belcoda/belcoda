@@ -107,3 +107,8 @@ export const deleteMutatorSchemaZero = v.object({
 	metadata: mutatorMetadata
 });
 export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;
+
+export const verifyMutatorSchemaZero = v.object({
+	metadata: mutatorMetadata
+});
+export type VerifyMutatorSchemaZero = v.InferOutput<typeof verifyMutatorSchemaZero>;

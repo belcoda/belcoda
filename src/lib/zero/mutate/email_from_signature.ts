@@ -4,7 +4,8 @@ import { type Schema } from '$lib/zero/schema';
 import {
 	type CreateMutatorSchemaZeroOutput,
 	type UpdateMutatorSchemaZeroOutput,
-	type DeleteMutatorSchemaZero
+	type DeleteMutatorSchemaZero,
+	type VerifyMutatorSchemaZero
 } from '$lib/schema/email-from-signature';
 
 export function createEmailFromSignature() {
@@ -44,6 +45,15 @@ export function deleteEmailFromSignature() {
 		tx.mutate.emailFromSignature.update({
 			id: args.metadata.emailFromSignatureId,
 			deletedAt: new Date().getTime(),
+			updatedAt: new Date().getTime()
+		});
+	};
+}
+
+export function verifyEmailFromSignature() {
+	return async function (tx: Transaction<Schema>, args: VerifyMutatorSchemaZero) {
+		tx.mutate.emailFromSignature.update({
+			id: args.metadata.emailFromSignatureId,
 			updatedAt: new Date().getTime()
 		});
 	};
