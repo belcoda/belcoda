@@ -15,7 +15,6 @@
 	import type { OrganizationSettingsSchema } from '$lib/schema/organization/settings';
 
 	const organization = appState.activeOrganization;
-	let saving = $state(false);
 
 	let { form, data, helpers } = $state(
 		createForm({
@@ -28,7 +27,6 @@
 					return;
 				}
 
-				saving = true;
 				try {
 					const response = z.mutate.organization.updateTheme({
 						metadata: {
@@ -45,8 +43,6 @@
 					toast.success(t`Theme settings saved successfully.`);
 				} catch (err) {
 					toast.error(err instanceof Error ? err.message : 'Failed to save theme settings');
-				} finally {
-					saving = false;
 				}
 			}
 		})
@@ -65,15 +61,20 @@
 				</Card.Header>
 				<Card.Content class="space-y-6">
 					<Form.Field {form} name="favicon">
-						<Form.Label>{t`Tab Icon URL`}</Form.Label>
-						<CroppedImageUpload
-							fileUrl={$data.favicon}
-							aspectRatio={1}
-							onUpload={async (url) => {
-								$data.favicon = url;
-							}}
-							class="max-w-xs"
-						/>
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{t`Tab Icon URL`}</Form.Label>
+								<CroppedImageUpload
+									{...props}
+									fileUrl={$data.favicon}
+									aspectRatio={1}
+									onUpload={async (url) => {
+										$data.favicon = url;
+									}}
+									class="max-w-xs"
+								/>
+							{/snippet}
+						</Form.Control>
 						<Form.Description>
 							{t`URL to an icon that will appear in browser tabs for public pages. Recommended size: 32x32px or 64x64px.`}
 						</Form.Description>
@@ -104,12 +105,11 @@
 								form.reset();
 							});
 						}}
-						disabled={saving}
 					>
 						{t`Cancel`}
 					</Button>
-					<Button type="submit" disabled={saving}>
-						{saving ? t`Saving...` : t`Save Changes`}
+					<Button type="submit">
+						{t`Save Changes`}
 					</Button>
 				</Card.Footer>
 			</Card.Root>
