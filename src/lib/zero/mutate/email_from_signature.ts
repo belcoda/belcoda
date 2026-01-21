@@ -5,7 +5,8 @@ import {
 	type CreateMutatorSchemaZeroOutput,
 	type UpdateMutatorSchemaZeroOutput,
 	type DeleteMutatorSchemaZero,
-	type VerifyMutatorSchemaZero
+	type VerifyMutatorSchemaZero,
+	type SetDefaultSignatureMutatorSchemaZero
 } from '$lib/schema/email-from-signature';
 
 export function createEmailFromSignature() {
@@ -54,6 +55,31 @@ export function verifyEmailFromSignature() {
 	return async function (tx: Transaction<Schema>, args: VerifyMutatorSchemaZero) {
 		tx.mutate.emailFromSignature.update({
 			id: args.metadata.emailFromSignatureId,
+			updatedAt: new Date().getTime()
+		});
+	};
+}
+
+export function setDefaultSignature() {
+	return async function (tx: Transaction<Schema>, args: SetDefaultSignatureMutatorSchemaZero) {
+		const currentOrg = await tx.query.organization
+			.where('id', '=', args.metadata.organizationId)
+			.one()
+			.run();
+
+		if (!currentOrg) {
+			throw new Error('Organization not found');
+		}
+
+		tx.mutate.organization.update({
+			id: args.metadata.organizationId,
+			settings: {
+				...currentOrg.settings,
+				email: {
+					...currentOrg.settings?.email,
+					defaultFromSignatureId: args.input.defaultFromSignatureId
+				}
+			},
 			updatedAt: new Date().getTime()
 		});
 	};

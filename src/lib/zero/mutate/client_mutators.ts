@@ -41,7 +41,8 @@ export default function createMutators() {
 			create: emailFromSignature.createEmailFromSignature(),
 			update: emailFromSignature.updateEmailFromSignature(),
 			delete: emailFromSignature.deleteEmailFromSignature(),
-			verify: emailFromSignature.verifyEmailFromSignature()
+			verify: emailFromSignature.verifyEmailFromSignature(),
+			setDefault: emailFromSignature.setDefaultSignature()
 		}
 	};
 }

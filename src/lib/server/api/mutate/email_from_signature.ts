@@ -6,6 +6,7 @@ import {
 	type UpdateMutatorSchemaZeroOutput,
 	type DeleteMutatorSchemaZero,
 	type VerifyMutatorSchemaZero,
+	type SetDefaultSignatureMutatorSchemaZero,
 	updateEmailFromSignatureZero
 } from '$lib/schema/email-from-signature';
 import { parse } from 'valibot';
@@ -243,5 +244,56 @@ export function verifyEmailFromSignature(params: MutatorParams) {
 					eq(emailFromSignature.organizationId, input.metadata.organizationId)
 				)
 			);
+	};
+}
+
+export function setDefaultSignature(params: MutatorParams) {
+	return async function (tx: Transaction, input: SetDefaultSignatureMutatorSchemaZero) {
+		if (
+			![...params.queryContext.adminOrgs, ...params.queryContext.ownerOrgs].includes(
+				input.metadata.organizationId
+			)
+		) {
+			throw new Error('You are not authorized to update this organization');
+		}
+
+		if (input.input.defaultFromSignatureId !== null) {
+			const signatureRecord = await tx.query.emailFromSignature
+				.where('id', '=', input.input.defaultFromSignatureId)
+				.where('organizationId', '=', input.metadata.organizationId)
+				.where((expr) => emailFromSignatureReadPermissions(expr, params.queryContext))
+				.where('deletedAt', 'IS', null)
+				.one()
+				.run();
+
+			if (!signatureRecord) {
+				throw new Error('Email from signature not found');
+			}
+		}
+
+		const currentOrg = await tx.dbTransaction.wrappedTransaction
+			.select()
+			.from(organization)
+			.where(eq(organization.id, input.metadata.organizationId))
+			.limit(1)
+			.then((rows) => rows[0]);
+
+		if (!currentOrg) {
+			throw new Error('Organization not found');
+		}
+
+		await tx.dbTransaction.wrappedTransaction
+			.update(organization)
+			.set({
+				settings: {
+					...currentOrg.settings,
+					email: {
+						...currentOrg.settings?.email,
+						defaultFromSignatureId: input.input.defaultFromSignatureId
+					}
+				},
+				updatedAt: new Date()
+			})
+			.where(eq(organization.id, input.metadata.organizationId));
 	};
 }

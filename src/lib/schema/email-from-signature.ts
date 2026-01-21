@@ -112,3 +112,15 @@ export const verifyMutatorSchemaZero = v.object({
 	metadata: mutatorMetadata
 });
 export type VerifyMutatorSchemaZero = v.InferOutput<typeof verifyMutatorSchemaZero>;
+
+export const setDefaultSignatureMutatorSchemaZero = v.object({
+	input: v.object({
+		defaultFromSignatureId: v.nullable(helpers.uuid)
+	}),
+	metadata: v.object({
+		organizationId: emailFromSignatureSchema.entries.organizationId
+	})
+});
+export type SetDefaultSignatureMutatorSchemaZero = v.InferOutput<
+	typeof setDefaultSignatureMutatorSchemaZero
+>;
