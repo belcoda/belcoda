@@ -2,7 +2,8 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 import {
 	organizationSettingsSchema,
-	defaultOrganizationSettings
+	defaultOrganizationSettings,
+	whatsappOrganizationSettingsSchema
 } from '$lib/schema/organization/settings';
 import { organizationNameSchema, organizationSlugSchema } from '$lib/schema/organization/names';
 
@@ -68,3 +69,22 @@ export const updateOrganizationZeroMutatorSchema = v.object({
 export type UpdateOrganizationZeroMutatorSchema = v.InferOutput<
 	typeof updateOrganizationZeroMutatorSchema
 >;
+  
+export const updateOrganizationWhatsappSettings = v.partial(whatsappOrganizationSettingsSchema);
+export type UpdateOrganizationWhatsappSettings = v.InferInput<
+	typeof updateOrganizationWhatsappSettings
+>;
+
+export const organizationMutatorMetadata = v.object({
+	organizationId: organizationSchema.entries.id
+});
+
+export const updateOrganizationMutatorSchema = v.object({
+	input: updateOrganization,
+	metadata: organizationMutatorMetadata
+});
+
+export const updateOrganizationWhatsappSettingsMutatorSchema = v.object({
+	input: updateOrganizationWhatsappSettings,
+	metadata: organizationMutatorMetadata
+});
