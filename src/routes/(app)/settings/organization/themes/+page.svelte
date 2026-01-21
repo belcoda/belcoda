@@ -4,127 +4,116 @@
 	import { appState } from '$lib/state.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import { ColorPicker } from '$lib/components/ui/color-picker/index.js';
-	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { toast } from 'svelte-sonner';
+	import createForm from '$lib/form.svelte';
+	import { themeSettingsSchema, defaultThemeSettings } from '$lib/schema/organization/settings';
+	import type { OrganizationSettingsSchema } from '$lib/schema/organization/settings';
 
 	const organization = appState.activeOrganization;
-	const themeSettings = $derived(
-		(organization.data?.settings as any)?.theme || {
-			favicon: null,
-			primaryColor: null,
-			secondaryColor: null
-		}
-	);
-
-	// Form state
-	let favicon = $state<string | null>(null);
-	let primaryColor = $state<string | null>(null);
-	let secondaryColor = $state<string | null>(null);
-
 	let saving = $state(false);
 
-	function syncFormState() {
-		const currentTheme = (organization.data?.settings as any)?.theme;
-		if (currentTheme) {
-			favicon = currentTheme.favicon;
-			primaryColor = currentTheme.primaryColor;
-			secondaryColor = currentTheme.secondaryColor;
-		} else {
-			favicon = null;
-			primaryColor = null;
-			secondaryColor = null;
-		}
-	}
-
-	if (organization.data?.settings) {
-		syncFormState();
-	}
-
-	async function handleSave() {
-		if (!appState.organizationId) {
-			toast.error('Organization ID not found');
-			return;
-		}
-
-		saving = true;
-
-		try {
-			const response = z.mutate.organization.updateTheme({
-				metadata: {
-					organizationId: appState.organizationId
-				},
-				input: {
-					favicon,
-					primaryColor,
-					secondaryColor
+	let { form, data, helpers } = $state(
+		createForm({
+			schema: themeSettingsSchema,
+			initialData: (organization.data?.settings as OrganizationSettingsSchema)?.theme || defaultThemeSettings(),
+			validateOnLoad: false,
+			onSubmit: async (formData) => {
+				if (!appState.organizationId) {
+					toast.error('Organization ID not found');
+					return;
 				}
-			});
 
-			await response.server;
-			toast.success(t`Theme settings saved successfully.`);
-			syncFormState();
-		} catch (err) {
-			toast.error(err instanceof Error ? err.message : 'Failed to save theme settings');
-		} finally {
-			saving = false;
-		}
-	}
+				saving = true;
+				try {
+					const response = z.mutate.organization.updateTheme({
+						metadata: {
+							organizationId: appState.organizationId
+						},
+						input: {
+							favicon: formData.favicon,
+							primaryColor: formData.primaryColor,
+							secondaryColor: formData.secondaryColor
+						}
+					});
 
-	function handleCancel() {
-		syncFormState();
-	}
+					await response.server;
+					toast.success(t`Theme settings saved successfully.`);
+				} catch (err) {
+					toast.error(err instanceof Error ? err.message : 'Failed to save theme settings');
+				} finally {
+					saving = false;
+				}
+			}
+		})
+	);
 </script>
 
 <ContentLayout rootLink="/settings">
 	{#if organization.details.type === 'complete' && organization.data}
-		<Card.Root>
-			<Card.Header>
-				<Card.Title>{t`Display Settings`}</Card.Title>
-				<Card.Description>
-					{t`Customize how your workspace appears on public pages like event calendars and event signup pages.`}
-				</Card.Description>
-			</Card.Header>
-			<Card.Content class="space-y-6">
-				<div class="space-y-2">
-					<div class="text-sm font-medium">{t`Tab Icon URL`}</div>
-					<CroppedImageUpload
-						fileUrl={favicon}
-						aspectRatio={1}
-						onUpload={async (url) => {
-							favicon = url;
+		<form use:form.enhance>
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>{t`Display Settings`}</Card.Title>
+					<Card.Description>
+						{t`Customize how your workspace appears on public pages like event calendars and event signup pages.`}
+					</Card.Description>
+				</Card.Header>
+				<Card.Content class="space-y-6">
+					<Form.Field {form} name="favicon">
+						<Form.Label>{t`Tab Icon URL`}</Form.Label>
+						<CroppedImageUpload
+							fileUrl={$data.favicon}
+							aspectRatio={1}
+							onUpload={async (url) => {
+								$data.favicon = url;
+							}}
+							class="max-w-xs"
+						/>
+						<Form.Description>
+							{t`URL to an icon that will appear in browser tabs for public pages. Recommended size: 32x32px or 64x64px.`}
+						</Form.Description>
+					</Form.Field>
+
+					<Form.Field {form} name="primaryColor">
+						<ColorPicker
+							bind:value={$data.primaryColor}
+							label={t`Primary Color`}
+							description={t`Main color for buttons, links, and primary accents on public pages.`}
+						/>
+					</Form.Field>
+
+					<Form.Field {form} name="secondaryColor">
+						<ColorPicker
+							bind:value={$data.secondaryColor}
+							label={t`Secondary Color`}
+							description={t`Accent color for success states and secondary elements on public pages.`}
+						/>
+					</Form.Field>
+				</Card.Content>
+				<Card.Footer class="flex justify-end gap-2">
+					<Button
+						variant="outline"
+						type="button"
+						onclick={() => {
+							helpers.warnBeforeDiscard(helpers.isTainted, () => {
+								form.reset();
+							});
 						}}
-						class="max-w-xs"
-					/>
-					<p class="text-sm text-muted-foreground">
-						{t`URL to an icon that will appear in browser tabs for public pages. Recommended size: 32x32px or 64x64px.`}
-					</p>
-				</div>
-
-				<ColorPicker
-					bind:value={primaryColor}
-					label={t`Primary Color`}
-					description={t`Main color for buttons, links, and primary accents on public pages.`}
-				/>
-
-				<ColorPicker
-					bind:value={secondaryColor}
-					label={t`Secondary Color`}
-					description={t`Accent color for success states and secondary elements on public pages.`}
-				/>
-			</Card.Content>
-			<Card.Footer class="flex justify-end gap-2">
-				<Button variant="outline" onclick={handleCancel} disabled={saving}>
-					{t`Cancel`}
-				</Button>
-				<Button onclick={handleSave} disabled={saving}>
-					{saving ? t`Saving...` : t`Save Changes`}
-				</Button>
-			</Card.Footer>
-		</Card.Root>
+						disabled={saving}
+					>
+						{t`Cancel`}
+					</Button>
+					<Button type="submit" disabled={saving}>
+						{saving ? t`Saving...` : t`Save Changes`}
+					</Button>
+				</Card.Footer>
+			</Card.Root>
+		</form>
 	{:else}
 		<div class="text-center text-muted-foreground">
 			<p>{t`Failed to load organization settings.`}</p>
