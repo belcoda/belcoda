@@ -13,8 +13,23 @@
 	import { toast } from 'svelte-sonner';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
+	import { env } from '$env/dynamic/public';
+	import { dev } from '$app/environment';
+	import PetitionMakeACopy from './PetitionMakeACopy.svelte';
+
+	const { PUBLIC_ROOT_DOMAIN } = env;
 
 	let openShareModal = $state(false);
+	let openMakeACopyModal = $state(false);
+
+	const petitionPageUrl = $derived(() => {
+		const orgSlug = appState.activeOrganization.data?.slug;
+		if (!orgSlug || !petition.slug) {
+			return '#';
+		}
+		const protocol = dev ? 'http' : 'https';
+		return `${protocol}://${orgSlug}.${PUBLIC_ROOT_DOMAIN}/page/${orgSlug}/petitions/${petition.slug}`;
+	});
 
 	function updatePublished(checked: boolean) {
 		z.mutate.petition.update({
@@ -79,12 +94,18 @@
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>
-				<DropdownMenu.Item disabled>
+				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={`#`}
+						<a {...props} href={petitionPageUrl()} target="_blank" rel="noopener noreferrer"
 							>{#if petition.published}View petition page{:else}Preview petition page{/if}</a
 						>
 					{/snippet}
+				</DropdownMenu.Item>
+			</DropdownMenu.Group>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Group>
+				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
+					Make a copy
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 		</DropdownMenu.Content>
@@ -97,3 +118,4 @@
 		<!-- TODO: Add petition share modal component -->
 	</div>
 </ResponsiveModal>
+<PetitionMakeACopy {petition} bind:open={openMakeACopyModal} />
