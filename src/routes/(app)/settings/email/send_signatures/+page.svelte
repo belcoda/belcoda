@@ -104,6 +104,9 @@
 
 	let selectedSignatureValue = $state<string>('__system__');
 	let updatingDefault = $state(false);
+	const displayedSelectedSignatureValue = $derived(
+		updatingDefault ? selectedSignatureValue : computedSelectedValue
+	);
 
 	async function updateDefaultSignature(signatureId: string) {
 		updatingDefault = true;
@@ -175,7 +178,7 @@
 					{#key organization.data?.settings.email.defaultFromSignatureId}
 						<Select.Root
 							type="single"
-							value={computedSelectedValue}
+							value={displayedSelectedSignatureValue}
 							onValueChange={(value) => {
 								if (value) {
 									selectedSignatureValue = value;
@@ -185,7 +188,7 @@
 							disabled={updatingDefault}
 						>
 							<Select.Trigger class="w-full justify-between">
-								{signatureOptions.find((opt) => opt.value === (selectedSignatureValue || computedSelectedValue))?.label ||
+								{signatureOptions.find((opt) => opt.value === displayedSelectedSignatureValue)?.label ||
 									t`Select default signature`}
 							</Select.Trigger>
 							<Select.Content>
