@@ -6,6 +6,7 @@ import * as petition from '$lib/zero/mutate/petition';
 import * as petitionSignature from '$lib/zero/mutate/petition_signature';
 import * as emailFromSignature from '$lib/zero/mutate/email_from_signature';
 import * as organization from '$lib/zero/mutate/organization';
+import * as webhook from '$lib/zero/mutate/webhook';
 export default function createMutators() {
 	return {
 		person: {
@@ -49,6 +50,10 @@ export default function createMutators() {
 		organization: {
 			update: organization.updateOrganization(),
 			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings()
+    },
+		webhook: {
+			create: webhook.createWebhook(),
+			delete: webhook.deleteWebhook()
 		}
 	};
 }
