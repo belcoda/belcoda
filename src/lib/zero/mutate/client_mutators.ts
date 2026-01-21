@@ -5,6 +5,7 @@ import * as event from '$lib/zero/mutate/event';
 import * as petition from '$lib/zero/mutate/petition';
 import * as petitionSignature from '$lib/zero/mutate/petition_signature';
 import * as emailFromSignature from '$lib/zero/mutate/email_from_signature';
+import * as organization from '$lib/zero/mutate/organization';
 export default function createMutators() {
 	return {
 		person: {
@@ -43,6 +44,10 @@ export default function createMutators() {
 			delete: emailFromSignature.deleteEmailFromSignature(),
 			verify: emailFromSignature.verifyEmailFromSignature(),
 			setDefault: emailFromSignature.setDefaultSignature()
+		},
+		organization: {
+			update: organization.updateOrganization(),
+			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings()
 		}
 	};
 }

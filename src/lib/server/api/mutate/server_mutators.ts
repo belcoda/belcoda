@@ -6,6 +6,7 @@ import * as event from '$lib/server/api/mutate/event';
 import * as petition from '$lib/server/api/mutate/petition';
 import * as petitionSignature from '$lib/server/api/mutate/petition_signature';
 import * as emailFromSignature from '$lib/server/api/mutate/email_from_signature';
+import * as organization from '$lib/server/api/mutate/organization';
 
 export function createMutators(params: MutatorParams) {
 	return {
@@ -45,6 +46,10 @@ export function createMutators(params: MutatorParams) {
 			delete: emailFromSignature.deleteEmailFromSignature(params),
 			verify: emailFromSignature.verifyEmailFromSignature(params),
 			setDefault: emailFromSignature.setDefaultSignature(params)
+		},
+		organization: {
+			update: organization.updateOrganization(params),
+			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings(params)
 		}
 	};
 }

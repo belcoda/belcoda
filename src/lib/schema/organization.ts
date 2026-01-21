@@ -3,7 +3,8 @@ import * as helpers from '$lib/schema/helpers';
 
 import {
 	organizationSettingsSchema,
-	defaultOrganizationSettings
+	defaultOrganizationSettings,
+	whatsappOrganizationSettingsSchema
 } from '$lib/schema/organization/settings';
 import { organizationNameSchema, organizationSlugSchema } from '$lib/schema/organization/names';
 
@@ -55,8 +56,26 @@ export const updateOrganization = v.partial(
 		icon: organizationSchema.entries.icon,
 		country: organizationSchema.entries.country,
 		defaultLanguage: organizationSchema.entries.defaultLanguage,
-		defaultTimezone: organizationSchema.entries.defaultTimezone,
-		settings: organizationSettingsSchema
+		defaultTimezone: organizationSchema.entries.defaultTimezone
 	})
 );
 export type UpdateOrganization = v.InferInput<typeof updateOrganization>;
+
+export const updateOrganizationWhatsappSettings = v.partial(whatsappOrganizationSettingsSchema);
+export type UpdateOrganizationWhatsappSettings = v.InferInput<
+	typeof updateOrganizationWhatsappSettings
+>;
+
+export const organizationMutatorMetadata = v.object({
+	organizationId: organizationSchema.entries.id
+});
+
+export const updateOrganizationMutatorSchema = v.object({
+	input: updateOrganization,
+	metadata: organizationMutatorMetadata
+});
+
+export const updateOrganizationWhatsappSettingsMutatorSchema = v.object({
+	input: updateOrganizationWhatsappSettings,
+	metadata: organizationMutatorMetadata
+});
