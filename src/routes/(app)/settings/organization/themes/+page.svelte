@@ -7,37 +7,34 @@
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import { ColorPicker } from '$lib/components/ui/color-picker/index.js';
-	import { post } from '$lib/utils/http';
-	import { object, boolean } from 'valibot';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { readOrganization } from '$lib/zero/query/organizations/read';
+	import { z } from '$lib/zero.svelte';
+	import { toast } from 'svelte-sonner';
 
 	const organization = appState.activeOrganization;
 	const themeSettings = $derived(
 		(organization.data?.settings as any)?.theme || {
-			logo: null,
+			favicon: null,
 			primaryColor: null,
 			secondaryColor: null
 		}
 	);
 
 	// Form state
-	let logo = $state<string | null>(null);
+	let favicon = $state<string | null>(null);
 	let primaryColor = $state<string | null>(null);
 	let secondaryColor = $state<string | null>(null);
 
 	let saving = $state(false);
-	let error = $state<string | null>(null);
-	let success = $state(false);
 
 	function syncFormState() {
 		const currentTheme = (organization.data?.settings as any)?.theme;
 		if (currentTheme) {
-			logo = currentTheme.logo;
+			favicon = currentTheme.favicon;
 			primaryColor = currentTheme.primaryColor;
 			secondaryColor = currentTheme.secondaryColor;
 		} else {
-			logo = null;
+			favicon = null;
 			primaryColor = null;
 			secondaryColor = null;
 		}
@@ -49,57 +46,36 @@
 
 	async function handleSave() {
 		if (!appState.organizationId) {
-			error = 'Organization ID not found';
+			toast.error('Organization ID not found');
 			return;
 		}
 
 		saving = true;
-		error = null;
-		success = false;
 
 		try {
-			await post({
-				path: '/api/organization/update',
-				schema: object({ success: boolean() }),
-				body: {
-					organizationId: appState.organizationId,
-					settings: {
-						theme: {
-							logo,
-							primaryColor,
-							secondaryColor
-						}
-					}
+			const response = z.mutate.organization.updateTheme({
+				metadata: {
+					organizationId: appState.organizationId
+				},
+				input: {
+					favicon,
+					primaryColor,
+					secondaryColor
 				}
 			});
 
-			success = true;
-			// Refresh organization data
-			organization.updateQuery(
-				readOrganization(appState.queryContext, { organizationId: appState.organizationId }),
-				true
-			);
-
-			// Sync form state after a short delay to allow query to complete
-			setTimeout(() => {
-				syncFormState();
-			}, 100);
-
-			setTimeout(() => {
-				success = false;
-			}, 3000);
+			await response.server;
+			toast.success(t`Theme settings saved successfully.`);
+			syncFormState();
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to save theme settings';
+			toast.error(err instanceof Error ? err.message : 'Failed to save theme settings');
 		} finally {
 			saving = false;
 		}
 	}
 
 	function handleCancel() {
-		// Reset to original values
 		syncFormState();
-		error = null;
-		success = false;
 	}
 </script>
 
@@ -116,10 +92,10 @@
 				<div class="space-y-2">
 					<div class="text-sm font-medium">{t`Tab Icon URL`}</div>
 					<CroppedImageUpload
-						fileUrl={logo}
+						fileUrl={favicon}
 						aspectRatio={1}
 						onUpload={async (url) => {
-							logo = url;
+							favicon = url;
 						}}
 						class="max-w-xs"
 					/>
@@ -139,18 +115,6 @@
 					label={t`Secondary Color`}
 					description={t`Accent color for success states and secondary elements on public pages.`}
 				/>
-
-				{#if error}
-					<div class="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-						{error}
-					</div>
-				{/if}
-
-				{#if success}
-					<div class="rounded-md bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400">
-						{t`Theme settings saved successfully.`}
-					</div>
-				{/if}
 			</Card.Content>
 			<Card.Footer class="flex justify-end gap-2">
 				<Button variant="outline" onclick={handleCancel} disabled={saving}>

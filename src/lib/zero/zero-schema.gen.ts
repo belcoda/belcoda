@@ -1316,6 +1316,11 @@ const organizationTable = {
           systemFromIdentity: { name: string | null; replyTo: string | null };
           defaultFromSignatureId: string | null;
         };
+        theme: {
+          favicon: string | null;
+          primaryColor: string | null;
+          secondaryColor: string | null;
+        };
       },
     },
     balance: {
