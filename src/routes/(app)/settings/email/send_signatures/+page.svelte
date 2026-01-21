@@ -5,8 +5,9 @@
 	import { getListFilter, appState } from '$lib/state.svelte';
 	import { listEmailFromSignatures } from '$lib/zero/query/email_from_signature/list';
 	import { readOrganization } from '$lib/zero/query/organizations/read';
-	import { page } from '$app/state';
-	const { postmarkSendingDomain } = page.data;
+	import { env } from '$env/dynamic/public';
+	const { PUBLIC_POSTMARK_SENDING_DOMAIN } = env;
+	const postmarkSendingDomain = PUBLIC_POSTMARK_SENDING_DOMAIN || 'belcoda.com';
 	let emailFromSignatureListFilter = $state({
 		...getListFilter(appState.organizationId)
 	});
@@ -43,26 +44,12 @@
 	async function verifyEmailFromSignature(emailFromSignatureId: string) {
 		loadingArr.push(emailFromSignatureId);
 		try {
-			const response = await fetch(`/api/utils/postmark/verify_send_signature/${emailFromSignatureId}`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
+			await z.mutate.emailFromSignature.verify({
+				metadata: {
+					organizationId: appState.organizationId,
+					emailFromSignatureId
 				}
 			});
-
-			if (!response.ok) {
-				let errorMessage = `Failed to verify signature: ${response.statusText}`;
-				try {
-					const errorData = await response.json();
-					errorMessage = errorData.error || errorData.message || errorMessage;
-				} catch {
-					// If JSON parsing fails, try to get text
-					const text = await response.text().catch(() => '');
-					errorMessage = text || errorMessage;
-				}
-				throw new Error(errorMessage);
-			}
-
 			toast.success(t`Email signature verification status updated`);
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : t`Failed to verify email signature`;
@@ -121,39 +108,20 @@
 	async function updateDefaultSignature(signatureId: string) {
 		updatingDefault = true;
 		try {
+			if (!organization.data) return;
 			const actualId = signatureId === '__system__' ? null : signatureId;
-			const response = await fetch(`/api/organization/settings`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
+			await z.mutate.emailFromSignature.setDefault({
+				metadata: {
+					organizationId: appState.organizationId
 				},
-				body: JSON.stringify({
-					organizationId: appState.organizationId,
-					settings: {
-						email: {
-							defaultFromSignatureId: actualId
-						}
-					}
-				})
-			});
-
-			if (!response.ok) {
-				let errorMessage = `Failed to update: ${response.statusText}`;
-				try {
-					const errorData = await response.json();
-					errorMessage = errorData.error || errorData.message || errorMessage;
-				} catch {
-					const text = await response.text().catch(() => '');
-					errorMessage = text || errorMessage;
+				input: {
+					defaultFromSignatureId: actualId
 				}
-				throw new Error(errorMessage);
-			}
-
+			});
 			toast.success(t`Default send signature updated successfully`);
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : t`Failed to update default send signature`;
 			toast.error(errorMessage);
-			// Revert to previous value on error
 			if (organization.data) {
 				const currentValue = organization.data.settings.email.defaultFromSignatureId || '__system__';
 				selectedSignatureValue = currentValue;
