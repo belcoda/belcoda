@@ -6,7 +6,8 @@ import {
 	type UpdateMutatorSchemaZeroOutput,
 	type DeleteMutatorSchemaZero,
 	type VerifyMutatorSchemaZero,
-	type SetDefaultSignatureMutatorSchemaZero
+	type SetDefaultSignatureMutatorSchemaZero,
+	type UpdateSystemFromIdentityMutatorSchemaZero
 } from '$lib/schema/email-from-signature';
 
 export function createEmailFromSignature() {
@@ -78,6 +79,34 @@ export function setDefaultSignature() {
 				email: {
 					...currentOrg.settings?.email,
 					defaultFromSignatureId: args.input.defaultFromSignatureId
+				}
+			},
+			updatedAt: new Date().getTime()
+		});
+	};
+}
+
+export function updateSystemFromIdentity() {
+	return async function (tx: Transaction<Schema>, args: UpdateSystemFromIdentityMutatorSchemaZero) {
+		const currentOrg = await tx.query.organization
+			.where('id', '=', args.metadata.organizationId)
+			.one()
+			.run();
+
+		if (!currentOrg) {
+			throw new Error('Organization not found');
+		}
+
+		tx.mutate.organization.update({
+			id: args.metadata.organizationId,
+			settings: {
+				...currentOrg.settings,
+				email: {
+					...currentOrg.settings?.email,
+					systemFromIdentity: {
+						...currentOrg.settings?.email?.systemFromIdentity,
+						...args.input
+					}
 				}
 			},
 			updatedAt: new Date().getTime()

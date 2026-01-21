@@ -7,6 +7,7 @@ import {
 	type DeleteMutatorSchemaZero,
 	type VerifyMutatorSchemaZero,
 	type SetDefaultSignatureMutatorSchemaZero,
+	type UpdateSystemFromIdentityMutatorSchemaZero,
 	updateEmailFromSignatureZero
 } from '$lib/schema/email-from-signature';
 import { parse } from 'valibot';
@@ -290,6 +291,46 @@ export function setDefaultSignature(params: MutatorParams) {
 					email: {
 						...currentOrg.settings?.email,
 						defaultFromSignatureId: input.input.defaultFromSignatureId
+					}
+				},
+				updatedAt: new Date()
+			})
+			.where(eq(organization.id, input.metadata.organizationId));
+	};
+}
+
+export function updateSystemFromIdentity(params: MutatorParams) {
+	return async function (tx: Transaction, input: UpdateSystemFromIdentityMutatorSchemaZero) {
+		if (
+			![...params.queryContext.adminOrgs, ...params.queryContext.ownerOrgs].includes(
+				input.metadata.organizationId
+			)
+		) {
+			throw new Error('You are not authorized to update this organization');
+		}
+
+		const currentOrg = await tx.dbTransaction.wrappedTransaction
+			.select()
+			.from(organization)
+			.where(eq(organization.id, input.metadata.organizationId))
+			.limit(1)
+			.then((rows) => rows[0]);
+
+		if (!currentOrg) {
+			throw new Error('Organization not found');
+		}
+
+		await tx.dbTransaction.wrappedTransaction
+			.update(organization)
+			.set({
+				settings: {
+					...currentOrg.settings,
+					email: {
+						...currentOrg.settings?.email,
+						systemFromIdentity: {
+							...currentOrg.settings?.email?.systemFromIdentity,
+							...input.input
+						}
 					}
 				},
 				updatedAt: new Date()

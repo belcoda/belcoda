@@ -45,7 +45,8 @@ export function createMutators(params: MutatorParams) {
 			update: emailFromSignature.updateEmailFromSignature(params),
 			delete: emailFromSignature.deleteEmailFromSignature(params),
 			verify: emailFromSignature.verifyEmailFromSignature(params),
-			setDefault: emailFromSignature.setDefaultSignature(params)
+			setDefault: emailFromSignature.setDefaultSignature(params),
+			updateSystemFromIdentity: emailFromSignature.updateSystemFromIdentity(params)
 		},
 		organization: {
 			update: organization.updateOrganization(params),

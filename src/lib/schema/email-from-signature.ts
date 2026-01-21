@@ -124,3 +124,16 @@ export const setDefaultSignatureMutatorSchemaZero = v.object({
 export type SetDefaultSignatureMutatorSchemaZero = v.InferOutput<
 	typeof setDefaultSignatureMutatorSchemaZero
 >;
+
+export const updateSystemFromIdentityMutatorSchemaZero = v.object({
+	input: v.object({
+		name: v.optional(v.nullable(helpers.shortString), null),
+		replyTo: v.optional(v.nullable(helpers.email), null)
+	}),
+	metadata: v.object({
+		organizationId: emailFromSignatureSchema.entries.organizationId
+	})
+});
+export type UpdateSystemFromIdentityMutatorSchemaZero = v.InferOutput<
+	typeof updateSystemFromIdentityMutatorSchemaZero
+>;

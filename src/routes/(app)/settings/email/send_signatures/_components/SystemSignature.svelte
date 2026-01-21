@@ -8,6 +8,8 @@
 	import XIcon from '@lucide/svelte/icons/x';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import { toast } from 'svelte-sonner';
+	import { z } from '$lib/zero.svelte';
+	import { updateSystemFromIdentityMutatorSchemaZero } from '$lib/schema/email-from-signature';
 
 	type Props = {
 		organizationId: string;
@@ -32,36 +34,19 @@
 	}) {
 		saving = true;
 		try {
-			const response = await fetch(`/api/organization/settings`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
+			const toUpdate = {
+				input: {
+					...(updates.name !== undefined && { name: updates.name }),
+					...(updates.replyTo !== undefined && { replyTo: updates.replyTo })
 				},
-				body: JSON.stringify({
-					organizationId,
-					settings: {
-						email: {
-							systemFromIdentity: {
-								...(updates.name !== undefined && { name: updates.name }),
-								...(updates.replyTo !== undefined && { replyTo: updates.replyTo })
-							}
-						}
-					}
-				})
-			});
-
-			if (!response.ok) {
-				let errorMessage = `Failed to update: ${response.statusText}`;
-				try {
-					const errorData = await response.json();
-					errorMessage = errorData.error || errorData.message || errorMessage;
-				} catch {
-					// If JSON parsing fails, try to get text
-					const text = await response.text().catch(() => '');
-					errorMessage = text || errorMessage;
+				metadata: {
+					organizationId
 				}
-				throw new Error(errorMessage);
-			}
+			};
+
+			const parsed = parse(updateSystemFromIdentityMutatorSchemaZero, toUpdate);
+			const response = z.mutate.emailFromSignature.updateSystemFromIdentity(parsed);
+			await response.server;
 
 			// Update local state
 			if (updates.name !== undefined) {

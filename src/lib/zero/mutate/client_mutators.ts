@@ -43,7 +43,8 @@ export default function createMutators() {
 			update: emailFromSignature.updateEmailFromSignature(),
 			delete: emailFromSignature.deleteEmailFromSignature(),
 			verify: emailFromSignature.verifyEmailFromSignature(),
-			setDefault: emailFromSignature.setDefaultSignature()
+			setDefault: emailFromSignature.setDefaultSignature(),
+			updateSystemFromIdentity: emailFromSignature.updateSystemFromIdentity()
 		},
 		organization: {
 			update: organization.updateOrganization(),
