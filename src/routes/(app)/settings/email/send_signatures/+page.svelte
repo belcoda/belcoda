@@ -61,12 +61,18 @@
 
 	async function deleteEmailFromSignature(emailFromSignatureId: string) {
 		if (window.confirm(t`Are you sure you want to delete this email signature?`)) {
-			await z.mutate.emailFromSignature.delete({
-				metadata: {
-					organizationId: appState.organizationId,
-					emailFromSignatureId
-				}
-			});
+			try {
+				await z.mutate.emailFromSignature.delete({
+					metadata: {
+						organizationId: appState.organizationId,
+						emailFromSignatureId
+					}
+				});
+				toast.success(t`Email signature deleted successfully`);
+			} catch (error) {
+				const errorMessage = error instanceof Error ? error.message : t`Failed to delete email signature`;
+				toast.error(errorMessage);
+			}
 		}
 	}
 
@@ -125,10 +131,6 @@
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : t`Failed to update default send signature`;
 			toast.error(errorMessage);
-			if (organization.data) {
-				const currentValue = organization.data.settings.email.defaultFromSignatureId || '__system__';
-				selectedSignatureValue = currentValue;
-			}
 		} finally {
 			updatingDefault = false;
 		}
