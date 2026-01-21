@@ -1,6 +1,5 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-
 import {
 	organizationSettingsSchema,
 	defaultOrganizationSettings,
@@ -61,6 +60,16 @@ export const updateOrganization = v.partial(
 );
 export type UpdateOrganization = v.InferInput<typeof updateOrganization>;
 
+export const updateOrganizationZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid
+	}),
+	input: updateOrganization
+});
+export type UpdateOrganizationZeroMutatorSchema = v.InferOutput<
+	typeof updateOrganizationZeroMutatorSchema
+>;
+  
 export const updateOrganizationWhatsappSettings = v.partial(whatsappOrganizationSettingsSchema);
 export type UpdateOrganizationWhatsappSettings = v.InferInput<
 	typeof updateOrganizationWhatsappSettings

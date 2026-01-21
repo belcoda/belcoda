@@ -51,7 +51,8 @@ export function createMutators(params: MutatorParams) {
 		},
 		organization: {
 			update: organization.updateOrganization(params),
-			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings(params)
+			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings(params),
+      updateTheme: organization.updateTheme(params)
     },
 		webhook: {
 			create: webhook.createWebhook(params),

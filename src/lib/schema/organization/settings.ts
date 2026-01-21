@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 export const themeSettingsSchema = v.object({
-	logo: v.optional(v.nullable(helpers.url), null),
+	favicon: v.optional(v.nullable(helpers.url), null),
 	primaryColor: v.optional(v.nullable(helpers.hexColor), null),
 	secondaryColor: v.optional(v.nullable(helpers.hexColor), null)
 });
@@ -11,7 +11,7 @@ export type ThemeSettingsSchema = v.InferOutput<typeof themeSettingsSchema>;
 
 export function defaultThemeSettings(): ThemeSettingsSchema {
 	return {
-		logo: null,
+		favicon: null,
 		primaryColor: null,
 		secondaryColor: null
 	};
@@ -68,3 +68,11 @@ export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 		theme: defaultThemeSettings()
 	};
 }
+
+export const updateThemeZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid
+	}),
+	input: themeSettingsSchema
+});
+export type UpdateThemeZeroMutatorSchema = v.InferOutput<typeof updateThemeZeroMutatorSchema>;

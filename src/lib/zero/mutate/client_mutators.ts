@@ -49,7 +49,8 @@ export default function createMutators() {
 		},
 		organization: {
 			update: organization.updateOrganization(),
-			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings()
+			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings(),
+      updateTheme: organization.updateTheme()
     },
 		webhook: {
 			create: webhook.createWebhook(),
