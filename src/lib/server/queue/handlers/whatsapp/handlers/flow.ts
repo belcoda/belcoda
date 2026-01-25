@@ -1,0 +1,430 @@
+import pino from '$lib/pino';
+import { db } from '$lib/server/db';
+import { person as personTable, organization as organizationTable } from '$lib/schema/drizzle';
+import { eq } from 'drizzle-orm';
+import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
+import { v7 as uuidv7 } from 'uuid';
+
+import { getTransaction, type Transaction } from '$lib/server/db/zeroDrizzle';
+import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
+
+import { env as publicEnv } from '$env/dynamic/public';
+import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
+import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
+import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
+
+const log = pino(import.meta.url);
+
+async function sendConfirmationMessage({
+	from,
+	organizationId,
+	eventTitle,
+	eventStartDate,
+	eventTimezone,
+	tx: defaultTx
+}: {
+	from: string;
+	organizationId: string;
+	eventTitle: string;
+	eventStartDate: Date | null;
+	eventTimezone: string;
+	tx?: Transaction;
+}) {
+	try {
+		const tx = defaultTx || (await getTransaction());
+		// Get workspace settings for WhatsApp phone number
+		const organization = await getOrganizationByIdUnsafe({
+			organizationId,
+			tx
+		});
+
+		const waPhoneNumber =
+			organization.settings.whatsApp?.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER;
+
+		// Format event date in the event's timezone if available
+		let dateString = 'Date TBA';
+		if (eventStartDate) {
+			try {
+				const formatter = new Intl.DateTimeFormat('en-US', {
+					weekday: 'long',
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit',
+					timeZone: eventTimezone,
+					timeZoneName: 'short'
+				});
+				dateString = formatter.format(new Date(eventStartDate));
+			} catch (error) {
+				log.error({ error, eventTimezone }, 'Invalid timezone, falling back to UTC');
+				// Fallback to UTC if timezone is invalid
+				const formatter = new Intl.DateTimeFormat('en-US', {
+					weekday: 'long',
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit',
+					timeZone: 'UTC',
+					timeZoneName: 'short'
+				});
+				dateString = formatter.format(new Date(eventStartDate));
+			}
+		}
+
+		const confirmationText = `✅ You're registered for *${eventTitle}*!\n\n📅 ${dateString}\n\nWe'll send you a reminder before the event. See you there!`;
+
+		await sendWhatsappMessage({
+			from: waPhoneNumber,
+			to: from,
+			type: 'text',
+			externalId: uuidv7(),
+			text: {
+				body: confirmationText
+			}
+		});
+
+		log.info({ from, eventTitle }, 'Sent confirmation message after event signup');
+	} catch (error) {
+		log.error({ error, from, eventTitle }, 'Failed to send confirmation message');
+		// Don't throw - confirmation message failure shouldn't break signup
+	}
+}
+
+/**
+ * Determines the target table and action based on flow response payload
+ * Uses resource_type and resource_id
+ */
+async function determineFlowTarget(responsePayload: Record<string, unknown>) {
+	const resourceType = responsePayload.resource_type;
+	const resourceId = responsePayload.resource_id;
+
+	if (!resourceType || typeof resourceType !== 'string') {
+		log.error({ responsePayload }, 'Missing or invalid resource_type in flow response');
+		throw new Error('Missing or invalid resource_type in flow response payload');
+	}
+
+	if (!resourceId || typeof resourceId !== 'string') {
+		log.error({ responsePayload }, 'Missing or invalid resource_id in flow response');
+		throw new Error('Missing or invalid resource_id in flow response payload');
+	}
+
+	switch (resourceType) {
+		case 'event':
+			return {
+				type: 'event_signup' as const,
+				eventId: resourceId
+			};
+
+		case 'petition':
+			throw new Error('Petition signatures are not supported yet');
+		// return {
+		// 	type: 'petition_signature' as const,
+		// 	petitionId: resourceId
+		// };
+
+		case 'survey':
+			throw new Error('Survey responses are not supported yet');
+		// return {
+		// 	type: 'survey_response' as const,
+		// 	surveyId: resourceId
+		// };
+
+		default:
+			log.error({ resourceType }, 'Unsupported resource_type in flow response');
+			throw new Error(
+				`Unsupported resource_type: ${resourceType}. Expected: event, petition, or survey`
+			);
+	}
+}
+
+export async function handleFlowResponse({
+	flowName,
+	body,
+	response,
+	from,
+	givenName,
+	tx: defaultTx
+}: {
+	flowName: string;
+	body?: string;
+	response: string;
+	from: string;
+	givenName: string;
+	tx?: Transaction;
+}) {
+	try {
+		log.info(
+			{
+				flowName,
+				from,
+				response
+			},
+			'Handling WhatsApp Flow response'
+		);
+		let responseJson: Record<string, unknown>;
+		try {
+			responseJson = JSON.parse(response);
+		} catch (error) {
+			log.error({ error }, 'invalid JSON in flow response');
+			throw error;
+		}
+
+		const tx = defaultTx || (await getTransaction());
+
+		// Determine what type of flow this is and where to save the data
+		// Looks for resource_type and resource_id in the response payload
+		const { type, eventId } = await determineFlowTarget(responseJson);
+
+		switch (type) {
+			case 'event_signup': {
+				const flowResponses = {
+					name: flowName,
+					body,
+					response_json: responseJson
+				};
+				const event = await _getEventByIdUnsafe({ eventId, tx });
+				const organization = await getOrganizationByIdUnsafe({
+					organizationId: event.organizationId,
+					tx
+				});
+				const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
+				const eventSignup = await signUpForEventHelper({
+					eventId: event.id,
+					personAction: {
+						subscribed: true,
+						country: countryCode,
+						phoneNumber: from,
+						givenName: givenName
+					},
+					signupDetails: {
+						channel: { type: 'whatsapp' },
+						customFields: {}
+					},
+					organizationId: event.organizationId,
+					tx
+				});
+
+				// Send confirmation message
+				await sendConfirmationMessage({
+					from,
+					organizationId: organization.id,
+					eventTitle: event.title,
+					eventStartDate: event.startsAt,
+					eventTimezone: event.timezone
+				});
+
+				return eventSignup;
+			}
+
+			default:
+				throw new Error(`Unsupported flow type: ${type}`);
+		}
+	} catch (error) {
+		log.error(
+			{
+				error,
+				flowName,
+				from,
+				response
+			},
+			'Error handling flow response'
+		);
+		throw error;
+	}
+}
+
+/**
+ * Process form data from WhatsApp Flow endpoint
+ * Called directly from the data exchange endpoint
+ */
+export async function processFlowDataExchange({
+	formData,
+	flowToken
+}: {
+	formData: Record<string, unknown>;
+	flowToken: string;
+}) {
+	log.info({ flowToken, formData }, 'Processing flow data exchange');
+
+	// Extract resource identifiers from footer payload
+	const resourceType = formData.resource_type;
+	const resourceId = formData.resource_id;
+
+	if (!resourceType || typeof resourceType !== 'string') {
+		throw new Error('Missing or invalid resource_type in form data');
+	}
+
+	if (!resourceId || typeof resourceId !== 'string') {
+		throw new Error('Missing or invalid resource_id in form data');
+	}
+
+	// Extract phone number (required field)
+	const phone = formData.phone;
+	if (!phone || typeof phone !== 'string') {
+		throw new Error('Missing or invalid phone number in form data');
+	}
+
+	// TODO: This should be done using the "from" phone number that the message came from.
+	// Look up person by phone number
+	const existingPerson = await db.query.person.findFirst({
+		where: eq(personTable.phoneNumber, phone)
+	});
+
+	if (!existingPerson) {
+		log.error({ phone }, 'Person not found for phone number');
+		throw new Error('Person not found. Please send an event code first.');
+	}
+
+	// Route based on resource type
+	switch (resourceType) {
+		case 'event': {
+			// Convert form data to flow response format
+			const flowResponses = {
+				name: 'flow',
+				body: 'Sent',
+				response_json: formData
+			};
+
+			await handleEventSignupFlowResponse({
+				eventId: resourceId,
+				from: phone,
+				givenName: existingPerson.givenName || existingPerson.familyName || phone,
+				responses: flowResponses
+			});
+
+			log.info(
+				{ eventId: resourceId, personId: existingPerson.id },
+				'Event signup processed successfully'
+			);
+			break;
+		}
+
+		case 'petition':
+			throw new Error('Petition signatures are not supported yet');
+
+		case 'survey':
+			throw new Error('Survey responses are not supported yet');
+
+		default:
+			throw new Error(`Unsupported resource_type: ${resourceType}`);
+	}
+}
+
+import { type FlowResponses } from '$lib/schema/whatsapp/flows/responses';
+
+export async function handleEventSignupFlowResponse({
+	eventId,
+	givenName,
+	from,
+	responses,
+	tx: defaultTx
+}: {
+	eventId: string;
+	from: string;
+	givenName: string;
+	responses?: FlowResponses;
+	tx?: Transaction;
+}) {
+	const tx = defaultTx || (await getTransaction());
+
+	// Extract and update person data from flow responses
+	const customFields: Record<string, unknown> = {};
+
+	if (responses?.response_json) {
+		try {
+			const flowData =
+				typeof responses.response_json === 'string'
+					? JSON.parse(responses.response_json)
+					: responses.response_json;
+
+			// Extract custom fields (everything except standard fields and resource identifiers)
+			const standardFields = [
+				'fullName',
+				'email',
+				'phone',
+				'address',
+				'gender',
+				'dateOfBirth',
+				'organization',
+				'position',
+				'resource_type',
+				'resource_id'
+			];
+
+			Object.keys(flowData).forEach((key) => {
+				if (!standardFields.includes(key)) {
+					const value = flowData[key];
+					// Handle different field types from WhatsApp Flows
+					if (value === null || value === undefined) {
+						// Skip null/undefined values
+						return;
+					}
+					if (Array.isArray(value)) {
+						// Multi-select/Checkbox fields return arrays
+						// Filter out any non-string values and empty strings
+						const arrayValue = value.filter(
+							(item) => typeof item === 'string' && item.trim().length > 0
+						);
+						if (arrayValue.length > 0) {
+							customFields[key] = arrayValue as string[];
+						}
+					} else if (typeof value === 'string') {
+						// Text, TextArea, Email, Phone, DatePicker, RadioButtonsGroup, Dropdown
+						const stringValue = value.trim();
+						if (stringValue.length > 0) {
+							customFields[key] = stringValue as string;
+						}
+					} else if (typeof value === 'boolean') {
+						// OptIn fields return boolean
+						customFields[key] = value as boolean;
+					} else if (typeof value === 'number') {
+						// Numeric fields
+						customFields[key] = value as number;
+					} else {
+						// Log unexpected types for debugging
+						log.warn(
+							{ key, value, type: typeof value },
+							'Unexpected custom field type in flow response'
+						);
+						customFields[key] = value as string;
+					}
+				}
+			});
+
+			log.debug({ customFields }, 'Extracted custom fields from flow response');
+		} catch (error) {
+			log.error({ error, responses }, 'Failed to parse flow response for custom fields');
+		}
+	}
+
+	const event = await _getEventByIdUnsafe({ eventId, tx });
+	const organization = await getOrganizationByIdUnsafe({
+		organizationId: event.organizationId,
+		tx
+	});
+	const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
+	const eventSignup = await signUpForEventHelper({
+		eventId: event.id,
+		personAction: {
+			subscribed: true,
+			country: countryCode,
+			phoneNumber: from,
+			givenName: givenName
+		},
+		signupDetails: {
+			channel: { type: 'whatsapp' },
+			customFields: customFields as Record<string, string | number | boolean | string[]>
+		},
+		organizationId: event.organizationId,
+		tx
+	});
+
+	log.info(
+		{ eventSignupId: eventSignup.id, personId: eventSignup.personId, eventId: event.id },
+		'Created activity record for event signup'
+	);
+
+	return eventSignup;
+}
