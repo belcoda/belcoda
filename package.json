@@ -15,6 +15,7 @@
 		"lint": "eslint . && prettier --check .",
 		"format": "prettier --write .",
 		"generate": "svelte-kit sync && drizzle-zero generate --format --output ./src/lib/zero/zero-schema.gen.ts --config ./src/lib/zero/drizzle-zero.config.ts --drizzle-kit-config ./drizzle.config.ts",
+		"ngrok": "node ngrok.config.cjs",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
