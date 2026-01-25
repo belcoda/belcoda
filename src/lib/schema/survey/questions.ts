@@ -194,7 +194,10 @@ export function renderQuestionTypeName(questionType: SurveyQuestionType, locale:
 	}
 }
 
-export const surveyQuestionResponse = v.record(helpers.uuid, helpers.longString);
+export const surveyQuestionResponse = v.record(
+	helpers.uuid,
+	v.union([helpers.longString, v.number(), v.boolean(), v.array(helpers.longString)])
+);
 export type SurveyQuestionResponse = v.InferOutput<typeof surveyQuestionResponse>;
 
 export function getSurveySchema(eventObj: EventSchema) {
