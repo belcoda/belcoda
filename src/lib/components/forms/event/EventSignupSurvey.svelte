@@ -90,7 +90,7 @@
 	}
 
 	function isChecked(field: SurveyQuestionType) {
-		return $data.settings?.survey?.collections[0].questions.some(
+		return $data.settings?.survey?.collections?.[0]?.questions?.some(
 			(question) => question.type === field
 		);
 	}
@@ -167,9 +167,9 @@
 			{@render addQuestionDropdown()}
 		</div>
 
-		{#if $data.settings?.survey && $data.settings?.survey?.collections[0].questions.length > 0}
+		{#if $data.settings?.survey && $data.settings?.survey?.collections?.[0]?.questions?.length > 0}
 			<Accordion.Root type="multiple" class="space-y-2">
-				{#each $data.settings?.survey?.collections[0].questions as field, index (field.id)}
+				{#each $data.settings?.survey?.collections?.[0]?.questions as field, index (field.id)}
 					{#if field.type.startsWith('custom.')}
 						<Accordion.Item value={field.id} class="rounded-lg border last:border-b">
 							<Accordion.Trigger class="px-4 py-3 hover:no-underline">
