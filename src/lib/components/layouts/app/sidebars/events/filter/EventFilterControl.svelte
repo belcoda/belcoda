@@ -151,5 +151,14 @@
 				}}>Published</DropdownMenu.CheckboxItem
 			>
 		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.CheckboxItem
+				checked={filter.hasSignups ?? false}
+				onCheckedChange={(checked) => {
+					filter.hasSignups = checked;
+				}}>Has signups</DropdownMenu.CheckboxItem
+			>
+		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
