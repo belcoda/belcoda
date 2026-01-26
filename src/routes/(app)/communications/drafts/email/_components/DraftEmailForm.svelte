@@ -10,6 +10,8 @@
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import Info from '@lucide/svelte/icons/info';
 	import Users from '@lucide/svelte/icons/users';
+	import Check from '@lucide/svelte/icons/check';
+	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import type { ReadEmailMessageZero } from '$lib/schema/email-message';
 	import type { EmailFromSignature } from '$lib/zero/zero-schema.gen';
 	import { z } from '$lib/zero.svelte';
@@ -29,6 +31,7 @@
 	let composer: RichTextComposer;
 	let isSaving = $state(false);
 	let recipientSelectorOpen = $state(false);
+	let lastSaved = $state<Date | null>(null);
 
 	const fromAddressOptions = fromSignatures.map((sig) => ({
 		value: sig.id,
@@ -54,6 +57,7 @@
 					replyToOverride: emailMessage.replyToOverride
 				}
 			});
+			lastSaved = new Date();
 		} finally {
 			isSaving = false;
 		}
@@ -76,13 +80,19 @@
 			</Button>
 			<div class="flex-1">
 				<h1 class="text-3xl font-bold">Email Draft</h1>
-				<p class="text-muted-foreground mt-1 text-sm">
+				<div class="mt-1 flex items-center gap-2">
 					{#if isSaving}
-						Saving...
+						<Loader2 class="size-3 animate-spin text-muted-foreground" />
+						<p class="text-muted-foreground text-sm">Saving...</p>
+					{:else if lastSaved}
+						<Check class="size-3 text-green-600" />
+						<p class="text-muted-foreground text-sm">
+							Saved at {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+						</p>
 					{:else}
-						All changes saved
+						<p class="text-muted-foreground text-sm">Draft</p>
 					{/if}
-				</p>
+				</div>
 			</div>
 			<div class="flex gap-2">
 				<Button disabled={emailMessage.recipients.filters.length === 0} onclick={sendEmail}>
