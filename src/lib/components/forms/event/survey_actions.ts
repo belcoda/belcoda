@@ -182,3 +182,13 @@ export function changeQuestionType({
 	} as SurveyQuestion;
 	return survey;
 }
+
+export function getSurveyQuestions(questions: Survey['collections'][number]['questions']): {
+	person: SurveyQuestion[];
+	custom: SurveyQuestion[];
+} {
+	return {
+		person: questions.filter((question) => question.type.startsWith('person.')),
+		custom: questions.filter((question) => question.type.startsWith('custom.'))
+	};
+}
