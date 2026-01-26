@@ -32,6 +32,7 @@
 		changeQuestionType as changeQuestionTypeAction
 	} from './survey_actions';
 	import PlusIcon from '@lucide/svelte/icons/plus';
+	import { renderPersonQuestion } from './render_survey_question';
 
 	function toggleStandardInformation(field: SurveyQuestionType, checked: boolean) {
 		if (!$data.settings?.survey) return;
@@ -111,7 +112,9 @@
 					checked={isChecked('person.address')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.address', checked)}
 				/>
-				<Label for="standard-information-address" class="cursor-pointer font-normal">Address</Label>
+				<Label for="standard-information-address" class="cursor-pointer font-normal"
+					>{renderPersonQuestion('person.address')}</Label
+				>
 			</div>
 			<div class="flex items-center gap-3">
 				<Checkbox
@@ -119,7 +122,9 @@
 					checked={isChecked('person.gender')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.gender', checked)}
 				/>
-				<Label for="standard-information-gender" class="cursor-pointer font-normal">Gender</Label>
+				<Label for="standard-information-gender" class="cursor-pointer font-normal"
+					>{renderPersonQuestion('person.gender')}</Label
+				>
 			</div>
 			<div class="flex items-center gap-3">
 				<Checkbox
@@ -128,7 +133,7 @@
 					onCheckedChange={(checked) => toggleStandardInformation('person.dateOfBirth', checked)}
 				/>
 				<Label for="standard-information-dob" class="cursor-pointer font-normal"
-					>Date of birth</Label
+					>{renderPersonQuestion('person.dateOfBirth')}</Label
 				>
 			</div>
 			<div class="flex items-center gap-3">
@@ -138,7 +143,7 @@
 					onCheckedChange={(checked) => toggleStandardInformation('person.workplace', checked)}
 				/>
 				<Label for="standard-information-workplace" class="cursor-pointer font-normal"
-					>Workplace</Label
+					>{renderPersonQuestion('person.workplace')}</Label
 				>
 			</div>
 			<div class="flex items-center gap-3">
@@ -148,7 +153,7 @@
 					onCheckedChange={(checked) => toggleStandardInformation('person.position', checked)}
 				/>
 				<Label for="standard-information-position" class="cursor-pointer font-normal"
-					>Position</Label
+					>{renderPersonQuestion('person.position')}</Label
 				>
 			</div>
 		</div>

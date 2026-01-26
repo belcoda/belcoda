@@ -36,7 +36,10 @@ const actionCodeTable = {
     type: {
       type: "string",
       optional: false,
-      customType: null as unknown as "event_signup" | "event_attended",
+      customType: null as unknown as
+        | "event_signup"
+        | "event_attended"
+        | "petition_signed",
     },
     createdAt: {
       type: "number",
@@ -889,6 +892,7 @@ const eventSignupTable = {
       optional: false,
       customType: null as unknown as {
         channel: { type: "eventPage" | "adminPanel" | "whatsapp" };
+        customFields: { [x: string]: string | number | boolean | string[] };
       },
     },
     status: {
@@ -1316,6 +1320,7 @@ const organizationTable = {
           systemFromIdentity: { name: string | null; replyTo: string | null };
           defaultFromSignatureId: string | null;
         };
+        display: { primaryColor: string | null; secondaryColor: string | null };
       },
     },
     balance: {
@@ -1832,7 +1837,8 @@ const personTable = {
         | { type: "import"; importId: string }
         | { type: "added_manually"; userId: string }
         | { type: "added_from_event"; eventSignupId: string }
-        | { type: "added_from_petition"; petitionSignatureId: string },
+        | { type: "added_from_petition"; petitionSignatureId: string }
+        | { type: "incoming_whatsapp_message"; messageId: string },
       serverName: "added_from",
     },
     createdAt: {
