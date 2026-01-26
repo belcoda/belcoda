@@ -1,6 +1,10 @@
 import type { Survey } from '$lib/schema/survey/collection';
 import type { SurveyQuestionType, SurveyQuestion } from '$lib/schema/survey/questions';
 import { v4 as uuidv4 } from 'uuid';
+import { renderAddress } from '$lib/utils/string/address';
+import { renderQuestionTypeName } from '$lib/schema/survey/questions';
+import type { Locale } from '$lib/utils/language';
+import type { ReadPersonZero } from '$lib/schema/person';
 
 export function getSurveyQuestions(questions: Survey['collections'][number]['questions']): {
 	person: SurveyQuestion[];
@@ -56,8 +60,6 @@ export function removeFieldTypeFromSurvey(survey: Survey, type: SurveyQuestionTy
 	return { ...survey, collections: newCollections };
 }
 
-import { renderQuestionTypeName } from '$lib/schema/survey/questions';
-import type { Locale } from '$lib/utils/language';
 export function addQuestion(type: SurveyQuestionType, locale: Locale): SurveyQuestion {
 	const baseQuestion = {
 		id: uuidv4(),
@@ -192,4 +194,33 @@ export function changeQuestionType({
 		...newOptions
 	} as SurveyQuestion;
 	return survey;
+}
+
+export function renderPersonQuestionResponse(
+	question: SurveyQuestionType,
+	person: ReadPersonZero,
+	locale: Locale
+): string {
+	switch (question) {
+		case 'person.dateOfBirth':
+			return person.dateOfBirth ? new Date(person.dateOfBirth).toLocaleDateString() : '';
+		case 'person.gender':
+			return person.gender ?? '';
+		case 'person.workplace':
+			return person.workplace ?? '';
+		case 'person.position':
+			return person.position ?? '';
+		case 'person.address':
+			return renderAddress({
+				addressLine1: person.addressLine1,
+				addressLine2: person.addressLine2,
+				locality: person.locality,
+				region: person.region,
+				postcode: person.postcode,
+				country: person.country,
+				locale: locale
+			});
+		default:
+			return '';
+	}
 }
