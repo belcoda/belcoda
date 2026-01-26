@@ -15,6 +15,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { debounce } from '$lib/utils/debounce';
+	import RecipientSelector from './RecipientSelector.svelte';
 
 	let {
 		emailMessage: initialEmailMessage,
@@ -27,6 +28,7 @@
 	let emailMessage = $state(initialEmailMessage);
 	let composer: RichTextComposer;
 	let isSaving = $state(false);
+	let recipientSelectorOpen = $state(false);
 
 	const fromAddressOptions = fromSignatures.map((sig) => ({
 		value: sig.id,
@@ -116,7 +118,11 @@
 
 					<div class="space-y-2">
 						<Label for="recipients">Recipients</Label>
-						<div class="rounded-lg border bg-muted/30 p-4">
+						<button
+							type="button"
+							class="w-full rounded-lg border bg-muted/30 p-4 text-left transition-colors hover:bg-muted/50"
+							onclick={() => (recipientSelectorOpen = true)}
+						>
 							<div class="flex items-center gap-3">
 								<Users class="text-muted-foreground size-5" />
 								<div class="flex-1">
@@ -131,11 +137,11 @@
 										Estimated recipients: {emailMessage.estimatedRecipientCount}
 									</p>
 								</div>
-								<Button variant="outline" size="sm">
+								<Button variant="outline" size="sm" onclick={(e) => e.stopPropagation()}>
 									Configure Recipients
 								</Button>
 							</div>
-						</div>
+						</button>
 					</div>
 
 					<div class="space-y-2">
@@ -160,3 +166,5 @@
 		</Card.Root>
 	</div>
 </ContentLayout>
+
+<RecipientSelector bind:recipients={emailMessage.recipients} bind:open={recipientSelectorOpen} />
