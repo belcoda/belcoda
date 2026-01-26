@@ -1,6 +1,17 @@
 import type { Survey } from '$lib/schema/survey/collection';
 import type { SurveyQuestionType, SurveyQuestion } from '$lib/schema/survey/questions';
 import { v4 as uuidv4 } from 'uuid';
+
+export function getSurveyQuestions(questions: Survey['collections'][number]['questions']): {
+	person: SurveyQuestion[];
+	custom: SurveyQuestion[];
+} {
+	return {
+		person: questions.filter((question) => question.type.startsWith('person.')),
+		custom: questions.filter((question) => question.type.startsWith('custom.'))
+	};
+}
+
 export function addFieldTypeToSurvey(
 	survey: Survey,
 	type: SurveyQuestionType,

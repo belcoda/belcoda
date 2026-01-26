@@ -45,11 +45,11 @@
 	import createForm from '$lib/form.svelte';
 	import { parse, object } from 'valibot';
 	import { convertQuestionsToValibotSchema } from '$lib/schema/survey/questions';
-	const survey = event.settings.survey.collections[0].questions;
-	const customSurveyQuestions = survey.filter((question) => question.type.startsWith('custom.'));
-	const personSurveyQuestions = survey
-		.filter((question) => question.type.startsWith('person.'))
-		.map((item) => item.type);
+	import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
+	const { person: personSurveyQuestionsRaw, custom: customSurveyQuestions } = getSurveyQuestions(
+		event.settings.survey.collections[0].questions
+	);
+	const personSurveyQuestions = personSurveyQuestionsRaw.map((item) => item.type);
 	const customQuestionSurveySchema = object(convertQuestionsToValibotSchema(customSurveyQuestions));
 	const personActionHelperSchema = setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
 		personActionHelper,
