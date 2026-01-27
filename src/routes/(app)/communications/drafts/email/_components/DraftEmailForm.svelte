@@ -39,8 +39,10 @@
 		label: `${sig.name} <${sig.emailAddress}>`
 	}));
 
+	let selectedFromAddressValue = $state(emailMessage.emailFromSignatureId);
+
 	const selectedFromAddress = $derived(
-		fromAddressOptions.find((opt) => opt.value === emailMessage.emailFromSignatureId)
+		fromAddressOptions.find((opt) => opt.value === selectedFromAddressValue)
 	);
 
 	const saveChanges = debounce(async () => {
@@ -55,7 +57,8 @@
 					subject: emailMessage.subject,
 					body: emailMessage.body,
 					emailFromSignatureId: emailMessage.emailFromSignatureId,
-					replyToOverride: emailMessage.replyToOverride
+					replyToOverride: emailMessage.replyToOverride,
+					recipients: emailMessage.recipients
 				}
 			});
 			lastSaved = new Date();
@@ -130,16 +133,17 @@
 					<div class="space-y-2">
 						<Label for="from">From</Label>
 						<Select.Root
-							selected={selectedFromAddress}
-							onSelectedChange={(selected) => {
-								if (selected) {
-									emailMessage.emailFromSignatureId = selected.value;
+							type="single"
+							bind:value={selectedFromAddressValue}
+							onValueChange={(value) => {
+								if (value) {
+									emailMessage.emailFromSignatureId = value;
 									saveChanges();
 								}
 							}}
 						>
-							<Select.Trigger id="from">
-								<Select.Value placeholder="Select sender" />
+							<Select.Trigger id="from" placeholder="Select sender">
+								{selectedFromAddress?.label ?? 'Select sender'}
 							</Select.Trigger>
 							<Select.Content>
 								{#each fromAddressOptions as option}
@@ -151,30 +155,7 @@
 
 					<div class="space-y-2">
 						<Label for="recipients">Recipients</Label>
-						<button
-							type="button"
-							class="w-full rounded-lg border bg-muted/30 p-4 text-left transition-colors hover:bg-muted/50"
-							onclick={() => (recipientSelectorOpen = true)}
-						>
-							<div class="flex items-center gap-3">
-								<Users class="text-muted-foreground size-5" />
-								<div class="flex-1">
-									<p class="text-sm font-medium">
-										{#if emailMessage.recipients.filters.length === 0}
-											No recipients selected
-										{:else}
-											{emailMessage.recipients.filters.length} filter{emailMessage.recipients.filters.length === 1 ? '' : 's'} applied
-										{/if}
-									</p>
-									<p class="text-muted-foreground text-xs">
-										Estimated recipients: {emailMessage.estimatedRecipientCount}
-									</p>
-								</div>
-								<Button variant="outline" size="sm" onclick={(e) => e.stopPropagation()}>
-									Configure Recipients
-								</Button>
-							</div>
-						</button>
+						<RecipientSelector bind:recipients={emailMessage.recipients} onChange={saveChanges} />
 					</div>
 
 					<div class="space-y-2">
@@ -199,5 +180,3 @@
 		</Card.Root>
 	</div>
 </ContentLayout>
-
-<RecipientSelector bind:recipients={emailMessage.recipients} bind:open={recipientSelectorOpen} />
