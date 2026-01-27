@@ -52,7 +52,8 @@ export function createMutators(params: MutatorParams) {
 		},
 		emailMessage: {
 			create: emailMessage.createEmailMessage(params),
-			update: emailMessage.updateEmailMessage(params)
+			update: emailMessage.updateEmailMessage(params),
+			delete: emailMessage.deleteEmailMessage(params)
 		},
 		organization: {
 			update: organization.updateOrganization(params),

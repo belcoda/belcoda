@@ -94,3 +94,27 @@ export function updateEmailMessage(params: MutatorParams) {
 			);
 	};
 }
+
+export function deleteEmailMessage(params: MutatorParams) {
+	return async function (tx: Transaction, input: { id: string; organizationId: string }) {
+		const emailMessageRecord = await tx.query.emailMessage
+			.where('id', '=', input.id)
+			.where('organizationId', '=', input.organizationId)
+			.where((expr) => emailMessageReadPermissions(expr, params.queryContext))
+			.one()
+			.run();
+		if (!emailMessageRecord) {
+			throw new Error('Email message not found');
+		}
+
+		await tx.dbTransaction.wrappedTransaction
+			.update(emailMessage)
+			.set({
+				deletedAt: new Date(),
+				updatedAt: new Date()
+			})
+			.where(
+				and(eq(emailMessage.id, input.id), eq(emailMessage.organizationId, input.organizationId))
+			);
+	};
+}

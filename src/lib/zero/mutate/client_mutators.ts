@@ -50,7 +50,8 @@ export default function createMutators() {
 		},
 		emailMessage: {
 			create: emailMessage.createEmailMessage(),
-			update: emailMessage.updateEmailMessage()
+			update: emailMessage.updateEmailMessage(),
+			delete: emailMessage.deleteEmailMessage()
 		},
 		organization: {
 			update: organization.updateOrganization(),

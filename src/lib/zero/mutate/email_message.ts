@@ -46,3 +46,12 @@ export function updateEmailMessage() {
 		});
 	};
 }
+
+export function deleteEmailMessage() {
+	return async function (tx: Transaction<Schema>, args: { id: string; organizationId: string }) {
+		tx.mutate.emailMessage.update({
+			id: args.id,
+			deletedAt: new Date().getTime()
+		});
+	};
+}

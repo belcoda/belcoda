@@ -12,12 +12,14 @@
 	import Users from '@lucide/svelte/icons/users';
 	import Check from '@lucide/svelte/icons/check';
 	import Loader2 from '@lucide/svelte/icons/loader-2';
+	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import type { ReadEmailMessageZero } from '$lib/schema/email-message';
 	import type { EmailFromSignature } from '$lib/zero/zero-schema.gen';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { debounce } from '$lib/utils/debounce';
 	import RecipientSelector from './RecipientSelector.svelte';
+	import { goto } from '$app/navigation';
 
 	let {
 		emailMessage: initialEmailMessage,
@@ -30,7 +32,6 @@
 	let emailMessage = $state(initialEmailMessage);
 	let composer: RichTextComposer;
 	let isSaving = $state(false);
-	let recipientSelectorOpen = $state(false);
 	let lastSaved = $state<Date | null>(null);
 
 	const fromAddressOptions = fromSignatures.map((sig) => ({
@@ -70,6 +71,24 @@
 		}
 		console.log('Send email:', emailMessage);
 	};
+
+	const deleteDraft = async () => {
+		const confirmed = confirm(
+			'Are you sure you want to delete this draft? This action cannot be undone.'
+		);
+		if (!confirmed) return;
+
+		try {
+			await z.mutate.emailMessage.delete({
+				id: emailMessage.id,
+				organizationId: appState.organizationId
+			});
+			goto('/communications/drafts/email');
+		} catch (error) {
+			console.error('Error deleting draft:', error);
+			alert('Failed to delete draft. Please try again.');
+		}
+	};
 </script>
 
 <ContentLayout rootLink="/communications">
@@ -95,6 +114,10 @@
 				</div>
 			</div>
 			<div class="flex gap-2">
+				<Button variant="outline" onclick={deleteDraft}>
+					<Trash2 class="mr-2 size-4" />
+					Delete Draft
+				</Button>
 				<Button disabled={emailMessage.recipients.filters.length === 0} onclick={sendEmail}>
 					Send Email
 				</Button>
