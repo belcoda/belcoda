@@ -3,100 +3,56 @@
 	import Switch from '$lib/components/ui/switch/switch.svelte';
 	import FileIcon from '@lucide/svelte/icons/file';
 	import Send from '@lucide/svelte/icons/send';
+	import { z } from '$lib/zero.svelte';
+	import { appState, getListFilter } from '$lib/state.svelte';
+	import { listEmailMessages } from '$lib/zero/query/email_message/list';
+	import { formatShortTimestamp } from '$lib/utils/date';
 
     const { folder }: { folder?: string } = $props();
+    
     const activeItem = $derived.by(() => {
         switch (folder) {
             case 'sent':
                 return {
                     title: 'Sent',
-                    icon: Send
+                    icon: Send,
+                    isDraft: false
                 };
             case 'drafts':
                 return {
                     title: 'Drafts',
-                    icon: FileIcon
+                    icon: FileIcon,
+                    isDraft: true
                 };
             default:
                 return {
                     title: 'Drafts',
-                    icon: FileIcon
+                    icon: FileIcon,
+                    isDraft: true
                 };
         }
     });
 
-    const mails = [
-      {
-        name: "William Smith",
-        email: "williamsmith@example.com",
-        subject: "Meeting Tomorrow",
-        date: "09:34 AM",
-        teaser: "Hi team, just a reminder about our meeting tomorrow at 10 AM.\nPlease come prepared with your project updates.",
-      },
-      {
-        name: "Alice Smith",
-        email: "alicesmith@example.com",
-        subject: "Re: Project Update",
-        date: "Yesterday",
-        teaser: "Thanks for the update. The progress looks great so far.\nLet's schedule a call to discuss the next steps.",
-      },
-      {
-        name: "Bob Johnson",
-        email: "bobjohnson@example.com",
-        subject: "Weekend Plans",
-        date: "2 days ago",
-        teaser: "Hey everyone! I'm thinking of organizing a team outing this weekend.\nWould you be interested in a hiking trip or a beach day?",
-      },
-      {
-        name: "Emily Davis",
-        email: "emilydavis@example.com",
-        subject: "Re: Question about Budget",
-        date: "2 days ago",
-        teaser: "I've reviewed the budget numbers you sent over.\nCan we set up a quick call to discuss some potential adjustments?",
-      },
-      {
-        name: "Michael Wilson",
-        email: "michaelwilson@example.com",
-        subject: "Important Announcement",
-        date: "1 week ago",
-        teaser: "Please join us for an all-hands meeting this Friday at 3 PM.\nWe have some exciting news to share about the company's future.",
-      },
-      {
-        name: "Sarah Brown",
-        email: "sarahbrown@example.com",
-        subject: "Re: Feedback on Proposal",
-        date: "1 week ago",
-        teaser: "Thank you for sending over the proposal. I've reviewed it and have some thoughts.\nCould we schedule a meeting to discuss my feedback in detail?",
-      },
-      {
-        name: "David Lee",
-        email: "davidlee@example.com",
-        subject: "New Project Idea",
-        date: "1 week ago",
-        teaser: "I've been brainstorming and came up with an interesting project concept.\nDo you have time this week to discuss its potential impact and feasibility?",
-      },
-      {
-        name: "Olivia Wilson",
-        email: "oliviawilson@example.com",
-        subject: "Vacation Plans",
-        date: "1 week ago",
-        teaser: "Just a heads up that I'll be taking a two-week vacation next month.\nI'll make sure all my projects are up to date before I leave.",
-      },
-      {
-        name: "James Martin",
-        email: "jamesmartin@example.com",
-        subject: "Re: Conference Registration",
-        date: "1 week ago",
-        teaser: "I've completed the registration for the upcoming tech conference.\nLet me know if you need any additional information from my end.",
-      },
-      {
-        name: "Sophia White",
-        email: "sophiawhite@example.com",
-        subject: "Team Dinner",
-        date: "1 week ago",
-        teaser: "To celebrate our recent project success, I'd like to organize a team dinner.\nAre you available next Friday evening? Please let me know your preferences.",
-      },
-    ];
+    const emailFilter = $derived.by(() => ({
+        ...getListFilter(appState.organizationId),
+        isDraft: activeItem.isDraft
+    }));
+
+    const emailsQuery = $derived.by(() =>
+        z.createQuery(listEmailMessages(appState.queryContext, emailFilter))
+    );
+
+    const emails = $derived(emailsQuery.data ?? []);
+
+    function getRecipientDisplay(email: typeof emails[0]) {
+        const count = email.estimatedRecipientCount;
+        if (count === 1) {
+            // For single recipient, we'd need to fetch the actual recipient name
+            // For now, show "1 recipient"
+            return '1 recipient';
+        }
+        return `${count} recipients`;
+    }
 </script>
 <div class="flex w-full flex-col bg-background md:w-[300px] md:shrink-0">
     <div class="flex flex-col gap-3 border-b p-4">
@@ -113,20 +69,26 @@
     </div>
     <div class="flex-1 overflow-auto">
       <div class="flex flex-col">
-        {#each mails as mail (mail.email)}
+        {#each emails as email (email.id)}
           <a
-            href="##"
+            href="/communications/email/{folder}/{email.id}"
             class="hover:bg-muted flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0"
           >
             <div class="flex w-full items-center gap-2">
-              <span>{mail.name}</span>
-              <span class="ms-auto text-xs text-muted-foreground">{mail.date}</span>
+              <span>{getRecipientDisplay(email)}</span>
+              <span class="ms-auto text-xs text-muted-foreground">{formatShortTimestamp(email.updatedAt)}</span>
             </div>
-            <span class="font-medium">{mail.subject}</span>
-            <span class="line-clamp-2 text-xs text-muted-foreground">
-              {mail.teaser}
-            </span>
+            <span class="font-medium">{email.subject || '(No subject)'}</span>
+            {#if email.previewTextOverride}
+              <span class="line-clamp-2 text-xs text-muted-foreground">
+                {email.previewTextOverride}
+              </span>
+            {/if}
           </a>
+        {:else}
+          <div class="flex flex-col items-center justify-center p-8 text-center">
+            <p class="text-sm text-muted-foreground">No emails found</p>
+          </div>
         {/each}
       </div>
     </div>
