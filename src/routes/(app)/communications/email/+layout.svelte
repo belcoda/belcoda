@@ -1,8 +1,8 @@
 <script lang="ts">
-	import UniversalLayout from '$lib/components/layouts/app/UniversalLayout.svelte';
+	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	const { children } = $props();
 </script>
 
-<UniversalLayout rootNav="/communications/email">
+<ContentLayout rootLink='/communications/email'>
 	{@render children?.()}
-</UniversalLayout>
+</ContentLayout>
