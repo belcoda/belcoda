@@ -19,9 +19,19 @@
 
 	const email = $derived(emailQuery?.data);
 
-	function handleSave(data: any) {
-		console.log('Save draft:', data);
-		// TODO: Implement save mutation
+	async function handleSave(data: any) {
+		if (!emailId) return;
+		
+		await z.mutate.emailMessage.update({
+			metadata: {
+				organizationId: appState.organizationId,
+				emailMessageId: emailId
+			},
+			input: {
+				subject: data.subject,
+				body: data.body
+			}
+		});
 	}
 
 	function handleSend(data: any) {
