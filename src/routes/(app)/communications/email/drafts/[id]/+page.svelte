@@ -29,7 +29,14 @@
 		// TODO: Implement send mutation
 	}
 
-	function handleDiscard() {
+	async function handleDiscard() {
+		if (!emailId) return;
+		
+		await z.mutate.emailMessage.delete({
+			id: emailId,
+			organizationId: appState.organizationId
+		});
+		
 		goto('/communications/email/drafts');
 	}
 </script>
