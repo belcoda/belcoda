@@ -12,14 +12,24 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { type SurveySchema, getSurveySchema } from '$lib/schema/survey/questions';
 	type Props = {
+		theme: 'default' | 'embed';
 		event: EventSchema;
 		organization: OrganizationSchema;
+		currentSignups: number;
 		person?: PersonSchema | null;
 		whatsAppSignupLink: string;
 		form: SuperValidated<SurveySchema>;
 	};
 
-	const { event, organization, person, whatsAppSignupLink, form: formProp }: Props = $props();
+	const {
+		event,
+		organization,
+		currentSignups,
+		person,
+		whatsAppSignupLink,
+		form: formProp,
+		theme = 'default'
+	}: Props = $props();
 
 	const primaryColor = $derived(
 		organization.settings?.display?.primaryColor || defaultDisplaySettings.primaryColor
@@ -85,6 +95,7 @@
 	import MapPin from '@lucide/svelte/icons/map-pin';
 	import X from '@lucide/svelte/icons/x';
 	import Error from '$lib/components/ui/form/custom/error.svelte';
+	import EventDetails from './EventDetails.svelte';
 
 	//form helperrs
 
@@ -108,7 +119,15 @@
 				</p>
 			</div>
 		{/if}
-		<h3 class="mb-6 text-lg font-semibold text-gray-900">Join this event</h3>
+		{#if theme === 'default'}
+			<h3 class="mb-6 text-lg font-semibold text-gray-900">Join this event</h3>
+		{:else if theme === 'embed'}
+			<div class="mb-6">
+				<h3 class="mb-2 text-lg font-semibold text-gray-900">{event.title}</h3>
+				<p class="mb-2 text-sm text-gray-600">{event.shortDescription}</p>
+				<EventDetails {event} {currentSignups} {primaryColor} />
+			</div>
+		{/if}
 
 		<div class="mb-6 lg:hidden">
 			<WhatsAppSignup directLink {whatsAppSignupLink} />
