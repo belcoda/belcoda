@@ -29,7 +29,7 @@
 				<ActionsMenu />
 			</div>
 			<div class="mb-4 px-4 pt-4">
-				<Button href="/communications/drafts/email/new" class="w-full" size="lg">
+				<Button href="/communications/email/drafts/new" class="w-full" size="lg">
 					<span class="icon-[mdi--email] size-5"></span> Compose Email
 				</Button>
 			</div>
@@ -39,7 +39,7 @@
 				<Sidebar.GroupContent>
 					<Sidebar.Menu>
 						<Sidebar.MenuItem>
-							<a href="/communications/drafts">
+							<a href="/communications/email/drafts">
 								<Sidebar.MenuButton isActive={isDrafts}>
 									<span>Drafts</span>
 								</Sidebar.MenuButton>
