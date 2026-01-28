@@ -1,0 +1,47 @@
+<script lang="ts">
+	import EmailForm from '$lib/components/communications/email/EmailForm.svelte';
+	import { z } from '$lib/zero.svelte';
+	import { appState } from '$lib/state.svelte';
+	import { readEmailMessage } from '$lib/zero/query/email_message/read';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+
+	const emailId = $derived(page.params.id);
+
+	const emailQuery = $derived.by(() => {
+		if (!emailId) return null;
+		return z.createQuery(
+			readEmailMessage(appState.queryContext, {
+				emailMessageId: emailId
+			})
+		);
+	});
+
+	const email = $derived(emailQuery?.data);
+
+	function handleSave(data: any) {
+		console.log('Save draft:', data);
+		// TODO: Implement save mutation
+	}
+
+	function handleSend(data: any) {
+		console.log('Send email:', data);
+		// TODO: Implement send mutation
+	}
+
+	function handleDiscard() {
+		goto('/communications/email/drafts');
+	}
+</script>
+
+{#if !emailId}
+	<div class="flex h-full items-center justify-center">
+		<p class="text-muted-foreground">Invalid email ID</p>
+	</div>
+{:else if email}
+	<EmailForm {email} onSave={handleSave} onSend={handleSend} onDiscard={handleDiscard} />
+{:else}
+	<div class="flex h-full items-center justify-center">
+		<p class="text-muted-foreground">Loading...</p>
+	</div>
+{/if}
