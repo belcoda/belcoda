@@ -12,6 +12,7 @@
 	import { listEmailMessages } from '$lib/zero/query/email_message/list';
 
 	onMount(() => {
+		// Rediect to emails because it's the only module we have so far
 		goto('/communications/email/drafts', { replaceState: true });
 	});
 
