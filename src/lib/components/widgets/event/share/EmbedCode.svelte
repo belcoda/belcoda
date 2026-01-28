@@ -12,16 +12,24 @@
 	let copied = $state(false);
 	type Theme = 'default';
 	let theme: Theme = $state('default');
+
+	import { appState } from '$lib/state.svelte';
+	import { getEventLink } from '$lib/utils/events/link';
+	const eventLink = getEventLink({
+		eventSlug: event.slug,
+		organizationSlug: appState.activeOrganization.data?.slug || ''
+	});
+
 	const embedCode = $derived.by(() => {
 		switch (theme) {
 			case 'default':
-				return `TODO: Generated embeddable iframe code for event ${event.title}`;
+				return `<iframe src="${eventLink}?theme=embed" width="100%" height="100%" frameborder="0"></iframe>`;
 		}
 	});
 </script>
 
 <div class="grid w-full max-w-md gap-4">
-	<InputGroup.Root>
+	<InputGroup.Root class="w-full overflow-x-auto">
 		<InputGroup.Addon align="block-start" class="border-b">
 			<InputGroup.Text class="font-medium text-foreground"
 				>Copy to embed in your website</InputGroup.Text
@@ -56,6 +64,6 @@
 				{#if copied}<CheckIcon />{:else}<IconCopy />{/if}
 			</InputGroup.Button>
 		</InputGroup.Addon>
-		<InputGroup.Textarea value={embedCode} class="min-h-[200px] font-mono" readonly />
+		<InputGroup.Textarea value={embedCode} class="min-h-[200px] font-mono text-xs" readonly />
 	</InputGroup.Root>
 </div>
