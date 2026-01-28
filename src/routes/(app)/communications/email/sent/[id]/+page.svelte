@@ -8,19 +8,23 @@
 
 	const emailId = $derived(page.params.id);
 
-	const emailQuery = $derived.by(() =>
-		z.createQuery(
+	const emailQuery = $derived.by(() => {
+		if (!emailId) return null;
+		return z.createQuery(
 			readEmailMessage(appState.queryContext, {
-				organizationId: appState.organizationId,
 				emailMessageId: emailId
 			})
-		)
-	);
+		);
+	});
 
-	const email = $derived(emailQuery.data);
+	const email = $derived(emailQuery?.data);
 </script>
 
-{#if email}
+{#if !emailId}
+	<div class="flex h-full items-center justify-center">
+		<p class="text-muted-foreground">Invalid email ID</p>
+	</div>
+{:else if email}
 	<div class="flex h-full flex-col">
 		<div class="border-b p-4">
 			<div class="flex items-center justify-between">
