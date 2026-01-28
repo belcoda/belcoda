@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -8,6 +10,10 @@
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { listEmailMessages } from '$lib/zero/query/email_message/list';
+
+	onMount(() => {
+		goto('/communications/email/drafts', { replaceState: true });
+	});
 
 	const draftFilter = $state({
 		...getListFilter(appState.organizationId),
