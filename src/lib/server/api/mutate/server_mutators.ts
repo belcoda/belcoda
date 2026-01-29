@@ -1,6 +1,7 @@
 import type { MutatorParams } from '$lib/zero/schema';
 import * as person from '$lib/server/api/mutate/person';
 import * as personNote from '$lib/server/api/mutate/person_note';
+import * as personImport from '$lib/server/api/mutate/person_import';
 import * as eventSignup from '$lib/server/api/mutate/event_signup';
 import * as event from '$lib/server/api/mutate/event';
 import * as petition from '$lib/server/api/mutate/petition';
@@ -19,6 +20,10 @@ export function createMutators(params: MutatorParams) {
 			removeFromTeam: person.removePersonFromTeam(params),
 			addTag: person.addPersonTag(params),
 			removeTag: person.removePersonTag(params)
+		},
+		personImport: {
+			insert: personImport.insertPersonImport(params),
+			triggerQueue: personImport.triggerImportQueue(params)
 		},
 		personNote: {
 			create: personNote.createPersonNote(params),
@@ -52,8 +57,8 @@ export function createMutators(params: MutatorParams) {
 		organization: {
 			update: organization.updateOrganization(params),
 			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings(params),
-      updateTheme: organization.updateTheme(params)
-    },
+			updateTheme: organization.updateTheme(params)
+		},
 		webhook: {
 			create: webhook.createWebhook(params),
 			delete: webhook.deleteWebhook(params)

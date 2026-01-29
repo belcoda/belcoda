@@ -1,0 +1,30 @@
+import { type Transaction } from '@rocicorp/zero';
+import { type Schema } from '$lib/zero/schema';
+
+import { type CreateMutatorSchemaZeroOutput } from '$lib/schema/person-import';
+
+export function insertPersonImport() {
+	return async function (tx: Transaction<Schema>, args: CreateMutatorSchemaZeroOutput) {
+		tx.mutate.personImport.insert({
+			id: args.metadata.importId,
+			organizationId: args.metadata.organizationId,
+			csvUrl: args.input.csvUrl,
+			status: 'pending',
+			totalRows: 0,
+			processedRows: 0,
+			failedRows: 0,
+			failedEntries: null,
+			importedBy: args.metadata.importedBy,
+			createdAt: new Date().getTime(),
+			completedAt: null
+		});
+	};
+}
+
+export function triggerImportQueue() {
+	return async function (_tx: Transaction<Schema>, { personImportId }: { personImportId: string }) {
+		// Server-side mutator will handle the actual queue triggering
+		// personImportId will be used by the server-side implementation
+		return;
+	};
+}

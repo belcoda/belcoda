@@ -1,5 +1,6 @@
 import * as person from '$lib/zero/mutate/person';
 import * as personNote from '$lib/zero/mutate/person_note';
+import * as personImport from '$lib/zero/mutate/person_import';
 import * as eventSignup from '$lib/zero/mutate/event_signup';
 import * as event from '$lib/zero/mutate/event';
 import * as petition from '$lib/zero/mutate/petition';
@@ -17,6 +18,10 @@ export default function createMutators() {
 			removeFromTeam: person.removePersonFromTeam(),
 			addTag: person.addPersonTag(),
 			removeTag: person.removePersonTag()
+		},
+		personImport: {
+			insert: personImport.insertPersonImport(),
+			triggerQueue: personImport.triggerImportQueue()
 		},
 		personNote: {
 			create: personNote.createPersonNote(),
@@ -50,8 +55,8 @@ export default function createMutators() {
 		organization: {
 			update: organization.updateOrganization(),
 			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings(),
-      updateTheme: organization.updateTheme()
-    },
+			updateTheme: organization.updateTheme()
+		},
 		webhook: {
 			create: webhook.createWebhook(),
 			delete: webhook.deleteWebhook()
