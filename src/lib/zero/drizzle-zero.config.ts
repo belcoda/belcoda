@@ -411,19 +411,6 @@ export default drizzleZeroConfig(drizzleSchema, {
 			updatedAt: true,
 			deletedAt: true
 		},
-		peopleImport: {
-			id: true,
-			organizationId: true,
-			csvUrl: true,
-			status: true,
-			totalRows: true,
-			processedRows: true,
-			failedRows: true,
-			failedEntries: true,
-			importedBy: true,
-			createdAt: true,
-			completedAt: true
-		},
 		webhook: {
 			id: true,
 			organizationId: true,
