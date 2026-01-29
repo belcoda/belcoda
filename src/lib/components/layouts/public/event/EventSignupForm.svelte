@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { type EventSchema } from '$lib/schema/event';
 	import type { OrganizationSchema } from '$lib/schema/organization';
-	import { type PersonSchema } from '$lib/schema/person';
 	import { renderEventTime } from '$lib/utils/date';
 	import { renderAddress } from '$lib/utils/string/address';
 	import { page } from '$app/state';
@@ -16,7 +15,6 @@
 		event: EventSchema;
 		organization: OrganizationSchema;
 		currentSignups: number;
-		person?: PersonSchema | null;
 		whatsAppSignupLink: string;
 		form: SuperValidated<SurveySchema>;
 	};
@@ -25,7 +23,6 @@
 		event,
 		organization,
 		currentSignups,
-		person,
 		whatsAppSignupLink,
 		form: formProp,
 		theme = 'default'
@@ -110,9 +107,10 @@
 </script>
 
 <!-- Registration Form -->
-{#if event.published || person}
+{#if event.published}
 	<div>
-		{#if person && !event.published}
+		<!-- If the event is not published, show a warning. It will only be visible if a user with event permissions is signed in because this page won't be visible otherwise -->
+		{#if !event.published}
 			<div class="mb-6 rounded-md bg-yellow-50 p-3">
 				<p class="text-sm text-yellow-700">
 					This is a preview of the event. Publish the event before sharing it with others.

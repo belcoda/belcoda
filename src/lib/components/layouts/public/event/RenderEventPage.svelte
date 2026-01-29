@@ -16,7 +16,6 @@
 	type Props = {
 		event: EventSchema;
 		organization: OrganizationSchema;
-		person?: PersonSchema | null;
 		signupCount?: number;
 		form?: SuperValidated<SurveySchema>;
 		whatsAppSignupLink?: string;
@@ -26,7 +25,6 @@
 	const {
 		event,
 		organization,
-		person,
 		theme = 'default',
 		signupCount = 0,
 		whatsAppSignupLink,
@@ -140,7 +138,6 @@
 									{event}
 									{organization}
 									{theme}
-									{person}
 									{whatsAppSignupLink}
 								/>
 							{/if}
@@ -162,7 +159,6 @@
 				{event}
 				{organization}
 				{theme}
-				{person}
 				{whatsAppSignupLink}
 			/>
 		{/if}
