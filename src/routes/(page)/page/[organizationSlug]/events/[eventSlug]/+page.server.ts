@@ -6,7 +6,6 @@ import {
 	_getOrganizationIdBySlugUnsafe,
 	getOrganizationByIdUnsafe
 } from '$lib/server/api/data/organization';
-export const ssr = false;
 import { generateWhatsAppSignupLink } from '$lib/utils/events/link';
 import { _getEventActionCodeUnsafe } from '$lib/server/api/data/event/check';
 
@@ -17,6 +16,8 @@ import { getSurveySchema, type SurveySchema } from '$lib/schema/survey/questions
 import { type EventSignupHelper, eventSignupHelper } from '$lib/schema/event-signup';
 import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db/zeroDrizzle';
+import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
+import { event, session } from '$lib/schema/drizzle.js';
 
 export async function load({ locals, params, url }) {
 	log.debug(
@@ -29,16 +30,30 @@ export async function load({ locals, params, url }) {
 		},
 		'[DEBUG] Route started loading'
 	);
-
 	const {
 		event: eventObj,
 		organization: organizationObj,
 		whatsAppSignupLink
-	} = await getDetails(params.eventSlug, params.organizationSlug);
+	} = await getDetails(params.eventSlug, params.organizationSlug, locals.session).catch((err) => {
+		if (err instanceof Error && err.message === 'Unknown event') {
+			return error(404, 'Unknown event');
+		}
+		if (err instanceof Error && err.message === 'You are not authorized to access this resource') {
+			return error(403, 'You are not authorized to access this resource');
+		}
+		return error(500, 'Unknown error');
+	});
 
 	const surveySchema = getSurveySchema(eventObj);
 	const form = await superValidate(valibot(surveySchema));
-	return { event: eventObj, organization: organizationObj, whatsAppSignupLink, form };
+
+	return {
+		event: eventObj,
+		organization: organizationObj,
+		whatsAppSignupLink,
+		form,
+		session: locals.session
+	};
 }
 
 export const actions = {
@@ -97,7 +112,11 @@ export const actions = {
 	}
 };
 
-async function getDetails(eventSlug: string, organizationSlug: string) {
+async function getDetails(
+	eventSlug: string,
+	organizationSlug: string,
+	session: App.Locals['session'] | null
+) {
 	const organizationId = await _getOrganizationIdBySlugUnsafe({
 		organizationSlug: organizationSlug
 	});
@@ -115,6 +134,22 @@ async function getDetails(eventSlug: string, organizationSlug: string) {
 
 	if (!eventObj) {
 		throw new Error('Event not found');
+	}
+	if (!session && !eventObj.published) {
+		throw new Error('Unknown event');
+	}
+
+	if (session) {
+		const authedTeams = await getAuthedTeams(session.user.id);
+		const adminOwnerOrgs = await getAdminOwnerOrgs(session.user.id);
+		if (
+			eventObj.teamId &&
+			!authedTeams.includes(eventObj.teamId) &&
+			!adminOwnerOrgs.admin.includes(eventObj.organizationId) &&
+			!adminOwnerOrgs.owner.includes(eventObj.organizationId)
+		) {
+			throw new Error('You are not authorized to access this resource');
+		}
 	}
 
 	const actionCode = await _getEventActionCodeUnsafe({ eventId: eventObj.id });
