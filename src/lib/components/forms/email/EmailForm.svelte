@@ -17,9 +17,17 @@
 		onDiscard?: () => void;
 	} = $props();
 
-	let subject = $state(email?.subject || '');
-	let body = $state(email?.body || null);
-	let recipientCount = $state(email?.estimatedRecipientCount || 0);
+	let subject = $state('');
+	let body = $state(null);
+	let recipientCount = $derived(email?.estimatedRecipientCount || 0);
+
+	// $effect.pre runs before the DOM updates which prevents flickers
+	$effect.pre(() => {
+		if (email) {
+			subject = email.subject || '';
+			body = email.body || null;
+		}
+	});
 
 	function handleSave() {
 		onSave?.({
