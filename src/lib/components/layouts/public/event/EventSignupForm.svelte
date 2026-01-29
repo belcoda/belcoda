@@ -12,14 +12,24 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { type SurveySchema, getSurveySchema } from '$lib/schema/survey/questions';
 	type Props = {
+		theme: 'default' | 'embed';
 		event: EventSchema;
 		organization: OrganizationSchema;
+		currentSignups: number;
 		person?: PersonSchema | null;
 		whatsAppSignupLink: string;
 		form: SuperValidated<SurveySchema>;
 	};
 
-	const { event, organization, person, whatsAppSignupLink, form: formProp }: Props = $props();
+	const {
+		event,
+		organization,
+		currentSignups,
+		person,
+		whatsAppSignupLink,
+		form: formProp,
+		theme = 'default'
+	}: Props = $props();
 
 	const primaryColor = $derived(
 		organization.settings?.display?.primaryColor || defaultDisplaySettings.primaryColor
@@ -45,11 +55,12 @@
 	import createForm from '$lib/form.svelte';
 	import { parse, object } from 'valibot';
 	import { convertQuestionsToValibotSchema } from '$lib/schema/survey/questions';
-	const survey = event.settings.survey.collections[0].questions;
-	const customSurveyQuestions = survey.filter((question) => question.type.startsWith('custom.'));
-	const personSurveyQuestions = survey
-		.filter((question) => question.type.startsWith('person.'))
-		.map((item) => item.type);
+	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
+	import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
+	const { person: personSurveyQuestionsRaw, custom: customSurveyQuestions } = getSurveyQuestions(
+		event.settings.survey.collections[0].questions
+	);
+	const personSurveyQuestions = personSurveyQuestionsRaw.map((item) => item.type);
 	const customQuestionSurveySchema = object(convertQuestionsToValibotSchema(customSurveyQuestions));
 	const personActionHelperSchema = setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
 		personActionHelper,
@@ -84,6 +95,7 @@
 	import MapPin from '@lucide/svelte/icons/map-pin';
 	import X from '@lucide/svelte/icons/x';
 	import Error from '$lib/components/ui/form/custom/error.svelte';
+	import EventDetails from './EventDetails.svelte';
 
 	//form helperrs
 
@@ -107,7 +119,15 @@
 				</p>
 			</div>
 		{/if}
-		<h3 class="mb-6 text-lg font-semibold text-gray-900">Join this event</h3>
+		{#if theme === 'default'}
+			<h3 class="mb-6 text-lg font-semibold text-gray-900">Join this event</h3>
+		{:else if theme === 'embed'}
+			<div class="mb-6">
+				<h3 class="mb-2 text-lg font-semibold text-gray-900">{event.title}</h3>
+				<p class="mb-2 text-sm text-gray-600">{event.shortDescription}</p>
+				<EventDetails {event} {currentSignups} {primaryColor} />
+			</div>
+		{/if}
 
 		<div class="mb-6 lg:hidden">
 			<WhatsAppSignup directLink {whatsAppSignupLink} />
@@ -168,6 +188,7 @@
 			</Form.Field>
 
 			{#if personSurveyQuestions.includes('person.address')}
+				<!--Can't use renderPersonQuestion here because the address-->
 				<Form.Field {form} name="person.addressLine1">
 					<Form.Control>
 						{#snippet children({ props })}
@@ -224,7 +245,7 @@
 				<Form.Field {form} name="person.dateOfBirth">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Date of Birth</Form.Label>
+							<Form.Label>{renderPersonQuestion('person.dateOfBirth')}</Form.Label>
 							<DateOfBirth {...props} bind:value={$data.person.dateOfBirth} />
 						{/snippet}
 					</Form.Control>
@@ -236,7 +257,7 @@
 				<Form.Field {form} name="person.gender">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Gender</Form.Label>
+							<Form.Label>{renderPersonQuestion('person.gender')}</Form.Label>
 							<GenderSelect {...props} bind:value={$data.person.gender as GenderOption} />
 						{/snippet}
 					</Form.Control>
@@ -248,7 +269,7 @@
 				<Form.Field {form} name="person.workplace">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Workplace</Form.Label>
+							<Form.Label>{renderPersonQuestion('person.workplace')}</Form.Label>
 							<Input {...props} bind:value={$data.person.workplace} />
 						{/snippet}
 					</Form.Control>
@@ -259,7 +280,7 @@
 				<Form.Field {form} name="person.position">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Position</Form.Label>
+							<Form.Label>{renderPersonQuestion('person.position')}</Form.Label>
 							<Input {...props} bind:value={$data.person.position} />
 						{/snippet}
 					</Form.Control>
