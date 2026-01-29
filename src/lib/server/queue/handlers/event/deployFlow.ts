@@ -45,8 +45,8 @@ export async function deployEventWhatsAppFlow({ eventId }: { eventId: string }) 
 		.set({
 			settings: {
 				...eventResult.settings,
-				whatsappFlowId: internalFlow.metadata.id,
-				whatsappFlowYCloudId: internalFlow.metadata.ycloudFlowId,
+				whatsappFlowId: flow.flowId, //this is the same as ycloudFlowId, but might be different if we ed up using different platforms.
+				whatsappFlowYCloudId: flow.flowId,
 				whatsappFlowCreatedAt: internalFlow.metadata.createdAt
 			}
 		})

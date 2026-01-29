@@ -12,6 +12,11 @@ import { env as publicEnv } from '$env/dynamic/public';
 import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
 import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
 import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
+import { parse, safeParse, intersect } from 'valibot';
+import {
+	personActionHelperWhatsAppFlow,
+	personActionHelperCustomFieldsOnly
+} from '$lib/schema/person';
 
 const log = pino(import.meta.url);
 
@@ -144,14 +149,12 @@ export async function handleFlowResponse({
 	body,
 	response,
 	from,
-	givenName,
 	tx: defaultTx
 }: {
 	flowName: string;
 	body?: string;
 	response: string;
 	from: string;
-	givenName: string;
 	tx?: Transaction;
 }) {
 	try {
@@ -179,28 +182,33 @@ export async function handleFlowResponse({
 
 		switch (type) {
 			case 'event_signup': {
-				const flowResponses = {
-					name: flowName,
-					body,
-					response_json: responseJson
-				};
 				const event = await _getEventByIdUnsafe({ eventId, tx });
 				const organization = await getOrganizationByIdUnsafe({
 					organizationId: event.organizationId,
 					tx
 				});
 				const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
-				const eventSignup = await signUpForEventHelper({
-					eventId: event.id,
-					personAction: {
+				const parsedPersonAction = parse(
+					intersect([personActionHelperWhatsAppFlow, personActionHelperCustomFieldsOnly]),
+					{
 						subscribed: true,
 						country: countryCode,
 						phoneNumber: from,
-						givenName: givenName
-					},
+						...responseJson
+					}
+				);
+				const parsedCustomFields = safeParse(personActionHelperCustomFieldsOnly, responseJson);
+				const customFields = parsedCustomFields.success ? parsedCustomFields.output : {};
+				log.debug(
+					{ parsedPersonAction },
+					'Signing up person for event with personAction from WhatsApp flow'
+				);
+				const eventSignup = await signUpForEventHelper({
+					eventId: event.id,
+					personAction: parsedPersonAction,
 					signupDetails: {
 						channel: { type: 'whatsapp' },
-						customFields: {}
+						customFields: customFields
 					},
 					organizationId: event.organizationId,
 					tx

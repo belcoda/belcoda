@@ -320,7 +320,7 @@ export function convertInternalToYCloudRequest(
 
 	return {
 		wabaId: options.wabaId,
-		name: internal.metadata.title,
+		name: `${internal.metadata.id} - ${internal.metadata.title}`,
 		categories: options.categories || ['SURVEY'],
 		flowJson,
 		publish: options.publish || false,
@@ -417,7 +417,7 @@ export function convertEventSignupFieldsToFlow({
 	// Required: Email
 	components.push({
 		type: 'TextInput',
-		name: 'email',
+		name: 'emailAddress',
 		label: 'Email',
 		required: false,
 		'input-type': 'email',
@@ -427,7 +427,7 @@ export function convertEventSignupFieldsToFlow({
 	// Required: Phone (WhatsApp uses phone for identification)
 	components.push({
 		type: 'TextInput',
-		name: 'phone',
+		name: 'phoneNumber',
 		label: 'Phone Number',
 		required: true,
 		'input-type': 'phone',
@@ -538,8 +538,8 @@ export function convertEventSignupFieldsToFlow({
 				// Form field references
 				givenName: '${form.givenName}',
 				familyName: '${form.familyName}',
-				email: '${form.email}',
-				phone: '${form.phone}',
+				emailAddress: '${form.emailAddress}',
+				phoneNumber: '${form.phoneNumber}',
 				...Object.fromEntries(
 					settings.survey.collections[0].questions.map((question) => [
 						question.id,

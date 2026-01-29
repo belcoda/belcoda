@@ -249,6 +249,34 @@ export const personActionHelper = v.pipe(
 );
 export type PersonActionHelper = v.InferOutput<typeof personActionHelper>;
 
+export const personActionHelperWhatsAppFlow = v.object({
+	...personActionHelper.entries,
+	flow_token: v.literal('unused'),
+	resource_type: v.picklist(['event', 'petition', 'survey', 'other']),
+	resource_id: helpers.uuid
+});
+
+export const customFieldValue = v.union([v.string(), v.number(), v.boolean(), v.array(v.string())]);
+type CustomFieldValue = v.InferOutput<typeof customFieldValue>;
+export const personActionHelperCustom = v.record(helpers.uuid, customFieldValue);
+
+export const personActionHelperCustomFieldsOnly = v.pipe(
+	v.record(v.string(), customFieldValue),
+	v.transform((obj) => {
+		const result: Record<string, CustomFieldValue> = {};
+		for (const [key, value] of Object.entries(obj)) {
+			try {
+				// Validate the key; if invalid, skip it
+				v.parse(helpers.uuid, key);
+				result[key] = value;
+			} catch {
+				// skip invalid keys
+			}
+		}
+		return result;
+	})
+);
+
 export function setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
 	schema: typeof personActionHelper,
 	questions: SurveyQuestion[]

@@ -210,25 +210,12 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				if (parsed.whatsappInboundMessage.interactive.type === 'button_reply') {
 					break;
 				} else if (parsed.whatsappInboundMessage.interactive.type === 'nfm_reply') {
-					const { organization, person } = await getDetailsFromMessageByWabaId({
-						wabaId: parsed.whatsappInboundMessage.wabaId,
-						messageId: insertedWhatsAppMessageId,
-						personPhoneNumber: parsed.whatsappInboundMessage.from,
-						personName:
-							parsed.whatsappInboundMessage.customerProfile?.name ??
-							parsed.whatsappInboundMessage.from,
-						tx
-					});
-					organizationId = organization.id;
-					personId = person.id;
-
 					// Handle flow response messages
 					await handleFlowResponse({
 						flowName: parsed.whatsappInboundMessage.interactive.nfm_reply.name,
 						body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
 						response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
 						from: parsed.whatsappInboundMessage.from,
-						givenName: person.givenName || person.familyName || parsed.whatsappInboundMessage.from,
 						tx
 					});
 				}
