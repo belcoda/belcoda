@@ -1,5 +1,5 @@
 <script lang="ts">
-	import EmailForm from '$lib/components/communications/email/EmailForm.svelte';
+	import EmailForm from '$lib/components/forms/email/EmailForm.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { readEmailMessage } from '$lib/zero/query/email_message/read';
