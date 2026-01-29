@@ -22,9 +22,18 @@ export function insertPersonImport() {
 }
 
 export function triggerImportQueue() {
-	return async function (_tx: Transaction<Schema>, { personImportId }: { personImportId: string }) {
+	return async function (
+		_tx: Transaction<Schema>,
+		{
+			personImportId,
+			organizationId
+		}: {
+			personImportId: string;
+			organizationId: string;
+		}
+	) {
 		// Server-side mutator will handle the actual queue triggering
-		// personImportId will be used by the server-side implementation
+		// personImportId and organizationId will be used by the server-side implementation
 		return;
 	};
 }
