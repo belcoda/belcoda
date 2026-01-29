@@ -14,6 +14,7 @@ import { eq, and } from 'drizzle-orm';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { unsafeInsertActionCode } from './action_code';
+import { getQueue } from '$lib/server/queue';
 
 export function createEvent(params: MutatorParams) {
 	return async function (tx: Transaction, input: CreateEventZeroMutatorSchema) {
@@ -128,7 +129,7 @@ export function updateEvent(params: MutatorParams) {
 			throw new Error('Event not found');
 		}
 
-		await tx.dbTransaction.wrappedTransaction
+		const [updatedEvent] = await tx.dbTransaction.wrappedTransaction
 			.update(event)
 			.set({
 				...parsed.input,
@@ -139,6 +140,16 @@ export function updateEvent(params: MutatorParams) {
 					eq(event.id, parsed.metadata.eventId),
 					eq(event.organizationId, parsed.metadata.organizationId)
 				)
-			);
+			)
+			.returning();
+
+		const structureChanged = !!(input.input.settings || input.input.title);
+		const publishedStatusChanged =
+			eventRecord?.published !== undefined && eventRecord?.published !== updatedEvent?.published;
+
+		if (structureChanged || publishedStatusChanged) {
+			const queue = await getQueue();
+			queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
+		}
 	};
 }
