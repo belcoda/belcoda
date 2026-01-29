@@ -11,18 +11,35 @@
 		RichTextPlugin,
 		StrikethroughButton,
 		Toolbar,
-		UnderlineButton
+		UnderlineButton,
+		OnChangePlugin
 	} from 'svelte-lexical';
 	import { theme } from 'svelte-lexical/dist/themes/default';
+	import type { EditorState } from 'lexical';
+
+	let {
+		value = $bindable(null),
+		onChange
+	}: {
+		value?: any;
+		onChange?: (state: any) => void;
+	} = $props();
 
 	const initialConfig = {
 		theme,
 		namespace: 'belcoda_wysiwyg',
 		nodes: [],
+		editorState: value ? JSON.stringify(value) : undefined,
 		onError: (error: Error) => {
 			throw error;
 		}
 	};
+
+	function handleChange(editorState: EditorState) {
+		const state = structuredClone(editorState.toJSON());
+		value = state;
+		onChange?.(state);
+	}
 </script>
 
 <Composer {initialConfig}>
@@ -48,6 +65,7 @@
 				</div>
 			</div>
 			<RichTextPlugin />
+			<OnChangePlugin onChange={handleChange} ignoreHistoryMergeTagChange={true} ignoreSelectionChange={true} />
 		</div>
 	</div>
 </Composer>

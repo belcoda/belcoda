@@ -32,14 +32,14 @@
 	function handleSave() {
 		onSave?.({
 			subject,
-			body
+			body: body ? JSON.parse(JSON.stringify(body)) : null
 		});
 	}
 
 	function handleSend() {
 		onSend?.({
 			subject,
-			body
+			body: body ? JSON.parse(JSON.stringify(body)) : null
 		});
 	}
 </script>
@@ -98,7 +98,9 @@
 			<div class="space-y-2">
 				<Label for="body">Message</Label>
 				<div class="rounded-md border">
-					<SvelteLexical />
+					{#key email?.id}
+						<SvelteLexical bind:value={body} />
+					{/key}
 				</div>
 			</div>
 		</div>
