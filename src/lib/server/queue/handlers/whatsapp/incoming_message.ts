@@ -216,9 +216,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 						body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
 						response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
 						from: parsed.whatsappInboundMessage.from,
-						givenName:
-							parsed.whatsappInboundMessage.customerProfile?.name ??
-							parsed.whatsappInboundMessage.from,
 						tx
 					});
 				}
