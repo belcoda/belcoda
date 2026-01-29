@@ -7,7 +7,7 @@
 	import { locale } from '$lib/index.svelte';
 	const { data, children } = $props();
 	locale.setLocale(data.locale);
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { Tooltip as TooltipPrimitive } from 'bits-ui';
 </script>
 
 <svelte:head>
@@ -24,9 +24,9 @@
 			<span class="icon-[lucide--loader] size-10 animate-spin"></span>
 		</div>
 	{:then}
-		<Tooltip.Provider>
+		<TooltipPrimitive.Provider>
 			<Toaster position="top-center" />
 			{@render children?.()}
-		</Tooltip.Provider>
+		</TooltipPrimitive.Provider>
 	{/await}
 </main>
