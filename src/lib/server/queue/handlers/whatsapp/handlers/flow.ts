@@ -189,6 +189,8 @@ export async function handleFlowResponse({
 					organizationId: event.organizationId,
 					tx
 				});
+
+				const foo = flowResponses;
 				const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
 				const eventSignup = await signUpForEventHelper({
 					eventId: event.id,
@@ -196,7 +198,9 @@ export async function handleFlowResponse({
 						subscribed: true,
 						country: countryCode,
 						phoneNumber: from,
-						givenName: givenName
+						emailAddress:
+							(flowResponses.response_json.email as string | null | undefined) ?? undefined,
+						...flowResponses.response_json
 					},
 					signupDetails: {
 						channel: { type: 'whatsapp' },
