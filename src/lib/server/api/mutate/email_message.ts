@@ -4,8 +4,10 @@ import type { Transaction } from '$lib/server/db/zeroDrizzle';
 import {
 	type CreateMutatorSchemaOutput,
 	type UpdateMutatorSchemaOutput,
+	type SendMutatorSchemaOutput,
 	createMutatorSchema,
-	updateMutatorSchema
+	updateMutatorSchema,
+	sendMutatorSchema
 } from '$lib/schema/email-message';
 import { parse } from 'valibot';
 
@@ -115,6 +117,41 @@ export function deleteEmailMessage(params: MutatorParams) {
 			})
 			.where(
 				and(eq(emailMessage.id, input.id), eq(emailMessage.organizationId, input.organizationId))
+			);
+	};
+}
+
+export function sendEmailMessage(params: MutatorParams) {
+	return async function (tx: Transaction, input: SendMutatorSchemaOutput) {
+		const parsed = parse(sendMutatorSchema, input);
+		const emailMessageRecord = await tx.query.emailMessage
+			.where('id', '=', parsed.metadata.emailMessageId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => emailMessageReadPermissions(expr, params.queryContext))
+			.one()
+			.run();
+		if (!emailMessageRecord) {
+			throw new Error('Email message not found');
+		}
+
+		if (emailMessageRecord.startedAt) {
+			throw new Error('Email message has already been sent');
+		}
+
+		await tx.dbTransaction.wrappedTransaction
+			.update(emailMessage)
+			.set({
+				subject: parsed.input.subject ?? emailMessageRecord.subject,
+				body: parsed.input.body ?? emailMessageRecord.body,
+				startedAt: new Date(),
+				sentBy: params.queryContext.userId,
+				updatedAt: new Date()
+			})
+			.where(
+				and(
+					eq(emailMessage.id, parsed.metadata.emailMessageId),
+					eq(emailMessage.organizationId, parsed.metadata.organizationId)
+				)
 			);
 	};
 }

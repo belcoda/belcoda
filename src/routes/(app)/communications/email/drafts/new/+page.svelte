@@ -6,11 +6,13 @@
 	import { v7 as uuidv7 } from 'uuid';
 
 	async function handleSave(data: any) {
-		const emailId = uuidv7();
+		const signatureId = appState.activeOrganization.data?.settings?.email?.defaultFromSignatureId;
+		if (!signatureId) {
+			console.error('No default email signature configured for this organization');
+			return;
+		}
 		
-		// TODO: Need to get a valid emailFromSignatureId
-		// For now, we need to fetch the first available signature or create a default one
-		const signatureId = 'temp-signature-id'; // This needs to be replaced with actual signature
+		const emailId = uuidv7();
 		
 		await z.mutate.emailMessage.create({
 			metadata: {
@@ -32,9 +34,43 @@
 		goto(`/communications/email/drafts/${emailId}`);
 	}
 
-	function handleSend(data: any) {
-		console.log('Send new email:', data);
-		// TODO: Implement create and send mutation
+	async function handleSend(data: any) {
+		const signatureId = appState.activeOrganization.data?.settings?.email?.defaultFromSignatureId;
+		if (!signatureId) {
+			console.error('No default email signature configured for this organization');
+			return;
+		}
+		
+		const emailId = uuidv7();
+
+		await z.mutate.emailMessage.create({
+			metadata: {
+				organizationId: appState.organizationId,
+				emailMessageId: emailId
+			},
+			input: {
+				emailFromSignatureId: signatureId,
+				replyToOverride: null,
+				recipients: { type: 'or', filters: [], exclude: [] }, // Empty recipients for now
+				previewTextOverride: null,
+				previewTextLock: false,
+				subject: data.subject,
+				body: data.body
+			}
+		});
+		
+		await z.mutate.emailMessage.send({
+			metadata: {
+				organizationId: appState.organizationId,
+				emailMessageId: emailId
+			},
+			input: {
+				subject: data.subject,
+				body: data.body
+			}
+		});
+		
+		goto('/communications/email/sent');
 	}
 
 	function handleDiscard() {

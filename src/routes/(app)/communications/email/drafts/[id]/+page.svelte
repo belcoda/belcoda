@@ -34,9 +34,21 @@
 		});
 	}
 
-	function handleSend(data: any) {
-		console.log('Send email:', data);
-		// TODO: Implement send mutation
+	async function handleSend(data: any) {
+		if (!emailId) return;
+		
+		await z.mutate.emailMessage.send({
+			metadata: {
+				organizationId: appState.organizationId,
+				emailMessageId: emailId
+			},
+			input: {
+				subject: data.subject,
+				body: data.body
+			}
+		});
+		
+		goto('/communications/email/sent');
 	}
 
 	async function handleDiscard() {

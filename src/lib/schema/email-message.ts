@@ -64,6 +64,12 @@ export const updateEmailMessage = v.partial(
 );
 export type UpdateEmailMessage = v.InferInput<typeof updateEmailMessage>;
 
+export const sendEmailMessage = v.object({
+	subject: v.optional(v.nullable(emailMessageSchema.entries.subject), null),
+	body: v.optional(v.nullable(emailMessageSchema.entries.body), null)
+});
+export type SendEmailMessage = v.InferInput<typeof sendEmailMessage>;
+
 export const mutatorMetadata = v.object({
 	organizationId: emailMessageSchema.entries.organizationId,
 	emailMessageId: emailMessageSchema.entries.id
@@ -83,3 +89,10 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const sendMutatorSchema = v.object({
+	input: sendEmailMessage,
+	metadata: mutatorMetadata
+});
+export type SendMutatorSchema = v.InferInput<typeof sendMutatorSchema>;
+export type SendMutatorSchemaOutput = v.InferOutput<typeof sendMutatorSchema>;

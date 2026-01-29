@@ -4,8 +4,10 @@ import { type Schema } from '$lib/zero/schema';
 import {
 	type CreateMutatorSchemaOutput,
 	type UpdateMutatorSchemaOutput,
+	type SendMutatorSchemaOutput,
 	createMutatorSchema,
-	updateMutatorSchema
+	updateMutatorSchema,
+	sendMutatorSchema
 } from '$lib/schema/email-message';
 import { parse } from 'valibot';
 
@@ -52,6 +54,19 @@ export function deleteEmailMessage() {
 		tx.mutate.emailMessage.update({
 			id: args.id,
 			deletedAt: new Date().getTime()
+		});
+	};
+}
+
+export function sendEmailMessage() {
+	return async function (tx: Transaction<Schema>, args: SendMutatorSchemaOutput) {
+		const parsed = parse(sendMutatorSchema, args);
+		tx.mutate.emailMessage.update({
+			id: parsed.metadata.emailMessageId,
+			subject: parsed.input.subject ?? undefined,
+			body: parsed.input.body ?? undefined,
+			startedAt: new Date().getTime(),
+			updatedAt: new Date().getTime()
 		});
 	};
 }
