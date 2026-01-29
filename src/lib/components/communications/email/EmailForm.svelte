@@ -37,7 +37,6 @@
 </script>
 
 <div class="flex h-full flex-col">
-	<!-- Header -->
 	<div class="border-b p-4">
 		<div class="flex items-center justify-between">
 			<h2 class="text-xl font-semibold">
@@ -59,10 +58,8 @@
 		</div>
 	</div>
 
-	<!-- Form -->
 	<div class="flex-1 overflow-auto p-6">
 		<div class="mx-auto max-w-4xl space-y-6">
-			<!-- Recipients -->
 			<div class="space-y-2">
 				<Label for="recipients">Recipients</Label>
 				<div class="flex items-center gap-2">
@@ -80,7 +77,6 @@
 				</div>
 			</div>
 
-			<!-- Subject -->
 			<div class="space-y-2">
 				<Label for="subject">Subject</Label>
 				<Input
@@ -91,7 +87,6 @@
 				/>
 			</div>
 
-			<!-- Body -->
 			<div class="space-y-2">
 				<Label for="body">Message</Label>
 				<div class="rounded-md border">
