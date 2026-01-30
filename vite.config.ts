@@ -5,14 +5,15 @@ import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { wuchale } from '@wuchale/vite-plugin';
 import { playwright } from '@vitest/browser-playwright';
-import { env } from '$env/dynamic/private';
+import { config } from 'dotenv';
+config();
 
 export default defineConfig({
 	plugins: [
 		sentrySvelteKit({
 			org: 'belcoda',
 			project: 'belcoda-belcoda-prod',
-			authToken: env.SENTRY_AUTH_TOKEN
+			authToken: process.env.SENTRY_AUTH_TOKEN
 		}),
 		sveltekit(),
 		tailwindcss(),
