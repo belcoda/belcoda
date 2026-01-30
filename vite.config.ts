@@ -1,12 +1,24 @@
+import { sentrySvelteKit } from '@sentry/sveltekit';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { wuchale } from '@wuchale/vite-plugin';
 import { playwright } from '@vitest/browser-playwright';
+import { env } from '$env/dynamic/private';
 
 export default defineConfig({
-	plugins: [sveltekit(), tailwindcss(), wuchale('wuchale.config.ts'), devtoolsJson()],
+	plugins: [
+		sentrySvelteKit({
+			org: 'belcoda',
+			project: 'belcoda-belcoda-prod',
+			authToken: env.SENTRY_AUTH_TOKEN
+		}),
+		sveltekit(),
+		tailwindcss(),
+		wuchale('wuchale.config.ts'),
+		devtoolsJson()
+	],
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

@@ -86,6 +86,7 @@
 		"@rocicorp/zero": "^0.24.3000000000",
 		"@scalar/sveltekit": "^0.1.29",
 		"@types/country-list": "^2.1.4",
+		"@sentry/sveltekit": "^10.37.0",
 		"@wuchale/svelte": "^0.17.5",
 		"@wuchale/vite-plugin": "^0.15.3",
 		"awesome-phonenumber": "^7.6.0",

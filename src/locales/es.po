@@ -13,6 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Basic information"
 msgstr "Informacion basico"
 
@@ -48,5 +49,259 @@ msgid ""
 msgstr ""
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email from signatures"
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Display Settings"
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Customize how your workspace appears on public pages like event calendars and event signup pages."
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Tab Icon URL"
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "URL to an icon that will appear in browser tabs for public pages. Recommended size: 32x32px or 64x64px."
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Primary Color"
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Main color for buttons, links, and primary accents on public pages."
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Secondary Color"
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Accent color for success states and secondary elements on public pages."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Cancel"
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Save Changes"
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Failed to load organization settings."
+msgstr ""
+
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Theme Settings"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "Add Email from signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "Create a new email signature that will be verified with Postmark."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+msgid "Display name"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+msgid "Email address"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "email@example.com"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "The email address must be verified with Postmark."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+msgid "Reply-to address"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "reply@example.com"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Optional. If not set, replies will go to the email address above."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Return path domain"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "bounce.example.com"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Optional. The return path domain is used for bounce handling."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "Create signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Edit Email from signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Update the email signature details."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "The email address cannot be changed."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Save changes"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Are you sure you want to delete this email signature?"
+msgstr ""
+
+#. placeholder {0}: organization.data?.settings.email.systemFromIdentity.name || systemEmailAddress
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "System ({0})"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "System send signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "This is the default send signature provided to every organization. You can customize the name and reply-to address."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Default send signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Choose which email signature will be used by default when sending emails. You can override this for individual emails."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Select default signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Updating..."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Custom send signatures"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Additional email signatures that you can use to send emails. These must be verified with Postmark."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Name & Email"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Reply-to"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Return path"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "The return path domain is used for bounce handling."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Status"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Verification status from Postmark."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Actions"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Verified"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Not verified"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+msgid "Not set"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Edit signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Verify signature status"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Delete signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "System"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "Loading..."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/+page.svelte
+msgid "New"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+msgid "This email address cannot be changed."
 msgstr ""
