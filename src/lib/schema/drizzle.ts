@@ -13,8 +13,7 @@ import {
 	check,
 	uniqueIndex,
 	primaryKey,
-	type AnyPgColumn,
-	foreignKey
+	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 
 import type { OrganizationSchema } from '$lib/schema/organization';
@@ -51,7 +50,7 @@ import { type LanguageCode, type Locale } from '$lib/utils/language';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
-import { type FilterGroupType } from '$lib/schema/filter/types';
+import { type FilterGroupType } from '$lib/schema/person/filter';
 import {
 	type WhatsappMessage,
 	type WhatsappTemplateMessage,

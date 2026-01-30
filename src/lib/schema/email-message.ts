@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
-import { filterGroup } from '$lib/schema/filter/types';
+import { filterGroup } from '$lib/schema/person/filter';
 
 export const emailMessageSchema = v.object({
 	id: helpers.uuid,
