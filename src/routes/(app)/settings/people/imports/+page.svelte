@@ -47,6 +47,8 @@
 
 	let uploadModalOpen = $state(false);
 	let selectedFile: File | null = $state(null);
+	let failuresModalOpen = $state(false);
+	let selectedImportFailures: { row: number; error: string; data?: any }[] | null = $state(null);
 	let uploading = $state(false);
 
 	async function getUploadUrl(fileKey: string) {
@@ -178,12 +180,26 @@
 							<Table.Cell>{imp.importedBy}</Table.Cell>
 							<Table.Cell>
 								{#if imp.status === 'completed' || imp.status === 'failed'}
-									<span class="text-sm text-muted-foreground">
-										{imp.processedRows || 0} imported
-										{#if (imp.failedRows || 0) > 0}
-											, {imp.failedRows} failed
+									<div class="flex items-center gap-2">
+										<span class="text-sm text-muted-foreground">
+											{imp.processedRows || 0} imported
+											{#if (imp.failedRows || 0) > 0}
+												, {imp.failedRows} failed
+											{/if}
+										</span>
+										{#if (imp.failedRows || 0) > 0 && imp.failedEntries}
+											<Button
+												variant="outline"
+												size="sm"
+												onclick={() => {
+													selectedImportFailures = imp.failedEntries ?? null;
+													failuresModalOpen = true;
+												}}
+											>
+												View Failures
+											</Button>
 										{/if}
-									</span>
+									</div>
 								{:else}
 									<span class="text-sm text-muted-foreground">-</span>
 								{/if}
@@ -255,6 +271,39 @@
 					</div>
 				{/snippet}
 			</ResponsiveModal>
+
+		<ResponsiveModal
+			title="Import Failures"
+			description="Detailed information about failed import entries"
+			bind:open={failuresModalOpen}
+		>
+			{#snippet children()}
+
+				<div class="max-h-[60vh] overflow-y-auto space-y-4">
+					{#if selectedImportFailures && selectedImportFailures.length > 0}
+						{#each selectedImportFailures as failure (failure.row)}
+							<div class="border rounded-lg p-4 space-y-2">
+								<div class="flex items-center gap-2">
+									<Badge variant="destructive">Row {failure.row}</Badge>
+									<span class="text-sm font-medium text-destructive">{failure.error}</span>
+								</div>
+								{#if failure.data}
+									<div class="text-xs text-muted-foreground">
+										<div class="font-semibold mb-1">Row Data:</div>
+										<pre class="bg-muted p-2 rounded overflow-x-auto">{JSON.stringify(failure.data, null, 2)}</pre>
+									</div>
+								{/if}
+							</div>
+						{/each}
+					{:else}
+						<p class="text-muted-foreground text-center py-8">No failure details available</p>
+					{/if}
+				</div>
+			{/snippet}
+			{#snippet footer()}
+				<Button variant="outline" onclick={() => (failuresModalOpen = false)}>Close</Button>
+			{/snippet}
+		</ResponsiveModal>
 		{/if}
 	</div>
 {/snippet}
