@@ -30,7 +30,6 @@
 				},
 				input: {
 					gender: data.gender,
-					// @ts-expect-error - the mutator expects date that gets transformed to a timestamp, so it will work if we just pass a timestamp
 					dateOfBirth: data.dateOfBirth ? data.dateOfBirth.getTime() : null
 				}
 			});

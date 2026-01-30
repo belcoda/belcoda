@@ -61,6 +61,11 @@ export const organizationSettingsSchema = v.object({
 
 export type OrganizationSettingsSchema = v.InferOutput<typeof organizationSettingsSchema>;
 
+export const defaultDisplaySettings = {
+	primaryColor: '#4f46e5',
+	secondaryColor: '#10b981'
+};
+
 export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 	return {
 		whatsApp: defaultWhatsappOrganizationSettings(),

@@ -14,7 +14,7 @@
 		isValidInternationalPhoneNumber
 	} from '$lib/utils/phone';
 	import { appState } from '$lib/state.svelte';
-	const locale = appState.locale;
+	import { locale } from '$lib/index.svelte';
 	import { cn } from '$lib/utils.js';
 
 	import { tick } from 'svelte';
@@ -34,7 +34,12 @@
 		country = $bindable(),
 		class: className,
 		...rest
-	}: { value: string | undefined; valid: boolean; country: CountryCode; class?: string } = $props();
+	}: {
+		value: string | null | undefined;
+		valid?: boolean;
+		country: CountryCode;
+		class?: string;
+	} = $props();
 
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
@@ -46,7 +51,7 @@
 		return {
 			value: item,
 			code: getDialingCode(item),
-			label: `${renderLocalizedCountryName(item, locale)}`
+			label: `${renderLocalizedCountryName(item, locale.current)}`
 		};
 	});
 	const options = [...unsortedOptions].sort((a, b) => a.label.localeCompare(b.label));

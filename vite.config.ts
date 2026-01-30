@@ -8,6 +8,9 @@ import { playwright } from '@vitest/browser-playwright';
 import { config } from 'dotenv';
 config();
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 export default defineConfig({
 	plugins: [
 		sentrySvelteKit({

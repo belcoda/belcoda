@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import SvelteLexical from '$lib/components/ui/wysiwyg/SvelteLexical.svelte';
 
 	import { useDebounce } from 'runed';
@@ -74,7 +74,7 @@
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 
 	import DateTimeSelect from '$lib/components/forms/event/DateTimeSelect.svelte';
-	import StandardInformation from '$lib/components/forms/event/StandardInformation.svelte';
+	import EventSignupSurvey from '$lib/components/forms/event/EventSignupSurvey.svelte';
 	import { defaultEventSettings } from '$lib/schema/event/settings';
 
 	function setSlug(slug: string) {
@@ -144,7 +144,7 @@
 				<Card.Title>Survey</Card.Title>
 			</Card.Header>
 			<Card.Content class="space-y-6">
-				<StandardInformation bind:form bind:data bind:errors />
+				<EventSignupSurvey bind:form bind:data bind:errors />
 			</Card.Content>
 		</Card.Root>
 	{/if}

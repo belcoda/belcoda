@@ -62,6 +62,7 @@
 		...getListFilter(appState.organizationId),
 		tagId: null,
 		eventType: null,
+		hasSignups: false,
 		status: null
 	});
 
