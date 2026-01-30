@@ -57,6 +57,24 @@ export const mutatorMetadata = v.object({
 	emailFromSignatureId: emailFromSignatureSchema.entries.id
 });
 
+export const createEmailFromSignatureZero = v.object({
+	name: emailFromSignatureSchema.entries.name,
+	emailAddress: emailFromSignatureSchema.entries.emailAddress,
+	replyTo: v.optional(v.nullable(emailFromSignatureSchema.entries.replyTo), null),
+	returnPathDomain: v.optional(v.nullable(emailFromSignatureSchema.entries.returnPathDomain), null)
+});
+export type CreateEmailFromSignatureZero = v.InferOutput<typeof createEmailFromSignatureZero>;
+
+export const updateEmailFromSignatureZero = v.partial(
+	v.omit(
+		v.object({
+			...createEmailFromSignatureZero.entries
+		}),
+		['emailAddress']
+	)
+);
+export type UpdateEmailFromSignatureZero = v.InferOutput<typeof updateEmailFromSignatureZero>;
+
 export const createMutatorSchema = v.object({
 	input: createEmailFromSignature,
 	metadata: mutatorMetadata
@@ -64,9 +82,58 @@ export const createMutatorSchema = v.object({
 export type CreateMutatorSchema = v.InferInput<typeof createMutatorSchema>;
 export type CreateMutatorSchemaOutput = v.InferOutput<typeof createMutatorSchema>;
 
+export const createMutatorSchemaZero = v.object({
+	input: createEmailFromSignatureZero,
+	metadata: mutatorMetadata
+});
+export type CreateMutatorSchemaZeroInput = v.InferInput<typeof createMutatorSchemaZero>;
+export type CreateMutatorSchemaZeroOutput = v.InferOutput<typeof createMutatorSchemaZero>;
+
 export const updateMutatorSchema = v.object({
 	input: updateEmailFromSignature,
 	metadata: mutatorMetadata
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const updateMutatorSchemaZero = v.object({
+	input: updateEmailFromSignatureZero,
+	metadata: mutatorMetadata
+});
+export type UpdateMutatorSchemaZeroInput = v.InferInput<typeof updateMutatorSchemaZero>;
+export type UpdateMutatorSchemaZeroOutput = v.InferOutput<typeof updateMutatorSchemaZero>;
+
+export const deleteMutatorSchemaZero = v.object({
+	metadata: mutatorMetadata
+});
+export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;
+
+export const verifyMutatorSchemaZero = v.object({
+	metadata: mutatorMetadata
+});
+export type VerifyMutatorSchemaZero = v.InferOutput<typeof verifyMutatorSchemaZero>;
+
+export const setDefaultSignatureMutatorSchemaZero = v.object({
+	input: v.object({
+		defaultFromSignatureId: v.nullable(helpers.uuid)
+	}),
+	metadata: v.object({
+		organizationId: emailFromSignatureSchema.entries.organizationId
+	})
+});
+export type SetDefaultSignatureMutatorSchemaZero = v.InferOutput<
+	typeof setDefaultSignatureMutatorSchemaZero
+>;
+
+export const updateSystemFromIdentityMutatorSchemaZero = v.object({
+	input: v.object({
+		name: v.optional(v.nullable(helpers.shortString)),
+		replyTo: v.optional(v.nullable(helpers.email))
+	}),
+	metadata: v.object({
+		organizationId: emailFromSignatureSchema.entries.organizationId
+	})
+});
+export type UpdateSystemFromIdentityMutatorSchemaZero = v.InferOutput<
+	typeof updateSystemFromIdentityMutatorSchemaZero
+>;

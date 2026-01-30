@@ -34,7 +34,7 @@
 
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
 	const primaryColor = $derived(
-		organization.settings?.display?.primaryColor || defaultDisplaySettings.primaryColor
+		organization.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
 	);
 
 	const currentSignups = $derived(signupCount);
@@ -47,7 +47,7 @@
 	<meta name="description" content={event.shortDescription} />
 	<meta name="robots" content="index, follow" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta name="theme-color" content={organization.settings?.display?.primaryColor || '#000000'} />
+	<meta name="theme-color" content={organization.settings?.theme?.primaryColor || '#000000'} />
 	{#if organization.icon}
 		<link rel="icon" href={organization.icon} />
 	{/if}

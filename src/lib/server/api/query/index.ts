@@ -1,5 +1,6 @@
 export { listPersons } from '$lib/zero/query/person/list';
 export { listPersonByIdsArray } from '$lib/zero/query/person/list';
+export { listEmailFromSignatures } from '$lib/zero/query/email_from_signature/list';
 export { readPerson } from '$lib/zero/query/person/read';
 
 export { listOrganizations } from '$lib/zero/query/organizations/list';
@@ -28,3 +29,5 @@ export { listTags } from '$lib/zero/query/tag/list';
 export { readTag } from '$lib/zero/query/tag/read';
 
 export { listActionCodes } from '$lib/zero/query/action_code/list';
+
+export { listWebhooks } from '$lib/zero/query/webhook/list';

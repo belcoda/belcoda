@@ -4,6 +4,9 @@ import * as eventSignup from '$lib/zero/mutate/event_signup';
 import * as event from '$lib/zero/mutate/event';
 import * as petition from '$lib/zero/mutate/petition';
 import * as petitionSignature from '$lib/zero/mutate/petition_signature';
+import * as emailFromSignature from '$lib/zero/mutate/email_from_signature';
+import * as organization from '$lib/zero/mutate/organization';
+import * as webhook from '$lib/zero/mutate/webhook';
 export default function createMutators() {
 	return {
 		person: {
@@ -35,6 +38,23 @@ export default function createMutators() {
 		petitionSignature: {
 			create: petitionSignature.createPetitionSignature(),
 			update: petitionSignature.updatePetitionSignature()
+		},
+		emailFromSignature: {
+			create: emailFromSignature.createEmailFromSignature(),
+			update: emailFromSignature.updateEmailFromSignature(),
+			delete: emailFromSignature.deleteEmailFromSignature(),
+			verify: emailFromSignature.verifyEmailFromSignature(),
+			setDefault: emailFromSignature.setDefaultSignature(),
+			updateSystemFromIdentity: emailFromSignature.updateSystemFromIdentity()
+		},
+		organization: {
+			update: organization.updateOrganization(),
+			updateWhatsappSettings: organization.updateOrganizationWhatsappSettings(),
+      updateTheme: organization.updateTheme()
+    },
+		webhook: {
+			create: webhook.createWebhook(),
+			delete: webhook.deleteWebhook()
 		}
 	};
 }
