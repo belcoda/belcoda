@@ -5,7 +5,7 @@ import pino from '$lib/pino';
 import { v4 as uuidv4 } from 'uuid';
 import { personSchema, type PersonSchema } from '$lib/schema/person';
 import { parse as valibotParse } from 'valibot';
-import type { CountryCode } from '$lib/utils/country';
+import { type CountryCode, isValidCountryCode } from '$lib/utils/country';
 import type { LanguageCode } from '$lib/utils/language';
 import { getCode } from 'country-list';
 import type { SocialMedia, PersonAddedFrom } from '$lib/schema/person/meta';
@@ -97,6 +97,63 @@ export async function parseImportCsv(
 	});
 }
 
+function parseBoolean(value: string | null | undefined): boolean {
+	if (!value) return false;
+	const normalized = value.toLowerCase().trim();
+	return normalized === 'true' || normalized === '1' || normalized === 'yes';
+}
+
+function normalizeGender(gender: string | null | undefined): GenderOption | null {
+	if (!gender) return null;
+
+	const normalized = gender.toLowerCase().trim();
+
+	switch (normalized) {
+		case 'male':
+		case 'm':
+		case 'man':
+		case 'boy':
+			return 'male';
+		case 'female':
+		case 'f':
+		case 'woman':
+		case 'girl':
+			return 'female';
+		case 'other':
+		case 'non-binary':
+		case 'nonbinary':
+		case 'nb':
+		case 'genderfluid':
+		case 'genderqueer':
+		case 'agender':
+		case 'bigender':
+		case 'pangender':
+		case 'polygender':
+		case 'two-spirit':
+		case 'twospirit':
+			return 'other';
+		case 'not-specified':
+		case 'not specified':
+		case 'unspecified':
+		case 'prefer not to say':
+			return 'not-specified';
+		default:
+			return 'not-specified';
+	}
+}
+
+function parseDateOfBirth(dob: string | null | undefined): Date | null {
+	if (!dob) return null;
+
+	try {
+		const date = new Date(dob);
+		if (isNaN(date.getTime())) return null;
+		return date;
+	} catch {
+		return null;
+	}
+}
+
 function mapCsvRowToPerson(
 	csvRow: CsvRow,
 	organizationId: string,
@@ -107,15 +164,15 @@ function mapCsvRowToPerson(
 		const lowercased = country.toLowerCase();
 		if (!isValidCountryCode(lowercased)) {
 			const extractedCode = getCode(country);
-			if (extractedCode && isValidCountryCode(extractedCode.toLowerCase())) {
-				country = extractedCode.toLowerCase() as CountryCode;
+			if (extractedCode && isValidCountryCode(extractedCode)) {
+				country = extractedCode.toUpperCase() as CountryCode;
 			} else {
 				throw new Error(
 					`Invalid country: "${country}" (must be a valid country code or country name)`
 				);
 			}
 		} else {
-			country = lowercased as CountryCode;
+			country = lowercased.toUpperCase() as CountryCode;
 		}
 	} else {
 		throw new Error('Country is required');
@@ -171,9 +228,8 @@ function mapCsvRowToPerson(
 		preferredLanguage,
 		gender: normalizeGender(csvRow['gender']),
 		dateOfBirth: parseDateOfBirth(csvRow['date_of_birth'] || csvRow['dob']),
-		subscribed: csvRow['subscribed'] === 'true' || csvRow['subscribed'] === '1' ? true : false,
-		doNotContact:
-			csvRow['do_not_contact'] === 'true' || csvRow['do_not_contact'] === '1' ? true : false,
+		subscribed: parseBoolean(csvRow['email_subscribed'] || csvRow['subscribed']),
+		doNotContact: parseBoolean(csvRow['do_not_contact']),
 		socialMedia,
 		externalId: csvRow['external_id'] || csvRow['externalId'] || null,
 		profilePicture: csvRow['profile_picture'] || csvRow['profilePicture'] || null,
@@ -181,310 +237,4 @@ function mapCsvRowToPerson(
 		mostRecentActivityAt: new Date(),
 		mostRecentActivityPreview: null
 	};
-}
-
-function normalizeGender(gender: string | null | undefined): GenderOption | null {
-	if (!gender) return null;
-
-	const normalized = gender.toLowerCase().trim();
-
-	switch (normalized) {
-		case 'male':
-		case 'm':
-		case 'man':
-		case 'boy':
-			return 'male';
-		case 'female':
-		case 'f':
-		case 'woman':
-		case 'girl':
-			return 'female';
-		case 'other':
-		case 'non-binary':
-		case 'nonbinary':
-		case 'nb':
-		case 'genderfluid':
-		case 'genderqueer':
-		case 'agender':
-		case 'bigender':
-		case 'pangender':
-		case 'polygender':
-		case 'two-spirit':
-		case 'twospirit':
-			return 'other';
-		case 'not-specified':
-		case 'not specified':
-		case 'unspecified':
-		case 'prefer not to say':
-			return 'not-specified';
-		default:
-			return 'not-specified';
-	}
-}
-
-function parseDateOfBirth(dob: string | null | undefined): Date | null {
-	if (!dob) return null;
-
-	try {
-		const date = new Date(dob);
-		if (isNaN(date.getTime())) return null;
-		return date;
-	} catch {
-		return null;
-	}
-}
-
-function isValidCountryCode(code: string): boolean {
-	const validCodes = [
-		'af',
-		'ax',
-		'al',
-		'dz',
-		'as',
-		'ad',
-		'ao',
-		'ai',
-		'aq',
-		'ag',
-		'ar',
-		'am',
-		'aw',
-		'au',
-		'at',
-		'az',
-		'bs',
-		'bh',
-		'bd',
-		'bb',
-		'by',
-		'be',
-		'bz',
-		'bj',
-		'bm',
-		'bt',
-		'bo',
-		'bq',
-		'ba',
-		'bw',
-		'bv',
-		'br',
-		'io',
-		'bn',
-		'bg',
-		'bf',
-		'bi',
-		'cv',
-		'kh',
-		'cm',
-		'ca',
-		'ky',
-		'cf',
-		'td',
-		'cl',
-		'cn',
-		'cx',
-		'cc',
-		'co',
-		'km',
-		'cg',
-		'cd',
-		'ck',
-		'cr',
-		'ci',
-		'hr',
-		'cu',
-		'cw',
-		'cy',
-		'cz',
-		'dk',
-		'dj',
-		'dm',
-		'do',
-		'ec',
-		'eg',
-		'sv',
-		'gq',
-		'er',
-		'ee',
-		'sz',
-		'et',
-		'fk',
-		'fo',
-		'fj',
-		'fi',
-		'fr',
-		'gf',
-		'pf',
-		'tf',
-		'ga',
-		'gm',
-		'ge',
-		'de',
-		'gh',
-		'gi',
-		'gr',
-		'gl',
-		'gd',
-		'gp',
-		'gu',
-		'gt',
-		'gg',
-		'gn',
-		'gw',
-		'gy',
-		'ht',
-		'hm',
-		'va',
-		'hn',
-		'hk',
-		'hu',
-		'is',
-		'in',
-		'id',
-		'ir',
-		'iq',
-		'ie',
-		'im',
-		'il',
-		'it',
-		'jm',
-		'jp',
-		'je',
-		'jo',
-		'kz',
-		'ke',
-		'ki',
-		'kp',
-		'kr',
-		'kw',
-		'kg',
-		'la',
-		'lv',
-		'lb',
-		'ls',
-		'lr',
-		'ly',
-		'li',
-		'lt',
-		'lu',
-		'mo',
-		'mg',
-		'mw',
-		'my',
-		'mv',
-		'ml',
-		'mt',
-		'mh',
-		'mq',
-		'mr',
-		'mu',
-		'yt',
-		'mx',
-		'fm',
-		'md',
-		'mc',
-		'mn',
-		'me',
-		'ms',
-		'ma',
-		'mz',
-		'mm',
-		'na',
-		'nr',
-		'np',
-		'nl',
-		'nc',
-		'nz',
-		'ni',
-		'ne',
-		'ng',
-		'nu',
-		'nf',
-		'mk',
-		'mp',
-		'no',
-		'om',
-		'pk',
-		'pw',
-		'ps',
-		'pa',
-		'pg',
-		'py',
-		'pe',
-		'ph',
-		'pn',
-		'pl',
-		'pt',
-		'pr',
-		'qa',
-		're',
-		'ro',
-		'ru',
-		'rw',
-		'bl',
-		'sh',
-		'kn',
-		'lc',
-		'mf',
-		'pm',
-		'vc',
-		'ws',
-		'sm',
-		'st',
-		'sa',
-		'sn',
-		'rs',
-		'sc',
-		'sl',
-		'sg',
-		'sx',
-		'sk',
-		'si',
-		'sb',
-		'so',
-		'za',
-		'gs',
-		'ss',
-		'es',
-		'lk',
-		'sd',
-		'sr',
-		'sj',
-		'se',
-		'ch',
-		'sy',
-		'tw',
-		'tj',
-		'tz',
-		'th',
-		'tl',
-		'tg',
-		'tk',
-		'to',
-		'tt',
-		'tn',
-		'tr',
-		'tm',
-		'tc',
-		'tv',
-		'ug',
-		'ua',
-		'ae',
-		'gb',
-		'us',
-		'um',
-		'uy',
-		'uz',
-		'vu',
-		've',
-		'vn',
-		'vg',
-		'vi',
-		'wf',
-		'eh',
-		'ye',
-		'zm',
-		'zw'
-	];
-	return validCodes.includes(code.toLowerCase());
 }
