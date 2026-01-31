@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { appState } from '$lib/state.svelte';
+	import { locale } from '$lib/index.svelte';
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type Readable } from 'svelte/store';
 	import { type CreateEventZero, type UpdateEventZero } from '$lib/schema/event';
@@ -31,11 +32,12 @@
 		changeQuestionType as changeQuestionTypeAction
 	} from './survey_actions';
 	import PlusIcon from '@lucide/svelte/icons/plus';
+	import { renderPersonQuestion } from './render_survey_question';
 
 	function toggleStandardInformation(field: SurveyQuestionType, checked: boolean) {
 		if (!$data.settings?.survey) return;
 		if (checked) {
-			$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, field, appState.locale);
+			$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, field, locale.current);
 		} else {
 			$data.settings.survey = removeFieldTypeFromSurvey($data.settings.survey, field);
 		}
@@ -43,7 +45,7 @@
 
 	function addQuestion(type: SurveyQuestionType) {
 		if (!$data.settings?.survey) return;
-		$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, type, appState.locale);
+		$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, type, locale.current);
 	}
 
 	function removeQuestion(id: string) {
@@ -65,7 +67,7 @@
 			collectionIndex: 0,
 			questionIndex,
 			type,
-			locale: appState.locale
+			locale: locale.current
 		});
 	}
 
@@ -87,6 +89,12 @@
 				(_, index) => index !== optionIndex
 			);
 	}
+
+	function isChecked(field: SurveyQuestionType) {
+		return $data.settings?.survey?.collections?.[0]?.questions?.some(
+			(question) => question.type === field
+		);
+	}
 </script>
 
 <div class="space-y-6">
@@ -101,52 +109,51 @@
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-address"
+					checked={isChecked('person.address')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.address', checked)}
 				/>
-				<Label for="standard-information-address" class="cursor-pointer font-normal">Address</Label>
+				<Label for="standard-information-address" class="cursor-pointer font-normal"
+					>{renderPersonQuestion('person.address')}</Label
+				>
 			</div>
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-gender"
+					checked={isChecked('person.gender')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.gender', checked)}
 				/>
-				<Label for="standard-information-gender" class="cursor-pointer font-normal">Gender</Label>
+				<Label for="standard-information-gender" class="cursor-pointer font-normal"
+					>{renderPersonQuestion('person.gender')}</Label
+				>
 			</div>
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-dob"
+					checked={isChecked('person.dateOfBirth')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.dateOfBirth', checked)}
 				/>
 				<Label for="standard-information-dob" class="cursor-pointer font-normal"
-					>Date of birth</Label
+					>{renderPersonQuestion('person.dateOfBirth')}</Label
 				>
 			</div>
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-workplace"
+					checked={isChecked('person.workplace')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.workplace', checked)}
 				/>
 				<Label for="standard-information-workplace" class="cursor-pointer font-normal"
-					>Workplace</Label
+					>{renderPersonQuestion('person.workplace')}</Label
 				>
 			</div>
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-position"
+					checked={isChecked('person.position')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.position', checked)}
 				/>
 				<Label for="standard-information-position" class="cursor-pointer font-normal"
-					>Position</Label
-				>
-			</div>
-			<div class="flex items-center gap-3">
-				<Checkbox
-					id="standard-information-preferred-language"
-					onCheckedChange={(checked) =>
-						toggleStandardInformation('person.preferredLanguage', checked)}
-				/>
-				<Label for="standard-information-preferred-language" class="cursor-pointer font-normal"
-					>Preferred language</Label
+					>{renderPersonQuestion('person.position')}</Label
 				>
 			</div>
 		</div>
@@ -165,16 +172,16 @@
 			{@render addQuestionDropdown()}
 		</div>
 
-		{#if $data.settings?.survey && $data.settings?.survey?.collections[0].questions.length > 0}
+		{#if $data.settings?.survey && $data.settings?.survey?.collections?.[0]?.questions?.length > 0}
 			<Accordion.Root type="multiple" class="space-y-2">
-				{#each $data.settings?.survey?.collections[0].questions as field, index (field.id)}
+				{#each $data.settings?.survey?.collections?.[0]?.questions as field, index (field.id)}
 					{#if field.type.startsWith('custom.')}
 						<Accordion.Item value={field.id} class="rounded-lg border last:border-b">
 							<Accordion.Trigger class="px-4 py-3 hover:no-underline">
 								<div class="flex w-full items-center justify-between pr-4">
 									<span class="font-medium">{field.label || 'Untitled Question'}</span>
 									<span class="text-xs text-muted-foreground">
-										{renderQuestionTypeName(field.type, appState.locale)}
+										{renderQuestionTypeName(field.type, locale.current)}
 									</span>
 								</div>
 							</Accordion.Trigger>
@@ -314,6 +321,9 @@
 			<Dropdown.Item onclick={() => addQuestion('custom.radioGroup')}>Multiple choice</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => addQuestion('custom.dropdown')}>Dropdown</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.emailInput')}>Email</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.phoneInput')}>Phone</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.numberInput')}>Number</Dropdown.Item>
 		</Dropdown.Content>
 	</Dropdown.Root>
 {/snippet}
@@ -342,6 +352,15 @@
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.dropdown')}
 				>Dropdown</Dropdown.Item
+			>
+			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.emailInput')}
+				>Email</Dropdown.Item
+			>
+			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.phoneInput')}
+				>Phone</Dropdown.Item
+			>
+			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.numberInput')}
+				>Number</Dropdown.Item
 			>
 		</Dropdown.Content>
 	</Dropdown.Root>

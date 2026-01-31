@@ -22,7 +22,8 @@
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { getTimeAgo } from '$lib/utils/time';
-	const timeAgo = getTimeAgo(appState.locale);
+	import { locale } from '$lib/index.svelte';
+	const timeAgo = getTimeAgo(locale.current);
 	import PersonNote from '$lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte';
 	import PersonNoteForm from '$lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte';
 

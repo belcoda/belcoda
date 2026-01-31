@@ -1,0 +1,37 @@
+import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
+
+import { env } from '$env/dynamic/private';
+
+const webhookSecret = env.YCLOUD_WEBHOOK_VERIFY_TOKEN;
+
+export async function POST({ request, url }) {
+	const verifyToken = url.searchParams.get('verify');
+	if (verifyToken !== webhookSecret) {
+		return new Response('Unauthorized', { status: 401 });
+	}
+	const body = await request.json();
+	try {
+		const queue = await getQueue();
+		switch (body.type) {
+			case 'whatsapp.template.reviewed':
+				//TODO: implement template reviewed logic when needed
+				//await queue.handleWhatsappTemplateReviewed(body);
+				break;
+			case 'whatsapp.inbound_message.received':
+				await queue.handleIncomingMessage(body);
+				break;
+			case 'whatsapp.message.updated':
+				//TODO: implement message updated logic when needed
+				//await queue.handleWhatsappMessageUpdated(body);
+				break;
+			default:
+				log.warn({ type: body.type }, 'Unknown whatsapp webhook type');
+		}
+	} catch (error) {
+		log.error(error, 'Error processing whatsapp webhook');
+	} finally {
+		return new Response('OK', { status: 200 }); //we don't want to block the webhook from being processed
+	}
+}
