@@ -31,3 +31,5 @@ export { readTag } from '$lib/zero/query/tag/read';
 export { listActionCodes } from '$lib/zero/query/action_code/list';
 
 export { listWebhooks } from '$lib/zero/query/webhook/list';
+
+export { listPersonImports } from '$lib/zero/query/person_import/list';
