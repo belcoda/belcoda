@@ -7,6 +7,6 @@
 {#snippet sidebar()}
 	<EmailsSidebar />
 {/snippet}
-<UniversalLayout rootNav="/communications" {sidebar}>
+<UniversalLayout rootNav="/communications/email/drafts" {sidebar}>
 	{@render children?.()}
 </UniversalLayout>
