@@ -3,18 +3,23 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import SvelteLexical from '$lib/components/ui/wysiwyg/SvelteLexical.svelte';
+	import EmailFrom from '$lib/components/ui/custom-select/email-from/email-from.svelte';
 	import type { ReadEmailMessageZero } from '$lib/schema/email-message';
+	import type { FilterGroupType } from '$lib/schema/filter/types';
+
+	type UpdateEmailData = {
+		subject: string | undefined;
+		body: any | undefined;
+		emailFromSignatureId: string | undefined;
+		recipients: FilterGroupType;
+	};
 
 	let {
 		email = $bindable(),
-		onSave,
-		onSend,
-		onDiscard
+		handleUpdate
 	}: {
-		email?: ReadEmailMessageZero | null;
-		onSave?: (data: any) => void;
-		onSend?: (data: any) => void;
-		onDiscard?: () => void;
+		email: ReadEmailMessageZero;
+		handleUpdate?: (data: UpdateEmailData) => void;
 	} = $props();
 
 	let subject = $state('');
@@ -29,45 +34,30 @@
 		}
 	});
 
-	function handleSave() {
-		onSave?.({
+	import { useDebounce } from 'runed';
+	function triggerUpdate() {
+		handleUpdate?.({
 			subject,
-			body: body ? JSON.parse(JSON.stringify(body)) : null
+			body: body ? JSON.parse(JSON.stringify(body)) : null,
+			emailFromSignatureId: email?.emailFromSignatureId ?? undefined,
+			recipients: email?.recipients ?? { type: 'or', filters: [], exclude: [] }
 		});
 	}
-
-	function handleSend() {
-		onSend?.({
-			subject,
-			body: body ? JSON.parse(JSON.stringify(body)) : null
-		});
-	}
+	const debouncedTriggerUpdate = useDebounce(triggerUpdate, 1000);
 </script>
 
 <div class="flex h-full flex-col">
-	<div class="border-b p-4">
-		<div class="flex items-center justify-between">
-			<h2 class="text-xl font-semibold">
-				{email ? 'Edit Draft' : 'Compose Email'}
-			</h2>
-			<div class="flex gap-2">
-				{#if onDiscard}
-					<Button variant="destructive" size="sm" onclick={onDiscard}>
-						Discard
-					</Button>
-				{/if}
-				<Button variant="outline" size="sm" onclick={handleSave}>
-					Save Draft
-				</Button>
-				<Button size="sm" onclick={handleSend}>
-					Send
-				</Button>
-			</div>
-		</div>
-	</div>
-
-	<div class="flex-1 overflow-auto p-6">
+	<div class="flex-1">
 		<div class="mx-auto max-w-4xl space-y-6">
+			<div class="space-y-2">
+				<Label for="recipients">From</Label>
+				<div class="flex items-center gap-2">
+					<EmailFrom
+						bind:value={email.emailFromSignatureId}
+						onValueChange={debouncedTriggerUpdate}
+					/>
+				</div>
+			</div>
 			<div class="space-y-2">
 				<Label for="recipients">Recipients</Label>
 				<div class="flex items-center gap-2">
@@ -76,12 +66,12 @@
 						type="text"
 						placeholder="Select recipients..."
 						readonly
-						value={recipientCount > 0 ? `${recipientCount} recipients selected` : 'No recipients selected'}
+						value={recipientCount > 0
+							? `${recipientCount} recipients selected`
+							: 'No recipients selected'}
 						class="flex-1"
 					/>
-					<Button variant="outline" size="sm">
-						Select
-					</Button>
+					<Button variant="outline" size="sm">Select</Button>
 				</div>
 			</div>
 
@@ -92,16 +82,15 @@
 					type="text"
 					placeholder="Enter email subject..."
 					bind:value={subject}
+					oninput={debouncedTriggerUpdate}
 				/>
 			</div>
 
 			<div class="space-y-2">
 				<Label for="body">Message</Label>
-				<div class="rounded-md border">
-					{#key email?.id}
-						<SvelteLexical bind:value={body} />
-					{/key}
-				</div>
+				{#key email?.id}
+					<SvelteLexical bind:value={body} onChange={debouncedTriggerUpdate} />
+				{/key}
 			</div>
 		</div>
 	</div>
