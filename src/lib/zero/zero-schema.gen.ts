@@ -36,7 +36,10 @@ const actionCodeTable = {
     type: {
       type: "string",
       optional: false,
-      customType: null as unknown as "event_signup" | "event_attended",
+      customType: null as unknown as
+        | "event_signup"
+        | "event_attended"
+        | "petition_signed",
     },
     createdAt: {
       type: "number",
@@ -334,7 +337,7 @@ const emailMessageTable = {
     },
     emailFromSignatureId: {
       type: "string",
-      optional: false,
+      optional: true,
       customType: null as unknown as string,
       serverName: "email_from_signature_id",
     },
