@@ -43,7 +43,9 @@
 </script>
 
 <Composer {initialConfig}>
-	<div class="editor-shell svelte-lexical">
+	<div
+		class="editor-shell svelte-lexical focus-within:rounded-lg focus-within:border focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50"
+	>
 		<Toolbar>
 			{#snippet children({ editor, activeEditor, blockType })}
 				<FontFamilyDropDown />
@@ -59,13 +61,17 @@
 		</Toolbar>
 
 		<div class="editor-container">
-			<div class="editor-scroller">
-				<div class="editor">
+			<div class="editor-scroller group">
+				<div class="editor group">
 					<ContentEditable />
 				</div>
 			</div>
 			<RichTextPlugin />
-			<OnChangePlugin onChange={handleChange} ignoreHistoryMergeTagChange={true} ignoreSelectionChange={true} />
+			<OnChangePlugin
+				onChange={handleChange}
+				ignoreHistoryMergeTagChange={true}
+				ignoreSelectionChange={true}
+			/>
 		</div>
 	</div>
 </Composer>
