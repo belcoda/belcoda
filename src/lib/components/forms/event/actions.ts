@@ -161,6 +161,12 @@ export function renderDate(timestamp: number, timezone: string, locale: Locale) 
 import { env } from '$env/dynamic/public';
 const { PUBLIC_ROOT_DOMAIN } = env;
 import { dev } from '$app/environment';
-export function generateEventPageUrl(slug: string) {
-	return `http${dev ? '' : 's'}://${'appState.activeOrganization.data?.slug'}.${PUBLIC_ROOT_DOMAIN}/events/${slug}`;
+export function generateEventPageUrl({
+	eventSlug,
+	organizationSlug
+}: {
+	eventSlug: string;
+	organizationSlug: string;
+}) {
+	return `http${dev ? '' : 's'}://${organizationSlug}.${PUBLIC_ROOT_DOMAIN}/events/${eventSlug}`;
 }

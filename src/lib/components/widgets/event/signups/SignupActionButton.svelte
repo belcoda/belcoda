@@ -14,8 +14,11 @@
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 
 	import { handleUpdateStatus } from './actions';
+	import ViewDetailedSignup from './ViewDetailedSignup.svelte';
+	let openDetailedSignup = $state(false);
 </script>
 
+<ViewDetailedSignup {signup} {event} bind:open={openDetailedSignup} />
 <ButtonGroup.Root class="flex w-full items-center justify-end">
 	{#if signup.status === 'attended'}
 		<Button
@@ -116,6 +119,10 @@
 						eventId: signup.eventId,
 						status: 'notattending'
 					})}>Cancel signup</DropdownMenu.Item
+			>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Item onclick={() => (openDetailedSignup = true)}
+				>View detailed signup</DropdownMenu.Item
 			>
 			<DropdownMenu.Separator />
 			{#if signup.person.phoneNumber || signup.person.emailAddress}

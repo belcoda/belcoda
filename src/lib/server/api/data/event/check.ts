@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import { eq, isNull, and, not } from 'drizzle-orm';
-import { event } from '$lib/schema/drizzle';
+import { actionCode, event } from '$lib/schema/drizzle';
 export async function checkEventSlug({
 	slug,
 	organizationId,
@@ -44,4 +44,15 @@ export async function checkEventTitle({
 		where: and(...where)
 	});
 	return result ? true : false;
+}
+
+export async function _getEventActionCodeUnsafe({ eventId }: { eventId: string }) {
+	const result = await db.query.actionCode.findFirst({
+		where: and(
+			eq(actionCode.referenceId, eventId),
+			eq(actionCode.type, 'event_signup'),
+			isNull(actionCode.deletedAt)
+		)
+	});
+	return result;
 }

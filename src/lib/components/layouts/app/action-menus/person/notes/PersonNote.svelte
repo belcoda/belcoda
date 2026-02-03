@@ -13,7 +13,8 @@
 	import { z } from '$lib/zero.svelte';
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/state.svelte';
-	const timeAgo = getTimeAgo(appState.locale);
+	import { locale } from '$lib/index.svelte';
+	const timeAgo = getTimeAgo(locale.current);
 	const { note }: { note: ReadPersonNoteWithUserZero } = $props();
 	let editOpen = $state(false);
 	import EditNote from '$lib/components/layouts/app/action-menus/person/notes/EditNote.svelte';
@@ -53,7 +54,8 @@
 					<div>{note.user?.name || 'User'}</div>
 				</Item.Title>
 				<Item.Description class="text-xs">
-					{timeAgo.format(note.createdAt, 'short')}
+					<!-- typescript has a problem with 'short' even though it is a valid format-->
+					{timeAgo.format(note.createdAt, 'short' as 'twitter')}
 				</Item.Description>
 			</div>
 			{#if canEditDelete}

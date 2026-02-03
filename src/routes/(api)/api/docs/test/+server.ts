@@ -13,6 +13,7 @@ export const GET = async (event) => {
 				teamId: null,
 				isDeleted: null,
 				startAfter: null,
+				excludedIds: [],
 				pageSize: 3
 			},
 			userId: event.locals.authorizedApiUser!,

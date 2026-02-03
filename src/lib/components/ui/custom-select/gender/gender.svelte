@@ -14,7 +14,7 @@
 </script>
 
 <Select.Root type="single" bind:value {...props}>
-	<Select.Trigger class={cn('w-full justify-between', className)}>
+	<Select.Trigger class={cn('w-full justify-between font-medium', className)}>
 		{value ? genderOptions.find((option) => option.value === value)?.label : 'Select a gender'}
 	</Select.Trigger>
 	<Select.Content>

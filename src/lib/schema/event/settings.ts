@@ -10,12 +10,17 @@ import {
 	fallback
 } from 'valibot';
 const fieldTypeSchema = picklist(['text', 'number', 'date', 'boolean', 'select', 'multi-select']);
-import { url, shortString } from '$lib/schema/helpers';
+import { url, shortString, unixTimestamp } from '$lib/schema/helpers';
 import { surveySchema } from '$lib/schema/survey/collection';
+import { surveyQuestionResponse } from '$lib/schema/survey/questions';
+import { whatsappFlowInternalSchema } from '$lib/schema/whatsapp/flows/schema';
 
 export const eventSettingsSchema = object({
 	displayTimezone: boolean(),
 	survey: surveySchema,
+	whatsappFlowId: optional(shortString),
+	whatsappFlowYCloudId: optional(shortString),
+	whatsappFlowCreatedAt: optional(unixTimestamp),
 	attachments: optional(
 		array(
 			object({
@@ -33,7 +38,8 @@ export type EventSettings = InferOutput<typeof eventSettingsSchema>;
 export const eventSignupDetails = object({
 	channel: object({
 		type: picklist(['eventPage', 'adminPanel', 'whatsapp'])
-	})
+	}),
+	customFields: optional(surveyQuestionResponse, {})
 });
 export type EventSignupDetails = InferOutput<typeof eventSignupDetails>;
 

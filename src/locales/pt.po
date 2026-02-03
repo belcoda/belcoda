@@ -53,6 +53,77 @@ msgstr ""
 msgid "Email from signatures"
 msgstr ""
 
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "Add Email from signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "Create a new email signature that will be verified with Postmark."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+msgid "Display name"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+msgid "Email address"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "email@example.com"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "The email address must be verified with Postmark."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+msgid "Reply-to address"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "reply@example.com"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Optional. If not set, replies will go to the email address above."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Return path domain"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "bounce.example.com"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Optional. The return path domain is used for bounce handling."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/organization/themes/+page.svelte
+msgid "Cancel"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+msgid "Create signature"
+msgstr ""
+
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Display Settings"
 msgstr ""
@@ -85,12 +156,6 @@ msgstr ""
 msgid "Accent color for success states and secondary elements on public pages."
 msgstr ""
 
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/organization/themes/+page.svelte
-msgid "Cancel"
-msgstr ""
-
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Save Changes"
 msgstr ""
@@ -101,6 +166,22 @@ msgstr ""
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Theme Settings"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Edit Email from signature"
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Update the email signature details."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "The email address cannot be changed."
+msgstr ""
+
+#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+msgid "Save changes"
 msgstr ""
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -221,87 +302,6 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-msgid "Add Email from signature"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-msgid "Create a new email signature that will be verified with Postmark."
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
-msgid "Display name"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
-msgid "Email address"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-msgid "email@example.com"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-msgid "The email address must be verified with Postmark."
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
-msgid "Reply-to address"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-msgid "reply@example.com"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-msgid "Optional. If not set, replies will go to the email address above."
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-msgid "Return path domain"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-msgid "bounce.example.com"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-msgid "Optional. The return path domain is used for bounce handling."
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
-msgid "Create signature"
-msgstr ""
-
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "This email address cannot be changed."
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-msgid "Edit Email from signature"
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-msgid "Update the email signature details."
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-msgid "The email address cannot be changed."
-msgstr ""
-
-#: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
-msgid "Save changes"
 msgstr ""

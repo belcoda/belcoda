@@ -34,7 +34,7 @@ export function updatePerson() {
 		tx.mutate.person.update({
 			id: args.metadata.personId,
 			...args.input,
-			dateOfBirth: args.input.dateOfBirth ? args.input.dateOfBirth.getTime() : undefined,
+			dateOfBirth: args.input.dateOfBirth ? args.input.dateOfBirth : undefined,
 			updatedAt: new Date().getTime()
 		});
 	};
