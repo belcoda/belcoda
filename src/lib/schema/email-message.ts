@@ -7,7 +7,7 @@ export const emailMessageSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
 	teamId: v.nullable(helpers.uuid),
-	emailFromSignatureId: helpers.uuid,
+	emailFromSignatureId: v.nullable(helpers.uuid),
 	replyToOverride: v.nullable(helpers.email),
 	recipients: filterGroup,
 	previewTextOverride: v.nullable(helpers.mediumString),
@@ -96,3 +96,35 @@ export const sendMutatorSchema = v.object({
 });
 export type SendMutatorSchema = v.InferInput<typeof sendMutatorSchema>;
 export type SendMutatorSchemaOutput = v.InferOutput<typeof sendMutatorSchema>;
+
+export function createDefaultEmailMessage({
+	id,
+	organizationId,
+	teamId
+}: {
+	id: string;
+	teamId?: string | null;
+	organizationId: string;
+}) {
+	return {
+		id,
+		organizationId,
+		teamId: null,
+		emailFromSignatureId: null,
+		replyToOverride: null,
+		recipients: { type: 'or' as const, filters: [], exclude: [] },
+		previewTextOverride: null,
+		previewTextLock: false,
+		subject: null,
+		body: null,
+		sentBy: null,
+		startedAt: null,
+		completedAt: null,
+		estimatedRecipientCount: 0,
+		successfulRecipientCount: 0,
+		failedRecipientCount: 0,
+		createdAt: new Date().getTime(),
+		updatedAt: new Date().getTime(),
+		deletedAt: null
+	};
+}
