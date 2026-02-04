@@ -5,6 +5,7 @@
 	import { page } from '$app/state';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { Button } from '$lib/components/ui/button';
+	import SvelteLexical from '$lib/components/ui/wysiwyg/SvelteLexical.svelte';
 
 	const emailId = $derived(page.params.id);
 
@@ -35,9 +36,7 @@
 					</p>
 				</div>
 				<div class="flex gap-2">
-					<Button variant="outline" size="sm">
-						View Stats
-					</Button>
+					<Button variant="outline" size="sm">View Stats</Button>
 				</div>
 			</div>
 		</div>
@@ -62,15 +61,11 @@
 
 				<div>
 					<h3 class="mb-2 text-sm font-medium text-muted-foreground">Message</h3>
-					<div class="rounded-lg border bg-muted/50 p-4">
-						{#if email.body}
-							<div class="prose prose-sm max-w-none">
-								{@html email.body}
-							</div>
-						{:else}
-							<p class="text-muted-foreground">(No content)</p>
-						{/if}
-					</div>
+					{#if email.body}
+						<SvelteLexical value={email.body} disabled={true} />
+					{:else}
+						<p class="text-muted-foreground">(No content)</p>
+					{/if}
 				</div>
 			</div>
 		</div>
