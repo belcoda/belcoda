@@ -6,6 +6,7 @@ import * as event from '$lib/zero/mutate/event';
 import * as petition from '$lib/zero/mutate/petition';
 import * as petitionSignature from '$lib/zero/mutate/petition_signature';
 import * as emailFromSignature from '$lib/zero/mutate/email_from_signature';
+import * as emailMessage from '$lib/zero/mutate/email_message';
 import * as organization from '$lib/zero/mutate/organization';
 import * as webhook from '$lib/zero/mutate/webhook';
 export default function createMutators() {
@@ -51,6 +52,12 @@ export default function createMutators() {
 			verify: emailFromSignature.verifyEmailFromSignature(),
 			setDefault: emailFromSignature.setDefaultSignature(),
 			updateSystemFromIdentity: emailFromSignature.updateSystemFromIdentity()
+		},
+		emailMessage: {
+			create: emailMessage.createEmailMessage(),
+			update: emailMessage.updateEmailMessage(),
+			delete: emailMessage.deleteEmailMessage(),
+			send: emailMessage.sendEmailMessage()
 		},
 		organization: {
 			update: organization.updateOrganization(),

@@ -7,6 +7,7 @@ import * as event from '$lib/server/api/mutate/event';
 import * as petition from '$lib/server/api/mutate/petition';
 import * as petitionSignature from '$lib/server/api/mutate/petition_signature';
 import * as emailFromSignature from '$lib/server/api/mutate/email_from_signature';
+import * as emailMessage from '$lib/server/api/mutate/email_message';
 import * as organization from '$lib/server/api/mutate/organization';
 import * as webhook from '$lib/server/api/mutate/webhook';
 
@@ -53,6 +54,12 @@ export function createMutators(params: MutatorParams) {
 			verify: emailFromSignature.verifyEmailFromSignature(params),
 			setDefault: emailFromSignature.setDefaultSignature(params),
 			updateSystemFromIdentity: emailFromSignature.updateSystemFromIdentity(params)
+		},
+		emailMessage: {
+			create: emailMessage.createEmailMessage(params),
+			update: emailMessage.updateEmailMessage(params),
+			delete: emailMessage.deleteEmailMessage(params),
+			send: emailMessage.sendEmailMessage(params)
 		},
 		organization: {
 			update: organization.updateOrganization(params),

@@ -334,7 +334,7 @@ const emailMessageTable = {
 		},
 		emailFromSignatureId: {
 			type: 'string',
-			optional: false,
+			optional: true,
 			customType: null as unknown as string,
 			serverName: 'email_from_signature_id'
 		},
