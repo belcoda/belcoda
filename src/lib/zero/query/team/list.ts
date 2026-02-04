@@ -53,6 +53,9 @@ function whereClause(
 		cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null),
 		cmp('id', 'NOT IN', filter.excludedIds)
 	];
+	if (filter.searchString && filter.searchString.length > 0) {
+		filterArr.push(cmp('name', 'ILIKE', `%${filter.searchString}%`));
+	}
 	if (filter.personId) {
 		filterArr.push(
 			exists('people', (pt) => {
