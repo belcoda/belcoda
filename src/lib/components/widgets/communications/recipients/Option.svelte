@@ -95,7 +95,7 @@
 {#if filter.type === 'teamId'}
 	{#snippet teamImage()}
 		<div class="flex size-5 items-center overflow-hidden rounded-full">
-			<img src={`/images/icons/filters/icon-team.png`} alt="Team" />
+			<Avatar src={null} name1={filter.name} />
 		</div>
 	{/snippet}
 	{@render renderFilter(filter.label, teamImage)}
