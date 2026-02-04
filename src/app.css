@@ -129,6 +129,16 @@
   }
 
 
+:global(div.multiselect > ul.selected > li button, button.remove-all) {
+  /* buttons to remove a single or all selected options at once */
+  @apply hidden;
+}
+
+::highlight(sms-search-matches) {
+  @apply text-yellow-600;
+}
+
+
   /* For WebKit browsers (Chrome, Safari, Edge) */
   ::-webkit-scrollbar {
     /* Set the width of the scrollbar */

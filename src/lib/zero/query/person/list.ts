@@ -58,6 +58,25 @@ export const listPersons = syncedQueryWithContext(
 	}
 );
 
+export function listFilteredPersonsQuery({
+	tx,
+	ctx,
+	input
+}: {
+	tx?: Query;
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const zero = tx || builder;
+	const q = zero.person
+		.where((expr) => personReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input, userId: ctx.userId }))
+		.orderBy('mostRecentActivityAt', 'desc')
+		.limit(input.pageSize || 50);
+	return q;
+}
+
 export function listPersonByIdsArrayQuery({
 	tx,
 	ctx,

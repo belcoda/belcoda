@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { whatsappMessage as whatsappMessageSchema } from '$lib/schema/whatsapp/message';
-import { filterGroup } from '$lib/schema/filter/types';
+import { filterGroup } from '$lib/schema/person/filter';
 import { whatsappTemplateMessage as whatsappTemplateMessageSchema } from '$lib/schema/whatsapp/message';
 import { whatsappMessageActionsSchema } from '$lib/schema/whatsapp/actions';
 
