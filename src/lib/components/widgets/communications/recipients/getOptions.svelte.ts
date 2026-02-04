@@ -2,222 +2,91 @@ import { appState, getListFilter } from '$lib/state.svelte';
 import { type FilterType } from '$lib/schema/person/filter';
 import { z } from '$lib/zero.svelte';
 
-import { countryCodes } from '$lib/utils/country';
+import { countryCodes, renderLocalizedCountryName } from '$lib/utils/country';
 import { ageGroupList } from '$lib/utils/person';
-import { languageCodes } from '$lib/utils/language';
-import { genderOptions } from '$lib/utils/person';
+import { languageCodes, getLocalizedLanguageName } from '$lib/utils/language';
+import { genderOptions, renderGender } from '$lib/utils/person';
 
-import { listEvents } from '$lib/zero/query/event/list';
-import { listTeams } from '$lib/zero/query/team/list';
-import { listTags } from '$lib/zero/query/tag/list';
-import { listPersons } from '$lib/zero/query/person/list';
-
-function startsWithOneOf(str: string, prefixes: string[]): boolean {
-	return prefixes.some((prefix) => str.startsWith(prefix));
-}
-
-export function buildGetOptions(
-	organizationId: string
-): ({ search }: { search: string }) => { options: FilterType[]; hasMore: boolean } {
-	return ({ search }: { search: string }) => getOptions(search, organizationId);
-}
-/* export function buildGetOptions(
-	organizationId: string
-): ({ search }: { search: string }) => Promise<{ options: FilterType[]; hasMore: boolean }> {
-	return async ({ search }: { search: string }) => getOptions(search, organizationId);
-} */
-
-function getOptions(
-	searchString: string,
-	organizationId: string
-): { options: FilterType[]; hasMore: boolean } {
-	let showMainFilters = true;
-	const options: FilterType[] = [];
+export type FilterCategory =
+	| 'default'
+	| 'gender'
+	| 'ageGroup'
+	| 'preferredLanguage'
+	| 'country'
+	| 'eventActivity'
+	| 'eventAttended'
+	| 'eventNoshow';
+export function getFilterType(searchString: string): {
+	type: FilterCategory;
+	searchString: string;
+} {
 	if (searchString.startsWith('age:')) {
-		showMainFilters = false;
-		options.push(
-			...ageGroupList.map((ageGroup) => ({
-				type: 'ageGroup' as const,
-				ageGroup,
-				label: `Age: ${ageGroup}`
-			}))
-		);
+		return { type: 'ageGroup' as const, searchString: searchString.replace('age:', '') };
 	}
-
 	if (searchString.startsWith('country:')) {
-		showMainFilters = false;
-		options.push(
-			...countryCodes.map((country) => ({
-				type: 'country' as const,
-				country,
-				label: `Country: ${country}`
-			}))
-		);
+		return { type: 'country' as const, searchString: searchString.replace('country:', '') };
 	}
-
 	if (searchString.startsWith('language:')) {
-		showMainFilters = false;
-		options.push(
-			...languageCodes.map((language) => ({
-				type: 'preferredLanguage' as const,
-				preferredLanguage: language,
-				label: `language:${language}`
-			}))
-		);
+		return {
+			type: 'preferredLanguage' as const,
+			searchString: searchString.replace('language:', '')
+		};
 	}
-
 	if (searchString.startsWith('gender:')) {
-		showMainFilters = false;
-		options.push(
-			...genderOptions.map((gender) => ({
-				type: 'gender' as const,
-				gender,
-				label: `gender:${gender}`
-			}))
-		);
+		return { type: 'gender' as const, searchString: searchString.replace('gender:', '') };
+	}
+	if (searchString.startsWith('attended:')) {
+		return { type: 'eventAttended' as const, searchString: searchString.replace('attended:', '') };
+	}
+	if (searchString.startsWith('noshow:')) {
+		return { type: 'eventNoshow' as const, searchString: searchString.replace('noshow:', '') };
 	}
 	if (searchString.startsWith('event:')) {
-		options.push(
-			...[
+		return { type: 'eventActivity' as const, searchString: searchString.replace('event:', '') };
+	}
+	return { type: 'default' as const, searchString: searchString };
+}
+
+export function getFilterOptionsByType(filterState: {
+	type: FilterCategory;
+	searchString: string;
+}): FilterType[] {
+	switch (filterState.type) {
+		case 'ageGroup':
+			return ageGroupList.map((ageGroup) => ({
+				type: 'ageGroup' as const,
+				ageGroup,
+				label: `${ageGroup}`
+			}));
+		case 'country':
+			return countryCodes.map((country) => ({
+				type: 'country' as const,
+				country,
+				label: `${renderLocalizedCountryName(country, appState.locale)}`
+			}));
+		case 'preferredLanguage':
+			return languageCodes.map((language) => ({
+				type: 'preferredLanguage' as const,
+				preferredLanguage: language,
+				label: `${getLocalizedLanguageName(language)}`
+			}));
+		case 'gender':
+			return genderOptions.map((gender) => ({
+				type: 'gender' as const,
+				gender,
+				label: `${renderGender(gender)}`
+			}));
+		case 'eventActivity':
+			return [
 				{
 					label: 'noshow:No show (ever)',
 					type: 'eventActivity' as const,
 					include: 'any' as const,
 					status: 'noshow' as const
-				},
-				{
-					label: 'noshow:No show (past 30 days)',
-					type: 'eventActivity' as const,
-					include: 'past30' as const,
-					status: 'noshow' as const
-				},
-				{
-					label: 'noshow:No show (past 90 days)',
-					type: 'eventActivity' as const,
-					include: 'past90' as const,
-					status: 'noshow' as const
-				},
-				{
-					label: 'noshow:No show (past 6 months)',
-					type: 'eventActivity' as const,
-					include: 'past180' as const,
-					status: 'noshow' as const
-				},
-				{
-					label: 'noshow:No show (past year)',
-					type: 'eventActivity' as const,
-					include: 'pastyear' as const,
-					status: 'noshow' as const
 				}
-			]
-		);
-	}
-
-	if (searchString.startsWith('attended:')) {
-		options.push(
-			...generateEventSignupOptions({ organizationId, searchString, status: 'attended' })
-		);
-	}
-	if (searchString.startsWith('noshow:')) {
-		options.push(...generateEventSignupOptions({ organizationId, searchString, status: 'noshow' }));
-	}
-	if (searchString.startsWith('signup:')) {
-		options.push(...generateEventSignupOptions({ organizationId, searchString, status: 'signup' }));
-	}
-
-	if (showMainFilters) {
-		if (!startsWithOneOf(searchString, ['attended:', 'noshow:', 'signup:', 'cancelled:'])) {
-			// we only return events if it's NOT an event status filter...
-			options.push(...generateEventSignupOptions({ organizationId, searchString, status: 'any' }));
+			];
+		default: {
+			return [];
 		}
-		options.push(...generateTeamOptions({ organizationId, searchString }));
-		options.push(...generateTagOptions({ organizationId, searchString }));
-		options.push(...generatePeopleOptions({ organizationId, searchString }));
 	}
-	return { options: options, hasMore: false };
-}
-
-export function generateEventSignupOptions({
-	organizationId,
-	searchString,
-	status
-}: {
-	organizationId: string;
-	searchString: string;
-	status: 'any' | 'signup' | 'attended' | 'noshow';
-}): FilterType[] {
-	const listFilter = getListFilter(organizationId, { searchString, pageSize: 5 });
-	const d = $derived.by(() => {
-		const query = z.createQuery(listEvents(appState.queryContext, listFilter));
-		const suffix = status === 'any' ? '' : ` (${status})`;
-		return query.data?.map((event) => ({
-			label: `${event.title} ${suffix}`,
-			type: 'eventSignup' as const,
-			eventId: event.id,
-			status
-		}));
-	});
-	return d;
-}
-
-export function generateTeamOptions({
-	organizationId,
-	searchString
-}: {
-	organizationId: string;
-	searchString: string;
-}): FilterType[] {
-	const listFilter = getListFilter(organizationId, { searchString, pageSize: 5 });
-	const d = $derived.by(() => {
-		const query = z.createQuery(listTeams(appState.queryContext, listFilter));
-		return query.data?.map((team) => ({
-			type: 'teamId' as const,
-			teamId: team.id,
-			name: team.name,
-			label: `${team.name}`
-		}));
-	});
-	return d;
-}
-
-export function generateTagOptions({
-	organizationId,
-	searchString
-}: {
-	organizationId: string;
-	searchString: string;
-}): FilterType[] {
-	const listFilter = getListFilter(organizationId, { searchString, pageSize: 5 });
-	const d = $derived.by(() => {
-		const query = z.createQuery(listTags(appState.queryContext, listFilter));
-		return query.data?.map((tag) => ({
-			type: 'hasTag' as const,
-			tagId: tag.id,
-			name: tag.name,
-			label: `${tag.name}`
-		}));
-	});
-	return d;
-}
-
-export function generatePeopleOptions({
-	organizationId,
-	searchString
-}: {
-	organizationId: string;
-	searchString: string;
-}): FilterType[] {
-	const listFilter = getListFilter(organizationId, { searchString, pageSize: 5 });
-	const d = $derived.by(() => {
-		const query = z.createQuery(listPersons(appState.queryContext, listFilter));
-		return query.data?.map((person) => ({
-			type: 'personId' as const,
-			personId: person.id,
-			givenName: person.givenName,
-			familyName: person.familyName,
-			profilePicture: person.profilePicture,
-			label: `${person.givenName} ${person.familyName}`
-		}));
-	});
-	return d;
 }

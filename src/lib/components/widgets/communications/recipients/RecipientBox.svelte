@@ -1,6 +1,13 @@
 <script lang="ts">
-	import { appState } from '$lib/state.svelte';
+	import { appState, getListFilter } from '$lib/state.svelte';
 	import MultiSelect from 'svelte-multiselect'; //the component that handles the dropdown and the selected items (see https://multiselect.janosh.dev/)\
+
+	import { z } from '$lib/zero.svelte';
+	import { listEvents } from '$lib/zero/query/event/list';
+	import { listTeams } from '$lib/zero/query/team/list';
+	import { listTags } from '$lib/zero/query/tag/list';
+	import { listPersons } from '$lib/zero/query/person/list';
+
 	import {
 		type FilterGroupType,
 		type FilterType,
@@ -21,14 +28,88 @@
 
 	import OptionComponent from '$lib/components/widgets/communications/recipients/Option.svelte';
 	import AndOrToggle from '$lib/components/widgets/communications/recipients/AndOrToggle.svelte';
-	import { buildGetOptions } from '$lib/components/widgets/communications/recipients/getOptions.svelte';
-	const getOptions = buildGetOptions(appState.organizationId);
+	import {
+		getFilterType,
+		getFilterOptionsByType
+	} from '$lib/components/widgets/communications/recipients/getOptions.svelte';
 
-	let searchText = $state('');
-	import { Debounced } from 'runed';
-	const options = $derived.by(
-		() => new Debounced(() => getOptions({ search: searchText }), 200).current
-	);
+	//filter state
+	let searchString = $state('');
+	let filterState = $state(getFilterType(''));
+	const eventStatus = $derived.by(() => {
+		if (filterState.type === 'eventAttended') {
+			return 'attended';
+		} else if (filterState.type === 'eventNoshow') {
+			return 'noshow';
+		} else {
+			return 'any';
+		}
+	});
+
+	//zero queries
+	const personResults = $derived.by(() => {
+		const listFilter = getListFilter(appState.organizationId, { searchString, pageSize: 5 });
+		return z.createQuery(listPersons(appState.queryContext, listFilter));
+	});
+
+	const teamResults = $derived.by(() => {
+		const listFilter = getListFilter(appState.organizationId, { searchString, pageSize: 5 });
+		return z.createQuery(listTeams(appState.queryContext, listFilter));
+	});
+
+	const tagResults = $derived.by(() => {
+		const listFilter = getListFilter(appState.organizationId, { searchString, pageSize: 5 });
+		return z.createQuery(listTags(appState.queryContext, listFilter));
+	});
+
+	const eventResults = $derived.by(() => {
+		const listFilter = getListFilter(appState.organizationId, { searchString, pageSize: 5 });
+		return z.createQuery(listEvents(appState.queryContext, listFilter));
+	});
+
+	// return options for the multiselect
+	const options = $derived.by(() => {
+		const returnArr = [];
+		if (filterState.type === 'default') {
+			returnArr.push(
+				...[
+					...personResults.data?.map((person) => ({
+						type: 'personId' as const,
+						personId: person.id,
+						givenName: person.givenName,
+						familyName: person.familyName,
+						profilePicture: person.profilePicture,
+						label: `${person.givenName} ${person.familyName}`
+					})),
+					...teamResults.data?.map((team) => ({
+						type: 'teamId' as const,
+						teamId: team.id,
+						name: team.name,
+						label: `${team.name}`
+					})),
+					...tagResults.data?.map((tag) => ({
+						type: 'hasTag' as const,
+						tagId: tag.id,
+						name: tag.name,
+						label: `${tag.name}`
+					})),
+					...eventResults.data?.map((event) => {
+						const suffix = eventStatus === 'any' ? '' : ` (${eventStatus})`;
+						return {
+							type: 'eventSignup' as const,
+							eventId: event.id,
+							status: eventStatus as 'any' | 'signup' | 'attended' | 'noshow',
+							label: `${event.title}${suffix}`
+						};
+					})
+				]
+			);
+		} else {
+			const optionsArr = getFilterOptionsByType(filterState);
+			returnArr.push(...optionsArr);
+		}
+		return returnArr;
+	});
 
 	function getSelected() {
 		return filter.filters;
@@ -37,15 +118,24 @@
 	function setSelected(selected: FilterType[]) {
 		filter.filters = selected;
 	}
+
+	function getSearchString() {
+		return searchString;
+	}
+
+	function setSearchString(value: string) {
+		filterState = getFilterType(value);
+		searchString = value;
+	}
 </script>
 
 <MultiSelect
 	{disabled}
-	options={options.options}
-	bind:searchText
+	{options}
+	bind:searchText={getSearchString, setSearchString}
 	bind:selected={getSelected, setSelected}
 	filterFunc={(opt, searchText) => {
-		return opt.label.toLowerCase().includes(searchText.toLowerCase());
+		return opt.label.toLowerCase().includes(filterState.searchString.toLowerCase());
 	}}
 	placeholder="Recipients"
 	--sms-options-bg="white"
