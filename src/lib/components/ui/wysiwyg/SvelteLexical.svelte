@@ -19,9 +19,11 @@
 
 	let {
 		value = $bindable(null),
-		onChange
+		onChange,
+		disabled = false
 	}: {
 		value?: any;
+		disabled?: boolean;
 		onChange?: (state: any) => void;
 	} = $props();
 
@@ -29,6 +31,7 @@
 		theme,
 		namespace: 'belcoda_wysiwyg',
 		nodes: [],
+		editable: !disabled,
 		editorState: value ? JSON.stringify(value) : undefined,
 		onError: (error: Error) => {
 			throw error;
@@ -46,20 +49,21 @@
 	<div
 		class="editor-shell svelte-lexical focus-within:rounded-lg focus-within:border focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50"
 	>
-		<Toolbar>
-			{#snippet children({ editor, activeEditor, blockType })}
-				<FontFamilyDropDown />
-				<FontSizeDropDown />
-				<Divider />
-				<BoldButton />
-				<ItalicButton />
-				<UnderlineButton />
-				<StrikethroughButton />
-				<Divider />
-				<DropDownAlign />
-			{/snippet}
-		</Toolbar>
-
+		{#if !disabled}
+			<Toolbar>
+				{#snippet children({ editor, activeEditor, blockType })}
+					<FontFamilyDropDown />
+					<FontSizeDropDown />
+					<Divider />
+					<BoldButton />
+					<ItalicButton />
+					<UnderlineButton />
+					<StrikethroughButton />
+					<Divider />
+					<DropDownAlign />
+				{/snippet}
+			</Toolbar>
+		{/if}
 		<div class="editor-container">
 			<div class="editor-scroller group">
 				<div class="editor group">
