@@ -8,6 +8,7 @@
 	import { cn } from '$lib/utils.js';
 	import { countryCodes, renderLocalizedCountryName } from '$lib/utils/country';
 	import { appState } from '$lib/state.svelte';
+	import { locale } from '$lib/index.svelte';
 
 	let open = $state(false);
 
@@ -25,7 +26,7 @@
 	const countries = $derived(
 		countryCodes.map((c) => ({
 			value: c,
-			label: renderLocalizedCountryName(c, appState.locale)
+			label: renderLocalizedCountryName(c, locale.current)
 		}))
 	);
 

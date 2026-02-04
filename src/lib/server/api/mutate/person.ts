@@ -98,11 +98,16 @@ export function updatePerson(params: MutatorParams) {
 		}
 
 		const parseUpdateParams = parse(updatePersonZero, input.input);
-
+		const updatedDateParsed = {
+			...parseUpdateParams,
+			dateOfBirth: parseUpdateParams.dateOfBirth
+				? new Date(parseUpdateParams.dateOfBirth)
+				: undefined
+		};
 		await tx.dbTransaction.wrappedTransaction
 			.update(person)
 			.set({
-				...parseUpdateParams,
+				...updatedDateParsed,
 				updatedAt: new Date()
 			})
 			.where(

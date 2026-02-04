@@ -8,8 +8,8 @@
 	import { cn } from '$lib/utils.js';
 	import { getTimeZonesWithOffsets, formatTimezone } from './actions';
 
-	import { appState } from '$lib/state.svelte';
-	const timezones = getTimeZonesWithOffsets(appState.locale);
+	import { locale } from '$lib/index.svelte';
+	const timezones = getTimeZonesWithOffsets(locale.current);
 
 	let open = $state(false);
 

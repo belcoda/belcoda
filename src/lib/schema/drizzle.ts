@@ -666,9 +666,7 @@ export const emailMessage = pgTable('email_message', {
 		.notNull()
 		.references(() => organization.id),
 	teamId: uuid('team_id').references(() => team.id),
-	emailFromSignatureId: uuid('email_from_signature_id')
-		.notNull()
-		.references(() => emailFromSignature.id),
+	emailFromSignatureId: uuid('email_from_signature_id').references(() => emailFromSignature.id),
 	replyToOverride: text('reply_to_override'),
 
 	recipients: jsonb('recipients').$type<FilterGroupType>().notNull(),

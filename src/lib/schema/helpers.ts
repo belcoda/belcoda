@@ -182,11 +182,6 @@ export const ownedDomainEmail = v.pipe(
 	)
 );
 
-export const hexColor = v.pipe(
-	v.string(),
-	v.regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color format (e.g., #FFFFFF or #FFF)')
-);
-
 import { countryCodes as countryCodeArr } from '$lib/utils/country';
 export const countryCode = v.picklist([...countryCodeArr], 'Invalid country code');
 export type CountryCode = v.InferOutput<typeof countryCode>;
@@ -220,6 +215,11 @@ export const isoPhoneNumber = v.pipe(
 		const phone = parsePhoneNumber(input);
 		return phone.possibility === 'is-possible';
 	}, 'Invalid phone number format')
+);
+
+export const e164PhoneNumber = v.pipe(
+	v.string(),
+	v.regex(/^\+[1-9]\d{1,14}$/, 'Invalid phone number format')
 );
 
 export const url = v.pipe(
@@ -388,6 +388,13 @@ export function parseSchema<T extends v.ObjectSchema<any, any>>(schema: T) {
 	};
 }
 
+export const hexColor = v.pipe(
+	v.string(),
+	v.minLength(1, 'Color is required'),
+	v.maxLength(7, 'Color must be 7 characters long'),
+	v.regex(/^#([0-9a-fA-F]{6})$/, 'Invalid hex color format')
+);
+
 export const listFilter = v.object({
 	searchString: v.fallback(v.nullable(v.string()), null),
 	teamId: v.fallback(v.nullable(uuid), null),
@@ -411,3 +418,12 @@ export const nanoidSchema = v.pipe(
 	v.regex(new RegExp(`^[${nanoidAlphabet}]+$`), 'Must contain only lowercase letters and numbers')
 );
 export type Nanoid = v.InferOutput<typeof nanoidSchema>;
+
+export const address = v.object({
+	addressLine1: mediumStringEmpty,
+	addressLine2: v.optional(mediumStringEmpty),
+	locality: v.optional(mediumStringEmpty),
+	region: v.optional(mediumStringEmpty),
+	postcode: v.optional(mediumStringEmpty),
+	country: v.optional(countryCode)
+});

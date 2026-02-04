@@ -4,14 +4,10 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
 	import UserSearchIcon from '@lucide/svelte/icons/user-search';
-	import RecipientBox from '$lib/components/widgets/communications/recipients/RecipientBox.svelte';
 </script>
 
 <ContentLayout rootLink="/community">
-	<div class="mx-auto mt-20 flex w-md flex-col gap-4">
-		<RecipientBox />
-	</div>
-	<!-- <Empty.Root>
+	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
 				<UserSearchIcon />
@@ -32,5 +28,5 @@
 				Learn More <ExternalLinkIcon class="inline" />
 			</a>
 		</Button>
-	</Empty.Root> -->
+	</Empty.Root>
 </ContentLayout>

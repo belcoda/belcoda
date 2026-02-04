@@ -22,6 +22,9 @@ function get_z_options() {
 export const z = new Z<Schema, ReturnType<typeof createMutators>>(get_z_options());
 
 function getCookie(name: string): string | null {
+	if (typeof document === 'undefined') {
+		return null;
+	}
 	const cookies = document.cookie.split('; ');
 	for (const cookie of cookies) {
 		const [key, value] = cookie.split('=');
@@ -31,25 +34,30 @@ function getCookie(name: string): string | null {
 }
 
 async function getToken() {
-	const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
-	if (!jwt) {
-		//todo: refresh
-		throw new Error('No JWT found');
+	try {
+		const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
+		if (!jwt) {
+			//todo: refresh
+			throw new Error('No JWT found');
+		}
+		return jwt;
+	} catch (error) {
+		return null;
 	}
-	return jwt;
 }
 
 function getAuthData() {
-	const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
-	if (!jwt) {
-		// Return a placeholder user ID when not authenticated
-		// This allows the app to load without throwing .
-		// The actual JWT is verified server side anyway
+	try {
+		const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
+		if (!jwt) {
+			throw new Error('No JWT found');
+		}
+		const decoded = jwtDecode(jwt);
+		if (!decoded.sub) {
+			throw new Error('No user ID found');
+		}
+		return decoded.sub;
+	} catch (error) {
 		return 'anonymous';
 	}
-	const decoded = jwtDecode(jwt);
-	if (!decoded.sub) {
-		throw new Error('No user ID found');
-	}
-	return decoded.sub;
 }

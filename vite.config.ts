@@ -5,8 +5,9 @@ import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { wuchale } from '@wuchale/vite-plugin';
 import { playwright } from '@vitest/browser-playwright';
-import { config } from 'dotenv';
-config();
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 export default defineConfig({
 	plugins: [

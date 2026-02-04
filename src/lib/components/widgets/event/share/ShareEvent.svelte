@@ -12,9 +12,8 @@
 	import { appState } from '$lib/state.svelte';
 	import { env } from '$env/dynamic/public';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	const whatsAppSignupLink = $derived.by(() => {
-		return `https://wa.me/${appState.activeOrganization.data?.settings.whatsApp.number || env.PUBLIC_DEFAULT_WHATSAPP_NUMBER}/?text=${encodeURIComponent(`Send to check in to ${event.title} [#${actionCode.id}] (do not edit this message)`)}`;
-	});
+	import { generateWhatsAppSignupLink, getEventLink } from '$lib/utils/events/link';
+	const whatsAppSignupLink = generateWhatsAppSignupLink(event.title, actionCode.id);
 	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte';
 	const clipboard = new UseClipboard();
 	import CheckIcon from '@lucide/svelte/icons/check';
@@ -22,8 +21,9 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { dev } from '$app/environment';
 	import { toast } from 'svelte-sonner';
-	const eventSignupPageLink = $derived.by(() => {
-		return `http${dev ? '' : 's'}://${appState.activeOrganization.data?.slug}.${env.PUBLIC_ROOT_DOMAIN}/events/${event.slug}`;
+	const eventSignupPageLink = getEventLink({
+		eventSlug: event.slug,
+		organizationSlug: appState.activeOrganization.data?.slug || ''
 	});
 </script>
 
