@@ -2657,39 +2657,39 @@ msgstr "Presencial"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Configuration"
-msgstr ""
+msgstr "Configuração"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Themes & colors"
-msgstr ""
+msgstr "Temas e cores"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Imports"
-msgstr ""
+msgstr "Importações"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Exports"
-msgstr ""
+msgstr "Exportações"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Credit balance"
-msgstr ""
+msgstr "Saldo de créditos"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "API keys"
-msgstr ""
+msgstr "Chaves API"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "WhatsApp templates"
-msgstr ""
+msgstr "Modelos de WhatsApp"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "WhatsApp accounts"
-msgstr ""
+msgstr "Contas de WhatsApp"
