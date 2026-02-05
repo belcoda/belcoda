@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import { useDebounce } from 'runed';
 	import { slugify } from '$lib/utils/slug';
 	import * as Card from '$lib/components/ui/card/index.js';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import { parse } from 'valibot';
 	import { renderValiError, shortString, email } from '$lib/schema/helpers';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -57,7 +57,8 @@
 
 			toast.success(t`System signature updated successfully`);
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : t`Failed to update system signature`;
+			const errorMessage =
+				err instanceof Error ? err.message : t`Failed to update system signature`;
 			toast.error(errorMessage);
 		} finally {
 			saving = false;
@@ -105,13 +106,13 @@
 
 <div class="space-y-4">
 	<div>
-		<p class="text-sm font-medium mb-1">{t`Email address`}</p>
-		<p class="text-sm text-muted-foreground font-mono">{emailAddress}</p>
-		<p class="text-xs text-muted-foreground mt-1">{t`This email address cannot be changed.`}</p>
+		<p class="mb-1 text-sm font-medium">{t`Email address`}</p>
+		<p class="font-mono text-sm text-muted-foreground">{emailAddress}</p>
+		<p class="mt-1 text-xs text-muted-foreground">{t`This email address cannot be changed.`}</p>
 	</div>
 
 	<div>
-		<p class="text-sm font-medium mb-1">{t`Display name`}</p>
+		<p class="mb-1 text-sm font-medium">{t`Display name`}</p>
 		{#if editingName}
 			<div class="space-y-2">
 				<div class="flex items-center gap-2">
@@ -121,20 +122,10 @@
 						class="flex-1"
 						disabled={saving}
 					/>
-					<Button
-						variant="ghost"
-						size="icon"
-						onclick={handleSaveName}
-						disabled={saving}
-					>
+					<Button variant="ghost" size="icon" onclick={handleSaveName} disabled={saving}>
 						<CheckIcon class="size-4" />
 					</Button>
-					<Button
-						variant="ghost"
-						size="icon"
-						onclick={handleCancelName}
-						disabled={saving}
-					>
+					<Button variant="ghost" size="icon" onclick={handleCancelName} disabled={saving}>
 						<XIcon class="size-4" />
 					</Button>
 				</div>
@@ -160,7 +151,7 @@
 	</div>
 
 	<div>
-		<p class="text-sm font-medium mb-1">{t`Reply-to address`}</p>
+		<p class="mb-1 text-sm font-medium">{t`Reply-to address`}</p>
 		{#if editingReplyTo}
 			<div class="space-y-2">
 				<div class="flex items-center gap-2">
@@ -171,20 +162,10 @@
 						class="flex-1 font-mono"
 						disabled={saving}
 					/>
-					<Button
-						variant="ghost"
-						size="icon"
-						onclick={handleSaveReplyTo}
-						disabled={saving}
-					>
+					<Button variant="ghost" size="icon" onclick={handleSaveReplyTo} disabled={saving}>
 						<CheckIcon class="size-4" />
 					</Button>
-					<Button
-						variant="ghost"
-						size="icon"
-						onclick={handleCancelReplyTo}
-						disabled={saving}
-					>
+					<Button variant="ghost" size="icon" onclick={handleCancelReplyTo} disabled={saving}>
 						<XIcon class="size-4" />
 					</Button>
 				</div>
@@ -194,7 +175,7 @@
 			</div>
 		{:else}
 			<div class="flex items-center gap-2">
-				<p class="text-sm font-mono">{replyTo || emailAddress}</p>
+				<p class="font-mono text-sm">{replyTo || emailAddress}</p>
 				<Button
 					variant="ghost"
 					size="icon-sm"

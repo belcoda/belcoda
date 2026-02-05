@@ -45,7 +45,7 @@
 		}
 	});
 	import H2 from '$lib/components/ui/typography/H2.svelte';
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <Sidebar.Root

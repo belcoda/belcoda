@@ -14,7 +14,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import { toast } from 'svelte-sonner';
 	import type { ReadEmailFromSignatureZero } from '$lib/schema/email-from-signature';
 	import { isSubdomain } from '$lib/utils/string/domain';
@@ -69,7 +69,8 @@
 				isOpen = false;
 				onUpdated?.();
 			} catch (err) {
-				const errorMessage = err instanceof Error ? err.message : t`Failed to update email signature`;
+				const errorMessage =
+					err instanceof Error ? err.message : t`Failed to update email signature`;
 				toast.error(errorMessage);
 				throw err;
 			}
@@ -98,8 +99,8 @@
 
 			<div>
 				<Label>{t`Email address`}</Label>
-				<p class="text-sm text-muted-foreground font-mono mt-1">{signature.emailAddress}</p>
-				<p class="text-sm text-muted-foreground mt-1">
+				<p class="mt-1 font-mono text-sm text-muted-foreground">{signature.emailAddress}</p>
+				<p class="mt-1 text-sm text-muted-foreground">
 					{t`The email address cannot be changed.`}
 				</p>
 			</div>
@@ -118,7 +119,9 @@
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
-				<Form.Description>{t`Optional. If not set, replies will go to the email address above.`}</Form.Description>
+				<Form.Description
+					>{t`Optional. If not set, replies will go to the email address above.`}</Form.Description
+				>
 			</Form.Field>
 
 			<Form.Field {form} name="returnPathDomain">
@@ -134,7 +137,9 @@
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
-				<Form.Description>{t`Optional. The return path domain is used for bounce handling.`}</Form.Description>
+				<Form.Description
+					>{t`Optional. The return path domain is used for bounce handling.`}</Form.Description
+				>
 			</Form.Field>
 		</form>
 	{/snippet}
