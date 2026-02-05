@@ -7,8 +7,14 @@
 		DropDownAlign,
 		FontFamilyDropDown,
 		FontSizeDropDown,
+		LinkPlugin,
 		ItalicButton,
+		LinkNode,
+		AutoLinkNode,
+		AutoLinkPlugin,
 		RichTextPlugin,
+		InsertLink,
+		FloatingLinkEditorPlugin,
 		StrikethroughButton,
 		Toolbar,
 		UnderlineButton,
@@ -29,7 +35,7 @@
 	const initialConfig = {
 		theme,
 		namespace: 'belcoda_wysiwyg',
-		nodes: [],
+		nodes: [LinkNode],
 		editable: (() => !disabled)(),
 		editorState: value ? JSON.stringify(value) : undefined,
 		onError: (error: Error) => {
@@ -59,6 +65,8 @@
 					<UnderlineButton />
 					<StrikethroughButton />
 					<Divider />
+					<InsertLink />
+					<Divider />
 					<DropDownAlign />
 				{/snippet}
 			</Toolbar>
@@ -70,6 +78,7 @@
 				</div>
 			</div>
 			<RichTextPlugin />
+			<LinkPlugin />
 			<OnChangePlugin
 				onChange={handleChange}
 				ignoreHistoryMergeTagChange={true}
