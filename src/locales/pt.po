@@ -2671,6 +2671,7 @@ msgstr "Importações"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports"
 msgstr "Exportações"
 
@@ -2693,3 +2694,11 @@ msgstr "Modelos de WhatsApp"
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "WhatsApp accounts"
 msgstr "Contas de WhatsApp"
+
+#: src/routes/(app)/settings/people/exports/+page.svelte
+msgid "People Exports"
+msgstr ""
+
+#: src/routes/(app)/settings/people/exports/+page.svelte
+msgid "Exports are not currently supported, but will be added in a future update."
+msgstr ""
