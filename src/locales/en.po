@@ -2667,6 +2667,7 @@ msgstr "Imports"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports"
 msgstr "Exports"
 
@@ -2693,3 +2694,10 @@ msgstr "WhatsApp accounts"
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Configuration"
 msgstr "Configuration"
+
+#~ msgid "People Exports"
+#~ msgstr "People Exports"
+
+#: src/routes/(app)/settings/people/exports/+page.svelte
+msgid "Exports are not currently supported, but will be added in a future update."
+msgstr "Exports are not currently supported, but will be added in a future update."
