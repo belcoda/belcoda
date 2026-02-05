@@ -128,6 +128,9 @@
     @apply bg-background text-foreground;
   }
 
+  .decorate-links a {
+    @apply text-primary underline underline-offset-3;
+  }
 
 :global(div.multiselect > ul.selected > li button, button.remove-all) {
   /* buttons to remove a single or all selected options at once */

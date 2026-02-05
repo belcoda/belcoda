@@ -7,8 +7,14 @@
 		DropDownAlign,
 		FontFamilyDropDown,
 		FontSizeDropDown,
+		LinkPlugin,
 		ItalicButton,
+		LinkNode,
+		AutoLinkNode,
+		AutoLinkPlugin,
 		RichTextPlugin,
+		InsertLink,
+		FloatingLinkEditorPlugin,
 		StrikethroughButton,
 		Toolbar,
 		UnderlineButton,
@@ -16,7 +22,6 @@
 	} from 'svelte-lexical';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
-
 	let {
 		value = $bindable(null),
 		onChange,
@@ -30,8 +35,8 @@
 	const initialConfig = {
 		theme,
 		namespace: 'belcoda_wysiwyg',
-		nodes: [],
-		editable: !disabled,
+		nodes: [LinkNode],
+		editable: (() => !disabled)(),
 		editorState: value ? JSON.stringify(value) : undefined,
 		onError: (error: Error) => {
 			throw error;
@@ -60,6 +65,8 @@
 					<UnderlineButton />
 					<StrikethroughButton />
 					<Divider />
+					<InsertLink />
+					<Divider />
 					<DropDownAlign />
 				{/snippet}
 			</Toolbar>
@@ -71,6 +78,7 @@
 				</div>
 			</div>
 			<RichTextPlugin />
+			<LinkPlugin />
 			<OnChangePlugin
 				onChange={handleChange}
 				ignoreHistoryMergeTagChange={true}

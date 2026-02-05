@@ -18,6 +18,8 @@ import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db/zeroDrizzle';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
 import { event, session } from '$lib/schema/drizzle.js';
+import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+const lexicalRenderer = new LexicalHtmlRenderer();
 
 export async function load({ locals, params, url }) {
 	log.debug(
@@ -47,8 +49,12 @@ export async function load({ locals, params, url }) {
 	const surveySchema = getSurveySchema(eventObj);
 	const form = await superValidate(valibot(surveySchema));
 
+	const renderedEvent = {
+		...eventObj,
+		description: eventObj.description ? await lexicalRenderer.render(eventObj.description) : null
+	};
 	return {
-		event: eventObj,
+		event: renderedEvent,
 		organization: organizationObj,
 		whatsAppSignupLink,
 		form,

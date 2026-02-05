@@ -135,7 +135,7 @@
 			<Card.Title>{t`Event page`}</Card.Title>
 		</Card.Header>
 		<Card.Content class="space-y-6">
-			<SvelteLexical />
+			<SvelteLexical bind:value={$data.description} />
 		</Card.Content>
 	</Card.Root>
 	{#if $data.settings && $data.settings.survey}
