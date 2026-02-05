@@ -16,6 +16,7 @@
 		event: EventSchema;
 		organization: OrganizationSchema;
 		currentSignups: number;
+		session?: App.Locals['session'] | null;
 		whatsAppSignupLink: string;
 		form: SuperValidated<SurveySchema>;
 	};
@@ -25,6 +26,7 @@
 		organization,
 		currentSignups,
 		whatsAppSignupLink,
+		session,
 		form: formProp,
 		theme = 'default'
 	}: Props = $props();
@@ -108,7 +110,7 @@
 </script>
 
 <!-- Registration Form -->
-{#if event.published}
+{#if event.published || session?.session.id}
 	<div>
 		<!-- If the event is not published, show a warning. It will only be visible if a user with event permissions is signed in because this page won't be visible otherwise -->
 		{#if !event.published}

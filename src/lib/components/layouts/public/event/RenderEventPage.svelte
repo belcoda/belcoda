@@ -2,14 +2,6 @@
 	import { t } from '$lib/index.svelte';
 	import { type EventSchema } from '$lib/schema/event';
 	import { type OrganizationSchema } from '$lib/schema/organization';
-	import { type PersonSchema } from '$lib/schema/person';
-	import { renderEventTime } from '$lib/utils/date';
-	import { renderAddress } from '$lib/utils/string/address';
-	import { page } from '$app/state';
-	import ClockIcon from '@lucide/svelte/icons/clock';
-	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
-	import MapPinIcon from '@lucide/svelte/icons/map-pin';
-	import UsersIcon from '@lucide/svelte/icons/users';
 	import LinkIcon from '@lucide/svelte/icons/link';
 	import type { SurveySchema } from '$lib/schema/survey/questions';
 	import type { SuperValidated } from 'sveltekit-superforms';
@@ -18,6 +10,7 @@
 		event: EventSchema;
 		organization: OrganizationSchema;
 		signupCount?: number;
+		session?: App.Locals['session'] | null;
 		form?: SuperValidated<SurveySchema>;
 		whatsAppSignupLink?: string;
 		theme: 'default' | 'embed';
@@ -28,6 +21,7 @@
 		organization,
 		theme = 'default',
 		signupCount = 0,
+		session,
 		whatsAppSignupLink,
 		form,
 		success = false
@@ -138,6 +132,7 @@
 									{currentSignups}
 									{event}
 									{organization}
+									{session}
 									{theme}
 									{whatsAppSignupLink}
 								/>
