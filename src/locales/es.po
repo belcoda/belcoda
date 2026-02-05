@@ -15,11 +15,11 @@ msgstr ""
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Basic information"
-msgstr "Informacion basico"
+msgstr "Información básica"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Date and time"
-msgstr "Dia y tiempo"
+msgstr "Fecha y hora"
 
 #: src/routes/(app)/preferences/language/+page.svelte
 msgid "Language"
@@ -31,16 +31,16 @@ msgstr "Idiomas"
 
 #: src/routes/(app)/preferences/language/+page.svelte
 msgid "Update your preferred language:"
-msgstr ""
+msgstr "Actualiza tu idioma preferido:"
 
 #: src/routes/(app)/preferences/language/+page.svelte
 msgid "This will update your language for all the pages in the application."
-msgstr ""
+msgstr "Esto actualizará tu idioma para todas las páginas de la aplicación."
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Settings"
-msgstr ""
+msgstr "Configuración"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid ""
@@ -48,43 +48,46 @@ msgid ""
 "of the organization. You can add as many as you want, but they must be attached to a\n"
 "non-public email address that you control."
 msgstr ""
+"Las firmas de correo son los nombres y direcciones de correo electrónico que se utilizan para enviar correos en nombre\n"
+"de la organización. Puedes agregar tantas como quieras, pero deben estar asociadas a una\n"
+"dirección de correo electrónico no pública que controles."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email from signatures"
-msgstr ""
+msgstr "Firmas de correo electrónico"
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Display Settings"
-msgstr ""
+msgstr "Configuración de visualización"
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Customize how your workspace appears on public pages like event calendars and event signup pages."
-msgstr ""
+msgstr "Personaliza cómo aparece tu espacio de trabajo en páginas públicas como calendarios de eventos y páginas de registro."
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Tab Icon URL"
-msgstr ""
+msgstr "URL del ícono de pestaña"
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "URL to an icon that will appear in browser tabs for public pages. Recommended size: 32x32px or 64x64px."
-msgstr ""
+msgstr "URL de un ícono que aparecerá en las pestañas del navegador para páginas públicas. Tamaño recomendado: 32x32px o 64x64px."
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Primary Color"
-msgstr ""
+msgstr "Color primario"
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Main color for buttons, links, and primary accents on public pages."
-msgstr ""
+msgstr "Color principal para botones, enlaces y acentos primarios en páginas públicas."
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Secondary Color"
-msgstr ""
+msgstr "Color secundario"
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Accent color for success states and secondary elements on public pages."
-msgstr ""
+msgstr "Color de acento para estados de éxito y elementos secundarios en páginas públicas."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
@@ -92,27 +95,27 @@ msgstr ""
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Save Changes"
-msgstr ""
+msgstr "Guardar cambios"
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Failed to load organization settings."
-msgstr ""
+msgstr "Error al cargar la configuración de la organización."
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Theme Settings"
-msgstr ""
+msgstr "Configuración de tema"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Add Email from signature"
-msgstr ""
+msgstr "Agregar firma de correo electrónico"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Create a new email signature that will be verified with Postmark."
-msgstr ""
+msgstr "Crea una nueva firma de correo electrónico que será verificada con Postmark."
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
@@ -121,535 +124,535 @@ msgstr ""
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "Display name"
-msgstr ""
+msgstr "Nombre para mostrar"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "Email address"
-msgstr ""
+msgstr "Dirección de correo electrónico"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "email@example.com"
-msgstr ""
+msgstr "email@example.com"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "The email address must be verified with Postmark."
-msgstr ""
+msgstr "La dirección de correo electrónico debe ser verificada con Postmark."
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "Reply-to address"
-msgstr ""
+msgstr "Dirección de respuesta"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "reply@example.com"
-msgstr ""
+msgstr "reply@example.com"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Optional. If not set, replies will go to the email address above."
-msgstr ""
+msgstr "Opcional. Si no se establece, las respuestas irán a la dirección de correo anterior."
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Return path domain"
-msgstr ""
+msgstr "Dominio de ruta de retorno"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "bounce.example.com"
-msgstr ""
+msgstr "bounce.example.com"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Optional. The return path domain is used for bounce handling."
-msgstr ""
+msgstr "Opcional. El dominio de ruta de retorno se usa para el manejo de rebotes."
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Create signature"
-msgstr ""
+msgstr "Crear firma"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Edit Email from signature"
-msgstr ""
+msgstr "Editar firma de correo electrónico"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Update the email signature details."
-msgstr ""
+msgstr "Actualiza los detalles de la firma de correo electrónico."
 
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "The email address cannot be changed."
-msgstr ""
+msgstr "La dirección de correo electrónico no puede ser cambiada."
 
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Save changes"
-msgstr ""
+msgstr "Guardar cambios"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Are you sure you want to delete this email signature?"
-msgstr ""
+msgstr "¿Estás seguro de que quieres eliminar esta firma de correo electrónico?"
 
 #. placeholder {0}: organization.data?.settings.email.systemFromIdentity.name || systemEmailAddress
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "System ({0})"
-msgstr ""
+msgstr "Sistema ({0})"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "System send signature"
-msgstr ""
+msgstr "Firma de envío del sistema"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "This is the default send signature provided to every organization. You can customize the name and reply-to address."
-msgstr ""
+msgstr "Esta es la firma de envío predeterminada proporcionada a cada organización. Puedes personalizar el nombre y la dirección de respuesta."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Default send signature"
-msgstr ""
+msgstr "Firma de envío predeterminada"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Choose which email signature will be used by default when sending emails. You can override this for individual emails."
-msgstr ""
+msgstr "Elige qué firma de correo electrónico se usará por defecto al enviar correos. Puedes cambiar esto para correos individuales."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Select default signature"
-msgstr ""
+msgstr "Seleccionar firma predeterminada"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Updating..."
-msgstr ""
+msgstr "Actualizando..."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Custom send signatures"
-msgstr ""
+msgstr "Firmas de envío personalizadas"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Additional email signatures that you can use to send emails. These must be verified with Postmark."
-msgstr ""
+msgstr "Firmas de correo electrónico adicionales que puedes usar para enviar correos. Deben ser verificadas con Postmark."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Name & Email"
-msgstr ""
+msgstr "Nombre y correo"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Reply-to"
-msgstr ""
+msgstr "Responder a"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Return path"
-msgstr ""
+msgstr "Ruta de retorno"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "The return path domain is used for bounce handling."
-msgstr ""
+msgstr "El dominio de ruta de retorno se usa para el manejo de rebotes."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Verification status from Postmark."
-msgstr ""
+msgstr "Estado de verificación de Postmark."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Actions"
-msgstr ""
+msgstr "Acciones"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Verified"
-msgstr ""
+msgstr "Verificado"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Not verified"
-msgstr ""
+msgstr "No verificado"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "Not set"
-msgstr ""
+msgstr "No establecido"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Edit signature"
-msgstr ""
+msgstr "Editar firma"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Verify signature status"
-msgstr ""
+msgstr "Verificar estado de firma"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Delete signature"
-msgstr ""
+msgstr "Eliminar firma"
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Loading..."
-msgstr ""
+msgstr "Cargando..."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "New"
-msgstr ""
+msgstr "Nuevo"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "This email address cannot be changed."
-msgstr ""
+msgstr "Esta dirección de correo electrónico no puede ser cambiada."
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Community"
-msgstr ""
+msgstr "Comunidad"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Error loading persons"
-msgstr ""
+msgstr "Error al cargar personas"
 
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 msgid "Selected"
-msgstr ""
+msgstr "Seleccionado"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 msgid "Organizations"
-msgstr ""
+msgstr "Organizaciones"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 msgid "users"
-msgstr ""
+msgstr "usuarios"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 msgid "Invite?"
-msgstr ""
+msgstr "¿Invitar?"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 msgid "Admin"
-msgstr ""
+msgstr "Administrador"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 msgid "Member"
-msgstr ""
+msgstr "Miembro"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 msgid "Owner"
-msgstr ""
+msgstr "Propietario"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/PreferencesSidebar.svelte
 msgid "Preferences"
-msgstr ""
+msgstr "Preferencias"
 
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
 msgid "Log out"
-msgstr ""
+msgstr "Cerrar sesión"
 
 #: src/lib/components/ui/sidebar/sidebar-rail.svelte
 #: src/lib/components/ui/sidebar/sidebar-rail.svelte
 msgid "Toggle Sidebar"
-msgstr ""
+msgstr "Alternar barra lateral"
 
 #: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 msgid "New person"
-msgstr ""
+msgstr "Nueva persona"
 
 #: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 msgid "Billing"
-msgstr ""
+msgstr "Facturación"
 
 #: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 msgid "Team"
-msgstr ""
+msgstr "Equipo"
 
 #: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 msgid "Subscription"
-msgstr ""
+msgstr "Suscripción"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 msgid "Communications"
-msgstr ""
+msgstr "Comunicaciones"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 msgid "Events"
-msgstr ""
+msgstr "Eventos"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 msgid "Petitions"
-msgstr ""
+msgstr "Peticiones"
 
 #: src/lib/components/widgets/person/filter/Filter.svelte
 msgid "Filter"
-msgstr ""
+msgstr "Filtrar"
 
 #: src/lib/components/layouts/app/sidebars/preferences/PreferencesSidebar.svelte
 #: src/lib/components/widgets/person/filter/Filter.svelte
 msgid "Search..."
-msgstr ""
+msgstr "Buscar..."
 
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 msgid "Back"
-msgstr ""
+msgstr "Volver"
 
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 msgid "Create person"
-msgstr ""
+msgstr "Crear persona"
 
 #: src/lib/components/widgets/person/filter/display/DisplayActivityFilter.svelte
 msgid "Unknown activity filter"
-msgstr ""
+msgstr "Filtro de actividad desconocido"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Teams"
-msgstr ""
+msgstr "Equipos"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Filter teams..."
-msgstr ""
+msgstr "Filtrar equipos..."
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "No teams found."
-msgstr ""
+msgstr "No se encontraron equipos."
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Tags"
-msgstr ""
+msgstr "Etiquetas"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Filter tags..."
-msgstr ""
+msgstr "Filtrar etiquetas..."
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "No tags found."
-msgstr ""
+msgstr "No se encontraron etiquetas."
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Activity"
-msgstr ""
+msgstr "Actividad"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Recent activity: 7 days"
-msgstr ""
+msgstr "Actividad reciente: 7 días"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Recent activity: 30 days"
-msgstr ""
+msgstr "Actividad reciente: 30 días"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Recent activity: 90 days"
-msgstr ""
+msgstr "Actividad reciente: 90 días"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "Recent activity: 1 year"
-msgstr ""
+msgstr "Actividad reciente: 1 año"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "No activity: 7 days"
-msgstr ""
+msgstr "Sin actividad: 7 días"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "No activity: 30 days"
-msgstr ""
+msgstr "Sin actividad: 30 días"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "No activity: 90 days"
-msgstr ""
+msgstr "Sin actividad: 90 días"
 
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 msgid "No activity: 1 year"
-msgstr ""
+msgstr "Sin actividad: 1 año"
 
 #: src/lib/form.svelte.ts
 msgid "Are you sure you want to discard your changes?"
-msgstr ""
+msgstr "¿Estás seguro de que quieres descartar los cambios?"
 
 #. placeholder {0}: HUMAN_READABLE_MAX_FILE_SIZE
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "File too large. Max size is {0}."
-msgstr ""
+msgstr "Archivo demasiado grande. El tamaño máximo es {0}."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "File type not allowed. Allowed types are .png, .jpg, .jpeg."
-msgstr ""
+msgstr "Tipo de archivo no permitido. Los tipos permitidos son .png, .jpg, .jpeg."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "File validation error. Please try again."
-msgstr ""
+msgstr "Error de validación del archivo. Por favor, inténtalo de nuevo."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "File upload error. Please try again."
-msgstr ""
+msgstr "Error al subir el archivo. Por favor, inténtalo de nuevo."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Unknown error. Please try again."
-msgstr ""
+msgstr "Error desconocido. Por favor, inténtalo de nuevo."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Upload"
-msgstr ""
+msgstr "Subir"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Upload an image to your workspace"
-msgstr ""
+msgstr "Sube una imagen a tu espacio de trabajo"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Error:"
-msgstr ""
+msgstr "Error:"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Replace image"
-msgstr ""
+msgstr "Reemplazar imagen"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Allowed: .png, .jpg, .jpeg"
-msgstr ""
+msgstr "Permitidos: .png, .jpg, .jpeg"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Max size:"
-msgstr ""
+msgstr "Tamaño máximo:"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Click or drag to upload image"
-msgstr ""
+msgstr "Haz clic o arrastra para subir una imagen"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 msgid "Max size: 2MB"
-msgstr ""
+msgstr "Tamaño máximo: 2MB"
 
 #: src/lib/components/ui/form/custom/error.svelte
 msgid "There are some errors that need to be fixed"
-msgstr ""
+msgstr "Hay algunos errores que necesitan ser corregidos"
 
 #: src/lib/components/ui/command/command-dialog.svelte
 msgid "Command Palette"
-msgstr ""
+msgstr "Paleta de comandos"
 
 #: src/lib/components/ui/command/command-dialog.svelte
 msgid "Search for a command to run"
-msgstr ""
+msgstr "Busca un comando para ejecutar"
 
 #: src/routes/(app)/preferences/+page.svelte
 msgid "Test"
-msgstr ""
+msgstr "Prueba"
 
 #: src/routes/(app)/preferences/+page.svelte
 msgid "Footer"
-msgstr ""
+msgstr "Pie de página"
 
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Organization ID not found"
-msgstr ""
+msgstr "ID de organización no encontrado"
 
 #: src/lib/components/ui/color-picker/ColorPicker.svelte
 msgid "Color preview"
-msgstr ""
+msgstr "Vista previa del color"
 
 #: src/lib/components/ui/color-picker/ColorPicker.svelte
 msgid "Color picker"
-msgstr ""
+msgstr "Selector de color"
 
 #: src/lib/components/ui/color-picker/ColorPicker.svelte
 msgid "Hex color code"
-msgstr ""
+msgstr "Código de color hexadecimal"
 
 #: src/lib/components/ui/color-picker/ColorPicker.svelte
 msgid "Clear color"
-msgstr ""
+msgstr "Limpiar color"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 msgid "Notes"
-msgstr ""
+msgstr "Notas"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 msgid "Send email"
-msgstr ""
+msgstr "Enviar correo"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 msgid "Call"
-msgstr ""
+msgstr "Llamar"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 msgid "WhatsApp"
-msgstr ""
+msgstr "WhatsApp"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 msgid "Add tag"
-msgstr ""
+msgstr "Agregar etiqueta"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 msgid "Added tag"
-msgstr ""
+msgstr "Etiqueta agregada"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 msgid "Add to team"
-msgstr ""
+msgstr "Agregar al equipo"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 msgid "Person added to team"
-msgstr ""
+msgstr "Persona agregada al equipo"
 
 #: src/lib/components/widgets/render/RenderPerson.svelte
 msgid "Error loading person"
-msgstr ""
+msgstr "Error al cargar persona"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 msgid "No notes found"
-msgstr ""
+msgstr "No se encontraron notas"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 msgid "Add a note to share information with the team"
-msgstr ""
+msgstr "Agrega una nota para compartir información con el equipo"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
 msgid "Add a note or comment..."
-msgstr ""
+msgstr "Agrega una nota o comentario..."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 msgid "Are you sure you want to delete this note?"
-msgstr ""
+msgstr "¿Estás seguro de que quieres eliminar esta nota?"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 msgid "Note deleted"
-msgstr ""
+msgstr "Nota eliminada"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 msgid "Edit note..."
-msgstr ""
+msgstr "Editar nota..."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 msgid "Update note"
-msgstr ""
+msgstr "Actualizar nota"
