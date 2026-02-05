@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import type { EventSchema } from '$lib/schema/event';
 	import type { OrganizationSchema } from '$lib/schema/organization';
 	import {
@@ -75,7 +76,7 @@
 		class="flex w-full items-center justify-center space-x-2 rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
 	>
 		<CalendarDays class="h-4 w-4" />
-		<span>Add To Calendar</span>
+		<span>{t`Add To Calendar`}</span>
 		<ChevronDown class="h-4 w-4 transition-transform {isOpen ? 'rotate-180' : ''}" />
 	</button>
 
@@ -90,7 +91,7 @@
 					class="flex w-full items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
 				>
 					<ExternalLink class="h-4 w-4 text-gray-400" />
-					<span>Google Calendar</span>
+					<span>{t`Google Calendar`}</span>
 				</button>
 
 				<button
@@ -99,7 +100,7 @@
 					class="flex w-full items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
 				>
 					<ExternalLink class="h-4 w-4 text-gray-400" />
-					<span>Outlook Calendar</span>
+					<span>{t`Outlook Calendar`}</span>
 				</button>
 
 				<button
@@ -108,7 +109,7 @@
 					class="flex w-full items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
 				>
 					<Download class="h-4 w-4 text-gray-400" />
-					<span>Download .ics file</span>
+					<span>{t`Download .ics file`}</span>
 				</button>
 			</div>
 		</div>

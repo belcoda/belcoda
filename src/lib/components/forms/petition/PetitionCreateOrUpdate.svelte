@@ -93,9 +93,9 @@
 
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>Feature image</Card.Title>
+			<Card.Title>{t`Feature image`}</Card.Title>
 			<Card.Description
-				>This image will be displayed on the petition page and in shared links.</Card.Description
+				>{t`This image will be displayed on the petition page and in shared links.`}</Card.Description
 			>
 		</Card.Header>
 		<Card.Content class="space-y-6">
@@ -115,12 +115,12 @@
 	<Form.Field {form} name="title" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Title</Form.Label>
+				<Form.Label>{t`Title`}</Form.Label>
 				<InputGroup.Root>
 					<InputGroup.Input
 						bind:value={$data.title}
 						{...props}
-						placeholder="Title"
+						placeholder={t`Title`}
 						oninput={useDebounce(
 							() => {
 								if (!form.isTainted('slug')) {
@@ -144,7 +144,7 @@
 									>http{dev ? '' : 's'}://{appState.activeOrganization.data
 										?.slug}.{PUBLIC_ROOT_DOMAIN}/petitions/{$data.slug}</span
 								>
-								<ResponsiveModal title="Edit petition link" bind:open={editSlugOpen}>
+								<ResponsiveModal title={t`Edit petition link`} bind:open={editSlugOpen}>
 									{#snippet trigger()}
 										<InputGroup.Button type="button">Edit</InputGroup.Button>
 									{/snippet}
@@ -156,14 +156,14 @@
 													bind:value={$data.slug}
 													{...props}
 													class="font-mono"
-													placeholder="Slug"
+													placeholder={t`Slug`}
 												/>
 											{/snippet}
 										</Form.Control>
 										<Form.Description>
-											This is a URL-friendly identifier for the petition and is part of the petition
+											{t`This is a URL-friendly identifier for the petition and is part of the petition
 											link. It must be unique and can only contain lowercase letters, numbers, and
-											hyphens.
+											hyphens.`}
 										</Form.Description>
 										<Form.FieldErrors />
 									</Form.Field>
@@ -176,7 +176,7 @@
 											onclick={() => {
 												form.validate('slug');
 												editSlugOpen = false;
-											}}>Save</Button
+											}}>{t`Save`}</Button
 										>
 									{/snippet}
 								</ResponsiveModal>
@@ -194,12 +194,12 @@
 	<Form.Field {form} name="shortDescription" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Description</Form.Label>
+				<Form.Label>{t`Description`}</Form.Label>
 				<InputGroup.Root>
 					<InputGroup.Textarea
 						bind:value={$data.shortDescription}
 						{...props}
-						placeholder="Description"
+						placeholder={t`Description`}
 						class="min-h-[80px]"
 					/>
 					{#if $data.shortDescription && $data.shortDescription.length > 0}
@@ -218,16 +218,16 @@
 	<Form.Field {form} name="petitionTarget" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Petition target</Form.Label>
+				<Form.Label>{t`Petition target`}</Form.Label>
 				<InputGroup.Root>
 					<InputGroup.Input
 						bind:value={$data.petitionTarget}
 						{...props}
-						placeholder="e.g., Local Government, CEO of Company X"
+						placeholder={t`e.g., Local Government, CEO of Company X`}
 					/>
 				</InputGroup.Root>
 				<Form.Description>
-					Who is this petition directed to? (e.g., "The Mayor of Springfield", "Parliament")
+					{t`Who is this petition directed to? (e.g., "The Mayor of Springfield", "Parliament")`}
 				</Form.Description>
 			{/snippet}
 		</Form.Control>

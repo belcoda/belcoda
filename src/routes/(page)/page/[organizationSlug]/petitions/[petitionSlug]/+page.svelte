@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
@@ -50,6 +50,14 @@
 	});
 
 	const signatureSuccess = $derived(form?.success === true);
+
+	const petitionSignatureCount = (count: string) => {
+		return t`${count} people have signed this petition`;
+	};
+
+	const targetToGoal = (current: string, target: string) => {
+		return t`${current} more signatures needed to reach ${target}`;
+	};
 </script>
 
 <div class="min-h-screen bg-background">
@@ -60,11 +68,11 @@
 				<div class="mb-4 flex justify-end gap-2">
 					<Button variant="outline" size="sm" href={`/petitions/${data.petition.id}`}>
 						<EditIcon class="size-4" />
-						Edit
+						{t`Edit`}
 					</Button>
 					<Button variant="outline" size="sm">
 						<ShareIcon class="size-4" />
-						Share
+						{t`Share`}
 					</Button>
 				</div>
 			{/if}
@@ -80,7 +88,7 @@
 			<div>
 				<h1 class="mb-2 text-3xl font-bold md:text-4xl">{data.petition.title}</h1>
 				{#if data.petition.petitionTarget}
-					<p class="text-lg text-muted-foreground">To: {data.petition.petitionTarget}</p>
+					<p class="text-lg text-muted-foreground">{t`To:`} {data.petition.petitionTarget}</p>
 				{/if}
 			</div>
 		</div>
@@ -91,7 +99,7 @@
 			<div class="lg:col-span-2">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>Petition Details</Card.Title>
+						<Card.Title>{t`Petition Details`}</Card.Title>
 					</Card.Header>
 					<Card.Content class="prose max-w-none">
 						{#if data.petition.shortDescription}
@@ -105,9 +113,9 @@
 
 				<Card.Root class="mt-8">
 					<Card.Header>
-						<Card.Title>Recent Signatures</Card.Title>
+						<Card.Title>{t`Recent Signatures`}</Card.Title>
 						<p class="text-sm text-muted-foreground">
-							{formatNumber(data.signatureCount)} people have signed this petition
+							{petitionSignatureCount(formatNumber(data.signatureCount))}
 						</p>
 					</Card.Header>
 					<Card.Content>
@@ -138,7 +146,7 @@
 							</div>
 						{:else}
 							<p class="py-4 text-center text-sm text-muted-foreground">
-								Be the first to sign this petition!
+								{t`Be the first to sign this petition!`}
 							</p>
 						{/if}
 					</Card.Content>
@@ -155,14 +163,14 @@
 										<div>
 											<div class="text-3xl font-bold">{formatNumber(data.signatureCount)}</div>
 											<div class="text-xs tracking-wide text-muted-foreground uppercase">
-												signatures
+												{t`signatures`}
 											</div>
 										</div>
 										<div class="text-right">
 											<div class="text-lg font-semibold">
 												{Math.round(progress)}%
 											</div>
-											<div class="text-xs text-muted-foreground">of goal</div>
+											<div class="text-xs text-muted-foreground">{t`of goal`}</div>
 										</div>
 									</div>
 									<Progress value={progress} class="h-2.5" />
@@ -179,13 +187,15 @@
 											<div class="flex items-start gap-2">
 												<span class="text-lg">🎉</span>
 												<div>
-													<strong>Goal reached!</strong> Keep the momentum going to make an even bigger
-													impact.
+													{t`Goal reached! Keep the momentum going to make an even bigger
+													impact.`}
 												</div>
 											</div>
 										{:else}
-											<strong>{formatNumber(currentTarget - data.signatureCount)}</strong> more
-											signatures needed to reach {formatNumber(currentTarget)}
+											{targetToGoal(
+												formatNumber(currentTarget - data.signatureCount),
+												formatNumber(currentTarget)
+											)}
 										{/if}
 									</div>
 								{/if}
@@ -197,10 +207,9 @@
 								<div class="space-y-4 text-center">
 									<CheckCircleIcon class="mx-auto size-16 text-green-600" />
 									<div>
-										<h3 class="text-lg font-semibold">Thank you for signing!</h3>
+										<h3 class="text-lg font-semibold">{t`Thank you for signing!`}</h3>
 										<p class="text-sm text-muted-foreground">
-											Your signature has been recorded and you'll receive updates about this
-											petition.
+											{t`Your signature has been recorded and you'll receive updates about this petition.`}
 										</p>
 									</div>
 									<Button
@@ -210,7 +219,7 @@
 											window.location.reload();
 										}}
 									>
-										Return to petition
+										{t`Return to petition`}
 									</Button>
 								</div>
 							{:else}
@@ -246,44 +255,44 @@
 									{/if}
 
 									<div class="space-y-2">
-										<Label for="givenName">First name</Label>
+										<Label for="givenName">{t`First name`}</Label>
 										<Input
 											id="givenName"
 											name="givenName"
 											bind:value={formValues.givenName}
-											placeholder="First name"
+											placeholder={t`First name`}
 											required
 											disabled={signingInProgress}
 										/>
 									</div>
 
 									<div class="space-y-2">
-										<Label for="familyName">Last name</Label>
+										<Label for="familyName">{t`Last name`}</Label>
 										<Input
 											id="familyName"
 											name="familyName"
 											bind:value={formValues.familyName}
-											placeholder="Last name"
+											placeholder={t`Last name`}
 											required
 											disabled={signingInProgress}
 										/>
 									</div>
 
 									<div class="space-y-2">
-										<Label for="emailAddress">Email</Label>
+										<Label for="emailAddress">{t`Email`}</Label>
 										<Input
 											id="emailAddress"
 											name="emailAddress"
 											type="email"
 											bind:value={formValues.emailAddress}
-											placeholder="your@email.com"
+											placeholder={t`your@email.com`}
 											required
 											disabled={signingInProgress}
 										/>
 									</div>
 
 									<div class="space-y-2">
-										<Label for="phoneNumber">Phone (optional)</Label>
+										<Label for="phoneNumber">{t`Phone (optional)`}</Label>
 										<Input
 											id="phoneNumber"
 											name="phoneNumber"
@@ -296,12 +305,11 @@
 
 									<Button type="submit" class="w-full" size="lg" disabled={signingInProgress}>
 										<PenLineIcon class="mr-2 size-5" />
-										{signingInProgress ? 'Signing...' : 'Sign this petition'}
+										{signingInProgress ? t`Signing...` : t`Sign this petition`}
 									</Button>
 
 									<p class="text-xs text-muted-foreground">
-										By signing, you agree to receive updates about this petition and related
-										campaigns.
+										{t`By signing, you agree to receive updates about this petition and related campaigns.`}
 									</p>
 								</form>
 							{/if}
@@ -312,7 +320,7 @@
 						<Card.Content class="pt-6">
 							<Button variant="outline" class="w-full">
 								<ShareIcon class="mr-2 size-4" />
-								Share this petition
+								{t`Share this petition`}
 							</Button>
 						</Card.Content>
 					</Card.Root>

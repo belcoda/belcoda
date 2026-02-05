@@ -8,7 +8,7 @@
 	import { cn } from '$lib/utils.js';
 	import { getTimeZonesWithOffsets, formatTimezone } from './actions';
 
-	import { locale } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	const timezones = getTimeZonesWithOffsets(locale.current);
 
 	let open = $state(false);
@@ -47,16 +47,16 @@
 				role="combobox"
 				aria-expanded={open}
 			>
-				{selectedValue || 'Select a timezone...'}
+				{selectedValue || t`Select a timezone...`}
 				<ChevronsUpDownIcon class="opacity-50" />
 			</Button>
 		{/snippet}
 	</Popover.Trigger>
 	<Popover.Content class="p-0">
 		<Command.Root {...props}>
-			<Command.Input placeholder="Search timezone..." />
+			<Command.Input placeholder={t`Search timezone...`} />
 			<Command.List>
-				<Command.Empty>No timezones found.</Command.Empty>
+				<Command.Empty>{t`No timezones found.`}</Command.Empty>
 				<Command.Group value="timezones">
 					{#each timezones as timezone (timezone.value)}
 						<Command.Item

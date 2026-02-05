@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	const { params } = $props();
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { listEventSignups, type ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
@@ -186,7 +187,7 @@
 				/>
 			{/if}
 			<Button variant="outline" size="sm" onclick={downloadTableAsCSV}
-				><DownloadIcon /> Download CSV</Button
+				><DownloadIcon /> {t`Download CSV`}</Button
 			>
 		</div>
 	</div>

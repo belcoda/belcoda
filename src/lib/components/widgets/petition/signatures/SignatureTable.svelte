@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { type ReadPetitionSignatureZeroWithPerson } from '$lib/schema/petition/petition-signature';
 	import { type ReadPetitionZero } from '$lib/schema/petition/petition';
+	import { t } from '$lib/index.svelte';
 
 	let {
 		signatures,
@@ -22,6 +23,9 @@
 	import SignatureTableRow from './SignatureTableRow.svelte';
 
 	import PenLineIcon from '@lucide/svelte/icons/pen-line';
+	const signatureCountLabel = (count: number) => {
+		return t`${count.toString()} signatures`;
+	};
 </script>
 
 {#if queryIsCompleted && signatures.length === 0}
@@ -30,9 +34,9 @@
 			<Empty.Media variant="icon">
 				<PenLineIcon />
 			</Empty.Media>
-			<Empty.Title>No signatures found</Empty.Title>
+			<Empty.Title>{t`No signatures found`}</Empty.Title>
 			<Empty.Description
-				>No signatures found for this petition. Signatures will appear here once people sign.</Empty.Description
+				>{t`No signatures found for this petition. Signatures will appear here once people sign.`}</Empty.Description
 			>
 		</Empty.Header>
 	</Empty.Root>
@@ -53,14 +57,16 @@
 							}}
 						/>
 						{#if selectedSignatures.length > 0}
-							Signatures ({selectedSignatures.length}/{signatures.length})
+							{t`Signatures`} ({signatureCountLabel(
+								selectedSignatures.length
+							)}/{signatureCountLabel(signatures.length)})
 						{:else}
-							Signatures ({signatures.length})
+							{t`Signatures`} ({signatureCountLabel(signatures.length)})
 						{/if}
 					</div>
 				</Table.Head>
-				<Table.Head>Signed At</Table.Head>
-				<Table.Head class="text-end">Actions</Table.Head>
+				<Table.Head>{t`Signed At`}</Table.Head>
+				<Table.Head class="text-end">{t`Actions`}</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>

@@ -21,6 +21,7 @@
 		edit = $bindable(false)
 	}: Props = $props();
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <div class="items-start gap-4 md:flex">

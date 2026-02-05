@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ReadPetitionZero } from '$lib/schema/petition/petition';
 	let { petition }: { petition: ReadPetitionZero } = $props();
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -47,13 +48,13 @@
 
 <ButtonGroup.Root>
 	<Button variant="outline" onclick={() => (openShareModal = true)}
-		><ShareIcon class="size-3.5" /> Share</Button
+		><ShareIcon class="size-3.5" /> {t`Share`}</Button
 	>
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
 				<Button {...props} variant="outline"
-					><ChevronDownIcon class="size-5" /><span class="sr-only">Open</span></Button
+					><ChevronDownIcon class="size-5" /><span class="sr-only">{t`Open`}</span></Button
 				>
 			{/snippet}
 		</DropdownMenu.Trigger>
@@ -68,19 +69,19 @@
 								onCheckedChange={(checked) => {
 									updatePublished(checked);
 									if (checked) {
-										toast.success('Petition published');
+										toast.success(t`Petition published`);
 									} else {
-										toast.success('Petition unpublished');
+										toast.success(t`Petition unpublished`);
 									}
 								}}
 							/>
-							<Label for={`${id}-switch`}>Published</Label>
+							<Label for={`${id}-switch`}>{t`Published`}</Label>
 						</div>
 					{/snippet}
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={`/petitions/${petition.id}/edit`}>Edit petition</a>
+						<a {...props} href={`/petitions/${petition.id}/edit`}>{t`Edit petition`}</a>
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
@@ -88,7 +89,7 @@
 			<DropdownMenu.Group>
 				<DropdownMenu.Item disabled>
 					{#snippet child({ props })}
-						<a {...props} href={`#`}>Detailed signatures table</a>
+						<a {...props} href={`#`}>{t`Detailed signatures table`}</a>
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
@@ -97,7 +98,7 @@
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
 						<a {...props} href={petitionPageUrl()} target="_blank" rel="noopener noreferrer"
-							>{#if petition.published}View petition page{:else}Preview petition page{/if}</a
+							>{#if petition.published}{t`View petition page`}{:else}{t`Preview petition page`}{/if}</a
 						>
 					{/snippet}
 				</DropdownMenu.Item>
@@ -105,16 +106,16 @@
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>
 				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
-					Make a copy
+					{t`Make a copy`}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 </ButtonGroup.Root>
 
-<ResponsiveModal title="Share Petition" bind:open={openShareModal}>
+<ResponsiveModal title={t`Share Petition`} bind:open={openShareModal}>
 	<div class="space-y-4">
-		<p class="text-sm text-muted-foreground">Share functionality coming soon...</p>
+		<p class="text-sm text-muted-foreground">{t`Share functionality coming soon...`}</p>
 		<!-- TODO: Add petition share modal component -->
 	</div>
 </ResponsiveModal>

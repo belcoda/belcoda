@@ -11,7 +11,7 @@
 	import { getLocalTimeZone } from '@internationalized/date';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
-	import { locale } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	const time = renderEventTime(event.startsAt, event.endsAt, locale.current, event.timezone);
 	import RenderEventDetails from './RenderEventDetails.svelte';
 	import { page } from '$app/state';

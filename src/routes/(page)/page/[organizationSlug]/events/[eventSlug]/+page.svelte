@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	const { data } = $props();
 	import RenderEventPage from '$lib/components/layouts/public/event/RenderEventPage.svelte';
 	import { page } from '$app/state';
@@ -18,7 +19,7 @@
 	import UserNavBar from '$lib/components/layouts/public/UserNavBar.svelte';
 </script>
 
-<UserNavBar session={data.session} linkUrl={editEventUrl} linkText="Edit Event" />
+<UserNavBar session={data.session} linkUrl={editEventUrl} linkText={t`Edit Event`} />
 
 <RenderEventPage
 	event={data.event}

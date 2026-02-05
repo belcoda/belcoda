@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
@@ -77,7 +78,7 @@
 
 	async function handleUpload() {
 		if (!selectedFile) {
-			toast.error('Please select a CSV file');
+			toast.error(t`Please select a CSV file`);
 			return;
 		}
 
@@ -107,12 +108,12 @@
 				organizationId: appState.organizationId
 			});
 
-			toast.success('Import started successfully');
+			toast.success(t`Import started successfully`);
 			uploadModalOpen = false;
 			selectedFile = null;
 		} catch (error) {
 			console.error('Upload failed:', error);
-			toast.error(error instanceof Error ? error.message : 'Upload failed. Please try again.');
+			toast.error(error instanceof Error ? error.message : t`Upload failed. Please try again.`);
 		} finally {
 			uploading = false;
 		}
@@ -136,13 +137,13 @@
 	function getStatusLabel(status: string): string {
 		switch (status) {
 			case 'completed':
-				return 'Completed';
+				return t`Completed`;
 			case 'processing':
-				return 'Processing';
+				return t`Processing`;
 			case 'failed':
-				return 'Failed';
+				return t`Failed`;
 			case 'pending':
-				return 'Pending';
+				return t`Pending`;
 			default:
 				return status;
 		}
@@ -153,19 +154,19 @@
 	<div class="space-y-4">
 		{#if imports.length === 0}
 			<div class="flex flex-col items-center justify-center py-12 text-center">
-				<p class="text-muted-foreground mb-4">No imports yet</p>
+				<p class="text-muted-foreground mb-4">{t`No imports yet`}</p>
 				{#if appState.isAdminOrOwner}
-					<Button onclick={() => (uploadModalOpen = true)}>New Import</Button>
+					<Button onclick={() => (uploadModalOpen = true)}>{t`New Import`}</Button>
 				{/if}
 			</div>
 		{:else}
 			<Table.Root>
 				<Table.Header>
 					<Table.Row>
-						<Table.Head>Date</Table.Head>
-						<Table.Head>Status</Table.Head>
-						<Table.Head>Imported by</Table.Head>
-						<Table.Head>Details</Table.Head>
+						<Table.Head>{t`Date`}</Table.Head>
+						<Table.Head>{t`Status`}</Table.Head>
+						<Table.Head>{t`Imported by`}</Table.Head>
+						<Table.Head>{t`Details`}</Table.Head>
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
@@ -182,9 +183,9 @@
 								{#if imp.status === 'completed' || imp.status === 'failed'}
 									<div class="flex items-center gap-2">
 										<span class="text-sm text-muted-foreground">
-											{imp.processedRows || 0} imported
+											{imp.processedRows || 0} {t`imported`}
 											{#if (imp.failedRows || 0) > 0}
-												, {imp.failedRows} failed
+												, {imp.failedRows} {t`failed`}
 											{/if}
 										</span>
 										{#if (imp.failedRows || 0) > 0 && imp.failedEntries}
@@ -196,7 +197,7 @@
 													failuresModalOpen = true;
 												}}
 											>
-												View Failures
+												{t`View Failures`}
 											</Button>
 										{/if}
 									</div>
@@ -214,28 +215,28 @@
 
 {#snippet header()}
 	<div class="flex items-center justify-between">
-		<H2>People Imports</H2>
+		<H2>{t`People Imports`}</H2>
 		{#if appState.isAdminOrOwner}
 			<ResponsiveModal
-				title="New People Import"
-				description="Upload a CSV file to import people"
+				title={t`New People Import`}
+				description={t`Upload a CSV file to import people`}
 				bind:open={uploadModalOpen}
 			>
 				{#snippet trigger()}
-					<Button>New Import</Button>
+					<Button>{t`New Import`}</Button>
 				{/snippet}
 				{#snippet children()}
 					<div class="space-y-4">
 						<div class="space-y-2">
 							<div class="flex items-center justify-between">
-								<Label for="csvFile">CSV file</Label>
+								<Label for="csvFile">{t`CSV file`}</Label>
 								<button
 									type="button"
 									class="text-sm text-primary underline hover:no-underline flex items-center gap-1"
 									onclick={() => downloadSampleCsv()}
 								>
 									<DownloadIcon class="size-3" />
-									Download sample
+									{t`Download sample`}
 								</button>
 							</div>
 							<input
@@ -249,7 +250,7 @@
 								}}
 							/>
 							{#if selectedFile}
-								<p class="text-xs text-muted-foreground">Selected: {selectedFile.name}</p>
+								<p class="text-xs text-muted-foreground">{t`Selected:`} {selectedFile.name}</p>
 							{/if}
 						</div>
 					</div>
@@ -257,15 +258,15 @@
 				{#snippet footer()}
 					<div class="flex justify-end gap-2">
 						<Button variant="outline" onclick={() => (uploadModalOpen = false)} disabled={uploading}>
-							Cancel
+							{t`Cancel`}
 						</Button>
 						<Button onclick={handleUpload} disabled={uploading}>
 							{#if uploading}
 								<UploadIcon class="mr-2 size-4 animate-spin" />
-								Uploading...
+								{t`Uploading...`}
 							{:else}
 								<UploadIcon class="mr-2 size-4" />
-								Upload
+								{t`Upload`}
 							{/if}
 						</Button>
 					</div>
@@ -273,8 +274,8 @@
 			</ResponsiveModal>
 
 		<ResponsiveModal
-			title="Import Failures"
-			description="Detailed information about failed import entries"
+			title={t`Import Failures`}
+			description={t`Detailed information about failed import entries`}
 			bind:open={failuresModalOpen}
 		>
 			{#snippet children()}
@@ -284,24 +285,24 @@
 						{#each selectedImportFailures as failure (failure.row)}
 							<div class="border rounded-lg p-4 space-y-2">
 								<div class="flex items-center gap-2">
-									<Badge variant="destructive">Row {failure.row}</Badge>
+									<Badge variant="destructive">{t`Row`} {failure.row}</Badge>
 									<span class="text-sm font-medium text-destructive">{failure.error}</span>
 								</div>
 								{#if failure.data}
 									<div class="text-xs text-muted-foreground">
-										<div class="font-semibold mb-1">Row Data:</div>
+										<div class="font-semibold mb-1">{t`Row Data:`}</div>
 										<pre class="bg-muted p-2 rounded overflow-x-auto">{JSON.stringify(failure.data, null, 2)}</pre>
 									</div>
 								{/if}
 							</div>
 						{/each}
 					{:else}
-						<p class="text-muted-foreground text-center py-8">No failure details available</p>
+						<p class="text-muted-foreground text-center py-8">{t`No failure details available`}</p>
 					{/if}
 				</div>
 			{/snippet}
 			{#snippet footer()}
-				<Button variant="outline" onclick={() => (failuresModalOpen = false)}>Close</Button>
+				<Button variant="outline" onclick={() => (failuresModalOpen = false)}>{t`Close`}</Button>
 			{/snippet}
 		</ResponsiveModal>
 		{/if}

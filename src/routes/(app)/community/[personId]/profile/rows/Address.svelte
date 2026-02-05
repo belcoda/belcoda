@@ -6,7 +6,7 @@
 	let { person }: { person: ReadPersonZero } = $props();
 	import { renderAddress } from '$lib/utils/string/address';
 	import { appState } from '$lib/state.svelte';
-	import { locale } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import AddressForm from './form/Address.svelte';
 	import ProfileRow from '../ProfileRow.svelte';
 	let edit = $state(false);
@@ -14,7 +14,7 @@
 
 <ProfileRow
 	bind:edit
-	title="Address"
+	title={t`Address`}
 	separator={true}
 	showCopyButton={true}
 	copyText={renderAddress({

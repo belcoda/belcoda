@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import Send from '@lucide/svelte/icons/send';
 	import { Button } from '$lib/components/ui/button';
 </script>
@@ -8,13 +9,13 @@
 		<div class="flex size-20 items-center justify-center rounded-full bg-muted">
 			<Send class="size-10 text-muted-foreground" />
 		</div>
-		<h2 class="mt-6 text-xl font-semibold">Select a sent email</h2>
+		<h2 class="mt-6 text-xl font-semibold">{t`Select a sent email`}</h2>
 		<p class="mt-2 text-center text-muted-foreground">
-			Choose an email from the list to view its details and statistics.
+			{t`Choose an email from the list to view its details and statistics.`}
 		</p>
 		<div class="mt-6">
 			<Button href="/communications/email/drafts/new">
-				Create New Email
+				{t`Create New Email`}
 			</Button>
 		</div>
 	</div>

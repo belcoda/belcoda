@@ -10,6 +10,7 @@
 	import { formatShortTimestamp } from '$lib/utils/date';
 
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { t } from '$lib/index.svelte';
 
 	const isDrafts = $derived(page.url.pathname.includes('/drafts'));
 	const isSent = $derived(page.url.pathname.includes('/sent'));
@@ -25,12 +26,12 @@
 	<Sidebar.Root collapsible="none" class="flex w-full flex-1">
 		<Sidebar.Header class="gap-3.5 border-b p-0">
 			<div class="flex w-full items-center justify-between px-4 pt-4">
-				<div class="text-2xl font-bold text-foreground">Communications</div>
+				<div class="text-2xl font-bold text-foreground">{t`Communications`}</div>
 				<ActionsMenu />
 			</div>
 			<div class="mb-4 px-4 pt-4">
 				<Button href="/communications/email/drafts/new" class="w-full" size="lg">
-					<span class="icon-[mdi--email] size-5"></span> Compose Email
+					<span class="icon-[mdi--email] size-5"></span> {t`Compose Email`}
 				</Button>
 			</div>
 		</Sidebar.Header>
@@ -41,14 +42,14 @@
 						<Sidebar.MenuItem>
 							<a href="/communications/email/drafts">
 								<Sidebar.MenuButton isActive={isDrafts}>
-									<span>Drafts</span>
+									<span>{t`Drafts`}</span>
 								</Sidebar.MenuButton>
 							</a>
 						</Sidebar.MenuItem>
 						<Sidebar.MenuItem>
 							<a href="/communications/sent">
 								<Sidebar.MenuButton isActive={isSent}>
-									<span>Sent</span>
+									<span>{t`Sent`}</span>
 								</Sidebar.MenuButton>
 							</a>
 						</Sidebar.MenuItem>

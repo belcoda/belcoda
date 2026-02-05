@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -42,7 +43,7 @@
 	<ContentLayout rootLink="/community">
 		{#snippet header()}
 			<div class="flex items-center justify-between">
-				<h1 class="text-2xl font-bold">{person ? 'Edit Person' : 'Create Person'}</h1>
+				<h1 class="text-2xl font-bold">{person ? t`Edit Person` : t`Create Person`}</h1>
 			</div>
 		{/snippet}
 		<div class="mx-auto flex w-full max-w-4xl flex-col gap-4">
@@ -61,7 +62,7 @@
 					<Form.Field {form} name="givenName">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Given name</Form.Label>
+								<Form.Label>{t`Given name`}</Form.Label>
 								<Input {...props} bind:value={$data.givenName} />
 							{/snippet}
 						</Form.Control>
@@ -70,7 +71,7 @@
 					<Form.Field {form} name="familyName">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Family name</Form.Label>
+								<Form.Label>{t`Family name`}</Form.Label>
 								<Input {...props} bind:value={$data.familyName} />
 							{/snippet}
 						</Form.Control>
@@ -81,14 +82,14 @@
 
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>Contact details</Card.Title>
+					<Card.Title>{t`Contact details`}</Card.Title>
 				</Card.Header>
 				<Card.Content>
 					<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
 						<Form.Field {form} name="emailAddress">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Email address</Form.Label>
+									<Form.Label>{t`Email address`}</Form.Label>
 									<Input {...props} bind:value={$data.emailAddress} />
 								{/snippet}
 							</Form.Control>
@@ -97,7 +98,7 @@
 						<Form.Field {form} name="phoneNumber">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Phone number</Form.Label>
+									<Form.Label>{t`Phone number`}</Form.Label>
 									<Input {...props} bind:value={$data.phoneNumber} />
 								{/snippet}
 							</Form.Control>
@@ -116,10 +117,10 @@
 												class="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
 											/>
 											<div class="grid gap-1.5 font-normal">
-												<p class="text-sm leading-none font-medium">Subscribed</p>
+												<p class="text-sm leading-none font-medium">{t`Subscribed`}</p>
 												<p class="text-sm text-muted-foreground">
-													If the person is subscribed, they will be able to receive notifications
-													and messages.
+													{t`If the person is subscribed, they will be able to receive notifications
+													and messages.`}
 												</p>
 											</div>
 										</Form.Label>
@@ -134,13 +135,13 @@
 
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>Address</Card.Title>
+					<Card.Title>{t`Address`}</Card.Title>
 				</Card.Header>
 				<Card.Content class="grid grid-cols-1 gap-4 lg:grid-cols-2">
 					<Form.Field {form} name="addressLine1">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Address line 1</Form.Label>
+								<Form.Label>{t`Address line 1`}</Form.Label>
 								<Input {...props} bind:value={$data.addressLine1} />
 							{/snippet}
 						</Form.Control>
@@ -149,7 +150,7 @@
 					<Form.Field {form} name="addressLine2">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Address line 2</Form.Label>
+								<Form.Label>{t`Address line 2`}</Form.Label>
 								<Input {...props} bind:value={$data.addressLine2} />
 								<Form.FieldErrors />
 							{/snippet}
@@ -158,7 +159,7 @@
 					<Form.Field {form} name="locality">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>City/town</Form.Label>
+								<Form.Label>{t`City/town`}</Form.Label>
 								<Input {...props} bind:value={$data.locality} />
 							{/snippet}
 						</Form.Control>
@@ -167,7 +168,7 @@
 					<Form.Field {form} name="region">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Region/state</Form.Label>
+								<Form.Label>{t`Region/state`}</Form.Label>
 								<Input {...props} bind:value={$data.region} />
 							{/snippet}
 						</Form.Control>
@@ -176,7 +177,7 @@
 					<Form.Field {form} name="postcode">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Postcode</Form.Label>
+								<Form.Label>{t`Postcode`}</Form.Label>
 								<Input {...props} bind:value={$data.postcode} />
 							{/snippet}
 						</Form.Control>
@@ -185,7 +186,7 @@
 					<Form.Field {form} name="country">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Country</Form.Label>
+								<Form.Label>{t`Country`}</Form.Label>
 								<CountrySelect
 									value={$data.country}
 									onSelectChange={(v) => {
@@ -201,13 +202,13 @@
 			</Card.Root>
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>Language</Card.Title>
+					<Card.Title>{t`Language`}</Card.Title>
 				</Card.Header>
 				<Card.Content>
 					<Form.Field {form} name="preferredLanguage">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Preferred language</Form.Label>
+								<Form.Label>{t`Preferred language`}</Form.Label>
 								<LanguageSelect
 									value={$data.preferredLanguage}
 									onSelectChange={(v) => {
@@ -223,14 +224,14 @@
 			</Card.Root>
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>Personal details</Card.Title>
+					<Card.Title>{t`Personal details`}</Card.Title>
 				</Card.Header>
 				<Card.Content>
 					<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
 						<Form.Field {form} name="dateOfBirth">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Date of birth</Form.Label>
+									<Form.Label>{t`Date of birth`}</Form.Label>
 									<Input {...props} bind:value={$data.dateOfBirth} />
 								{/snippet}
 							</Form.Control>
@@ -238,7 +239,7 @@
 						<Form.Field {form} name="gender">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Gender</Form.Label>
+									<Form.Label>{t`Gender`}</Form.Label>
 									<GenderSelect {...props} bind:value={$data.gender as GenderOption} />
 								{/snippet}
 							</Form.Control>
@@ -247,7 +248,7 @@
 						<Form.Field {form} name="workplace">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Workplace</Form.Label>
+									<Form.Label>{t`Workplace`}</Form.Label>
 									<Input {...props} bind:value={$data.workplace} />
 								{/snippet}
 							</Form.Control>
@@ -256,7 +257,7 @@
 						<Form.Field {form} name="position">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Position</Form.Label>
+									<Form.Label>{t`Position`}</Form.Label>
 									<Input {...props} bind:value={$data.position} />
 								{/snippet}
 							</Form.Control>
@@ -268,14 +269,14 @@
 			{#if $data.socialMedia}
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>Social media</Card.Title>
+						<Card.Title>{t`Social media`}</Card.Title>
 					</Card.Header>
 					<Card.Content>
 						<div class="grid grid-cols-1 gap-4">
 							<Form.Field {form} name="socialMedia.facebook">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Form.Label>Facebook</Form.Label>
+										<Form.Label>{t`Facebook`}</Form.Label>
 										<Input {...props} bind:value={$data.socialMedia!.facebook} />
 									{/snippet}
 								</Form.Control>
@@ -284,7 +285,7 @@
 							<Form.Field {form} name="socialMedia.twitter">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Form.Label>Twitter</Form.Label>
+										<Form.Label>{t`Twitter`}</Form.Label>
 										<Input {...props} bind:value={$data.socialMedia!.twitter} />
 									{/snippet}
 								</Form.Control>
@@ -293,7 +294,7 @@
 							<Form.Field {form} name="socialMedia.instagram">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Form.Label>Instagram</Form.Label>
+										<Form.Label>{t`Instagram`}</Form.Label>
 										<Input {...props} bind:value={$data.socialMedia!.instagram} />
 									{/snippet}
 								</Form.Control>
@@ -302,7 +303,7 @@
 							<Form.Field {form} name="socialMedia.linkedIn">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Form.Label>LinkedIn</Form.Label>
+										<Form.Label>{t`LinkedIn`}</Form.Label>
 										<Input {...props} bind:value={$data.socialMedia!.linkedIn} />
 									{/snippet}
 								</Form.Control>
@@ -311,7 +312,7 @@
 							<Form.Field {form} name="socialMedia.tiktok">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Form.Label>TikTok</Form.Label>
+										<Form.Label>{t`TikTok`}</Form.Label>
 										<Input {...props} bind:value={$data.socialMedia!.tiktok} />
 									{/snippet}
 								</Form.Control>
@@ -320,7 +321,7 @@
 							<Form.Field {form} name="socialMedia.website">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Form.Label>Website</Form.Label>
+										<Form.Label>{t`Website`}</Form.Label>
 										<Input {...props} bind:value={$data.socialMedia!.website} />
 									{/snippet}
 								</Form.Control>
@@ -333,8 +334,8 @@
 		</div>
 		{#snippet footer()}
 			<div class="flex w-full justify-end gap-2">
-				<Button href="/community" variant="outline">Cancel</Button>
-				<Button type="submit" onclick={() => form.submit()}>Save</Button>
+				<Button href="/community" variant="outline">{t`Cancel`}</Button>
+				<Button type="submit" onclick={() => form.submit()}>{t`Save`}</Button>
 			</div>
 		{/snippet}
 	</ContentLayout>

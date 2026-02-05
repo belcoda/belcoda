@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import PetitionCreateOrUpdate from '$lib/components/forms/petition/PetitionCreateOrUpdate.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -35,13 +36,13 @@
 
 {#snippet header()}
 	<div class="flex items-center justify-between">
-		<h1 class="text-2xl font-bold">New petition</h1>
+		<h1 class="text-2xl font-bold">{t`New petition`}</h1>
 	</div>
 {/snippet}
 
 {#snippet footer()}
 	<div class="flex w-full justify-end gap-2">
-		<Button variant="outline" href="/petitions">Cancel</Button>
-		<Button type="submit" form="petition-form">Save</Button>
+		<Button variant="outline" href="/petitions">{t`Cancel`}</Button>
+		<Button type="submit" form="petition-form">{t`Save`}</Button>
 	</div>
 {/snippet}

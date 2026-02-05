@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
+	import { t } from '$lib/index.svelte';
 	const {
 		link,
 		title,
@@ -25,7 +26,7 @@
 				<div
 					class="flex size-6 items-center justify-center rounded-[calc(0.2rem-1px)] bg-primary text-primary-foreground"
 				>
-					<img src={logo} alt="logo" class="h-full w-full object-contain" />
+					<img src={logo} alt={t`logo`} class="h-full w-full object-contain" />
 				</div>
 			</GradientBorder>
 			Belcoda

@@ -5,6 +5,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import { getLocalTimeZone, today, type CalendarDate, parseDate } from '@internationalized/date';
+	import { t } from '$lib/index.svelte';
 
 	const id = $props.id();
 	let { value = $bindable(null) }: { value: Date | null | undefined } = $props();
@@ -33,7 +34,7 @@
 							month: 'long',
 							day: 'numeric'
 						})
-					: 'Select date'}
+					: t`Select date`}
 				<ChevronDownIcon />
 			</Button>
 		{/snippet}

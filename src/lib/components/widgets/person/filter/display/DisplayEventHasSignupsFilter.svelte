@@ -2,6 +2,7 @@
 	const { onRemove }: { onRemove: () => void } = $props();
 
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <DismissableAvatarBadge
@@ -9,5 +10,5 @@
 	hideAvatar={true}
 	src={null}
 	onRemove={() => onRemove()}
-	title="Has signups"
+	title={t`Has signups`}
 />

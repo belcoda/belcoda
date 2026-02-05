@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { appState } from '$lib/state.svelte';
 	import { type FilterType } from '$lib/schema/person/filter';
+	import { t } from '$lib/index.svelte';
 	const { filter }: { filter: FilterType } = $props();
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import type { Snippet } from 'svelte';
@@ -50,7 +51,7 @@
 		<div
 			class="flex size-5 items-center overflow-hidden rounded-full bg-linear-to-br from-red-700 to-red-900 p-0.5"
 		>
-			<img src={`/images/icons/filters/icon-cake.png`} alt="Age Group" />
+			<img src={`/images/icons/filters/icon-cake.png`} alt={t`Age Group`} />
 		</div>
 	{/snippet}
 	{@render renderFilter(filter.label, ageGroupImage)}
@@ -61,7 +62,7 @@
 		<div
 			class="flex size-5 items-center overflow-hidden rounded-full bg-linear-to-br from-purple-700 to-purple-900 p-0.5"
 		>
-			<img src={`/images/icons/filters/icon-language.png`} alt="Language" />
+			<img src={`/images/icons/filters/icon-language.png`} alt={t`Language`} />
 		</div>
 	{/snippet}
 	{@render renderFilter(
@@ -75,7 +76,7 @@
 		<div
 			class="flex size-5 items-center overflow-hidden rounded-full bg-linear-to-br from-yellow-500 to-yellow-600 p-0.5"
 		>
-			<img src={`/images/icons/filters/icon-person.png`} alt="Gender" />
+			<img src={`/images/icons/filters/icon-person.png`} alt={t`Gender`} />
 		</div>
 	{/snippet}
 	{@render renderFilter(renderGender(filter.gender), genderImage)}
@@ -86,7 +87,7 @@
 		<div
 			class="flex size-5 items-center overflow-hidden rounded-full bg-linear-to-br from-green-600 to-green-800 p-1"
 		>
-			<img src={`/images/icons/filters/icon-calendar.png`} alt="Event Signup" />
+			<img src={`/images/icons/filters/icon-calendar.png`} alt={t`Event Signup`} />
 		</div>
 	{/snippet}
 	{@render renderFilter(filter.label, eventSignupImage)}
@@ -106,7 +107,7 @@
 		<div
 			class="flex size-5 items-center overflow-hidden rounded-full bg-linear-to-br from-orange-500 to-orange-600 p-0.5"
 		>
-			<img src={`/images/icons/filters/icon-tag.png`} alt="Tag" />
+			<img src={`/images/icons/filters/icon-tag.png`} alt={t`Tag`} />
 		</div>
 	{/snippet}
 	{@render renderFilter(filter.label, tagImage)}
@@ -115,7 +116,7 @@
 {#if filter.type === 'eventActivity'}
 	{#snippet eventActivityImage()}
 		<div class="flex size-5 items-center overflow-hidden rounded-full">
-			<img src={`/images/icons/filters/icon-event.png`} alt="Event Activity" />
+			<img src={`/images/icons/filters/icon-event.png`} alt={t`Event Activity`} />
 		</div>
 	{/snippet}
 	{@render renderFilter(filter.label, eventActivityImage)}

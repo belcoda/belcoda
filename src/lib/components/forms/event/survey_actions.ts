@@ -1,3 +1,4 @@
+import { t } from '$lib/index.svelte';
 import type { Survey } from '$lib/schema/survey/collection';
 import type { SurveyQuestionType, SurveyQuestion } from '$lib/schema/survey/questions';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,7 +27,7 @@ export function addFieldTypeToSurvey(
 			? [
 					{
 						id: uuidv4(),
-						title: 'Event information',
+						title: t`Event information`,
 						description: null,
 						questions: [addQuestion(type, locale)],
 						terminal: false,
@@ -138,21 +139,21 @@ export function addQuestion(type: SurveyQuestionType, locale: Locale): SurveyQue
 			return {
 				...baseQuestion,
 				type: 'custom.checkboxGroup',
-				options: ['Option 1', 'Option 2']
+				options: [t`Option 1`, t`Option 2`]
 			};
 
 		case 'custom.radioGroup':
 			return {
 				...baseQuestion,
 				type: 'custom.radioGroup',
-				options: ['Option 1', 'Option 2']
+				options: [t`Option 1`, t`Option 2`]
 			};
 
 		case 'custom.dropdown':
 			return {
 				...baseQuestion,
 				type: 'custom.dropdown',
-				options: ['Option 1', 'Option 2']
+				options: [t`Option 1`, t`Option 2`]
 			};
 	}
 }

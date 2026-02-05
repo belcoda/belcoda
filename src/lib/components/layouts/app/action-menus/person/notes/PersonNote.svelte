@@ -13,7 +13,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/state.svelte';
-	import { locale } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	const timeAgo = getTimeAgo(locale.current);
 	const { note }: { note: ReadPersonNoteWithUserZero } = $props();
 	let editOpen = $state(false);
@@ -23,7 +23,7 @@
 
 	function deleteNote() {
 		if (!canEditDelete) return;
-		if (window.confirm('Are you sure you want to delete this note?')) {
+		if (window.confirm(t`Are you sure you want to delete this note?`)) {
 			const parsed = parse(deleteMutatorSchemaZero, {
 				metadata: {
 					personId: note.personId,
@@ -33,7 +33,7 @@
 				}
 			});
 			const input = z.mutate.personNote.delete(parsed);
-			toast.success('Note deleted');
+			toast.success(t`Note deleted`);
 		}
 	}
 </script>
@@ -68,9 +68,9 @@
 						</DropdownMenu.Trigger>
 						<DropdownMenu.Content>
 							{#if !editOpen}<DropdownMenu.Item onclick={() => (editOpen = true)}
-									>Edit</DropdownMenu.Item
+									>{t`Edit`}</DropdownMenu.Item
 								>{/if}
-							<DropdownMenu.Item onclick={() => deleteNote()}>Delete</DropdownMenu.Item>
+							<DropdownMenu.Item onclick={() => deleteNote()}>{t`Delete`}</DropdownMenu.Item>
 						</DropdownMenu.Content>
 					</DropdownMenu.Root>
 				</div>

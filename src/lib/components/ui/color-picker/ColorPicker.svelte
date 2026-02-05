@@ -4,6 +4,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import XIcon from '@lucide/svelte/icons/x';
 	import { cn } from '$lib/utils';
+	import { t } from '$lib/index.svelte';
 
 	type Props = {
 		value?: string | null;
@@ -65,7 +66,7 @@
 			class="h-9 w-9 shrink-0 rounded-md border border-input shadow-xs"
 			style="background-color: {colorInputValue};"
 			role="img"
-			aria-label="Color preview"
+			aria-label={t`Color preview`}
 		></div>
 
 		<!-- Color Picker -->
@@ -74,7 +75,7 @@
 			value={colorInputValue}
 			oninput={handleColorInputChange}
 			class="h-9 w-12 cursor-pointer rounded-md border border-input shadow-xs"
-			aria-label="Color picker"
+			aria-label={t`Color picker`}
 		/>
 
 		<!-- Hex Text Input -->
@@ -84,7 +85,7 @@
 			oninput={handleHexInputChange}
 			placeholder="#000000"
 			class="flex-1"
-			aria-label="Hex color code"
+			aria-label={t`Hex color code`}
 		/>
 
 		<!-- Clear Button -->
@@ -95,7 +96,7 @@
 				size="icon"
 				onclick={handleClear}
 				class="h-9 w-9 shrink-0"
-				aria-label="Clear color"
+				aria-label={t`Clear color`}
 			>
 				<XIcon class="size-4" />
 			</Button>

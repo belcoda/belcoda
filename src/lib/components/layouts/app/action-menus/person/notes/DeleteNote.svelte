@@ -5,6 +5,7 @@
 	import { parse } from 'valibot';
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/state.svelte';
+	import { t } from '$lib/index.svelte';
 	let {
 		noteId,
 		personId,
@@ -21,8 +22,8 @@
 			}
 		});
 		const input = z.mutate.personNote.delete(parsed);
-		toast.success('Note deleted');
+		toast.success(t`Note deleted`);
 	}
 </script>
 
-<Button variant="destructive" type="button" size="sm" onclick={() => deleteNote()}>Delete</Button>
+<Button variant="destructive" type="button" size="sm" onclick={() => deleteNote()}>{t`Delete`}</Button>

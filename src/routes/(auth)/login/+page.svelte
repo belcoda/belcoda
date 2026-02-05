@@ -1,11 +1,11 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import AuthLayout from '$lib/components/widgets/AuthLayout.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
 	import { goto } from '$app/navigation';
 
 	import { authClient } from '$lib/auth-client';
@@ -50,7 +50,7 @@
 	});
 </script>
 
-<AuthLayout link="/" title="Welcome back" description="Login with your Google account">
+<AuthLayout link="/" title={t`Welcome back`} description={t`Login with your Google account`}>
 	<form use:form.enhance class="space-y-6">
 		{#if loading}
 			<div class="flex justify-center">
@@ -67,11 +67,11 @@
 			<Form.Field {form} name="email">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Email</Form.Label>
+						<Form.Label>{t`Email`}</Form.Label>
 						<Input
 							{...props}
 							type="email"
-							placeholder="email@example.com"
+							placeholder={t`email@example.com`}
 							autocomplete="email"
 							bind:value={$data.email}
 						/>
@@ -83,12 +83,12 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<div class="flex items-center">
-							<Form.Label>Password</Form.Label>
+							<Form.Label>{t`Password`}</Form.Label>
 							<a
 								href="/login/forgot_password"
 								class="ml-auto text-sm underline-offset-4 hover:underline"
 							>
-								Forgot your password?
+								{t`Forgot your password?`}
 							</a>
 						</div>
 						<Input
@@ -103,12 +103,12 @@
 				</Form.Control>
 			</Form.Field>
 			<Button type="submit" class="w-full" disabled={loading}>
-				{loading ? 'Logging in...' : 'Login'}
+				{loading ? t`Logging in...` : t`Login`}
 			</Button>
 			<Debug {data} />
 			<div class="text-center text-sm">
-				Don&apos;t have an account?
-				<a href="/signup" class="underline underline-offset-4"> Sign up </a>
+				{t`Don't have an account?`}
+				<a href="/signup" class="underline underline-offset-4"> {t`Sign up`} </a>
 			</div>
 		{/if}
 	</form>
@@ -129,7 +129,7 @@
 					fill="currentColor"
 				/>
 			</svg>
-			Login with Google
+			{t`Login with Google`}
 		</Button>
 	</div>
 {/snippet}
@@ -138,6 +138,6 @@
 	<div
 		class="relative my-4 text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border"
 	>
-		<span class="relative z-10 bg-card px-2 text-muted-foreground"> Or continue with </span>
+		<span class="relative z-10 bg-card px-2 text-muted-foreground"> {t`Or continue with`} </span>
 	</div>
 {/snippet}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import AuthLayout from '$lib/components/widgets/AuthLayout.svelte';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
@@ -14,11 +15,11 @@
 		onSubmit: async (formData) => {
 			try {
 				loading = true;
-				const organization = await createOrganization(formData.name, formData.slug);
+				await createOrganization(formData.name, formData.slug);
 				await goto(`/`);
 			} catch (err) {
 				console.error(`Error creating organization: ${err}`);
-				error = err instanceof Error ? err.message : 'An unknown error occurred';
+				error = err instanceof Error ? err.message : t`An unknown error occurred`;
 			} finally {
 				loading = false;
 			}
@@ -30,8 +31,8 @@
 
 <AuthLayout
 	link="/organization"
-	title="Create a new organization"
-	description="Create a new organization to get started"
+	title={t`Create a new organization`}
+	description={t`Create a new organization to get started`}
 >
 	{#if loading}
 		<div class="my-12 flex justify-center">
@@ -46,10 +47,10 @@
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Name</Form.Label>
+						<Form.Label>{t`Name`}</Form.Label>
 						<Input {...props} bind:value={$data.name} autocomplete="organization" />
 						<Form.Description
-							>The name of your organization. You <strong>cannot</strong> change it later.</Form.Description
+							>{t`The name of your organization. You cannot change it later.`}</Form.Description
 						>
 						<Form.FieldErrors />
 					{/snippet}
@@ -58,15 +59,17 @@
 			<Form.Field {form} name="slug">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Slug</Form.Label>
+						<Form.Label>{t`Slug`}</Form.Label>
 						<Input {...props} bind:value={$data.slug} autocomplete="off" />
 						<Form.FieldErrors />
 					{/snippet}
 				</Form.Control>
 			</Form.Field>
 			<div class="flex justify-between gap-2">
-				<Button type="button" href="/organization" variant="outline" class="w-auto">Back</Button>
-				<Button type="submit" class="w-auto">Create Organization</Button>
+				<Button type="button" href="/organization" variant="outline" class="w-auto"
+					>{t`Back`}</Button
+				>
+				<Button type="submit" class="w-auto">{t`Create Organization`}</Button>
 			</div>
 			<Debug {data} />
 		</form>

@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { t, locale } from '$lib/index.svelte';
 	import { appState } from '$lib/state.svelte';
-	import { locale } from '$lib/index.svelte';
 	import { type EventSchema } from '$lib/schema/event';
 	import { type OrganizationSchema } from '$lib/schema/organization';
 
@@ -41,9 +41,9 @@
 	>
 		<Check class="h-8 w-8" style="color: {secondaryColor};" />
 	</div>
-	<h3 class="mb-4 text-xl font-semibold text-gray-900">You're signed up!</h3>
+	<h3 class="mb-4 text-xl font-semibold text-gray-900">{t`You're signed up!`}</h3>
 
-	<p class="mb-2 text-sm text-gray-600">Thanks for signing up for</p>
+	<p class="mb-2 text-sm text-gray-600">{t`Thanks for signing up for`}</p>
 
 	<div class="mb-4 space-y-2 rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
 		<h4 class="mb-4 text-lg font-medium text-gray-900">{event.title}</h4>
@@ -69,7 +69,7 @@
 		{/if}
 	</div>
 
-	<p class="mb-6 text-sm text-gray-600">We will send you a confirmation email.</p>
+	<p class="mb-6 text-sm text-gray-600">{t`We will send you a confirmation email.`}</p>
 
 	<AddToCalendarDropdown {event} {organization} />
 </div>

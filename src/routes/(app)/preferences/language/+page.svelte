@@ -5,7 +5,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { LOCALES, type Locale, getLocaleName, isSupportedLanguage } from '$lib/utils/language';
 	import { appState } from '$lib/state.svelte';
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	let value = $state<Locale>(appState.locale);
 	import { authClient } from '$lib/auth-client';
 	async function setLocale(locale: string) {

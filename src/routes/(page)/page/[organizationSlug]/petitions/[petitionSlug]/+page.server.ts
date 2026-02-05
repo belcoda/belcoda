@@ -149,7 +149,6 @@ export const actions = {
 					organizationId: org.id,
 					teamId: petitionData.teamId || undefined,
 					personAction: {
-						organizationId: org.id,
 						givenName: parsed.givenName || null,
 						familyName: parsed.familyName || null,
 						emailAddress: parsed.emailAddress || null,

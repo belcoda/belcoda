@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { appState, getListFilter } from '$lib/state.svelte';
+	import { t } from '$lib/index.svelte';
 	import MultiSelect from 'svelte-multiselect'; //the component that handles the dropdown and the selected items (see https://multiselect.janosh.dev/)\
 
 	import { z } from '$lib/zero.svelte';
@@ -137,7 +138,7 @@
 	filterFunc={(opt, searchText) => {
 		return opt.label.toLowerCase().includes(filterState.searchString.toLowerCase());
 	}}
-	placeholder="Recipients"
+	placeholder={t`Recipients`}
 	--sms-options-bg="white"
 	--sms-options-border="1px solid #e0e0e0"
 	--sms-bg="white"

@@ -5,6 +5,7 @@
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { type ReadEventZero } from '$lib/schema/event';
 	const { event }: { event: ReadEventZero } = $props();
+	import { t } from '$lib/index.svelte';
 
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { toast } from 'svelte-sonner';
@@ -32,7 +33,7 @@
 	<InputGroup.Root class="w-full overflow-x-auto">
 		<InputGroup.Addon align="block-start" class="border-b">
 			<InputGroup.Text class="font-medium text-foreground"
-				>Copy to embed in your website</InputGroup.Text
+				>{t`Copy to embed in your website`}</InputGroup.Text
 			>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
@@ -45,7 +46,7 @@
 				<DropdownMenu.Content>
 					<DropdownMenu.CheckboxItem
 						checked={theme === 'default'}
-						onCheckedChange={() => (theme = 'default')}>Default theme</DropdownMenu.CheckboxItem
+						onCheckedChange={() => (theme = 'default')}>{t`Default theme`}</DropdownMenu.CheckboxItem
 					>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
@@ -54,7 +55,7 @@
 				size="icon-xs"
 				onclick={() => {
 					navigator.clipboard.writeText(embedCode);
-					toast.success('Copied to clipboard');
+					toast.success(t`Copied to clipboard`);
 					copied = true;
 					setTimeout(() => {
 						copied = false;

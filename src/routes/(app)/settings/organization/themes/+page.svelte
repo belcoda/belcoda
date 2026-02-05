@@ -23,7 +23,7 @@
 			validateOnLoad: false,
 			onSubmit: async (formData) => {
 				if (!appState.organizationId) {
-					toast.error('Organization ID not found');
+					toast.error(t`Organization ID not found`);
 					return;
 				}
 
@@ -42,7 +42,7 @@
 					await response.server;
 					toast.success(t`Theme settings saved successfully.`);
 				} catch (err) {
-					toast.error(err instanceof Error ? err.message : 'Failed to save theme settings');
+					toast.error(err instanceof Error ? err.message : t`Failed to save theme settings`);
 				}
 			}
 		})

@@ -1,21 +1,22 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import FileIcon from '@lucide/svelte/icons/file';
 	import SendIcon from '@lucide/svelte/icons/send';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	const navMain = [
+	const navMain = $derived([
 		{
-			title: 'Drafts',
+			title: t`Drafts`,
 			url: '/communications/email/drafts',
 			icon: FileIcon
 		},
 		{
-			title: 'Sent',
+			title: t`Sent`,
 			url: '/communications/email/sent',
 			icon: SendIcon
 		}
-	];
+	]);
 
 	const activeFolder = $derived(
 		navMain.find((item) => page.url.pathname.includes(item.url.split('/').pop() || '')) ||
@@ -26,7 +27,7 @@
 <div class="flex h-full w-[180px] flex-col border-r bg-background">
 	<div class="border-b p-3">
 		<Button href="/communications/email/drafts/new" class="w-full" size="sm">
-			<span class="icon-[mdi--email] size-4"></span> Compose
+			<span class="icon-[mdi--email] size-4"></span> {t`Compose`}
 		</Button>
 	</div>
 	<nav class="flex flex-col gap-0.5 p-2">

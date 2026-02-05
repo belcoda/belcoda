@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
@@ -23,11 +24,11 @@
 	</Card.Root>
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<H2>Tags</H2>
+			<H2>{t`Tags`}</H2>
 			<ResponsiveModal>
-				<h1>Add Tag</h1>
+				<h1>{t`Add Tag`}</h1>
 				{#snippet trigger()}
-					<Button variant="outline">Add Tag</Button>
+					<Button variant="outline">{t`Add Tag`}</Button>
 				{/snippet}
 			</ResponsiveModal>
 		</div>

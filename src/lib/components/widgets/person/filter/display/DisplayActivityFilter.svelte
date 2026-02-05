@@ -56,5 +56,5 @@
 	src={null}
 	avatarTitle={avatarTitle() ?? '?'}
 	onRemove={() => onRemove()}
-	title={text() ?? 'Unknown activity filter'}
+	title={text() ?? t`Unknown activity filter`}
 />
