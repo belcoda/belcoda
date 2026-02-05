@@ -75,10 +75,8 @@
 						{#if event.description}
 							<div class="border-t border-gray-200 pt-8">
 								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`What to Expect:`}</h2>
-								<div class="space-y-4 text-gray-700">
-									<p>
-										{JSON.stringify(event.description)}
-									</p>
+								<div class="prose space-y-4 text-gray-700">
+									{@html event.description}
 								</div>
 							</div>
 						{/if}
