@@ -31,3 +31,4 @@
 	avatarTitle={avatarTitle() ?? '?'}
 	onRemove={() => onRemove()}
 	title={text() ?? t`Unknown event type filter`}
+/>
