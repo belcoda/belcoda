@@ -22,6 +22,7 @@ msgid "Date and time"
 msgstr "Fecha y hora"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/routes/(app)/preferences/language/+page.svelte
 msgid "Language"
@@ -54,6 +55,7 @@ msgstr ""
 "de la organización. Puedes agregar tantas como quieras, pero deben estar asociadas a una\n"
 "dirección de correo electrónico no pública que controles."
 
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email from signatures"
@@ -415,6 +417,8 @@ msgid "Team"
 msgstr "Equipo"
 
 #: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Subscription"
 msgstr "Suscripción"
 
@@ -462,6 +466,8 @@ msgid "Unknown activity filter"
 msgstr "Filtro de actividad desconocido"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
 msgid "Teams"
@@ -483,6 +489,8 @@ msgid "No teams found."
 msgstr "No se encontraron equipos."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
@@ -2051,6 +2059,8 @@ msgstr "Tipos de evento"
 msgid "Loading webhooks..."
 msgstr "Cargando webhooks..."
 
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -2644,3 +2654,42 @@ msgstr "En línea"
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "In-person"
 msgstr "Presencial"
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Configuration"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Themes & colors"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Imports"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Exports"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Credit balance"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "API keys"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "WhatsApp templates"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "WhatsApp accounts"
+msgstr ""
