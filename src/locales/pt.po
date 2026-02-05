@@ -21,6 +21,8 @@ msgstr "Informações básicas"
 msgid "Date and time"
 msgstr "Data e hora"
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/routes/(app)/preferences/language/+page.svelte
 msgid "Language"
 msgstr "Idioma"
@@ -74,6 +76,8 @@ msgstr "Crie uma nova assinatura de e-mail que será verificada com Postmark."
 msgid "Display name"
 msgstr "Nome de exibição"
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
@@ -82,6 +86,9 @@ msgstr "Endereço de e-mail"
 
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/signup/+page.svelte
 msgid "email@example.com"
 msgstr "email@example.com"
 
@@ -119,6 +126,7 @@ msgstr "bounce.example.com"
 msgid "Optional. The return path domain is used for bounce handling."
 msgstr "Opcional. O domínio de caminho de retorno é usado para tratamento de rejeições."
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -127,10 +135,17 @@ msgstr "Opcional. O domínio de caminho de retorno é usado para tratamento de r
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/events/[eventId]/edit/+page.svelte
+#: src/routes/(app)/events/new/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
+#: src/routes/(app)/petitions/new/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -257,6 +272,8 @@ msgstr "Caminho de retorno"
 msgid "The return path domain is used for bounce handling."
 msgstr "O domínio de caminho de retorno é usado para tratamento de rejeições."
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
@@ -267,7 +284,12 @@ msgstr "Status"
 msgid "Verification status from Postmark."
 msgstr "Status de verificação do Postmark."
 
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Actions"
 msgstr "Ações"
 
@@ -309,11 +331,13 @@ msgid "System"
 msgstr "Sistema"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Loading..."
 msgstr "Carregando..."
 
+#: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "New"
 msgstr "Novo"
@@ -396,16 +420,22 @@ msgstr "Assinatura"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/routes/(app)/communications/+page.svelte
 msgid "Communications"
 msgstr "Comunicações"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+#: src/routes/(app)/events/+page.svelte
 msgid "Events"
 msgstr "Eventos"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/routes/(app)/petitions/+page.svelte
 msgid "Petitions"
 msgstr "Petições"
 
@@ -419,6 +449,7 @@ msgid "Search..."
 msgstr "Buscar..."
 
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
 msgstr "Voltar"
 
@@ -430,36 +461,43 @@ msgstr "Criar pessoa"
 msgid "Unknown activity filter"
 msgstr "Filtro de atividade desconhecido"
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
 msgid "Teams"
 msgstr "Equipes"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTeam.svelte
 msgid "Filter teams..."
 msgstr "Filtrar equipes..."
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTeam.svelte
 msgid "No teams found."
 msgstr "Nenhuma equipe encontrada."
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 msgid "Tags"
 msgstr "Tags"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
 msgid "Filter tags..."
 msgstr "Filtrar tags..."
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
@@ -534,6 +572,7 @@ msgid "Upload"
 msgstr "Enviar"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
 msgid "Upload an image to your workspace"
 msgstr "Envie uma imagem para seu espaço de trabalho"
 
@@ -547,6 +586,7 @@ msgstr "Substituir imagem"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
 msgid "Allowed: .png, .jpg, .jpeg"
 msgstr "Permitidos: .png, .jpg, .jpeg"
 
@@ -618,6 +658,7 @@ msgid "Call"
 msgstr "Ligar"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
@@ -657,17 +698,21 @@ msgstr "Adicione uma nota ou comentário..."
 msgid "Are you sure you want to delete this note?"
 msgstr "Tem certeza de que deseja excluir esta nota?"
 
+#: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 msgid "Note deleted"
 msgstr "Nota excluída"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Name.svelte
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "Edit"
 msgstr "Editar"
 
+#: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
 msgid "Delete"
 msgstr "Excluir"
 
@@ -695,10 +740,18 @@ msgstr ""
 msgid "Person deleted"
 msgstr ""
 
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "Email"
 msgstr ""
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
 msgid "Subscribed"
@@ -718,15 +771,20 @@ msgstr ""
 msgid "Not specified"
 msgstr ""
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Workplace.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
 msgid "Workplace"
 msgstr ""
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Address.svelte
 msgid "Address"
 msgstr ""
 
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
 msgid "Phone"
 msgstr ""
@@ -748,28 +806,44 @@ msgstr ""
 msgid "Copied \"{0}\" to clipboard"
 msgstr ""
 
+#: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
 msgid "Copied!"
 msgstr ""
 
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
 msgid "Copy"
 msgstr ""
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
 msgid "Given name"
 msgstr ""
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
 msgid "Family name"
 msgstr ""
 
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/events/[eventId]/edit/+page.svelte
+#: src/routes/(app)/events/new/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
+#: src/routes/(app)/petitions/new/+page.svelte
 msgid "Save"
 msgstr ""
 
@@ -778,6 +852,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
 msgid "Position"
 msgstr ""
@@ -798,6 +873,8 @@ msgstr ""
 msgid "No countries found."
 msgstr ""
 
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
@@ -821,6 +898,9 @@ msgstr ""
 msgid "New Import"
 msgstr ""
 
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Date"
 msgstr ""
@@ -893,6 +973,1662 @@ msgstr ""
 msgid "No failure details available"
 msgstr ""
 
+#: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+#: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Close"
+msgstr ""
+
+#: src/lib/components/widgets/AuthLayout.svelte
+msgid "logo"
+msgstr ""
+
+#: src/routes/(app)/petitions/+page.svelte
+msgid "Create petitions and collect signatures from your community."
+msgstr ""
+
+#: src/routes/(app)/petitions/+page.svelte
+msgid "Create petition"
+msgstr ""
+
+#: src/routes/(app)/petitions/+page.svelte
+msgid "Learn more about petitions"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "Manage your email campaigns and messages"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "New Email"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "Untitled Draft"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "Updated"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "Sent Emails"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "sent"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "View All"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "No sent emails yet"
+msgstr ""
+
+#: src/routes/(app)/communications/+page.svelte
+msgid "Untitled Email"
+msgstr ""
+
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/routes/(app)/communications/+page.svelte
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "Sent"
+msgstr ""
+
+#. placeholder {0}: error.message
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Error loading invitations: {0}"
+msgstr ""
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "My Organizations"
+msgstr ""
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Each organization is a separate entity with its own resources and users"
+msgstr ""
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Back to dashboard"
+msgstr ""
+
+#: src/routes/(auth)/organization/+page.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Create a new organization"
+msgstr ""
+
+#: src/routes/(app)/events/+page.svelte
+msgid "Create events to track your team's activities and progress."
+msgstr ""
+
+#: src/routes/(app)/events/+page.svelte
+msgid "Create event"
+msgstr ""
+
+#: src/routes/(app)/events/+page.svelte
+msgid "Learn more about events"
+msgstr ""
+
+#: src/routes/(auth)/logout/+page.svelte
+msgid "Logging out..."
+msgstr ""
+
+#: src/routes/(auth)/logout/+page.svelte
+msgid "Please wait while we log you out..."
+msgstr ""
+
+#. placeholder {0}: email
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Invited by {0}"
+msgstr ""
+
+#. placeholder {0}: error.message
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Error loading invitation: {0}"
+msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Accept / Reject"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+msgid "Welcome back"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+msgid "Login with your Google account"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Password"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+msgid "Forgot your password?"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+msgid "Logging in..."
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Login"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+msgid "Don't have an account?"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+msgid "Sign up"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+msgid "Login with Google"
+msgstr ""
+
+#: src/routes/(auth)/login/+page.svelte
+msgid "Or continue with"
+msgstr ""
+
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+msgid "Drafts"
+msgstr ""
+
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+msgid "Compose"
+msgstr ""
+
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "Email Verified"
+msgstr ""
+
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "Your email has been successfully verified"
+msgstr ""
+
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "Your email address has been verified. You can now sign in to your account."
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/signup/+page.svelte
+#: src/routes/(auth)/verify-email/+page.svelte
+msgid "Go to Login"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Welcome to Belcoda"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Create an account to get started"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Name"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Your full name"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Confirm Password"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Creating account..."
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Create account"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Already have an account?"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Sign in"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Sign up with Google"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Or create an account using email and password"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Check your email"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "We've sent a verification link to"
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Please click the link in the email to verify your account before signing in."
+msgstr ""
+
+#. placeholder {0}: count.toString()
+#: src/lib/components/forms/email/EmailForm.svelte
+msgid "{0} recipients selected"
+msgstr ""
+
+#: src/lib/components/forms/email/EmailForm.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "From"
+msgstr ""
+
+#: src/lib/components/forms/email/EmailForm.svelte
+#: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "Recipients"
+msgstr ""
+
+#: src/lib/components/forms/email/EmailForm.svelte
+msgid "Select recipients..."
+msgstr ""
+
+#: src/lib/components/forms/email/EmailForm.svelte
+msgid "No recipients selected"
+msgstr ""
+
+#: src/lib/components/forms/email/EmailForm.svelte
+msgid "Select"
+msgstr ""
+
+#: src/lib/components/forms/email/EmailForm.svelte
+msgid "Subject"
+msgstr ""
+
+#: src/lib/components/forms/email/EmailForm.svelte
+msgid "Enter email subject..."
+msgstr ""
+
+#: src/lib/components/forms/email/EmailForm.svelte
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "Message"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Feature image"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "This image will be displayed on the petition page and in shared links."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Title"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Edit petition link"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Slug"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid ""
+"This is a URL-friendly identifier for the petition and is part of the petition\n"
+"link. It must be unique and can only contain lowercase letters, numbers, and\n"
+"hyphens."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Description"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Petition target"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "e.g., Local Government, CEO of Company X"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Who is this petition directed to? (e.g., \"The Mayor of Springfield\", \"Parliament\")"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Edit Person"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Create Person"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Contact details"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid ""
+"If the person is subscribed, they will be able to receive notifications\n"
+"and messages."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Address line 1"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Address line 2"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "City/town"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Region/state"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Postcode"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Country"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Preferred language"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+msgid "Personal details"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Date of birth"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+msgid "Gender"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Social media"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Facebook"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Twitter"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Instagram"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "LinkedIn"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "TikTok"
+msgstr ""
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Website"
+msgstr ""
+
+#: src/lib/components/widgets/petition/PetitionSignatures.svelte
+msgid "Add signature"
+msgstr ""
+
+#. placeholder {0}: (index + 1).toString()
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Option {0}"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Standard Information"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Select which standard information fields to collect from attendees."
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Custom Questions"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Add custom questions to collect additional information from attendees."
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Untitled Question"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Question Label"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Enter question label"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Required field"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Options"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Add option"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Remove option"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "No custom questions added yet."
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Click \"Add question\" above to get started."
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Add question"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Short text"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Long text"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Checkboxes"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Multiple choice"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Dropdown"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Number"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Change type"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Are you sure you want to remove this question?"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Remove question"
+msgstr ""
+
+#. placeholder {0}: count.toString()
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "{0} recipients"
+msgstr ""
+
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "1 recipient"
+msgstr ""
+
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "Type to search..."
+msgstr ""
+
+#: src/lib/components/communications/email/EmailList.svelte
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "(No subject)"
+msgstr ""
+
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "No emails found"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Start date must be before end date"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Start date"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+#: src/lib/components/ui/custom-select/date-of-birth/date-of-birth.svelte
+msgid "Select date"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "End date"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "End date must be after start date"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "To"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Standard event"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Start and end at a specific time on the same day."
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "All day event"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Start and end at midnight on the same day (all day)."
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Multi-day event"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Start and end on different days."
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Display timezone on signup page and notifications"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "This will display the timezone on the signup page and notifications."
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+msgid "Timezone"
+msgstr ""
+
+#: src/lib/components/forms/event/DateTimeSelect.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Toggle"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "All signups"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
+msgid "Attended"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
+msgid "No show"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
+msgid "Not attending"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
+msgid "Signed up"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+msgid "Add signup"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Location"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "This event will be displayed on the event page and in notifications and shared links."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Event page"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Survey"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Edit event link"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid ""
+"This is a URL-friendly identifier for the event and is part of the event link.\n"
+"It must be unique and can only contain lowercase letters, numbers, and\n"
+"hyphens."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "In person"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Virtual"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Address line 2 (optional)"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Online link"
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Upload Image"
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Too large!"
+msgstr ""
+
+#. placeholder {0}: humanReadableMaxFileSize
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "(Max {0})"
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Wrong file type!"
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Validation error!"
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Please try again."
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Upload error!"
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Error"
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Unknown error"
+msgstr ""
+
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "Upload an image"
+msgstr ""
+
+#. placeholder {0}: humanReadableMaxFileSize
+#: src/lib/components/ui/image-upload/ImageUpload.svelte
+msgid "(Max size: {0})"
+msgstr ""
+
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "No Projects Yet"
+msgstr ""
+
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "You haven't created any projects yet. Get started by creating your first project."
+msgstr ""
+
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Create Project"
+msgstr ""
+
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Import Project"
+msgstr ""
+
+#: src/routes/(app)/communications/email/+page.svelte
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Learn More"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Published"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "Draft"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "Target:"
+msgstr ""
+
+#: src/routes/(app)/events/new/+page.svelte
+msgid "New event"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EventShareModal.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Share"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Open"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Petition published"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Petition unpublished"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
+msgid "Edit petition"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Detailed signatures table"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "View petition page"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Preview petition page"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionMakeACopy.svelte
+msgid "Make a copy"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Share Petition"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Share functionality coming soon..."
+msgstr ""
+
+#: src/routes/(app)/petitions/new/+page.svelte
+msgid "New petition"
+msgstr ""
+
+#: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Add Tag"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Name is required"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "API key copied to clipboard"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "You don't have permission to view API keys. Only admins and owners can access this page."
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Key"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Created"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Expires"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "No API keys found"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Delete API key"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "API Keys"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Create API Key"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "API Key Created"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "This key will not be shown again. Please copy it now."
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Your API Key"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Copy to clipboard"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "e.g., Production API Key"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Expires At (Optional)"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Leave empty for a key that never expires"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Creating..."
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Create"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Delete API Key"
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Are you sure you want to delete this API key? This action cannot be undone and any applications using this key will lose access immediately."
+msgstr ""
+
+#: src/routes/(app)/settings/api-keys/+page.svelte
+msgid "Deleting..."
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionMakeACopy.svelte
+msgid "Copy of"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
+#: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
+msgid "Event title"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+msgid "Enter your email to reset your password"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Reset password"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Remember your password?"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+msgid "Password reset email sent"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/+page.svelte
+msgid "We've sent a password reset email to the email address you provided. Please check your email and follow the instructions to reset your password."
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Create a new organization to get started"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "The name of your organization. You cannot change it later."
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Create Organization"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/AddToCalendarDropdown.svelte
+msgid "Add To Calendar"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/AddToCalendarDropdown.svelte
+msgid "Google Calendar"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/AddToCalendarDropdown.svelte
+msgid "Outlook Calendar"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/AddToCalendarDropdown.svelte
+msgid "Download .ics file"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignUpSuccess.svelte
+msgid "You're signed up!"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignUpSuccess.svelte
+msgid "Thanks for signing up for"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignUpSuccess.svelte
+msgid "We will send you a confirmation email."
+msgstr ""
+
+#. placeholder {0}: webhook.name
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Are you sure you want to delete the webhook \"{0}\"?"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "All events"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "No webhooks configured"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Create Webhook"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Target URL"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Event Types"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Loading webhooks..."
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Webhooks"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Register a new webhook endpoint"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "My Webhook"
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "https://example.com/webhook"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+#: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+msgid "Sign up via WhatsApp"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+msgid "Choose how you'd like to proceed with your signup."
+msgstr ""
+
+#: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+msgid "Open WhatsApp"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+msgid "Or scan QR code"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+msgid "WhatsApp Signup QR Code"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+msgid "Scan with your phone to sign up via WhatsApp"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EmbedCode.svelte
+msgid "Copy to embed in your website"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EmbedCode.svelte
+msgid "Default theme"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+#: src/lib/components/widgets/event/share/EmbedCode.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Copied to clipboard"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionMakeACopy.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionMakeACopy.svelte
+msgid "Petition title"
+msgstr ""
+
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+msgid "Age Group"
+msgstr ""
+
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+msgid "Event Signup"
+msgstr ""
+
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+msgid "Tag"
+msgstr ""
+
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+msgid "Event Activity"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/RenderEventPage.svelte
+msgid "What to Expect:"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/RenderEventPage.svelte
+msgid "Resources:"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/RenderEventPage.svelte
+msgid "Attachment thumbnail"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "This is a preview of the event. Publish the event before sharing it with others."
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Join this event"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Locality"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Region"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Sign up now"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "I can't attend"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Event not published"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "This event is not published yet. Please check back later."
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "Not joining this event"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "You declined an invitation to"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+msgid "We'll let the organiser know you can't attend."
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+msgid "Scan this QR code to mark attendance via WhatsApp"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "WhatsApp checkin link"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Download QR code"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/CheckIn.svelte
+msgid "Copy WhatsApp checkin link"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EventShareModal.svelte
+msgid "Embed"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EventShareModal.svelte
+msgid "Check-in"
+msgstr ""
+
+#. placeholder {0}: count.toString()
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "{0} signups"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "No signups found"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "No signups found. Create a new signup to get started."
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "Add Person"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "Signups"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "Mark as attended"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/event/signups/SignupTable.svelte
+msgid "Mark as no show"
+msgstr ""
+
+#: src/lib/components/widgets/communications/recipients/AndOrToggle.svelte
+msgid "toggle and"
+msgstr ""
+
+#: src/lib/components/widgets/communications/recipients/AndOrToggle.svelte
+msgid "AND"
+msgstr ""
+
+#: src/lib/components/widgets/communications/recipients/AndOrToggle.svelte
+msgid "toggle or"
+msgstr ""
+
+#: src/lib/components/widgets/communications/recipients/AndOrToggle.svelte
+msgid "OR"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+msgid "Additional details"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+msgid ""
+"Personal details may differ the responses provided by the attendee if their recorded personal\n"
+"information in Belcoda has been modified or updated since they signed up for the event."
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+msgid "Custom fields"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Cancel signup"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "View detailed signup"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Quick contact"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Share this event with your audience"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "Event signup page link"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "WhatsApp signup link"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/ShareEvent.svelte
+msgid "View WhatsApp signup QR code"
+msgstr ""
+
+#: src/lib/components/ui/custom-select/email-from/email-from.svelte
+msgid "[Select a email]"
+msgstr ""
+
+#. placeholder {0}: count.toString()
+#: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+msgid "{0} signatures"
+msgstr ""
+
+#: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+msgid "No signatures found"
+msgstr ""
+
+#: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+msgid "No signatures found for this petition. Signatures will appear here once people sign."
+msgstr ""
+
+#: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+#: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+msgid "Signatures"
+msgstr ""
+
+#: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+msgid "Signed At"
+msgstr ""
+
+#: src/lib/components/ui/custom-select/timezone/timezone.svelte
+msgid "Select a timezone..."
+msgstr ""
+
+#: src/lib/components/ui/custom-select/timezone/timezone.svelte
+msgid "Search timezone..."
+msgstr ""
+
+#: src/lib/components/ui/custom-select/timezone/timezone.svelte
+msgid "No timezones found."
+msgstr ""
+
+#: src/lib/components/ui/custom-select/language/language.svelte
+msgid "Select a language"
+msgstr ""
+
+#: src/lib/components/ui/custom-select/language/language.svelte
+msgid "Search language..."
+msgstr ""
+
+#: src/lib/components/ui/custom-select/language/language.svelte
+msgid "No languages found."
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/edit/+page.svelte
+msgid "Edit event"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/+page.svelte
+msgid "No draft selected"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/+page.svelte
+msgid "Select a draft from the list to view its details"
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/+page.svelte
+msgid "Select a sent email"
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/+page.svelte
+msgid "Choose an email from the list to view its details and statistics."
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/+page.svelte
+msgid "Create New Email"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/signups/+page.svelte
+msgid "Download CSV"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "Belcoda icon"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Reset token is missing. Please use the link from your email."
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Reset your password"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Enter your new password below"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "New Password"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Resetting password..."
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Password reset successfully"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Your password has been reset. You can now sign in with your new password."
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Invalid or expired token"
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "The password reset link is invalid or has expired. Please request a new password reset link."
+msgstr ""
+
+#: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
+msgid "Request new reset link"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "No events found"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "No events found. Create a new event to get started."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Create Event"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+msgid "No target specified"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+msgid "No petitions found"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+msgid "No petitions found. Create a new petition to get started."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+msgid "Create Petition"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/+error.svelte
+msgid "Petition Not Found"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/+error.svelte
+msgid "The petition you are looking for could not be found."
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/+error.svelte
+msgid "Return to Home"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+msgid "Compose Email"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "Invalid email ID"
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "View Stats"
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "recipients"
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "Successful"
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "Failed"
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "Preview Text"
+msgstr ""
+
+#: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+msgid "(No content)"
+msgstr ""
+
+#: src/lib/components/widgets/person/filter/display/DisplayEventTypeFilter.svelte
+msgid "Unknown event type filter"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventHasSignupsFilter.svelte
+msgid "Has signups"
+msgstr ""
+
+#: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
+msgid "Unknown event status filter"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Are you sure you want to discard this email draft?"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Email Draft"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Discard"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Send"
+msgstr ""
+
+#. placeholder {0}: count
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "{0} people have signed this petition"
+msgstr ""
+
+#. placeholder {0}: current
+#. placeholder {1}: target
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "{0} more signatures needed to reach {1}"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "To:"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Petition Details"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Recent Signatures"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Be the first to sign this petition!"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "signatures"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "of goal"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid ""
+"Goal reached! Keep the momentum going to make an even bigger\n"
+"impact."
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Thank you for signing!"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Your signature has been recorded and you'll receive updates about this petition."
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Return to petition"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "First name"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Last name"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "your@email.com"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Phone (optional)"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Signing..."
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Sign this petition"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "By signing, you agree to receive updates about this petition and related campaigns."
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+msgid "Share this petition"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/events/[eventSlug]/+page.svelte
+msgid "Edit Event"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Event type"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Online"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "In-person"
 msgstr ""
