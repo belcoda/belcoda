@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
@@ -13,17 +14,17 @@
 			<Empty.Media variant="icon">
 				<UserSearchIcon />
 			</Empty.Media>
-			<Empty.Title>Events</Empty.Title>
+			<Empty.Title>{t`Events`}</Empty.Title>
 			<Empty.Description>
-				Create events to track your team's activities and progress.
+				{t`Create events to track your team's activities and progress.`}
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content>
-			<Button href="/events/new">Create event</Button>
+			<Button href="/events/new">{t`Create event`}</Button>
 		</Empty.Content>
 		<Button variant="link" class="text-muted-foreground" size="sm">
 			<a href="#/">
-				Learn more about events <ExternalLinkIcon class="inline" />
+				{t`Learn more about events`} <ExternalLinkIcon class="inline" />
 			</a>
 		</Button>
 	</Empty.Root>

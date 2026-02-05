@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import FileIcon from '@lucide/svelte/icons/file';
 	import Send from '@lucide/svelte/icons/send';
 	import { z } from '$lib/zero.svelte';
@@ -12,19 +13,19 @@
 		switch (folder) {
 			case 'sent':
 				return {
-					title: 'Sent',
+					title: t`Sent`,
 					icon: Send,
 					isDraft: false
 				};
 			case 'drafts':
 				return {
-					title: 'Drafts',
+					title: t`Drafts`,
 					icon: FileIcon,
 					isDraft: true
 				};
 			default:
 				return {
-					title: 'Drafts',
+					title: t`Drafts`,
 					icon: FileIcon,
 					isDraft: true
 				};
@@ -43,15 +44,18 @@
 	);
 
 	const emails = $derived(emailsQuery.data ?? []);
+	const recipientCountLabel = (count: number) => {
+		return t`${count.toString()} recipients`;
+	};
 
 	function getRecipientDisplay(email: (typeof emails)[0]) {
 		const count = email.estimatedRecipientCount;
 		if (count === 1) {
 			// For single recipient, we'd need to fetch the actual recipient name
 			// For now, show "1 recipient"
-			return '1 recipient';
+			return t`1 recipient`;
 		}
-		return `${count} recipients`;
+		return recipientCountLabel(count);
 	}
 	import { Input } from '$lib/components/ui/input/index.js';
 </script>
@@ -63,7 +67,7 @@
 				{activeItem.title}
 			</div>
 		</div>
-		<Input placeholder="Type to search..." bind:value={search} />
+		<Input placeholder={t`Type to search...`} bind:value={search} />
 	</div>
 	<div class="flex-1 overflow-auto">
 		<div class="flex flex-col">
@@ -78,7 +82,7 @@
 							>{formatShortTimestamp(email.updatedAt)}</span
 						>
 					</div>
-					<span class="font-medium">{email.subject || '(No subject)'}</span>
+					<span class="font-medium">{email.subject || t`(No subject)`}</span>
 					{#if email.previewTextOverride}
 						<span class="line-clamp-2 text-xs text-muted-foreground">
 							{email.previewTextOverride}
@@ -87,7 +91,7 @@
 				</a>
 			{:else}
 				<div class="flex flex-col items-center justify-center p-8 text-center">
-					<p class="text-sm text-muted-foreground">No emails found</p>
+					<p class="text-sm text-muted-foreground">{t`No emails found`}</p>
 				</div>
 			{/each}
 		</div>

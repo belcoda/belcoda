@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import EmailForm from '$lib/components/forms/email/EmailForm.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
@@ -108,7 +109,7 @@
 	}
 
 	async function handleDiscard() {
-		if (window.confirm('Are you sure you want to discard this email draft?')) {
+		if (window.confirm(t`Are you sure you want to discard this email draft?`)) {
 			if (!emailId) return;
 
 			await z.mutate.emailMessage.delete({
@@ -125,18 +126,18 @@
 <ContentLayout rootLink="/communications/email/drafts">
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-bold">Email Draft</h1>
+			<h1 class="text-2xl font-bold">{t`Email Draft`}</h1>
 		</div>
 	{/snippet}
 	{#snippet footer()}
 		<div class="flex w-full justify-end gap-2">
-			<Button variant="destructive" size="sm" onclick={handleDiscard}>Discard</Button>
-			<Button variant="default" size="sm" onclick={handleSend}>Send</Button>
+			<Button variant="destructive" size="sm" onclick={handleDiscard}>{t`Discard`}</Button>
+			<Button variant="default" size="sm" onclick={handleSend}>{t`Send`}</Button>
 		</div>
 	{/snippet}
 	{#if !emailId}
 		<div class="flex h-full items-center justify-center">
-			<p class="text-muted-foreground">Invalid email ID</p>
+			<p class="text-muted-foreground">{t`Invalid email ID`}</p>
 		</div>
 	{:else if email}
 		<EmailForm {email} {handleUpdate} />

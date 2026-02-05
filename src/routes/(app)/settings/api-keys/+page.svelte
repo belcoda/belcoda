@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { onMount } from 'svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { appState } from '$lib/state.svelte';
@@ -51,11 +52,11 @@
 			error = null;
 			const result = await authClient.apiKey.list();
 			if (result.error) {
-				throw new Error(result.error.message || 'Failed to load API keys');
+				throw new Error(result.error.message || t`Failed to load API keys`);
 			}
 			apiKeys = (result.data || []) as ApiKeyDisplay[];
 		} catch (e: any) {
-			error = e.message || 'An error occurred while loading API keys';
+			error = e.message || t`An error occurred while loading API keys`;
 			console.error('Error loading API keys:', e);
 		} finally {
 			loading = false;
@@ -64,7 +65,7 @@
 
 	async function handleCreateApiKey() {
 		if (!newKeyName.trim()) {
-			createError = 'Name is required';
+			createError = t`Name is required`;
 			return;
 		}
 
@@ -89,7 +90,7 @@
 			});
 
 			if (result.error) {
-				throw new Error(result.error.message || 'Failed to create API key');
+				throw new Error(result.error.message || t`Failed to create API key`);
 			}
 
 			// Store the full key (only shown once)
@@ -101,7 +102,7 @@
 
 			await loadApiKeys();
 		} catch (e: any) {
-			createError = e.message || 'An error occurred while creating the API key';
+			createError = e.message || t`An error occurred while creating the API key`;
 			console.error('Error creating API key:', e);
 		} finally {
 			creating = false;
@@ -124,7 +125,7 @@
 	function copyKeyToClipboard() {
 		if (createdKey) {
 			navigator.clipboard.writeText(createdKey);
-			toast.success('API key copied to clipboard');
+			toast.success(t`API key copied to clipboard`);
 		}
 	}
 
@@ -156,11 +157,11 @@
 			});
 
 			if (result.error) {
-				throw new Error(result.error.message || 'Failed to delete API key');
+				throw new Error(result.error.message || t`Failed to delete API key`);
 			}
 
 			apiKeys = apiKeys.filter((key) => key.id !== deletingKeyId);
-			toast.success('API key deleted successfully');
+			toast.success(t`API key deleted successfully`);
 			
 			// Close dialog and reset state
 			showDeleteDialog = false;
@@ -169,7 +170,7 @@
 				deleteError = null;
 			}, 300);
 		} catch (e: any) {
-			deleteError = e.message || 'An error occurred while deleting the API key';
+			deleteError = e.message || t`An error occurred while deleting the API key`;
 			console.error('Error deleting API key:', e);
 		} finally {
 			deleting = false;
@@ -190,7 +191,7 @@
 	<ContentLayout rootLink="/settings">
 		<Card.Root>
 			<Card.Content>
-				<p>You don't have permission to view API keys. Only admins and owners can access this page.</p>
+				<p>{t`You don't have permission to view API keys. Only admins and owners can access this page.`}</p>
 			</Card.Content>
 		</Card.Root>
 	</ContentLayout>
@@ -199,7 +200,7 @@
 		{#if error}
 			<Alert.Root variant="destructive" class="mb-4">
 				<AlertCircleIcon />
-				<Alert.Title>Error</Alert.Title>
+				<Alert.Title>{t`Error`}</Alert.Title>
 				<Alert.Description>{error}</Alert.Description>
 			</Alert.Root>
 		{/if}
@@ -214,17 +215,17 @@
 					<Table.Root>
 						<Table.Header>
 							<Table.Row>
-								<Table.Head>Name</Table.Head>
-								<Table.Head>Key</Table.Head>
-								<Table.Head>Created</Table.Head>
-								<Table.Head>Expires</Table.Head>
-								<Table.Head class="text-right">Actions</Table.Head>
+								<Table.Head>{t`Name`}</Table.Head>
+								<Table.Head>{t`Key`}</Table.Head>
+								<Table.Head>{t`Created`}</Table.Head>
+								<Table.Head>{t`Expires`}</Table.Head>
+								<Table.Head class="text-right">{t`Actions`}</Table.Head>
 							</Table.Row>
 						</Table.Header>
 						<Table.Body>
 							<Table.Row>
 								<Table.Cell colspan={5} class="text-center text-muted-foreground">
-									No API keys found
+									{t`No API keys found`}
 								</Table.Cell>
 							</Table.Row>
 						</Table.Body>
@@ -233,11 +234,11 @@
 					<Table.Root>
 						<Table.Header>
 							<Table.Row>
-								<Table.Head>Name</Table.Head>
-								<Table.Head>Key</Table.Head>
-								<Table.Head>Created</Table.Head>
-								<Table.Head>Expires</Table.Head>
-								<Table.Head class="text-right">Actions</Table.Head>
+								<Table.Head>{t`Name`}</Table.Head>
+								<Table.Head>{t`Key`}</Table.Head>
+								<Table.Head>{t`Created`}</Table.Head>
+								<Table.Head>{t`Expires`}</Table.Head>
+								<Table.Head class="text-right">{t`Actions`}</Table.Head>
 							</Table.Row>
 						</Table.Header>
 						<Table.Body>
@@ -253,7 +254,7 @@
 												variant="ghost"
 												size="icon"
 												onclick={() => openDeleteDialog(key.id)}
-												title="Delete API key"
+												title={t`Delete API key`}
 												class="text-destructive hover:text-destructive"
 											>
 												<TrashIcon class="h-4 w-4" />
@@ -270,25 +271,25 @@
 
 		{#snippet header()}
 			<div class="flex items-center justify-between">
-				<H2>API Keys</H2>
+				<H2>{t`API Keys`}</H2>
 				{#if appState.isAdminOrOwner}
-					<ResponsiveModal bind:open={modalOpen} title="Create API Key">
+					<ResponsiveModal bind:open={modalOpen} title={t`Create API Key`}>
 						{#snippet trigger()}
-							<Button variant="outline"><PlusIcon /> New</Button>
+							<Button variant="outline"><PlusIcon /> {t`New`}</Button>
 						{/snippet}
 
 						{#if createdKey}
 							<div class="space-y-4">
 								<Alert.Root variant="default">
 									<AlertCircleIcon />
-									<Alert.Title>API Key Created</Alert.Title>
+									<Alert.Title>{t`API Key Created`}</Alert.Title>
 									<Alert.Description>
-										This key will not be shown again. Please copy it now.
+										{t`This key will not be shown again. Please copy it now.`}
 									</Alert.Description>
 								</Alert.Root>
 
 								<div class="space-y-2">
-									<Label.Root>Your API Key</Label.Root>
+									<Label.Root>{t`Your API Key`}</Label.Root>
 									<div class="flex items-center gap-2">
 										<Input
 											value={createdKey}
@@ -301,7 +302,7 @@
 											variant="outline"
 											size="icon"
 											onclick={copyKeyToClipboard}
-											title="Copy to clipboard"
+											title={t`Copy to clipboard`}
 										>
 											<CopyIcon class="h-4 w-4" />
 										</Button>
@@ -310,33 +311,33 @@
 
 								<div class="flex justify-end gap-2 pt-2">
 									<Button type="button" variant="outline" onclick={handleModalClose}>
-										Close
+										{t`Close`}
 									</Button>
 								</div>
 							</div>
-						{:else}
+							{:else}
 							<div class="space-y-4">
 								{#if createError}
 									<Alert.Root variant="destructive">
 										<AlertCircleIcon />
-										<Alert.Title>Error</Alert.Title>
+										<Alert.Title>{t`Error`}</Alert.Title>
 										<Alert.Description>{createError}</Alert.Description>
 									</Alert.Root>
 								{/if}
 
 								<div class="space-y-2">
-									<Label.Root for="key-name">Name</Label.Root>
+									<Label.Root for="key-name">{t`Name`}</Label.Root>
 									<Input
 										id="key-name"
 										bind:value={newKeyName}
-										placeholder="e.g., Production API Key"
+										placeholder={t`e.g., Production API Key`}
 										required
 										disabled={creating}
 									/>
 								</div>
 
 								<div class="space-y-2">
-									<Label.Root for="key-expires">Expires At (Optional)</Label.Root>
+									<Label.Root for="key-expires">{t`Expires At (Optional)`}</Label.Root>
 									<Input
 										id="key-expires"
 										type="datetime-local"
@@ -344,21 +345,21 @@
 										disabled={creating}
 									/>
 									<p class="text-sm text-muted-foreground">
-										Leave empty for a key that never expires
+										{t`Leave empty for a key that never expires`}
 									</p>
 								</div>
 
 								<div class="flex justify-end gap-2 pt-2">
 									<Button type="button" variant="outline" onclick={handleModalClose} disabled={creating}>
-										Cancel
+										{t`Cancel`}
 									</Button>
 									<Button type="button" onclick={handleCreateApiKey} disabled={creating || !newKeyName.trim()}>
 										{#if creating}
 											<Spinner class="mr-2 h-4 w-4" />
-											Creating...
+											{t`Creating...`}
 										{:else}
 											<CheckIcon class="mr-2 h-4 w-4" />
-											Create
+											{t`Create`}
 										{/if}
 									</Button>
 								</div>
@@ -374,16 +375,16 @@
 	<Dialog.Root bind:open={showDeleteDialog}>
 		<Dialog.Content>
 			<Dialog.Header>
-				<Dialog.Title>Delete API Key</Dialog.Title>
+				<Dialog.Title>{t`Delete API Key`}</Dialog.Title>
 				<Dialog.Description>
-					Are you sure you want to delete this API key? This action cannot be undone and any applications using this key will lose access immediately.
+					{t`Are you sure you want to delete this API key? This action cannot be undone and any applications using this key will lose access immediately.`}
 				</Dialog.Description>
 			</Dialog.Header>
 
 			{#if deleteError}
 				<Alert.Root variant="destructive" class="mt-4">
 					<AlertCircleIcon />
-					<Alert.Title>Error</Alert.Title>
+					<Alert.Title>{t`Error`}</Alert.Title>
 					<Alert.Description>{deleteError}</Alert.Description>
 				</Alert.Root>
 			{/if}
@@ -391,15 +392,15 @@
 			<Dialog.Footer>
 				<div class="flex gap-2 justify-end">
 					<Button variant="outline" onclick={closeDeleteDialog} disabled={deleting}>
-						Cancel
+						{t`Cancel`}
 					</Button>
 					<Button variant="destructive" onclick={handleDeleteApiKey} disabled={deleting}>
 						{#if deleting}
 							<Spinner class="mr-2 h-4 w-4" />
-							Deleting...
+							{t`Deleting...`}
 						{:else}
 							<TrashIcon class="mr-2 h-4 w-4" />
-							Delete
+							{t`Delete`}
 						{/if}
 					</Button>
 				</div>

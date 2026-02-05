@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ReadEventZero } from '$lib/schema/event';
 	let { event }: { event: ReadEventZero } = $props();
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';

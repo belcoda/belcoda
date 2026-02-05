@@ -116,11 +116,11 @@
 	</form>
 </ScrollArea>
 <div class="flex items-center justify-end gap-2">
-	<Button variant="outline" onclick={() => (modalMode = 'list')}>Back</Button>
+	<Button variant="outline" onclick={() => (modalMode = 'list')}>{t`Back`}</Button>
 	<Button
 		onclick={() => {
 			form.submit();
 		}}
-		>Create person
+		>{t`Create person`}
 	</Button>
 </div>

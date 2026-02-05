@@ -5,6 +5,7 @@
 	import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
 	import UserSearchIcon from '@lucide/svelte/icons/user-search';
 	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <ContentLayout rootLink="/community">

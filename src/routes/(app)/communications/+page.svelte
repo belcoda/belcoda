@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
@@ -44,12 +45,12 @@
 	<div class="container mx-auto max-w-6xl py-8">
 		<div class="mb-8 flex items-center justify-between">
 			<div>
-				<h1 class="mb-2 text-3xl font-bold">Communications</h1>
-				<p class="text-muted-foreground">Manage your email campaigns and messages</p>
+				<h1 class="mb-2 text-3xl font-bold">{t`Communications`}</h1>
+				<p class="text-muted-foreground">{t`Manage your email campaigns and messages`}</p>
 			</div>
 			<Button href="/communications/drafts/email/new" data-sveltekit-preload-data="off">
 				<PlusCircle class="mr-2 size-4" />
-				New Email
+				{t`New Email`}
 			</Button>
 		</div>
 
@@ -90,10 +91,10 @@
 									class="block rounded-lg border p-3 transition-colors hover:bg-muted/50"
 								>
 									<div class="mb-1 font-medium">
-										{draft.subject || 'Untitled Draft'}
+										{draft.subject || t`Untitled Draft`}
 									</div>
 									<div class="text-muted-foreground text-xs">
-										Updated {new Date(draft.updatedAt).toLocaleDateString()}
+										{t`Updated`} {new Date(draft.updatedAt).toLocaleDateString()}
 									</div>
 								</a>
 							{/each}
@@ -112,12 +113,12 @@
 								<Send class="size-5 text-green-600" />
 							</div>
 							<div>
-								<Card.Title>Sent Emails</Card.Title>
-								<Card.Description>{sent.length} sent</Card.Description>
+								<Card.Title>{t`Sent Emails`}</Card.Title>
+								<Card.Description>{sent.length} {t`sent`}</Card.Description>
 							</div>
 						</div>
 						<Button href="/communications/sent" variant="ghost" size="sm">
-							View All
+							{t`View All`}
 						</Button>
 					</div>
 				</Card.Header>
@@ -125,17 +126,17 @@
 					{#if sent.length === 0}
 						<div class="py-8 text-center">
 							<Send class="text-muted-foreground mx-auto mb-3 size-12" />
-							<p class="text-muted-foreground text-sm">No sent emails yet</p>
+							<p class="text-muted-foreground text-sm">{t`No sent emails yet`}</p>
 						</div>
 					{:else}
 						<div class="space-y-3">
 							{#each sent as email}
 								<div class="rounded-lg border p-3">
 									<div class="mb-1 font-medium">
-										{email.subject || 'Untitled Email'}
+										{email.subject || t`Untitled Email`}
 									</div>
 									<div class="text-muted-foreground flex items-center justify-between text-xs">
-										<span>Sent {new Date(email.startedAt || email.createdAt).toLocaleDateString()}</span>
+										<span>{t`Sent`} {new Date(email.startedAt || email.createdAt).toLocaleDateString()}</span>
 										<span>{email.successfulRecipientCount} recipient{email.successfulRecipientCount === 1 ? '' : 's'}</span>
 									</div>
 								</div>

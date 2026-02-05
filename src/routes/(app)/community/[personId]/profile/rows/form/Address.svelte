@@ -9,6 +9,7 @@
 	import { toast } from 'svelte-sonner';
 
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
+	import { t } from '$lib/index.svelte';
 
 	const schema = objectAsync({
 		addressLine1: optional(personSchema.entries.addressLine1),
@@ -48,7 +49,7 @@
 				await response.server;
 				edit = false;
 			} catch (error) {
-				toast.error('Could not update address. Please check that the address is valid.');
+				toast.error(t`Could not update address. Please check that the address is valid.`);
 			}
 		}
 	});
@@ -131,8 +132,8 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<div class="mt-3 flex items-center justify-end gap-2">
-		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>Cancel</Button>
-		<Button type="submit" size="sm">Save</Button>
+		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>{t`Cancel`}</Button>
+		<Button type="submit" size="sm">{t`Save`}</Button>
 	</div>
 	<Debug {data} />
 </form>

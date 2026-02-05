@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type EventSchema } from '$lib/schema/event';
 	import type { OrganizationSchema } from '$lib/schema/organization';
 	import { renderEventTime } from '$lib/utils/date';
@@ -113,12 +114,12 @@
 		{#if !event.published}
 			<div class="mb-6 rounded-md bg-yellow-50 p-3">
 				<p class="text-sm text-yellow-700">
-					This is a preview of the event. Publish the event before sharing it with others.
+					{t`This is a preview of the event. Publish the event before sharing it with others.`}
 				</p>
 			</div>
 		{/if}
 		{#if theme === 'default'}
-			<h3 class="mb-6 text-lg font-semibold text-gray-900">Join this event</h3>
+			<h3 class="mb-6 text-lg font-semibold text-gray-900">{t`Join this event`}</h3>
 		{:else if theme === 'embed'}
 			<div class="mb-6">
 				<h3 class="mb-2 text-lg font-semibold text-gray-900">{event.title}</h3>
@@ -144,7 +145,7 @@
 				<Form.Field {form} name="person.givenName">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Given name</Form.Label>
+							<Form.Label>{t`Given name`}</Form.Label>
 							<Input {...props} bind:value={$data.person.givenName} />
 						{/snippet}
 					</Form.Control>
@@ -154,7 +155,7 @@
 				<Form.Field {form} name="person.familyName">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Family name</Form.Label>
+							<Form.Label>{t`Family name`}</Form.Label>
 							<Input {...props} bind:value={$data.person.familyName} />
 						{/snippet}
 					</Form.Control>
@@ -164,7 +165,7 @@
 			<Form.Field {form} name="person.emailAddress">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Email address</Form.Label>
+						<Form.Label>{t`Email address`}</Form.Label>
 						<Input {...props} bind:value={$data.person.emailAddress} />
 					{/snippet}
 				</Form.Control>
@@ -174,7 +175,7 @@
 			<Form.Field {form} name="person.phoneNumber">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Phone number</Form.Label>
+						<Form.Label>{t`Phone number`}</Form.Label>
 						<PhoneNumber
 							{...props}
 							country={$data.person.country}
@@ -190,7 +191,7 @@
 				<Form.Field {form} name="person.addressLine1">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Address line 1</Form.Label>
+							<Form.Label>{t`Address line 1`}</Form.Label>
 							<Input {...props} bind:value={$data.person.addressLine1} />
 						{/snippet}
 					</Form.Control>
@@ -198,7 +199,7 @@
 				<Form.Field {form} name="person.addressLine2">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Address line 2 (optional)</Form.Label>
+							<Form.Label>{t`Address line 2 (optional)`}</Form.Label>
 							<Input {...props} bind:value={$data.person.addressLine2} />
 						{/snippet}
 					</Form.Control>
@@ -207,7 +208,7 @@
 					<Form.Field {form} name="person.locality">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Locality</Form.Label>
+								<Form.Label>{t`Locality`}</Form.Label>
 								<Input {...props} bind:value={$data.person.locality} />
 							{/snippet}
 						</Form.Control>
@@ -215,7 +216,7 @@
 					<Form.Field {form} name="person.region">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Region</Form.Label>
+								<Form.Label>{t`Region`}</Form.Label>
 								<Input {...props} bind:value={$data.person.region} />
 							{/snippet}
 						</Form.Control>
@@ -223,7 +224,7 @@
 					<Form.Field {form} name="person.postcode">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Postcode</Form.Label>
+								<Form.Label>{t`Postcode`}</Form.Label>
 								<Input {...props} bind:value={$data.person.postcode} />
 							{/snippet}
 						</Form.Control>
@@ -231,7 +232,7 @@
 					<Form.Field {form} name="person.country">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Country</Form.Label>
+								<Form.Label>{t`Country`}</Form.Label>
 								<CountrySelect {...props} bind:value={$data.person.country as CountryCode} />
 							{/snippet}
 						</Form.Control>
@@ -359,13 +360,13 @@
 			<div class="mt-4 flex flex-col gap-3">
 				<Button type="submit" class="w-full" disabled={$submitting}>
 					{#if $delayed}<Spinner class="size-4" />{/if}
-					Sign up now</Button
+					{t`Sign up now`}</Button
 				>
 				<div class="hidden lg:block">
 					<WhatsAppSignup {whatsAppSignupLink} />
 				</div>
 				<Button type="button" variant="ghost" class="w-full" disabled={$submitting}
-					>I can't attend</Button
+					>{t`I can't attend`}</Button
 				>
 			</div>
 
@@ -377,9 +378,9 @@
 		<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100">
 			<AlertTriangle class="h-6 w-6 text-yellow-600" />
 		</div>
-		<h3 class="mt-4 text-lg font-medium text-gray-900">Event not published</h3>
+		<h3 class="mt-4 text-lg font-medium text-gray-900">{t`Event not published`}</h3>
 		<p class="mt-2 text-sm text-gray-600">
-			This event is not published yet. Please check back later.
+			{t`This event is not published yet. Please check back later.`}
 		</p>
 	</div>
 {/if}
@@ -389,9 +390,9 @@
 		<div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
 			<X class="h-8 w-8 text-red-600" />
 		</div>
-		<h3 class="mb-4 text-xl font-semibold text-gray-900">Not joining this event</h3>
+		<h3 class="mb-4 text-xl font-semibold text-gray-900">{t`Not joining this event`}</h3>
 
-		<p class="mb-2 text-sm text-gray-600">You declined an invitation to</p>
+		<p class="mb-2 text-sm text-gray-600">{t`You declined an invitation to`}</p>
 
 		<div class="mb-4 space-y-2 rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
 			<h4 class="mb-4 text-lg font-medium text-gray-900">{event.title}</h4>
@@ -417,6 +418,6 @@
 			{/if}
 		</div>
 
-		<p class="mb-6 text-sm text-gray-600">We'll let the organiser know you can't attend.</p>
+		<p class="mb-6 text-sm text-gray-600">{t`We'll let the organiser know you can't attend.`}</p>
 	</div>
 {/snippet}

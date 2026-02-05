@@ -21,20 +21,20 @@
 	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
 
 	import * as Table from '$lib/components/ui/table/index.js';
-	import { locale } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import H5 from '$lib/components/ui/typography/H5.svelte';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 </script>
 
-<ResponsiveModal bind:open title="Additional details">
+<ResponsiveModal bind:open title={t`Additional details`}>
 	<Alert.Root variant="default">
 		<Alert.Description>
-			Personal details may differ the responses provided by the attendee if their recorded personal
-			information in Belcoda has been modified or updated since they signed up for the event.
+			{t`Personal details may differ the responses provided by the attendee if their recorded personal
+			information in Belcoda has been modified or updated since they signed up for the event.`}
 		</Alert.Description>
 	</Alert.Root>
-	<H5>Personal details</H5>
+	<H5>{t`Personal details`}</H5>
 	<Table.Root>
 		<Table.Body>
 			{#each personSurveyQuestions as question}
@@ -49,7 +49,7 @@
 			{/each}
 		</Table.Body>
 	</Table.Root>
-	<H5>Custom fields</H5>
+	<H5>{t`Custom fields`}</H5>
 	<Table.Root>
 		<Table.Body>
 			{#each customSurveyQuestions as question}
@@ -66,7 +66,7 @@
 	</Table.Root>
 	{#snippet footer()}
 		<div class="flex justify-end">
-			<Button variant="outline" onclick={() => (open = false)}>Close</Button>
+			<Button variant="outline" onclick={() => (open = false)}>{t`Close`}</Button>
 		</div>
 	{/snippet}
 </ResponsiveModal>

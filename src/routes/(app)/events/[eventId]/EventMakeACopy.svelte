@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ReadEventZero } from '$lib/schema/event';
 	import { type Snippet } from 'svelte';
 	import { v7 as uuidv7 } from 'uuid';
@@ -15,7 +16,7 @@
 	import { slugify } from '$lib/utils/slug';
 	const newEvent = {
 		...event,
-		title: `Copy of ${event.title}`,
+		title: `${t`Copy of`} ${event.title}`,
 		slug: `copy-of-${event.slug}`,
 		published: false,
 		publishedAt: null,
@@ -61,13 +62,13 @@
 		<Form.Field {form} name="title">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Event title</Form.Label>
-					<Input {...props} bind:value={$data.title} placeholder="Event title" />
+					<Form.Label>{t`Event title`}</Form.Label>
+					<Input {...props} bind:value={$data.title} placeholder={t`Event title`} />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<Button type="submit">Make a copy</Button>
+		<Button type="submit">{t`Make a copy`}</Button>
 		<Debug {data} hide={true} />
 	</form>
 </ResponsiveModal>

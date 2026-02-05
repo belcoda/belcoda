@@ -14,7 +14,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { v7 as uuidv7 } from 'uuid';
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import { toast } from 'svelte-sonner';
 	import { isSubdomain } from '$lib/utils/string/domain';
 
@@ -62,7 +62,8 @@
 				isOpen = false;
 				onCreated?.();
 			} catch (err) {
-				const errorMessage = err instanceof Error ? err.message : t`Failed to create email signature`;
+				const errorMessage =
+					err instanceof Error ? err.message : t`Failed to create email signature`;
 				toast.error(errorMessage);
 				throw err;
 			}
@@ -120,7 +121,9 @@
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
-				<Form.Description>{t`Optional. If not set, replies will go to the email address above.`}</Form.Description>
+				<Form.Description
+					>{t`Optional. If not set, replies will go to the email address above.`}</Form.Description
+				>
 			</Form.Field>
 
 			<Form.Field {form} name="returnPathDomain">
@@ -136,7 +139,9 @@
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
-				<Form.Description>{t`Optional. The return path domain is used for bounce handling.`}</Form.Description>
+				<Form.Description
+					>{t`Optional. The return path domain is used for bounce handling.`}</Form.Description
+				>
 			</Form.Field>
 		</form>
 	{/snippet}

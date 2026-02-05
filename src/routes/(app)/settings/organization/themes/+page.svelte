@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -19,11 +19,13 @@
 	let { form, data, helpers } = $state(
 		createForm({
 			schema: themeSettingsSchema,
-			initialData: (organization.data?.settings as OrganizationSettingsSchema)?.theme || defaultThemeSettings(),
+			initialData:
+				(organization.data?.settings as OrganizationSettingsSchema)?.theme ||
+				defaultThemeSettings(),
 			validateOnLoad: false,
 			onSubmit: async (formData) => {
 				if (!appState.organizationId) {
-					toast.error('Organization ID not found');
+					toast.error(t`Organization ID not found`);
 					return;
 				}
 
@@ -42,7 +44,7 @@
 					await response.server;
 					toast.success(t`Theme settings saved successfully.`);
 				} catch (err) {
-					toast.error(err instanceof Error ? err.message : 'Failed to save theme settings');
+					toast.error(err instanceof Error ? err.message : t`Failed to save theme settings`);
 				}
 			}
 		})

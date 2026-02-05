@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type EventSchema } from '$lib/schema/event';
 	import { type OrganizationSchema } from '$lib/schema/organization';
 	import { type PersonSchema } from '$lib/schema/person';
@@ -79,7 +80,7 @@
 
 						{#if event.description}
 							<div class="border-t border-gray-200 pt-8">
-								<h2 class="mb-4 text-xl font-semibold text-gray-900">What to Expect:</h2>
+								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`What to Expect:`}</h2>
 								<div class="space-y-4 text-gray-700">
 									<p>
 										{JSON.stringify(event.description)}
@@ -90,7 +91,7 @@
 
 						{#if event.settings?.attachments && event.settings.attachments.length > 0}
 							<div class="border-t border-gray-200 pt-8">
-								<h2 class="mb-4 text-xl font-semibold text-gray-900">Resources:</h2>
+								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`Resources:`}</h2>
 								<div class="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
 									{#each event.settings.attachments as attachment}
 										<a
@@ -102,7 +103,7 @@
 											{#if attachment.thumbnail}
 												<img
 													src={attachment.thumbnail}
-													alt="Attachment thumbnail"
+													alt={t`Attachment thumbnail`}
 													class="h-8 w-8 shrink-0 rounded"
 												/>
 											{:else}

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
+	import { t } from '$lib/index.svelte';
 	const navClass = cn(
 		buttonVariants({ variant: 'ghost', size: 'default' }),
 		'h-full w-full justify-center rounded-none'

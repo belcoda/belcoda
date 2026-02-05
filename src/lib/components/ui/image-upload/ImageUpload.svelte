@@ -98,8 +98,9 @@
 	import BadgeXIcon from '@lucide/svelte/icons/badge-x';
 	import RefreshCCWIcon from '@lucide/svelte/icons/refresh-ccw';
 	import { cn } from '$lib/utils.js';
-	let title = 'Upload Image';
-	let description = 'Upload an image to your workspace';
+	import { t } from '$lib/index.svelte';
+	let title = t`Upload Image`;
+	let description = t`Upload an image to your workspace`;
 	let open = $state(false);
 	let crop = $state({ x: 0, y: 0 });
 	let zoom = $state(1);
@@ -202,41 +203,41 @@
 	{#if currentState === 'size'}
 		<div class="text-white">
 			<div class="flex justify-center"><BadgeXIcon class="size-5" /></div>
-			<div class="text-center text-sm font-medium">Too large!</div>
+			<div class="text-center text-sm font-medium">{t`Too large!`}</div>
 			<div class="text-center text-xs font-medium">
-				{`(Max ${humanReadableMaxFileSize})`}
+				{t`(Max ${humanReadableMaxFileSize})`}
 			</div>
 		</div>
 	{:else if currentState === 'type'}
 		<div class="text-white">
 			<div class="flex justify-center"><BadgeXIcon class="size-5" /></div>
-			<div class="text-center text-sm font-medium">Wrong file type!</div>
-			<div class="text-center text-xs font-medium">Allowed: .png, .jpg, .jpeg</div>
+			<div class="text-center text-sm font-medium">{t`Wrong file type!`}</div>
+			<div class="text-center text-xs font-medium">{t`Allowed: .png, .jpg, .jpeg`}</div>
 		</div>
 	{:else if currentState === 'validation'}
 		<div class="text-white">
 			<div class="flex justify-center"><BadgeXIcon class="size-5" /></div>
-			<div class="text-center text-sm font-medium">Validation error!</div>
-			<div class="text-center text-xs font-medium">Please try again.</div>
+			<div class="text-center text-sm font-medium">{t`Validation error!`}</div>
+			<div class="text-center text-xs font-medium">{t`Please try again.`}</div>
 		</div>
 	{:else if currentState === 'upload'}
 		<div class="text-white">
 			<div class="flex justify-center"><BadgeXIcon class="size-5" /></div>
-			<div class="text-center text-sm font-medium">Upload error!</div>
-			<div class="text-center text-xs font-medium">Please try again.</div>
+			<div class="text-center text-sm font-medium">{t`Upload error!`}</div>
+			<div class="text-center text-xs font-medium">{t`Please try again.`}</div>
 		</div>
 	{:else if currentState === 'custom'}
 		<div class="text-white">
 			<div class="flex justify-center"><BadgeXIcon class="size-5" /></div>
-			<div class="text-center text-sm font-medium">Error</div>
-			<div class="text-center text-xs font-medium">Unknown error</div>
+			<div class="text-center text-sm font-medium">{t`Error`}</div>
+			<div class="text-center text-xs font-medium">{t`Unknown error`}</div>
 		</div>
 	{:else}
 		<div>
 			<div class="flex justify-center"><UploadIcon class="size-4 text-white" /></div>
-			<div class="text-center text-sm font-medium text-white">Upload an image</div>
+			<div class="text-center text-sm font-medium text-white">{t`Upload an image`}</div>
 			<div class="text-center text-xs font-medium text-white">
-				{`(Max size: ${humanReadableMaxFileSize})`}
+				{t`(Max size: ${humanReadableMaxFileSize})`}
 			</div>
 		</div>
 	{/if}

@@ -17,6 +17,7 @@
 	}
 
 	const { personId }: { personId: string } = $props();
+	import { t } from '$lib/index.svelte';
 
 	import { listTags } from '$lib/zero/query/tag/list';
 	import { z } from '$lib/zero.svelte';
@@ -43,16 +44,16 @@
 	<Popover.Trigger bind:ref={triggerRef}>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline" class="gap-2" role="combobox" aria-expanded={open}>
-				Add
+				{t`Add`}
 				<ChevronDownIcon class="size-4" />
 			</Button>
 		{/snippet}
 	</Popover.Trigger>
 	<Popover.Content class="p-0">
 		<Command.Root>
-			<Command.Input autofocus placeholder="Filter tags..." />
+			<Command.Input autofocus placeholder={t`Filter tags...`} />
 			<Command.List>
-				<Command.Empty class="text-sm text-muted-foreground">No tags found.</Command.Empty>
+				<Command.Empty class="text-sm text-muted-foreground">{t`No tags found.`}</Command.Empty>
 				<Command.Group>
 					{#each tagList.data as tag (tag.id)}
 						{#if !personTagList.data.some((pt) => pt.id === tag.id)}

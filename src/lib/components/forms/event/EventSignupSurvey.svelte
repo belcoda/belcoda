@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { appState } from '$lib/state.svelte';
-	import { locale } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type Readable } from 'svelte/store';
 	import { type CreateEventZero, type UpdateEventZero } from '$lib/schema/event';
@@ -71,13 +71,17 @@
 		});
 	}
 
+	const optionLabel = (index: number) => {
+		return t`Option ${(index + 1).toString()}`;
+	};
+
 	function addOption(questionIndex: number) {
 		if (!$data.settings?.survey) return;
 		if (!('options' in $data.settings.survey.collections[0].questions[questionIndex])) return;
 		const length = $data.settings.survey.collections[0].questions[questionIndex].options.length;
 		$data.settings.survey.collections[0].questions[questionIndex].options = [
 			...$data.settings.survey.collections[0].questions[questionIndex].options,
-			`Option ${length + 1}`
+			optionLabel(length)
 		];
 	}
 
@@ -100,9 +104,9 @@
 <div class="space-y-6">
 	<div class="space-y-4">
 		<div>
-			<h3 class="text-sm leading-none font-medium">Standard Information</h3>
+			<h3 class="text-sm leading-none font-medium">{t`Standard Information`}</h3>
 			<p class="mt-1.5 text-sm text-muted-foreground">
-				Select which standard information fields to collect from attendees.
+				{t`Select which standard information fields to collect from attendees.`}
 			</p>
 		</div>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -164,9 +168,9 @@
 	<div class="space-y-4">
 		<div class="flex items-center justify-between">
 			<div>
-				<h3 class="text-sm leading-none font-medium">Custom Questions</h3>
+				<h3 class="text-sm leading-none font-medium">{t`Custom Questions`}</h3>
 				<p class="mt-1.5 text-sm text-muted-foreground">
-					Add custom questions to collect additional information from attendees.
+					{t`Add custom questions to collect additional information from attendees.`}
 				</p>
 			</div>
 			{@render addQuestionDropdown()}
@@ -179,7 +183,7 @@
 						<Accordion.Item value={field.id} class="rounded-lg border last:border-b">
 							<Accordion.Trigger class="px-4 py-3 hover:no-underline">
 								<div class="flex w-full items-center justify-between pr-4">
-									<span class="font-medium">{field.label || 'Untitled Question'}</span>
+									<span class="font-medium">{field.label || t`Untitled Question`}</span>
 									<span class="text-xs text-muted-foreground">
 										{renderQuestionTypeName(field.type, locale.current)}
 									</span>
@@ -194,12 +198,12 @@
 										<Form.Control>
 											{#snippet children({ props })}
 												{#if $data.settings?.survey}
-													<Form.Label>Question Label</Form.Label>
+													<Form.Label>{t`Question Label`}</Form.Label>
 													<Input
 														type="text"
 														{...props}
 														bind:value={$data.settings.survey.collections[0].questions[index].label}
-														placeholder="Enter question label"
+														placeholder={t`Enter question label`}
 													/>
 												{/if}
 											{/snippet}
@@ -223,7 +227,7 @@
 																}
 															/>
 															<Form.Label class="cursor-pointer font-normal"
-																>Required field</Form.Label
+																>{t`Required field`}</Form.Label
 															>
 														</div>
 													{/if}
@@ -240,7 +244,7 @@
 									{#if 'options' in $data.settings?.survey?.collections[0].questions[index]}
 										<div class="space-y-3 rounded-md border p-4">
 											<div class="flex items-center justify-between">
-												<Label class="text-sm font-medium">Options</Label>
+												<Label class="text-sm font-medium">{t`Options`}</Label>
 												<Button
 													onclick={() => addOption(index)}
 													variant="outline"
@@ -248,7 +252,7 @@
 													type="button"
 												>
 													<PlusIcon class="mr-2 size-4" />
-													Add option
+													{t`Add option`}
 												</Button>
 											</div>
 											<div class="space-y-2">
@@ -284,7 +288,7 @@
 															class="shrink-0"
 														>
 															<XIcon class="size-4" />
-															<span class="sr-only">Remove option</span>
+															<span class="sr-only">{t`Remove option`}</span>
 														</Button>
 													</div>
 												{/each}
@@ -299,8 +303,10 @@
 			</Accordion.Root>
 		{:else}
 			<div class="rounded-lg border border-dashed p-8 text-center">
-				<p class="text-sm text-muted-foreground">No custom questions added yet.</p>
-				<p class="mt-1 text-xs text-muted-foreground">Click "Add question" above to get started.</p>
+				<p class="text-sm text-muted-foreground">{t`No custom questions added yet.`}</p>
+				<p class="mt-1 text-xs text-muted-foreground">
+					{t`Click "Add question" above to get started.`}
+				</p>
 			</div>
 		{/if}
 	</div>
@@ -310,20 +316,23 @@
 	<Dropdown.Root>
 		<Dropdown.Trigger class={buttonVariants({ variant: 'outline', size: 'sm' })}>
 			<PlusIcon class="mr-2 size-4" />
-			Add question
+			{t`Add question`}
 			<ChevronDownIcon class="ml-2 size-4" />
 		</Dropdown.Trigger>
 		<Dropdown.Content>
-			<Dropdown.Item onclick={() => addQuestion('custom.textInput')}>Short text</Dropdown.Item>
-			<Dropdown.Item onclick={() => addQuestion('custom.textarea')}>Long text</Dropdown.Item>
-			<Dropdown.Item onclick={() => addQuestion('custom.dateInput')}>Date</Dropdown.Item>
-			<Dropdown.Item onclick={() => addQuestion('custom.checkboxGroup')}>Checkboxes</Dropdown.Item>
-			<Dropdown.Item onclick={() => addQuestion('custom.radioGroup')}>Multiple choice</Dropdown.Item
+			<Dropdown.Item onclick={() => addQuestion('custom.textInput')}>{t`Short text`}</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.textarea')}>{t`Long text`}</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.dateInput')}>{t`Date`}</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.checkboxGroup')}
+				>{t`Checkboxes`}</Dropdown.Item
 			>
-			<Dropdown.Item onclick={() => addQuestion('custom.dropdown')}>Dropdown</Dropdown.Item>
-			<Dropdown.Item onclick={() => addQuestion('custom.emailInput')}>Email</Dropdown.Item>
-			<Dropdown.Item onclick={() => addQuestion('custom.phoneInput')}>Phone</Dropdown.Item>
-			<Dropdown.Item onclick={() => addQuestion('custom.numberInput')}>Number</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.radioGroup')}
+				>{t`Multiple choice`}</Dropdown.Item
+			>
+			<Dropdown.Item onclick={() => addQuestion('custom.dropdown')}>{t`Dropdown`}</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.emailInput')}>{t`Email`}</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.phoneInput')}>{t`Phone`}</Dropdown.Item>
+			<Dropdown.Item onclick={() => addQuestion('custom.numberInput')}>{t`Number`}</Dropdown.Item>
 		</Dropdown.Content>
 	</Dropdown.Root>
 {/snippet}
@@ -331,36 +340,36 @@
 {#snippet changeQuestionTypeDropdown(questionIndex: number, questionType: SurveyQuestionType)}
 	<Dropdown.Root>
 		<Dropdown.Trigger class={buttonVariants({ variant: 'outline', size: 'sm' })}>
-			Change type
+			{t`Change type`}
 			<ChevronDownIcon class="ml-2 size-4" />
 		</Dropdown.Trigger>
 		<Dropdown.Content>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.textInput')}
-				>Short text</Dropdown.Item
+				>{t`Short text`}</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.textarea')}
-				>Long text</Dropdown.Item
+				>{t`Long text`}</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.dateInput')}
-				>Date</Dropdown.Item
+				>{t`Date`}</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.checkboxGroup')}
-				>Checkboxes</Dropdown.Item
+				>{t`Checkboxes`}</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.radioGroup')}
-				>Multiple choice</Dropdown.Item
+				>{t`Multiple choice`}</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.dropdown')}
-				>Dropdown</Dropdown.Item
+				>{t`Dropdown`}</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.emailInput')}
-				>Email</Dropdown.Item
+				>{t`Email`}</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.phoneInput')}
-				>Phone</Dropdown.Item
+				>{t`Phone`}</Dropdown.Item
 			>
 			<Dropdown.Item onclick={() => changeQuestionType(questionIndex, 'custom.numberInput')}
-				>Number</Dropdown.Item
+				>{t`Number`}</Dropdown.Item
 			>
 		</Dropdown.Content>
 	</Dropdown.Root>
@@ -372,13 +381,13 @@
 		size="icon"
 		type="button"
 		onclick={() => {
-			if (window.confirm('Are you sure you want to remove this question?')) {
+			if (window.confirm(t`Are you sure you want to remove this question?`)) {
 				removeQuestion(questionId);
 			}
 		}}
 		class="text-destructive hover:text-destructive"
 	>
 		<XIcon class="size-4" />
-		<span class="sr-only">Remove question</span>
+		<span class="sr-only">{t`Remove question`}</span>
 	</Button>
 {/snippet}

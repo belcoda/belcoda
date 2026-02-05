@@ -1,6 +1,7 @@
 <script lang="ts">
 	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 	import { type ReadPetitionZero } from '$lib/schema/petition/petition';
+	import { t } from '$lib/index.svelte';
 	const { petition }: { petition: ReadPetitionZero } = $props();
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
@@ -47,5 +48,5 @@
 	</Card.Content>
 </Card.Root>
 
-{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> Add signature</Button
+{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> {t`Add signature`}</Button
 	>{/snippet}

@@ -21,7 +21,11 @@ export default defineConfig({
 		}),
 		js: js({
 			loader: 'vite',
-			files: ['src/**/+{page,layout}.{js,ts}', 'src/**/+{page,layout}.server.{js,ts}'],
+			files: [
+				'src/**/+{page,layout}.{js,ts}',
+				'src/**/+{page,layout}.server.{js,ts}',
+				'src/**/items.ts'
+			],
 			heuristic: (msg) => {
 				const { details } = msg;
 				if (details.call === 't') {

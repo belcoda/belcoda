@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
@@ -12,17 +13,17 @@
 			<Empty.Media variant="icon">
 				<BookAlertIcon />
 			</Empty.Media>
-			<Empty.Title>Petitions</Empty.Title>
+			<Empty.Title>{t`Petitions`}</Empty.Title>
 			<Empty.Description>
-				Create petitions and collect signatures from your community.
+				{t`Create petitions and collect signatures from your community.`}
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content>
-			<Button href="/petitions/new">Create petition</Button>
+			<Button href="/petitions/new">{t`Create petition`}</Button>
 		</Empty.Content>
 		<Button variant="link" class="text-muted-foreground" size="sm">
 			<a href="#/">
-				Learn more about petitions <ExternalLinkIcon class="inline" />
+				{t`Learn more about petitions`} <ExternalLinkIcon class="inline" />
 			</a>
 		</Button>
 	</Empty.Root>

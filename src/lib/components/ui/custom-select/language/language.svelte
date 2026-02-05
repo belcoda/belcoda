@@ -12,6 +12,7 @@
 		getEnglishLanguageName
 	} from '$lib/utils/language';
 	import { appState } from '$lib/state.svelte';
+	import { t } from '$lib/index.svelte';
 
 	let open = $state(false);
 
@@ -57,16 +58,16 @@
 				role="combobox"
 				aria-expanded={open}
 			>
-				{selectedValue || 'Select a language'}
+				{selectedValue || t`Select a language`}
 				<ChevronsUpDownIcon class="opacity-50" />
 			</Button>
 		{/snippet}
 	</Popover.Trigger>
 	<Popover.Content class="p-0">
 		<Command.Root {...props}>
-			<Command.Input placeholder="Search language..." />
+			<Command.Input placeholder={t`Search language...`} />
 			<Command.List>
-				<Command.Empty>No languages found.</Command.Empty>
+				<Command.Empty>{t`No languages found.`}</Command.Empty>
 				<Command.Group value="languages">
 					{#each languages as language (language.value)}
 						<Command.Item

@@ -11,6 +11,7 @@
 	import { email } from '$lib/schema/helpers';
 
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
+	import { t } from '$lib/index.svelte';
 
 	const schema = objectAsync({
 		givenName: optional(personSchema.entries.givenName),
@@ -39,7 +40,7 @@
 				edit = false;
 			} catch (error) {
 				toast.error(
-					'Could not update email address. Please check that the email address does not belong to another person.'
+					t`Could not update email address. Please check that the email address does not belong to another person.`
 				);
 			}
 		}
@@ -53,7 +54,7 @@
 			{#snippet children({ props })}
 				<Input
 					type="text"
-					placeholder="Given name"
+					placeholder={t`Given name`}
 					{...props}
 					bind:value={$data.givenName as string}
 				/>
@@ -66,7 +67,7 @@
 			{#snippet children({ props })}
 				<Input
 					type="text"
-					placeholder="Family name"
+					placeholder={t`Family name`}
 					{...props}
 					bind:value={$data.familyName as string}
 				/>
@@ -75,8 +76,8 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<div class="mt-3 flex items-center justify-end gap-2">
-		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>Cancel</Button>
-		<Button type="submit" size="sm">Save</Button>
+		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>{t`Cancel`}</Button>
+		<Button type="submit" size="sm">{t`Save`}</Button>
 	</div>
 	<Debug {data} />
 </form>

@@ -28,6 +28,7 @@
 	import NotesAction from '$lib/components/layouts/app/action-menus/person/NotesAction.svelte';
 	import TeamsRow from './rows/Teams.svelte';
 	import TagsRow from './rows/Tags.svelte';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <ContentLayout rootLink={`/community/${params.personId}`} {header}>
@@ -46,27 +47,26 @@
 				{#if appState.isAdminOrOwner}
 					<Alert.Root variant="destructive" class="mt-8 mb-8">
 						<AlertCircleIcon />
-						<Alert.Title>Danger zone!</Alert.Title>
+						<Alert.Title>{t`Danger zone!`}</Alert.Title>
 						<Alert.Description>
-							Delete this person record permanently along with all associated data. Be careful, this
-							action cannot be undone.
+							{t`Delete this person record permanently along with all associated data. Be careful, this action cannot be undone.`}
 
 							<div class="mt-2">
 								<LongPressButton
 									duration={1500}
 									onComplete={async () => {
-										if (window.confirm('Are you sure you want to delete this person?')) {
+										if (window.confirm(t`Are you sure you want to delete this person?`)) {
 											z.mutate.person.delete({
 												metadata: {
 													personId: params.personId,
 													organizationId: appState.organizationId
 												}
 											});
-											toast.success('Person deleted');
+											toast.success(t`Person deleted`);
 											goto(`/community`);
 										}
 									}}
-									>Delete
+									>{t`Delete`}
 								</LongPressButton>
 							</div>
 						</Alert.Description>

@@ -45,7 +45,7 @@
 		}
 	});
 	import H2 from '$lib/components/ui/typography/H2.svelte';
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <Sidebar.Root
@@ -73,11 +73,11 @@
 					<Sidebar.GroupLabel>{group.group}</Sidebar.GroupLabel>
 					<Sidebar.GroupContent>
 						<Sidebar.Menu>
-							{#each group.items as item (item.title)}
+							{#each group.items as item (item.url)}
 								<Sidebar.MenuItem>
 									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 										{#snippet child({ props })}
-											<a href={item.url} {...props}>{item.title}</a>
+											<a href={item.url} {...props}>{item.title()}</a>
 										{/snippet}
 									</Sidebar.MenuButton>
 								</Sidebar.MenuItem>

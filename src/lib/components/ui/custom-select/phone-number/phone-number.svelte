@@ -14,7 +14,7 @@
 		isValidInternationalPhoneNumber
 	} from '$lib/utils/phone';
 	import { appState } from '$lib/state.svelte';
-	import { locale } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import { cn } from '$lib/utils.js';
 
 	import { tick } from 'svelte';
@@ -87,11 +87,11 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 
 	const phonePlaceholder = $derived.by(() => {
-		if (!selectedCountry) return 'Phone number';
+		if (!selectedCountry) return t`Phone number`;
 		const selectedOption = options.find((item) => item.value === selectedCountry);
-		if (!selectedOption) return 'Phone number';
+		if (!selectedOption) return t`Phone number`;
 		const ph = getPhoneNumberExample(selectedOption.value).number?.national;
-		if (!ph) return 'Phone number';
+		if (!ph) return t`Phone number`;
 		return ph;
 	});
 </script>
@@ -113,7 +113,7 @@
 								{...props}
 								variant="ghost"
 								size="xs"
-								aria-label="Select a country"
+								aria-label={t`Select a country`}
 								role="combobox"
 								aria-expanded={open}
 							>
@@ -125,7 +125,7 @@
 									/>
 									({getDialingCode(selectedCountry)})
 								{:else}
-									Select a country
+									{t`Select a country`}
 								{/if}
 								<ChevronsUpDownIcon class="opacity-50" />
 							</InputGroup.Button>
@@ -133,9 +133,9 @@
 					</Popover.Trigger>
 					<Popover.Content class="p-0">
 						<Command.Root>
-							<Command.Input placeholder="Search framework..." />
+							<Command.Input placeholder={t`Search country...`} />
 							<Command.List>
-								<Command.Empty>No framework found.</Command.Empty>
+								<Command.Empty>{t`No countries found.`}</Command.Empty>
 								<Command.Group value="countries">
 									{#each options as option (option.value)}
 										<Command.Item

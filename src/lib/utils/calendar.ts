@@ -2,6 +2,7 @@ import type { EventSchema } from '$lib/schema/event';
 import type { OrganizationSchema } from '$lib/schema/organization';
 import { renderAddress } from '$lib/utils/string/address';
 import type { Locale } from '$lib/utils/language';
+import { t } from '$lib/index.svelte';
 
 interface CalendarEventData {
 	event: EventSchema;
@@ -59,13 +60,13 @@ export function generateICalContent({
 			locale
 		});
 	} else if (event.onlineLink) {
-		location = 'Online Event';
+		location = t`Online Event`;
 	}
 
 	// Prepare description
 	let description = event.shortDescription;
 	if (event.onlineLink) {
-		description += `\n\nJoin online: ${event.onlineLink}`;
+		description += `\n\n${t`Join online:`} ${event.onlineLink}`;
 	}
 
 	// Generate iCal content
@@ -152,7 +153,7 @@ export function generateGoogleCalendarUrl({
 
 	let details = event.shortDescription;
 	if (event.onlineLink && event.addressLine1) {
-		details += `\n\nJoin online: ${event.onlineLink}`;
+		details += `\n\n${t`Join online:`} ${event.onlineLink}`;
 	}
 
 	const params = new URLSearchParams({
@@ -190,7 +191,7 @@ export function generateOutlookUrl({ event, organization, locale }: CalendarEven
 
 	let body = event.shortDescription;
 	if (event.onlineLink && event.addressLine1) {
-		body += `\n\nJoin online: ${event.onlineLink}`;
+		body += `\n\n${t`Join online:`} ${event.onlineLink}`;
 	}
 
 	const params = new URLSearchParams({

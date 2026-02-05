@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
@@ -15,7 +15,9 @@
 		z.createQuery(listEmailFromSignatures(appState.queryContext, emailFromSignatureListFilter))
 	);
 	const organization = $derived.by(() =>
-		z.createQuery(readOrganization(appState.queryContext, { organizationId: appState.organizationId }))
+		z.createQuery(
+			readOrganization(appState.queryContext, { organizationId: appState.organizationId })
+		)
 	);
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -52,7 +54,8 @@
 			});
 			toast.success(t`Email signature verification status updated`);
 		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : t`Failed to verify email signature`;
+			const errorMessage =
+				error instanceof Error ? error.message : t`Failed to verify email signature`;
 			toast.error(errorMessage);
 		} finally {
 			loadingArr = loadingArr.filter((id) => id !== emailFromSignatureId);
@@ -70,7 +73,8 @@
 				});
 				toast.success(t`Email signature deleted successfully`);
 			} catch (error) {
-				const errorMessage = error instanceof Error ? error.message : t`Failed to delete email signature`;
+				const errorMessage =
+					error instanceof Error ? error.message : t`Failed to delete email signature`;
 				toast.error(errorMessage);
 			}
 		}
@@ -105,7 +109,7 @@
 	});
 
 	const computedSelectedValue = $derived(
-		organization.data ? (defaultSignatureId || '__system__') : '__system__'
+		organization.data ? defaultSignatureId || '__system__' : '__system__'
 	);
 
 	let selectedSignatureValue = $state<string>('__system__');
@@ -129,7 +133,8 @@
 			});
 			toast.success(t`Default send signature updated successfully`);
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : t`Failed to update default send signature`;
+			const errorMessage =
+				err instanceof Error ? err.message : t`Failed to update default send signature`;
 			toast.error(errorMessage);
 		} finally {
 			updatingDefault = false;
@@ -190,8 +195,8 @@
 							disabled={updatingDefault}
 						>
 							<Select.Trigger class="w-full justify-between">
-								{signatureOptions.find((opt) => opt.value === displayedSelectedSignatureValue)?.label ||
-									t`Select default signature`}
+								{signatureOptions.find((opt) => opt.value === displayedSelectedSignatureValue)
+									?.label || t`Select default signature`}
 							</Select.Trigger>
 							<Select.Content>
 								{#each signatureOptions as option}
@@ -217,7 +222,7 @@
 		</Card.Header>
 		<Card.Content>
 			<!-- Desktop Table View -->
-			<div class="hidden md:block overflow-x-auto">
+			<div class="hidden overflow-x-auto md:block">
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
@@ -262,14 +267,14 @@
 										</Avatar>
 										<div>
 											<p class="text-sm font-semibold">{signature.name}</p>
-											<p class="text-sm text-muted-foreground font-mono">
+											<p class="font-mono text-sm text-muted-foreground">
 												{signature.emailAddress}
 											</p>
 										</div>
 									</div>
 								</Table.Cell>
 								<Table.Cell>
-									<p class="text-sm font-mono">
+									<p class="font-mono text-sm">
 										{signature.replyTo || signature.emailAddress}
 									</p>
 								</Table.Cell>
@@ -277,9 +282,7 @@
 									{#if signature.returnPathDomain}
 										<div class="space-y-1">
 											<p class="text-sm">{signature.returnPathDomain}</p>
-											<Badge
-												color={signature.returnPathDomainVerified ? 'green' : 'red'}
-											>
+											<Badge color={signature.returnPathDomainVerified ? 'green' : 'red'}>
 												{signature.returnPathDomainVerified ? t`Verified` : t`Not verified`}
 											</Badge>
 										</div>
@@ -295,7 +298,7 @@
 								<Table.Cell>
 									<div class="flex items-center gap-2">
 										{#if signature.externalId}
-											<EditModal signature={signature}>
+											<EditModal {signature}>
 												{#snippet trigger()}
 													<Tooltip.Root>
 														<Tooltip.Trigger>
@@ -372,13 +375,13 @@
 									</Avatar>
 									<div class="flex-1">
 										<p class="text-sm font-semibold">{signature.name}</p>
-										<p class="text-sm text-muted-foreground font-mono">
+										<p class="font-mono text-sm text-muted-foreground">
 											{signature.emailAddress}
 										</p>
 									</div>
 									<div class="flex items-center gap-2">
 										{#if signature.externalId}
-											<EditModal signature={signature}>
+											<EditModal {signature}>
 												{#snippet trigger()}
 													<Button variant="ghost" size="icon">
 														<PencilIcon class="size-4" />
@@ -411,24 +414,22 @@
 								</div>
 
 								<div>
-									<p class="text-xs font-medium text-muted-foreground uppercase mb-1">
+									<p class="mb-1 text-xs font-medium text-muted-foreground uppercase">
 										{t`Reply-to`}
 									</p>
-									<p class="text-sm font-mono">
+									<p class="font-mono text-sm">
 										{signature.replyTo || signature.emailAddress}
 									</p>
 								</div>
 
 								<div>
-									<p class="text-xs font-medium text-muted-foreground uppercase mb-1">
+									<p class="mb-1 text-xs font-medium text-muted-foreground uppercase">
 										{t`Return path`}
 									</p>
 									{#if signature.returnPathDomain}
 										<div class="space-y-1">
 											<p class="text-sm">{signature.returnPathDomain}</p>
-											<Badge
-												color={signature.returnPathDomainVerified ? 'green' : 'red'}
-											>
+											<Badge color={signature.returnPathDomainVerified ? 'green' : 'red'}>
 												{signature.returnPathDomainVerified ? t`Verified` : t`Not verified`}
 											</Badge>
 										</div>
@@ -438,7 +439,7 @@
 								</div>
 
 								<div>
-									<p class="text-xs font-medium text-muted-foreground uppercase mb-1">
+									<p class="mb-1 text-xs font-medium text-muted-foreground uppercase">
 										{t`Status`}
 									</p>
 									<Badge color={signature.verified ? 'green' : 'red'}>

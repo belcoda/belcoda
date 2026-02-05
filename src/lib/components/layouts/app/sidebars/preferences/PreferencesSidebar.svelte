@@ -43,6 +43,7 @@
 		}
 	});
 	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <Sidebar.Root
@@ -55,10 +56,10 @@
 	<Sidebar.Root collapsible="none" class="flex flex-1">
 		<Sidebar.Header class="gap-3.5 border-b p-4">
 			<div class="flex w-full items-center justify-between">
-				<H2>Preferences</H2>
+				<H2>{t`Preferences`}</H2>
 			</div>
 			<InputGroup.Root class="bg-background">
-				<InputGroup.Input placeholder="Search..." bind:value={searchString} />
+				<InputGroup.Input placeholder={t`Search...`} bind:value={searchString} />
 				<InputGroup.Addon>
 					<SearchIcon />
 				</InputGroup.Addon>
@@ -68,11 +69,11 @@
 			<Sidebar.Group>
 				<Sidebar.GroupContent>
 					<Sidebar.Menu>
-						{#each result as item (item.title)}
+						{#each result as item (item.url)}
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 									{#snippet child({ props })}
-										<a href={item.url} {...props}>{item.title}</a>
+										<a href={item.url} {...props}>{item.title()}</a>
 									{/snippet}
 								</Sidebar.MenuButton>
 							</Sidebar.MenuItem>

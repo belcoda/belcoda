@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import AuthLayout from '$lib/components/widgets/AuthLayout.svelte';
 	import { authClient } from '$lib/auth-client';
 	import { email } from '$lib/schema/helpers';
-	import { cn } from '$lib/utils';
 	import { object } from 'valibot';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
@@ -52,8 +51,8 @@
 
 <AuthLayout
 	link="/"
-	title="Forgot your password?"
-	description="Enter your email to reset your password"
+	title={t`Forgot your password?`}
+	description={t`Enter your email to reset your password`}
 >
 	{#if errorAlert}
 		<ErrorAlert>{errorAlert}</ErrorAlert>
@@ -74,11 +73,11 @@
 			<Form.Field {form} name="email">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Email</Form.Label>
+						<Form.Label>{t`Email`}</Form.Label>
 						<Input
 							{...props}
 							type="email"
-							placeholder="email@example.com"
+							placeholder={t`email@example.com`}
 							bind:value={$data.email}
 						/>
 					{/snippet}
@@ -86,14 +85,15 @@
 			</Form.Field>
 
 			<div>
-				<Button type="submit" class="btn-blue w-full" disabled={loading}>Reset password</Button>
+				<Button type="submit" class="btn-blue w-full" disabled={loading}>{t`Reset password`}</Button
+				>
 			</div>
 
 			<Debug {data} />
 		</form>
 		<div class="text-center text-sm">
-			Remember your password?
-			<a href="/login" class="underline underline-offset-4"> Login </a>
+			{t`Remember your password?`}
+			<a href="/login" class="underline underline-offset-4"> {t`Login`} </a>
 		</div>
 	{/if}
 {/snippet}
@@ -101,10 +101,9 @@
 {#snippet successMessage()}
 	<div class="flex flex-col gap-4 text-center">
 		<div class="rounded border border-green-800 bg-green-50 p-4 text-sm text-green-800">
-			<h3 class="mb-2 font-semibold">Password reset email sent</h3>
+			<h3 class="mb-2 font-semibold">{t`Password reset email sent`}</h3>
 			<p>
-				We've sent a password reset email to the email address you provided. Please check your email
-				and follow the instructions to reset your password.
+				{t`We've sent a password reset email to the email address you provided. Please check your email and follow the instructions to reset your password.`}
 			</p>
 		</div>
 	</div>

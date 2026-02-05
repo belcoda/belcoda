@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { readPetition } from '$lib/zero/query/petition/read';
 	import { z } from '$lib/zero.svelte';
@@ -45,13 +46,13 @@
 
 {#snippet header()}
 	<div class="flex items-center justify-between">
-		<h1 class="text-2xl font-bold">Edit petition</h1>
+		<h1 class="text-2xl font-bold">{t`Edit petition`}</h1>
 	</div>
 {/snippet}
 
 {#snippet footer()}
 	<div class="flex w-full justify-end gap-2">
-		<Button variant="outline" href={`/petitions/${params.petitionId}`}>Cancel</Button>
-		<Button type="submit" form="petition-form">Save</Button>
+		<Button variant="outline" href={`/petitions/${params.petitionId}`}>{t`Cancel`}</Button>
+		<Button type="submit" form="petition-form">{t`Save`}</Button>
 	</div>
 {/snippet}

@@ -1,28 +1,32 @@
+import { t } from '$lib/index.svelte';
+
 export const genderOptions = ['male', 'female', 'other', 'not-specified'] as const;
 export type GenderOption = (typeof genderOptions)[number];
-export const genderSelectOptions: { value: GenderOption; label: string }[] = [
-	{
-		value: 'female',
-		label: 'Female'
-	},
-	{
-		value: 'male',
-		label: 'Male'
-	},
-	{
-		value: 'other',
-		label: 'Other'
-	},
-	{
-		value: 'not-specified',
-		label: 'Not Specified'
-	}
-] as const;
+export function getGenderSelectOptions(): { value: GenderOption; label: string }[] {
+	return [
+		{
+			value: 'female',
+			label: t`Female`
+		},
+		{
+			value: 'male',
+			label: t`Male`
+		},
+		{
+			value: 'other',
+			label: t`Other`
+		},
+		{
+			value: 'not-specified',
+			label: t`Not Specified`
+		}
+	];
+}
 
 export const renderGender = (gender: string) => {
 	// get the label from genderSelectOptions
-	const option = genderSelectOptions.find((option) => option.value === gender)?.label;
-	return option ? option : 'Not Specified';
+	const option = getGenderSelectOptions().find((option) => option.value === gender)?.label;
+	return option ? option : t`Not Specified`;
 };
 
 /**

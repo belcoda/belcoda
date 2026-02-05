@@ -3,6 +3,7 @@
 
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	import { type ReadEventZero } from '$lib/schema/event';
+	import { t } from '$lib/index.svelte';
 	let {
 		signups,
 		event,
@@ -30,6 +31,10 @@
 	import XIcon from '@lucide/svelte/icons/x';
 
 	import { handleAddPerson, handleUpdateStatus } from './actions';
+
+	const signupCountLabel = (count: number) => {
+		return t`${count.toString()} signups`;
+	};
 </script>
 
 {#if queryIsCompleted && signups.length === 0}
@@ -38,8 +43,10 @@
 			<Empty.Media variant="icon">
 				<UserPlusIcon />
 			</Empty.Media>
-			<Empty.Title>No signups found</Empty.Title>
-			<Empty.Description>No signups found. Create a new signup to get started.</Empty.Description>
+			<Empty.Title>{t`No signups found`}</Empty.Title>
+			<Empty.Description
+				>{t`No signups found. Create a new signup to get started.`}</Empty.Description
+			>
 		</Empty.Header>
 		<Empty.Content>
 			<div class="flex gap-2">
@@ -50,7 +57,7 @@
 						handleAddPerson({ eventId: event.id, personIds });
 					}}
 				/>
-				{#snippet emptyAddPersonTrigger()}<Button>Add Person</Button>{/snippet}
+				{#snippet emptyAddPersonTrigger()}<Button>{t`Add Person`}</Button>{/snippet}
 			</div>
 		</Empty.Content>
 	</Empty.Root>
@@ -71,14 +78,16 @@
 							}}
 						/>
 						{#if selectedSignups.length > 0}
-							Signups ({selectedSignups.length}/{signups.length})
+							{t`Signups`} ({signupCountLabel(selectedSignups.length)}/{signupCountLabel(
+								signups.length
+							)})
 						{:else}
-							Signups ({signups.length})
+							{t`Signups`} ({signups.length})
 						{/if}
 					</div>
 				</Table.Head>
-				<Table.Head>Status</Table.Head>
-				<Table.Head class="text-end">Actions</Table.Head>
+				<Table.Head>{t`Status`}</Table.Head>
+				<Table.Head class="text-end">{t`Actions`}</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
@@ -132,7 +141,7 @@
 				selectedSignups = [];
 			}}
 		>
-			<CheckIcon class="text-green-700" />Mark as attended
+			<CheckIcon class="text-green-700" />{t`Mark as attended`}
 		</Button>
 		<Button
 			variant="outline"
@@ -149,7 +158,7 @@
 					});
 				});
 				selectedSignups = [];
-			}}><XIcon class="text-red-700" />Mark as no show</Button
+			}}><XIcon class="text-red-700" />{t`Mark as no show`}</Button
 		>
 	</div>
 {/snippet}

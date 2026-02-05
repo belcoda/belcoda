@@ -2,7 +2,7 @@ import { z } from '$lib/zero.svelte';
 import { formatShortTimestamp } from '$lib/utils/date';
 import { getLocalTimeZone } from '@internationalized/date';
 import { appState } from '$lib/state.svelte';
-import { locale } from '$lib/index.svelte';
+import { locale, t } from '$lib/index.svelte';
 import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 import { type ReadEventZero } from '$lib/schema/event';
 
@@ -70,10 +70,10 @@ export function renderSignupChannel({
 	const formattedDate = formatShortTimestamp(date, locale.current, getLocalTimeZone());
 	switch (channel.type) {
 		case 'eventPage':
-			return `Signed up via event page [${formattedDate}]`;
+			return t`Signed up via event page [${formattedDate}]`;
 		case 'adminPanel':
-			return `Added manually [${formattedDate}]`;
+			return t`Added manually [${formattedDate}]`;
 		case 'whatsapp':
-			return `Signed up via WhatsApp [${formattedDate}]`;
+			return t`Signed up via WhatsApp [${formattedDate}]`;
 	}
 }

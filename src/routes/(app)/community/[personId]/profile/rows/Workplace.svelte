@@ -10,9 +10,10 @@
 	import * as Item from '$lib/components/ui/item/index.js';
 	import Building2Icon from '@lucide/svelte/icons/building-2';
 	import BriefcaseIcon from '@lucide/svelte/icons/briefcase';
+	import { t } from '$lib/index.svelte';
 </script>
 
-<ProfileRow title="Workplace" separator={false} showCopyButton={false} bind:edit>
+<ProfileRow title={t`Workplace`} separator={false} showCopyButton={false} bind:edit>
 	{#if edit}
 		<WorkplaceForm bind:edit {person} />
 	{:else}
@@ -29,7 +30,7 @@
 							{person.workplace}
 						</Item.Title>
 					{:else}
-						<Item.Description>Not specified</Item.Description>
+						<Item.Description>{t`Not specified`}</Item.Description>
 					{/if}
 				</Item.Content>
 			</Item.Root>
@@ -45,7 +46,7 @@
 							{person.position}
 						</Item.Title>
 					{:else}
-						<Item.Description>Not specified</Item.Description>
+						<Item.Description>{t`Not specified`}</Item.Description>
 					{/if}
 				</Item.Content>
 			</Item.Root>

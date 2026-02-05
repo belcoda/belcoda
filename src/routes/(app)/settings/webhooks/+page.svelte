@@ -50,17 +50,17 @@
 			});
 
 			await response.server;
-			toast.success('Webhook created successfully');
+			toast.success(t`Webhook created successfully`);
 			createModalOpen = false;
 			name = '';
 			targetUrl = '';
 		} catch (error) {
-			toast.error(error instanceof Error ? error.message : 'Failed to create webhook');
+			toast.error(error instanceof Error ? error.message : t`Failed to create webhook`);
 		}
 	}
 
 	function handleDeleteWebhook(webhook: { id: string; name: string }) {
-		if (!window.confirm(`Are you sure you want to delete the webhook "${webhook.name}"?`)) {
+		if (!window.confirm(t`Are you sure you want to delete the webhook "${webhook.name}"?`)) {
 			return;
 		}
 
@@ -73,15 +73,15 @@
 			});
 
 			z.mutate.webhook.delete(parsed);
-			toast.success('Webhook deleted');
+			toast.success(t`Webhook deleted`);
 		} catch (error) {
-			toast.error(error instanceof Error ? error.message : 'Failed to delete webhook');
+			toast.error(error instanceof Error ? error.message : t`Failed to delete webhook`);
 		}
 	}
 
 	function formatEventTypes(eventTypes: string[]): string {
 		if (eventTypes.includes('all')) {
-			return 'All events';
+			return t`All events`;
 		}
 		return eventTypes.join(', ');
 	}
@@ -91,20 +91,20 @@
 	<div class="space-y-4">
 		{#if webhookList.details.type === 'complete' && webhookList.data && webhookList.data.length === 0}
 			<div class="flex flex-col items-center justify-center py-12 text-center">
-				<p class="text-muted-foreground mb-4">No webhooks configured</p>
+				<p class="text-muted-foreground mb-4">{t`No webhooks configured`}</p>
 				{#if appState.isOwner}
-					<Button onclick={() => (createModalOpen = true)}>Create Webhook</Button>
+					<Button onclick={() => (createModalOpen = true)}>{t`Create Webhook`}</Button>
 				{/if}
 			</div>
 		{:else}
 			<Table.Root>
 				<Table.Header>
 					<Table.Row>
-						<Table.Head>Name</Table.Head>
-						<Table.Head>Target URL</Table.Head>
-						<Table.Head>Event Types</Table.Head>
-						<Table.Head>Created</Table.Head>
-						<Table.Head class="text-right">Actions</Table.Head>
+						<Table.Head>{t`Name`}</Table.Head>
+						<Table.Head>{t`Target URL`}</Table.Head>
+						<Table.Head>{t`Event Types`}</Table.Head>
+						<Table.Head>{t`Created`}</Table.Head>
+						<Table.Head class="text-right">{t`Actions`}</Table.Head>
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
@@ -140,7 +140,7 @@
 					{:else}
 						<Table.Row>
 							<Table.Cell colspan={5} class="text-center text-muted-foreground py-8">
-								Loading webhooks...
+								{t`Loading webhooks...`}
 							</Table.Cell>
 						</Table.Row>
 					{/if}
@@ -152,37 +152,37 @@
 
 {#snippet header()}
 	<div class="flex items-center justify-between">
-		<H2>Webhooks</H2>
+		<H2>{t`Webhooks`}</H2>
 		{#if appState.isOwner}
-			<ResponsiveModal title="Create Webhook" description="Register a new webhook endpoint" bind:open={createModalOpen}>
+			<ResponsiveModal title={t`Create Webhook`} description={t`Register a new webhook endpoint`} bind:open={createModalOpen}>
 				{#snippet trigger()}
-					<Button>Create Webhook</Button>
+					<Button>{t`Create Webhook`}</Button>
 				{/snippet}
 				{#snippet children()}
 					<div class="space-y-2">
-						<Label for="webhook-name-header">Name</Label>
+						<Label for="webhook-name-header">{t`Name`}</Label>
 						<Input
 							id="webhook-name-header"
 							bind:value={name}
-							placeholder="My Webhook"
+							placeholder={t`My Webhook`}
 							required
 						/>
 					</div>
 					<div class="space-y-2">
-						<Label for="webhook-url-header">Target URL</Label>
+						<Label for="webhook-url-header">{t`Target URL`}</Label>
 						<Input
 							id="webhook-url-header"
 							bind:value={targetUrl}
 							type="url"
-							placeholder="https://example.com/webhook"
+							placeholder={t`https://example.com/webhook`}
 							required
 						/>
 					</div>
 				{/snippet}
 				{#snippet footer()}
 					<div class="flex justify-end gap-2">
-						<Button variant="outline" onclick={() => (createModalOpen = false)}>Cancel</Button>
-						<Button onclick={handleCreateWebhook}>Create</Button>
+						<Button variant="outline" onclick={() => (createModalOpen = false)}>{t`Cancel`}</Button>
+						<Button onclick={handleCreateWebhook}>{t`Create`}</Button>
 					</div>
 				{/snippet}
 			</ResponsiveModal>

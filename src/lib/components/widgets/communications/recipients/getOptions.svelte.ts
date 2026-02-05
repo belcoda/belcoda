@@ -6,6 +6,7 @@ import { countryCodes, renderLocalizedCountryName } from '$lib/utils/country';
 import { ageGroupList } from '$lib/utils/person';
 import { languageCodes, getLocalizedLanguageName } from '$lib/utils/language';
 import { genderOptions, renderGender } from '$lib/utils/person';
+import { t } from '$lib/index.svelte';
 
 export type FilterCategory =
 	| 'default'
@@ -79,7 +80,7 @@ export function getFilterOptionsByType(filterState: {
 		case 'eventActivity':
 			return [
 				{
-					label: 'noshow:No show (ever)',
+					label: `noshow:${t`No show (ever)`}`,
 					type: 'eventActivity' as const,
 					include: 'any' as const,
 					status: 'noshow' as const

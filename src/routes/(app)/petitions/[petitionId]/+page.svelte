@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	const { params } = $props();
 	import { readPetition } from '$lib/zero/query/petition/read';
@@ -41,12 +42,12 @@
 						<div class="flex items-center gap-2">
 							<div class="text-lg font-medium">{petition.data.title}</div>
 							<ColorBadge color={petition.data.published ? 'green' : 'gray'}>
-								{petition.data.published ? 'Published' : 'Draft'}
+								{petition.data.published ? t`Published` : t`Draft`}
 							</ColorBadge>
 						</div>
 						{#if petition.data.petitionTarget}
 							<div class="text-sm text-muted-foreground">
-								Target: {petition.data.petitionTarget}
+								{t`Target:`} {petition.data.petitionTarget}
 							</div>
 						{/if}
 					</div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
@@ -12,20 +13,20 @@
 			<Empty.Media variant="icon">
 				<UserSearchIcon />
 			</Empty.Media>
-			<Empty.Title>No Projects Yet</Empty.Title>
+			<Empty.Title>{t`No Projects Yet`}</Empty.Title>
 			<Empty.Description>
-				You haven't created any projects yet. Get started by creating your first project.
+				{t`You haven't created any projects yet. Get started by creating your first project.`}
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content>
 			<div class="flex gap-2">
-				<Button>Create Project</Button>
-				<Button variant="outline">Import Project</Button>
+				<Button>{t`Create Project`}</Button>
+				<Button variant="outline">{t`Import Project`}</Button>
 			</div>
 		</Empty.Content>
 		<Button variant="link" class="text-muted-foreground" size="sm">
 			<a href="#/">
-				Learn More <ExternalLinkIcon class="inline" />
+				{t`Learn More`} <ExternalLinkIcon class="inline" />
 			</a>
 		</Button>
 	</Empty.Root>

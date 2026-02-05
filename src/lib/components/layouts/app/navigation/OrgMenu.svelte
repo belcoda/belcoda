@@ -12,6 +12,7 @@
 	import GradientBorder from '$lib/components/widgets/GradientBorder.svelte';
 	import { goto } from '$app/navigation';
 	import { setActiveOrganizationId } from '$lib/auth-client';
+	import { t } from '$lib/index.svelte';
 	const organizations = appState.organizations;
 	const activeOrganization = appState.activeOrganization;
 	const users = appState.organizationUsers;
@@ -98,7 +99,7 @@
 				{#snippet child({ props })}
 					<a href="/settings" class="flex items-center gap-2" {...props}>
 						<SettingsIcon />
-						Settings
+						{t`Settings`}
 					</a>
 				{/snippet}
 			</DropdownMenu.Item>
@@ -106,7 +107,7 @@
 		<DropdownMenu.Separator />
 		{#if organizations.data}
 			<DropdownMenu.Group>
-				<DropdownMenu.Label>Organizations</DropdownMenu.Label>
+				<DropdownMenu.Label>{t`Organizations`}</DropdownMenu.Label>
 				{#each organizations.data as organization}
 					<DropdownMenu.CheckboxItem
 						class="flex items-center gap-2"
@@ -156,7 +157,7 @@
 {#snippet userCountBadge(count: number)}
 	<span class="flex items-center gap-1 rounded bg-accent px-1.5 py-0.5 text-xs font-medium">
 		<UserIcon class="size-3" />
-		{count} users
+		{count} {t`users`}
 	</span>
 {/snippet}
 
@@ -166,7 +167,7 @@
 		class=" text-heading flex items-center gap-1 rounded border bg-background px-1.5 py-0.5 text-xs font-medium hover:bg-accent"
 	>
 		<PlusIcon class="size-3" />
-		Invite?</a
+		{t`Invite?`}</a
 	>
 {/snippet}
 
@@ -174,22 +175,22 @@
 	{#if role === 'admin'}
 		<span
 			class="rounded border border-green-100 bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-800"
-			>Admin</span
+			>{t`Admin`}</span
 		>
 	{:else if role === 'member'}
 		<span
 			class="rounded border border-blue-100 bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-800"
-			>Member</span
+			>{t`Member`}</span
 		>
 	{:else if role === 'owner'}
 		<span
 			class="rounded border border-green-100 bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-800"
-			>Owner</span
+			>{t`Owner`}</span
 		>
 	{:else}
 		<span
 			class="rounded border border-gray-100 bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-800"
-			>Unknown</span
+			>{t`Unknown`}</span
 		>
 	{/if}
 {/snippet}

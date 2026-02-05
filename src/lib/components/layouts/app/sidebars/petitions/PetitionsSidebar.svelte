@@ -14,6 +14,7 @@
 	import { page } from '$app/state';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
+	import { t } from '$lib/index.svelte';
 
 	let petitionListFilter: PetitionListFilter = $state({
 		...getListFilter(appState.organizationId),
@@ -35,7 +36,7 @@
 	<Sidebar.Root collapsible="none" class="flex w-full flex-1">
 		<Sidebar.Header class="gap-3.5 border-b p-4">
 			<div class="flex w-full items-center justify-between">
-				<div class="text-2xl font-bold text-foreground">Petitions</div>
+				<div class="text-2xl font-bold text-foreground">{t`Petitions`}</div>
 				<Button href="/petitions/new" variant="outline">
 					<PlusIcon class="size-5" />
 				</Button>
@@ -66,11 +67,11 @@
 											<div class="line-clamp-1 text-sm font-medium">{petition.title}</div>
 										</div>
 										<div class="text-xs text-muted-foreground">
-											{petition.petitionTarget || 'No target specified'}
+											{petition.petitionTarget || t`No target specified`}
 										</div>
 									</div>
 									<ColorBadge color={petition.published ? 'green' : 'gray'}>
-										{petition.published ? 'Published' : 'Draft'}
+										{petition.published ? t`Published` : t`Draft`}
 									</ColorBadge>
 								</a>
 							{/each}
@@ -88,12 +89,12 @@
 									<Empty.Media variant="icon">
 										<FileTextIcon />
 									</Empty.Media>
-									<Empty.Title>No petitions found</Empty.Title>
+									<Empty.Title>{t`No petitions found`}</Empty.Title>
 									<Empty.Description>
-										No petitions found. Create a new petition to get started.
+										{t`No petitions found. Create a new petition to get started.`}
 									</Empty.Description>
 									<Empty.Content>
-										<Button href="/petitions/new">Create Petition</Button>
+										<Button href="/petitions/new">{t`Create Petition`}</Button>
 									</Empty.Content>
 								</Empty.Header>
 							</Empty.Root>

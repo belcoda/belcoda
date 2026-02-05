@@ -3,6 +3,7 @@
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <DropdownMenu.Root>
@@ -13,12 +14,12 @@
 		<DropdownMenu.Group>
 			<DropdownMenu.Item>
 				{#snippet child({ props })}
-					<a href="/community/person/new" {...props}> New person </a>
+					<a href="/community/person/new" {...props}> {t`New person`} </a>
 				{/snippet}
 			</DropdownMenu.Item>
-			<DropdownMenu.Item>Billing</DropdownMenu.Item>
-			<DropdownMenu.Item>Team</DropdownMenu.Item>
-			<DropdownMenu.Item>Subscription</DropdownMenu.Item>
+			<DropdownMenu.Item>{t`Billing`}</DropdownMenu.Item>
+			<DropdownMenu.Item>{t`Team`}</DropdownMenu.Item>
+			<DropdownMenu.Item>{t`Subscription`}</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

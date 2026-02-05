@@ -10,6 +10,7 @@ import type { LanguageCode } from '$lib/utils/language';
 import { getCode } from 'country-list';
 import type { SocialMedia, PersonAddedFrom } from '$lib/schema/person/meta';
 import type { GenderOption } from '$lib/utils/person';
+import { t } from '$lib/index.svelte';
 
 const log = pino(import.meta.url);
 
@@ -168,14 +169,14 @@ function mapCsvRowToPerson(
 				country = extractedCode.toUpperCase() as CountryCode;
 			} else {
 				throw new Error(
-					`Invalid country: "${country}" (must be a valid country code or country name)`
+					t`Invalid country: "${country}" (must be a valid country code or country name)`
 				);
 			}
 		} else {
 			country = lowercased.toUpperCase() as CountryCode;
 		}
 	} else {
-		throw new Error('Country is required');
+		throw new Error(t`Country is required`);
 	}
 
 	const preferredLanguage = (

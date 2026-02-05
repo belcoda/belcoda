@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ReadPetitionZero } from '$lib/schema/petition/petition';
 	import { type Snippet } from 'svelte';
 	import { v7 as uuidv7 } from 'uuid';
@@ -15,7 +16,7 @@
 	import { slugify } from '$lib/utils/slug';
 	const newPetition = {
 		...petition,
-		title: `Copy of ${petition.title}`,
+		title: `${t`Copy of`} ${petition.title}`,
 		slug: `copy-of-${petition.slug}`,
 		published: false,
 		publishedAt: null,
@@ -57,13 +58,13 @@
 		<Form.Field {form} name="title">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Petition title</Form.Label>
-					<Input {...props} bind:value={$data.title} placeholder="Petition title" />
+					<Form.Label>{t`Petition title`}</Form.Label>
+					<Input {...props} bind:value={$data.title} placeholder={t`Petition title`} />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<Button type="submit">Make a copy</Button>
+		<Button type="submit">{t`Make a copy`}</Button>
 		<Debug {data} hide={true} />
 	</form>
 </ResponsiveModal>
