@@ -1,97 +1,97 @@
 import { t } from '$lib/index.svelte';
 export const settingsItems: {
-	title: string;
+	title: () => string;
 	group: string;
 	url: string;
 	keywords: string[];
 	permissions: 'admin' | 'owner' | 'member';
 }[] = [
 	{
-		title: t`Configuration`,
+		title: () => t`Configuration`,
 		group: 'Organization',
 		url: '/settings/organization/settings',
 		keywords: ['organization', 'settings', 'preferences', 'config'],
 		permissions: 'admin'
 	},
 	{
-		title: t`Themes & colors`,
+		title: () => t`Themes & colors`,
 		group: 'Organization',
 		url: '/settings/organization/themes',
 		keywords: ['themes', 'colors', 'icon', 'logo', 'branding'],
 		permissions: 'admin'
 	},
 	{
-		title: t`Email from signatures`,
+		title: () => t`Email from signatures`,
 		group: 'Email',
 		url: '/settings/email/send_signatures',
 		keywords: ['email', 'from', 'address', 'send', 'signature'],
 		permissions: 'admin'
 	},
 	{
-		title: t`Tags`,
+		title: () => t`Tags`,
 		group: 'Community',
 		url: '/settings/tags',
 		keywords: ['tags', 'people', 'tag', 'tagging'],
 		permissions: 'admin'
 	},
 	{
-		title: t`Teams`,
+		title: () => t`Teams`,
 		group: 'Community',
 		url: '/settings/people/teams',
 		keywords: ['teams', 'people', 'team'],
 		permissions: 'admin'
 	},
 	{
-		title: t`Imports`,
+		title: () => t`Imports`,
 		group: 'Community',
 		url: '/settings/people/imports',
 		keywords: ['imports', 'people', 'import', 'csv'],
 		permissions: 'admin'
 	},
 	{
-		title: t`Exports`,
+		title: () => t`Exports`,
 		group: 'Community',
 		url: '/settings/people/exports',
 		keywords: ['exports', 'people', 'export', 'csv'],
 		permissions: 'admin'
 	},
 	{
-		title: t`Subscription`,
+		title: () => t`Subscription`,
 		group: 'Billing',
 		url: '/settings/billing/subscription',
 		keywords: ['subscription', 'billing', 'payments'],
 		permissions: 'owner'
 	},
 	{
-		title: t`Credit balance`,
+		title: () => t`Credit balance`,
 		group: 'Billing',
 		url: '/settings/billing/credit',
 		keywords: ['credit', 'balance', 'billing', 'payments', 'recharge'],
 		permissions: 'owner'
 	},
 	{
-		title: t`Webhooks`,
+		title: () => t`Webhooks`,
 		group: 'Developer',
 		url: '/settings/webhooks',
 		keywords: ['webhooks', 'hooks', 'api', 'events'],
 		permissions: 'owner'
 	},
 	{
-		title: t`API keys`,
+		title: () => t`API keys`,
 		group: 'Developer',
 		url: '/settings/api-keys',
 		keywords: ['api', 'api-key', 'api-keys'],
 		permissions: 'owner'
 	},
 	{
-		title: t`WhatsApp templates`,
+		title: () => t`WhatsApp templates`,
 		group: 'WhatsApp',
 		url: '/settings/whatsapp/templates',
 		keywords: ['whatsapp', 'templates'],
 		permissions: 'admin'
 	},
 	{
-		title: t`WhatsApp accounts`,
+		title: () => t`WhatsApp accounts`,
 		group: 'WhatsApp',
 		url: '/settings/whatsapp/accounts',
 		keywords: ['whatsapp', 'accounts', 'onboarding', 'meta', 'embedded', 'wa'],

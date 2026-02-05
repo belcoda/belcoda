@@ -69,11 +69,11 @@
 			<Sidebar.Group>
 				<Sidebar.GroupContent>
 					<Sidebar.Menu>
-						{#each result as item (item.title)}
+						{#each result as item (item.url)}
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 									{#snippet child({ props })}
-										<a href={item.url} {...props}>{item.title}</a>
+										<a href={item.url} {...props}>{item.title()}</a>
 									{/snippet}
 								</Sidebar.MenuButton>
 							</Sidebar.MenuItem>
