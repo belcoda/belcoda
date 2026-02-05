@@ -45,6 +45,8 @@ import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
 
+import type { SerializedEditorState } from 'lexical';
+
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
@@ -731,7 +733,7 @@ export const event = pgTable(
 		slug: text('slug').notNull(),
 		title: text('title').notNull(),
 		shortDescription: text('short_description').notNull(),
-		description: jsonb('description'),
+		description: jsonb('description').$type<SerializedEditorState>(),
 
 		published: boolean('published').notNull(),
 
