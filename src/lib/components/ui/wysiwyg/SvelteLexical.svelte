@@ -16,7 +16,6 @@
 	} from 'svelte-lexical';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
-
 	let {
 		value = $bindable(null),
 		onChange,
@@ -31,7 +30,7 @@
 		theme,
 		namespace: 'belcoda_wysiwyg',
 		nodes: [],
-		editable: !disabled,
+		editable: (() => !disabled)(),
 		editorState: value ? JSON.stringify(value) : undefined,
 		onError: (error: Error) => {
 			throw error;
