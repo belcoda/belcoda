@@ -4,8 +4,13 @@ import {
 	type UpdateOrganization,
 	type UpdateOrganizationWhatsappSettings
 } from '$lib/schema/organization';
+import {
+	type UpdateThemeZeroMutatorSchema,
+	updateThemeZeroMutatorSchema
+} from '$lib/schema/organization/settings';
 import { organization } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
+import { parse } from 'valibot';
 
 export function updateOrganization(params: MutatorParams) {
 	return async function (
@@ -20,6 +25,15 @@ export function updateOrganization(params: MutatorParams) {
 			throw new Error('You are not authorized to update this organization');
 		}
 
+		const [currentOrg] = await tx.dbTransaction.wrappedTransaction
+			.select()
+			.from(organization)
+			.where(eq(organization.id, organizationId))
+			.limit(1);
+
+		if (!currentOrg) {
+			throw new Error('Organization not found');
+		}
 		const [updated] = await tx.dbTransaction.wrappedTransaction
 			.update(organization)
 			.set({
@@ -83,8 +97,7 @@ export function updateOrganizationWhatsappSettings(params: MutatorParams) {
 		}
 
 		params.result?.push(updated);
-    
-  };
+	};
 }
 
 export function updateTheme(params: MutatorParams) {
@@ -108,7 +121,7 @@ export function updateTheme(params: MutatorParams) {
 			throw new Error('Organization not found');
 		}
 
-		await tx.dbTransaction.wrappedTransaction
+		const [updated] = await tx.dbTransaction.wrappedTransaction
 			.update(organization)
 			.set({
 				settings: {
@@ -120,7 +133,7 @@ export function updateTheme(params: MutatorParams) {
 				},
 				updatedAt: new Date()
 			})
-			.where(eq(organization.id, parsed.metadata.organizationId));
-   };
+			.where(eq(organization.id, parsed.metadata.organizationId))
+			.returning();
+	};
 }
-

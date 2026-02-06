@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
+	import { goto } from '$app/navigation';
+	import { tick } from 'svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -24,15 +26,15 @@
 				defaultThemeSettings(),
 			validateOnLoad: false,
 			onSubmit: async (formData) => {
-				if (!appState.organizationId) {
-					toast.error(t`Organization ID not found`);
-					return;
-				}
-
 				try {
-					const response = z.mutate.organization.updateTheme({
+					if (!organization.data?.settings) {
+						toast.error(t`Organization settings not found`);
+						return;
+					}
+					z.mutate.organization.updateTheme({
 						metadata: {
-							organizationId: appState.organizationId
+							organizationId: appState.organizationId,
+							existingSettings: { ...(() => organization.data?.settings)() }
 						},
 						input: {
 							favicon: formData.favicon,
@@ -41,8 +43,9 @@
 						}
 					});
 
-					await response.server;
 					toast.success(t`Theme settings saved successfully.`);
+					await tick();
+					await goto(`/settings`);
 				} catch (err) {
 					toast.error(err instanceof Error ? err.message : t`Failed to save theme settings`);
 				}
