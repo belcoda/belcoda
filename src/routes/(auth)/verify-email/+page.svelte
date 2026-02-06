@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { goto } from '$app/navigation';
@@ -16,14 +17,14 @@
 		</a>
 		<Card.Root>
 			<Card.Header class="text-center">
-				<Card.Title class="text-xl">Email Verified</Card.Title>
-				<Card.Description>Your email has been successfully verified</Card.Description>
+				<Card.Title class="text-xl">{t`Email Verified`}</Card.Title>
+				<Card.Description>{t`Your email has been successfully verified`}</Card.Description>
 			</Card.Header>
 			<Card.Content class="flex flex-col gap-4">
 				<div class="rounded border border-green-800 bg-green-50 p-4 text-sm text-green-800 text-center">
-					<p>Your email address has been verified. You can now sign in to your account.</p>
+					<p>{t`Your email address has been verified. You can now sign in to your account.`}</p>
 				</div>
-				<Button class="w-full" onclick={() => goto('/login')}> Go to Login </Button>
+				<Button class="w-full" onclick={() => goto('/login')}> {t`Go to Login`} </Button>
 			</Card.Content>
 		</Card.Root>
 	</div>

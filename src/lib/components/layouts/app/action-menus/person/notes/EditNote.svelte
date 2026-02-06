@@ -13,6 +13,7 @@
 	import { appState } from '$lib/state.svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
+	import { t } from '$lib/index.svelte';
 
 	let {
 		note,
@@ -51,7 +52,7 @@
 				<InputGroup.Root>
 					<InputGroup.Textarea
 						{...props}
-						placeholder="Edit note..."
+						placeholder={t`Edit note...`}
 						bind:value={$data.note}
 						onkeydown={(e) => {
 							if (e.key === 'Enter' && !e.shiftKey && (e.metaKey || e.ctrlKey)) {
@@ -71,13 +72,13 @@
 			{/snippet}
 		</Form.Control>
 		<Form.FieldErrors />
-	</Form.Field>
-	<div class="flex justify-end gap-2">
-		<Button variant="outline" type="button" size="sm" onclick={() => (editOpen = false)}
-			>Cancel</Button
-		>
-		<Button variant="default" type="submit" size="sm">
-			<ArrowUpIcon /> Update note
-		</Button>
-	</div>
+		</Form.Field>
+		<div class="flex justify-end gap-2">
+			<Button variant="outline" type="button" size="sm" onclick={() => (editOpen = false)}
+				>{t`Cancel`}</Button
+			>
+			<Button variant="default" type="submit" size="sm">
+				<ArrowUpIcon /> {t`Update note`}
+			</Button>
+		</div>
 </form>

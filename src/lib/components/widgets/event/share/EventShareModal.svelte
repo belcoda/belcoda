@@ -4,6 +4,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { listActionCodes } from '$lib/zero/query/action_code/list';
 	import { readEvent } from '$lib/zero/query/event/read';
+	import { t } from '$lib/index.svelte';
 	const actionCodes = $derived.by(() => {
 		return z.createQuery(
 			listActionCodes(appState.queryContext, {
@@ -34,9 +35,9 @@
 
 <Tabs.Root value="share">
 	<Tabs.List>
-		<Tabs.Trigger value="share">Share</Tabs.Trigger>
-		<Tabs.Trigger value="embed">Embed</Tabs.Trigger>
-		<Tabs.Trigger value="checkin">Check-in</Tabs.Trigger>
+		<Tabs.Trigger value="share">{t`Share`}</Tabs.Trigger>
+		<Tabs.Trigger value="embed">{t`Embed`}</Tabs.Trigger>
+		<Tabs.Trigger value="checkin">{t`Check-in`}</Tabs.Trigger>
 	</Tabs.List>
 	<Tabs.Content value="share">
 		{#if event.data && actionCodeSignup}

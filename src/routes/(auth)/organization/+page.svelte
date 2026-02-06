@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { authClient } from '$lib/auth-client';
 	import { parse } from 'valibot';
 	import { type ReadOrganizationRest, readOrganizationRest } from '$lib/schema/organization';
@@ -27,12 +28,16 @@
 		// @ts-expect-error - icon and logo are not defined in the organization schema
 		return organization.icon || organization.logo;
 	}
+
+	const errorLoadingInvitations = (error: Error) => {
+		return t`Error loading invitations: ${error.message}`;
+	};
 </script>
 
 <AuthLayout
 	link="/"
-	title="My Organizations"
-	description="Each organization is a separate entity with its own resources and users"
+	title={t`My Organizations`}
+	description={t`Each organization is a separate entity with its own resources and users`}
 	{footer}
 >
 	<div class="flex w-full max-w-md flex-col gap-4">
@@ -42,7 +47,7 @@
 </AuthLayout>
 {#snippet footer()}
 	<div class="text-center text-xs text-muted-foreground">
-		<a href="/" class="underline underline-offset-4">Back to dashboard</a>
+		<a href="/" class="underline underline-offset-4">{t`Back to dashboard`}</a>
 	</div>
 {/snippet}
 
@@ -57,7 +62,7 @@
 			{/each}
 		{/if}
 	{:catch error}
-		<ErrorAlert>Error loading invitations: {error?.message ?? 'Unknown error'}</ErrorAlert>
+		<ErrorAlert>{errorLoadingInvitations(error)}</ErrorAlert>
 	{/await}
 {/snippet}
 
@@ -114,7 +119,7 @@
 					<CirclePlusIcon class="size-5 text-muted-foreground" />
 				</Item.Media>
 				<Item.Content>
-					<Item.Title class="line-clamp-1">Create a new organization</Item.Title>
+					<Item.Title class="line-clamp-1">{t`Create a new organization`}</Item.Title>
 				</Item.Content>
 				<Item.Content>
 					<ChevronRightIcon class="size-4 text-muted-foreground" />

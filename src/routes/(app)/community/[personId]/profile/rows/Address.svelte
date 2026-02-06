@@ -6,6 +6,7 @@
 	let { person }: { person: ReadPersonZero } = $props();
 	import { renderAddress } from '$lib/utils/string/address';
 	import { appState } from '$lib/state.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import AddressForm from './form/Address.svelte';
 	import ProfileRow from '../ProfileRow.svelte';
 	let edit = $state(false);
@@ -13,7 +14,7 @@
 
 <ProfileRow
 	bind:edit
-	title="Address"
+	title={t`Address`}
 	separator={true}
 	showCopyButton={true}
 	copyText={renderAddress({
@@ -23,7 +24,7 @@
 		region: person.region,
 		postcode: person.postcode,
 		country: person.country,
-		locale: appState.locale
+		locale: locale.current
 	})}
 >
 	{#if edit}
@@ -43,7 +44,7 @@
 		{/if}
 
 		<div class="line-clamp-1">
-			{renderLocalizedCountryName(person.country as CountryCode, appState.locale)}
+			{renderLocalizedCountryName(person.country as CountryCode, locale.current)}
 			{person.postcode}
 		</div>
 	{/if}

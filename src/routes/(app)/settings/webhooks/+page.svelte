@@ -1,0 +1,191 @@
+<script lang="ts">
+	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
+	import { z } from '$lib/zero.svelte';
+	import { getListFilter, appState } from '$lib/state.svelte';
+	import { listWebhooks } from '$lib/zero/query/webhook/list';
+	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { v7 as uuidv7 } from 'uuid';
+	import { parse } from 'valibot';
+	import { createWebhookZero, deleteMutatorSchemaZero, type ReadWebhookZero } from '$lib/schema/webhook';
+	import { toast } from 'svelte-sonner';
+	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import { formatDate } from '$lib/utils/date';
+
+	let webhookListFilter = $state({
+		...getListFilter(appState.organizationId)
+	});
+	const webhookList = $derived.by(() =>
+		z.createQuery(listWebhooks(appState.queryContext, webhookListFilter))
+	);
+
+	let createModalOpen = $state(false);
+	let name = $state('');
+	let targetUrl = $state('');
+
+	async function handleCreateWebhook() {
+		if (!name.trim() || !targetUrl.trim()) {
+			toast.error('Please fill in all required fields');
+			return;
+		}
+
+		try {
+			const webhookId = uuidv7();
+			const parsed = parse(createWebhookZero, {
+				name: name.trim(),
+				targetUrl: targetUrl.trim(),
+				eventTypes: ['all'] as const
+			});
+
+			const response = z.mutate.webhook.create({
+				metadata: {
+					webhookId,
+					organizationId: appState.organizationId
+				},
+				input: parsed
+			});
+
+			await response.server;
+			toast.success(t`Webhook created successfully`);
+			createModalOpen = false;
+			name = '';
+			targetUrl = '';
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : t`Failed to create webhook`);
+		}
+	}
+
+	function handleDeleteWebhook(webhook: { id: string; name: string }) {
+		if (!window.confirm(t`Are you sure you want to delete the webhook "${webhook.name}"?`)) {
+			return;
+		}
+
+		try {
+			const parsed = parse(deleteMutatorSchemaZero, {
+				metadata: {
+					webhookId: webhook.id,
+					organizationId: appState.organizationId
+				}
+			});
+
+			z.mutate.webhook.delete(parsed);
+			toast.success(t`Webhook deleted`);
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : t`Failed to delete webhook`);
+		}
+	}
+
+	function formatEventTypes(eventTypes: string[]): string {
+		if (eventTypes.includes('all')) {
+			return t`All events`;
+		}
+		return eventTypes.join(', ');
+	}
+</script>
+
+<ContentLayout rootLink="/settings" {header}>
+	<div class="space-y-4">
+		{#if webhookList.details.type === 'complete' && webhookList.data && webhookList.data.length === 0}
+			<div class="flex flex-col items-center justify-center py-12 text-center">
+				<p class="text-muted-foreground mb-4">{t`No webhooks configured`}</p>
+				{#if appState.isOwner}
+					<Button onclick={() => (createModalOpen = true)}>{t`Create Webhook`}</Button>
+				{/if}
+			</div>
+		{:else}
+			<Table.Root>
+				<Table.Header>
+					<Table.Row>
+						<Table.Head>{t`Name`}</Table.Head>
+						<Table.Head>{t`Target URL`}</Table.Head>
+						<Table.Head>{t`Event Types`}</Table.Head>
+						<Table.Head>{t`Created`}</Table.Head>
+						<Table.Head class="text-right">{t`Actions`}</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#if webhookList.data}
+						{#each webhookList.data as webhook (webhook.id)}
+							<Table.Row>
+								<Table.Cell class="font-medium">{webhook.name}</Table.Cell>
+								<Table.Cell>
+									<a
+										href={webhook.targetUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="text-primary hover:underline"
+									>
+										{webhook.targetUrl}
+									</a>
+								</Table.Cell>
+								<Table.Cell>{formatEventTypes(webhook.eventTypes)}</Table.Cell>
+								<Table.Cell>{formatDate(webhook.createdAt)}</Table.Cell>
+								<Table.Cell class="text-right">
+									{#if appState.isAdminOrOwner}
+										<Button
+											variant="ghost"
+											size="sm"
+											onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
+										>
+											<TrashIcon class="h-4 w-4" />
+										</Button>
+									{/if}
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+					{:else}
+						<Table.Row>
+							<Table.Cell colspan={5} class="text-center text-muted-foreground py-8">
+								{t`Loading webhooks...`}
+							</Table.Cell>
+						</Table.Row>
+					{/if}
+				</Table.Body>
+			</Table.Root>
+		{/if}
+	</div>
+</ContentLayout>
+
+{#snippet header()}
+	<div class="flex items-center justify-between">
+		<H2>{t`Webhooks`}</H2>
+		{#if appState.isOwner}
+			<ResponsiveModal title={t`Create Webhook`} description={t`Register a new webhook endpoint`} bind:open={createModalOpen}>
+				{#snippet trigger()}
+					<Button>{t`Create Webhook`}</Button>
+				{/snippet}
+				{#snippet children()}
+					<div class="space-y-2">
+						<Label for="webhook-name-header">{t`Name`}</Label>
+						<Input
+							id="webhook-name-header"
+							bind:value={name}
+							placeholder={t`My Webhook`}
+							required
+						/>
+					</div>
+					<div class="space-y-2">
+						<Label for="webhook-url-header">{t`Target URL`}</Label>
+						<Input
+							id="webhook-url-header"
+							bind:value={targetUrl}
+							type="url"
+							placeholder={t`https://example.com/webhook`}
+							required
+						/>
+					</div>
+				{/snippet}
+				{#snippet footer()}
+					<div class="flex justify-end gap-2">
+						<Button variant="outline" onclick={() => (createModalOpen = false)}>{t`Cancel`}</Button>
+						<Button onclick={handleCreateWebhook}>{t`Create`}</Button>
+					</div>
+				{/snippet}
+			</ResponsiveModal>
+		{/if}
+	</div>
+{/snippet}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ReadEventZero } from '$lib/schema/event';
 	let { event }: { event: ReadEventZero } = $props();
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -72,7 +73,7 @@
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
 						<a data-sveltekit-preload-data="off" {...props} href={`/events/${event.id}/preview`}
-							>Preview event page</a
+							>{#if event.published}View event page{:else}Preview event page{/if}</a
 						>
 					{/snippet}
 				</DropdownMenu.Item>
@@ -82,16 +83,6 @@
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
 						<a {...props} href={`/events/${event.id}/signups`}>Detailed signups table</a>
-					{/snippet}
-				</DropdownMenu.Item>
-			</DropdownMenu.Group>
-			<DropdownMenu.Separator />
-			<DropdownMenu.Group>
-				<DropdownMenu.Item>
-					{#snippet child({ props })}
-						<a {...props} href={`/events/${event.id}/page`}
-							>{#if event.published}View event page{:else}Preview event page{/if}</a
-						>
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>

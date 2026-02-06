@@ -7,10 +7,11 @@
 	let edit = $state(true);
 	import { z } from '$lib/zero.svelte';
 	import AddTag from './form/AddTag.svelte';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <ProfileRow
-	title="Tags"
+	title={t`Tags`}
 	separator={true}
 	showCopyButton={false}
 	copyText={person.emailAddress}
@@ -26,7 +27,7 @@
 						avatarTitle={'#'}
 						onRemove={() => {
 							if (!appState.isAdminOrOwner) return;
-							if (window.confirm('Are you sure you want to remove this tag?')) {
+							if (window.confirm(t`Are you sure you want to remove this tag?`)) {
 								z.mutate.person.removeTag({
 									metadata: {
 										organizationId: appState.organizationId,
@@ -43,7 +44,7 @@
 			{/each}
 		</div>
 	{:else}
-		<div class="text-sm text-muted-foreground">No tags found.</div>
+		<div class="text-sm text-muted-foreground">{t`No tags found.`}</div>
 	{/if}
 	{#snippet action()}
 		<AddTag personId={person.id} />

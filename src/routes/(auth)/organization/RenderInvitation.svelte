@@ -1,10 +1,18 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	const { invitationId } = $props();
 	import { authClient } from '$lib/auth-client';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import * as Item from '$lib/components/ui/item/index.js';
 	import MailIcon from '@lucide/svelte/icons/mail';
+
+	const invitedBy = (email: string) => {
+		return t`Invited by ${email}`;
+	};
+	const errorLoadingInvitation = (error: Error) => {
+		return t`Error loading invitation: ${error.message}`;
+	};
 </script>
 
 {#await authClient.organization.getInvitation({ query: { id: invitationId } })}
@@ -20,14 +28,16 @@
 					<Item.Title class="line-clamp-1">
 						{invitation.data?.organizationName}
 					</Item.Title>
-					<Item.Description>Invited by {invitation.data?.inviterEmail}</Item.Description>
+					{#if invitation.data?.inviterEmail}
+						<Item.Description>{invitedBy(invitation.data.inviterEmail)}</Item.Description>
+					{/if}
 				</Item.Content>
-				<Item.Content class="flex-none text-center">Accept / Reject</Item.Content>
+				<Item.Content class="flex-none text-center">{t`Accept / Reject`}</Item.Content>
 			</a>
 		{/snippet}
 	</Item.Root>
 {:catch error}
-	<ErrorAlert>Error loading invitation: {error?.message ?? 'Unknown error'}</ErrorAlert>
+	<ErrorAlert>{errorLoadingInvitation(error)}</ErrorAlert>
 {/await}
 {#snippet skeletonItem()}
 	<div class="flex items-center space-x-4">

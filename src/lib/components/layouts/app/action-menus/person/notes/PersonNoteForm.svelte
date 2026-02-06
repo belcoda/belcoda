@@ -6,6 +6,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { createMutatorSchemaZero, createPersonNoteZero } from '$lib/schema/person-note';
 	import { appState } from '$lib/state.svelte';
+	import { t } from '$lib/index.svelte';
 
 	import { v7 as uuidv7 } from 'uuid';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
@@ -40,7 +41,7 @@
 				<InputGroup.Root>
 					<InputGroup.Textarea
 						{...props}
-						placeholder="Add a note or comment..."
+						placeholder={t`Add a note or comment...`}
 						bind:value={$data.note}
 						onkeydown={(e) => {
 							if (e.key === 'Enter' && !e.shiftKey && (e.metaKey || e.ctrlKey)) {

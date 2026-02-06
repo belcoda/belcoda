@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import AuthLayout from '$lib/components/widgets/AuthLayout.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -64,8 +65,8 @@
 
 <AuthLayout
 	link="/"
-	title="Welcome to Belcoda"
-	description="Create an account to get started"
+	title={t`Welcome to Belcoda`}
+	description={t`Create an account to get started`}
 	{footer}
 >
 	{#if success}
@@ -86,12 +87,12 @@
 				<Form.Field {form} name="name">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Name</Form.Label>
+							<Form.Label>{t`Name`}</Form.Label>
 							<Input
 								{...props}
 								type="text"
 								autocomplete="name"
-								placeholder="Your full name"
+								placeholder={t`Your full name`}
 								bind:value={$data.name}
 							/>
 							<Form.FieldErrors />
@@ -101,12 +102,12 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Email</Form.Label>
+							<Form.Label>{t`Email`}</Form.Label>
 							<Input
 								{...props}
 								type="email"
 								autocomplete="email"
-								placeholder="email@example.com"
+								placeholder={t`email@example.com`}
 								bind:value={$data.email}
 							/>
 							<Form.FieldErrors />
@@ -116,7 +117,7 @@
 				<Form.Field {form} name="password">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Password</Form.Label>
+							<Form.Label>{t`Password`}</Form.Label>
 							<Input
 								{...props}
 								type="password"
@@ -131,7 +132,7 @@
 				<Form.Field {form} name="confirmPassword">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>Confirm Password</Form.Label>
+							<Form.Label>{t`Confirm Password`}</Form.Label>
 							<Input
 								{...props}
 								type="password"
@@ -144,12 +145,12 @@
 					</Form.Control>
 				</Form.Field>
 				<Button type="submit" class="w-full" disabled={loading}>
-					{loading ? 'Creating account...' : 'Create account'}
+					{loading ? t`Creating account...` : t`Create account`}
 				</Button>
 				<Debug {data} />
 				<div class="text-center text-sm">
-					Already have an account?
-					<a href="/login" class="underline underline-offset-4"> Sign in </a>
+					{t`Already have an account?`}
+					<a href="/login" class="underline underline-offset-4"> {t`Sign in`} </a>
 				</div>
 			{/if}
 		</form>
@@ -160,8 +161,8 @@
 	<div
 		class="mt-6 text-center text-xs text-balance text-muted-foreground *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary"
 	>
-		By clicking continue, you agree to our <a href="##">Terms of Service</a>
-		and <a href="##">Privacy Policy</a>.
+		{@html t`By clicking continue, you agree to our <a href="https://www.belcoda.com/terms-of-service">Terms of Service</a>
+		and <a href="https://www.belcoda.com/privacy">Privacy Policy</a>.`}
 	</div>
 {/snippet}
 
@@ -180,7 +181,7 @@
 					fill="currentColor"
 				/>
 			</svg>
-			Sign up with Google
+			{t`Sign up with Google`}
 		</Button>
 	</div>
 {/snippet}
@@ -189,7 +190,7 @@
 		class="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border"
 	>
 		<span class="relative z-10 bg-card px-2 text-muted-foreground">
-			Or create an account using email and password
+			{t`Or create an account using email and password`}
 		</span>
 	</div>
 {/snippet}
@@ -197,12 +198,11 @@
 {#snippet successMessage()}
 	<div class="flex flex-col gap-4 text-center">
 		<div class="rounded border border-green-800 bg-green-50 p-4 text-sm text-green-800">
-			<h3 class="mb-2 font-semibold">Check your email</h3>
+			<h3 class="mb-2 font-semibold">{t`Check your email`}</h3>
 			<p>
-				We've sent a verification link to <strong>{sentVerificationEmailTo}</strong>. Please click
-				the link in the email to verify your account before signing in.
+				{t`We've sent a verification link to`} <strong>{sentVerificationEmailTo}</strong>. {t`Please click the link in the email to verify your account before signing in.`}
 			</p>
 		</div>
-		<Button variant="outline" onclick={() => goto('/login')}>Go to Login</Button>
+		<Button variant="outline" onclick={() => goto('/login')}>{t`Go to Login`}</Button>
 	</div>
 {/snippet}

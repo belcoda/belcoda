@@ -2,6 +2,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	import { type ReadEventZero } from '$lib/schema/event';
+	import { t } from '$lib/index.svelte';
 
 	let { signup, event }: { signup: ReadEventSignupZeroWithPerson; event: ReadEventZero } = $props();
 
@@ -14,8 +15,11 @@
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 
 	import { handleUpdateStatus } from './actions';
+	import ViewDetailedSignup from './ViewDetailedSignup.svelte';
+	let openDetailedSignup = $state(false);
 </script>
 
+<ViewDetailedSignup {signup} {event} bind:open={openDetailedSignup} />
 <ButtonGroup.Root class="flex w-full items-center justify-end">
 	{#if signup.status === 'attended'}
 		<Button
@@ -28,7 +32,7 @@
 					personId: signup.personId,
 					eventId: signup.eventId,
 					status: 'signup'
-				})}><CheckIcon class="text-green-500" /> Attended</Button
+				})}><CheckIcon class="text-green-500" /> {t`Attended`}</Button
 		>
 	{:else if signup.status === 'noshow'}
 		<Button
@@ -41,7 +45,7 @@
 					personId: signup.personId,
 					eventId: signup.eventId,
 					status: 'signup'
-				})}><XIcon class="text-red-500" /> No show</Button
+				})}><XIcon class="text-red-500" /> {t`No show`}</Button
 		>
 	{:else if signup.status === 'notattending'}
 		<Button
@@ -54,7 +58,7 @@
 					personId: signup.personId,
 					eventId: signup.eventId,
 					status: 'signup'
-				})}><XIcon class="text-red-500" /> Not attending</Button
+				})}><XIcon class="text-red-500" /> {t`Not attending`}</Button
 		>
 	{:else if signup.status === 'signup'}
 		<Button
@@ -67,7 +71,7 @@
 					personId: signup.personId,
 					eventId: signup.eventId,
 					status: 'attended'
-				})}><CheckIcon class="text-green-500" /> Attended</Button
+				})}><CheckIcon class="text-green-500" /> {t`Attended`}</Button
 		>
 		<Button
 			variant="outline"
@@ -79,7 +83,7 @@
 					personId: signup.personId,
 					eventId: signup.eventId,
 					status: 'noshow'
-				})}><XIcon class="text-red-500" /> No show</Button
+				})}><XIcon class="text-red-500" /> {t`No show`}</Button
 		>
 	{/if}
 	<DropdownMenu.Root>
@@ -95,7 +99,7 @@
 						personId: signup.personId,
 						eventId: signup.eventId,
 						status: 'attended'
-					})}>Mark as attended</DropdownMenu.Item
+					})}>{t`Mark as attended`}</DropdownMenu.Item
 			>
 			<DropdownMenu.Item
 				onclick={() =>
@@ -105,7 +109,7 @@
 						personId: signup.personId,
 						eventId: signup.eventId,
 						status: 'noshow'
-					})}>Mark as no show</DropdownMenu.Item
+					})}>{t`Mark as no show`}</DropdownMenu.Item
 			>
 			<DropdownMenu.Item
 				onclick={() =>
@@ -115,17 +119,21 @@
 						personId: signup.personId,
 						eventId: signup.eventId,
 						status: 'notattending'
-					})}>Cancel signup</DropdownMenu.Item
+					})}>{t`Cancel signup`}</DropdownMenu.Item
+			>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Item onclick={() => (openDetailedSignup = true)}
+				>{t`View detailed signup`}</DropdownMenu.Item
 			>
 			<DropdownMenu.Separator />
 			{#if signup.person.phoneNumber || signup.person.emailAddress}
 				<DropdownMenu.Group>
-					<DropdownMenu.GroupHeading>Quick contact</DropdownMenu.GroupHeading>
+					<DropdownMenu.GroupHeading>{t`Quick contact`}</DropdownMenu.GroupHeading>
 					{#if signup.person.phoneNumber}
 						<DropdownMenu.Item>
 							{#snippet child({ props })}
 								<a href={`https://wa.me/${signup.person.phoneNumber}`} target="_blank" {...props}
-									>WhatsApp <span class="icon-[lucide--external-link]"></span></a
+									>{t`WhatsApp`} <span class="icon-[lucide--external-link]"></span></a
 								>
 							{/snippet}
 						</DropdownMenu.Item>
@@ -134,7 +142,7 @@
 						<DropdownMenu.Item>
 							{#snippet child({ props })}
 								<a href={`tel:${signup.person.phoneNumber}`} target="_blank" {...props}
-									>Phone <span class="icon-[lucide--external-link]"></span></a
+									>{t`Phone`} <span class="icon-[lucide--external-link]"></span></a
 								>
 							{/snippet}
 						</DropdownMenu.Item>
@@ -143,7 +151,7 @@
 						<DropdownMenu.Item>
 							{#snippet child({ props })}
 								<a href={`mailto:${signup.person.emailAddress}`} target="_blank" {...props}
-									>Email <span class="icon-[lucide--external-link]"></span></a
+									>{t`Email`} <span class="icon-[lucide--external-link]"></span></a
 								>
 							{/snippet}
 						</DropdownMenu.Item>

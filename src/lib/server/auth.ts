@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '$lib/server/db';
+import * as schema from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
 
 import { env } from '$env/dynamic/private';
@@ -65,7 +66,11 @@ export function buildBetterAuth(localeInput: string) {
 			}
 		},
 		database: drizzleAdapter(db, {
-			provider: 'pg' // or "mysql", "sqlite"
+			provider: 'pg', // or "mysql", "sqlite"
+			schema: {
+				...schema,
+				apikey: schema.apiKey // Map apiKey table to the name better-auth expects
+			}
 		}),
 		trustedOrigins: [
 			publicEnv.PUBLIC_ROOT_DOMAIN,
@@ -175,8 +180,8 @@ export function buildBetterAuth(localeInput: string) {
 		},
 		user: {
 			additionalFields: {
-				preferences: {
-					type: 'json',
+				preferredLanguage: {
+					type: 'string',
 					input: true,
 					required: false
 				}

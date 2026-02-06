@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type ListPersonsInput } from '$lib/zero/query/person/list';
+	import { t } from '$lib/index.svelte';
 	let {
 		filter = $bindable(),
 		hideActivityFilter = false
@@ -17,13 +18,13 @@
 </script>
 
 {#snippet trigger({ props }: { props: Record<string, unknown> })}
-	<InputGroup.Button {...props} variant="ghost" aria-label="Filter" size="icon-xs">
+	<InputGroup.Button {...props} variant="ghost" aria-label={t`Filter`} size="icon-xs">
 		<FilterIcon />
 	</InputGroup.Button>
 {/snippet}
 
 <InputGroup.Root class="bg-background">
-	<InputGroup.Input placeholder="Search..." bind:value={filter.searchString} />
+	<InputGroup.Input placeholder={t`Search...`} bind:value={filter.searchString} />
 	<InputGroup.Addon>
 		<SearchIcon />
 	</InputGroup.Addon>

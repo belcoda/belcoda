@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	const { children } = $props();
 	import { authClient } from '$lib/auth-client';
 	import { onMount } from 'svelte';
@@ -8,10 +9,10 @@
 		const session = await authClient.getSession();
 		if (session.error) {
 			console.error(session.error);
-			throw new Error('Error getting session');
+			throw new Error(t`Error getting session`);
 		}
 		if (!session.data?.user?.id) {
-			throw new Error('No user id found');
+			throw new Error(t`No user id found`);
 		}
 
 		await appState.loadQueryContext();
@@ -23,7 +24,7 @@
 			const organizationsList = await authClient.organization.list();
 			if (organizationsList.error) {
 				console.error(organizationsList.error);
-				throw new Error('Error getting organizations list');
+				throw new Error(t`Error getting organizations list`);
 			}
 			if (organizationsList.data && organizationsList.data.length > 0) {
 				// gotta set these two together, otherwise there will be a race condition...
@@ -40,12 +41,9 @@
 </script>
 
 <!-- This is an important check to ensure that we always have a valid userId and active organization Id. These will be used with confidence throughout the rest of the application interface -->
-{#if appState.user.details.type === 'complete' && appState.activeOrganization.details.type === 'complete' && appState.organizations.details.type === 'complete'}
+{#if appState.user?.details.type === 'complete' && appState.activeOrganization?.details.type === 'complete' && appState.organizations?.details.type === 'complete'}
 	{@render children()}
 {:else}
-	{JSON.stringify(appState.user.details)}
-	{JSON.stringify(appState.activeOrganization.details)}
-	{JSON.stringify(appState.organizations.details)}
 	<div class="flex h-screen w-screen items-center justify-center">
 		<Spinner />
 	</div>

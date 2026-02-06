@@ -13,9 +13,13 @@ import type { Transaction } from '$lib/server/db/zeroDrizzle';
 import { v7 as uuidv7 } from 'uuid';
 import { parse } from 'valibot';
 
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
+
 export async function findOrCreatePerson({
 	personAction,
 	addedFrom,
+	updateExistingPerson = false,
 	tx,
 	organizationId,
 	teamId
@@ -23,6 +27,7 @@ export async function findOrCreatePerson({
 	personAction: PersonActionHelper;
 	addedFrom: PersonAddedFrom;
 	organizationId: string;
+	updateExistingPerson?: boolean;
 	teamId?: string;
 	tx: Transaction;
 }) {
@@ -49,7 +54,25 @@ export async function findOrCreatePerson({
 		);
 
 	if (personRecord) {
-		//Todo: Maybe we want to update the person here with the provided info at personAction
+		if (updateExistingPerson) {
+			try {
+				const [updatedPerson] = await tx.dbTransaction.wrappedTransaction
+					.update(person)
+					.set({
+						...parsedActionHelper,
+						preferredLanguage: parsedActionHelper.preferredLanguage || undefined,
+						updatedAt: new Date()
+					})
+					.where(eq(person.id, personRecord.id))
+					.returning();
+				if (!updatedPerson) {
+					throw new Error('Unable to update person');
+				}
+				return updatedPerson;
+			} catch (error) {
+				log.error({ error }, 'Unable to update person');
+			}
+		}
 		return personRecord;
 	}
 	// create a new person

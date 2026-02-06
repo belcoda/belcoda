@@ -65,8 +65,8 @@ export const webhookEvents = [
 export const webhookEventsSchema = v.array(v.picklist(webhookEvents));
 export type WebhookEvents = v.InferOutput<typeof webhookEventsSchema>;
 
-// this is the type that is used in the database, it includes the 'any' event type so we're defining it
-export const webhookEventTypes = ['any', ...webhookEvents] as const;
+// this is the type that is used in the database, it includes the 'all' event type so we're defining it
+export const webhookEventTypes = ['all', ...webhookEvents] as const;
 export const webhookEventTypesSchema = v.array(v.picklist(webhookEventTypes));
 export type WebhookEventTypes = v.InferOutput<typeof webhookEventTypesSchema>;
 
@@ -116,9 +116,17 @@ export const createWebhook = v.object({
 	name: webhookSchema.entries.name,
 	targetUrl: webhookSchema.entries.targetUrl,
 	eventTypes: webhookSchema.entries.eventTypes,
-	secret: webhookSchema.entries.secret
+	secret: v.optional(webhookSchema.entries.secret)
 });
 export type CreateWebhook = v.InferOutput<typeof createWebhook>;
+
+export const createWebhookZero = v.object({
+	name: webhookSchema.entries.name,
+	targetUrl: webhookSchema.entries.targetUrl,
+	eventTypes: webhookSchema.entries.eventTypes,
+	secret: v.optional(webhookSchema.entries.secret)
+});
+export type CreateWebhookZero = v.InferOutput<typeof createWebhookZero>;
 
 export const updateWebhook = v.partial(
 	v.object({
@@ -141,3 +149,14 @@ export const createMutatorSchema = v.object({
 	input: createWebhook,
 	metadata: mutatorMetadata
 });
+export const createMutatorSchemaZero = v.object({
+	input: createWebhookZero,
+	metadata: mutatorMetadata
+});
+export type CreateMutatorSchemaZeroInput = v.InferInput<typeof createMutatorSchemaZero>;
+export type CreateMutatorSchemaZeroOutput = v.InferOutput<typeof createMutatorSchemaZero>;
+
+export const deleteMutatorSchemaZero = v.object({
+	metadata: mutatorMetadata
+});
+export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;

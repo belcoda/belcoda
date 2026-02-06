@@ -7,10 +7,11 @@
 	import { z } from '$lib/zero.svelte';
 	import AddTeam from './form/AddTeam.svelte';
 	let edit = $state(true);
+	import { t } from '$lib/index.svelte';
 </script>
 
 <ProfileRow
-	title="Teams"
+	title={t`Teams`}
 	separator={true}
 	showCopyButton={false}
 	copyText={person.emailAddress}
@@ -26,7 +27,7 @@
 						src={null}
 						onRemove={() => {
 							if (!appState.isAdminOrOwner) return;
-							if (window.confirm('Are you sure you want to remove this team?')) {
+							if (window.confirm(t`Are you sure you want to remove this team?`)) {
 								z.mutate.person.removeFromTeam({
 									metadata: {
 										organizationId: appState.organizationId,
@@ -42,7 +43,7 @@
 			{/each}
 		</div>
 	{:else}
-		<div class="text-sm text-muted-foreground">No teams found.</div>
+		<div class="text-sm text-muted-foreground">{t`No teams found.`}</div>
 	{/if}
 
 	{#snippet action()}

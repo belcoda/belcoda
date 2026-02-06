@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { dropAllDatabases } from '@rocicorp/zero';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -19,7 +20,7 @@
 	});
 </script>
 
-<AuthLayout link="/" title="Logging out..." description="Please wait while we log you out...">
+<AuthLayout link="/" title={t`Logging out...`} description={t`Please wait while we log you out...`}>
 	<div class="my-12 flex justify-center">
 		<Spinner />
 	</div>

@@ -49,3 +49,10 @@ export const createMutatorSchema = v.object({
 });
 export type CreateMutatorSchema = v.InferInput<typeof createMutatorSchema>;
 export type CreateMutatorSchemaOutput = v.InferOutput<typeof createMutatorSchema>;
+
+export const createMutatorSchemaZero = v.object({
+	input: createPersonImport,
+	metadata: mutatorMetadata
+});
+export type CreateMutatorSchemaZeroInput = v.InferInput<typeof createMutatorSchemaZero>;
+export type CreateMutatorSchemaZeroOutput = v.InferOutput<typeof createMutatorSchemaZero>;

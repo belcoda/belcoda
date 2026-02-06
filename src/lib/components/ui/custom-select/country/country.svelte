@@ -8,6 +8,7 @@
 	import { cn } from '$lib/utils.js';
 	import { countryCodes, renderLocalizedCountryName } from '$lib/utils/country';
 	import { appState } from '$lib/state.svelte';
+	import { locale, t } from '$lib/index.svelte';
 
 	let open = $state(false);
 
@@ -25,7 +26,7 @@
 	const countries = $derived(
 		countryCodes.map((c) => ({
 			value: c,
-			label: renderLocalizedCountryName(c, appState.locale)
+			label: renderLocalizedCountryName(c, locale.current)
 		}))
 	);
 
@@ -54,7 +55,7 @@
 			>
 				<div class="flex items-center gap-2">
 					<img src={`/images/icons/flags/svg/${value}.svg`} alt={value} class="size-4" />
-					{selectedValue || 'Select a country'}
+					{selectedValue || t`Select a country`}
 				</div>
 				<ChevronsUpDownIcon class="opacity-50" />
 			</Button>
@@ -62,9 +63,9 @@
 	</Popover.Trigger>
 	<Popover.Content class="p-0">
 		<Command.Root {...props}>
-			<Command.Input placeholder="Search country..." />
+			<Command.Input placeholder={t`Search country...`} />
 			<Command.List>
-				<Command.Empty>No countries found.</Command.Empty>
+				<Command.Empty>{t`No countries found.`}</Command.Empty>
 				<Command.Group value="countries">
 					{#each countries as country (country.value)}
 						<Command.Item

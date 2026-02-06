@@ -30,6 +30,7 @@
 		}
 	});
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { t } from '$lib/index.svelte';
 </script>
 
 {#if person.details.type === 'unknown'}
@@ -41,7 +42,7 @@
 		</div>
 	</div>
 {:else if person.details.type === 'error'}
-	Error loading person
+	{t`Error loading person`}
 {:else if person.details.type === 'complete' && person.data}
 	<div class="flex items-center gap-2">
 		<div>

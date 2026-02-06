@@ -4,6 +4,7 @@
 	import type { ComponentProps } from 'svelte';
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 	import OrgMenu from '$lib/components/layouts/app/navigation/OrgMenu.svelte';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <Sidebar.Root
@@ -31,12 +32,12 @@
 							class="flex size-12 items-center justify-center transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110"
 						>
 							{#snippet tooltipContent()}
-								<span class="text-base">Community</span>
+								<span class="text-base">{t`Community`}</span>
 							{/snippet}
 							{#snippet child({ props })}
 								<a href="/community" {...props}
 									><span class="icon-[lucide--users] size-6 text-sidebar-primary-foreground"></span>
-									<span class="sr-only">Community</span></a
+									<span class="sr-only">{t`Community`}</span></a
 								>
 							{/snippet}
 						</Sidebar.MenuButton>
@@ -51,14 +52,14 @@
 							class="flex size-12 items-center justify-center transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110"
 						>
 							{#snippet tooltipContent()}
-								<span class="text-base">Communications</span>
+								<span class="text-base">{t`Communications`}</span>
 							{/snippet}
 							{#snippet child({ props })}
 								<a href="/communications" {...props}
 									><span
 										class="mt-0.5 icon-[flowbite--messages-outline] size-7 text-sidebar-primary-foreground"
 									></span>
-									<span class="sr-only">Communications</span></a
+									<span class="sr-only">{t`Communications`}</span></a
 								>
 							{/snippet}
 						</Sidebar.MenuButton>
@@ -73,12 +74,12 @@
 							class="flex size-12 items-center justify-center transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110"
 						>
 							{#snippet tooltipContent()}
-								<span class="text-base">Events</span>
+								<span class="text-base">{t`Events`}</span>
 							{/snippet}
 							{#snippet child({ props })}
 								<a href="/events" {...props}>
 									<span class="icon-[mdi--events] size-5 text-sidebar-primary-foreground"></span>
-									<span class="sr-only">Events</span></a
+									<span class="sr-only">{t`Events`}</span></a
 								>
 							{/snippet}
 						</Sidebar.MenuButton>
@@ -93,12 +94,12 @@
 							class="flex size-12 items-center justify-center transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110"
 						>
 							{#snippet tooltipContent()}
-								<span class="text-base">Actions</span>
+								<span class="text-base">{t`Petitions`}</span>
 							{/snippet}
 							{#snippet child({ props })}
-								<a href="/actions" {...props}>
+								<a href="/petitions" {...props}>
 									<span class="icon-[mage--zap] size-7 text-sidebar-primary-foreground"></span>
-									<span class="sr-only">Actions</span></a
+									<span class="sr-only">{t`Petitions`}</span></a
 								>
 							{/snippet}
 						</Sidebar.MenuButton>

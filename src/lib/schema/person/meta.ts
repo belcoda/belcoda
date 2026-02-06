@@ -47,6 +47,10 @@ export const personAddedFrom = variant('type', [
 	object({
 		type: literal('added_from_petition'),
 		petitionSignatureId: uuid
+	}),
+	object({
+		type: literal('incoming_whatsapp_message'),
+		messageId: uuid
 	})
 ]);
 export type PersonAddedFrom = InferOutput<typeof personAddedFrom>;

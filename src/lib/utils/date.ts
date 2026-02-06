@@ -210,6 +210,26 @@ export function formatDate(timestamp: number): string {
 	return date.toLocaleDateString();
 }
 
+import { t } from '$lib/index.svelte';
+
+/**
+ * Format a date for display in API keys and similar contexts.
+ * Handles string, Date, or null values.
+ * @param date - Date as string, Date object, or null
+ * @returns Formatted date string or "Never expires" for null
+ */
+export function formatApiKeyDate(date: string | Date | null): string {
+	if (!date) return t`Never expires`;
+	const d = typeof date === 'string' ? new Date(date) : date;
+	return new Intl.DateTimeFormat('en-US', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: 'numeric',
+		minute: '2-digit'
+	}).format(d);
+}
+
 type DateInputValue = string | null | undefined;
 
 export function inputValueToDate(value: DateInputValue): Date | null {

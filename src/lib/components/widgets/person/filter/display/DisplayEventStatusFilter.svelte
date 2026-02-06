@@ -4,15 +4,16 @@
 		$props();
 
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
+	import { t } from '$lib/index.svelte';
 
 	const text = $derived(() => {
 		switch (status) {
 			case 'draft':
-				return 'Draft';
+				return t`Draft`;
 			case 'published':
-				return 'Published';
+				return t`Published`;
 			case 'cancelled':
-				return 'Cancelled';
+				return t`Cancelled`;
 		}
 	});
 	const avatarTitle = $derived(() => {
@@ -33,5 +34,5 @@
 	src={null}
 	avatarTitle={avatarTitle() ?? '?'}
 	onRemove={() => onRemove()}
-	title={text() ?? 'Unknown event status filter'}
+	title={text() ?? t`Unknown event status filter`}
 />

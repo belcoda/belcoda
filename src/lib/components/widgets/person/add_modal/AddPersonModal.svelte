@@ -84,7 +84,7 @@
 			{/if}
 		</ScrollArea>
 		{#if selectedPeople.data && selectedPeople.data.length > 0}
-			<div class="mt-2 -mb-1 font-medium">Selected ({selectedPeople.data.length})</div>
+			<div class="mt-2 -mb-1 font-medium">{t`Selected`} ({selectedPeople.data.length})</div>
 			<ScrollArea class="h-[150px] w-full rounded-md border">
 				{#each orderedPeople as person (person.id)}
 					{@render selectedPersonItem(person)}

@@ -8,6 +8,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { toast } from 'svelte-sonner';
 	let { person }: { person: ReadPersonZero } = $props();
+	import { t } from '$lib/index.svelte';
 </script>
 
 <div class="my-8 flex justify-center">
@@ -28,7 +29,7 @@
 					}
 				});
 			} catch (error) {
-				toast.error('Could not update profile picture. Please try again.');
+				toast.error(t`Could not update profile picture. Please try again.`);
 			}
 		}}
 	/>

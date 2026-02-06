@@ -6,10 +6,11 @@
 	let { person }: { person: ReadPersonZero } = $props();
 	let edit = $state(false);
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <ProfileRow
-	title="Phone"
+	title={t`Phone`}
 	separator={true}
 	showCopyButton={true}
 	copyText={person.phoneNumber}
@@ -30,13 +31,13 @@
 		</div>
 		<div class="mt-2 flex items-center gap-2">
 			{#if person.subscribed}
-				<ColorBadge color="green">Subscribed</ColorBadge>
+				<ColorBadge color="green">{t`Subscribed`}</ColorBadge>
 			{/if}
 			{#if person.doNotContact}
-				<ColorBadge color="red">Do not contact</ColorBadge>
+				<ColorBadge color="red">{t`Do not contact`}</ColorBadge>
 			{/if}
 		</div>
 	{:else}
-		<div class="text-muted-foreground italic">Not specified</div>
+		<div class="text-muted-foreground italic">{t`Not specified`}</div>
 	{/if}
 </ProfileRow>

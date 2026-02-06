@@ -10,6 +10,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { toast } from 'svelte-sonner';
+	import { t } from '$lib/index.svelte';
 	const {
 		person,
 		currentPage
@@ -74,7 +75,7 @@
 				{:else}
 					<span class="icon-[ph--chat-centered-bold]"></span>
 				{/if}
-				Notes</Button
+				{t`Notes`}</Button
 			>
 		{/snippet}
 	</NotesDrawer>
@@ -111,7 +112,7 @@
 						<DropdownMenu.Item>
 							{#snippet child({ props })}
 								<a href={`mailto:${person.emailAddress}`} target="_blank" {...props}
-									>Send email <span class="icon-[lucide--external-link]"></span></a
+									>{t`Send email`} <span class="icon-[lucide--external-link]"></span></a
 								>
 							{/snippet}
 						</DropdownMenu.Item>
@@ -120,7 +121,7 @@
 						<DropdownMenu.Item>
 							{#snippet child({ props })}
 								<a href={`tel:${person.phoneNumber}`} target="_blank" {...props}
-									>Call <span class="icon-[lucide--external-link]"></span></a
+									>{t`Call`} <span class="icon-[lucide--external-link]"></span></a
 								>
 							{/snippet}
 						</DropdownMenu.Item>
@@ -129,7 +130,7 @@
 						<DropdownMenu.Item>
 							{#snippet child({ props })}
 								<a href={`https://wa.me/${person.phoneNumber}`} target="_blank" {...props}
-									>WhatsApp <span class="icon-[lucide--external-link]"></span></a
+									>{t`WhatsApp`} <span class="icon-[lucide--external-link]"></span></a
 								>
 							{/snippet}
 						</DropdownMenu.Item>
@@ -139,12 +140,12 @@
 			{/if}
 			<DropdownMenu.Group>
 				<DropdownMenu.Sub>
-					<DropdownMenu.SubTrigger>Add tag</DropdownMenu.SubTrigger>
+					<DropdownMenu.SubTrigger>{t`Add tag`}</DropdownMenu.SubTrigger>
 					<DropdownMenu.SubContent>
 						<Command.Root value={filter.tagId ?? ''}>
-							<Command.Input autofocus placeholder="Filter tags..." />
+							<Command.Input autofocus placeholder={t`Filter tags...`} />
 							<Command.List>
-								<Command.Empty class="text-sm text-muted-foreground">No tags found.</Command.Empty>
+								<Command.Empty class="text-sm text-muted-foreground">{t`No tags found.`}</Command.Empty>
 								<Command.Group>
 									{#each tagList.data as tag (tag.id)}
 										{#if !personTagList.data.some((pt) => pt.id === tag.id)}
@@ -160,7 +161,7 @@
 														}
 													});
 													closeAndFocusTrigger();
-													toast.success('Added tag', { duration: 1000 });
+													toast.success(t`Added tag`, { duration: 1000 });
 												}}
 											>
 												<Avatar
@@ -178,12 +179,12 @@
 					</DropdownMenu.SubContent>
 				</DropdownMenu.Sub>
 				<DropdownMenu.Sub>
-					<DropdownMenu.SubTrigger>Add to team</DropdownMenu.SubTrigger>
+					<DropdownMenu.SubTrigger>{t`Add to team`}</DropdownMenu.SubTrigger>
 					<DropdownMenu.SubContent>
 						<Command.Root value={filter.teamId ?? ''}>
-							<Command.Input autofocus placeholder="Filter teams..." />
+							<Command.Input autofocus placeholder={t`Filter teams...`} />
 							<Command.List>
-								<Command.Empty class="text-sm text-muted-foreground">No teams found.</Command.Empty>
+								<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty>
 								<Command.Group>
 									{#each teamList.data as team (team.id)}
 										{#if !personTeamList.data.some((pt) => pt.id === team.id)}
@@ -199,7 +200,7 @@
 														}
 													});
 													closeAndFocusTrigger();
-													toast.success('Person added to team');
+													toast.success(t`Person added to team`);
 												}}
 											>
 												<Avatar src={null} name1={team.name} class="size-4 rounded-full text-xs" />

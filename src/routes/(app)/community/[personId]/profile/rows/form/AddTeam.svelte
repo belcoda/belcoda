@@ -18,6 +18,7 @@
 	}
 
 	const { personId }: { personId: string } = $props();
+	import { t } from '$lib/index.svelte';
 
 	import { listTeams } from '$lib/zero/query/team/list';
 	import { z } from '$lib/zero.svelte';
@@ -44,16 +45,16 @@
 	<Popover.Trigger bind:ref={triggerRef}>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline" class="gap-2" role="combobox" aria-expanded={open}>
-				Add
+				{t`Add`}
 				<ChevronDownIcon class="size-4" />
 			</Button>
 		{/snippet}
 	</Popover.Trigger>
 	<Popover.Content class="p-0">
 		<Command.Root>
-			<Command.Input autofocus placeholder="Filter teams..." />
+			<Command.Input autofocus placeholder={t`Filter teams...`} />
 			<Command.List>
-				<Command.Empty class="text-sm text-muted-foreground">No teams found.</Command.Empty>
+				<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty>
 				<Command.Group>
 					{#each teamList.data as team (team.id)}
 						{#if !personTeamList.data.some((pt) => pt.id === team.id)}

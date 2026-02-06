@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import AuthLayout from '$lib/components/widgets/AuthLayout.svelte';
 	import { authClient } from '$lib/auth-client';
 	import { confirmPasswordSchema } from '$lib/schema/helpers';
@@ -28,7 +29,7 @@
 
 	async function resetPassword() {
 		if (!token) {
-			errorAlert = 'Reset token is missing. Please use the link from your email.';
+			errorAlert = t`Reset token is missing. Please use the link from your email.`;
 			return;
 		}
 		if ($data.password1 !== $data.password2) {
@@ -44,21 +45,21 @@
 			if (error) {
 				errorAlert = error.message || null;
 			} else {
-				successAlert = 'Password reset successfully';
+				successAlert = t`Password reset successfully`;
 			}
 		} catch (err) {
-			errorAlert = err instanceof Error ? err.message : 'An unknown error occurred';
+			errorAlert = err instanceof Error ? err.message : t`An unknown error occurred`;
 		} finally {
 			loading = false;
 		}
 	}
 </script>
 
-<AuthLayout link="/" title="Reset your password" description="Enter your new password below">
+<AuthLayout link="/" title={t`Reset your password`} description={t`Enter your new password below`}>
 	<Card.Root>
 		<Card.Header class="text-center">
-			<Card.Title class="text-xl">Reset your password</Card.Title>
-			<Card.Description>Enter your new password below</Card.Description>
+			<Card.Title class="text-xl">{t`Reset your password`}</Card.Title>
+			<Card.Description>{t`Enter your new password below`}</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			{#if page.url.searchParams.get('error') === 'INVALID_TOKEN'}
@@ -86,7 +87,7 @@
 			<Form.Field {form} name="password1">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>New Password</Form.Label>
+						<Form.Label>{t`New Password`}</Form.Label>
 						<Input
 							{...props}
 							type="password"
@@ -101,7 +102,7 @@
 			<Form.Field {form} name="password2">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Confirm Password</Form.Label>
+						<Form.Label>{t`Confirm Password`}</Form.Label>
 						<Input
 							{...props}
 							type="password"
@@ -116,39 +117,39 @@
 
 			<div>
 				<Button type="submit" class="w-full" disabled={loading}>
-					{loading ? 'Resetting password...' : 'Reset password'}
+					{loading ? t`Resetting password...` : t`Reset password`}
 				</Button>
 			</div>
 
 			<Debug {data} />
 		</form>
-		<div class="text-center text-sm">
-			Remember your password?
-			<a href="/login" class="underline underline-offset-4"> Login </a>
-		</div>
+<div class="text-center text-sm">
+		{t`Remember your password?`}
+		<a href="/login" class="underline underline-offset-4"> {t`Login`} </a>
+	</div>
 	{/if}
 {/snippet}
 
 {#snippet passwordResetSuccess()}
 	<div class="flex flex-col gap-4 text-center">
 		<div class="rounded border border-green-800 bg-green-50 p-4 text-sm text-green-800">
-			<h3 class="mb-2 font-semibold">Password reset successfully</h3>
-			<p>Your password has been reset. You can now sign in with your new password.</p>
+			<h3 class="mb-2 font-semibold">{t`Password reset successfully`}</h3>
+			<p>{t`Your password has been reset. You can now sign in with your new password.`}</p>
 		</div>
-		<Button variant="outline" onclick={() => goto('/login')}>Go to Login</Button>
+		<Button variant="outline" onclick={() => goto('/login')}>{t`Go to Login`}</Button>
 	</div>
 {/snippet}
 
 {#snippet invalidToken()}
 	<div class="flex flex-col gap-4 text-center">
 		<div class="rounded border border-red-800 bg-red-50 p-4 text-sm text-red-800">
-			<h3 class="mb-2 font-semibold">Invalid or expired token</h3>
+			<h3 class="mb-2 font-semibold">{t`Invalid or expired token`}</h3>
 			<p>
-				The password reset link is invalid or has expired. Please request a new password reset link.
+				{t`The password reset link is invalid or has expired. Please request a new password reset link.`}
 			</p>
 		</div>
 		<Button variant="outline" onclick={() => goto('/login/forgot_password')}>
-			Request new reset link
+			{t`Request new reset link`}
 		</Button>
 	</div>
 {/snippet}

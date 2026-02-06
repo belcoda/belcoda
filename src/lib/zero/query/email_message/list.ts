@@ -1,0 +1,69 @@
+import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { builder, type Schema } from '$lib/zero/schema';
+import type { QueryContext } from '$lib/zero/schema';
+import type { Query } from '$lib/server/db/zeroDrizzle';
+import { array, type InferOutput, object, optional, nullable, boolean } from 'valibot';
+import { listFilter, parseSchema } from '$lib/schema/helpers';
+import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
+import { readEmailMessageZero } from '$lib/schema/email-message';
+
+export const inputSchema = object({
+	...listFilter.entries,
+	isDraft: optional(nullable(boolean()))
+});
+export type ListEmailMessagesInput = InferOutput<typeof inputSchema>;
+
+export function listEmailMessagesQuery({
+	tx,
+	ctx,
+	input
+}: {
+	tx?: Query;
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const zero = tx || builder;
+	let q = zero.emailMessage
+		.where((expr) => emailMessageReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('updatedAt', 'desc')
+		.limit(input.pageSize || 50);
+	if (input.startAfter) {
+		q = q.start({ id: input.startAfter });
+	}
+	return q;
+}
+
+export const listEmailMessages = syncedQueryWithContext(
+	'listEmailMessages',
+	parseSchema(inputSchema),
+	(ctx: QueryContext, filter) => {
+		return listEmailMessagesQuery({ ctx, input: filter });
+	}
+);
+
+function whereClause(
+	builder: ExpressionBuilder<Schema, 'emailMessage'>,
+	{ filter }: { filter: ListEmailMessagesInput }
+) {
+	const isDeleted = filter.isDeleted ?? false;
+	const { and, cmp } = builder;
+	const filterArr = [
+		cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null),
+		cmp('id', 'NOT IN', filter.excludedIds)
+	];
+	if (filter.searchString && filter.searchString.length > 0) {
+		filterArr.push(cmp('subject', 'ILIKE', `%${filter.searchString}%`));
+	}
+	if (filter.isDraft !== undefined && filter.isDraft !== null) {
+		if (filter.isDraft) {
+			filterArr.push(cmp('startedAt', 'IS', null));
+		} else {
+			filterArr.push(cmp('startedAt', 'IS NOT', null));
+		}
+	}
+	return and(...filterArr);
+}
+
+export const outputSchema = array(readEmailMessageZero);

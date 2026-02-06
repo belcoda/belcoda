@@ -20,6 +20,7 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import RenderEvent from '$lib/components/layouts/app/sidebars/events/RenderEvent.svelte';
+	import { t } from '$lib/index.svelte';
 	let placeholder = $state(getTodayCalendarDate(getLocalTimeZone()));
 	let value = $state<DateRange>({
 		start: undefined,
@@ -62,6 +63,7 @@
 		...getListFilter(appState.organizationId),
 		tagId: null,
 		eventType: null,
+		hasSignups: false,
 		status: null
 	});
 
@@ -80,7 +82,7 @@
 	<Sidebar.Root collapsible="none" class="flex w-full flex-1">
 		<Sidebar.Header class="gap-3.5 border-b p-4">
 			<div class="flex w-full items-center justify-between">
-				<div class="text-2xl font-bold text-foreground">Events</div>
+				<div class="text-2xl font-bold text-foreground">{t`Events`}</div>
 				<Button href="/events" variant="outline"><CalendarPlusIcon class="size-5" /></Button>
 			</div>
 			<EventCalendar
@@ -136,12 +138,12 @@
 									<Empty.Media variant="icon">
 										<CalendarPlusIcon />
 									</Empty.Media>
-									<Empty.Title>No events found</Empty.Title>
+									<Empty.Title>{t`No events found`}</Empty.Title>
 									<Empty.Description>
-										No events found. Create a new event to get started.
+										{t`No events found. Create a new event to get started.`}
 									</Empty.Description>
 									<Empty.Content>
-										<Button href="/events/new">Create Event</Button>
+										<Button href="/events/new">{t`Create Event`}</Button>
 									</Empty.Content>
 								</Empty.Header>
 							</Empty.Root>

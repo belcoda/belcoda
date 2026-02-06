@@ -10,9 +10,10 @@
 	import * as Item from '$lib/components/ui/item/index.js';
 	import VenusAndMarsIcon from '@lucide/svelte/icons/venus-and-mars';
 	import CakeIcon from '@lucide/svelte/icons/cake';
+	import { t } from '$lib/index.svelte';
 </script>
 
-<ProfileRow title="Personal information" separator={true} showCopyButton={false} bind:edit>
+<ProfileRow title={t`Personal information`} separator={true} showCopyButton={false} bind:edit>
 	{#if edit}
 		<PersonalInfoForm bind:edit {person} />
 	{:else}
@@ -29,7 +30,7 @@
 							{renderGender(person.gender)}
 						</Item.Title>
 					{:else}
-						<Item.Description>Not specified</Item.Description>
+						<Item.Description>{t`Not specified`}</Item.Description>
 					{/if}
 				</Item.Content>
 			</Item.Root>
@@ -45,7 +46,7 @@
 							{formatDate(person.dateOfBirth)}
 						</Item.Title>
 					{:else}
-						<Item.Description>Not specified</Item.Description>
+						<Item.Description>{t`Not specified`}</Item.Description>
 					{/if}
 				</Item.Content>
 			</Item.Root>

@@ -50,7 +50,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			emailVerified: true,
 			image: true,
 			name: true,
-			preferences: true,
+			preferredLanguage: true,
 			twoFactorEnabled: true,
 			stripeCustomerId: false,
 			createdAt: true,
@@ -366,6 +366,41 @@ export default drizzleZeroConfig(drizzleSchema, {
 			createdAt: true,
 			updatedAt: true
 		},
+		petition: {
+			id: true,
+			organizationId: true,
+			teamId: true,
+			pointPersonId: true,
+
+			slug: true,
+			title: true,
+			description: true,
+			shortDescription: true,
+
+			published: true,
+
+			petitionTarget: true,
+			petitionText: true,
+
+			featureImage: true,
+			settings: true,
+
+			createdAt: true,
+			updatedAt: true,
+			deletedAt: true,
+			archivedAt: true
+		},
+		petitionSignature: {
+			id: true,
+			organizationId: true,
+			teamId: true,
+			petitionId: true,
+			personId: true,
+			details: true,
+			responses: true,
+			createdAt: true,
+			updatedAt: true
+		},
 		personNote: {
 			id: true,
 			organizationId: true,
@@ -375,19 +410,6 @@ export default drizzleZeroConfig(drizzleSchema, {
 			createdAt: true,
 			updatedAt: true,
 			deletedAt: true
-		},
-		peopleImport: {
-			id: true,
-			organizationId: true,
-			csvUrl: true,
-			status: true,
-			totalRows: true,
-			processedRows: true,
-			failedRows: true,
-			failedEntries: true,
-			importedBy: true,
-			createdAt: true,
-			completedAt: true
 		},
 		webhook: {
 			id: true,
@@ -431,13 +453,17 @@ export default drizzleZeroConfig(drizzleSchema, {
 			tags: ['personTag', 'tag'],
 			whatsappGroups: ['whatsappGroupMember', 'whatsappGroup'],
 			teams: ['personTeam', 'team'],
-			events: ['eventSignup', 'event']
+			events: ['eventSignup', 'event'],
+			petitions: ['petitionSignature', 'petition']
 		},
 		whatsappGroup: {
 			members: ['whatsappGroupMember', 'person']
 		},
 		team: {
 			people: ['personTeam', 'person']
+		},
+		petition: {
+			signers: ['petitionSignature', 'person']
 		}
 	},
 	debug: true

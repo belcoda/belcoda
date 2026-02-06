@@ -1,13 +1,13 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
-import { filterGroup } from '$lib/schema/filter/types';
+import { filterGroup } from '$lib/schema/person/filter';
 
 export const emailMessageSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
 	teamId: v.nullable(helpers.uuid),
-	emailFromSignatureId: helpers.uuid,
+	emailFromSignatureId: v.nullable(helpers.uuid),
 	replyToOverride: v.nullable(helpers.email),
 	recipients: filterGroup,
 	previewTextOverride: v.nullable(helpers.mediumString),
@@ -64,6 +64,12 @@ export const updateEmailMessage = v.partial(
 );
 export type UpdateEmailMessage = v.InferInput<typeof updateEmailMessage>;
 
+export const sendEmailMessage = v.object({
+	subject: v.optional(v.nullable(emailMessageSchema.entries.subject), null),
+	body: v.optional(v.nullable(emailMessageSchema.entries.body), null)
+});
+export type SendEmailMessage = v.InferInput<typeof sendEmailMessage>;
+
 export const mutatorMetadata = v.object({
 	organizationId: emailMessageSchema.entries.organizationId,
 	emailMessageId: emailMessageSchema.entries.id
@@ -83,3 +89,42 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const sendMutatorSchema = v.object({
+	input: sendEmailMessage,
+	metadata: mutatorMetadata
+});
+export type SendMutatorSchema = v.InferInput<typeof sendMutatorSchema>;
+export type SendMutatorSchemaOutput = v.InferOutput<typeof sendMutatorSchema>;
+
+export function createDefaultEmailMessage({
+	id,
+	organizationId,
+	teamId
+}: {
+	id: string;
+	teamId?: string | null;
+	organizationId: string;
+}) {
+	return {
+		id,
+		organizationId,
+		teamId: null,
+		emailFromSignatureId: null,
+		replyToOverride: null,
+		recipients: { type: 'or' as const, filters: [], exclude: [] },
+		previewTextOverride: null,
+		previewTextLock: false,
+		subject: null,
+		body: null,
+		sentBy: null,
+		startedAt: null,
+		completedAt: null,
+		estimatedRecipientCount: 0,
+		successfulRecipientCount: 0,
+		failedRecipientCount: 0,
+		createdAt: new Date().getTime(),
+		updatedAt: new Date().getTime(),
+		deletedAt: null
+	};
+}

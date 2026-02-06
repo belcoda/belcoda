@@ -4,13 +4,14 @@
 	import Command from "./command.svelte";
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import type { WithoutChildrenOrChild } from "$lib/utils.js";
+	import { t } from '$lib/index.svelte';
 
 	let {
 		open = $bindable(false),
 		ref = $bindable(null),
 		value = $bindable(""),
-		title = "Command Palette",
-		description = "Search for a command to run",
+		title = t`Command Palette`,
+		description = t`Search for a command to run`,
 		portalProps,
 		children,
 		...restProps

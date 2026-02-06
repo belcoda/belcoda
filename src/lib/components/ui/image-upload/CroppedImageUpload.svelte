@@ -11,6 +11,7 @@
 	import { cn } from '$lib/utils.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import Cropper from 'svelte-easy-crop';
+	import { t } from '$lib/index.svelte';
 	import {
 		createCroppedFile,
 		processAndUploadFile,
@@ -78,15 +79,15 @@
 			message: string;
 		}) => {
 			if (err.type === 'size') {
-				errorState = `File too large. Max size is ${HUMAN_READABLE_MAX_FILE_SIZE}.`;
+				errorState = t`File too large. Max size is ${HUMAN_READABLE_MAX_FILE_SIZE}.`;
 			} else if (err.type === 'type') {
-				errorState = `File type not allowed. Allowed types are .png, .jpg, .jpeg.`;
+				errorState = t`File type not allowed. Allowed types are .png, .jpg, .jpeg.`;
 			} else if (err.type === 'validation') {
-				errorState = `File validation error. Please try again.`;
+				errorState = t`File validation error. Please try again.`;
 			} else if (err.type === 'upload') {
-				errorState = `File upload error. Please try again.`;
+				errorState = t`File upload error. Please try again.`;
 			} else if (err.type === 'custom') {
-				errorState = `Unknown error. Please try again.`;
+				errorState = t`Unknown error. Please try again.`;
 			}
 		},
 		accept: '.png, .jpg, .jpeg',
@@ -144,8 +145,8 @@
 </script>
 
 <ResponsiveModal
-	title="Upload"
-	description="Upload an image to your workspace"
+	title={t`Upload`}
+	description={t`Upload an image to your workspace`}
 	bind:open={modalOpen}
 >
 	<div class="relative max-h-[500px] min-h-[300px] w-full">
@@ -162,8 +163,8 @@
 
 	{#snippet footer()}
 		<div class="flex justify-end gap-2">
-			<Button variant="outline" onclick={handleCancel}>Cancel</Button>
-			<Button onclick={uploadCroppedImage} disabled={!cropResults}>Upload</Button>
+			<Button variant="outline" onclick={handleCancel}>{t`Cancel`}</Button>
+			<Button onclick={uploadCroppedImage} disabled={!cropResults}>{t`Upload`}</Button>
 		</div>
 	{/snippet}
 </ResponsiveModal>
@@ -184,24 +185,24 @@
 	<div class="z-20 flex flex-col items-center text-center text-white">
 		{#if loading}
 			<LoaderIcon class="mb-2 h-8 w-8 animate-spin group-hover:text-white" />
-			<p class="group-hover:text-white">Loading...</p>
+			<p class="group-hover:text-white">{t`Loading...`}</p>
 		{:else if errorState}
 			<BadgeXIcon class="mb-2 h-8 w-8" />
-			<p class="group-hover:text-white">Error: {errorState}</p>
+			<p class="group-hover:text-white">{t`Error: `}{errorState}</p>
 		{:else if fileUrl}
 			<div class="hidden flex-col items-center group-hover:flex">
 				<RefreshCCWIcon class="mb-2 h-8 w-8 transition-transform duration-300" />
-				<p>Replace image</p>
-				<p class="text-xs text-white">Allowed: .png, .jpg, .jpeg</p>
-				<p class="text-xs text-white">Max size: {HUMAN_READABLE_MAX_FILE_SIZE}</p>
+				<p>{t`Replace image`}</p>
+				<p class="text-xs text-white">{t`Allowed: .png, .jpg, .jpeg`}</p>
+				<p class="text-xs text-white">{t`Max size: `}{HUMAN_READABLE_MAX_FILE_SIZE}</p>
 			</div>
 		{:else}
 			<UploadIcon
 				class="mb-2 h-8 w-8 transition-transform duration-300 group-hover:-translate-y-1"
 			/>
-			<p class="text-sm font-medium tracking-tighter">Click or drag to upload image</p>
-			<p class="text-xs tracking-tighter text-white">Allowed: .png, .jpg, .jpeg</p>
-			<p class="text-xs tracking-tighter text-white">Max size: 2MB</p>
+			<p class="text-sm font-medium tracking-tighter">{t`Click or drag to upload image`}</p>
+			<p class="text-xs tracking-tighter text-white">{t`Allowed: .png, .jpg, .jpeg`}</p>
+			<p class="text-xs tracking-tighter text-white">{t`Max size: 2MB`}</p>
 		{/if}
 	</div>
 </div>

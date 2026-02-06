@@ -1,3 +1,4 @@
+import { t } from '$lib/index.svelte';
 import { type GenericSchema, type GenericSchemaAsync } from 'valibot';
 import { superForm, defaults, type SuperValidated } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
@@ -54,7 +55,7 @@ export default function Form<
 		}
 
 		if (isTainted()) {
-			if (confirm('Are you sure you want to discard your changes?')) {
+			if (confirm(t`Are you sure you want to discard your changes?`)) {
 				callbackOrNavigateBack();
 			}
 		} else {

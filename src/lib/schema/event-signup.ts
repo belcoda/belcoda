@@ -6,6 +6,7 @@ import { readPersonZero } from '$lib/schema/person';
 import { personAddedFrom } from '$lib/schema/person/meta';
 
 import { personActionHelper } from '$lib/schema/person';
+import { surveyQuestionResponse } from '$lib/schema/survey/questions';
 
 export const eventSignupSchema = v.object({
 	id: helpers.uuid,
@@ -31,6 +32,10 @@ export const readEventSignupRest = v.object({
 	updatedAt: helpers.dateToString
 });
 export type ReadEventSignupRest = v.InferOutput<typeof readEventSignupRest>;
+
+export const readEventSignup = v.object({
+	...v.omit(eventSignupSchema, ['organizationId']).entries
+});
 
 export const readEventSignupZero = v.object({
 	...eventSignupSchema.entries,
@@ -84,6 +89,7 @@ export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
 
 export const eventSignupHelper = v.object({
+	organizationId: helpers.uuid,
 	person: personActionHelper,
 	addedFrom: personAddedFrom,
 	eventId: helpers.uuid,

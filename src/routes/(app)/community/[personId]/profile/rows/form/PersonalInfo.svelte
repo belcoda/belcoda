@@ -10,6 +10,7 @@
 	import { date } from '$lib/schema/helpers';
 
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
+	import { t } from '$lib/index.svelte';
 
 	const schema = objectAsync({
 		gender: personSchema.entries.gender,
@@ -30,7 +31,6 @@
 				},
 				input: {
 					gender: data.gender,
-					// @ts-expect-error - the mutator expects date that gets transformed to a timestamp, so it will work if we just pass a timestamp
 					dateOfBirth: data.dateOfBirth ? data.dateOfBirth.getTime() : null
 				}
 			});
@@ -38,7 +38,7 @@
 				await response.server;
 				edit = false;
 			} catch (error) {
-				toast.error('Could not update personal information. Please try again.');
+				toast.error(t`Could not update personal information. Please try again.`);
 			}
 		}
 	});
@@ -81,8 +81,8 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<div class="mt-3 flex items-center justify-end gap-2">
-		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>Cancel</Button>
-		<Button type="submit" size="sm">Save</Button>
+		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>{t`Cancel`}</Button>
+		<Button type="submit" size="sm">{t`Save`}</Button>
 	</div>
 	<Debug {data} />
 </form>

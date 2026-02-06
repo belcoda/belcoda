@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
-export const actionCodeTypes = ['event_signup', 'event_attended'] as const;
+export const actionCodeTypes = ['event_signup', 'event_attended', 'petition_signed'] as const;
 export const actionCodeType = v.picklist(actionCodeTypes);
 export type ActionCodeType = v.InferOutput<typeof actionCodeType>;
 

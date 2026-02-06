@@ -13,7 +13,8 @@
 	import { z } from '$lib/zero.svelte';
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/state.svelte';
-	const timeAgo = getTimeAgo(appState.locale);
+	import { locale, t } from '$lib/index.svelte';
+	const timeAgo = getTimeAgo(locale.current);
 	const { note }: { note: ReadPersonNoteWithUserZero } = $props();
 	let editOpen = $state(false);
 	import EditNote from '$lib/components/layouts/app/action-menus/person/notes/EditNote.svelte';
@@ -22,7 +23,7 @@
 
 	function deleteNote() {
 		if (!canEditDelete) return;
-		if (window.confirm('Are you sure you want to delete this note?')) {
+		if (window.confirm(t`Are you sure you want to delete this note?`)) {
 			const parsed = parse(deleteMutatorSchemaZero, {
 				metadata: {
 					personId: note.personId,
@@ -32,7 +33,7 @@
 				}
 			});
 			const input = z.mutate.personNote.delete(parsed);
-			toast.success('Note deleted');
+			toast.success(t`Note deleted`);
 		}
 	}
 </script>
@@ -53,7 +54,8 @@
 					<div>{note.user?.name || 'User'}</div>
 				</Item.Title>
 				<Item.Description class="text-xs">
-					{timeAgo.format(note.createdAt, 'short')}
+					<!-- typescript has a problem with 'short' even though it is a valid format-->
+					{timeAgo.format(note.createdAt, 'short' as 'twitter')}
 				</Item.Description>
 			</div>
 			{#if canEditDelete}
@@ -66,9 +68,9 @@
 						</DropdownMenu.Trigger>
 						<DropdownMenu.Content>
 							{#if !editOpen}<DropdownMenu.Item onclick={() => (editOpen = true)}
-									>Edit</DropdownMenu.Item
+									>{t`Edit`}</DropdownMenu.Item
 								>{/if}
-							<DropdownMenu.Item onclick={() => deleteNote()}>Delete</DropdownMenu.Item>
+							<DropdownMenu.Item onclick={() => deleteNote()}>{t`Delete`}</DropdownMenu.Item>
 						</DropdownMenu.Content>
 					</DropdownMenu.Root>
 				</div>
