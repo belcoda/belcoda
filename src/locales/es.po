@@ -632,9 +632,8 @@ msgstr "Prueba"
 msgid "Footer"
 msgstr "Pie de página"
 
-#: src/routes/(app)/settings/organization/themes/+page.svelte
-msgid "Organization ID not found"
-msgstr "ID de organización no encontrado"
+#~ msgid "Organization ID not found"
+#~ msgstr "ID de organización no encontrado"
 
 #: src/lib/components/ui/color-picker/ColorPicker.svelte
 msgid "Color preview"
