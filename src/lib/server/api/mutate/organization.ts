@@ -4,8 +4,13 @@ import {
 	type UpdateOrganization,
 	type UpdateOrganizationWhatsappSettings
 } from '$lib/schema/organization';
+import {
+	type UpdateThemeZeroMutatorSchema,
+	updateThemeZeroMutatorSchema
+} from '$lib/schema/organization/settings';
 import { organization } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
+import { parse } from 'valibot';
 
 export function updateOrganization(params: MutatorParams) {
 	return async function (
@@ -83,8 +88,7 @@ export function updateOrganizationWhatsappSettings(params: MutatorParams) {
 		}
 
 		params.result?.push(updated);
-    
-  };
+	};
 }
 
 export function updateTheme(params: MutatorParams) {
@@ -121,6 +125,5 @@ export function updateTheme(params: MutatorParams) {
 				updatedAt: new Date()
 			})
 			.where(eq(organization.id, parsed.metadata.organizationId));
-   };
+	};
 }
-

@@ -2,7 +2,8 @@ import { type Transaction } from '@rocicorp/zero';
 import { type Schema } from '$lib/zero/schema';
 import {
 	type UpdateOrganizationZeroMutatorSchema,
-	updateOrganizationZeroMutatorSchema
+	updateOrganizationZeroMutatorSchema,
+	type UpdateOrganizationWhatsappSettings
 } from '$lib/schema/organization';
 import {
 	type UpdateThemeZeroMutatorSchema,
@@ -42,7 +43,7 @@ export function updateTheme() {
 		});
 	};
 }
-      
+
 export function updateOrganizationWhatsappSettings() {
 	return async function (
 		tx: Transaction<Schema>,
