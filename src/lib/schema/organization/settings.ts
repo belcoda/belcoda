@@ -76,7 +76,8 @@ export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 
 export const updateThemeZeroMutatorSchema = v.object({
 	metadata: v.object({
-		organizationId: helpers.uuid
+		organizationId: helpers.uuid,
+		existingSettings: organizationSettingsSchema
 	}),
 	input: themeSettingsSchema
 });

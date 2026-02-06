@@ -29,9 +29,9 @@ export function updateTheme() {
 		tx.mutate.organization.update({
 			id: parsed.metadata.organizationId,
 			settings: {
-				...org.settings,
+				...parsed.metadata.existingSettings,
 				theme: {
-					...org.settings.theme,
+					...parsed.metadata.existingSettings.theme,
 					...parsed.input
 				}
 			},
