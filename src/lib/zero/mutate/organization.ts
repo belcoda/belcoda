@@ -25,10 +25,6 @@ export function updateOrganization() {
 export function updateTheme() {
 	return async function (tx: Transaction<Schema>, args: UpdateThemeZeroMutatorSchema) {
 		const parsed = parse(updateThemeZeroMutatorSchema, args);
-		const org = await tx.query.organization.where('id', parsed.metadata.organizationId).one().run();
-		if (!org) {
-			throw new Error('Organization not found');
-		}
 
 		tx.mutate.organization.update({
 			id: parsed.metadata.organizationId,
