@@ -83,7 +83,7 @@
 		"@aws-sdk/client-s3": "^3.948.0",
 		"@aws-sdk/s3-request-presigner": "^3.948.0",
 		"@better-auth/stripe": "^1.4.4",
-		"@rocicorp/zero": "^0.24.3000000000",
+		"@rocicorp/zero": "^0.25.12",
 		"@scalar/sveltekit": "^0.1.29",
 		"@wuchale/svelte": "^0.17.5",
 		"@wuchale/vite-plugin": "^0.15.3",
@@ -106,6 +106,6 @@
 		"svelte-lexical": "^0.6.3",
 		"valibot": "^1.1.0",
 		"wuchale": "^0.18.5",
-		"zero-svelte": "^1.1.2"
+		"zero-svelte": "^1.2.2"
 	}
 }
