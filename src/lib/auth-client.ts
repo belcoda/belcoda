@@ -12,11 +12,3 @@ export const authClient = createAuthClient({
 		oneTimeTokenClient()
 	]
 });
-
-import { appState } from '$lib/state.svelte';
-export async function setActiveOrganizationId(organizationId: string) {
-	await authClient.organization.setActive({
-		organizationId
-	});
-	appState.setOrganizationId(organizationId);
-}
