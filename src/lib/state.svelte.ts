@@ -9,8 +9,13 @@ import { type ListFilter } from '$lib/schema/helpers';
 import type { QueryContext } from '$lib/zero/schema';
 import { get } from '$lib/utils/http';
 import { queryContextSchema } from '$lib/zero/schema';
+import type { Schema } from '$lib/zero/schema';
 export const STARTING_ORGANIZATION_ID = 'STARTING_ORGANIZATION_ID' as const;
 export const STARTING_STATE_USER_ID = 'STARTING_STATE_USER_ID' as const;
+
+import { type Query } from '@rocicorp/zero';
+import type { ReadOrganizationZero } from './schema/organization';
+
 const DEFAULT_LIST_FILTER: ListFilter = {
 	organizationId: STARTING_ORGANIZATION_ID,
 	teamId: null,
@@ -29,57 +34,92 @@ export function getListFilter(
 }
 
 // Define the class that holds all your state and logic
-class AuthStore {
+export class AuthStore {
 	// 1. Reactive State Variables (as class properties)
 
-	locale = $state<Locale>('en');
+	locale: Locale;
 
-	organizationId = $state<string>(STARTING_ORGANIZATION_ID);
+	organizationId: string;
 
-	userId = $state<string>(STARTING_STATE_USER_ID);
+	userId: string;
 
-	usersListFilter = $state<ListFilter>(getListFilter(this.organizationId));
+	usersListFilter: ListFilter;
 
-	activeTeamId = $state<string | null>(null); // used in filtering content when teamId is set
+	activeTeamId: string | null; // used in filtering content when teamId is set
 
-	authTeams = $state<string[]>([]);
-	adminOrgs = $state<string[]>([]);
-	ownerOrgs = $state<string[]>([]);
+	authTeams: string[];
+	adminOrgs: string[];
+	ownerOrgs: string[];
+	queryContext: QueryContext;
 
-	queryContext = $derived({
-		userId: this.userId,
-		authTeams: this.authTeams,
-		adminOrgs: this.adminOrgs,
-		ownerOrgs: this.ownerOrgs
-	});
+	constructor({
+		session,
+		defaultActiveOrganizationId,
+		queryContext
+	}: {
+		session: App.Locals['session'];
+		defaultActiveOrganizationId: string;
+		queryContext: QueryContext;
+	}) {
+		if (!session) {
+			throw new Error('Session is required');
+		}
+		this.locale = $state('en');
+		this.userId = $state(session.user.id);
+		this.organizationId = $state(defaultActiveOrganizationId);
+		this.activeTeamId = null;
+		this.authTeams = $state(queryContext.authTeams);
+		this.adminOrgs = $state(queryContext.adminOrgs);
+		this.ownerOrgs = $state(queryContext.ownerOrgs);
+		this.usersListFilter = $state(getListFilter(defaultActiveOrganizationId));
+		this.queryContext = $derived({
+			userId: this.userId,
+			authTeams: this.authTeams,
+			adminOrgs: this.adminOrgs,
+			ownerOrgs: this.ownerOrgs
+		});
+	}
 
-	organizations = z.createQuery(
-		listOrganizations(this.queryContext, {}),
-		false // don't enable the query until we have a userId loaded...
-	);
+	get organizations() {
+		return z.createQuery(listOrganizations(this.queryContext, {}));
+	}
 
-	activeOrganization = z.createQuery(
-		readOrganization(this.queryContext, { organizationId: this.organizationId }),
-		false // don't enable the query until we have an organizationId loaded...
-	);
+	get activeOrganization() {
+		return z.createQuery(
+			readOrganization(this.queryContext, { organizationId: this.organizationId })
+		);
+	}
 
-	role = $derived(this.activeOrganization.data?.memberships[0].role);
-	isAdmin = $derived(this.role === 'admin');
-	isOwner = $derived(this.role === 'owner');
-	isAdminOrOwner = $derived(this.isAdmin || this.isOwner);
+	get role() {
+		return this.activeOrganization.data?.memberships[0].role;
+	}
 
-	organizationUsers = z.createQuery(
-		listUsers(this.queryContext, this.usersListFilter),
-		false // don't enable the query until we have a userId loaded...
-	);
+	get isAdmin() {
+		return this.role === 'admin';
+	}
 
-	myTeams = z.createQuery(
-		listMyTeams(this.queryContext, { userId: this.userId, organizationId: this.organizationId })
-	);
+	get isOwner() {
+		return this.role === 'owner';
+	}
 
-	user = z.createQuery(readUser(this.queryContext, { userId: this.userId }));
+	get isAdminOrOwner() {
+		return this.isAdmin || this.isOwner;
+	}
 
-	// 2. Actions (mutators)
+	get organizationUsers() {
+		return z.createQuery(listUsers(this.queryContext, this.usersListFilter));
+	}
+
+	get myTeams() {
+		return;
+		z.createQuery(
+			listMyTeams(this.queryContext, { userId: this.userId, organizationId: this.organizationId })
+		);
+	}
+
+	get user() {
+		return z.createQuery(readUser(this.queryContext, { userId: this.userId }));
+	}
 
 	setLocale = (newLocale: Locale) => {
 		this.locale = newLocale;
@@ -88,31 +128,10 @@ class AuthStore {
 	setOrganizationId = (newOrganizationId: string) => {
 		this.organizationId = newOrganizationId;
 		this.usersListFilter.organizationId = newOrganizationId;
-		this.organizations.updateQuery(listOrganizations(this.queryContext, {}), true);
-		this.activeOrganization.updateQuery(
-			readOrganization(this.queryContext, { organizationId: newOrganizationId }),
-			true
-		);
-		this.organizationUsers.updateQuery(listUsers(this.queryContext, this.usersListFilter), true);
-		this.myTeams.updateQuery(
-			listMyTeams(this.queryContext, { userId: this.userId, organizationId: newOrganizationId }),
-			true
-		);
 	};
 
 	setUserId = (newUserId: string) => {
 		this.userId = newUserId;
-		this.user.updateQuery(readUser(this.queryContext, { userId: newUserId }));
-		this.organizations.updateQuery(listOrganizations(this.queryContext, {}), true);
-		this.activeOrganization.updateQuery(
-			readOrganization(this.queryContext, { organizationId: this.organizationId }),
-			true
-		);
-		this.organizationUsers.updateQuery(listUsers(this.queryContext, this.usersListFilter), true);
-		this.myTeams.updateQuery(
-			listMyTeams(this.queryContext, { userId: newUserId, organizationId: this.organizationId }),
-			true
-		);
 	};
 
 	setActiveTeamId = (newTeamId: string | null) => {
@@ -126,15 +145,134 @@ class AuthStore {
 		this.adminOrgs = newQueryContext.adminOrgs;
 		this.ownerOrgs = newQueryContext.ownerOrgs;
 	};
-
-	async loadQueryContext() {
-		const queryContext = await get({
-			path: '/api/utils/auth/permissions',
-			schema: queryContextSchema
-		});
-		this.setQueryContext(queryContext);
-	}
 }
 
-// Singleton instance of the store
-export const appState = new AuthStore();
+export function createAppState({
+	session,
+	initialQueryContext,
+	defaultActiveOrganizationId
+}: {
+	session: App.Locals['session'];
+	initialQueryContext: QueryContext;
+	defaultActiveOrganizationId: string;
+}) {
+	if (!session) {
+		throw new Error('Session is required');
+	}
+
+	let locale: Locale = $state('en');
+	const setLocale = (newLocale: Locale) => {
+		locale = newLocale;
+	};
+
+	let organizationId: string = $state(defaultActiveOrganizationId);
+	const setOrganizationId = (newOrganizationId: string) => {
+		organizationId = newOrganizationId;
+	};
+
+	let userId: string = $state(session.user.id); //no set function needed here, it's always gonna be the same user...
+	let usersListFilter: ListFilter = $state(getListFilter(defaultActiveOrganizationId));
+	const setUsersListFilter = (newUsersListFilter: ListFilter) => {
+		usersListFilter = newUsersListFilter;
+	};
+
+	let activeTeamId: string | null = $state(null);
+	const setActiveTeamId = (newActiveTeamId: string | null) => {
+		activeTeamId = newActiveTeamId;
+	};
+
+	let queryContext: QueryContext = $state(initialQueryContext);
+	const setQueryContext = (newQueryContext: QueryContext) => {
+		queryContext = newQueryContext;
+	};
+	let organizations = $derived(z.createQuery(listOrganizations(queryContext, {})));
+	let activeOrganization = $derived(
+		z.createQuery(readOrganization(queryContext, { organizationId: organizationId }))
+	);
+
+	let adminOrgs = $derived.by(() => {
+		return organizations.data
+			?.filter((organization) =>
+				organization.memberships.some((membership) => membership.role === 'admin')
+			)
+			.map((organization) => organization.id);
+	});
+	let ownerOrgs = $derived.by(() => {
+		return organizations.data
+			?.filter((organization) =>
+				organization.memberships.some((membership) => membership.role === 'owner')
+			)
+			.map((organization) => organization.id);
+	});
+
+	let role = $derived(activeOrganization.data?.memberships[0].role);
+	let isAdmin = $derived(role === 'admin');
+	let isOwner = $derived(role === 'owner');
+	let isAdminOrOwner = $derived(isAdmin || isOwner);
+	let organizationUsers = $derived(z.createQuery(listUsers(queryContext, usersListFilter)));
+	let myTeams = $derived(
+		z.createQuery(listMyTeams(queryContext, { userId: userId, organizationId: organizationId }))
+	);
+	let user = $derived(z.createQuery(readUser(queryContext, { userId: userId })));
+
+	return {
+		get locale() {
+			return locale;
+		},
+		setLocale,
+
+		get organizationId() {
+			return organizationId;
+		},
+		setOrganizationId,
+
+		get userId() {
+			return userId;
+		},
+
+		get usersListFilter() {
+			return usersListFilter;
+		},
+		setUsersListFilter,
+
+		get activeTeamId() {
+			return activeTeamId;
+		},
+		setActiveTeamId,
+
+		get queryContext() {
+			return queryContext;
+		},
+		setQueryContext,
+
+		get organizations() {
+			return organizations;
+		},
+		get activeOrganization() {
+			return activeOrganization;
+		},
+		get role() {
+			return role;
+		},
+		get isAdmin() {
+			return isAdmin;
+		},
+		get isOwner() {
+			return isOwner;
+		},
+		get isAdminOrOwner() {
+			return isAdminOrOwner;
+		},
+		get organizationUsers() {
+			return organizationUsers;
+		},
+		get myTeams() {
+			return myTeams;
+		},
+		get user() {
+			return user;
+		}
+	};
+}
+import { createContext } from 'svelte';
+export const [getAppState, setAppState] = createContext<ReturnType<typeof createAppState>>();
