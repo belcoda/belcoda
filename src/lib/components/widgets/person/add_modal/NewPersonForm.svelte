@@ -10,7 +10,7 @@
 	} from '$lib/schema/person';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { v7 as uuidv7 } from 'uuid';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { readEmailMessage } from '$lib/zero/query/email_message/read';
 	import { page } from '$app/state';
 	import { formatShortTimestamp } from '$lib/utils/date';

@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { tick } from 'svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';

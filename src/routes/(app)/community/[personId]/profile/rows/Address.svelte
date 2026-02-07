@@ -5,7 +5,7 @@
 	import { renderLocalizedCountryName } from '$lib/utils/country';
 	let { person }: { person: ReadPersonZero } = $props();
 	import { renderAddress } from '$lib/utils/string/address';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { locale, t } from '$lib/index.svelte';
 	import AddressForm from './form/Address.svelte';
 	import ProfileRow from '../ProfileRow.svelte';

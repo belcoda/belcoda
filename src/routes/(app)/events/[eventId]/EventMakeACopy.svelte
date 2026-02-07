@@ -52,7 +52,7 @@
 	);
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { goto } from '$app/navigation';
 </script>
 

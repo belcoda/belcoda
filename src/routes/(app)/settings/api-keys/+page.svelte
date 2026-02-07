@@ -2,7 +2,7 @@
 	import { t } from '$lib/index.svelte';
 	import { onMount } from 'svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { authClient } from '$lib/auth-client';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';

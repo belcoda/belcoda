@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { type FilterType } from '$lib/schema/person/filter';
 	import { t } from '$lib/index.svelte';
 	const { filter }: { filter: FilterType } = $props();

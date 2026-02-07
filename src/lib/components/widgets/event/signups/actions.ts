@@ -1,7 +1,8 @@
 import { z } from '$lib/zero.svelte';
 import { formatShortTimestamp } from '$lib/utils/date';
 import { getLocalTimeZone } from '@internationalized/date';
-import { appState } from '$lib/state.svelte';
+import { getAppState } from '$lib/state.svelte';
+const appState = getAppState();
 import { locale, t } from '$lib/index.svelte';
 import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 import { type ReadEventZero } from '$lib/schema/event';

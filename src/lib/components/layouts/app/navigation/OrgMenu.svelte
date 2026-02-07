@@ -8,10 +8,11 @@
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	const sidebar = useSidebar();
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import GradientBorder from '$lib/components/widgets/GradientBorder.svelte';
 	import { goto } from '$app/navigation';
-	import { setActiveOrganizationId } from '$lib/auth-client';
+	import { authClient } from '$lib/auth-client';
 	import { t } from '$lib/index.svelte';
 	const organizations = appState.organizations;
 	const activeOrganization = appState.activeOrganization;
@@ -113,7 +114,9 @@
 						class="flex items-center gap-2"
 						checked={organization.id === appState.organizationId}
 						onclick={async () => {
-							await setActiveOrganizationId(organization.id);
+							await authClient.organization.setActive({
+								organizationId: organization.id
+							});
 							appState.setOrganizationId(organization.id);
 							await goto('/');
 						}}
@@ -157,7 +160,8 @@
 {#snippet userCountBadge(count: number)}
 	<span class="flex items-center gap-1 rounded bg-accent px-1.5 py-0.5 text-xs font-medium">
 		<UserIcon class="size-3" />
-		{count} {t`users`}
+		{count}
+		{t`users`}
 	</span>
 {/snippet}
 

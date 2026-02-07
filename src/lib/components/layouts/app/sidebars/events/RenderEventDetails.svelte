@@ -7,7 +7,7 @@
 	let { event }: { event: ReadEventZero } = $props();
 	import { renderEventTime } from '$lib/utils/date';
 	import { renderAddress, isAddressComplete } from '$lib/utils/string/address';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { locale } from '$lib/index.svelte';
 	const time = renderEventTime(event.startsAt, event.endsAt, locale.current, event.timezone);
 </script>

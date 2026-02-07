@@ -4,7 +4,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { parse } from 'valibot';
 	import { toast } from 'svelte-sonner';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { t } from '$lib/index.svelte';
 	let {
 		noteId,

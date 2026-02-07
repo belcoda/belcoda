@@ -9,7 +9,7 @@
 	const { PUBLIC_ROOT_DOMAIN } = env;
 	import { dev } from '$app/environment';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import LinkIcon from '@lucide/svelte/icons/link';
 	import createForm from '$lib/form.svelte';

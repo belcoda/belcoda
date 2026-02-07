@@ -13,7 +13,7 @@
 		renderLocalPhoneNumber,
 		isValidInternationalPhoneNumber
 	} from '$lib/utils/phone';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { locale, t } from '$lib/index.svelte';
 	import { cn } from '$lib/utils.js';
 

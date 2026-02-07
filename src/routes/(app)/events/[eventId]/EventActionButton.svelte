@@ -16,7 +16,7 @@
 	const id = $props.id();
 	import { toast } from 'svelte-sonner';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import EventMakeACopy from './EventMakeACopy.svelte';
 	function updatePublished(checked: boolean) {
 		z.mutate.event.update({

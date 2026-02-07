@@ -3,7 +3,7 @@
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { readPetition } from '$lib/zero/query/petition/read';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	const { params } = $props();
 	const petition = $derived.by(() => {
 		return z.createQuery(readPetition(appState.queryContext, { petitionId: params.petitionId }));

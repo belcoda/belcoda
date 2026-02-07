@@ -4,7 +4,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { LOCALES, type Locale, getLocaleName, isSupportedLanguage } from '$lib/utils/language';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { t } from '$lib/index.svelte';
 	let value = $state<Locale>(appState.locale);
 	import { authClient } from '$lib/auth-client';

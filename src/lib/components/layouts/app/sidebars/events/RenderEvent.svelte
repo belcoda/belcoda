@@ -7,7 +7,7 @@
 	let { event }: { event: ReadEventZero } = $props();
 	import { renderEventTime } from '$lib/utils/date';
 	import { renderAddress, isAddressComplete } from '$lib/utils/string/address';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { getLocalTimeZone } from '@internationalized/date';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';

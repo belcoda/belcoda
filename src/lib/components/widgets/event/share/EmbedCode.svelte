@@ -14,7 +14,7 @@
 	type Theme = 'default';
 	let theme: Theme = $state('default');
 
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { getEventLink } from '$lib/utils/events/link';
 	const eventLink = getEventLink({
 		eventSlug: event.slug,

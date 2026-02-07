@@ -3,7 +3,7 @@
 
 	import { readTag } from '$lib/zero/query/tag/read';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	const tag = $derived.by(() => z.createQuery(readTag(appState.queryContext, { tagId })));
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
 </script>

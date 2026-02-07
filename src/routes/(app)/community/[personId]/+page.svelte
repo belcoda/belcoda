@@ -6,7 +6,7 @@
 	import UserSearchIcon from '@lucide/svelte/icons/user-search';
 	import { z } from '$lib/zero.svelte';
 	const { params } = $props();
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { readPerson } from '$lib/zero/query/person/read';
 	const person = $derived.by(() => {
 		return z.createQuery(readPerson(appState.queryContext, { personId: params.personId }));

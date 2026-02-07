@@ -8,7 +8,7 @@
 	import { type ListFilter } from '$lib/schema/helpers';
 	import { getListFilter } from '$lib/state.svelte';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { toast } from 'svelte-sonner';
 	import { t } from '$lib/index.svelte';
 	const {

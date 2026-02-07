@@ -2,7 +2,8 @@ import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import { type ReadEventZero } from '$lib/schema/event';
 import { type ReadActionCodeZero } from '$lib/schema/action-code';
-import { appState } from '$lib/state.svelte';
+import { getAppState } from '$lib/state.svelte';
+const appState = getAppState();
 
 export function getEventLink({
 	eventSlug,

@@ -10,7 +10,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import DownloadIcon from '@lucide/svelte/icons/download';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { env } from '$env/dynamic/public';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { generateWhatsAppSignupLink, getEventLink } from '$lib/utils/events/link';

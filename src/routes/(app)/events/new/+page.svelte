@@ -6,7 +6,7 @@
 	import { type CreateEventZero, type UpdateEventZero, createEventZero } from '$lib/schema/event';
 	import { parse } from 'valibot';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { goto } from '$app/navigation';
 	import { v7 as uuidv7 } from 'uuid';
 	async function onSubmit(data: CreateEventZero | UpdateEventZero) {

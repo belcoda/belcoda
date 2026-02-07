@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appState } from '$lib/state.svelte';
+	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
 	import { type ReadEventZero } from '$lib/schema/event';
 	import { type ReadActionCodeZero } from '$lib/schema/action-code';
 	import { z } from '$lib/zero.svelte';
