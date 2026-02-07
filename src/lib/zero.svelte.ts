@@ -4,7 +4,7 @@ import { schema, type Schema } from '$lib/zero/schema';
 import { env as publicEnv } from '$env/dynamic/public';
 import { jwtDecode } from 'jwt-decode';
 import createMutators from '$lib/zero/mutate/client_mutators';
-
+/* 
 function get_z_options() {
 	const userId = getAuthData();
 	return {
@@ -18,9 +18,15 @@ function get_z_options() {
 		}
 	} as const;
 }
-
-export const z = new Z<Schema, ReturnType<typeof createMutators>>(get_z_options());
-
+ */
+export const z = new Z({
+	cacheURL: publicEnv.PUBLIC_ZERO_SERVER,
+	schema,
+	mutators: createMutators(),
+	kvStore: 'idb',
+	userID: 'anon'
+});
+/* 
 function getCookie(name: string): string | null {
 	if (typeof document === 'undefined') {
 		return null;
@@ -61,3 +67,4 @@ function getAuthData() {
 		return 'anonymous';
 	}
 }
+ */
