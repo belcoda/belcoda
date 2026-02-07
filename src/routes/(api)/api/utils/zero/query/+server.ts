@@ -2,9 +2,6 @@ import { withValidation, type ReadonlyJSONValue } from '@rocicorp/zero';
 import { handleGetQueriesRequest } from '@rocicorp/zero/server';
 import { schema } from '$lib/zero/schema';
 
-import { error, json } from '@sveltejs/kit';
-import * as jose from 'jose';
-import { env } from '$env/dynamic/private';
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
 import * as allQueriesMap from '$lib/server/api/query/index';
 const queryArr = Object.values(allQueriesMap);
@@ -17,36 +14,13 @@ const log = pino(import.meta.url);
 const validated = Object.fromEntries(queryArr.map((q) => [q.queryName, withValidation(q)]));
 
 export const POST = async (event) => {
-	const authHeader = event.request.headers.get('authorization');
-	if (!authHeader) {
-		return error(401, 'No authorization header found');
+	if (!event.locals.session) {
+		return json(
+			{ error: 'Unable to load Zero instance on the server because no session is present' },
+			{ status: 401 }
+		);
 	}
-	const [type, token] = authHeader.split(' ');
-	if (type !== 'Bearer') {
-		return error(401, 'Invalid authorization header');
-	}
-	const secret = new TextEncoder().encode(env.ZERO_AUTH_SECRET);
-
-	const parsed = await jose
-		.jwtVerify(token, secret, {
-			issuer: env.AUTH_JWT_ISSUER,
-			audience: env.AUTH_JWT_AUDIENCE
-		})
-		.catch((err) => {
-			log.error(err, 'Error verifying JWT');
-			return null;
-		});
-
-	if (!parsed) {
-		return error(401, 'Unable to verify JWT');
-	}
-
-	const userId = parsed.payload.sub;
-
-	if (!userId) {
-		return error(401, 'User ID not found in JWT');
-	}
-
+	const userId = event.locals.session.user.id;
 	const { authTeams, adminOrgs, ownerOrgs } = await getQueryContext(userId);
 	const ctx: QueryContext = { userId, authTeams, adminOrgs, ownerOrgs };
 	const response = await handleGetQueriesRequest(
