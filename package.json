@@ -28,7 +28,7 @@
 		"db:seed": "npx vite-node --options.transformMode.ssr='/.*/' src/lib/server/db/seed/index.ts",
 		"wuchale:extract": "wuchale --config wuchale.config.ts",
 		"wuchale:clean": "wuchale --config wuchale.config.ts --clean",
-		"zero:dev": "npx zero-cache-dev --schema-path=./src/lib/z/schema.ts"
+		"zero:dev": "npx zero-cache-dev"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.0",
