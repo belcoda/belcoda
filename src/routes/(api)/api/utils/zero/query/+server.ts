@@ -1,7 +1,7 @@
+import { json } from '@sveltejs/kit';
 import { withValidation, type ReadonlyJSONValue } from '@rocicorp/zero';
 import { handleGetQueriesRequest } from '@rocicorp/zero/server';
 import { schema } from '$lib/zero/schema';
-
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
 import * as allQueriesMap from '$lib/server/api/query/index';
 const queryArr = Object.values(allQueriesMap);
