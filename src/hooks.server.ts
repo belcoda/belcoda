@@ -50,7 +50,6 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 		event.url.pathname.startsWith('/logout') ||
 		event.url.pathname.startsWith('/api/docs') ||
 		event.url.pathname.startsWith('/verify-email') ||
-		event.url.pathname.startsWith('/api/utils/zero') ||
 		event.url.pathname.startsWith('/api/auth') || //this is for the better-auth api which handles its own authentication
 		event.url.pathname.startsWith('/webhooks') ||
 		event.url.pathname.startsWith('/sentry-example-page')
