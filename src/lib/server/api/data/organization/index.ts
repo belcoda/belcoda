@@ -2,6 +2,17 @@ import { organization, member } from '$lib/schema/drizzle';
 import { db } from '$lib/server/db';
 import type { Transaction } from '$lib/server/db/zeroDrizzle';
 import { eq } from 'drizzle-orm';
+
+export async function listOrganizationsByUserId({ userId }: { userId: string }): Promise<string[]> {
+	const result = await db.query.member.findMany({
+		where: eq(member.userId, userId),
+		columns: {
+			organizationId: true
+		}
+	});
+	return result.map((m) => m.organizationId);
+}
+
 export async function getOrganization({
 	userId,
 	organizationId
