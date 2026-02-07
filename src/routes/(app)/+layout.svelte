@@ -1,43 +1,16 @@
 <script lang="ts">
-	import { t } from '$lib/index.svelte';
-	const { children } = $props();
-	import { authClient } from '$lib/auth-client';
-	import { onMount } from 'svelte';
-	import { appState } from '$lib/state.svelte';
-
-	onMount(async () => {
-		const session = await authClient.getSession();
-		if (session.error) {
-			console.error(session.error);
-			throw new Error(t`Error getting session`);
-		}
-		if (!session.data?.user?.id) {
-			throw new Error(t`No user id found`);
-		}
-
-		await appState.loadQueryContext();
-
-		if (session.data.session.activeOrganizationId) {
-			appState.setUserId(session.data.user.id);
-			appState.setOrganizationId(session.data.session.activeOrganizationId);
-		} else {
-			const organizationsList = await authClient.organization.list();
-			if (organizationsList.error) {
-				console.error(organizationsList.error);
-				throw new Error(t`Error getting organizations list`);
-			}
-			if (organizationsList.data && organizationsList.data.length > 0) {
-				// gotta set these two together, otherwise there will be a race condition...
-				appState.setUserId(session.data.user.id);
-				appState.setOrganizationId(organizationsList.data[0].id);
-			} else {
-				await goto(`/organization`);
-			}
-		}
-	});
-
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { goto } from '$app/navigation';
+	const { children, data } = $props();
+	import { createAppState, setAppState, getAppState } from '$lib/state.svelte';
+	// svelte-ignore state_referenced_locally
+	const { session, queryContext, organizations, defaultActiveOrganizationId } = data;
+	const appStateInstance = createAppState({
+		session,
+		initialQueryContext: queryContext,
+		defaultActiveOrganizationId
+	});
+	setAppState(appStateInstance);
+	const appState = getAppState();
 </script>
 
 <!-- This is an important check to ensure that we always have a valid userId and active organization Id. These will be used with confidence throughout the rest of the application interface -->
