@@ -12,7 +12,8 @@
 	import { getTimeAgo } from '$lib/utils/time';
 	import { z } from '$lib/zero.svelte';
 	import { toast } from 'svelte-sonner';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { locale, t } from '$lib/index.svelte';
 	const timeAgo = getTimeAgo(locale.current);
 	const { note }: { note: ReadPersonNoteWithUserZero } = $props();

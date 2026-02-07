@@ -2,7 +2,8 @@
 	import { t } from '$lib/index.svelte';
 	import { onMount } from 'svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { authClient } from '$lib/auth-client';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -72,13 +73,15 @@
 		try {
 			creating = true;
 			createError = null;
-			
+
 			// Calculate expiresIn in seconds if expiration date is provided
 			let expiresIn: number | undefined = undefined;
 			if (newKeyExpiresAt) {
 				const expirationDate = new Date(newKeyExpiresAt);
 				const now = new Date();
-				const secondsUntilExpiration = Math.floor((expirationDate.getTime() - now.getTime()) / 1000);
+				const secondsUntilExpiration = Math.floor(
+					(expirationDate.getTime() - now.getTime()) / 1000
+				);
 				if (secondsUntilExpiration > 0) {
 					expiresIn = secondsUntilExpiration;
 				}
@@ -162,7 +165,7 @@
 
 			apiKeys = apiKeys.filter((key) => key.id !== deletingKeyId);
 			toast.success(t`API key deleted successfully`);
-			
+
 			// Close dialog and reset state
 			showDeleteDialog = false;
 			setTimeout(() => {
@@ -191,7 +194,9 @@
 	<ContentLayout rootLink="/settings">
 		<Card.Root>
 			<Card.Content>
-				<p>{t`You don't have permission to view API keys. Only admins and owners can access this page.`}</p>
+				<p>
+					{t`You don't have permission to view API keys. Only admins and owners can access this page.`}
+				</p>
 			</Card.Content>
 		</Card.Root>
 	</ContentLayout>
@@ -315,7 +320,7 @@
 									</Button>
 								</div>
 							</div>
-							{:else}
+						{:else}
 							<div class="space-y-4">
 								{#if createError}
 									<Alert.Root variant="destructive">
@@ -350,10 +355,19 @@
 								</div>
 
 								<div class="flex justify-end gap-2 pt-2">
-									<Button type="button" variant="outline" onclick={handleModalClose} disabled={creating}>
+									<Button
+										type="button"
+										variant="outline"
+										onclick={handleModalClose}
+										disabled={creating}
+									>
 										{t`Cancel`}
 									</Button>
-									<Button type="button" onclick={handleCreateApiKey} disabled={creating || !newKeyName.trim()}>
+									<Button
+										type="button"
+										onclick={handleCreateApiKey}
+										disabled={creating || !newKeyName.trim()}
+									>
 										{#if creating}
 											<Spinner class="mr-2 h-4 w-4" />
 											{t`Creating...`}
@@ -390,7 +404,7 @@
 			{/if}
 
 			<Dialog.Footer>
-				<div class="flex gap-2 justify-end">
+				<div class="flex justify-end gap-2">
 					<Button variant="outline" onclick={closeDeleteDialog} disabled={deleting}>
 						{t`Cancel`}
 					</Button>

@@ -7,7 +7,8 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
 	import { countryCodes, renderLocalizedCountryName } from '$lib/utils/country';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { locale, t } from '$lib/index.svelte';
 
 	let open = $state(false);

@@ -9,7 +9,8 @@
 		avatarImageClass?: string;
 	};
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { cn } from '$lib/utils.js';
 	const {
 		person: personProp,

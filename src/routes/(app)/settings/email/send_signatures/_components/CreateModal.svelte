@@ -12,7 +12,8 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { v7 as uuidv7 } from 'uuid';
 	import { t } from '$lib/index.svelte';
 	import { toast } from 'svelte-sonner';

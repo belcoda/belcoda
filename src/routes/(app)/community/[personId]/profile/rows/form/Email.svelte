@@ -1,7 +1,8 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form/index.js';
 	import createForm from '$lib/form.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import type { ReadPersonZero } from '$lib/schema/person';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { objectAsync } from 'valibot';
@@ -60,7 +61,9 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<div class="mt-3 flex items-center justify-end gap-2">
-		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>{t`Cancel`}</Button>
+		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}
+			>{t`Cancel`}</Button
+		>
 		<Button type="submit" size="sm">{t`Save`}</Button>
 	</div>
 	<Debug {data} />

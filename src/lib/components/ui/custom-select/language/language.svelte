@@ -11,7 +11,8 @@
 		getLocalizedLanguageName,
 		getEnglishLanguageName
 	} from '$lib/utils/language';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { t } from '$lib/index.svelte';
 
 	let open = $state(false);

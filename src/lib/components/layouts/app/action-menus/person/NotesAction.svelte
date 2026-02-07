@@ -8,7 +8,8 @@
 	import { type ListFilter } from '$lib/schema/helpers';
 	import { getListFilter } from '$lib/state.svelte';
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { toast } from 'svelte-sonner';
 	import { t } from '$lib/index.svelte';
 	const {
@@ -145,7 +146,9 @@
 						<Command.Root value={filter.tagId ?? ''}>
 							<Command.Input autofocus placeholder={t`Filter tags...`} />
 							<Command.List>
-								<Command.Empty class="text-sm text-muted-foreground">{t`No tags found.`}</Command.Empty>
+								<Command.Empty class="text-sm text-muted-foreground"
+									>{t`No tags found.`}</Command.Empty
+								>
 								<Command.Group>
 									{#each tagList.data as tag (tag.id)}
 										{#if !personTagList.data.some((pt) => pt.id === tag.id)}
@@ -184,7 +187,9 @@
 						<Command.Root value={filter.teamId ?? ''}>
 							<Command.Input autofocus placeholder={t`Filter teams...`} />
 							<Command.List>
-								<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty>
+								<Command.Empty class="text-sm text-muted-foreground"
+									>{t`No teams found.`}</Command.Empty
+								>
 								<Command.Group>
 									{#each teamList.data as team (team.id)}
 										{#if !personTeamList.data.some((pt) => pt.id === team.id)}

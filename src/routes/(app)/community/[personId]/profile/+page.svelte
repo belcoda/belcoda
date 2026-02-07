@@ -11,7 +11,8 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	const { params } = $props();
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { readPerson, type ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
 	const person = $derived.by(() => {
 		return z.createQuery(readPerson(appState.queryContext, { personId: params.personId }));

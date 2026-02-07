@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { type ReadEventZero } from '$lib/schema/event';
 	import { type ReadActionCodeZero } from '$lib/schema/action-code';
 	import { z } from '$lib/zero.svelte';
@@ -20,7 +21,9 @@
 </script>
 
 <div class="mt-3 grid w-full max-w-md gap-4">
-	<div class="text-sm text-muted-foreground">{t`Scan this QR code to mark attendance via WhatsApp`}</div>
+	<div class="text-sm text-muted-foreground">
+		{t`Scan this QR code to mark attendance via WhatsApp`}
+	</div>
 	{#await generateWhatsAppQRCode(whatsAppCheckinLink)}
 		<div class="flex items-center justify-center">
 			<Skeleton class="aspect-square size-24" />

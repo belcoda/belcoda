@@ -4,7 +4,8 @@
 	import { z } from '$lib/zero.svelte';
 	import { parse } from 'valibot';
 	import { toast } from 'svelte-sonner';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { t } from '$lib/index.svelte';
 	let {
 		noteId,
@@ -26,4 +27,6 @@
 	}
 </script>
 
-<Button variant="destructive" type="button" size="sm" onclick={() => deleteNote()}>{t`Delete`}</Button>
+<Button variant="destructive" type="button" size="sm" onclick={() => deleteNote()}
+	>{t`Delete`}</Button
+>

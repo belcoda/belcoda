@@ -13,7 +13,8 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { t } from '$lib/index.svelte';
 	import { toast } from 'svelte-sonner';
 	import type { ReadEmailFromSignatureZero } from '$lib/schema/email-from-signature';

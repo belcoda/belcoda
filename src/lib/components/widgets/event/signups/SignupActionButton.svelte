@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	import { type ReadEventZero } from '$lib/schema/event';
 	import { t } from '$lib/index.svelte';

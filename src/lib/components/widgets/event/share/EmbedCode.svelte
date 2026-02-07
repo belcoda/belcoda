@@ -14,7 +14,8 @@
 	type Theme = 'default';
 	let theme: Theme = $state('default');
 
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { getEventLink } from '$lib/utils/events/link';
 	const eventLink = getEventLink({
 		eventSlug: event.slug,
@@ -46,7 +47,8 @@
 				<DropdownMenu.Content>
 					<DropdownMenu.CheckboxItem
 						checked={theme === 'default'}
-						onCheckedChange={() => (theme = 'default')}>{t`Default theme`}</DropdownMenu.CheckboxItem
+						onCheckedChange={() => (theme = 'default')}
+						>{t`Default theme`}</DropdownMenu.CheckboxItem
 					>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>

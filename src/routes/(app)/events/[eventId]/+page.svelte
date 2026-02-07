@@ -3,7 +3,8 @@
 	const { params } = $props();
 	import { readEvent } from '$lib/zero/query/event/read';
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	const event = $derived.by(() => {
 		return z.createQuery(readEvent(appState.queryContext, { eventId: params.eventId }));
 	});

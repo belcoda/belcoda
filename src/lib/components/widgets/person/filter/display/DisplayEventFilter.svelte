@@ -3,7 +3,8 @@
 
 	import { readEvent } from '$lib/zero/query/event/read';
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	const event = $derived.by(() => z.createQuery(readEvent(appState.queryContext, { eventId })));
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
 </script>

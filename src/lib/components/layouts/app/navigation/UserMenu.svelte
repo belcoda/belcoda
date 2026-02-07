@@ -6,7 +6,8 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { readUser } from '$lib/zero/query/user/read';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { z } from '$lib/zero.svelte';

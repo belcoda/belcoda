@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { readEmailMessage } from '$lib/zero/query/email_message/read';
 	import { page } from '$app/state';
 	import { formatShortTimestamp } from '$lib/utils/date';
@@ -33,7 +34,8 @@
 				<div>
 					<h2 class="text-xl font-semibold">{email.subject || t`(No subject)`}</h2>
 					<p class="text-sm text-muted-foreground">
-						{t`Sent`} {formatShortTimestamp(email.startedAt || email.createdAt)}
+						{t`Sent`}
+						{formatShortTimestamp(email.startedAt || email.createdAt)}
 					</p>
 				</div>
 				<div class="flex gap-2">

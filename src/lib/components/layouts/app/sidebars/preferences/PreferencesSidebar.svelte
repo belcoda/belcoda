@@ -15,7 +15,8 @@
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import { preferencesItems } from '$lib/components/layouts/app/sidebars/preferences/items';
 
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	const result = $derived.by(() => {
 		if (searchString === '') {
 			return preferencesItems.filter((item) => {

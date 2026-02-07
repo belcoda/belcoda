@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getAppState } from '$lib/state.svelte'; const appState = getAppState();;
+	import { getAppState } from '$lib/state.svelte';
+	const appState = getAppState();
 	import { locale, t } from '$lib/index.svelte';
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type Readable } from 'svelte/store';
