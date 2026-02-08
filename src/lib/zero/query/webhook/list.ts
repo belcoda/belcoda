@@ -39,7 +39,7 @@ export const listWebhooks = defineQuery(inputSchema, ({ ctx, args }) => {
 });
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'webhook'>,
+	builder: ExpressionBuilder<'webhook', Schema>,
 	{ filter }: { filter: ListWebhooksInput }
 ) {
 	const { and, cmp } = builder;
