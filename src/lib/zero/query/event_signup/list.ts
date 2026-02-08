@@ -1,4 +1,4 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -38,16 +38,12 @@ export function listEventSignupsQuery({
 	return q;
 }
 
-export const listEventSignups = syncedQueryWithContext(
-	'listEventSignups',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listEventSignupsQuery({ ctx, input: filter });
-	}
-);
+export const listEventSignups = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listEventSignupsQuery({ ctx, input: args });
+});
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'eventSignup'>,
+	builder: ExpressionBuilder<'eventSignup', Schema>,
 	{ filter }: { filter: ListEventSignupsInput }
 ) {
 	const { and, exists, cmp } = builder;

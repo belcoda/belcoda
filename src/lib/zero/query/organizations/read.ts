@@ -1,4 +1,4 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -28,12 +28,8 @@ export function readOrganizationQuery({
 	return q;
 }
 
-export const readOrganization = syncedQueryWithContext(
-	'readOrganization',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, { organizationId }) => {
-		return readOrganizationQuery({ ctx, input: { organizationId } });
-	}
-);
+export const readOrganization = defineQuery(inputSchema, ({ ctx, args }) => {
+	return readOrganizationQuery({ ctx, input: { organizationId: args.organizationId } });
+});
 
 export const outputSchema = readOrganizationZero;

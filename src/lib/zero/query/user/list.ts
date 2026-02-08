@@ -1,4 +1,4 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -35,12 +35,8 @@ export function listUsersQuery({
 	return q;
 }
 
-export const listUsers = syncedQueryWithContext(
-	'listUsers',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, input) => {
-		return listUsersQuery({ ctx, input });
-	}
-);
+export const listUsers = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listUsersQuery({ ctx, input: args });
+});
 
 export const outputSchema = array(readUserZero);

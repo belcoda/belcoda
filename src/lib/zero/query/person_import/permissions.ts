@@ -6,7 +6,7 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 // it should return false otherwise
 
 export function personImportReadPermissions(
-	builder: ExpressionBuilder<Schema, 'personImport'>,
+	builder: ExpressionBuilder<'personImport', Schema>,
 	ctx: QueryContext
 ) {
 	const { or, cmp } = builder;

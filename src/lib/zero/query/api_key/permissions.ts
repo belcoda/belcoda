@@ -7,7 +7,7 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 // it should return false otherwise
 
 export function apiKeyReadPermissions(
-	builder: ExpressionBuilder<Schema, 'apiKey'>,
+	builder: ExpressionBuilder<'apiKey', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, or, cmp, exists } = builder;

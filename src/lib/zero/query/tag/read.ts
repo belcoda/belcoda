@@ -1,4 +1,4 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -27,13 +27,9 @@ export function readTagQuery({
 	return q;
 }
 
-export const readTag = syncedQueryWithContext(
-	'readTag',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, { tagId }) => {
-		return readTagQuery({ ctx, input: { tagId } });
-	}
-);
+export const readTag = defineQuery(inputSchema, ({ ctx, args }) => {
+	return readTagQuery({ ctx, input: args });
+});
 
 export const outputSchema = readTagZero;
 export type ReadTagOutput = InferOutput<typeof outputSchema>;

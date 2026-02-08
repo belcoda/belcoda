@@ -1,4 +1,4 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, optional, object, nullable, picklist } from 'valibot';
@@ -50,13 +50,9 @@ export function listPersonsQuery({
 	return q;
 }
 
-export const listPersons = syncedQueryWithContext(
-	'listPersons',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listPersonsQuery({ ctx, input: filter });
-	}
-);
+export const listPersons = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listPersonsQuery({ ctx, input: args });
+});
 
 export function listFilteredPersonsQuery({
 	tx,
@@ -94,16 +90,12 @@ export function listPersonByIdsArrayQuery({
 	return q;
 }
 
-export const listPersonByIdsArray = syncedQueryWithContext(
-	'listPersonByIdsArray',
-	parseSchema(object({ ids: array(uuid) })),
-	(ctx: QueryContext, input) => {
-		return listPersonByIdsArrayQuery({ ctx, input });
-	}
-);
+export const listPersonByIdsArray = defineQuery(object({ ids: array(uuid) }), ({ ctx, args }) => {
+	return listPersonByIdsArrayQuery({ ctx, input: args });
+});
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'person'>,
+	builder: ExpressionBuilder<'person', Schema>,
 	{ filter, userId }: { filter: InferOutput<typeof inputSchema>; userId: string }
 ) {
 	const isDeleted = filter.isDeleted ?? false;

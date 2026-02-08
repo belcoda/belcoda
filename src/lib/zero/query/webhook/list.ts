@@ -1,4 +1,4 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -34,13 +34,9 @@ export function listWebhooksQuery({
 	return q;
 }
 
-export const listWebhooks = syncedQueryWithContext(
-	'listWebhooks',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listWebhooksQuery({ ctx, input: filter });
-	}
-);
+export const listWebhooks = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listWebhooksQuery({ ctx, input: args });
+});
 
 function whereClause(
 	builder: ExpressionBuilder<Schema, 'webhook'>,

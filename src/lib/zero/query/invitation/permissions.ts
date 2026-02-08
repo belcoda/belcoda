@@ -8,7 +8,7 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 // it should return false otherwise
 
 export function invitationReadPermissions(
-	builder: ExpressionBuilder<Schema, 'invitation'>,
+	builder: ExpressionBuilder<'invitation', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, or, cmp, exists } = builder;

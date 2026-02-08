@@ -1,4 +1,4 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -25,12 +25,8 @@ export function listOrganizationsQuery({
 	return q;
 }
 
-export const listOrganizations = syncedQueryWithContext(
-	'listOrganizations',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, params) => {
-		return listOrganizationsQuery({ ctx, input: params });
-	}
-);
+export const listOrganizations = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listOrganizationsQuery({ ctx, input: args });
+});
 
 export const outputSchema = array(readOrganizationZero);

@@ -1,4 +1,4 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -30,12 +30,8 @@ export function listActionCodesQuery({
 	return q;
 }
 
-export const listActionCodes = syncedQueryWithContext(
-	'listActionCodes',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listActionCodesQuery({ ctx, input: filter });
-	}
-);
+export const listActionCodes = defineQuery(inputSchema, ({ args, ctx }) => {
+	return listActionCodesQuery({ ctx, input: args });
+});
 
 export const outputSchema = array(readActionCodeZero);

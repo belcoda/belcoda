@@ -1,4 +1,4 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -35,16 +35,12 @@ export function listPetitionsQuery({
 	return q;
 }
 
-export const listPetitions = syncedQueryWithContext(
-	'listPetitions',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listPetitionsQuery({ ctx, input: filter });
-	}
-);
+export const listPetitions = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listPetitionsQuery({ ctx, input: args });
+});
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'petition'>,
+	builder: ExpressionBuilder<'petition', Schema>,
 	{ filter }: { filter: InferOutput<typeof inputSchema> }
 ) {
 	const isDeleted = filter.isDeleted ?? false;

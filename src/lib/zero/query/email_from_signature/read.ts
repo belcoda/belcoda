@@ -1,4 +1,4 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -28,13 +28,12 @@ export function readEmailFromSignatureQuery({
 	return q;
 }
 
-export const readEmailFromSignature = syncedQueryWithContext(
-	'readEmailFromSignature',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, { emailFromSignatureId }) => {
-		return readEmailFromSignatureQuery({ ctx, input: { emailFromSignatureId } });
-	}
-);
+export const readEmailFromSignature = defineQuery(inputSchema, ({ ctx, args }) => {
+	return readEmailFromSignatureQuery({
+		ctx,
+		input: { emailFromSignatureId: args.emailFromSignatureId }
+	});
+});
 
 export const outputSchema = readEmailFromSignatureZero;
 export type ReadEmailFromSignatureOutput = InferOutput<typeof outputSchema>;

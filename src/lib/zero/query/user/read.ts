@@ -1,4 +1,4 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -28,12 +28,8 @@ export function readUserQuery({
 	return q;
 }
 
-export const readUser = syncedQueryWithContext(
-	'readUser',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, input) => {
-		return readUserQuery({ ctx, input });
-	}
-);
+export const readUser = defineQuery(inputSchema, ({ ctx, args }) => {
+	return readUserQuery({ ctx, input: args });
+});
 
 export const outputSchema = readUserZero;

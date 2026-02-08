@@ -1,4 +1,4 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
@@ -28,12 +28,8 @@ export function readPetitionQuery({
 	return q;
 }
 
-export const readPetition = syncedQueryWithContext(
-	'readPetition',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, { petitionId }) => {
-		return readPetitionQuery({ ctx, input: { petitionId } });
-	}
-);
+export const readPetition = defineQuery(inputSchema, ({ ctx, args }) => {
+	return readPetitionQuery({ ctx, input: args });
+});
 
 export const outputSchema = readPetitionRest;
