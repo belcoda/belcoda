@@ -6,7 +6,7 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 // it should return false otherwise
 
 export function whatsappThreadReadPermissions(
-	builder: ExpressionBuilder<Schema, 'whatsappThread'>,
+	builder: ExpressionBuilder<'whatsappThread', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, or, cmp, exists } = builder;
