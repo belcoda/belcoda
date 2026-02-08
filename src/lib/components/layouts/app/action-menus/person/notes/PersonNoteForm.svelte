@@ -5,8 +5,7 @@
 	import { MEDIUM_STRING_MAX_LENGTH } from '$lib/schema/helpers';
 	import { z } from '$lib/zero.svelte';
 	import { createMutatorSchemaZero, createPersonNoteZero } from '$lib/schema/person-note';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
 
 	import { v7 as uuidv7 } from 'uuid';

@@ -1,8 +1,7 @@
 <script lang="ts">
 	const { eventId }: { eventId: string } = $props();
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { listActionCodes } from '$lib/zero/query/action_code/list';
 	import { readEvent } from '$lib/zero/query/event/read';
 	import { t } from '$lib/index.svelte';

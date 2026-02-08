@@ -46,8 +46,7 @@
 	const id = $props.id();
 	let startDateOpen = $state(false);
 	let endDateOpen = $state(false);
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { locale } from '$lib/index.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 

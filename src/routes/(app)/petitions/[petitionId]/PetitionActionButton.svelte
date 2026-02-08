@@ -13,8 +13,7 @@
 	const id = $props.id();
 	import { toast } from 'svelte-sonner';
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { env } from '$env/dynamic/public';
 	import { dev } from '$app/environment';
 	import PetitionMakeACopy from './PetitionMakeACopy.svelte';

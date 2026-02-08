@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { getAppState } from '$lib/state.svelte';
-const appState = getAppState();
+import { appState } from '$lib/state.svelte';
 import { env } from '$env/dynamic/public';
 const { PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME } = env;
 type CropResults = { x: number; y: number; width: number; height: number };

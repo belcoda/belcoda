@@ -154,7 +154,7 @@
 	<div class="space-y-4">
 		{#if imports.length === 0}
 			<div class="flex flex-col items-center justify-center py-12 text-center">
-				<p class="text-muted-foreground mb-4">{t`No imports yet`}</p>
+				<p class="mb-4 text-muted-foreground">{t`No imports yet`}</p>
 				{#if appState.isAdminOrOwner}
 					<Button onclick={() => (uploadModalOpen = true)}>{t`New Import`}</Button>
 				{/if}
@@ -183,7 +183,8 @@
 								{#if imp.status === 'completed' || imp.status === 'failed'}
 									<div class="flex items-center gap-2">
 										<span class="text-sm text-muted-foreground">
-											{imp.processedRows || 0} {t`imported`}
+											{imp.processedRows || 0}
+											{t`imported`}
 											{#if (imp.failedRows || 0) > 0}
 												, {imp.failedRows} {t`failed`}
 											{/if}
@@ -232,7 +233,7 @@
 								<Label for="csvFile">{t`CSV file`}</Label>
 								<button
 									type="button"
-									class="text-sm text-primary underline hover:no-underline flex items-center gap-1"
+									class="flex items-center gap-1 text-sm text-primary underline hover:no-underline"
 									onclick={() => downloadSampleCsv()}
 								>
 									<DownloadIcon class="size-3" />
@@ -243,7 +244,7 @@
 								id="csvFile"
 								type="file"
 								accept=".csv,text/csv"
-								class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+								class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 								onchange={(e: Event) => {
 									const input = e.target as HTMLInputElement;
 									selectedFile = input.files?.[0] ?? null;
@@ -257,7 +258,11 @@
 				{/snippet}
 				{#snippet footer()}
 					<div class="flex justify-end gap-2">
-						<Button variant="outline" onclick={() => (uploadModalOpen = false)} disabled={uploading}>
+						<Button
+							variant="outline"
+							onclick={() => (uploadModalOpen = false)}
+							disabled={uploading}
+						>
 							{t`Cancel`}
 						</Button>
 						<Button onclick={handleUpload} disabled={uploading}>
@@ -273,38 +278,43 @@
 				{/snippet}
 			</ResponsiveModal>
 
-		<ResponsiveModal
-			title={t`Import Failures`}
-			description={t`Detailed information about failed import entries`}
-			bind:open={failuresModalOpen}
-		>
-			{#snippet children()}
-
-				<div class="max-h-[60vh] overflow-y-auto space-y-4">
-					{#if selectedImportFailures && selectedImportFailures.length > 0}
-						{#each selectedImportFailures as failure (failure.row)}
-							<div class="border rounded-lg p-4 space-y-2">
-								<div class="flex items-center gap-2">
-									<Badge variant="destructive">{t`Row`} {failure.row}</Badge>
-									<span class="text-sm font-medium text-destructive">{failure.error}</span>
-								</div>
-								{#if failure.data}
-									<div class="text-xs text-muted-foreground">
-										<div class="font-semibold mb-1">{t`Row Data:`}</div>
-										<pre class="bg-muted p-2 rounded overflow-x-auto">{JSON.stringify(failure.data, null, 2)}</pre>
+			<ResponsiveModal
+				title={t`Import Failures`}
+				description={t`Detailed information about failed import entries`}
+				bind:open={failuresModalOpen}
+			>
+				{#snippet children()}
+					<div class="max-h-[60vh] space-y-4 overflow-y-auto">
+						{#if selectedImportFailures && selectedImportFailures.length > 0}
+							{#each selectedImportFailures as failure (failure.row)}
+								<div class="space-y-2 rounded-lg border p-4">
+									<div class="flex items-center gap-2">
+										<Badge variant="destructive">{t`Row`} {failure.row}</Badge>
+										<span class="text-sm font-medium text-destructive">{failure.error}</span>
 									</div>
-								{/if}
-							</div>
-						{/each}
-					{:else}
-						<p class="text-muted-foreground text-center py-8">{t`No failure details available`}</p>
-					{/if}
-				</div>
-			{/snippet}
-			{#snippet footer()}
-				<Button variant="outline" onclick={() => (failuresModalOpen = false)}>{t`Close`}</Button>
-			{/snippet}
-		</ResponsiveModal>
+									{#if failure.data}
+										<div class="text-xs text-muted-foreground">
+											<div class="mb-1 font-semibold">{t`Row Data:`}</div>
+											<pre class="overflow-x-auto rounded bg-muted p-2">{JSON.stringify(
+													failure.data,
+													null,
+													2
+												)}</pre>
+										</div>
+									{/if}
+								</div>
+							{/each}
+						{:else}
+							<p class="py-8 text-center text-muted-foreground">
+								{t`No failure details available`}
+							</p>
+						{/if}
+					</div>
+				{/snippet}
+				{#snippet footer()}
+					<Button variant="outline" onclick={() => (failuresModalOpen = false)}>{t`Close`}</Button>
+				{/snippet}
+			</ResponsiveModal>
 		{/if}
 	</div>
 {/snippet}

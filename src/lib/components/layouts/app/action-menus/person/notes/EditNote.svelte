@@ -10,8 +10,7 @@
 		updatePersonNoteZero,
 		type ReadPersonNoteWithUserZero
 	} from '$lib/schema/person-note';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 	import { t } from '$lib/index.svelte';

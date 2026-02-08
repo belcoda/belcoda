@@ -1,8 +1,7 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form/index.js';
 	import createForm from '$lib/form.svelte';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { type ReadPersonZero, personSchema } from '$lib/schema/person';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { objectAsync } from 'valibot';

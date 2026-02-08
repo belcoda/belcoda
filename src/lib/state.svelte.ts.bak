@@ -1,0 +1,141 @@
+import { z } from '$lib/zero.svelte';
+import { readOrganization } from '$lib/zero/query/organizations/read';
+import { listOrganizations } from '$lib/zero/query/organizations/list';
+import { listMyTeams } from '$lib/zero/query/team/listMyTeams';
+import { listUsers } from '$lib/zero/query/user/list';
+import { readUser } from '$lib/zero/query/user/read';
+import { type Locale } from '$lib/utils/language';
+import { type ListFilter } from '$lib/schema/helpers';
+import type { QueryContext } from '$lib/zero/schema';
+export const STARTING_ORGANIZATION_ID = 'STARTING_ORGANIZATION_ID' as const;
+export const STARTING_STATE_USER_ID = 'STARTING_STATE_USER_ID' as const;
+
+export function createAppState({
+	session,
+	initialQueryContext,
+	defaultActiveOrganizationId
+}: {
+	session: App.Locals['session'];
+	initialQueryContext: QueryContext;
+	defaultActiveOrganizationId: string;
+}) {
+	if (!session) {
+		throw new Error('Session is required');
+	}
+
+	let locale: Locale = $state('en');
+	const setLocale = (newLocale: Locale) => {
+		locale = newLocale;
+	};
+
+	let organizationId: string = $state(defaultActiveOrganizationId);
+	const setOrganizationId = (newOrganizationId: string) => {
+		organizationId = newOrganizationId;
+	};
+
+	let userId: string = $state(session.user.id); //no set function needed here, it's always gonna be the same user...
+	let usersListFilter: ListFilter = $state(getListFilter(defaultActiveOrganizationId));
+	const setUsersListFilter = (newUsersListFilter: ListFilter) => {
+		usersListFilter = newUsersListFilter;
+	};
+
+	let activeTeamId: string | null = $state(null);
+	const setActiveTeamId = (newActiveTeamId: string | null) => {
+		activeTeamId = newActiveTeamId;
+	};
+
+	let queryContext: QueryContext = $state(initialQueryContext);
+	const setQueryContext = (newQueryContext: QueryContext) => {
+		queryContext = newQueryContext;
+	};
+	let organizations = $derived(z.createQuery(listOrganizations(queryContext, {})));
+	let activeOrganization = $derived(
+		z.createQuery(readOrganization(queryContext, { organizationId: organizationId }))
+	);
+
+	let adminOrgs = $derived.by(() => {
+		return organizations.data
+			?.filter((organization) =>
+				organization.memberships.some((membership) => membership.role === 'admin')
+			)
+			.map((organization) => organization.id);
+	});
+	let ownerOrgs = $derived.by(() => {
+		return organizations.data
+			?.filter((organization) =>
+				organization.memberships.some((membership) => membership.role === 'owner')
+			)
+			.map((organization) => organization.id);
+	});
+
+	let role = $derived(activeOrganization.data?.memberships[0].role);
+	let isAdmin = $derived(role === 'admin');
+	let isOwner = $derived(role === 'owner');
+	let isAdminOrOwner = $derived(isAdmin || isOwner);
+	let organizationUsers = $derived(z.createQuery(listUsers(queryContext, usersListFilter)));
+	let myTeams = $derived(
+		z.createQuery(listMyTeams(queryContext, { userId: userId, organizationId: organizationId }))
+	);
+	let user = $derived(z.createQuery(readUser(queryContext, { userId: userId })));
+
+	return {
+		get locale() {
+			return locale;
+		},
+		setLocale,
+
+		get organizationId() {
+			return organizationId;
+		},
+		setOrganizationId,
+
+		get userId() {
+			return userId;
+		},
+
+		get usersListFilter() {
+			return usersListFilter;
+		},
+		setUsersListFilter,
+
+		get activeTeamId() {
+			return activeTeamId;
+		},
+		setActiveTeamId,
+
+		get queryContext() {
+			return queryContext;
+		},
+		setQueryContext,
+
+		get organizations() {
+			return organizations;
+		},
+		get activeOrganization() {
+			return activeOrganization;
+		},
+		get role() {
+			return role;
+		},
+		get isAdmin() {
+			return isAdmin;
+		},
+		get isOwner() {
+			return isOwner;
+		},
+		get isAdminOrOwner() {
+			return isAdminOrOwner;
+		},
+		get organizationUsers() {
+			return organizationUsers;
+		},
+		get myTeams() {
+			return myTeams;
+		},
+		get user() {
+			return user;
+		}
+	};
+}
+import { createContext } from 'svelte';
+export const [getAppState, setAppState] = createContext<ReturnType<typeof createAppState>>();

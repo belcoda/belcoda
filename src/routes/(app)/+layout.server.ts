@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
-import { listOrganizationsByUserId } from '$lib/server/api/data/organization';
+import { _listOrganizationMembershipsByUserIdUnsafe } from '$lib/server/api/data/organization';
 export async function load({ locals }) {
 	const session = locals.session;
 
@@ -8,28 +8,26 @@ export async function load({ locals }) {
 	if (!session) {
 		throw redirect(302, '/signup');
 	}
-	const [organizations, queryContext] = await Promise.all([
-		listOrganizationsByUserId({ userId: session.user.id }),
+	const [memberships, queryContext] = await Promise.all([
+		_listOrganizationMembershipsByUserIdUnsafe({ userId: session.user.id }),
 		getQueryContext(session.user.id)
 	]);
-	let defaultActiveOrganizationId: string | null = null;
-	if (session.session.activeOrganizationId) {
-		defaultActiveOrganizationId = session.session.activeOrganizationId;
-	} else {
-		defaultActiveOrganizationId = queryContext.ownerOrgs[0];
-		if (!defaultActiveOrganizationId) {
-			defaultActiveOrganizationId = queryContext.adminOrgs[0];
-		}
-		if (!defaultActiveOrganizationId) {
-			defaultActiveOrganizationId = organizations[0];
-		}
-		if (!defaultActiveOrganizationId) {
-			return redirect(302, '/organization');
-		}
+	const ownerOrgs = memberships.filter((m) => m.role === 'owner');
+	const adminOrgs = memberships.filter((m) => m.role === 'admin');
+	const otherOrgs = memberships.filter((m) => m.role !== 'owner' && m.role !== 'admin');
+
+	// prioritize the active organization id, then the owner organizations, then the admin organizations, then the other organizations
+	const defaultActiveOrganizationId =
+		session.session.activeOrganizationId ||
+		ownerOrgs[0]?.organizationId ||
+		adminOrgs[0]?.organizationId ||
+		otherOrgs[0]?.organizationId ||
+		null;
+	if (!defaultActiveOrganizationId) {
+		return redirect(302, '/organization'); //should never happen, because the user *must* have at least one organization to load this route lol
 	}
 	return {
-		session: session,
-		organizations: organizations,
+		userId: session.user.id,
 		defaultActiveOrganizationId: defaultActiveOrganizationId,
 		queryContext: queryContext
 	};

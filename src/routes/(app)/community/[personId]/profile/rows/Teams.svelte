@@ -3,8 +3,7 @@
 	import { type ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
 	let { person }: { person: ReadPersonOutputWithReadonlyArrays } = $props();
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { z } from '$lib/zero.svelte';
 	import AddTeam from './form/AddTeam.svelte';
 	let edit = $state(true);

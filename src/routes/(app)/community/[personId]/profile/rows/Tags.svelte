@@ -2,8 +2,7 @@
 	import ProfileRow from '../ProfileRow.svelte';
 	import { type ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
 	let { person }: { person: ReadPersonOutputWithReadonlyArrays } = $props();
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
 	let edit = $state(true);
 	import { z } from '$lib/zero.svelte';

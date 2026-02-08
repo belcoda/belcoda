@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { authClient } from '$lib/auth-client';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { parse } from 'valibot';
 	import { type ReadOrganizationRest, readOrganizationRest } from '$lib/schema/organization';
 	const organizations = authClient.useListOrganizations;
@@ -80,7 +79,7 @@
 						onclick={async () => {
 							isLoading.loading = true;
 							await authClient.organization.setActive({ organizationId: organization.id });
-							appState.setOrganizationId(organization.id);
+							appState.organizationId = organization.id;
 							isLoading.loading = false;
 							goto(`/`);
 						}}

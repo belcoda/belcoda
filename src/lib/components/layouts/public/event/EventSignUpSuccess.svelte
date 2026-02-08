@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { t, locale } from '$lib/index.svelte';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { type EventSchema } from '$lib/schema/event';
 	import { type OrganizationSchema } from '$lib/schema/organization';
 

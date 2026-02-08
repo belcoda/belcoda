@@ -1,5 +1,5 @@
 import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
-import { builder, type Schema } from '$lib/zero/schema';
+import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object, nullable, optional, picklist } from 'valibot';

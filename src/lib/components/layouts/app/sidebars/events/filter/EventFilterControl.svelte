@@ -53,7 +53,8 @@
 				<Command.Root value={filter.teamId ?? ''}>
 					<Command.Input autofocus placeholder={t`Filter teams...`} />
 					<Command.List>
-						<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty>
+						<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty
+						>
 						<Command.Group>
 							{#each teamList.data as team (team.id)}
 								<Command.Item

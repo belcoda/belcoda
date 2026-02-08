@@ -16,8 +16,7 @@
 	import type { CountryCode, LanguageCode } from '$lib/schema/helpers';
 	import type { GenderOption } from '$lib/utils/person';
 	const { person }: { person?: ReadPersonZero } = $props();
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
 	const { form, data, errors, Errors, helpers } = person
 		? createForm({

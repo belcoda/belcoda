@@ -6,8 +6,7 @@
 <script lang="ts">
 	import { v4 as uuidv4 } from 'uuid';
 	import { page } from '$app/state';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import Cropper from 'svelte-easy-crop';
 
 	import { env } from '$env/dynamic/public';

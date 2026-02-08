@@ -3,14 +3,15 @@ import { db } from '$lib/server/db';
 import type { Transaction } from '$lib/server/db/zeroDrizzle';
 import { eq } from 'drizzle-orm';
 
-export async function listOrganizationsByUserId({ userId }: { userId: string }): Promise<string[]> {
+export async function _listOrganizationMembershipsByUserIdUnsafe({
+	userId
+}: {
+	userId: string;
+}): Promise<(typeof member.$inferSelect)[]> {
 	const result = await db.query.member.findMany({
-		where: eq(member.userId, userId),
-		columns: {
-			organizationId: true
-		}
+		where: eq(member.userId, userId)
 	});
-	return result.map((m) => m.organizationId);
+	return result;
 }
 
 export async function getOrganization({

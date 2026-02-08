@@ -39,6 +39,7 @@
 			})
 		)
 	);
+
 	import XIcon from '@lucide/svelte/icons/x';
 </script>
 
@@ -76,7 +77,9 @@
 								<MessageCircleIcon />
 							</Empty.Media>
 							<Empty.Title>{t`No notes found`}</Empty.Title>
-							<Empty.Description>{t`Add a note to share information with the team`}</Empty.Description>
+							<Empty.Description
+								>{t`Add a note to share information with the team`}</Empty.Description
+							>
 						</Empty.Header>
 					</Empty.Root>
 				</div>

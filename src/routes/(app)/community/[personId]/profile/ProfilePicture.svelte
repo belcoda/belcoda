@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { type ReadPersonZero } from '$lib/schema/person';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { url as urlSchema } from '$lib/schema/helpers';
 	import { parse } from 'valibot';
 

@@ -8,8 +8,7 @@
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	const sidebar = useSidebar();
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import GradientBorder from '$lib/components/widgets/GradientBorder.svelte';
 	import { goto } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';

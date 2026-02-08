@@ -2,8 +2,7 @@
 	import { t } from '$lib/index.svelte';
 	import EmailForm from '$lib/components/forms/email/EmailForm.svelte';
 	import { z } from '$lib/zero.svelte';
-	import { getAppState } from '$lib/state.svelte';
-	const appState = getAppState();
+	import { appState } from '$lib/state.svelte';
 	import { createDefaultEmailMessage } from '$lib/schema/email-message';
 	import { readEmailMessage } from '$lib/zero/query/email_message/read';
 	import { page } from '$app/state';
