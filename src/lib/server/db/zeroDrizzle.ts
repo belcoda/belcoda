@@ -1,12 +1,12 @@
+// app/api/mutate/db-provider.ts
 import { zeroDrizzle } from '@rocicorp/zero/server/adapters/drizzle';
 import { schema } from '$lib/zero/schema';
-import { db as drizzleDb } from '$lib/server/db';
-export const db = zeroDrizzle(schema, drizzleDb);
+import { db } from '$lib/server/db';
+export const dbProvider = zeroDrizzle(schema, db);
 
-export async function getTransaction() {
-	return db.transaction(async (tx) => {
-		return tx;
-	});
+// Register the database provider for type safety
+declare module '@rocicorp/zero' {
+	interface DefaultTypes {
+		dbProvider: typeof dbProvider;
+	}
 }
-export type Transaction = Awaited<ReturnType<typeof getTransaction>>;
-export type Query = Transaction['query'];
