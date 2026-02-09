@@ -10,3 +10,10 @@ declare module '@rocicorp/zero' {
 		dbProvider: typeof dbProvider;
 	}
 }
+
+export async function getTransaction() {
+	return await dbProvider.transaction(async (tx) => {
+		return tx;
+	});
+}
+export type Transaction = Awaited<ReturnType<typeof getTransaction>>;
