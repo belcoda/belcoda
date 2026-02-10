@@ -32,8 +32,8 @@
 				schema: createPersonZero,
 				initialData: {
 					socialMedia: DEFAULT_SOCIAL_MEDIA,
-					country: appState.activeOrganization.data?.country || defaultCountryCode,
-					preferredLanguage: appState.activeOrganization.data?.defaultLanguage || 'en'
+					country: appState.activeOrganization?.data?.country || defaultCountryCode,
+					preferredLanguage: appState.activeOrganization?.data?.defaultLanguage || 'en'
 				},
 				onSubmit: async (data) => {
 					console.log(data);

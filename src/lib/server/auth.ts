@@ -10,8 +10,6 @@ import { env as publicEnv } from '$env/dynamic/public';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 
-import { createAuthMiddleware } from 'better-auth/api';
-import { createJwt } from '$lib/server/utils/security/jwt';
 import { openAPI, apiKey, organization } from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
@@ -161,22 +159,6 @@ export function buildBetterAuth(localeInput: string) {
 					context: email
 				});
 			}
-		},
-		hooks: {
-			after: createAuthMiddleware(async (ctx) => {
-				const newSession = ctx.context.newSession;
-				if (newSession) {
-					const userId = newSession.user.id;
-					const jwt = await createJwt(userId);
-					ctx.setCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME as string, jwt, {
-						path: '/',
-						maxAge: 14 * 24 * 60 * 60,
-						httpOnly: false,
-						secure: dev ? false : true,
-						sameSite: 'strict'
-					});
-				}
-			})
 		},
 		user: {
 			additionalFields: {

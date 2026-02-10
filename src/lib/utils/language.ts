@@ -159,16 +159,14 @@ export function getEnglishLanguageName(languageCode: LanguageCode): string {
 export const LOCALES = ['en', 'es', 'pt'] as const;
 export type Locale = (typeof LOCALES)[number];
 
-import { t } from '$lib/index.svelte';
-
 export const getLocaleName = (locale: Locale): string => {
 	switch (locale) {
 		case 'en':
-			return t`English`;
+			return 'English';
 		case 'es':
-			return t`Español`;
+			return 'Español';
 		case 'pt':
-			return t`Português`;
+			return 'Português';
 		default:
 			return locale;
 	}

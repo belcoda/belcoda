@@ -110,13 +110,10 @@ class AppState {
 	}
 
 	get activeTeamId() {
-		if (!this.#activeTeamId) {
-			throw new Error('Active team ID is not set');
-		}
 		return this.#activeTeamId;
 	}
 
-	set activeTeamId(newActiveTeamId: string) {
+	set activeTeamId(newActiveTeamId: string | null) {
 		this.#activeTeamId = newActiveTeamId;
 	}
 
