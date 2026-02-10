@@ -1,7 +1,6 @@
 import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { type InferOutput, object } from 'valibot';
 import { uuid, parseSchema } from '$lib/schema/helpers';
 import { emailFromSignatureReadPermissions } from '$lib/zero/query/email_from_signature/permissions';
@@ -12,16 +11,13 @@ export const inputSchema = object({
 });
 
 export function readEmailFromSignatureQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	const q = zero.emailFromSignature
+	const q = builder.emailFromSignature
 		.where('id', '=', input.emailFromSignatureId)
 		.where((expr) => emailFromSignatureReadPermissions(expr, ctx))
 		.one();

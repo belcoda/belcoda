@@ -1,7 +1,6 @@
 import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { object, type InferOutput } from 'valibot';
 import { uuid, parseSchema } from '$lib/schema/helpers';
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -11,16 +10,13 @@ export const inputSchema = object({
 });
 
 export function readOrganizationQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	const q = zero.organization
+	const q = builder.organization
 		.where('id', '=', input.organizationId)
 		.related('memberships')
 		.where((expr) => organizationReadPermissions(expr, ctx))

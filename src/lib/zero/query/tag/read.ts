@@ -1,7 +1,6 @@
 import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { type InferOutput, object } from 'valibot';
 import { uuid, parseSchema } from '$lib/schema/helpers';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
@@ -11,16 +10,13 @@ export const inputSchema = object({
 });
 
 export function readTagQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	const q = zero.tag
+	const q = builder.tag
 		.where('id', '=', input.tagId)
 		.where((expr) => tagReadPermissions(expr, ctx))
 		.one();

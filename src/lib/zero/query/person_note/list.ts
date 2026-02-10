@@ -1,7 +1,6 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object } from 'valibot';
 import { listFilter, parseSchema, uuid } from '$lib/schema/helpers';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
@@ -18,16 +17,13 @@ export const inputSchema = object({
 export type ListPersonNotesInput = InferOutput<typeof inputSchema>;
 
 export function listPersonNotesQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.personNote
+	let q = builder.personNote
 		.where((expr) => personNoteReadPermissions(expr, ctx))
 		.related('user', (expr) => expr.one())
 		.where('organizationId', '=', input.organizationId)

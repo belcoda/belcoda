@@ -1,6 +1,5 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, optional, object, nullable, picklist } from 'valibot';
 import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
@@ -29,16 +28,13 @@ export const inputSchema = object({
 
 export type ListPersonsInput = InferOutput<typeof inputSchema>;
 export function listPersonsQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.person
+	let q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input, userId: ctx.userId }))
@@ -55,16 +51,13 @@ export const listPersons = defineQuery(inputSchema, ({ ctx, args }) => {
 });
 
 export function listFilteredPersonsQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	const q = zero.person
+	const q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input, userId: ctx.userId }))
@@ -74,16 +67,13 @@ export function listFilteredPersonsQuery({
 }
 
 export function listPersonByIdsArrayQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: { ids: string[] };
 }) {
-	const zero = tx || builder;
-	const q = zero.person
+	const q = builder.person
 		.where('id', 'IN', input.ids)
 		.where((expr) => personReadPermissions(expr, ctx))
 		.limit(input.ids.length);

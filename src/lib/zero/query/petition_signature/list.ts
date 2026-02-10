@@ -1,7 +1,6 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object, optional } from 'valibot';
 import { listFilter, parseSchema, uuid } from '$lib/schema/helpers';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
@@ -15,16 +14,13 @@ export const inputSchema = object({
 export type PetitionSignatureListFilter = InferOutput<typeof inputSchema>;
 
 export function listPetitionSignaturesQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.petitionSignature
+	let q = builder.petitionSignature
 		.where((expr) => petitionSignatureReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))

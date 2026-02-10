@@ -1,7 +1,6 @@
 import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { object, type InferOutput } from 'valibot';
 import { uuid, parseSchema } from '$lib/schema/helpers';
 import { eventSignupReadPermissions } from '$lib/zero/query/event_signup/permissions';
@@ -12,16 +11,13 @@ export const inputSchema = object({
 });
 
 export function readEventSignupQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	const q = zero.eventSignup
+	const q = builder.eventSignup
 		.where('id', '=', input.eventSignupId)
 		.where((expr) => eventSignupReadPermissions(expr, ctx))
 		.one();

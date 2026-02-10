@@ -1,7 +1,6 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object, optional, boolean } from 'valibot';
 import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
 import { emailFromSignatureReadPermissions } from '$lib/zero/query/email_from_signature/permissions';
@@ -14,16 +13,13 @@ export const inputSchema = object({
 export type ListEmailFromSignaturesInput = InferOutput<typeof inputSchema>;
 
 export function listEmailFromSignaturesQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.emailFromSignature
+	let q = builder.emailFromSignature
 		.where((expr) => emailFromSignatureReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
