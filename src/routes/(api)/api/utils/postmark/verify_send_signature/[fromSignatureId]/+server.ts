@@ -58,7 +58,7 @@ export async function PUT(event) {
 		const returnPathDomainVerified = result.ReturnPathDomainVerified === true;
 
 		// Update the database
-		const [updated] = await db
+		const [updated] = await drizzle
 			.update(emailFromSignature)
 			.set({
 				verified,
