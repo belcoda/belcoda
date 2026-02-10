@@ -16,19 +16,22 @@
 	const id = $props.id();
 	import { toast } from 'svelte-sonner';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import EventMakeACopy from './EventMakeACopy.svelte';
 	function updatePublished(checked: boolean) {
-		z.mutate.event.update({
-			metadata: {
-				eventId: event.id,
-				teamId: appState.activeTeamId,
-				organizationId: appState.organizationId
-			},
-			input: {
-				published: checked
-			}
-		});
+		z.mutate(
+			mutators.event.update({
+				metadata: {
+					eventId: event.id,
+					teamId: appState.activeTeamId,
+					organizationId: appState.organizationId
+				},
+				input: {
+					published: checked
+				}
+			})
+		);
 	}
 </script>
 

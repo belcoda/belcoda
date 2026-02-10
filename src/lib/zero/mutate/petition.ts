@@ -1,44 +1,42 @@
 import { type Transaction } from '@rocicorp/zero';
 import { type Schema } from '$lib/zero/schema';
-
+import { defineMutator } from '@rocicorp/zero';
 import {
-	type CreatePetitionZeroMutatorSchema,
-	type UpdatePetitionZeroMutatorSchema,
 	createPetitionZeroMutatorSchema,
 	updatePetitionZeroMutatorSchema
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
 
-export function createPetition() {
-	return async function (tx: Transaction<Schema>, args: CreatePetitionZeroMutatorSchema) {
-		const parsedArgs = parse(createPetitionZeroMutatorSchema, args);
+export const createPetition = defineMutator(
+	createPetitionZeroMutatorSchema,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.petition.insert({
-			id: parsedArgs.metadata.petitionId,
-			organizationId: parsedArgs.metadata.organizationId,
-			teamId: parsedArgs.metadata.teamId,
-			pointPersonId: parsedArgs.input.pointPersonId,
-			slug: parsedArgs.input.slug,
-			title: parsedArgs.input.title,
-			shortDescription: parsedArgs.input.shortDescription,
-			description: parsedArgs.input.description,
+			id: args.metadata.petitionId,
+			organizationId: args.metadata.organizationId,
+			teamId: args.metadata.teamId,
+			pointPersonId: args.input.pointPersonId,
+			slug: args.input.slug,
+			title: args.input.title,
+			shortDescription: args.input.shortDescription,
+			description: args.input.description,
 			published: false,
-			petitionTarget: parsedArgs.input.petitionTarget,
-			petitionText: parsedArgs.input.petitionText,
-			featureImage: parsedArgs.input.featureImage,
-			settings: parsedArgs.input.settings,
+			petitionTarget: args.input.petitionTarget,
+			petitionText: args.input.petitionText,
+			featureImage: args.input.featureImage,
+			settings: args.input.settings,
 			createdAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function updatePetition() {
-	return async function (tx: Transaction<Schema>, args: UpdatePetitionZeroMutatorSchema) {
-		const parsed = parse(updatePetitionZeroMutatorSchema, args);
+export const updatePetition = defineMutator(
+	updatePetitionZeroMutatorSchema,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.petition.update({
-			id: parsed.metadata.petitionId,
-			...parsed.input,
+			id: args.metadata.petitionId,
+			...args.input,
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);

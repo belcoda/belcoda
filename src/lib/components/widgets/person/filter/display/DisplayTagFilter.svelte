@@ -1,10 +1,9 @@
 <script lang="ts">
 	const { tagId, onRemove }: { tagId: string; onRemove: () => void } = $props();
 
-	import { readTag } from '$lib/zero/query/tag/read';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
-	const tag = $derived.by(() => z.createQuery(readTag(appState.queryContext, { tagId })));
+	import queries from '$lib/zero/query/index';
+	const tag = $derived.by(() => z.createQuery(queries.tag.read({ tagId })));
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
 </script>
 

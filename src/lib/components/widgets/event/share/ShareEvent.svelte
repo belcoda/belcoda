@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { type ReadEventZero } from '$lib/schema/event';
 	import { type ReadActionCodeZero } from '$lib/schema/action-code';
+	import { type ReadOrganizationZero } from '$lib/schema/organization';
 	let { event, actionCode }: { event: ReadEventZero; actionCode: ReadActionCodeZero } = $props();
 	import { t } from '$lib/index.svelte';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
@@ -11,18 +12,23 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import { appState } from '$lib/state.svelte';
-	import { env } from '$env/dynamic/public';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { generateWhatsAppSignupLink, getEventLink } from '$lib/utils/events/link';
-	const whatsAppSignupLink = generateWhatsAppSignupLink(event.title, actionCode.id);
+	const whatsAppSignupLink = $derived(
+		generateWhatsAppSignupLink({
+			eventTitle: event.title,
+			whatsAppNumber: appState.activeOrganization?.data?.settings.whatsApp?.number,
+			actionCode: actionCode.id
+		})
+	);
 	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte';
 	const clipboard = new UseClipboard();
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { dev } from '$app/environment';
 	import { toast } from 'svelte-sonner';
 	const eventSignupPageLink = getEventLink({
+		/* svelte-ignore state_referenced_locally */
 		eventSlug: event.slug,
 		organizationSlug: appState.activeOrganization.data?.slug || ''
 	});

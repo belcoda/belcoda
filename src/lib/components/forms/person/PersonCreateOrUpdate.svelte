@@ -18,9 +18,11 @@
 	const { person }: { person?: ReadPersonZero } = $props();
 	import { appState } from '$lib/state.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
+	/* svelte-ignore state_referenced_locally */
 	const { form, data, errors, Errors, helpers } = person
 		? createForm({
 				schema: updatePersonZero,
+				/* svelte-ignore state_referenced_locally */
 				initialData: person,
 				onSubmit: async (data) => {
 					console.log(data);
@@ -30,8 +32,8 @@
 				schema: createPersonZero,
 				initialData: {
 					socialMedia: DEFAULT_SOCIAL_MEDIA,
-					country: appState.activeOrganization.data?.country || defaultCountryCode,
-					preferredLanguage: appState.activeOrganization.data?.defaultLanguage || 'en'
+					country: appState.activeOrganization?.data?.country || defaultCountryCode,
+					preferredLanguage: appState.activeOrganization?.data?.defaultLanguage || 'en'
 				},
 				onSubmit: async (data) => {
 					console.log(data);

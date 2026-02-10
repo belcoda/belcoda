@@ -15,10 +15,11 @@ import { parse } from 'valibot';
 import { getSurveySchema, type SurveySchema } from '$lib/schema/survey/questions';
 import { type EventSignupHelper, eventSignupHelper } from '$lib/schema/event-signup';
 import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
-import { db } from '$lib/server/db/zeroDrizzle';
+import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
 import { event, session } from '$lib/schema/drizzle.js';
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+import type { ServerTransaction } from '@rocicorp/zero';
 const lexicalRenderer = new LexicalHtmlRenderer();
 
 export async function load({ locals, params, url }) {
@@ -36,14 +37,8 @@ export async function load({ locals, params, url }) {
 		event: eventObj,
 		organization: organizationObj,
 		whatsAppSignupLink
-	} = await getDetails(params.eventSlug, params.organizationSlug, locals.session).catch((err) => {
-		if (err instanceof Error && err.message === 'Unknown event') {
-			return error(404, 'Unknown event');
-		}
-		if (err instanceof Error && err.message === 'You are not authorized to access this resource') {
-			return error(403, 'You are not authorized to access this resource');
-		}
-		return error(500, 'Unknown error');
+	} = await db.transaction(async (tx) => {
+		return await getDetails(params.eventSlug, params.organizationSlug, tx, locals.session);
 	});
 
 	const surveySchema = getSurveySchema(eventObj);
@@ -121,6 +116,7 @@ export const actions = {
 async function getDetails(
 	eventSlug: string,
 	organizationSlug: string,
+	tx: ServerTransaction,
 	session: App.Locals['session'] | null
 ) {
 	const organizationId = await _getOrganizationIdBySlugUnsafe({
@@ -130,7 +126,8 @@ async function getDetails(
 		return error(404, 'Organization not found');
 	}
 	const organizationObj = await getOrganizationByIdUnsafe({
-		organizationId: organizationId
+		organizationId: organizationId,
+		tx: tx
 	});
 
 	const eventObj = await _getEventBySlugUnsafe({
@@ -163,7 +160,11 @@ async function getDetails(
 		throw new Error('Action code not found');
 	}
 
-	const whatsAppSignupLink = generateWhatsAppSignupLink(eventObj.title, actionCode.id);
+	const whatsAppSignupLink = generateWhatsAppSignupLink({
+		eventTitle: eventObj.title,
+		whatsAppNumber: organizationObj.settings.whatsApp?.number,
+		actionCode: actionCode.id
+	});
 
 	return { event: eventObj, organization: organizationObj, whatsAppSignupLink, actionCode };
 }

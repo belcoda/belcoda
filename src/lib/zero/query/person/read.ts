@@ -1,7 +1,6 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { type InferOutput, object, array } from 'valibot';
 import { uuid, parseSchema } from '$lib/schema/helpers';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
@@ -15,16 +14,13 @@ export const inputSchema = object({
 });
 
 export function readPersonQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	const q = zero.person
+	const q = builder.person
 		.where('id', '=', input.personId)
 		.related('tags')
 		.limit(100)
@@ -40,13 +36,9 @@ export function readPersonQuery({
 	return q;
 }
 
-export const readPerson = syncedQueryWithContext(
-	'readPerson',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, { personId }) => {
-		return readPersonQuery({ ctx, input: { personId } });
-	}
-);
+export const readPerson = defineQuery(inputSchema, ({ ctx, args }) => {
+	return readPersonQuery({ ctx, input: args });
+});
 
 export const outputSchema = object({
 	...readPersonZero.entries,

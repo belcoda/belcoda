@@ -10,7 +10,7 @@
 	import PlusCircle from '@lucide/svelte/icons/plus-circle';
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
-	import { listEmailMessages } from '$lib/zero/query/email_message/list';
+	import queries from '$lib/zero/query/index';
 
 	onMount(() => {
 		// Rediect to emails because it's the only module we have so far
@@ -30,11 +30,11 @@
 	});
 
 	const draftsQuery = $derived.by(() =>
-		z.createQuery(listEmailMessages(appState.queryContext, draftFilter))
+		z.createQuery(queries.emailMessage.list(draftFilter))
 	);
 
 	const sentQuery = $derived.by(() =>
-		z.createQuery(listEmailMessages(appState.queryContext, sentFilter))
+		z.createQuery(queries.emailMessage.list(sentFilter))
 	);
 
 	const drafts = $derived(draftsQuery.data ?? []);
@@ -66,20 +66,26 @@
 							</div>
 							<div>
 								<Card.Title>Email Drafts</Card.Title>
-								<Card.Description>{drafts.length} draft{drafts.length === 1 ? '' : 's'}</Card.Description>
+								<Card.Description
+									>{drafts.length} draft{drafts.length === 1 ? '' : 's'}</Card.Description
+								>
 							</div>
 						</div>
-						<Button href="/communications/drafts/email" variant="ghost" size="sm">
-							View All
-						</Button>
+						<Button href="/communications/drafts/email" variant="ghost" size="sm">View All</Button>
 					</div>
 				</Card.Header>
 				<Card.Content>
 					{#if drafts.length === 0}
 						<div class="py-8 text-center">
-							<Mail class="text-muted-foreground mx-auto mb-3 size-12" />
-							<p class="text-muted-foreground text-sm">No drafts yet</p>
-							<Button href="/communications/drafts/email/new" variant="link" size="sm" class="mt-2" data-sveltekit-preload-data="off">
+							<Mail class="mx-auto mb-3 size-12 text-muted-foreground" />
+							<p class="text-sm text-muted-foreground">No drafts yet</p>
+							<Button
+								href="/communications/drafts/email/new"
+								variant="link"
+								size="sm"
+								class="mt-2"
+								data-sveltekit-preload-data="off"
+							>
 								Create your first draft
 							</Button>
 						</div>
@@ -93,8 +99,9 @@
 									<div class="mb-1 font-medium">
 										{draft.subject || t`Untitled Draft`}
 									</div>
-									<div class="text-muted-foreground text-xs">
-										{t`Updated`} {new Date(draft.updatedAt).toLocaleDateString()}
+									<div class="text-xs text-muted-foreground">
+										{t`Updated`}
+										{new Date(draft.updatedAt).toLocaleDateString()}
 									</div>
 								</a>
 							{/each}
@@ -125,8 +132,8 @@
 				<Card.Content>
 					{#if sent.length === 0}
 						<div class="py-8 text-center">
-							<Send class="text-muted-foreground mx-auto mb-3 size-12" />
-							<p class="text-muted-foreground text-sm">{t`No sent emails yet`}</p>
+							<Send class="mx-auto mb-3 size-12 text-muted-foreground" />
+							<p class="text-sm text-muted-foreground">{t`No sent emails yet`}</p>
 						</div>
 					{:else}
 						<div class="space-y-3">
@@ -135,9 +142,17 @@
 									<div class="mb-1 font-medium">
 										{email.subject || t`Untitled Email`}
 									</div>
-									<div class="text-muted-foreground flex items-center justify-between text-xs">
-										<span>{t`Sent`} {new Date(email.startedAt || email.createdAt).toLocaleDateString()}</span>
-										<span>{email.successfulRecipientCount} recipient{email.successfulRecipientCount === 1 ? '' : 's'}</span>
+									<div class="flex items-center justify-between text-xs text-muted-foreground">
+										<span
+											>{t`Sent`}
+											{new Date(email.startedAt || email.createdAt).toLocaleDateString()}</span
+										>
+										<span
+											>{email.successfulRecipientCount} recipient{email.successfulRecipientCount ===
+											1
+												? ''
+												: 's'}</span
+										>
 									</div>
 								</div>
 							{/each}

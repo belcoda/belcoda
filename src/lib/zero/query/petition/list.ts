@@ -1,7 +1,6 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object, nullable, optional, picklist } from 'valibot';
 import { listFilter, parseSchema, uuid } from '$lib/schema/helpers';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
@@ -14,16 +13,13 @@ export const inputSchema = object({
 export type PetitionListFilter = InferOutput<typeof inputSchema>;
 
 export function listPetitionsQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.petition
+	let q = builder.petition
 		.where((expr) => petitionReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
@@ -35,16 +31,12 @@ export function listPetitionsQuery({
 	return q;
 }
 
-export const listPetitions = syncedQueryWithContext(
-	'listPetitions',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listPetitionsQuery({ ctx, input: filter });
-	}
-);
+export const listPetitions = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listPetitionsQuery({ ctx, input: args });
+});
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'petition'>,
+	builder: ExpressionBuilder<'petition', Schema>,
 	{ filter }: { filter: InferOutput<typeof inputSchema> }
 ) {
 	const isDeleted = filter.isDeleted ?? false;

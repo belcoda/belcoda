@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { eq, isNull, and, not } from 'drizzle-orm';
 import { actionCode, event } from '$lib/schema/drizzle';
 export async function checkEventSlug({
@@ -18,7 +18,7 @@ export async function checkEventSlug({
 	if (excludeEventId) {
 		where.push(not(eq(event.id, excludeEventId)));
 	}
-	const result = await db.query.event.findFirst({
+	const result = await drizzle.query.event.findFirst({
 		where: and(...where)
 	});
 	return result ? true : false;
@@ -40,14 +40,14 @@ export async function checkEventTitle({
 	if (excludeEventId) {
 		where.push(not(eq(event.id, excludeEventId)));
 	}
-	const result = await db.query.event.findFirst({
+	const result = await drizzle.query.event.findFirst({
 		where: and(...where)
 	});
 	return result ? true : false;
 }
 
 export async function _getEventActionCodeUnsafe({ eventId }: { eventId: string }) {
-	const result = await db.query.actionCode.findFirst({
+	const result = await drizzle.query.actionCode.findFirst({
 		where: and(
 			eq(actionCode.referenceId, eventId),
 			eq(actionCode.type, 'event_signup'),

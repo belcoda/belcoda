@@ -1,11 +1,10 @@
 import pino from '$lib/pino';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { person as personTable, organization as organizationTable } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
 import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { v7 as uuidv7 } from 'uuid';
 
-import { getTransaction, type Transaction } from '$lib/server/db/zeroDrizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 
 import { env as publicEnv } from '$env/dynamic/public';
@@ -13,6 +12,7 @@ import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
 import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
 import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
 import { parse, safeParse, intersect } from 'valibot';
+import type { ServerTransaction } from '@rocicorp/zero';
 import {
 	personActionHelperWhatsAppFlow,
 	personActionHelperCustomFieldsOnly
@@ -26,17 +26,16 @@ async function sendConfirmationMessage({
 	eventTitle,
 	eventStartDate,
 	eventTimezone,
-	tx: defaultTx
+	tx
 }: {
 	from: string;
 	organizationId: string;
 	eventTitle: string;
 	eventStartDate: Date | null;
 	eventTimezone: string;
-	tx?: Transaction;
+	tx: ServerTransaction;
 }) {
 	try {
-		const tx = defaultTx || (await getTransaction());
 		// Get workspace settings for WhatsApp phone number
 		const organization = await getOrganizationByIdUnsafe({
 			organizationId,
@@ -149,13 +148,13 @@ export async function handleFlowResponse({
 	body,
 	response,
 	from,
-	tx: defaultTx
+	tx
 }: {
 	flowName: string;
 	body?: string;
 	response: string;
 	from: string;
-	tx?: Transaction;
+	tx: ServerTransaction;
 }) {
 	try {
 		log.info(
@@ -173,8 +172,6 @@ export async function handleFlowResponse({
 			log.error({ error }, 'invalid JSON in flow response');
 			throw error;
 		}
-
-		const tx = defaultTx || (await getTransaction());
 
 		// Determine what type of flow this is and where to save the data
 		// Looks for resource_type and resource_id in the response payload
@@ -220,7 +217,8 @@ export async function handleFlowResponse({
 					organizationId: organization.id,
 					eventTitle: event.title,
 					eventStartDate: event.startsAt,
-					eventTimezone: event.timezone
+					eventTimezone: event.timezone,
+					tx
 				});
 
 				return eventSignup;
@@ -249,10 +247,12 @@ export async function handleFlowResponse({
  */
 export async function processFlowDataExchange({
 	formData,
-	flowToken
+	flowToken,
+	tx
 }: {
 	formData: Record<string, unknown>;
 	flowToken: string;
+	tx: ServerTransaction;
 }) {
 	log.info({ flowToken, formData }, 'Processing flow data exchange');
 
@@ -276,7 +276,7 @@ export async function processFlowDataExchange({
 
 	// TODO: This should be done using the "from" phone number that the message came from.
 	// Look up person by phone number
-	const existingPerson = await db.query.person.findFirst({
+	const existingPerson = await drizzle.query.person.findFirst({
 		where: eq(personTable.phoneNumber, phone)
 	});
 
@@ -297,6 +297,7 @@ export async function processFlowDataExchange({
 
 			await handleEventSignupFlowResponse({
 				eventId: resourceId,
+				tx,
 				from: phone,
 				givenName: existingPerson.givenName || existingPerson.familyName || phone,
 				responses: flowResponses
@@ -327,16 +328,14 @@ export async function handleEventSignupFlowResponse({
 	givenName,
 	from,
 	responses,
-	tx: defaultTx
+	tx
 }: {
 	eventId: string;
 	from: string;
 	givenName: string;
 	responses?: FlowResponses;
-	tx?: Transaction;
+	tx: ServerTransaction;
 }) {
-	const tx = defaultTx || (await getTransaction());
-
 	// Extract and update person data from flow responses
 	const customFields: Record<string, unknown> = {};
 

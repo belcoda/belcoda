@@ -8,3782 +8,3833 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import type { ReadonlyJSONValue, Row } from '@rocicorp/zero';
-import { createBuilder } from '@rocicorp/zero';
-import type { ZeroCustomType } from 'drizzle-zero';
-import type { default as zeroSchema } from './drizzle-zero.config';
+import type { ReadonlyJSONValue, Row } from "@rocicorp/zero";
+import { createBuilder } from "@rocicorp/zero";
+import type { ZeroCustomType } from "drizzle-zero";
+import type { default as zeroSchema } from "./drizzle-zero.config";
 
 const actionCodeTable = {
-	name: 'actionCode',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		referenceId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'reference_id'
-		},
-		type: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as 'event_signup' | 'event_attended' | 'petition_signed'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'action_code'
+  name: "actionCode",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    referenceId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "reference_id",
+    },
+    type: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as
+        | "event_signup"
+        | "event_attended"
+        | "petition_signed",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "action_code",
 } as const;
 const activityTable = {
-	name: 'activity',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		personId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'person_id'
-		},
-		userId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'user_id'
-		},
-		type: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as
-				| 'whatsapp_message_incoming'
-				| 'whatsapp_message_outgoing'
-				| 'whatsapp_group_message_incoming'
-				| 'email_outgoing'
-				| 'tag_added'
-				| 'tag_removed'
-				| 'team_added'
-				| 'team_removed'
-				| 'event_signup'
-				| 'event_signup_email_sent'
-				| 'event_reminder_email_sent'
-				| 'event_attended'
-				| 'event_noshow'
-				| 'event_apology'
-				| 'event_removed'
-				| 'petition_signed'
-				| 'petition_removed'
-				| 'note_added'
-		},
-		unread: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "activity",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    personId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    userId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "user_id",
+    },
+    type: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as
+        | "whatsapp_message_incoming"
+        | "whatsapp_message_outgoing"
+        | "whatsapp_group_message_incoming"
+        | "email_outgoing"
+        | "tag_added"
+        | "tag_removed"
+        | "team_added"
+        | "team_removed"
+        | "event_signup"
+        | "event_signup_email_sent"
+        | "event_reminder_email_sent"
+        | "event_attended"
+        | "event_noshow"
+        | "event_apology"
+        | "event_removed"
+        | "petition_signed"
+        | "petition_removed"
+        | "note_added",
+    },
+    unread: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const apiKeyTable = {
-	name: 'apiKey',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		name: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		start: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		prefix: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		userId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'user_id'
-		},
-		refillInterval: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'refill_interval'
-		},
-		refillAmount: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'refill_amount'
-		},
-		lastRefillAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'last_refill_at'
-		},
-		enabled: {
-			type: 'boolean',
-			optional: true,
-			customType: null as unknown as boolean
-		},
-		rateLimitEnabled: {
-			type: 'boolean',
-			optional: true,
-			customType: null as unknown as boolean,
-			serverName: 'rate_limit_enabled'
-		},
-		rateLimitTimeWindow: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'rate_limit_time_window'
-		},
-		requestCount: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'request_count'
-		},
-		remaining: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number
-		},
-		lastRequest: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'last_request'
-		},
-		expiresAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'expires_at'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		permissions: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		metadata: {
-			type: 'json',
-			optional: true,
-			customType: null as unknown as ReadonlyJSONValue
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'api_key'
+  name: "apiKey",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    name: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    start: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    prefix: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    userId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "user_id",
+    },
+    refillInterval: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "refill_interval",
+    },
+    refillAmount: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "refill_amount",
+    },
+    lastRefillAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "last_refill_at",
+    },
+    enabled: {
+      type: "boolean",
+      optional: true,
+      customType: null as unknown as boolean,
+    },
+    rateLimitEnabled: {
+      type: "boolean",
+      optional: true,
+      customType: null as unknown as boolean,
+      serverName: "rate_limit_enabled",
+    },
+    rateLimitTimeWindow: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "rate_limit_time_window",
+    },
+    requestCount: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "request_count",
+    },
+    remaining: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+    },
+    lastRequest: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "last_request",
+    },
+    expiresAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "expires_at",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    permissions: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    metadata: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ReadonlyJSONValue,
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "api_key",
 } as const;
 const emailFromSignatureTable = {
-	name: 'emailFromSignature',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		name: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		emailAddress: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'email_address'
-		},
-		externalId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'external_id'
-		},
-		replyTo: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'reply_to'
-		},
-		verified: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean
-		},
-		returnPathDomain: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'return_path_domain'
-		},
-		returnPathDomainVerified: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean,
-			serverName: 'return_path_domain_verified'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'email_from_signature'
+  name: "emailFromSignature",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    name: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    emailAddress: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "email_address",
+    },
+    externalId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "external_id",
+    },
+    replyTo: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "reply_to",
+    },
+    verified: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+    },
+    returnPathDomain: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "return_path_domain",
+    },
+    returnPathDomainVerified: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+      serverName: "return_path_domain_verified",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "email_from_signature",
 } as const;
 const emailMessageTable = {
-	name: 'emailMessage',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		emailFromSignatureId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'email_from_signature_id'
-		},
-		replyToOverride: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'reply_to_override'
-		},
-		recipients: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'emailMessage', 'recipients'>
-		},
-		previewTextOverride: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'preview_text_override'
-		},
-		previewTextLock: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean,
-			serverName: 'preview_text_lock'
-		},
-		subject: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		body: {
-			type: 'json',
-			optional: true,
-			customType: null as unknown as ReadonlyJSONValue
-		},
-		sentBy: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'sent_by'
-		},
-		startedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'started_at'
-		},
-		completedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'completed_at'
-		},
-		estimatedRecipientCount: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'estimated_recipient_count'
-		},
-		successfulRecipientCount: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'successful_recipient_count'
-		},
-		failedRecipientCount: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'failed_recipient_count'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'email_message'
+  name: "emailMessage",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    emailFromSignatureId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "email_from_signature_id",
+    },
+    replyToOverride: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "reply_to_override",
+    },
+    recipients: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "emailMessage",
+        "recipients"
+      >,
+    },
+    previewTextOverride: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "preview_text_override",
+    },
+    previewTextLock: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+      serverName: "preview_text_lock",
+    },
+    subject: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    body: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ReadonlyJSONValue,
+    },
+    sentBy: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "sent_by",
+    },
+    startedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "started_at",
+    },
+    completedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "completed_at",
+    },
+    estimatedRecipientCount: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "estimated_recipient_count",
+    },
+    successfulRecipientCount: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "successful_recipient_count",
+    },
+    failedRecipientCount: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "failed_recipient_count",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "email_message",
 } as const;
 const eventTable = {
-	name: 'event',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		slug: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		title: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		shortDescription: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'short_description'
-		},
-		description: {
-			type: 'json',
-			optional: true,
-			customType: null as unknown as ReadonlyJSONValue
-		},
-		published: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean
-		},
-		startsAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'starts_at'
-		},
-		endsAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'ends_at'
-		},
-		onlineLink: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'online_link'
-		},
-		addressLine1: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'address_line_1'
-		},
-		addressLine2: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'address_line_2'
-		},
-		locality: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		region: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		postcode: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		country: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as
-				| 'AF'
-				| 'AL'
-				| 'DZ'
-				| 'AS'
-				| 'AD'
-				| 'AO'
-				| 'AI'
-				| 'AQ'
-				| 'AG'
-				| 'AR'
-				| 'AM'
-				| 'AW'
-				| 'AU'
-				| 'AT'
-				| 'AZ'
-				| 'BS'
-				| 'BH'
-				| 'BD'
-				| 'BB'
-				| 'BY'
-				| 'BE'
-				| 'BZ'
-				| 'BJ'
-				| 'BM'
-				| 'BT'
-				| 'BO'
-				| 'BQ'
-				| 'BA'
-				| 'BW'
-				| 'BR'
-				| 'IO'
-				| 'BN'
-				| 'BG'
-				| 'BF'
-				| 'BI'
-				| 'CV'
-				| 'KH'
-				| 'CM'
-				| 'CA'
-				| 'KY'
-				| 'CF'
-				| 'TD'
-				| 'CL'
-				| 'CN'
-				| 'CX'
-				| 'CC'
-				| 'CO'
-				| 'KM'
-				| 'CD'
-				| 'CG'
-				| 'CK'
-				| 'CR'
-				| 'HR'
-				| 'CU'
-				| 'CW'
-				| 'CY'
-				| 'CZ'
-				| 'CI'
-				| 'DK'
-				| 'DJ'
-				| 'DM'
-				| 'DO'
-				| 'EC'
-				| 'EG'
-				| 'SV'
-				| 'GQ'
-				| 'ER'
-				| 'EE'
-				| 'SZ'
-				| 'ET'
-				| 'FK'
-				| 'FO'
-				| 'FJ'
-				| 'FI'
-				| 'FR'
-				| 'GF'
-				| 'PF'
-				| 'GA'
-				| 'GM'
-				| 'GE'
-				| 'DE'
-				| 'GH'
-				| 'GI'
-				| 'GR'
-				| 'GL'
-				| 'GD'
-				| 'GP'
-				| 'GU'
-				| 'GT'
-				| 'GG'
-				| 'GN'
-				| 'GW'
-				| 'GY'
-				| 'HT'
-				| 'VA'
-				| 'HN'
-				| 'HK'
-				| 'HU'
-				| 'IS'
-				| 'IN'
-				| 'ID'
-				| 'IR'
-				| 'IQ'
-				| 'IE'
-				| 'IM'
-				| 'IL'
-				| 'IT'
-				| 'JM'
-				| 'JP'
-				| 'JE'
-				| 'JO'
-				| 'KZ'
-				| 'KE'
-				| 'KI'
-				| 'KP'
-				| 'KR'
-				| 'KW'
-				| 'KG'
-				| 'LA'
-				| 'LV'
-				| 'LB'
-				| 'LS'
-				| 'LR'
-				| 'LY'
-				| 'LI'
-				| 'LT'
-				| 'LU'
-				| 'MO'
-				| 'MG'
-				| 'MW'
-				| 'MY'
-				| 'MV'
-				| 'ML'
-				| 'MT'
-				| 'MH'
-				| 'MQ'
-				| 'MR'
-				| 'MU'
-				| 'YT'
-				| 'MX'
-				| 'FM'
-				| 'MD'
-				| 'MC'
-				| 'MN'
-				| 'ME'
-				| 'MS'
-				| 'MA'
-				| 'MZ'
-				| 'MM'
-				| 'NA'
-				| 'NR'
-				| 'NP'
-				| 'NL'
-				| 'NC'
-				| 'NZ'
-				| 'NI'
-				| 'NE'
-				| 'NG'
-				| 'NU'
-				| 'NF'
-				| 'MP'
-				| 'NO'
-				| 'OM'
-				| 'PK'
-				| 'PW'
-				| 'PS'
-				| 'PA'
-				| 'PG'
-				| 'PY'
-				| 'PE'
-				| 'PH'
-				| 'PN'
-				| 'PL'
-				| 'PT'
-				| 'PR'
-				| 'QA'
-				| 'MK'
-				| 'RO'
-				| 'RU'
-				| 'RW'
-				| 'RE'
-				| 'BL'
-				| 'SH'
-				| 'KN'
-				| 'LC'
-				| 'MF'
-				| 'PM'
-				| 'VC'
-				| 'WS'
-				| 'SM'
-				| 'ST'
-				| 'SA'
-				| 'SN'
-				| 'RS'
-				| 'SC'
-				| 'SL'
-				| 'SG'
-				| 'SX'
-				| 'SK'
-				| 'SI'
-				| 'SB'
-				| 'SO'
-				| 'ZA'
-				| 'GS'
-				| 'SS'
-				| 'ES'
-				| 'LK'
-				| 'SD'
-				| 'SR'
-				| 'SJ'
-				| 'SE'
-				| 'CH'
-				| 'SY'
-				| 'TW'
-				| 'TJ'
-				| 'TZ'
-				| 'TH'
-				| 'TL'
-				| 'TG'
-				| 'TK'
-				| 'TO'
-				| 'TT'
-				| 'TN'
-				| 'TR'
-				| 'TM'
-				| 'TC'
-				| 'TV'
-				| 'UG'
-				| 'UA'
-				| 'AE'
-				| 'GB'
-				| 'UM'
-				| 'US'
-				| 'UY'
-				| 'UZ'
-				| 'VU'
-				| 'VE'
-				| 'VN'
-				| 'VG'
-				| 'VI'
-				| 'WF'
-				| 'EH'
-				| 'YE'
-				| 'ZM'
-				| 'ZW'
-				| 'AX'
-		},
-		timezone: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		maxSignups: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'max_signups'
-		},
-		featureImage: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'feature_image'
-		},
-		settings: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'event', 'settings'>
-		},
-		signupTag: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'signup_tag'
-		},
-		attendanceTag: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'attendance_tag'
-		},
-		sendReminderHoursBefore: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'send_reminder_hours_before'
-		},
-		reminderSentAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'reminder_sent_at'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		},
-		archivedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'archived_at'
-		},
-		cancelledAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'cancelled_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "event",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    slug: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    title: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    shortDescription: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "short_description",
+    },
+    description: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "event",
+        "description"
+      >,
+    },
+    published: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+    },
+    startsAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "starts_at",
+    },
+    endsAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "ends_at",
+    },
+    onlineLink: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "online_link",
+    },
+    addressLine1: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "address_line_1",
+    },
+    addressLine2: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "address_line_2",
+    },
+    locality: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    region: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    postcode: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    country: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as
+        | "AF"
+        | "AL"
+        | "DZ"
+        | "AS"
+        | "AD"
+        | "AO"
+        | "AI"
+        | "AQ"
+        | "AG"
+        | "AR"
+        | "AM"
+        | "AW"
+        | "AU"
+        | "AT"
+        | "AZ"
+        | "BS"
+        | "BH"
+        | "BD"
+        | "BB"
+        | "BY"
+        | "BE"
+        | "BZ"
+        | "BJ"
+        | "BM"
+        | "BT"
+        | "BO"
+        | "BQ"
+        | "BA"
+        | "BW"
+        | "BR"
+        | "IO"
+        | "BN"
+        | "BG"
+        | "BF"
+        | "BI"
+        | "CV"
+        | "KH"
+        | "CM"
+        | "CA"
+        | "KY"
+        | "CF"
+        | "TD"
+        | "CL"
+        | "CN"
+        | "CX"
+        | "CC"
+        | "CO"
+        | "KM"
+        | "CD"
+        | "CG"
+        | "CK"
+        | "CR"
+        | "HR"
+        | "CU"
+        | "CW"
+        | "CY"
+        | "CZ"
+        | "CI"
+        | "DK"
+        | "DJ"
+        | "DM"
+        | "DO"
+        | "EC"
+        | "EG"
+        | "SV"
+        | "GQ"
+        | "ER"
+        | "EE"
+        | "SZ"
+        | "ET"
+        | "FK"
+        | "FO"
+        | "FJ"
+        | "FI"
+        | "FR"
+        | "GF"
+        | "PF"
+        | "GA"
+        | "GM"
+        | "GE"
+        | "DE"
+        | "GH"
+        | "GI"
+        | "GR"
+        | "GL"
+        | "GD"
+        | "GP"
+        | "GU"
+        | "GT"
+        | "GG"
+        | "GN"
+        | "GW"
+        | "GY"
+        | "HT"
+        | "VA"
+        | "HN"
+        | "HK"
+        | "HU"
+        | "IS"
+        | "IN"
+        | "ID"
+        | "IR"
+        | "IQ"
+        | "IE"
+        | "IM"
+        | "IL"
+        | "IT"
+        | "JM"
+        | "JP"
+        | "JE"
+        | "JO"
+        | "KZ"
+        | "KE"
+        | "KI"
+        | "KP"
+        | "KR"
+        | "KW"
+        | "KG"
+        | "LA"
+        | "LV"
+        | "LB"
+        | "LS"
+        | "LR"
+        | "LY"
+        | "LI"
+        | "LT"
+        | "LU"
+        | "MO"
+        | "MG"
+        | "MW"
+        | "MY"
+        | "MV"
+        | "ML"
+        | "MT"
+        | "MH"
+        | "MQ"
+        | "MR"
+        | "MU"
+        | "YT"
+        | "MX"
+        | "FM"
+        | "MD"
+        | "MC"
+        | "MN"
+        | "ME"
+        | "MS"
+        | "MA"
+        | "MZ"
+        | "MM"
+        | "NA"
+        | "NR"
+        | "NP"
+        | "NL"
+        | "NC"
+        | "NZ"
+        | "NI"
+        | "NE"
+        | "NG"
+        | "NU"
+        | "NF"
+        | "MP"
+        | "NO"
+        | "OM"
+        | "PK"
+        | "PW"
+        | "PS"
+        | "PA"
+        | "PG"
+        | "PY"
+        | "PE"
+        | "PH"
+        | "PN"
+        | "PL"
+        | "PT"
+        | "PR"
+        | "QA"
+        | "MK"
+        | "RO"
+        | "RU"
+        | "RW"
+        | "RE"
+        | "BL"
+        | "SH"
+        | "KN"
+        | "LC"
+        | "MF"
+        | "PM"
+        | "VC"
+        | "WS"
+        | "SM"
+        | "ST"
+        | "SA"
+        | "SN"
+        | "RS"
+        | "SC"
+        | "SL"
+        | "SG"
+        | "SX"
+        | "SK"
+        | "SI"
+        | "SB"
+        | "SO"
+        | "ZA"
+        | "GS"
+        | "SS"
+        | "ES"
+        | "LK"
+        | "SD"
+        | "SR"
+        | "SJ"
+        | "SE"
+        | "CH"
+        | "SY"
+        | "TW"
+        | "TJ"
+        | "TZ"
+        | "TH"
+        | "TL"
+        | "TG"
+        | "TK"
+        | "TO"
+        | "TT"
+        | "TN"
+        | "TR"
+        | "TM"
+        | "TC"
+        | "TV"
+        | "UG"
+        | "UA"
+        | "AE"
+        | "GB"
+        | "UM"
+        | "US"
+        | "UY"
+        | "UZ"
+        | "VU"
+        | "VE"
+        | "VN"
+        | "VG"
+        | "VI"
+        | "WF"
+        | "EH"
+        | "YE"
+        | "ZM"
+        | "ZW"
+        | "AX",
+    },
+    timezone: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    maxSignups: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "max_signups",
+    },
+    featureImage: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "feature_image",
+    },
+    settings: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "event",
+        "settings"
+      >,
+    },
+    signupTag: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "signup_tag",
+    },
+    attendanceTag: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "attendance_tag",
+    },
+    sendReminderHoursBefore: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "send_reminder_hours_before",
+    },
+    reminderSentAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "reminder_sent_at",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+    archivedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "archived_at",
+    },
+    cancelledAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "cancelled_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const eventSignupTable = {
-	name: 'eventSignup',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		eventId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'event_id'
-		},
-		personId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'person_id'
-		},
-		details: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as {
-				channel: { type: 'eventPage' | 'adminPanel' | 'whatsapp' };
-				customFields: { [x: string]: string | number | boolean | string[] };
-			}
-		},
-		status: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as 'signup' | 'attended' | 'noshow' | 'notattending'
-		},
-		signupNotificationSentAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'signup_notification_sent_at'
-		},
-		reminderSentAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'reminder_notification_sent_at'
-		},
-		cancellationNotificationSentAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'cancellation_notification_sent_at'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'event_signup'
+  name: "eventSignup",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    eventId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "event_id",
+    },
+    personId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    details: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as {
+        channel: { type: "eventPage" | "adminPanel" | "whatsapp" };
+        customFields: { [x: string]: string | number | boolean | string[] };
+      },
+    },
+    status: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as
+        | "signup"
+        | "attended"
+        | "noshow"
+        | "notattending",
+    },
+    signupNotificationSentAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "signup_notification_sent_at",
+    },
+    reminderSentAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "reminder_notification_sent_at",
+    },
+    cancellationNotificationSentAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "cancellation_notification_sent_at",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "event_signup",
 } as const;
 const invitationTable = {
-	name: 'invitation',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		email: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		inviterId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'inviter_id'
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		role: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		status: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		}
-	},
-	primaryKey: ['id']
+  name: "invitation",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    email: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    inviterId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "inviter_id",
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    role: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    status: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const memberTable = {
-	name: 'member',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		userId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'user_id'
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		role: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "member",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    userId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "user_id",
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    role: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const organizationTable = {
-	name: 'organization',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		name: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		slug: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		logo: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		icon: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		country: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as
-				| 'AF'
-				| 'AL'
-				| 'DZ'
-				| 'AS'
-				| 'AD'
-				| 'AO'
-				| 'AI'
-				| 'AQ'
-				| 'AG'
-				| 'AR'
-				| 'AM'
-				| 'AW'
-				| 'AU'
-				| 'AT'
-				| 'AZ'
-				| 'BS'
-				| 'BH'
-				| 'BD'
-				| 'BB'
-				| 'BY'
-				| 'BE'
-				| 'BZ'
-				| 'BJ'
-				| 'BM'
-				| 'BT'
-				| 'BO'
-				| 'BQ'
-				| 'BA'
-				| 'BW'
-				| 'BR'
-				| 'IO'
-				| 'BN'
-				| 'BG'
-				| 'BF'
-				| 'BI'
-				| 'CV'
-				| 'KH'
-				| 'CM'
-				| 'CA'
-				| 'KY'
-				| 'CF'
-				| 'TD'
-				| 'CL'
-				| 'CN'
-				| 'CX'
-				| 'CC'
-				| 'CO'
-				| 'KM'
-				| 'CD'
-				| 'CG'
-				| 'CK'
-				| 'CR'
-				| 'HR'
-				| 'CU'
-				| 'CW'
-				| 'CY'
-				| 'CZ'
-				| 'CI'
-				| 'DK'
-				| 'DJ'
-				| 'DM'
-				| 'DO'
-				| 'EC'
-				| 'EG'
-				| 'SV'
-				| 'GQ'
-				| 'ER'
-				| 'EE'
-				| 'SZ'
-				| 'ET'
-				| 'FK'
-				| 'FO'
-				| 'FJ'
-				| 'FI'
-				| 'FR'
-				| 'GF'
-				| 'PF'
-				| 'GA'
-				| 'GM'
-				| 'GE'
-				| 'DE'
-				| 'GH'
-				| 'GI'
-				| 'GR'
-				| 'GL'
-				| 'GD'
-				| 'GP'
-				| 'GU'
-				| 'GT'
-				| 'GG'
-				| 'GN'
-				| 'GW'
-				| 'GY'
-				| 'HT'
-				| 'VA'
-				| 'HN'
-				| 'HK'
-				| 'HU'
-				| 'IS'
-				| 'IN'
-				| 'ID'
-				| 'IR'
-				| 'IQ'
-				| 'IE'
-				| 'IM'
-				| 'IL'
-				| 'IT'
-				| 'JM'
-				| 'JP'
-				| 'JE'
-				| 'JO'
-				| 'KZ'
-				| 'KE'
-				| 'KI'
-				| 'KP'
-				| 'KR'
-				| 'KW'
-				| 'KG'
-				| 'LA'
-				| 'LV'
-				| 'LB'
-				| 'LS'
-				| 'LR'
-				| 'LY'
-				| 'LI'
-				| 'LT'
-				| 'LU'
-				| 'MO'
-				| 'MG'
-				| 'MW'
-				| 'MY'
-				| 'MV'
-				| 'ML'
-				| 'MT'
-				| 'MH'
-				| 'MQ'
-				| 'MR'
-				| 'MU'
-				| 'YT'
-				| 'MX'
-				| 'FM'
-				| 'MD'
-				| 'MC'
-				| 'MN'
-				| 'ME'
-				| 'MS'
-				| 'MA'
-				| 'MZ'
-				| 'MM'
-				| 'NA'
-				| 'NR'
-				| 'NP'
-				| 'NL'
-				| 'NC'
-				| 'NZ'
-				| 'NI'
-				| 'NE'
-				| 'NG'
-				| 'NU'
-				| 'NF'
-				| 'MP'
-				| 'NO'
-				| 'OM'
-				| 'PK'
-				| 'PW'
-				| 'PS'
-				| 'PA'
-				| 'PG'
-				| 'PY'
-				| 'PE'
-				| 'PH'
-				| 'PN'
-				| 'PL'
-				| 'PT'
-				| 'PR'
-				| 'QA'
-				| 'MK'
-				| 'RO'
-				| 'RU'
-				| 'RW'
-				| 'RE'
-				| 'BL'
-				| 'SH'
-				| 'KN'
-				| 'LC'
-				| 'MF'
-				| 'PM'
-				| 'VC'
-				| 'WS'
-				| 'SM'
-				| 'ST'
-				| 'SA'
-				| 'SN'
-				| 'RS'
-				| 'SC'
-				| 'SL'
-				| 'SG'
-				| 'SX'
-				| 'SK'
-				| 'SI'
-				| 'SB'
-				| 'SO'
-				| 'ZA'
-				| 'GS'
-				| 'SS'
-				| 'ES'
-				| 'LK'
-				| 'SD'
-				| 'SR'
-				| 'SJ'
-				| 'SE'
-				| 'CH'
-				| 'SY'
-				| 'TW'
-				| 'TJ'
-				| 'TZ'
-				| 'TH'
-				| 'TL'
-				| 'TG'
-				| 'TK'
-				| 'TO'
-				| 'TT'
-				| 'TN'
-				| 'TR'
-				| 'TM'
-				| 'TC'
-				| 'TV'
-				| 'UG'
-				| 'UA'
-				| 'AE'
-				| 'GB'
-				| 'UM'
-				| 'US'
-				| 'UY'
-				| 'UZ'
-				| 'VU'
-				| 'VE'
-				| 'VN'
-				| 'VG'
-				| 'VI'
-				| 'WF'
-				| 'EH'
-				| 'YE'
-				| 'ZM'
-				| 'ZW'
-				| 'AX'
-		},
-		defaultLanguage: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<
-				typeof zeroSchema,
-				'organization',
-				'defaultLanguage'
-			>,
-			serverName: 'default_language'
-		},
-		defaultTimezone: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'default_timezone'
-		},
-		settings: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as {
-				whatsApp: { wabaId: string | null; number: string | null };
-				email: {
-					systemFromIdentity: { name: string | null; replyTo: string | null };
-					defaultFromSignatureId: string | null;
-				};
-				theme: {
-					favicon: string | null;
-					primaryColor: string | null;
-					secondaryColor: string | null;
-				};
-			}
-		},
-		balance: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number
-		},
-		createdAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "organization",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    name: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    slug: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    logo: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    icon: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    country: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as
+        | "AF"
+        | "AL"
+        | "DZ"
+        | "AS"
+        | "AD"
+        | "AO"
+        | "AI"
+        | "AQ"
+        | "AG"
+        | "AR"
+        | "AM"
+        | "AW"
+        | "AU"
+        | "AT"
+        | "AZ"
+        | "BS"
+        | "BH"
+        | "BD"
+        | "BB"
+        | "BY"
+        | "BE"
+        | "BZ"
+        | "BJ"
+        | "BM"
+        | "BT"
+        | "BO"
+        | "BQ"
+        | "BA"
+        | "BW"
+        | "BR"
+        | "IO"
+        | "BN"
+        | "BG"
+        | "BF"
+        | "BI"
+        | "CV"
+        | "KH"
+        | "CM"
+        | "CA"
+        | "KY"
+        | "CF"
+        | "TD"
+        | "CL"
+        | "CN"
+        | "CX"
+        | "CC"
+        | "CO"
+        | "KM"
+        | "CD"
+        | "CG"
+        | "CK"
+        | "CR"
+        | "HR"
+        | "CU"
+        | "CW"
+        | "CY"
+        | "CZ"
+        | "CI"
+        | "DK"
+        | "DJ"
+        | "DM"
+        | "DO"
+        | "EC"
+        | "EG"
+        | "SV"
+        | "GQ"
+        | "ER"
+        | "EE"
+        | "SZ"
+        | "ET"
+        | "FK"
+        | "FO"
+        | "FJ"
+        | "FI"
+        | "FR"
+        | "GF"
+        | "PF"
+        | "GA"
+        | "GM"
+        | "GE"
+        | "DE"
+        | "GH"
+        | "GI"
+        | "GR"
+        | "GL"
+        | "GD"
+        | "GP"
+        | "GU"
+        | "GT"
+        | "GG"
+        | "GN"
+        | "GW"
+        | "GY"
+        | "HT"
+        | "VA"
+        | "HN"
+        | "HK"
+        | "HU"
+        | "IS"
+        | "IN"
+        | "ID"
+        | "IR"
+        | "IQ"
+        | "IE"
+        | "IM"
+        | "IL"
+        | "IT"
+        | "JM"
+        | "JP"
+        | "JE"
+        | "JO"
+        | "KZ"
+        | "KE"
+        | "KI"
+        | "KP"
+        | "KR"
+        | "KW"
+        | "KG"
+        | "LA"
+        | "LV"
+        | "LB"
+        | "LS"
+        | "LR"
+        | "LY"
+        | "LI"
+        | "LT"
+        | "LU"
+        | "MO"
+        | "MG"
+        | "MW"
+        | "MY"
+        | "MV"
+        | "ML"
+        | "MT"
+        | "MH"
+        | "MQ"
+        | "MR"
+        | "MU"
+        | "YT"
+        | "MX"
+        | "FM"
+        | "MD"
+        | "MC"
+        | "MN"
+        | "ME"
+        | "MS"
+        | "MA"
+        | "MZ"
+        | "MM"
+        | "NA"
+        | "NR"
+        | "NP"
+        | "NL"
+        | "NC"
+        | "NZ"
+        | "NI"
+        | "NE"
+        | "NG"
+        | "NU"
+        | "NF"
+        | "MP"
+        | "NO"
+        | "OM"
+        | "PK"
+        | "PW"
+        | "PS"
+        | "PA"
+        | "PG"
+        | "PY"
+        | "PE"
+        | "PH"
+        | "PN"
+        | "PL"
+        | "PT"
+        | "PR"
+        | "QA"
+        | "MK"
+        | "RO"
+        | "RU"
+        | "RW"
+        | "RE"
+        | "BL"
+        | "SH"
+        | "KN"
+        | "LC"
+        | "MF"
+        | "PM"
+        | "VC"
+        | "WS"
+        | "SM"
+        | "ST"
+        | "SA"
+        | "SN"
+        | "RS"
+        | "SC"
+        | "SL"
+        | "SG"
+        | "SX"
+        | "SK"
+        | "SI"
+        | "SB"
+        | "SO"
+        | "ZA"
+        | "GS"
+        | "SS"
+        | "ES"
+        | "LK"
+        | "SD"
+        | "SR"
+        | "SJ"
+        | "SE"
+        | "CH"
+        | "SY"
+        | "TW"
+        | "TJ"
+        | "TZ"
+        | "TH"
+        | "TL"
+        | "TG"
+        | "TK"
+        | "TO"
+        | "TT"
+        | "TN"
+        | "TR"
+        | "TM"
+        | "TC"
+        | "TV"
+        | "UG"
+        | "UA"
+        | "AE"
+        | "GB"
+        | "UM"
+        | "US"
+        | "UY"
+        | "UZ"
+        | "VU"
+        | "VE"
+        | "VN"
+        | "VG"
+        | "VI"
+        | "WF"
+        | "EH"
+        | "YE"
+        | "ZM"
+        | "ZW"
+        | "AX",
+    },
+    defaultLanguage: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "organization",
+        "defaultLanguage"
+      >,
+      serverName: "default_language",
+    },
+    defaultTimezone: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "default_timezone",
+    },
+    settings: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as {
+        whatsApp: { wabaId: string | null; number: string | null };
+        email: {
+          systemFromIdentity: { name: string | null; replyTo: string | null };
+          defaultFromSignatureId: string | null;
+        };
+        theme: {
+          favicon: string | null;
+          primaryColor: string | null;
+          secondaryColor: string | null;
+        };
+      },
+    },
+    balance: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+    },
+    createdAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const personTable = {
-	name: 'person',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		familyName: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'family_name'
-		},
-		givenName: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'given_name'
-		},
-		addressLine1: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'address_line_1'
-		},
-		addressLine2: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'address_line_2'
-		},
-		locality: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		region: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		postcode: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		country: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as
-				| 'AF'
-				| 'AL'
-				| 'DZ'
-				| 'AS'
-				| 'AD'
-				| 'AO'
-				| 'AI'
-				| 'AQ'
-				| 'AG'
-				| 'AR'
-				| 'AM'
-				| 'AW'
-				| 'AU'
-				| 'AT'
-				| 'AZ'
-				| 'BS'
-				| 'BH'
-				| 'BD'
-				| 'BB'
-				| 'BY'
-				| 'BE'
-				| 'BZ'
-				| 'BJ'
-				| 'BM'
-				| 'BT'
-				| 'BO'
-				| 'BQ'
-				| 'BA'
-				| 'BW'
-				| 'BR'
-				| 'IO'
-				| 'BN'
-				| 'BG'
-				| 'BF'
-				| 'BI'
-				| 'CV'
-				| 'KH'
-				| 'CM'
-				| 'CA'
-				| 'KY'
-				| 'CF'
-				| 'TD'
-				| 'CL'
-				| 'CN'
-				| 'CX'
-				| 'CC'
-				| 'CO'
-				| 'KM'
-				| 'CD'
-				| 'CG'
-				| 'CK'
-				| 'CR'
-				| 'HR'
-				| 'CU'
-				| 'CW'
-				| 'CY'
-				| 'CZ'
-				| 'CI'
-				| 'DK'
-				| 'DJ'
-				| 'DM'
-				| 'DO'
-				| 'EC'
-				| 'EG'
-				| 'SV'
-				| 'GQ'
-				| 'ER'
-				| 'EE'
-				| 'SZ'
-				| 'ET'
-				| 'FK'
-				| 'FO'
-				| 'FJ'
-				| 'FI'
-				| 'FR'
-				| 'GF'
-				| 'PF'
-				| 'GA'
-				| 'GM'
-				| 'GE'
-				| 'DE'
-				| 'GH'
-				| 'GI'
-				| 'GR'
-				| 'GL'
-				| 'GD'
-				| 'GP'
-				| 'GU'
-				| 'GT'
-				| 'GG'
-				| 'GN'
-				| 'GW'
-				| 'GY'
-				| 'HT'
-				| 'VA'
-				| 'HN'
-				| 'HK'
-				| 'HU'
-				| 'IS'
-				| 'IN'
-				| 'ID'
-				| 'IR'
-				| 'IQ'
-				| 'IE'
-				| 'IM'
-				| 'IL'
-				| 'IT'
-				| 'JM'
-				| 'JP'
-				| 'JE'
-				| 'JO'
-				| 'KZ'
-				| 'KE'
-				| 'KI'
-				| 'KP'
-				| 'KR'
-				| 'KW'
-				| 'KG'
-				| 'LA'
-				| 'LV'
-				| 'LB'
-				| 'LS'
-				| 'LR'
-				| 'LY'
-				| 'LI'
-				| 'LT'
-				| 'LU'
-				| 'MO'
-				| 'MG'
-				| 'MW'
-				| 'MY'
-				| 'MV'
-				| 'ML'
-				| 'MT'
-				| 'MH'
-				| 'MQ'
-				| 'MR'
-				| 'MU'
-				| 'YT'
-				| 'MX'
-				| 'FM'
-				| 'MD'
-				| 'MC'
-				| 'MN'
-				| 'ME'
-				| 'MS'
-				| 'MA'
-				| 'MZ'
-				| 'MM'
-				| 'NA'
-				| 'NR'
-				| 'NP'
-				| 'NL'
-				| 'NC'
-				| 'NZ'
-				| 'NI'
-				| 'NE'
-				| 'NG'
-				| 'NU'
-				| 'NF'
-				| 'MP'
-				| 'NO'
-				| 'OM'
-				| 'PK'
-				| 'PW'
-				| 'PS'
-				| 'PA'
-				| 'PG'
-				| 'PY'
-				| 'PE'
-				| 'PH'
-				| 'PN'
-				| 'PL'
-				| 'PT'
-				| 'PR'
-				| 'QA'
-				| 'MK'
-				| 'RO'
-				| 'RU'
-				| 'RW'
-				| 'RE'
-				| 'BL'
-				| 'SH'
-				| 'KN'
-				| 'LC'
-				| 'MF'
-				| 'PM'
-				| 'VC'
-				| 'WS'
-				| 'SM'
-				| 'ST'
-				| 'SA'
-				| 'SN'
-				| 'RS'
-				| 'SC'
-				| 'SL'
-				| 'SG'
-				| 'SX'
-				| 'SK'
-				| 'SI'
-				| 'SB'
-				| 'SO'
-				| 'ZA'
-				| 'GS'
-				| 'SS'
-				| 'ES'
-				| 'LK'
-				| 'SD'
-				| 'SR'
-				| 'SJ'
-				| 'SE'
-				| 'CH'
-				| 'SY'
-				| 'TW'
-				| 'TJ'
-				| 'TZ'
-				| 'TH'
-				| 'TL'
-				| 'TG'
-				| 'TK'
-				| 'TO'
-				| 'TT'
-				| 'TN'
-				| 'TR'
-				| 'TM'
-				| 'TC'
-				| 'TV'
-				| 'UG'
-				| 'UA'
-				| 'AE'
-				| 'GB'
-				| 'UM'
-				| 'US'
-				| 'UY'
-				| 'UZ'
-				| 'VU'
-				| 'VE'
-				| 'VN'
-				| 'VG'
-				| 'VI'
-				| 'WF'
-				| 'EH'
-				| 'YE'
-				| 'ZM'
-				| 'ZW'
-				| 'AX'
-		},
-		preferredLanguage: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<
-				typeof zeroSchema,
-				'person',
-				'preferredLanguage'
-			>,
-			serverName: 'preferred_language'
-		},
-		workplace: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		position: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		gender: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'person', 'gender'>
-		},
-		dateOfBirth: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'date_of_birth'
-		},
-		emailAddress: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'email_address'
-		},
-		subscribed: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean
-		},
-		doNotContact: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean,
-			serverName: 'do_not_contact'
-		},
-		phoneNumber: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'phone_number'
-		},
-		whatsAppUsername: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'whatsapp_username'
-		},
-		socialMedia: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as {
-				facebook?: string | null | undefined;
-				twitter?: string | null | undefined;
-				instagram?: string | null | undefined;
-				linkedIn?: string | null | undefined;
-				tiktok?: string | null | undefined;
-				website?: string | null | undefined;
-			},
-			serverName: 'social_media'
-		},
-		externalId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'external_id'
-		},
-		mostRecentActivityAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'most_recent_activity_at'
-		},
-		mostRecentActivityPreview: {
-			type: 'json',
-			optional: true,
-			customType: null as unknown as
-				| {
-						type: 'whatsapp_message_incoming';
-						message:
-							| { type: 'text'; text: string }
-							| { type: 'image' }
-							| { type: 'video' }
-							| { type: 'audio' }
-							| { type: 'document' }
-							| { type: 'sticker' }
-							| { type: 'location' }
-							| { type: 'contact' }
-							| { type: 'flow' }
-							| { type: 'button'; text: string }
-							| { type: 'reaction'; emoji: string };
-						whatsappMessageId: string;
-				  }
-				| {
-						type: 'whatsapp_message_outgoing';
-						message:
-							| { type: 'text'; text: string }
-							| { type: 'image' }
-							| { type: 'video' }
-							| { type: 'audio' }
-							| { type: 'document' }
-							| { type: 'sticker' }
-							| { type: 'location' }
-							| { type: 'contact' }
-							| { type: 'flow' }
-							| { type: 'button'; text: string }
-							| { type: 'reaction'; emoji: string };
-						whatsappMessageId: string;
-				  }
-				| {
-						type: 'whatsapp_group_message_incoming';
-						message:
-							| { type: 'text'; text: string }
-							| { type: 'image' }
-							| { type: 'video' }
-							| { type: 'audio' }
-							| { type: 'document' }
-							| { type: 'sticker' }
-							| { type: 'location' }
-							| { type: 'contact' }
-							| { type: 'flow' }
-							| { type: 'button'; text: string }
-							| { type: 'reaction'; emoji: string };
-						whatsappGroupId: string;
-				  }
-				| {
-						type: 'email_outgoing';
-						subject: string;
-						bodyStart: string;
-						emailMessageId: string;
-				  }
-				| { type: 'tag_added'; tagName: string; tagId: string }
-				| { type: 'tag_removed'; tagName: string; tagId: string }
-				| { type: 'team_added'; teamName: string; teamId: string }
-				| { type: 'team_removed'; teamName: string; teamId: string }
-				| { type: 'event_signup'; eventName: string; eventId: string }
-				| {
-						type: 'event_signup_email_sent';
-						eventName: string;
-						eventId: string;
-				  }
-				| {
-						type: 'event_reminder_email_sent';
-						eventName: string;
-						eventId: string;
-				  }
-				| { type: 'event_attended'; eventName: string; eventId: string }
-				| { type: 'event_noshow'; eventName: string; eventId: string }
-				| { type: 'event_apology'; eventName: string; eventId: string }
-				| { type: 'event_removed'; eventName: string; eventId: string }
-				| { type: 'petition_signed'; petitionName: string; petitionId: string }
-				| { type: 'petition_removed'; petitionName: string; petitionId: string }
-				| {
-						type: 'note_added';
-						notePreview: string;
-						userName: string;
-						noteId: string;
-				  },
-			serverName: 'most_recent_activity_preview'
-		},
-		profilePicture: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'profile_picture'
-		},
-		addedFrom: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as
-				| { type: 'seeds' }
-				| { type: 'import'; importId: string }
-				| { type: 'added_manually'; userId: string }
-				| { type: 'added_from_event'; eventSignupId: string }
-				| { type: 'added_from_petition'; petitionSignatureId: string }
-				| { type: 'incoming_whatsapp_message'; messageId: string },
-			serverName: 'added_from'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "person",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    familyName: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "family_name",
+    },
+    givenName: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "given_name",
+    },
+    addressLine1: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "address_line_1",
+    },
+    addressLine2: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "address_line_2",
+    },
+    locality: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    region: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    postcode: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    country: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as
+        | "AF"
+        | "AL"
+        | "DZ"
+        | "AS"
+        | "AD"
+        | "AO"
+        | "AI"
+        | "AQ"
+        | "AG"
+        | "AR"
+        | "AM"
+        | "AW"
+        | "AU"
+        | "AT"
+        | "AZ"
+        | "BS"
+        | "BH"
+        | "BD"
+        | "BB"
+        | "BY"
+        | "BE"
+        | "BZ"
+        | "BJ"
+        | "BM"
+        | "BT"
+        | "BO"
+        | "BQ"
+        | "BA"
+        | "BW"
+        | "BR"
+        | "IO"
+        | "BN"
+        | "BG"
+        | "BF"
+        | "BI"
+        | "CV"
+        | "KH"
+        | "CM"
+        | "CA"
+        | "KY"
+        | "CF"
+        | "TD"
+        | "CL"
+        | "CN"
+        | "CX"
+        | "CC"
+        | "CO"
+        | "KM"
+        | "CD"
+        | "CG"
+        | "CK"
+        | "CR"
+        | "HR"
+        | "CU"
+        | "CW"
+        | "CY"
+        | "CZ"
+        | "CI"
+        | "DK"
+        | "DJ"
+        | "DM"
+        | "DO"
+        | "EC"
+        | "EG"
+        | "SV"
+        | "GQ"
+        | "ER"
+        | "EE"
+        | "SZ"
+        | "ET"
+        | "FK"
+        | "FO"
+        | "FJ"
+        | "FI"
+        | "FR"
+        | "GF"
+        | "PF"
+        | "GA"
+        | "GM"
+        | "GE"
+        | "DE"
+        | "GH"
+        | "GI"
+        | "GR"
+        | "GL"
+        | "GD"
+        | "GP"
+        | "GU"
+        | "GT"
+        | "GG"
+        | "GN"
+        | "GW"
+        | "GY"
+        | "HT"
+        | "VA"
+        | "HN"
+        | "HK"
+        | "HU"
+        | "IS"
+        | "IN"
+        | "ID"
+        | "IR"
+        | "IQ"
+        | "IE"
+        | "IM"
+        | "IL"
+        | "IT"
+        | "JM"
+        | "JP"
+        | "JE"
+        | "JO"
+        | "KZ"
+        | "KE"
+        | "KI"
+        | "KP"
+        | "KR"
+        | "KW"
+        | "KG"
+        | "LA"
+        | "LV"
+        | "LB"
+        | "LS"
+        | "LR"
+        | "LY"
+        | "LI"
+        | "LT"
+        | "LU"
+        | "MO"
+        | "MG"
+        | "MW"
+        | "MY"
+        | "MV"
+        | "ML"
+        | "MT"
+        | "MH"
+        | "MQ"
+        | "MR"
+        | "MU"
+        | "YT"
+        | "MX"
+        | "FM"
+        | "MD"
+        | "MC"
+        | "MN"
+        | "ME"
+        | "MS"
+        | "MA"
+        | "MZ"
+        | "MM"
+        | "NA"
+        | "NR"
+        | "NP"
+        | "NL"
+        | "NC"
+        | "NZ"
+        | "NI"
+        | "NE"
+        | "NG"
+        | "NU"
+        | "NF"
+        | "MP"
+        | "NO"
+        | "OM"
+        | "PK"
+        | "PW"
+        | "PS"
+        | "PA"
+        | "PG"
+        | "PY"
+        | "PE"
+        | "PH"
+        | "PN"
+        | "PL"
+        | "PT"
+        | "PR"
+        | "QA"
+        | "MK"
+        | "RO"
+        | "RU"
+        | "RW"
+        | "RE"
+        | "BL"
+        | "SH"
+        | "KN"
+        | "LC"
+        | "MF"
+        | "PM"
+        | "VC"
+        | "WS"
+        | "SM"
+        | "ST"
+        | "SA"
+        | "SN"
+        | "RS"
+        | "SC"
+        | "SL"
+        | "SG"
+        | "SX"
+        | "SK"
+        | "SI"
+        | "SB"
+        | "SO"
+        | "ZA"
+        | "GS"
+        | "SS"
+        | "ES"
+        | "LK"
+        | "SD"
+        | "SR"
+        | "SJ"
+        | "SE"
+        | "CH"
+        | "SY"
+        | "TW"
+        | "TJ"
+        | "TZ"
+        | "TH"
+        | "TL"
+        | "TG"
+        | "TK"
+        | "TO"
+        | "TT"
+        | "TN"
+        | "TR"
+        | "TM"
+        | "TC"
+        | "TV"
+        | "UG"
+        | "UA"
+        | "AE"
+        | "GB"
+        | "UM"
+        | "US"
+        | "UY"
+        | "UZ"
+        | "VU"
+        | "VE"
+        | "VN"
+        | "VG"
+        | "VI"
+        | "WF"
+        | "EH"
+        | "YE"
+        | "ZM"
+        | "ZW"
+        | "AX",
+    },
+    preferredLanguage: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "person",
+        "preferredLanguage"
+      >,
+      serverName: "preferred_language",
+    },
+    workplace: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    position: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    gender: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "person",
+        "gender"
+      >,
+    },
+    dateOfBirth: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "date_of_birth",
+    },
+    emailAddress: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "email_address",
+    },
+    subscribed: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+    },
+    doNotContact: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+      serverName: "do_not_contact",
+    },
+    phoneNumber: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "phone_number",
+    },
+    whatsAppUsername: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "whatsapp_username",
+    },
+    socialMedia: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as {
+        facebook?: string | null | undefined;
+        twitter?: string | null | undefined;
+        instagram?: string | null | undefined;
+        linkedIn?: string | null | undefined;
+        tiktok?: string | null | undefined;
+        website?: string | null | undefined;
+      },
+      serverName: "social_media",
+    },
+    externalId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "external_id",
+    },
+    mostRecentActivityAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "most_recent_activity_at",
+    },
+    mostRecentActivityPreview: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as
+        | {
+            type: "whatsapp_message_incoming";
+            message:
+              | { type: "text"; text: string }
+              | { type: "image" }
+              | { type: "video" }
+              | { type: "audio" }
+              | { type: "document" }
+              | { type: "sticker" }
+              | { type: "location" }
+              | { type: "contact" }
+              | { type: "flow" }
+              | { type: "button"; text: string }
+              | { type: "reaction"; emoji: string };
+            whatsappMessageId: string;
+          }
+        | {
+            type: "whatsapp_message_outgoing";
+            message:
+              | { type: "text"; text: string }
+              | { type: "image" }
+              | { type: "video" }
+              | { type: "audio" }
+              | { type: "document" }
+              | { type: "sticker" }
+              | { type: "location" }
+              | { type: "contact" }
+              | { type: "flow" }
+              | { type: "button"; text: string }
+              | { type: "reaction"; emoji: string };
+            whatsappMessageId: string;
+          }
+        | {
+            type: "whatsapp_group_message_incoming";
+            message:
+              | { type: "text"; text: string }
+              | { type: "image" }
+              | { type: "video" }
+              | { type: "audio" }
+              | { type: "document" }
+              | { type: "sticker" }
+              | { type: "location" }
+              | { type: "contact" }
+              | { type: "flow" }
+              | { type: "button"; text: string }
+              | { type: "reaction"; emoji: string };
+            whatsappGroupId: string;
+          }
+        | {
+            type: "email_outgoing";
+            subject: string;
+            bodyStart: string;
+            emailMessageId: string;
+          }
+        | { type: "tag_added"; tagName: string; tagId: string }
+        | { type: "tag_removed"; tagName: string; tagId: string }
+        | { type: "team_added"; teamName: string; teamId: string }
+        | { type: "team_removed"; teamName: string; teamId: string }
+        | { type: "event_signup"; eventName: string; eventId: string }
+        | {
+            type: "event_signup_email_sent";
+            eventName: string;
+            eventId: string;
+          }
+        | {
+            type: "event_reminder_email_sent";
+            eventName: string;
+            eventId: string;
+          }
+        | { type: "event_attended"; eventName: string; eventId: string }
+        | { type: "event_noshow"; eventName: string; eventId: string }
+        | { type: "event_apology"; eventName: string; eventId: string }
+        | { type: "event_removed"; eventName: string; eventId: string }
+        | { type: "petition_signed"; petitionName: string; petitionId: string }
+        | { type: "petition_removed"; petitionName: string; petitionId: string }
+        | {
+            type: "note_added";
+            notePreview: string;
+            userName: string;
+            noteId: string;
+          },
+      serverName: "most_recent_activity_preview",
+    },
+    profilePicture: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "profile_picture",
+    },
+    addedFrom: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as
+        | { type: "seeds" }
+        | { type: "import"; importId: string }
+        | { type: "added_manually"; userId: string }
+        | { type: "added_from_event"; eventSignupId: string }
+        | { type: "added_from_petition"; petitionSignatureId: string }
+        | { type: "incoming_whatsapp_message"; messageId: string },
+      serverName: "added_from",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const personImportTable = {
-	name: 'personImport',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		csvUrl: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'csv_url'
-		},
-		status: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as 'pending' | 'failed' | 'processing' | 'completed'
-		},
-		totalRows: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'total_rows'
-		},
-		processedRows: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'processed_rows'
-		},
-		failedRows: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'failed_rows'
-		},
-		failedEntries: {
-			type: 'json',
-			optional: true,
-			customType: null as unknown as ReadonlyJSONValue,
-			serverName: 'failed_entries'
-		},
-		importedBy: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'imported_by'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		completedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'completed_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'person_import'
+  name: "personImport",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    csvUrl: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "csv_url",
+    },
+    status: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as
+        | "pending"
+        | "failed"
+        | "processing"
+        | "completed",
+    },
+    totalRows: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "total_rows",
+    },
+    processedRows: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "processed_rows",
+    },
+    failedRows: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "failed_rows",
+    },
+    failedEntries: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ReadonlyJSONValue,
+      serverName: "failed_entries",
+    },
+    importedBy: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "imported_by",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    completedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "completed_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "person_import",
 } as const;
 const personNoteTable = {
-	name: 'personNote',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		personId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'person_id'
-		},
-		note: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		userId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'user_id'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'person_note'
+  name: "personNote",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    personId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    note: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    userId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "user_id",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "person_note",
 } as const;
 const personTagTable = {
-	name: 'personTag',
-	columns: {
-		personId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'person_id'
-		},
-		tagId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'tag_id'
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		}
-	},
-	primaryKey: ['personId', 'tagId'],
-	serverName: 'person_tag'
+  name: "personTag",
+  columns: {
+    personId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    tagId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "tag_id",
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+  },
+  primaryKey: ["personId", "tagId"],
+  serverName: "person_tag",
 } as const;
 const personTeamTable = {
-	name: 'personTeam',
-	columns: {
-		personId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'person_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		}
-	},
-	primaryKey: ['personId', 'teamId'],
-	serverName: 'person_team'
+  name: "personTeam",
+  columns: {
+    personId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    teamId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+  },
+  primaryKey: ["personId", "teamId"],
+  serverName: "person_team",
 } as const;
 const petitionTable = {
-	name: 'petition',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		pointPersonId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'point_person_id'
-		},
-		slug: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		title: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		description: {
-			type: 'json',
-			optional: true,
-			customType: null as unknown as ReadonlyJSONValue
-		},
-		shortDescription: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'short_description'
-		},
-		published: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean
-		},
-		petitionTarget: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'petition_target'
-		},
-		petitionText: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'petition_text'
-		},
-		featureImage: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'feature_image'
-		},
-		settings: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'petition', 'settings'>
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		archivedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'archived_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "petition",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    pointPersonId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "point_person_id",
+    },
+    slug: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    title: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    description: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ReadonlyJSONValue,
+    },
+    shortDescription: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "short_description",
+    },
+    published: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+    },
+    petitionTarget: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "petition_target",
+    },
+    petitionText: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "petition_text",
+    },
+    featureImage: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "feature_image",
+    },
+    settings: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "petition",
+        "settings"
+      >,
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    archivedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "archived_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const petitionSignatureTable = {
-	name: 'petitionSignature',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		petitionId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'petition_id'
-		},
-		personId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'person_id'
-		},
-		details: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as {
-				channel: { type: 'adminPanel' | 'whatsapp' | 'petitionPage' };
-			}
-		},
-		responses: {
-			type: 'json',
-			optional: true,
-			customType: null as unknown as ReadonlyJSONValue
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'petition_signature'
+  name: "petitionSignature",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    petitionId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "petition_id",
+    },
+    personId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    details: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as {
+        channel: { type: "adminPanel" | "whatsapp" | "petitionPage" };
+      },
+    },
+    responses: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ReadonlyJSONValue,
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "petition_signature",
 } as const;
 const subscriptionTable = {
-	name: 'subscription',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		plan: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		referenceId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'reference_id'
-		},
-		stripeCustomerId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'stripe_customer_id'
-		},
-		stripeSubscriptionId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'stripe_subscription_id'
-		},
-		status: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		periodStart: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'period_start'
-		},
-		periodEnd: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'period_end'
-		},
-		cancelAtPeriodEnd: {
-			type: 'boolean',
-			optional: true,
-			customType: null as unknown as boolean,
-			serverName: 'cancel_at_period_end'
-		},
-		seats: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number
-		},
-		trialStart: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'trial_start'
-		},
-		trialEnd: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'trial_end'
-		}
-	},
-	primaryKey: ['id']
+  name: "subscription",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    plan: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    referenceId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "reference_id",
+    },
+    stripeCustomerId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "stripe_customer_id",
+    },
+    stripeSubscriptionId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "stripe_subscription_id",
+    },
+    status: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    periodStart: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "period_start",
+    },
+    periodEnd: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "period_end",
+    },
+    cancelAtPeriodEnd: {
+      type: "boolean",
+      optional: true,
+      customType: null as unknown as boolean,
+      serverName: "cancel_at_period_end",
+    },
+    seats: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+    },
+    trialStart: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "trial_start",
+    },
+    trialEnd: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "trial_end",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const tagTable = {
-	name: 'tag',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		name: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		active: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "tag",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    name: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    active: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const teamTable = {
-	name: 'team',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		name: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		parentTeamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'parent_team_id'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "team",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    name: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    parentTeamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "parent_team_id",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const teamMemberTable = {
-	name: 'teamMember',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		userId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'user_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'team_member'
+  name: "teamMember",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    userId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "user_id",
+    },
+    teamId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "team_member",
 } as const;
 const userTable = {
-	name: 'user',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		name: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		email: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		emailVerified: {
-			type: 'boolean',
-			optional: false,
-			customType: null as unknown as boolean,
-			serverName: 'email_verified'
-		},
-		image: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		twoFactorEnabled: {
-			type: 'boolean',
-			optional: true,
-			customType: null as unknown as boolean,
-			serverName: 'two_factor_enabled'
-		},
-		preferredLanguage: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as 'en' | 'pt' | 'es',
-			serverName: 'preferred_language'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "user",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    name: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    email: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    emailVerified: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+      serverName: "email_verified",
+    },
+    image: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    twoFactorEnabled: {
+      type: "boolean",
+      optional: true,
+      customType: null as unknown as boolean,
+      serverName: "two_factor_enabled",
+    },
+    preferredLanguage: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as "en" | "pt" | "es",
+      serverName: "preferred_language",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const webhookTable = {
-	name: 'webhook',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		name: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		targetUrl: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'target_url'
-		},
-		verificationMode: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as 'api_key' | 'signature',
-			serverName: 'verification_mode'
-		},
-		enabled: {
-			type: 'boolean',
-			optional: true,
-			customType: null as unknown as boolean
-		},
-		eventTypes: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'webhook', 'eventTypes'>,
-			serverName: 'event_types'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		lastSuccessAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'last_success_at'
-		},
-		lastFailureAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'last_failure_at'
-		}
-	},
-	primaryKey: ['id']
+  name: "webhook",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    name: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    targetUrl: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "target_url",
+    },
+    verificationMode: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as "api_key" | "signature",
+      serverName: "verification_mode",
+    },
+    enabled: {
+      type: "boolean",
+      optional: true,
+      customType: null as unknown as boolean,
+    },
+    eventTypes: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "webhook",
+        "eventTypes"
+      >,
+      serverName: "event_types",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    lastSuccessAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "last_success_at",
+    },
+    lastFailureAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "last_failure_at",
+    },
+  },
+  primaryKey: ["id"],
 } as const;
 const webhookLogTable = {
-	name: 'webhookLog',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		webhookId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'webhook_id'
-		},
-		eventType: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'webhookLog', 'eventType'>,
-			serverName: 'event_type'
-		},
-		status: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as 'pending' | 'success' | 'failed'
-		},
-		payload: {
-			type: 'json',
-			optional: true,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'webhookLog', 'payload'>
-		},
-		httpStatusCode: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'http_status_code'
-		},
-		responseBody: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'response_body'
-		},
-		attemptNumber: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'attempt_number'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'webhook_log'
+  name: "webhookLog",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    webhookId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "webhook_id",
+    },
+    eventType: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "webhookLog",
+        "eventType"
+      >,
+      serverName: "event_type",
+    },
+    status: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as "pending" | "success" | "failed",
+    },
+    payload: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "webhookLog",
+        "payload"
+      >,
+    },
+    httpStatusCode: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "http_status_code",
+    },
+    responseBody: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "response_body",
+    },
+    attemptNumber: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "attempt_number",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "webhook_log",
 } as const;
 const whatsappGroupTable = {
-	name: 'whatsappGroup',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		name: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		profilePicture: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'profile_picture'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		inviteCode: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'code'
-		},
-		externalId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'external_id'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'whatsapp_group'
+  name: "whatsappGroup",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    name: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    profilePicture: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "profile_picture",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    inviteCode: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "code",
+    },
+    externalId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "external_id",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "whatsapp_group",
 } as const;
 const whatsappGroupMemberTable = {
-	name: 'whatsappGroupMember',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		whatsappGroupId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'whatsapp_group_id'
-		},
-		personId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'person_id'
-		},
-		whatsappId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'whatsapp_id'
-		},
-		name: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string
-		},
-		addedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'whatsapp_group_member'
+  name: "whatsappGroupMember",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    whatsappGroupId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "whatsapp_group_id",
+    },
+    personId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    whatsappId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "whatsapp_id",
+    },
+    name: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+    },
+    addedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "whatsapp_group_member",
 } as const;
 const whatsappMessageTable = {
-	name: 'whatsappMessage',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		whatsappThreadId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'whatsapp_thread_id'
-		},
-		externalId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'external_id'
-		},
-		wamidId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'wamid_id'
-		},
-		type: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as
-				| 'incoming_api_message'
-				| 'outgoing_api_message'
-				| 'incoming_group_message'
-				| 'outgoing_group_message'
-				| 'incoming_direct_message'
-				| 'outgoing_direct_message'
-		},
-		message: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as {
-				id: string;
-				headerText?: string | undefined;
-				text?: string | undefined;
-				image_url?: string | undefined;
-				sticker_url?: string | undefined;
-				video_url?: string | undefined;
-				audio_url?: string | undefined;
-				buttons?: { text: string; action: string }[] | undefined;
-				emojiReactions: {
-					emoji: string | null;
-					personId: string | null;
-					phoneNumber: string | null;
-					viaBelcoda: boolean;
-					reactedAt: number;
-				}[];
-				replyToMessageId?: string | undefined;
-			}
-		},
-		userId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'user_id'
-		},
-		personId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'person_id'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'whatsapp_message'
+  name: "whatsappMessage",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    whatsappThreadId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "whatsapp_thread_id",
+    },
+    externalId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "external_id",
+    },
+    wamidId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "wamid_id",
+    },
+    type: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as
+        | "incoming_api_message"
+        | "outgoing_api_message"
+        | "incoming_group_message"
+        | "outgoing_group_message"
+        | "incoming_direct_message"
+        | "outgoing_direct_message",
+    },
+    message: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as {
+        id: string;
+        headerText?: string | undefined;
+        text?: string | undefined;
+        image_url?: string | undefined;
+        sticker_url?: string | undefined;
+        video_url?: string | undefined;
+        audio_url?: string | undefined;
+        buttons?: { text: string; action: string }[] | undefined;
+        emojiReactions: {
+          emoji: string | null;
+          personId: string | null;
+          phoneNumber: string | null;
+          viaBelcoda: boolean;
+          reactedAt: number;
+        }[];
+        replyToMessageId?: string | undefined;
+      },
+    },
+    userId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "user_id",
+    },
+    personId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "whatsapp_message",
 } as const;
 const whatsappTemplateTable = {
-	name: 'whatsappTemplate',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		name: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		locale: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'whatsappTemplate', 'locale'>
-		},
-		components: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as (
-				| {
-						type: 'HEADER';
-						format: 'TEXT';
-						text: string;
-						example: { header_text: string[] };
-				  }
-				| { type: 'HEADER'; format: 'IMAGE'; example: { header_url: string[] } }
-				| { type: 'BODY'; text: string; example: { body_text: string[][] } }
-				| { type: 'BUTTONS'; buttons: { type: 'QUICK_REPLY'; text: string }[] }
-			)[]
-		},
-		status: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as
-				| 'NOT_SUBMITTED'
-				| 'PENDING'
-				| 'APPROVED'
-				| 'REJECTED'
-				| 'IN_APPEAL'
-				| 'PENDING_DELETION'
-				| 'DELETED'
-				| 'DISABLED'
-				| 'PAUSED'
-				| 'LIMIT_EXCEEDED'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		submittedForReviewAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'submitted_for_review_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'whatsapp_template'
+  name: "whatsappTemplate",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    name: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    locale: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "whatsappTemplate",
+        "locale"
+      >,
+    },
+    components: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as (
+        | {
+            type: "HEADER";
+            format: "TEXT";
+            text: string;
+            example: { header_text: string[] };
+          }
+        | { type: "HEADER"; format: "IMAGE"; example: { header_url: string[] } }
+        | { type: "BODY"; text: string; example: { body_text: string[][] } }
+        | { type: "BUTTONS"; buttons: { type: "QUICK_REPLY"; text: string }[] }
+      )[],
+    },
+    status: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as
+        | "NOT_SUBMITTED"
+        | "PENDING"
+        | "APPROVED"
+        | "REJECTED"
+        | "IN_APPEAL"
+        | "PENDING_DELETION"
+        | "DELETED"
+        | "DISABLED"
+        | "PAUSED"
+        | "LIMIT_EXCEEDED",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    submittedForReviewAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "submitted_for_review_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "whatsapp_template",
 } as const;
 const whatsappThreadTable = {
-	name: 'whatsappThread',
-	columns: {
-		id: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		organizationId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'organization_id'
-		},
-		teamId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'team_id'
-		},
-		recipients: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<
-				typeof zeroSchema,
-				'whatsappThread',
-				'recipients'
-			>
-		},
-		templateId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		messages: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as {
-				id: string;
-				headerText?: string | undefined;
-				text?: string | undefined;
-				image_url?: string | undefined;
-				sticker_url?: string | undefined;
-				video_url?: string | undefined;
-				audio_url?: string | undefined;
-				buttons?: { text: string; action: string }[] | undefined;
-				emojiReactions: {
-					emoji: string | null;
-					personId: string | null;
-					phoneNumber: string | null;
-					viaBelcoda: boolean;
-					reactedAt: number;
-				}[];
-				replyToMessageId?: string | undefined;
-			}[]
-		},
-		actions: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'whatsappThread', 'actions'>
-		},
-		sentBy: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'sent_by'
-		},
-		startedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'started_at'
-		},
-		completedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'completed_at'
-		},
-		estimatedRecipientCount: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'estimated_recipient_count'
-		},
-		successfulRecipientCount: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'successful_recipient_count'
-		},
-		failedRecipientCount: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'failed_recipient_count'
-		},
-		estimatedCost: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'estimated_cost'
-		},
-		totalCost: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'total_cost'
-		},
-		createdAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'created_at'
-		},
-		updatedAt: {
-			type: 'number',
-			optional: false,
-			customType: null as unknown as number,
-			serverName: 'updated_at'
-		},
-		deletedAt: {
-			type: 'number',
-			optional: true,
-			customType: null as unknown as number,
-			serverName: 'deleted_at'
-		}
-	},
-	primaryKey: ['id'],
-	serverName: 'whatsapp_thread'
+  name: "whatsappThread",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    recipients: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "whatsappThread",
+        "recipients"
+      >,
+    },
+    templateId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    messages: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as {
+        id: string;
+        headerText?: string | undefined;
+        text?: string | undefined;
+        image_url?: string | undefined;
+        sticker_url?: string | undefined;
+        video_url?: string | undefined;
+        audio_url?: string | undefined;
+        buttons?: { text: string; action: string }[] | undefined;
+        emojiReactions: {
+          emoji: string | null;
+          personId: string | null;
+          phoneNumber: string | null;
+          viaBelcoda: boolean;
+          reactedAt: number;
+        }[];
+        replyToMessageId?: string | undefined;
+      }[],
+    },
+    actions: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "whatsappThread",
+        "actions"
+      >,
+    },
+    sentBy: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "sent_by",
+    },
+    startedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "started_at",
+    },
+    completedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "completed_at",
+    },
+    estimatedRecipientCount: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "estimated_recipient_count",
+    },
+    successfulRecipientCount: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "successful_recipient_count",
+    },
+    failedRecipientCount: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "failed_recipient_count",
+    },
+    estimatedCost: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "estimated_cost",
+    },
+    totalCost: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "total_cost",
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "whatsapp_thread",
 } as const;
 const tagRelationships = {
-	people: [
-		{
-			sourceField: ['id'],
-			destField: ['tagId'],
-			destSchema: 'personTag',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['tagId'],
-			destField: ['id'],
-			destSchema: 'tag',
-			cardinality: 'many'
-		}
-	],
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	personTags: [
-		{
-			sourceField: ['id'],
-			destField: ['tagId'],
-			destSchema: 'personTag',
-			cardinality: 'many'
-		}
-	]
+  people: [
+    {
+      sourceField: ["id"],
+      destField: ["tagId"],
+      destSchema: "personTag",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["tagId"],
+      destField: ["id"],
+      destSchema: "tag",
+      cardinality: "many",
+    },
+  ],
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  personTags: [
+    {
+      sourceField: ["id"],
+      destField: ["tagId"],
+      destSchema: "personTag",
+      cardinality: "many",
+    },
+  ],
 } as const;
 const personRelationships = {
-	tags: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'personTag',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['tagId'],
-			destField: ['id'],
-			destSchema: 'tag',
-			cardinality: 'many'
-		}
-	],
-	whatsappGroups: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'whatsappGroupMember',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['whatsappGroupId'],
-			destField: ['id'],
-			destSchema: 'whatsappGroup',
-			cardinality: 'many'
-		}
-	],
-	teams: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'personTeam',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'many'
-		}
-	],
-	events: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'eventSignup',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['eventId'],
-			destField: ['id'],
-			destSchema: 'event',
-			cardinality: 'many'
-		}
-	],
-	petitions: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'petitionSignature',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['petitionId'],
-			destField: ['id'],
-			destSchema: 'petition',
-			cardinality: 'many'
-		}
-	],
-	org: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	teamMemberships: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'personTeam',
-			cardinality: 'many'
-		}
-	],
-	personTags: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'personTag',
-			cardinality: 'many'
-		}
-	],
-	eventSignups: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'eventSignup',
-			cardinality: 'many'
-		}
-	],
-	petitionSignatures: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'petitionSignature',
-			cardinality: 'many'
-		}
-	],
-	whatsappGroupMemberships: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'whatsappGroupMember',
-			cardinality: 'many'
-		}
-	],
-	notes: [
-		{
-			sourceField: ['id'],
-			destField: ['personId'],
-			destSchema: 'personNote',
-			cardinality: 'many'
-		}
-	]
+  tags: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "personTag",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["tagId"],
+      destField: ["id"],
+      destSchema: "tag",
+      cardinality: "many",
+    },
+  ],
+  whatsappGroups: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "whatsappGroupMember",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["whatsappGroupId"],
+      destField: ["id"],
+      destSchema: "whatsappGroup",
+      cardinality: "many",
+    },
+  ],
+  teams: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "personTeam",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "many",
+    },
+  ],
+  events: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "eventSignup",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["eventId"],
+      destField: ["id"],
+      destSchema: "event",
+      cardinality: "many",
+    },
+  ],
+  petitions: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "petitionSignature",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["petitionId"],
+      destField: ["id"],
+      destSchema: "petition",
+      cardinality: "many",
+    },
+  ],
+  org: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  teamMemberships: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "personTeam",
+      cardinality: "many",
+    },
+  ],
+  personTags: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "personTag",
+      cardinality: "many",
+    },
+  ],
+  eventSignups: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "eventSignup",
+      cardinality: "many",
+    },
+  ],
+  petitionSignatures: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "petitionSignature",
+      cardinality: "many",
+    },
+  ],
+  whatsappGroupMemberships: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "whatsappGroupMember",
+      cardinality: "many",
+    },
+  ],
+  notes: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "personNote",
+      cardinality: "many",
+    },
+  ],
 } as const;
 const whatsappGroupRelationships = {
-	members: [
-		{
-			sourceField: ['id'],
-			destField: ['whatsappGroupId'],
-			destSchema: 'whatsappGroupMember',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'many'
-		}
-	],
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	],
-	groupMembers: [
-		{
-			sourceField: ['id'],
-			destField: ['whatsappGroupId'],
-			destSchema: 'whatsappGroupMember',
-			cardinality: 'many'
-		}
-	]
+  members: [
+    {
+      sourceField: ["id"],
+      destField: ["whatsappGroupId"],
+      destSchema: "whatsappGroupMember",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "many",
+    },
+  ],
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
+  groupMembers: [
+    {
+      sourceField: ["id"],
+      destField: ["whatsappGroupId"],
+      destSchema: "whatsappGroupMember",
+      cardinality: "many",
+    },
+  ],
 } as const;
 const teamRelationships = {
-	people: [
-		{
-			sourceField: ['id'],
-			destField: ['teamId'],
-			destSchema: 'personTeam',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'many'
-		}
-	],
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	person: [
-		{
-			sourceField: ['id'],
-			destField: ['teamId'],
-			destSchema: 'personTeam',
-			cardinality: 'many'
-		}
-	],
-	parentTeam: [
-		{
-			sourceField: ['parentTeamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	],
-	user: [
-		{
-			sourceField: ['id'],
-			destField: ['teamId'],
-			destSchema: 'teamMember',
-			cardinality: 'many'
-		}
-	]
+  people: [
+    {
+      sourceField: ["id"],
+      destField: ["teamId"],
+      destSchema: "personTeam",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "many",
+    },
+  ],
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  person: [
+    {
+      sourceField: ["id"],
+      destField: ["teamId"],
+      destSchema: "personTeam",
+      cardinality: "many",
+    },
+  ],
+  parentTeam: [
+    {
+      sourceField: ["parentTeamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
+  user: [
+    {
+      sourceField: ["id"],
+      destField: ["teamId"],
+      destSchema: "teamMember",
+      cardinality: "many",
+    },
+  ],
 } as const;
 const petitionRelationships = {
-	signers: [
-		{
-			sourceField: ['id'],
-			destField: ['petitionId'],
-			destSchema: 'petitionSignature',
-			cardinality: 'many'
-		},
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'many'
-		}
-	],
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	],
-	signatures: [
-		{
-			sourceField: ['id'],
-			destField: ['petitionId'],
-			destSchema: 'petitionSignature',
-			cardinality: 'many'
-		}
-	]
+  signers: [
+    {
+      sourceField: ["id"],
+      destField: ["petitionId"],
+      destSchema: "petitionSignature",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "many",
+    },
+  ],
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
+  signatures: [
+    {
+      sourceField: ["id"],
+      destField: ["petitionId"],
+      destSchema: "petitionSignature",
+      cardinality: "many",
+    },
+  ],
 } as const;
 const activityRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	person: [
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'one'
-		}
-	],
-	user: [
-		{
-			sourceField: ['userId'],
-			destField: ['id'],
-			destSchema: 'user',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  person: [
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "one",
+    },
+  ],
+  user: [
+    {
+      sourceField: ["userId"],
+      destField: ["id"],
+      destSchema: "user",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const apiKeyRelationships = {
-	user: [
-		{
-			sourceField: ['userId'],
-			destField: ['id'],
-			destSchema: 'user',
-			cardinality: 'one'
-		}
-	]
+  user: [
+    {
+      sourceField: ["userId"],
+      destField: ["id"],
+      destSchema: "user",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const emailFromSignatureRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const emailMessageRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	emailFromSignature: [
-		{
-			sourceField: ['emailFromSignatureId'],
-			destField: ['id'],
-			destSchema: 'emailFromSignature',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  emailFromSignature: [
+    {
+      sourceField: ["emailFromSignatureId"],
+      destField: ["id"],
+      destSchema: "emailFromSignature",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const eventRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	],
-	signups: [
-		{
-			sourceField: ['id'],
-			destField: ['eventId'],
-			destSchema: 'eventSignup',
-			cardinality: 'many'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
+  signups: [
+    {
+      sourceField: ["id"],
+      destField: ["eventId"],
+      destSchema: "eventSignup",
+      cardinality: "many",
+    },
+  ],
 } as const;
 const eventSignupRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	event: [
-		{
-			sourceField: ['eventId'],
-			destField: ['id'],
-			destSchema: 'event',
-			cardinality: 'one'
-		}
-	],
-	person: [
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  event: [
+    {
+      sourceField: ["eventId"],
+      destField: ["id"],
+      destSchema: "event",
+      cardinality: "one",
+    },
+  ],
+  person: [
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const invitationRelationships = {
-	inviter: [
-		{
-			sourceField: ['inviterId'],
-			destField: ['id'],
-			destSchema: 'user',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	],
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	]
+  inviter: [
+    {
+      sourceField: ["inviterId"],
+      destField: ["id"],
+      destSchema: "user",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const memberRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	user: [
-		{
-			sourceField: ['userId'],
-			destField: ['id'],
-			destSchema: 'user',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  user: [
+    {
+      sourceField: ["userId"],
+      destField: ["id"],
+      destSchema: "user",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const organizationRelationships = {
-	memberships: [
-		{
-			sourceField: ['id'],
-			destField: ['organizationId'],
-			destSchema: 'member',
-			cardinality: 'many'
-		}
-	],
-	teams: [
-		{
-			sourceField: ['id'],
-			destField: ['organizationId'],
-			destSchema: 'team',
-			cardinality: 'many'
-		}
-	],
-	invitations: [
-		{
-			sourceField: ['id'],
-			destField: ['organizationId'],
-			destSchema: 'invitation',
-			cardinality: 'many'
-		}
-	]
+  memberships: [
+    {
+      sourceField: ["id"],
+      destField: ["organizationId"],
+      destSchema: "member",
+      cardinality: "many",
+    },
+  ],
+  teams: [
+    {
+      sourceField: ["id"],
+      destField: ["organizationId"],
+      destSchema: "team",
+      cardinality: "many",
+    },
+  ],
+  invitations: [
+    {
+      sourceField: ["id"],
+      destField: ["organizationId"],
+      destSchema: "invitation",
+      cardinality: "many",
+    },
+  ],
 } as const;
 const personImportRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	importedByPerson: [
-		{
-			sourceField: ['importedBy'],
-			destField: ['id'],
-			destSchema: 'user',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  importedByPerson: [
+    {
+      sourceField: ["importedBy"],
+      destField: ["id"],
+      destSchema: "user",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const personNoteRelationships = {
-	person: [
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'one'
-		}
-	],
-	user: [
-		{
-			sourceField: ['userId'],
-			destField: ['id'],
-			destSchema: 'user',
-			cardinality: 'one'
-		}
-	],
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	]
+  person: [
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "one",
+    },
+  ],
+  user: [
+    {
+      sourceField: ["userId"],
+      destField: ["id"],
+      destSchema: "user",
+      cardinality: "one",
+    },
+  ],
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const personTeamRelationships = {
-	person: [
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	]
+  person: [
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const personTagRelationships = {
-	person: [
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'one'
-		}
-	],
-	tag: [
-		{
-			sourceField: ['tagId'],
-			destField: ['id'],
-			destSchema: 'tag',
-			cardinality: 'one'
-		}
-	]
+  person: [
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "one",
+    },
+  ],
+  tag: [
+    {
+      sourceField: ["tagId"],
+      destField: ["id"],
+      destSchema: "tag",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const petitionSignatureRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	petition: [
-		{
-			sourceField: ['petitionId'],
-			destField: ['id'],
-			destSchema: 'petition',
-			cardinality: 'one'
-		}
-	],
-	person: [
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  petition: [
+    {
+      sourceField: ["petitionId"],
+      destField: ["id"],
+      destSchema: "petition",
+      cardinality: "one",
+    },
+  ],
+  person: [
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const subscriptionRelationships = {
-	organization: [
-		{
-			sourceField: ['referenceId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["referenceId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const teamMemberRelationships = {
-	user: [
-		{
-			sourceField: ['userId'],
-			destField: ['id'],
-			destSchema: 'user',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	]
+  user: [
+    {
+      sourceField: ["userId"],
+      destField: ["id"],
+      destSchema: "user",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const userRelationships = {
-	orgMemberships: [
-		{
-			sourceField: ['id'],
-			destField: ['userId'],
-			destSchema: 'member',
-			cardinality: 'many'
-		}
-	],
-	teamMemberships: [
-		{
-			sourceField: ['id'],
-			destField: ['userId'],
-			destSchema: 'teamMember',
-			cardinality: 'many'
-		}
-	]
+  orgMemberships: [
+    {
+      sourceField: ["id"],
+      destField: ["userId"],
+      destSchema: "member",
+      cardinality: "many",
+    },
+  ],
+  teamMemberships: [
+    {
+      sourceField: ["id"],
+      destField: ["userId"],
+      destSchema: "teamMember",
+      cardinality: "many",
+    },
+  ],
 } as const;
 const webhookLogRelationships = {
-	webhook: [
-		{
-			sourceField: ['webhookId'],
-			destField: ['id'],
-			destSchema: 'webhook',
-			cardinality: 'one'
-		}
-	]
+  webhook: [
+    {
+      sourceField: ["webhookId"],
+      destField: ["id"],
+      destSchema: "webhook",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const webhookRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const whatsappGroupMemberRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	whatsappGroup: [
-		{
-			sourceField: ['whatsappGroupId'],
-			destField: ['id'],
-			destSchema: 'whatsappGroup',
-			cardinality: 'one'
-		}
-	],
-	person: [
-		{
-			sourceField: ['personId'],
-			destField: ['id'],
-			destSchema: 'person',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  whatsappGroup: [
+    {
+      sourceField: ["whatsappGroupId"],
+      destField: ["id"],
+      destSchema: "whatsappGroup",
+      cardinality: "one",
+    },
+  ],
+  person: [
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const whatsappTemplateRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
 } as const;
 const whatsappThreadRelationships = {
-	organization: [
-		{
-			sourceField: ['organizationId'],
-			destField: ['id'],
-			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	template: [
-		{
-			sourceField: ['templateId'],
-			destField: ['id'],
-			destSchema: 'whatsappTemplate',
-			cardinality: 'one'
-		}
-	],
-	team: [
-		{
-			sourceField: ['teamId'],
-			destField: ['id'],
-			destSchema: 'team',
-			cardinality: 'one'
-		}
-	]
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  template: [
+    {
+      sourceField: ["templateId"],
+      destField: ["id"],
+      destSchema: "whatsappTemplate",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
 } as const;
 /**
  * The Zero schema object.
  * This type is auto-generated from your Drizzle schema definition.
  */
 export const schema = {
-	tables: {
-		actionCode: actionCodeTable,
-		activity: activityTable,
-		apiKey: apiKeyTable,
-		emailFromSignature: emailFromSignatureTable,
-		emailMessage: emailMessageTable,
-		event: eventTable,
-		eventSignup: eventSignupTable,
-		invitation: invitationTable,
-		member: memberTable,
-		organization: organizationTable,
-		person: personTable,
-		personImport: personImportTable,
-		personNote: personNoteTable,
-		personTag: personTagTable,
-		personTeam: personTeamTable,
-		petition: petitionTable,
-		petitionSignature: petitionSignatureTable,
-		subscription: subscriptionTable,
-		tag: tagTable,
-		team: teamTable,
-		teamMember: teamMemberTable,
-		user: userTable,
-		webhook: webhookTable,
-		webhookLog: webhookLogTable,
-		whatsappGroup: whatsappGroupTable,
-		whatsappGroupMember: whatsappGroupMemberTable,
-		whatsappMessage: whatsappMessageTable,
-		whatsappTemplate: whatsappTemplateTable,
-		whatsappThread: whatsappThreadTable
-	},
-	relationships: {
-		tag: tagRelationships,
-		person: personRelationships,
-		whatsappGroup: whatsappGroupRelationships,
-		team: teamRelationships,
-		petition: petitionRelationships,
-		activity: activityRelationships,
-		apiKey: apiKeyRelationships,
-		emailFromSignature: emailFromSignatureRelationships,
-		emailMessage: emailMessageRelationships,
-		event: eventRelationships,
-		eventSignup: eventSignupRelationships,
-		invitation: invitationRelationships,
-		member: memberRelationships,
-		organization: organizationRelationships,
-		personImport: personImportRelationships,
-		personNote: personNoteRelationships,
-		personTeam: personTeamRelationships,
-		personTag: personTagRelationships,
-		petitionSignature: petitionSignatureRelationships,
-		subscription: subscriptionRelationships,
-		teamMember: teamMemberRelationships,
-		user: userRelationships,
-		webhookLog: webhookLogRelationships,
-		webhook: webhookRelationships,
-		whatsappGroupMember: whatsappGroupMemberRelationships,
-		whatsappTemplate: whatsappTemplateRelationships,
-		whatsappThread: whatsappThreadRelationships
-	},
-	enableLegacyQueries: true,
-	enableLegacyMutators: true
+  tables: {
+    actionCode: actionCodeTable,
+    activity: activityTable,
+    apiKey: apiKeyTable,
+    emailFromSignature: emailFromSignatureTable,
+    emailMessage: emailMessageTable,
+    event: eventTable,
+    eventSignup: eventSignupTable,
+    invitation: invitationTable,
+    member: memberTable,
+    organization: organizationTable,
+    person: personTable,
+    personImport: personImportTable,
+    personNote: personNoteTable,
+    personTag: personTagTable,
+    personTeam: personTeamTable,
+    petition: petitionTable,
+    petitionSignature: petitionSignatureTable,
+    subscription: subscriptionTable,
+    tag: tagTable,
+    team: teamTable,
+    teamMember: teamMemberTable,
+    user: userTable,
+    webhook: webhookTable,
+    webhookLog: webhookLogTable,
+    whatsappGroup: whatsappGroupTable,
+    whatsappGroupMember: whatsappGroupMemberTable,
+    whatsappMessage: whatsappMessageTable,
+    whatsappTemplate: whatsappTemplateTable,
+    whatsappThread: whatsappThreadTable,
+  },
+  relationships: {
+    tag: tagRelationships,
+    person: personRelationships,
+    whatsappGroup: whatsappGroupRelationships,
+    team: teamRelationships,
+    petition: petitionRelationships,
+    activity: activityRelationships,
+    apiKey: apiKeyRelationships,
+    emailFromSignature: emailFromSignatureRelationships,
+    emailMessage: emailMessageRelationships,
+    event: eventRelationships,
+    eventSignup: eventSignupRelationships,
+    invitation: invitationRelationships,
+    member: memberRelationships,
+    organization: organizationRelationships,
+    personImport: personImportRelationships,
+    personNote: personNoteRelationships,
+    personTeam: personTeamRelationships,
+    personTag: personTagRelationships,
+    petitionSignature: petitionSignatureRelationships,
+    subscription: subscriptionRelationships,
+    teamMember: teamMemberRelationships,
+    user: userRelationships,
+    webhookLog: webhookLogRelationships,
+    webhook: webhookRelationships,
+    whatsappGroupMember: whatsappGroupMemberRelationships,
+    whatsappTemplate: whatsappTemplateRelationships,
+    whatsappThread: whatsappThreadRelationships,
+  },
+  enableLegacyQueries: true,
+  enableLegacyMutators: true,
 } as const;
 
 /**

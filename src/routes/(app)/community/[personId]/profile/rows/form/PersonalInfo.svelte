@@ -6,6 +6,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { objectAsync } from 'valibot';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 	import { date } from '$lib/schema/helpers';
 
@@ -20,20 +21,24 @@
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			gender: person.gender,
+			/* svelte-ignore state_referenced_locally */
 			dateOfBirth: person.dateOfBirth ? new Date(person.dateOfBirth) : null
 		},
 		onSubmit: async (data) => {
-			const response = z.mutate.person.update({
-				metadata: {
-					organizationId: appState.organizationId,
-					personId: person.id
-				},
-				input: {
-					gender: data.gender,
-					dateOfBirth: data.dateOfBirth ? data.dateOfBirth.getTime() : null
-				}
-			});
+			const response = z.mutate(
+				mutators.person.update({
+					metadata: {
+						organizationId: appState.organizationId,
+						personId: person.id
+					},
+					input: {
+						gender: data.gender,
+						dateOfBirth: data.dateOfBirth ? data.dateOfBirth.getTime() : null
+					}
+				})
+			);
 			try {
 				await response.server;
 				edit = false;
@@ -48,6 +53,7 @@
 	import { dateToInputValue, inputValueToDate } from '$lib/utils/date';
 
 	let dateOfBirth = $state(
+		/* svelte-ignore state_referenced_locally */
 		person.dateOfBirth ? dateToInputValue(new Date(person.dateOfBirth)) : null
 	);
 
@@ -81,7 +87,9 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<div class="mt-3 flex items-center justify-end gap-2">
-		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>{t`Cancel`}</Button>
+		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}
+			>{t`Cancel`}</Button
+		>
 		<Button type="submit" size="sm">{t`Save`}</Button>
 	</div>
 	<Debug {data} />

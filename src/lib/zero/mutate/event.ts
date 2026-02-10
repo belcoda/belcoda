@@ -1,58 +1,53 @@
 import { type Transaction } from '@rocicorp/zero';
 import { type Schema } from '$lib/zero/schema';
+import { defineMutator } from '@rocicorp/zero';
 
-import {
-	type CreateEventZeroMutatorSchema,
-	type UpdateEventZeroMutatorSchema,
-	createEventZeroMutatorSchema,
-	updateEventZeroMutatorSchema
-} from '$lib/schema/event';
+import { createEventZeroMutatorSchema, updateEventZeroMutatorSchema } from '$lib/schema/event';
 import { parse } from 'valibot';
 
-export function createEvent() {
-	return async function (tx: Transaction<Schema>, args: CreateEventZeroMutatorSchema) {
-		const parsedArgs = parse(createEventZeroMutatorSchema, args);
+export const createEvent = defineMutator(
+	createEventZeroMutatorSchema,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.event.insert({
-			id: parsedArgs.metadata.eventId,
-			organizationId: parsedArgs.metadata.organizationId,
-			teamId: parsedArgs.metadata.teamId,
-			slug: parsedArgs.input.slug,
-			title: parsedArgs.input.title,
-			shortDescription: parsedArgs.input.shortDescription,
-			description: parsedArgs.input.description,
+			id: args.metadata.eventId,
+			organizationId: args.metadata.organizationId,
+			teamId: args.metadata.teamId,
+			slug: args.input.slug,
+			title: args.input.title,
+			shortDescription: args.input.shortDescription,
+			description: args.input.description,
 			published: false,
-			startsAt: parsedArgs.input.startsAt.getTime(),
-			endsAt: parsedArgs.input.endsAt.getTime(),
-			onlineLink: parsedArgs.input.onlineLink,
-			addressLine1: parsedArgs.input.addressLine1,
-			addressLine2: parsedArgs.input.addressLine2,
-			locality: parsedArgs.input.locality,
-			region: parsedArgs.input.region,
-			postcode: parsedArgs.input.postcode,
-			country: parsedArgs.input.country,
-			timezone: parsedArgs.input.timezone,
-			maxSignups: parsedArgs.input.maxSignups,
-			featureImage: parsedArgs.input.featureImage,
-			signupTag: parsedArgs.input.signupTag,
-			attendanceTag: parsedArgs.input.attendanceTag,
-			sendReminderHoursBefore: parsedArgs.input.sendReminderHoursBefore,
-			settings: parsedArgs.input.settings,
+			startsAt: args.input.startsAt,
+			endsAt: args.input.endsAt,
+			onlineLink: args.input.onlineLink,
+			addressLine1: args.input.addressLine1,
+			addressLine2: args.input.addressLine2,
+			locality: args.input.locality,
+			region: args.input.region,
+			postcode: args.input.postcode,
+			country: args.input.country,
+			timezone: args.input.timezone,
+			maxSignups: args.input.maxSignups,
+			featureImage: args.input.featureImage,
+			signupTag: args.input.signupTag,
+			attendanceTag: args.input.attendanceTag,
+			sendReminderHoursBefore: args.input.sendReminderHoursBefore,
+			settings: args.input.settings,
 			reminderSentAt: null,
 			createdAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function updateEvent() {
-	return async function (tx: Transaction<Schema>, args: UpdateEventZeroMutatorSchema) {
+export const updateEvent = defineMutator(
+	updateEventZeroMutatorSchema,
+	async ({ tx, args, ctx }) => {
 		const parsed = parse(updateEventZeroMutatorSchema, args);
 		tx.mutate.event.update({
-			id: parsed.metadata.eventId,
-			...parsed.input,
-			startsAt: parsed.input.startsAt ? parsed.input.startsAt.getTime() : undefined,
-			endsAt: parsed.input.endsAt ? parsed.input.endsAt.getTime() : undefined,
+			id: args.metadata.eventId,
+			...args.input,
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);

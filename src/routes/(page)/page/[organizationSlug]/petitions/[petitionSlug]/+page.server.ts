@@ -1,10 +1,9 @@
 import { error, fail } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
+import { db, drizzle } from '$lib/server/db';
 import { petition, petitionSignature, organization, person } from '$lib/schema/drizzle';
 import { eq, and, isNull, count, desc } from 'drizzle-orm';
 import pino from '$lib/pino';
 import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
-import { getTransaction } from '$lib/server/db/zeroDrizzle';
 import { parse } from 'valibot';
 import { signPetitionFormSchema } from '$lib/schema/petition/petition-signature';
 import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
@@ -15,7 +14,7 @@ export async function load({ params, locals }) {
 	const { organizationSlug, petitionSlug } = params;
 
 	// Find organization by slug
-	const [org] = await db
+	const [org] = await drizzle
 		.select()
 		.from(organization)
 		.where(eq(organization.slug, organizationSlug))
@@ -26,7 +25,7 @@ export async function load({ params, locals }) {
 	}
 
 	// Find petition by slug
-	const [petitionData] = await db
+	const [petitionData] = await drizzle
 		.select()
 		.from(petition)
 		.where(
@@ -43,13 +42,13 @@ export async function load({ params, locals }) {
 	}
 
 	// Count signatures
-	const [signatureCount] = await db
+	const [signatureCount] = await drizzle
 		.select({ count: count() })
 		.from(petitionSignature)
 		.where(eq(petitionSignature.petitionId, petitionData.id));
 
 	// Get recent signatures with person details
-	const recentSignatures = await db
+	const recentSignatures = await drizzle
 		.select({
 			id: petitionSignature.id,
 			createdAt: petitionSignature.createdAt,
@@ -102,47 +101,47 @@ export const actions = {
 		//! need zero permission checks here. Will change if we need zero for consistency or any other
 		//! reason.
 		try {
-			const [org] = await db
-				.select()
-				.from(organization)
-				.where(eq(organization.slug, organizationSlug))
-				.limit(1);
+			await db.transaction(async (tx) => {
+				const [org] = await tx.dbTransaction.wrappedTransaction
+					.select()
+					.from(organization)
+					.where(eq(organization.slug, organizationSlug))
+					.limit(1);
 
-			if (!org) {
-				return fail(404, { error: 'Organization not found', success: false });
-			}
+				if (!org) {
+					return fail(404, { error: 'Organization not found', success: false });
+				}
 
-			const petitionFilters = [
-				eq(petition.slug, petitionSlug),
-				eq(petition.organizationId, org.id),
-				isNull(petition.deletedAt)
-			];
+				const petitionFilters = [
+					eq(petition.slug, petitionSlug),
+					eq(petition.organizationId, org.id),
+					isNull(petition.deletedAt)
+				];
 
-			const [petitionData] = await db
-				.select()
-				.from(petition)
-				.where(and(...petitionFilters))
-				.limit(1);
+				const [petitionData] = await tx.dbTransaction.wrappedTransaction
+					.select()
+					.from(petition)
+					.where(and(...petitionFilters))
+					.limit(1);
 
-			if (!petitionData) {
-				return fail(404, { error: 'Petition not found', success: false });
-			}
+				if (!petitionData) {
+					return fail(404, { error: 'Petition not found', success: false });
+				}
 
-			if (!petitionData.published) {
-				return fail(400, { error: 'This petition is not published', success: false });
-			}
+				if (!petitionData.published) {
+					return fail(400, { error: 'This petition is not published', success: false });
+				}
 
-			const formData = await request.formData();
-			const phoneValue = formData.get('phoneNumber')?.toString().trim() || '';
-			const data = {
-				givenName: formData.get('givenName')?.toString() || '',
-				familyName: formData.get('familyName')?.toString() || '',
-				emailAddress: formData.get('emailAddress')?.toString() || '',
-				phoneNumber: phoneValue.length ? phoneValue : undefined
-			};
-			const parsed = parse(signPetitionFormSchema, data);
+				const formData = await request.formData();
+				const phoneValue = formData.get('phoneNumber')?.toString().trim() || '';
+				const data = {
+					givenName: formData.get('givenName')?.toString() || '',
+					familyName: formData.get('familyName')?.toString() || '',
+					emailAddress: formData.get('emailAddress')?.toString() || '',
+					phoneNumber: phoneValue.length ? phoneValue : undefined
+				};
+				const parsed = parse(signPetitionFormSchema, data);
 
-			await getTransaction().then(async (tx) => {
 				await signPetitionHelper({
 					tx,
 					petitionId: petitionData.id,

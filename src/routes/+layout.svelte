@@ -6,6 +6,7 @@
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { locale } from '$lib/index.svelte';
 	const { data, children } = $props();
+	/* svelte-ignore state_referenced_locally */
 	locale.setLocale(data.locale);
 	import { Tooltip as TooltipPrimitive } from 'bits-ui';
 </script>

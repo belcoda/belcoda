@@ -5,6 +5,7 @@
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import AddTeam from './form/AddTeam.svelte';
 	let edit = $state(true);
 	import { t } from '$lib/index.svelte';
@@ -28,13 +29,15 @@
 						onRemove={() => {
 							if (!appState.isAdminOrOwner) return;
 							if (window.confirm(t`Are you sure you want to remove this team?`)) {
-								z.mutate.person.removeFromTeam({
-									metadata: {
-										organizationId: appState.organizationId,
-										personId: person.id,
-										teamId: team.id
-									}
-								});
+								z.mutate(
+									mutators.person.removeFromTeam({
+										metadata: {
+											organizationId: appState.organizationId,
+											personId: person.id,
+											teamId: team.id
+										}
+									})
+								);
 							}
 						}}
 						title={team.name}

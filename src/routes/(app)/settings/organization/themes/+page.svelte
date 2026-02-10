@@ -11,6 +11,7 @@
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import { ColorPicker } from '$lib/components/ui/color-picker/index.js';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 	import createForm from '$lib/form.svelte';
 	import { themeSettingsSchema, defaultThemeSettings } from '$lib/schema/organization/settings';
@@ -31,17 +32,19 @@
 						toast.error(t`Organization settings not found`);
 						return;
 					}
-					z.mutate.organization.updateTheme({
-						metadata: {
-							organizationId: appState.organizationId,
-							existingSettings: { ...(() => organization.data?.settings)() }
-						},
-						input: {
-							favicon: formData.favicon,
-							primaryColor: formData.primaryColor,
-							secondaryColor: formData.secondaryColor
-						}
-					});
+					z.mutate(
+						mutators.organization.updateTheme({
+							metadata: {
+								organizationId: appState.organizationId,
+								existingSettings: { ...(() => organization.data?.settings)() }
+							},
+							input: {
+								favicon: formData.favicon,
+								primaryColor: formData.primaryColor,
+								secondaryColor: formData.secondaryColor
+							}
+						})
+					);
 
 					toast.success(t`Theme settings saved successfully.`);
 					await tick();

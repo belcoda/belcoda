@@ -6,20 +6,23 @@
 	import { type CreateEventZero, type UpdateEventZero, createEventZero } from '$lib/schema/event';
 	import { parse } from 'valibot';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { goto } from '$app/navigation';
 	import { v7 as uuidv7 } from 'uuid';
 	async function onSubmit(data: CreateEventZero | UpdateEventZero) {
 		const id = uuidv7();
 		const parsed = parse(createEventZero, data); //to also type check the data
-		const event = z.mutate.event.create({
-			metadata: {
-				eventId: id,
-				organizationId: appState.organizationId,
-				teamId: appState.activeTeamId
-			},
-			input: parsed
-		});
+		const event = z.mutate(
+			mutators.event.create({
+				metadata: {
+					eventId: id,
+					organizationId: appState.organizationId,
+					teamId: appState.activeTeamId
+				},
+				input: parsed
+			})
+		);
 		await event.client;
 		await goto(`/events/${id}`);
 	}

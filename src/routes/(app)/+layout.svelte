@@ -1,47 +1,19 @@
 <script lang="ts">
-	import { t } from '$lib/index.svelte';
-	const { children } = $props();
-	import { authClient } from '$lib/auth-client';
-	import { onMount } from 'svelte';
-	import { appState } from '$lib/state.svelte';
-
-	onMount(async () => {
-		const session = await authClient.getSession();
-		if (session.error) {
-			console.error(session.error);
-			throw new Error(t`Error getting session`);
-		}
-		if (!session.data?.user?.id) {
-			throw new Error(t`No user id found`);
-		}
-
-		await appState.loadQueryContext();
-
-		if (session.data.session.activeOrganizationId) {
-			appState.setUserId(session.data.user.id);
-			appState.setOrganizationId(session.data.session.activeOrganizationId);
-		} else {
-			const organizationsList = await authClient.organization.list();
-			if (organizationsList.error) {
-				console.error(organizationsList.error);
-				throw new Error(t`Error getting organizations list`);
-			}
-			if (organizationsList.data && organizationsList.data.length > 0) {
-				// gotta set these two together, otherwise there will be a race condition...
-				appState.setUserId(session.data.user.id);
-				appState.setOrganizationId(organizationsList.data[0].id);
-			} else {
-				await goto(`/organization`);
-			}
-		}
-	});
-
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { goto } from '$app/navigation';
+	const { children, data } = $props();
+	import { appState } from '$lib/state.svelte';
+	// svelte-ignore state_referenced_locally
+	const { userId, defaultActiveOrganizationId, queryContext } = data;
+
+	//initialize the zero instance with the user id and query context
+	// IMPORTANT: this must be done before the appState is created, because the appState relies on the zero instance
+	import { zero } from '$lib/zero.svelte';
+	zero.init(userId, queryContext);
+	appState.init({ userId, organizationId: defaultActiveOrganizationId, queryContext });
 </script>
 
 <!-- This is an important check to ensure that we always have a valid userId and active organization Id. These will be used with confidence throughout the rest of the application interface -->
-{#if appState.user?.details.type === 'complete' && appState.activeOrganization?.details.type === 'complete' && appState.organizations?.details.type === 'complete'}
+{#if zero.instance && appState.user?.details.type === 'complete' && appState.activeOrganization?.details.type === 'complete' && appState.organizations?.details.type === 'complete'}
 	{@render children()}
 {:else}
 	<div class="flex h-screen w-screen items-center justify-center">

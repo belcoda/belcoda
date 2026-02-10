@@ -5,7 +5,7 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 // it should return true if the user is a member of the organization of the tag
 // it should return false otherwise
 
-export function tagReadPermissions(builder: ExpressionBuilder<Schema, 'tag'>, ctx: QueryContext) {
+export function tagReadPermissions(builder: ExpressionBuilder<'tag', Schema>, ctx: QueryContext) {
 	const { and, or, cmp, exists } = builder;
 	return exists('organization', (m) => {
 		return m.whereExists('memberships', (m) => {

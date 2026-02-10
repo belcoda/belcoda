@@ -27,18 +27,19 @@
 	import PersonNote from '$lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte';
 	import PersonNoteForm from '$lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte';
 
-	import { listPersonNotes } from '$lib/zero/query/person_note/list';
+	import queries from '$lib/zero/query/index';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import { z } from '$lib/zero.svelte';
 	const notes = $derived.by(() =>
 		z.createQuery(
-			listPersonNotes(appState.queryContext, {
+			queries.personNote.list({
 				...getListFilter(appState.organizationId),
 				personId: person.id
 			})
 		)
 	);
+
 	import XIcon from '@lucide/svelte/icons/x';
 </script>
 
@@ -76,7 +77,9 @@
 								<MessageCircleIcon />
 							</Empty.Media>
 							<Empty.Title>{t`No notes found`}</Empty.Title>
-							<Empty.Description>{t`Add a note to share information with the team`}</Empty.Description>
+							<Empty.Description
+								>{t`Add a note to share information with the team`}</Empty.Description
+							>
 						</Empty.Header>
 					</Empty.Root>
 				</div>

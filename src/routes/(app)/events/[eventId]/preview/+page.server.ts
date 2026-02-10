@@ -1,33 +1,31 @@
 import { readEventQuery, inputSchema, outputSchema } from '$lib/zero/query/event/read';
-import { runQuery } from '$lib/server/db/query.js';
+import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { getEventLink } from '$lib/utils/events/link';
+import { getEventById } from '$lib/server/api/data/event/event.js';
 import { getOrganization } from '$lib/server/api/data/organization';
+import { getQueryContext } from '$lib/server/api/utils/auth/permissions.js';
 export async function load({ params, locals }) {
 	if (!locals.session) {
 		return error(401, 'Unauthorized');
 	}
 	const { eventId } = params;
-
-	const event = await runQuery({
-		query: readEventQuery,
-		inputSchema,
-		outputSchema,
-		input: { eventId },
-		userId: locals.session.user.id
+	const ctx = await getQueryContext(locals.session.user.id);
+	const event = await db.transaction(async (tx) => {
+		return await getEventById({
+			eventId,
+			ctx,
+			tx
+		});
 	});
-
-	if (event.status !== 200 || !event.data || !('id' in event.data)) {
-		return error(404, 'Event not found');
-	}
 
 	const organization = await getOrganization({
 		userId: locals.session.user.id,
-		organizationId: event.data.organizationId
+		organizationId: event.organizationId
 	});
 
 	const url = getEventLink({
-		eventSlug: event.data.slug,
+		eventSlug: event.slug,
 		organizationSlug: organization.slug
 	});
 

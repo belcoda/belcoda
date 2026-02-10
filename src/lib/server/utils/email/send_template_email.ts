@@ -1,10 +1,7 @@
 import { env } from '$env/dynamic/private';
 const { POSTMARK_SERVER_TOKEN } = env;
-import pino from '$lib/pino';
-
-import type { NumericRange } from '@sveltejs/kit';
 import { type JsonSchemaObject } from '$lib/schema/helpers';
-
+import pino from '$lib/pino';
 const log = pino(import.meta.url);
 export default async function (options: {
 	to: string;
@@ -36,10 +33,11 @@ export default async function (options: {
 	if (!result.ok) {
 		if (result.status === 422) {
 			const json = await result.json();
+			log.error({ result: json }, 'Failed to send email (422 error)');
+		} else {
+			const json = await result.json();
 			log.error(json);
 		}
-		const json = await result.json();
-		log.error(json);
 		throw new Error('Failed to send email');
 	} else {
 		const json = await result.json();

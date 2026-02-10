@@ -6,14 +6,16 @@
 	import { t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
-	import { listEventSignups, type ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
+	import type { ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
+	import queries from '$lib/zero/query/index';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	let filter: ListEventSignupsInput = $state({
 		...getListFilter(appState.organizationId),
+		/* svelte-ignore state_referenced_locally */
 		eventId: event.id
 	});
 	const eventSignups = $derived.by(() => {
-		return z.createQuery(listEventSignups(appState.queryContext, filter));
+		return z.createQuery(queries.eventSignup.list(filter));
 	});
 	let selectedEventSignups = $state<ReadEventSignupZeroWithPerson[]>([]);
 

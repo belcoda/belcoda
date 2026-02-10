@@ -82,3 +82,14 @@ export const updateThemeZeroMutatorSchema = v.object({
 	input: themeSettingsSchema
 });
 export type UpdateThemeZeroMutatorSchema = v.InferOutput<typeof updateThemeZeroMutatorSchema>;
+
+export const updateWhatsappOrganizationSettingsZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid,
+		existingSettings: organizationSettingsSchema
+	}),
+	input: whatsappOrganizationSettingsSchema
+});
+export type UpdateWhatsappOrganizationSettingsZeroMutatorSchema = v.InferOutput<
+	typeof updateWhatsappOrganizationSettingsZeroMutatorSchema
+>;

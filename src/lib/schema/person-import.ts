@@ -56,3 +56,11 @@ export const createMutatorSchemaZero = v.object({
 });
 export type CreateMutatorSchemaZeroInput = v.InferInput<typeof createMutatorSchemaZero>;
 export type CreateMutatorSchemaZeroOutput = v.InferOutput<typeof createMutatorSchemaZero>;
+
+export const triggerImportQueueMutatorSchema = v.object({
+	metadata: mutatorMetadata
+});
+export type TriggerImportQueueMutatorSchema = v.InferInput<typeof triggerImportQueueMutatorSchema>;
+export type TriggerImportQueueMutatorSchemaOutput = v.InferOutput<
+	typeof triggerImportQueueMutatorSchema
+>;

@@ -2,7 +2,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import createForm from '$lib/form.svelte';
 	import { parse } from 'valibot';
-	import { tick } from 'svelte';
+	import { t } from '$lib/index.svelte';
 	import {
 		createPerson,
 		type CreateMutatorSchemaZeroInput,
@@ -10,11 +10,12 @@
 	} from '$lib/schema/person';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { v7 as uuidv7 } from 'uuid';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
-	import { readPerson } from '$lib/zero/query/person/read';
+	import queries from '$lib/zero/query/index';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { type ReadPersonZero } from '$lib/schema/person';
 	const personId = uuidv7();
@@ -49,11 +50,11 @@
 				}
 			};
 			const parsed = parse(createMutatorSchemaZero, toCreate);
-			const input = z.mutate.person.create(parsed);
+			const input = z.mutate(mutators.person.create(parsed));
 			onCreated(personId);
 		}
 	});
-	const foo = $derived.by(() => z.createQuery(readPerson(appState.queryContext, { personId })));
+	const foo = $derived.by(() => z.createQuery(queries.person.read({ personId })));
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import { person } from '$lib/schema/drizzle';
 </script>

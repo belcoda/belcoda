@@ -21,6 +21,7 @@
 		purple: 'bg-purple-50 text-purple-700 inset-ring inset-ring-purple-700/10',
 		pink: 'bg-pink-50 text-pink-700 inset-ring inset-ring-pink-700/10'
 	};
+	/* svelte-ignore state_referenced_locally */
 	const colorClass = colors[color];
 </script>
 

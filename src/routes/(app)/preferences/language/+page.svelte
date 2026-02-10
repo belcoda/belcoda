@@ -6,18 +6,19 @@
 	import { LOCALES, type Locale, getLocaleName, isSupportedLanguage } from '$lib/utils/language';
 	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
-	let value = $state<Locale>(appState.locale);
+	import { locale } from '$lib/index.svelte';
+	let value = $state<Locale>(locale.current);
 	import { authClient } from '$lib/auth-client';
-	async function setLocale(locale: string) {
-		if (!isSupportedLanguage(locale)) {
+	async function setLocale(newLocale: string) {
+		if (!isSupportedLanguage(newLocale)) {
 			return;
 		}
 		await authClient.updateUser({
 			//@ts-expect-error - better auth doesn't type the extended user schema...
-			preferredLanguage: locale
+			preferredLanguage: newLocale
 		});
-		appState.locale = locale;
-		document.cookie = `BELCODA_LOCALE=${locale}; path=/; max-age=31536000; samesite=strict`;
+		locale.setLocale(newLocale);
+		document.cookie = `BELCODA_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=strict`;
 	}
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';

@@ -35,9 +35,11 @@
 		onSubmit: (data: CreateEventZero | UpdateEventZero) => void | Promise<void>;
 	} = $props();
 	import { generateEventTitleAsyncSchema } from '$lib/schema/event/helpers';
+	/* svelte-ignore state_referenced_locally */
 	const { title, slug } = generateEventTitleAsyncSchema(appState.organizationId, event?.id);
 	import { objectAsync } from 'valibot';
 	let { form, data, errors, Errors, Debug, helpers } = $state(
+		/* svelte-ignore state_referenced_locally */
 		event
 			? createForm({
 					schema: objectAsync({
@@ -181,7 +183,7 @@
 						<InputGroup.Addon align="block-end" class="flex items-center justify-end gap-2">
 							<InputGroup.Text>
 								<LinkIcon class="size-4" /><span class="font-mono text-xs"
-									>http{dev ? '' : 's'}://{appState.activeOrganization.data
+									>http{dev ? '' : 's'}://{appState.activeOrganization?.data
 										?.slug}.{PUBLIC_ROOT_DOMAIN}/events/{$data.slug}</span
 								>
 								<ResponsiveModal title={t`Edit event link`} bind:open={editSlugOpen}>

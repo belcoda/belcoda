@@ -11,8 +11,3 @@ export function extractActionCode(message: string): string | null {
 	}
 	return null;
 }
-
-export async function getActionCodeFromCode(code: string): Promise<ActionCodeSchema | null> {
-	const result = await _getActionCodeUnsafe({ code });
-	return result || null;
-}

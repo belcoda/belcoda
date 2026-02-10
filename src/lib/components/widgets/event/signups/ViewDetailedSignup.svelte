@@ -16,6 +16,7 @@
 		renderPersonQuestionResponse
 	} from '$lib/components/forms/event/survey_actions';
 	const { person: personSurveyQuestions, custom: customSurveyQuestions } = getSurveyQuestions(
+		/* svelte-ignore state_referenced_locally */
 		event.settings.survey.collections[0].questions
 	);
 	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';

@@ -9,7 +9,7 @@
 	import { type ReadPersonZero } from '$lib/schema/person';
 	import { type PersonAddedFrom } from '$lib/schema/person/meta';
 	import { z } from '$lib/zero.svelte';
-	import { listPersons } from '$lib/zero/query/person/list';
+	import queries from '$lib/zero/query/index';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
@@ -22,7 +22,7 @@
 		mostRecentActivity: null
 	});
 	const personList = $derived.by(() =>
-		z.createQuery(listPersons(appState.queryContext, personListFilter))
+		z.createQuery(queries.person.list(personListFilter))
 	);
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
 </script>

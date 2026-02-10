@@ -4,10 +4,7 @@
 	import MultiSelect from 'svelte-multiselect'; //the component that handles the dropdown and the selected items (see https://multiselect.janosh.dev/)\
 
 	import { z } from '$lib/zero.svelte';
-	import { listEvents } from '$lib/zero/query/event/list';
-	import { listTeams } from '$lib/zero/query/team/list';
-	import { listTags } from '$lib/zero/query/tag/list';
-	import { listPersons } from '$lib/zero/query/person/list';
+	import queries from '$lib/zero/query/index';
 
 	import {
 		type FilterGroupType,
@@ -50,22 +47,22 @@
 	//zero queries
 	const personResults = $derived.by(() => {
 		const listFilter = getListFilter(appState.organizationId, { searchString, pageSize: 5 });
-		return z.createQuery(listPersons(appState.queryContext, listFilter));
+		return z.createQuery(queries.person.list(listFilter));
 	});
 
 	const teamResults = $derived.by(() => {
 		const listFilter = getListFilter(appState.organizationId, { searchString, pageSize: 5 });
-		return z.createQuery(listTeams(appState.queryContext, listFilter));
+		return z.createQuery(queries.team.list(listFilter));
 	});
 
 	const tagResults = $derived.by(() => {
 		const listFilter = getListFilter(appState.organizationId, { searchString, pageSize: 5 });
-		return z.createQuery(listTags(appState.queryContext, listFilter));
+		return z.createQuery(queries.tag.list(listFilter));
 	});
 
 	const eventResults = $derived.by(() => {
 		const listFilter = getListFilter(appState.organizationId, { searchString, pageSize: 5 });
-		return z.createQuery(listEvents(appState.queryContext, listFilter));
+		return z.createQuery(queries.event.list(listFilter));
 	});
 
 	// return options for the multiselect

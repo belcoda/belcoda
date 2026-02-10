@@ -6,6 +6,7 @@
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
 	let edit = $state(true);
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import AddTag from './form/AddTag.svelte';
 	import { t } from '$lib/index.svelte';
 </script>
@@ -28,13 +29,15 @@
 						onRemove={() => {
 							if (!appState.isAdminOrOwner) return;
 							if (window.confirm(t`Are you sure you want to remove this tag?`)) {
-								z.mutate.person.removeTag({
-									metadata: {
-										organizationId: appState.organizationId,
-										personId: person.id,
-										tagId: tag.id
-									}
-								});
+								z.mutate(
+									mutators.person.removeTag({
+										metadata: {
+											organizationId: appState.organizationId,
+											personId: person.id,
+											tagId: tag.id
+										}
+									})
+								);
 							}
 						}}
 						title={tag.name}

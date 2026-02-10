@@ -1,12 +1,11 @@
 import { appState, getListFilter } from '$lib/state.svelte';
 import { type FilterType } from '$lib/schema/person/filter';
-import { z } from '$lib/zero.svelte';
 
 import { countryCodes, renderLocalizedCountryName } from '$lib/utils/country';
 import { ageGroupList } from '$lib/utils/person';
 import { languageCodes, getLocalizedLanguageName } from '$lib/utils/language';
 import { genderOptions, renderGender } from '$lib/utils/person';
-import { t } from '$lib/index.svelte';
+import { t, locale } from '$lib/index.svelte';
 
 export type FilterCategory =
 	| 'default'
@@ -63,7 +62,7 @@ export function getFilterOptionsByType(filterState: {
 			return countryCodes.map((country) => ({
 				type: 'country' as const,
 				country,
-				label: `${renderLocalizedCountryName(country, appState.locale)}`
+				label: `${renderLocalizedCountryName(country, locale.current)}`
 			}));
 		case 'preferredLanguage':
 			return languageCodes.map((language) => ({

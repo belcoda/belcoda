@@ -1,7 +1,6 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object } from 'valibot';
 import { parseSchema, uuid } from '$lib/schema/helpers';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
@@ -13,16 +12,13 @@ export const inputSchema = object({
 });
 
 export function listMyTeamsQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.team
+	let q = builder.team
 		.where((expr) => teamReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.whereExists('user', (m) => {
@@ -32,12 +28,8 @@ export function listMyTeamsQuery({
 	return q;
 }
 
-export const listMyTeams = syncedQueryWithContext(
-	'listMyTeams',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listMyTeamsQuery({ ctx, input: filter });
-	}
-);
+export const listMyTeams = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listMyTeamsQuery({ ctx, input: args });
+});
 
 export const outputSchema = array(readTeamZero);

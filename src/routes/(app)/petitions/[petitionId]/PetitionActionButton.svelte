@@ -13,6 +13,7 @@
 	const id = $props.id();
 	import { toast } from 'svelte-sonner';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { env } from '$env/dynamic/public';
 	import { dev } from '$app/environment';
@@ -33,16 +34,18 @@
 	});
 
 	function updatePublished(checked: boolean) {
-		z.mutate.petition.update({
-			metadata: {
-				petitionId: petition.id,
-				teamId: appState.activeTeamId,
-				organizationId: appState.organizationId
-			},
-			input: {
-				published: checked
-			}
-		});
+		z.mutate(
+			mutators.petition.update({
+				metadata: {
+					petitionId: petition.id,
+					teamId: appState.activeTeamId,
+					organizationId: appState.organizationId
+				},
+				input: {
+					published: checked
+				}
+			})
+		);
 	}
 </script>
 

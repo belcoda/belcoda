@@ -2,23 +2,18 @@
 	const { eventId }: { eventId: string } = $props();
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
-	import { listActionCodes } from '$lib/zero/query/action_code/list';
-	import { readEvent } from '$lib/zero/query/event/read';
+	import queries from '$lib/zero/query/index';
 	import { t } from '$lib/index.svelte';
 	const actionCodes = $derived.by(() => {
 		return z.createQuery(
-			listActionCodes(appState.queryContext, {
+			queries.actionCode.list({
 				organizationId: appState.organizationId,
 				referenceId: eventId
 			})
 		);
 	});
 	const event = $derived.by(() => {
-		return z.createQuery(
-			readEvent(appState.queryContext, {
-				eventId: eventId
-			})
-		);
+		return z.createQuery(queries.event.read({ eventId: eventId }));
 	});
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	const actionCodeSignup = $derived.by(() => {

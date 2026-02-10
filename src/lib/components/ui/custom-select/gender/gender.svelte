@@ -2,11 +2,14 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 
 	import {
-		getGenderSelectOptions,
-		type GenderOption as GenderOption
+		type GenderOption as GenderOption,
+		genderOptions as genderOptionsArray
 	} from '$lib/utils/person';
-	
-	const genderOptions = getGenderSelectOptions();
+	import { renderGender } from '$lib/utils/person/gender/render';
+
+	const genderOptions = $derived(
+		genderOptionsArray.map((option) => ({ value: option, label: renderGender(option) }))
+	);
 	let {
 		value = $bindable(),
 		class: className,

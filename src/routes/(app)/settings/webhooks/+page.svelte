@@ -1,8 +1,9 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { getListFilter, appState } from '$lib/state.svelte';
-	import { listWebhooks } from '$lib/zero/query/webhook/list';
+	import queries from '$lib/zero/query/index';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -11,17 +12,19 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { v7 as uuidv7 } from 'uuid';
 	import { parse } from 'valibot';
-	import { createWebhookZero, deleteMutatorSchemaZero, type ReadWebhookZero } from '$lib/schema/webhook';
+	import {
+		createWebhookZero,
+		deleteMutatorSchemaZero,
+		type ReadWebhookZero
+	} from '$lib/schema/webhook';
 	import { toast } from 'svelte-sonner';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import { formatDate } from '$lib/utils/date';
-
+	import { t } from '$lib/index.svelte';
 	let webhookListFilter = $state({
 		...getListFilter(appState.organizationId)
 	});
-	const webhookList = $derived.by(() =>
-		z.createQuery(listWebhooks(appState.queryContext, webhookListFilter))
-	);
+	const webhookList = $derived.by(() => z.createQuery(queries.webhook.list(webhookListFilter)));
 
 	let createModalOpen = $state(false);
 	let name = $state('');
@@ -41,13 +44,15 @@
 				eventTypes: ['all'] as const
 			});
 
-			const response = z.mutate.webhook.create({
-				metadata: {
-					webhookId,
-					organizationId: appState.organizationId
-				},
-				input: parsed
-			});
+			const response = z.mutate(
+				mutators.webhook.create({
+					metadata: {
+						webhookId,
+						organizationId: appState.organizationId
+					},
+					input: parsed
+				})
+			);
 
 			await response.server;
 			toast.success(t`Webhook created successfully`);
@@ -72,7 +77,7 @@
 				}
 			});
 
-			z.mutate.webhook.delete(parsed);
+			z.mutate(mutators.webhook.delete(parsed));
 			toast.success(t`Webhook deleted`);
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message : t`Failed to delete webhook`);
@@ -91,7 +96,7 @@
 	<div class="space-y-4">
 		{#if webhookList.details.type === 'complete' && webhookList.data && webhookList.data.length === 0}
 			<div class="flex flex-col items-center justify-center py-12 text-center">
-				<p class="text-muted-foreground mb-4">{t`No webhooks configured`}</p>
+				<p class="mb-4 text-muted-foreground">{t`No webhooks configured`}</p>
 				{#if appState.isOwner}
 					<Button onclick={() => (createModalOpen = true)}>{t`Create Webhook`}</Button>
 				{/if}
@@ -139,7 +144,7 @@
 						{/each}
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={5} class="text-center text-muted-foreground py-8">
+							<Table.Cell colspan={5} class="py-8 text-center text-muted-foreground">
 								{t`Loading webhooks...`}
 							</Table.Cell>
 						</Table.Row>
@@ -154,7 +159,11 @@
 	<div class="flex items-center justify-between">
 		<H2>{t`Webhooks`}</H2>
 		{#if appState.isOwner}
-			<ResponsiveModal title={t`Create Webhook`} description={t`Register a new webhook endpoint`} bind:open={createModalOpen}>
+			<ResponsiveModal
+				title={t`Create Webhook`}
+				description={t`Register a new webhook endpoint`}
+				bind:open={createModalOpen}
+			>
 				{#snippet trigger()}
 					<Button>{t`Create Webhook`}</Button>
 				{/snippet}

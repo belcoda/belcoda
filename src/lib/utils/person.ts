@@ -1,33 +1,6 @@
-import { t } from '$lib/index.svelte';
-
+// if you update these options, you must also update the genderOptions array in utils/person/gender/render.ts
 export const genderOptions = ['male', 'female', 'other', 'not-specified'] as const;
 export type GenderOption = (typeof genderOptions)[number];
-export function getGenderSelectOptions(): { value: GenderOption; label: string }[] {
-	return [
-		{
-			value: 'female',
-			label: t`Female`
-		},
-		{
-			value: 'male',
-			label: t`Male`
-		},
-		{
-			value: 'other',
-			label: t`Other`
-		},
-		{
-			value: 'not-specified',
-			label: t`Not Specified`
-		}
-	];
-}
-
-export const renderGender = (gender: string) => {
-	// get the label from genderSelectOptions
-	const option = getGenderSelectOptions().find((option) => option.value === gender)?.label;
-	return option ? option : t`Not Specified`;
-};
 
 /**
  * Returns the outer bounds of the dates that a date of birth can be to be in this age group

@@ -13,6 +13,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
 	import { toast } from 'svelte-sonner';
@@ -32,8 +33,11 @@
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: updateEmailFromSignatureZero,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			name: signature.name,
+			/* svelte-ignore state_referenced_locally */
 			replyTo: signature.replyTo || null,
+			/* svelte-ignore state_referenced_locally */
 			returnPathDomain: signature.returnPathDomain || null
 		},
 		validateOnLoad: false,
@@ -63,7 +67,7 @@
 					}
 				}
 				const parsed = parse(updateMutatorSchemaZero, toUpdate);
-				const response = z.mutate.emailFromSignature.update(parsed);
+				const response = z.mutate(mutators.emailFromSignature.update(parsed));
 				await response.server;
 				toast.success(t`Email signature updated successfully`);
 				isOpen = false;

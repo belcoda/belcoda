@@ -2,7 +2,7 @@
 	import { t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
-	import { readEmailMessage } from '$lib/zero/query/email_message/read';
+	import queries from '$lib/zero/query/index';
 	import { page } from '$app/state';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { Button } from '$lib/components/ui/button';
@@ -13,7 +13,7 @@
 	const emailQuery = $derived.by(() => {
 		if (!emailId) return null;
 		return z.createQuery(
-			readEmailMessage(appState.queryContext, {
+			queries.emailMessage.read({
 				emailMessageId: emailId
 			})
 		);
@@ -33,7 +33,8 @@
 				<div>
 					<h2 class="text-xl font-semibold">{email.subject || t`(No subject)`}</h2>
 					<p class="text-sm text-muted-foreground">
-						{t`Sent`} {formatShortTimestamp(email.startedAt || email.createdAt)}
+						{t`Sent`}
+						{formatShortTimestamp(email.startedAt || email.createdAt)}
 					</p>
 				</div>
 				<div class="flex gap-2">

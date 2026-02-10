@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { appState } from '$lib/state.svelte';
 	import { type FilterType } from '$lib/schema/person/filter';
-	import { t } from '$lib/index.svelte';
+	import { t, locale } from '$lib/index.svelte';
 	const { filter }: { filter: FilterType } = $props();
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import type { Snippet } from 'svelte';
@@ -39,11 +39,11 @@
 			<img
 				class="size-7 rounded-full"
 				src={`/images/icons/flags/svg/${filter.country}.svg`}
-				alt={renderLocalizedCountryName(filter.country, appState.locale)}
+				alt={renderLocalizedCountryName(filter.country, locale.current)}
 			/>
 		</div>
 	{/snippet}
-	{@render renderFilter(renderLocalizedCountryName(filter.country, appState.locale), countryImage)}
+	{@render renderFilter(renderLocalizedCountryName(filter.country, locale.current), countryImage)}
 {/if}
 
 {#if filter.type === 'ageGroup'}

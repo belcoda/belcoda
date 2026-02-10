@@ -1,11 +1,10 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	const { params } = $props();
-	import { readEvent } from '$lib/zero/query/event/read';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import queries from '$lib/zero/query/index';
 	const event = $derived.by(() => {
-		return z.createQuery(readEvent(appState.queryContext, { eventId: params.eventId }));
+		return z.createQuery(queries.event.read({ eventId: params.eventId }));
 	});
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';

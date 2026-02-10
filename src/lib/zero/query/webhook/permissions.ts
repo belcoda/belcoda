@@ -6,7 +6,7 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 // it should return false otherwise
 
 export function webhookReadPermissions(
-	builder: ExpressionBuilder<Schema, 'webhook'>,
+	builder: ExpressionBuilder<'webhook', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, or, cmp, exists } = builder;

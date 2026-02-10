@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { authClient } from '$lib/auth-client';
+	import { appState } from '$lib/state.svelte';
 	import { parse } from 'valibot';
 	import { type ReadOrganizationRest, readOrganizationRest } from '$lib/schema/organization';
 	const organizations = authClient.useListOrganizations;
@@ -14,7 +15,6 @@
 
 	import CirclePlusIcon from '@lucide/svelte/icons/circle-plus';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
-	import { setActiveOrganizationId } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 
 	function returnLogo(organization: {
@@ -78,7 +78,8 @@
 					<button
 						onclick={async () => {
 							isLoading.loading = true;
-							await setActiveOrganizationId(organization.id);
+							await authClient.organization.setActive({ organizationId: organization.id });
+							appState.organizationId = organization.id;
 							isLoading.loading = false;
 							goto(`/`);
 						}}

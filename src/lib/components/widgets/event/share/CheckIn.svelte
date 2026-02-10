@@ -20,7 +20,9 @@
 </script>
 
 <div class="mt-3 grid w-full max-w-md gap-4">
-	<div class="text-sm text-muted-foreground">{t`Scan this QR code to mark attendance via WhatsApp`}</div>
+	<div class="text-sm text-muted-foreground">
+		{t`Scan this QR code to mark attendance via WhatsApp`}
+	</div>
 	{#await generateWhatsAppQRCode(whatsAppCheckinLink)}
 		<div class="flex items-center justify-center">
 			<Skeleton class="aspect-square size-24" />

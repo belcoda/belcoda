@@ -8,6 +8,7 @@ import {
 	getOrganizationByIdUnsafe
 } from '$lib/server/api/data/organization';
 export const ssr = false;
+import { db } from '$lib/server/db';
 
 export async function load({ locals, params, url }) {
 	log.debug(
@@ -36,9 +37,14 @@ async function getDetails(eventSlug: string, organizationSlug: string) {
 	if (!organizationId) {
 		return error(404, 'Organization not found');
 	}
-	const organizationObj = await getOrganizationByIdUnsafe({
-		organizationId: organizationId
-	});
+
+	const organizationObj = await db.transaction(
+		async (tx) =>
+			await getOrganizationByIdUnsafe({
+				organizationId: organizationId,
+				tx: tx
+			})
+	);
 
 	const eventObj = await _getEventBySlugUnsafe({
 		eventSlug: eventSlug,

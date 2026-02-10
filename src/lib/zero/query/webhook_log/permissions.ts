@@ -7,7 +7,7 @@ import { webhookReadPermissions } from '$lib/zero/query/webhook/permissions';
 // it should return false otherwise
 
 export function webhookLogReadPermissions(
-	builder: ExpressionBuilder<Schema, 'webhookLog'>,
+	builder: ExpressionBuilder<'webhookLog', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, or, cmp, exists } = builder;

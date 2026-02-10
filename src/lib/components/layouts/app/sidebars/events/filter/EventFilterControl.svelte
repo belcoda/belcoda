@@ -2,27 +2,24 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { type Snippet } from 'svelte';
-	import { type ListPersonsInput } from '$lib/zero/query/person/list';
+	import { t } from '$lib/index.svelte';
+	import type { EventListFilter } from '$lib/zero/query/event/list';
 	let {
 		trigger,
 		filter = $bindable()
 	}: { trigger: Snippet<[{ props: Record<string, unknown> }]>; filter: EventListFilter } = $props();
 
-	import { listTeams } from '$lib/zero/query/team/list';
 	import type { ListFilter } from '$lib/schema/helpers';
-	import { listTags } from '$lib/zero/query/tag/list';
-	import { listEvents, type EventListFilter } from '$lib/zero/query/event/list';
 	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
-	const teamList = $derived.by(() =>
-		z.createQuery(listTeams(appState.queryContext, teamsListFilter))
-	);
+	const teamList = $derived.by(() => z.createQuery(queries.team.list(teamsListFilter)));
 
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
-	const tagList = $derived.by(() => z.createQuery(listTags(appState.queryContext, tagListFilter)));
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
 
 	import { tick } from 'svelte';
 	let open = $state(false);
@@ -53,7 +50,8 @@
 				<Command.Root value={filter.teamId ?? ''}>
 					<Command.Input autofocus placeholder={t`Filter teams...`} />
 					<Command.List>
-						<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty>
+						<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty
+						>
 						<Command.Group>
 							{#each teamList.data as team (team.id)}
 								<Command.Item

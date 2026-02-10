@@ -15,7 +15,7 @@ export const inputSchema = object({
 });
 
 export function whereClause(
-	builder: ExpressionBuilder<Schema, 'person'>,
+	builder: ExpressionBuilder<'person', Schema>,
 	{ filter, ctx }: { filter: InferOutput<typeof inputSchema>; ctx: QueryContext }
 ) {
 	const { and, or, cmp, not } = builder;
@@ -45,7 +45,7 @@ export const outputSchema = array(readPersonZero);
 
 export function processFilters(
 	filters: FilterType[],
-	builder: ExpressionBuilder<Schema, 'person'>
+	builder: ExpressionBuilder<'person', Schema>
 ) {
 	const { and, or, exists, cmp } = builder;
 	const filterArr = [];
@@ -165,7 +165,7 @@ export function processFilters(
  */
 export function processExcludeFilters(
 	filters: FilterType[],
-	builder: ExpressionBuilder<Schema, 'person'>
+	builder: ExpressionBuilder<'person', Schema>
 ) {
 	const { and, cmp } = builder; // no exists because we are exclusive (ie: with not in, which doesn't work for exists)
 	const filterArr = [];

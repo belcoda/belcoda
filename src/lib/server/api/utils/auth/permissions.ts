@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { sql } from 'drizzle-orm';
 import type { QueryContext } from '$lib/zero/schema';
 
@@ -14,7 +14,7 @@ export async function getQueryContext(userId: string): Promise<QueryContext> {
 }
 
 export async function getAuthedTeams(userId: string) {
-	const result = await db.execute(sql`
+	const result = await drizzle.execute(sql`
    WITH RECURSIVE auth_teams AS (
     SELECT t.id
     FROM "team" t
@@ -33,7 +33,7 @@ export async function getAuthedTeams(userId: string) {
 }
 
 export async function getAdminOwnerOrgs(userId: string) {
-	const result = await db.query.member.findMany({
+	const result = await drizzle.query.member.findMany({
 		where: (row, { eq, and, or }) =>
 			and(eq(row.userId, userId), or(eq(row.role, 'admin'), eq(row.role, 'owner')))
 	});

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
-	import { readPetition } from '$lib/zero/query/petition/read';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import queries from '$lib/zero/query/index';
 	const { params } = $props();
 	const petition = $derived.by(() => {
-		return z.createQuery(readPetition(appState.queryContext, { petitionId: params.petitionId }));
+		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
 	import PetitionCreateOrUpdate from '$lib/components/forms/petition/PetitionCreateOrUpdate.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -19,18 +19,21 @@
 	} from '$lib/schema/petition/petition';
 	import { parse } from 'valibot';
 	import { goto } from '$app/navigation';
+	import { appState } from '$lib/state.svelte';
 
 	async function onSubmit(data: CreatePetitionZero | UpdatePetitionZero) {
 		if (!petition.data) return;
 		const parsed = parse(updatePetitionZero, data);
-		const updatedPetitionMutator = z.mutate.petition.update({
-			metadata: {
-				petitionId: petition.data.id,
-				organizationId: appState.organizationId,
-				teamId: appState.activeTeamId
-			},
-			input: parsed
-		});
+		const updatedPetitionMutator = z.mutate(
+			mutators.petition.update({
+				metadata: {
+					petitionId: petition.data.id,
+					organizationId: appState.organizationId,
+					teamId: appState.activeTeamId
+				},
+				input: parsed
+			})
+		);
 		await updatedPetitionMutator.client;
 		await goto(`/petitions/${petition.data.id}`);
 	}

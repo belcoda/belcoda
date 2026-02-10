@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { eq, isNull, and, not } from 'drizzle-orm';
 import { petition } from '$lib/schema/drizzle';
 export async function checkPetitionSlug({
@@ -18,7 +18,7 @@ export async function checkPetitionSlug({
 	if (excludePetitionId) {
 		where.push(not(eq(petition.id, excludePetitionId)));
 	}
-	const result = await db.query.petition.findFirst({
+	const result = await drizzle.query.petition.findFirst({
 		where: and(...where)
 	});
 	return result ? true : false;
@@ -40,7 +40,7 @@ export async function checkPetitionTitle({
 	if (excludePetitionId) {
 		where.push(not(eq(petition.id, excludePetitionId)));
 	}
-	const result = await db.query.petition.findFirst({
+	const result = await drizzle.query.petition.findFirst({
 		where: and(...where)
 	});
 	return result ? true : false;

@@ -4,6 +4,7 @@
 	import { parse } from 'valibot';
 	import { MEDIUM_STRING_MAX_LENGTH } from '$lib/schema/helpers';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { createMutatorSchemaZero, createPersonNoteZero } from '$lib/schema/person-note';
 	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
@@ -28,7 +29,7 @@
 					personNoteId: uuidv7()
 				}
 			});
-			const input = z.mutate.personNote.create(parsed);
+			const input = z.mutate(mutators.personNote.create(parsed));
 			form.reset();
 		}
 	});

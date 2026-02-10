@@ -2,7 +2,6 @@ import { type Schema as ZeroSchema } from '@rocicorp/zero';
 import { schema as importedSchema } from './zero-schema.gen'; // don't use the $lib alias as it isn't runnable in CI
 import { createBuilder } from '@rocicorp/zero';
 import { array, object, type ObjectSchema, type InferOutput } from 'valibot';
-
 import { uuid } from '$lib/schema/helpers';
 
 export const schema = {

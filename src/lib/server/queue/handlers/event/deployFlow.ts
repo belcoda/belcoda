@@ -1,19 +1,18 @@
 import { event } from '$lib/schema/drizzle';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { convertEventSignupFieldsToFlow } from '$lib/utils/whatsapp/flow_convert';
 import { deployFlow } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
-import type { WhatsappFlowInternal } from '$lib/schema/whatsapp/flows/schema';
 import { env } from '$env/dynamic/private';
 import { eq } from 'drizzle-orm';
 export async function deployEventWhatsAppFlow({ eventId }: { eventId: string }) {
-	const eventResult = await db.query.event.findFirst({
+	const eventResult = await drizzle.query.event.findFirst({
 		where: (row, { eq }) => eq(row.id, eventId)
 	});
 	if (!eventResult) {
 		throw new Error('Event not found');
 	}
 
-	const organizationResult = await db.query.organization.findFirst({
+	const organizationResult = await drizzle.query.organization.findFirst({
 		where: (row, { eq }) => eq(row.id, eventResult.organizationId)
 	});
 	if (!organizationResult) {
@@ -40,7 +39,7 @@ export async function deployEventWhatsAppFlow({ eventId }: { eventId: string }) 
 		publish: true
 	});
 
-	await db
+	await drizzle
 		.update(event)
 		.set({
 			settings: {

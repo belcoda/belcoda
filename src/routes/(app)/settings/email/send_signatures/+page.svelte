@@ -2,9 +2,9 @@
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { getListFilter, appState } from '$lib/state.svelte';
-	import { listEmailFromSignatures } from '$lib/zero/query/email_from_signature/list';
-	import { readOrganization } from '$lib/zero/query/organizations/read';
+	import queries from '$lib/zero/query/index';
 	import { env } from '$env/dynamic/public';
 	const { PUBLIC_POSTMARK_SENDING_DOMAIN } = env;
 	const postmarkSendingDomain = PUBLIC_POSTMARK_SENDING_DOMAIN || 'belcoda.com';
@@ -12,12 +12,10 @@
 		...getListFilter(appState.organizationId)
 	});
 	const emailFromSignatureList = $derived.by(() =>
-		z.createQuery(listEmailFromSignatures(appState.queryContext, emailFromSignatureListFilter))
+		z.createQuery(queries.emailFromSignature.list(emailFromSignatureListFilter))
 	);
 	const organization = $derived.by(() =>
-		z.createQuery(
-			readOrganization(appState.queryContext, { organizationId: appState.organizationId })
-		)
+		z.createQuery(queries.organization.read({ organizationId: appState.organizationId }))
 	);
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -46,12 +44,14 @@
 	async function verifyEmailFromSignature(emailFromSignatureId: string) {
 		loadingArr.push(emailFromSignatureId);
 		try {
-			await z.mutate.emailFromSignature.verify({
-				metadata: {
-					organizationId: appState.organizationId,
-					emailFromSignatureId
-				}
-			});
+			await z.mutate(
+				mutators.emailFromSignature.verify({
+					metadata: {
+						organizationId: appState.organizationId,
+						emailFromSignatureId
+					}
+				})
+			);
 			toast.success(t`Email signature verification status updated`);
 		} catch (error) {
 			const errorMessage =
@@ -65,12 +65,14 @@
 	async function deleteEmailFromSignature(emailFromSignatureId: string) {
 		if (window.confirm(t`Are you sure you want to delete this email signature?`)) {
 			try {
-				await z.mutate.emailFromSignature.delete({
-					metadata: {
-						organizationId: appState.organizationId,
-						emailFromSignatureId
-					}
-				});
+				await z.mutate(
+					mutators.emailFromSignature.delete({
+						metadata: {
+							organizationId: appState.organizationId,
+							emailFromSignatureId
+						}
+					})
+				);
 				toast.success(t`Email signature deleted successfully`);
 			} catch (error) {
 				const errorMessage =
@@ -123,14 +125,16 @@
 		try {
 			if (!organization.data) return;
 			const actualId = signatureId === '__system__' ? null : signatureId;
-			await z.mutate.emailFromSignature.setDefault({
-				metadata: {
-					organizationId: appState.organizationId
-				},
-				input: {
-					defaultFromSignatureId: actualId
-				}
-			});
+			await z.mutate(
+				mutators.emailFromSignature.setDefault({
+					metadata: {
+						organizationId: appState.organizationId
+					},
+					input: {
+						defaultFromSignatureId: actualId
+					}
+				})
+			);
 			toast.success(t`Default send signature updated successfully`);
 		} catch (err) {
 			const errorMessage =

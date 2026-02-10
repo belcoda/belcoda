@@ -32,7 +32,8 @@
 	import { type CalendarDate, getLocalTimeZone } from '@internationalized/date';
 	import { doesEventStartOnDay, getMonthBounds } from '$lib/utils/date';
 	import { z } from '$lib/zero.svelte';
-	import { listEvents, type EventListFilter } from '$lib/zero/query/event/list';
+	import queries from '$lib/zero/query/index';
+	import type { EventListFilter } from '$lib/zero/query/event/list';
 
 	let calendarEventListFilter: EventListFilter = $state({
 		...getListFilter(appState.organizationId),
@@ -40,7 +41,7 @@
 		tagId: null
 	});
 	const calendarEventList = $derived.by(() =>
-		z.createQuery(listEvents(appState.queryContext, calendarEventListFilter))
+		z.createQuery(queries.event.list(calendarEventListFilter))
 	);
 	import { watch } from 'runed';
 	watch(

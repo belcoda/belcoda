@@ -2,11 +2,11 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
-	import { listEmailFromSignatures } from '$lib/zero/query/email_from_signature/list';
+	import queries from '$lib/zero/query/index';
 	import { type ReadEmailFromSignatureZero } from '$lib/schema/email-from-signature';
 	import { t } from '$lib/index.svelte';
 	const listSignature = z.createQuery(
-		listEmailFromSignatures(appState.queryContext, {
+		queries.emailFromSignature.list({
 			...getListFilter(appState.organizationId),
 			verified: true
 		})

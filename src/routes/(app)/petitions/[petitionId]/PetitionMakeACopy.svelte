@@ -13,10 +13,14 @@
 	import createForm from '$lib/form.svelte';
 	import { generateCreatePetitionZeroAsyncSchema } from '$lib/schema/petition/petition';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { slugify } from '$lib/utils/slug';
 	const newPetition = {
+		/* svelte-ignore state_referenced_locally */
 		...petition,
+		/* svelte-ignore state_referenced_locally */
 		title: `${t`Copy of`} ${petition.title}`,
+		/* svelte-ignore state_referenced_locally */
 		slug: `copy-of-${petition.slug}`,
 		published: false,
 		publishedAt: null,
@@ -31,17 +35,19 @@
 			initialData: newPetition,
 			onSubmit: async (data) => {
 				const petitionId = uuidv7();
-				const writePetition = z.mutate.petition.create({
-					metadata: {
-						organizationId: appState.organizationId,
-						teamId: appState.activeTeamId,
-						petitionId: petitionId
-					},
-					input: {
-						...data,
-						slug: slugify(data.title)
-					}
-				});
+				const writePetition = z.mutate(
+					mutators.petition.create({
+						metadata: {
+							organizationId: appState.organizationId,
+							teamId: appState.activeTeamId,
+							petitionId: petitionId
+						},
+						input: {
+							...data,
+							slug: slugify(data.title)
+						}
+					})
+				);
 				await writePetition.client;
 				await goto(`/petitions/${petitionId}`);
 			}

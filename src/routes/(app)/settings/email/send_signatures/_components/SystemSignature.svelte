@@ -9,6 +9,7 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import { toast } from 'svelte-sonner';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { updateSystemFromIdentityMutatorSchemaZero } from '$lib/schema/email-from-signature';
 
 	type Props = {
@@ -22,7 +23,9 @@
 
 	let editingName = $state(false);
 	let editingReplyTo = $state(false);
+	/* svelte-ignore state_referenced_locally */
 	let newName = $state(name || '');
+	/* svelte-ignore state_referenced_locally */
 	let newReplyTo = $state(replyTo || emailAddress);
 	let nameError = $state<string | null>(null);
 	let replyToError = $state<string | null>(null);
@@ -45,7 +48,7 @@
 			};
 
 			const parsed = parse(updateSystemFromIdentityMutatorSchemaZero, toUpdate);
-			const response = z.mutate.emailFromSignature.updateSystemFromIdentity(parsed);
+			const response = z.mutate(mutators.emailFromSignature.updateSystemFromIdentity(parsed));
 			await response.server;
 
 			if (updates.name !== undefined) {

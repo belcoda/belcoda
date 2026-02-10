@@ -128,3 +128,8 @@ export function createDefaultEmailMessage({
 		deletedAt: null
 	};
 }
+
+export const deleteMutatorSchema = v.object({
+	id: helpers.uuid,
+	organizationId: helpers.uuid
+});

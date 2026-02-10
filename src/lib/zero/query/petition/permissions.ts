@@ -9,7 +9,7 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 // Returns false otherwise
 
 export function petitionReadPermissions(
-	builder: ExpressionBuilder<Schema, 'petition'>,
+	builder: ExpressionBuilder<'petition', Schema>,
 	ctx: QueryContext
 ) {
 	const { or, cmp } = builder;

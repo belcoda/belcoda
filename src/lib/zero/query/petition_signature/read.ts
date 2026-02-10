@@ -1,7 +1,6 @@
-import { syncedQueryWithContext } from '@rocicorp/zero';
+import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { object, type InferOutput } from 'valibot';
 import { uuid, parseSchema } from '$lib/schema/helpers';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
@@ -12,28 +11,21 @@ export const inputSchema = object({
 });
 
 export function readPetitionSignatureQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	const q = zero.petitionSignature
+	const q = builder.petitionSignature
 		.where('id', '=', input.petitionSignatureId)
 		.where((expr) => petitionSignatureReadPermissions(expr, ctx))
 		.one();
 	return q;
 }
 
-export const readPetitionSignature = syncedQueryWithContext(
-	'readPetitionSignature',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, { petitionSignatureId }) => {
-		return readPetitionSignatureQuery({ ctx, input: { petitionSignatureId } });
-	}
-);
+export const readPetitionSignature = defineQuery(inputSchema, ({ ctx, args }) => {
+	return readPetitionSignatureQuery({ ctx, input: args });
+});
 
 export const outputSchema = readPetitionSignatureRest;

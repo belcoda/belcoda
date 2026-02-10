@@ -6,7 +6,7 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 // it should return false otherwise
 
 export function emailFromSignatureReadPermissions(
-	builder: ExpressionBuilder<Schema, 'emailFromSignature'>,
+	builder: ExpressionBuilder<'emailFromSignature', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, or, exists, cmp } = builder;

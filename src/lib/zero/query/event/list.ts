@@ -1,7 +1,6 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object, nullable, optional, picklist, boolean } from 'valibot';
 import { listFilter, parseSchema, uuid, unixTimestamp } from '$lib/schema/helpers';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
@@ -22,16 +21,13 @@ export const inputSchema = object({
 export type EventListFilter = InferOutput<typeof inputSchema>;
 
 export function listEventsQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.event
+	let q = builder.event
 		.where((expr) => eventReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
@@ -43,16 +39,12 @@ export function listEventsQuery({
 	return q;
 }
 
-export const listEvents = syncedQueryWithContext(
-	'listEvents',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listEventsQuery({ ctx, input: filter });
-	}
-);
+export const listEvents = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listEventsQuery({ ctx, input: args });
+});
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'event'>,
+	builder: ExpressionBuilder<'event', Schema>,
 	{ filter }: { filter: InferOutput<typeof inputSchema> }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
