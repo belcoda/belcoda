@@ -1,5 +1,6 @@
 import { type Transaction } from '@rocicorp/zero';
-import { type Schema } from '$lib/zero/schema';
+import { type Schema, builder } from '$lib/zero/schema';
+import { defineMutator } from '@rocicorp/zero';
 import {
 	type UpdateOrganizationZeroMutatorSchema,
 	updateOrganizationZeroMutatorSchema,
@@ -7,63 +8,51 @@ import {
 } from '$lib/schema/organization';
 import {
 	type UpdateThemeZeroMutatorSchema,
-	updateThemeZeroMutatorSchema
+	updateThemeZeroMutatorSchema,
+	updateWhatsappOrganizationSettingsZeroMutatorSchema
 } from '$lib/schema/organization/settings';
-import { parse } from 'valibot';
 
-export function updateOrganization() {
-	return async function (tx: Transaction<Schema>, args: UpdateOrganizationZeroMutatorSchema) {
-		const parsed = parse(updateOrganizationZeroMutatorSchema, args);
+export const updateOrganization = defineMutator(
+	updateOrganizationZeroMutatorSchema,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.organization.update({
-			id: parsed.metadata.organizationId,
-			...parsed.input,
+			id: args.metadata.organizationId,
+			...args.input,
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function updateTheme() {
-	return async function (tx: Transaction<Schema>, args: UpdateThemeZeroMutatorSchema) {
-		const parsed = parse(updateThemeZeroMutatorSchema, args);
-
-		tx.mutate.organization.update({
-			id: parsed.metadata.organizationId,
-			settings: {
-				...parsed.metadata.existingSettings,
-				theme: {
-					...parsed.metadata.existingSettings.theme,
-					...parsed.input
-				}
-			},
-			updatedAt: new Date().getTime()
-		});
-	};
-}
-
-export function updateOrganizationWhatsappSettings() {
-	return async function (
-		tx: Transaction<Schema>,
-		args: { metadata: { organizationId: string }; input: UpdateOrganizationWhatsappSettings }
-	) {
-		const currentOrg = await tx.query.organization
-			.where('id', '=', args.metadata.organizationId)
-			.one()
-			.run();
-
-		if (!currentOrg) {
-			throw new Error('Organization not found');
-		}
-
+export const updateTheme = defineMutator(
+	updateThemeZeroMutatorSchema,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.organization.update({
 			id: args.metadata.organizationId,
 			settings: {
-				...currentOrg.settings,
-				whatsApp: {
-					...currentOrg.settings?.whatsApp,
+				...args.metadata.existingSettings,
+				theme: {
+					...args.metadata.existingSettings?.theme,
 					...args.input
 				}
 			},
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
+
+export const updateOrganizationWhatsappSettings = defineMutator(
+	updateWhatsappOrganizationSettingsZeroMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		tx.mutate.organization.update({
+			id: args.metadata.organizationId,
+			settings: {
+				...args.metadata.existingSettings,
+				whatsApp: {
+					...args.metadata.existingSettings?.whatsApp,
+					...args.input
+				}
+			},
+			updatedAt: new Date().getTime()
+		});
+	}
+);

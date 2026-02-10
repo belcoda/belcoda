@@ -1,14 +1,15 @@
 import { type Transaction } from '@rocicorp/zero';
 import { type Schema } from '$lib/zero/schema';
-
+import { defineMutator } from '@rocicorp/zero';
 import {
-	type CreateMutatorSchemaZero,
-	type UpdateMutatorSchemaZero,
-	type DeleteMutatorSchemaZero
+	createMutatorSchemaZero,
+	updateMutatorSchemaZero,
+	deleteMutatorSchemaZero
 } from '$lib/schema/person-note';
 
-export function createPersonNote() {
-	return async function (tx: Transaction<Schema>, args: CreateMutatorSchemaZero) {
+export const createPersonNote = defineMutator(
+	createMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.personNote.insert({
 			id: args.metadata.personNoteId,
 			organizationId: args.metadata.organizationId,
@@ -18,24 +19,26 @@ export function createPersonNote() {
 			createdAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function updatePersonNote() {
-	return async function (tx: Transaction<Schema>, args: UpdateMutatorSchemaZero) {
+export const updatePersonNote = defineMutator(
+	updateMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.personNote.update({
 			id: args.metadata.personNoteId,
 			note: args.input.note,
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function deletePersonNote() {
-	return async function (tx: Transaction<Schema>, args: DeleteMutatorSchemaZero) {
+export const deletePersonNote = defineMutator(
+	deleteMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.personNote.update({
 			id: args.metadata.personNoteId,
 			deletedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);

@@ -1,5 +1,6 @@
 import { type Transaction } from '@rocicorp/zero';
-import { type Schema } from '$lib/zero/schema';
+import { type Schema, builder } from '$lib/zero/schema';
+import { defineMutator } from '@rocicorp/zero';
 
 import {
 	type CreateMutatorSchemaZeroOutput,
@@ -9,9 +10,18 @@ import {
 	type SetDefaultSignatureMutatorSchemaZero,
 	type UpdateSystemFromIdentityMutatorSchemaZero
 } from '$lib/schema/email-from-signature';
+import {
+	createMutatorSchema,
+	updateMutatorSchema,
+	deleteMutatorSchemaZero,
+	verifyMutatorSchemaZero,
+	setDefaultSignatureMutatorSchemaZero,
+	updateSystemFromIdentityMutatorSchemaZero
+} from '$lib/schema/email-from-signature';
 
-export function createEmailFromSignature() {
-	return async function (tx: Transaction<Schema>, args: CreateMutatorSchemaZeroOutput) {
+export const createEmailFromSignature = defineMutator(
+	createMutatorSchema,
+	async ({ tx, args, ctx }) => {
 		// Note: Postmark sync happens on the server side in the server mutator
 		tx.mutate.emailFromSignature.insert({
 			id: args.metadata.emailFromSignatureId,
@@ -28,45 +38,47 @@ export function createEmailFromSignature() {
 			updatedAt: new Date().getTime(),
 			deletedAt: null
 		});
-	};
-}
+	}
+);
 
-export function updateEmailFromSignature() {
-	return async function (tx: Transaction<Schema>, args: UpdateMutatorSchemaZeroOutput) {
-		// Note: Postmark sync happens on the server side in the server mutator
+export const updateEmailFromSignature = defineMutator(
+	updateMutatorSchema,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.emailFromSignature.update({
 			id: args.metadata.emailFromSignatureId,
 			...args.input,
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function deleteEmailFromSignature() {
-	return async function (tx: Transaction<Schema>, args: DeleteMutatorSchemaZero) {
+export const deleteEmailFromSignature = defineMutator(
+	deleteMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.emailFromSignature.update({
 			id: args.metadata.emailFromSignatureId,
 			deletedAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function verifyEmailFromSignature() {
-	return async function (tx: Transaction<Schema>, args: VerifyMutatorSchemaZero) {
+export const verifyEmailFromSignature = defineMutator(
+	verifyMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
 		tx.mutate.emailFromSignature.update({
 			id: args.metadata.emailFromSignatureId,
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function setDefaultSignature() {
-	return async function (tx: Transaction<Schema>, args: SetDefaultSignatureMutatorSchemaZero) {
-		const currentOrg = await tx.query.organization
-			.where('id', '=', args.metadata.organizationId)
-			.one()
-			.run();
+export const setDefaultSignature = defineMutator(
+	setDefaultSignatureMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
+		const currentOrg = await tx.run(
+			builder.organization.where('id', '=', args.metadata.organizationId).one()
+		);
 
 		if (!currentOrg) {
 			throw new Error('Organization not found');
@@ -83,15 +95,15 @@ export function setDefaultSignature() {
 			},
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
 
-export function updateSystemFromIdentity() {
-	return async function (tx: Transaction<Schema>, args: UpdateSystemFromIdentityMutatorSchemaZero) {
-		const currentOrg = await tx.query.organization
-			.where('id', '=', args.metadata.organizationId)
-			.one()
-			.run();
+export const updateSystemFromIdentity = defineMutator(
+	updateSystemFromIdentityMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
+		const currentOrg = await tx.run(
+			builder.organization.where('id', '=', args.metadata.organizationId).one()
+		);
 
 		if (!currentOrg) {
 			throw new Error('Organization not found');
@@ -112,5 +124,5 @@ export function updateSystemFromIdentity() {
 			},
 			updatedAt: new Date().getTime()
 		});
-	};
-}
+	}
+);
