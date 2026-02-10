@@ -19,7 +19,7 @@ export async function importPeople({
 	log.debug({ personImportId, organizationId }, 'Starting people import processing');
 
 	try {
-		const importRecord = await db.query.personImport.findFirst({
+		const importRecord = await drizzle.query.personImport.findFirst({
 			where: (item, { eq, and }) =>
 				and(eq(item.id, personImportId), eq(item.organizationId, organizationId))
 		});
@@ -33,7 +33,7 @@ export async function importPeople({
 			return;
 		}
 
-		await db
+		await drizzle
 			.update(personImport)
 			.set({
 				status: 'processing'
@@ -66,7 +66,7 @@ export async function importPeople({
 			'CSV parsing completed'
 		);
 
-		await db
+		await drizzle
 			.update(personImport)
 			.set({
 				status: 'completed',
@@ -80,7 +80,7 @@ export async function importPeople({
 	} catch (error) {
 		log.error({ error, personImportId }, 'Failed to process people import');
 
-		await db
+		await drizzle
 			.update(personImport)
 			.set({
 				status: 'failed',

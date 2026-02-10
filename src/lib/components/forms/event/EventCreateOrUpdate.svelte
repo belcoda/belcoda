@@ -35,9 +35,11 @@
 		onSubmit: (data: CreateEventZero | UpdateEventZero) => void | Promise<void>;
 	} = $props();
 	import { generateEventTitleAsyncSchema } from '$lib/schema/event/helpers';
+	/* svelte-ignore state_referenced_locally */
 	const { title, slug } = generateEventTitleAsyncSchema(appState.organizationId, event?.id);
 	import { objectAsync } from 'valibot';
 	let { form, data, errors, Errors, Debug, helpers } = $state(
+		/* svelte-ignore state_referenced_locally */
 		event
 			? createForm({
 					schema: objectAsync({

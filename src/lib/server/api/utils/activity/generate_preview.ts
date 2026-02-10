@@ -10,7 +10,7 @@ export async function generatePreview({
 }): Promise<ActivityPreviewPayload> {
 	switch (type) {
 		case 'tag_added': {
-			const tagResult = await db.query.tag.findFirst({
+			const tagResult = await drizzle.query.tag.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)
 			});
 			if (!tagResult) {
@@ -23,7 +23,7 @@ export async function generatePreview({
 			};
 		}
 		case 'tag_removed': {
-			const tagResult = await db.query.tag.findFirst({
+			const tagResult = await drizzle.query.tag.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)
 			});
 			if (!tagResult) {
@@ -36,7 +36,7 @@ export async function generatePreview({
 			};
 		}
 		case 'team_added': {
-			const teamResult = await db.query.team.findFirst({
+			const teamResult = await drizzle.query.team.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)
 			});
 			if (!teamResult) {
@@ -49,7 +49,7 @@ export async function generatePreview({
 			};
 		}
 		case 'team_removed': {
-			const teamResult = await db.query.team.findFirst({
+			const teamResult = await drizzle.query.team.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)
 			});
 			if (!teamResult) {
@@ -62,13 +62,13 @@ export async function generatePreview({
 			};
 		}
 		case 'note_added': {
-			const noteResult = await db.query.personNote.findFirst({
+			const noteResult = await drizzle.query.personNote.findFirst({
 				where: (row, { and, eq }) => and(eq(row.id, referenceId))
 			});
 			if (!noteResult) {
 				throw new Error('Note not found');
 			}
-			const userResult = await db.query.user.findFirst({
+			const userResult = await drizzle.query.user.findFirst({
 				where: (row, { eq }) => eq(row.id, noteResult.userId)
 			});
 			if (!userResult) {
@@ -82,13 +82,13 @@ export async function generatePreview({
 			};
 		}
 		case 'event_signup': {
-			const eventSignupResult = await db.query.eventSignup.findFirst({
+			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)
 			});
 			if (!eventSignupResult) {
 				throw new Error('Event signup not found');
 			}
-			const eventResult = await db.query.event.findFirst({
+			const eventResult = await drizzle.query.event.findFirst({
 				where: (row, { eq }) => eq(row.id, eventSignupResult.eventId)
 			});
 			if (!eventResult) {
@@ -101,13 +101,13 @@ export async function generatePreview({
 			};
 		}
 		case 'event_signup_email_sent': {
-			const eventSignupResult = await db.query.eventSignup.findFirst({
+			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)
 			});
 			if (!eventSignupResult) {
 				throw new Error('Event signup not found');
 			}
-			const eventResult = await db.query.event.findFirst({
+			const eventResult = await drizzle.query.event.findFirst({
 				where: (row, { eq }) => eq(row.id, eventSignupResult.eventId)
 			});
 			if (!eventResult) {

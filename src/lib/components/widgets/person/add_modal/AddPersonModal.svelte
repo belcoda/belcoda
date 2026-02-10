@@ -20,13 +20,12 @@
 		tagId: null,
 		signupEventId: null,
 		mostRecentActivity: null,
+		/* svelte-ignore state_referenced_locally */
 		personIdsToExclude: personIdsToExclude
 	});
 	import { Debounced } from 'runed';
 	let debouncedFilter = new Debounced(() => filter, 1000);
-	const personList = $derived.by(() =>
-		z.createQuery(queries.person.list(debouncedFilter.current))
-	);
+	const personList = $derived.by(() => z.createQuery(queries.person.list(debouncedFilter.current)));
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';

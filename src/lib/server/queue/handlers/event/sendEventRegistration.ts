@@ -17,26 +17,26 @@ export async function sendEventRegistration({
 	eventSignupId: string;
 	locale: Locale;
 }) {
-	const signup = await db.query.eventSignup.findFirst({
+	const signup = await drizzle.query.eventSignup.findFirst({
 		where: eq(eventSignup.id, eventSignupId)
 	});
 	if (!signup) {
 		throw new Error('Event signup not found');
 	}
 
-	const orgResult = await db.query.organization.findFirst({
+	const orgResult = await drizzle.query.organization.findFirst({
 		where: eq(organization.id, signup.organizationId)
 	});
 	if (!orgResult) {
 		throw new Error('Organization not found');
 	}
-	const eventResult = await db.query.event.findFirst({
+	const eventResult = await drizzle.query.event.findFirst({
 		where: eq(event.id, signup.eventId)
 	});
 	if (!eventResult) {
 		throw new Error('Event not found');
 	}
-	const personResult = await db.query.person.findFirst({
+	const personResult = await drizzle.query.person.findFirst({
 		where: eq(person.id, signup.personId)
 	});
 	if (!personResult) {
@@ -72,7 +72,7 @@ export async function sendEventRegistration({
 
 	log.debug({ sendEmailResult, personId: personResult.id }, 'Event registration email sent');
 
-	await db
+	await drizzle
 		.update(eventSignup)
 		.set({
 			signupNotificationSentAt: new Date()

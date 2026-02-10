@@ -65,7 +65,7 @@ export function buildBetterAuth(localeInput: string) {
 				clientSecret: env.GOOGLE_AUTH_CLIENT_SECRET as string
 			}
 		},
-		database: drizzleAdapter(db, {
+		database: drizzleAdapter(drizzle, {
 			provider: 'pg', // or "mysql", "sqlite"
 			schema: {
 				...schema,
@@ -198,7 +198,7 @@ export function buildBetterAuth(localeInput: string) {
 				referenceId: string;
 				action: any;
 			}) => {
-				const member = await db.query.member.findFirst({
+				const member = await drizzle.query.member.findFirst({
 					where: (row, { eq, and }) =>
 						and(eq(row.userId, user.id), eq(row.organizationId, referenceId))
 				});

@@ -59,7 +59,6 @@ export function renderColumnName(columnName: string) {
 			return t`Position`;
 		case 'person.workplace':
 			return t`Workplace`;
-		case 'person.socialMedia':
 		case 'person.region':
 			return t`Region`;
 		case 'person.postcode':

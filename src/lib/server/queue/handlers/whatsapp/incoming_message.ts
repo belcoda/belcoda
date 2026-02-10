@@ -228,6 +228,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 					organizationId = messageActivity.organizationId;
 					if (messageActivity.personId) {
 						await handleIncomingReaction({
+							tx,
 							messageId: messageActivity.id,
 							personId: messageActivity.personId,
 							phoneNumber: parsed.whatsappInboundMessage.from,

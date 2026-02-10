@@ -205,3 +205,24 @@ export async function _getEventByIdUnsafe({
 	}
 	return eventObject;
 }
+
+export async function getEventById({
+	eventId,
+	ctx,
+	tx
+}: {
+	eventId: string;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const eventRecord = await tx.run(
+		builder.event
+			.where('id', '=', eventId)
+			.where((expr) => eventReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!eventRecord) {
+		throw new Error('Event not found');
+	}
+	return eventRecord;
+}

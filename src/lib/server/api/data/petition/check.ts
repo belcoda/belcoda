@@ -18,7 +18,7 @@ export async function checkPetitionSlug({
 	if (excludePetitionId) {
 		where.push(not(eq(petition.id, excludePetitionId)));
 	}
-	const result = await db.query.petition.findFirst({
+	const result = await drizzle.query.petition.findFirst({
 		where: and(...where)
 	});
 	return result ? true : false;
@@ -40,7 +40,7 @@ export async function checkPetitionTitle({
 	if (excludePetitionId) {
 		where.push(not(eq(petition.id, excludePetitionId)));
 	}
-	const result = await db.query.petition.findFirst({
+	const result = await drizzle.query.petition.findFirst({
 		where: and(...where)
 	});
 	return result ? true : false;

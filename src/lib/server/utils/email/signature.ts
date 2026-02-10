@@ -18,7 +18,7 @@ export async function getEmailSignature({
 			emailAddress: `${organization.slug}@${postmarkSendingDomain}`
 		};
 	}
-	const emailSignature = await db.query.emailFromSignature.findFirst({
+	const emailSignature = await drizzle.query.emailFromSignature.findFirst({
 		where: eq(emailFromSignature.id, emailFromSignatureId)
 	});
 	if (!emailSignature) {

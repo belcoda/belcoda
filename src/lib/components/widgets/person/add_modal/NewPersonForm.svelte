@@ -2,7 +2,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import createForm from '$lib/form.svelte';
 	import { parse } from 'valibot';
-	import { tick } from 'svelte';
+	import { t } from '$lib/index.svelte';
 	import {
 		createPerson,
 		type CreateMutatorSchemaZeroInput,

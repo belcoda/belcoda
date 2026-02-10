@@ -20,7 +20,7 @@ export async function insertActivity({
 	unread: boolean;
 }) {
 	//check that personId belongs to the organization
-	const personResult = await db.query.person.findFirst({
+	const personResult = await drizzle.query.person.findFirst({
 		where: (row, { and, eq }) => and(eq(row.id, personId), eq(row.organizationId, organizationId))
 	});
 	if (!personResult) {
@@ -36,10 +36,10 @@ export async function insertActivity({
 		userId: userId || null,
 		createdAt: new Date()
 	};
-	await db.insert(activity).values(activityInsert);
+	await drizzle.insert(activity).values(activityInsert);
 
 	const preview = await generatePreview({ type, referenceId });
-	await db
+	await drizzle
 		.update(person)
 		.set({
 			mostRecentActivityPreview: preview,

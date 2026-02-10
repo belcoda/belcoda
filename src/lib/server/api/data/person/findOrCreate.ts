@@ -8,12 +8,12 @@ import {
 	DEFAULT_SOCIAL_MEDIA,
 	type PersonAddedFrom
 } from '$lib/schema/person/meta';
-import type { Transaction } from '$lib/server/db/zeroDrizzle';
 
 import { v7 as uuidv7 } from 'uuid';
 import { parse } from 'valibot';
 
 import pino from '$lib/pino';
+import type { ServerTransaction } from '@rocicorp/zero';
 const log = pino(import.meta.url);
 
 export async function findOrCreatePerson({
@@ -29,7 +29,7 @@ export async function findOrCreatePerson({
 	organizationId: string;
 	updateExistingPerson?: boolean;
 	teamId?: string;
-	tx: Transaction;
+	tx: ServerTransaction;
 }) {
 	const parsedActionHelper = parse(personActionHelper, personAction);
 	const parsedAddedFrom = parse(personAddedFrom, addedFrom);
@@ -101,7 +101,7 @@ export async function findOrCreatePerson({
 
 	//if teamId is provided, add the person to the team
 	if (teamId) {
-		await db.insert(personTeam).values({
+		await drizzle.insert(personTeam).values({
 			personId: insertedPerson.id,
 			teamId: teamId,
 			organizationId: organizationId,

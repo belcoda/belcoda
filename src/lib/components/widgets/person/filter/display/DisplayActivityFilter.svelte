@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ListPersonsInput } from '$lib/zero/query/person/list';
 	const {
 		mostRecentActivity,

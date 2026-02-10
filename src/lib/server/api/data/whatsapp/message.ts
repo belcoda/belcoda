@@ -1,6 +1,6 @@
 import { whatsappMessage } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
-import { getTransaction, type Transaction } from '$lib/server/db/zeroDrizzle';
+import type { ServerTransaction } from '@rocicorp/zero';
 
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
@@ -8,7 +8,6 @@ const log = pino(import.meta.url);
 import {
 	type WhatsappMessage,
 	whatsappMessage as whatsappMessageObjectSchema,
-	whatsappMessageActivityTypeSchema,
 	type WhatsappMessageActivityType
 } from '$lib/schema/whatsapp/message';
 import { v7 as uuidv7 } from 'uuid';
@@ -19,7 +18,7 @@ export async function _findWhatsAppMessageByWamidIdUnsafe({
 	tx
 }: {
 	wamidId: string;
-	tx: Transaction;
+	tx: ServerTransaction;
 }) {
 	const result = await tx.dbTransaction.wrappedTransaction
 		.select()
@@ -39,7 +38,7 @@ export async function _findWhatsAppMessageByIdUnsafe({
 	tx
 }: {
 	messageId: string;
-	tx: Transaction;
+	tx: ServerTransaction;
 }) {
 	const result = await tx.dbTransaction.wrappedTransaction
 		.select()
@@ -59,15 +58,14 @@ export async function handleIncomingReaction({
 	personId,
 	phoneNumber,
 	emoji,
-	tx: defaultTx
+	tx
 }: {
 	messageId: string;
 	emoji: string | null;
 	personId: string;
 	phoneNumber: string;
-	tx?: Transaction;
+	tx: ServerTransaction;
 }) {
-	const tx = defaultTx || (await getTransaction());
 	const messageActivity = await _findWhatsAppMessageByIdUnsafe({ messageId, tx });
 	if (['incoming_whatsapp_message', 'outgoing_whatsapp_message'].includes(messageActivity.type)) {
 		if (messageActivity.wamidId) {
@@ -114,15 +112,14 @@ export async function createWhatsAppMessage({
 	message,
 	type,
 	organizationId,
-	tx: defaultTx
+	tx
 }: {
 	id: string;
 	message: WhatsappMessage;
 	organizationId: string;
 	type: WhatsappMessageActivityType;
-	tx?: Transaction;
+	tx: ServerTransaction;
 }) {
-	const tx = defaultTx || (await getTransaction());
 	const parsed = await parse(whatsappMessageObjectSchema, message);
 	const insertedId = id || uuidv7();
 	const toInsert: typeof whatsappMessage.$inferInsert = {
