@@ -69,7 +69,7 @@ export const updateOrganizationZeroMutatorSchema = v.object({
 export type UpdateOrganizationZeroMutatorSchema = v.InferOutput<
 	typeof updateOrganizationZeroMutatorSchema
 >;
-  
+
 export const updateOrganizationWhatsappSettings = v.partial(whatsappOrganizationSettingsSchema);
 export type UpdateOrganizationWhatsappSettings = v.InferInput<
 	typeof updateOrganizationWhatsappSettings
@@ -83,8 +83,12 @@ export const updateOrganizationMutatorSchema = v.object({
 	input: updateOrganization,
 	metadata: organizationMutatorMetadata
 });
+export type UpdateOrganizationMutatorSchema = v.InferOutput<typeof updateOrganizationMutatorSchema>;
 
 export const updateOrganizationWhatsappSettingsMutatorSchema = v.object({
 	input: updateOrganizationWhatsappSettings,
 	metadata: organizationMutatorMetadata
 });
+export type UpdateOrganizationWhatsappSettingsMutatorSchema = v.InferOutput<
+	typeof updateOrganizationWhatsappSettingsMutatorSchema
+>;
