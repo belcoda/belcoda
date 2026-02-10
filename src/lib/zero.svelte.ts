@@ -2,23 +2,7 @@ import { Z } from 'zero-svelte';
 
 import { schema, type Schema, type QueryContext } from '$lib/zero/schema';
 import { env as publicEnv } from '$env/dynamic/public';
-import { jwtDecode } from 'jwt-decode';
-import createMutators from '$lib/zero/mutate/client_mutators';
-/* 
-function get_z_options() {
-	const userId = getAuthData();
-	return {
-		schema,
-		server: publicEnv.PUBLIC_ZERO_SERVER,
-		userID: userId,
-		mutators: createMutators(),
-		auth: async () => {
-			const token = await getToken();
-			return token;
-		}
-	} as const;
-}
- */
+import { mutators } from '$lib/zero/mutate/client_mutators';
 
 class ZeroInstance {
 	#z = $state<Z | null>(null);
@@ -29,10 +13,11 @@ class ZeroInstance {
 		return this.#z;
 	}
 	init(userId: string, queryContext: QueryContext) {
+		// @ts-expect-error - something with the typing of mutators object... let's see if it works tho
 		this.#z = new Z({
 			cacheURL: publicEnv.PUBLIC_ZERO_SERVER,
 			schema,
-			mutators: createMutators(),
+			mutators,
 			kvStore: 'idb',
 			context: queryContext,
 			userID: userId
