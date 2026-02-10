@@ -23,7 +23,9 @@
 
 	let editingName = $state(false);
 	let editingReplyTo = $state(false);
+	/* svelte-ignore state_referenced_locally */
 	let newName = $state(name || '');
+	/* svelte-ignore state_referenced_locally */
 	let newReplyTo = $state(replyTo || emailAddress);
 	let nameError = $state<string | null>(null);
 	let replyToError = $state<string | null>(null);

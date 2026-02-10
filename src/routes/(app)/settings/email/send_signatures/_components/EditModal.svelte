@@ -33,8 +33,11 @@
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: updateEmailFromSignatureZero,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			name: signature.name,
+			/* svelte-ignore state_referenced_locally */
 			replyTo: signature.replyTo || null,
+			/* svelte-ignore state_referenced_locally */
 			returnPathDomain: signature.returnPathDomain || null
 		},
 		validateOnLoad: false,
