@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { person, personTeam } from '$lib/schema/drizzle';
 import { eq, or, and, isNull } from 'drizzle-orm';
 

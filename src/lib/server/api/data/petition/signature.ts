@@ -1,24 +1,142 @@
+import type { ServerTransaction } from '@rocicorp/zero';
+import { type QueryContext, builder } from '$lib/zero/schema';
+
+import {
+	createMutatorSchema,
+	type CreateMutatorSchemaOutput,
+	updateMutatorSchema,
+	type UpdateMutatorSchemaOutput
+} from '$lib/schema/petition/petition-signature';
+
+import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
+import { personReadPermissions } from '$lib/zero/query/person/permissions';
+import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
+import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
+
 import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
 import { type PersonAddedFrom, personAddedFrom } from '$lib/schema/person/meta';
-import { type PetitionSignatureDetails, petitionSignatureDetails } from '$lib/schema/petition/settings';
+import {
+	type PetitionSignatureDetails,
+	petitionSignatureDetails
+} from '$lib/schema/petition/settings';
 
 import { parse } from 'valibot';
 
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and } from 'drizzle-orm';
-import type { Transaction } from '$lib/server/db/zeroDrizzle';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
-import { clampLocale } from '$lib/utils/language';
+
+export async function createPetitionSignature({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: CreateMutatorSchemaOutput;
+}) {
+	const parsed = parse(createMutatorSchema, args);
+	const organization = await tx.run(
+		builder.organization
+			.where((expr) => organizationReadPermissions(expr, ctx))
+			.where('id', parsed.metadata.organizationId)
+			.one()
+	);
+	if (!organization) {
+		throw new Error('Organization not found');
+	}
+	const person = await tx.run(
+		builder.person
+			.where((expr) => personReadPermissions(expr, ctx))
+			.where('id', parsed.metadata.personId)
+			.one()
+	);
+	if (!person) {
+		throw new Error('Person not found');
+	}
+	const petition = await tx.run(
+		builder.petition
+			.where((expr) => petitionReadPermissions(expr, ctx))
+			.where('id', parsed.metadata.petitionId)
+			.one()
+	);
+	if (!petition) {
+		throw new Error('Petition not found');
+	}
+
+	const petitionSignatureRecord: typeof petitionSignature.$inferInsert = {
+		id: parsed.metadata.petitionSignatureId,
+		organizationId: parsed.metadata.organizationId,
+		petitionId: parsed.metadata.petitionId,
+		personId: parsed.metadata.personId,
+		teamId: petition.teamId,
+		details: parsed.input.details,
+		responses: parsed.input.responses,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	};
+
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.insert(petitionSignature)
+		.values(petitionSignatureRecord)
+		.returning();
+
+	const queue = await getQueue();
+	await queue.insertActivity({
+		organizationId: parsed.metadata.organizationId,
+		personId: parsed.metadata.personId,
+		userId: ctx.userId || undefined,
+		type: 'petition_signed',
+		referenceId: parsed.metadata.petitionSignatureId,
+		unread: false
+	});
+	return result;
+}
+
+export async function updatePetitionSignature({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateMutatorSchemaOutput;
+}) {
+	const parsed = parse(updateMutatorSchema, args);
+	const petitionSignatureRecord = await tx.run(
+		builder.petitionSignature
+			.where((expr) => petitionSignatureReadPermissions(expr, ctx))
+			.where('id', parsed.metadata.petitionSignatureId)
+			.one()
+	);
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.update(petitionSignature)
+		.set({
+			responses: args.input.responses,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(petitionSignature.id, args.metadata.petitionSignatureId),
+				eq(petitionSignature.organizationId, args.metadata.organizationId)
+			)
+		)
+		.returning();
+	if (!result) {
+		throw new Error('Unable to update petition signature');
+	}
+	return result;
+}
 
 export async function getPetitionByIdUnsafe({
 	petitionId,
 	organizationId,
 	tx
 }: {
-	tx: Transaction;
+	tx: ServerTransaction;
 	petitionId: string;
 	organizationId: string;
 }) {
@@ -37,7 +155,7 @@ export async function getPetitionSignaturesByPetitionIdUnsafe({
 	organizationId,
 	tx
 }: {
-	tx: Transaction;
+	tx: ServerTransaction;
 	petitionId: string;
 	organizationId: string;
 }) {
@@ -61,7 +179,7 @@ export async function signPetitionHelper({
 	signatureDetails,
 	organizationId
 }: {
-	tx: Transaction;
+	tx: ServerTransaction;
 	petitionId: string;
 	personAction: PersonActionHelper;
 	signatureDetails: PetitionSignatureDetails;
@@ -114,7 +232,7 @@ export async function signPetitionUnsafe({
 	details
 }: {
 	petitionSignatureId?: string;
-	tx: Transaction;
+	tx: ServerTransaction;
 	petitionRecord: typeof petition.$inferSelect;
 	personRecord: typeof person.$inferSelect;
 	organizationRecord: typeof organization.$inferSelect;
@@ -153,4 +271,3 @@ export async function signPetitionUnsafe({
 
 	return insertedPetitionSignature;
 }
-

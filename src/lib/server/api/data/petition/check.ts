@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { eq, isNull, and, not } from 'drizzle-orm';
 import { petition } from '$lib/schema/drizzle';
 export async function checkPetitionSlug({

@@ -1,6 +1,160 @@
-import type { Transaction } from '$lib/server/db/zeroDrizzle';
+import type { ServerTransaction } from '@rocicorp/zero';
+import { type QueryContext, builder } from '$lib/zero/schema';
 import { eq, and, isNull } from 'drizzle-orm';
-import { person } from '$lib/schema/drizzle';
+import { person, personTeam, team } from '$lib/schema/drizzle';
+import { personReadPermissions } from '$lib/zero/query/person/permissions';
+import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
+import {
+	createMutatorSchemaZero,
+	type CreateMutatorSchemaZeroOutput,
+	deleteMutatorSchemaZero,
+	type DeleteMutatorSchemaZero,
+	updateMutatorSchemaZero,
+	type UpdateMutatorSchemaZeroOutput
+} from '$lib/schema/person';
+import { parse } from 'valibot';
+export async function createPerson({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: CreateMutatorSchemaZeroOutput;
+}) {
+	const parsed = parse(createMutatorSchemaZero, args);
+	const organizationRecord = await getOrganizationByIdUnsafe({
+		organizationId: parsed.metadata.organizationId,
+		tx
+	});
+	if (!organizationRecord) {
+		throw new Error('Organization not found');
+	}
+	if (
+		![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(organizationRecord.id) &&
+		!parsed.metadata.teamId
+	) {
+		throw new Error('You are not authorized to create a person in this organization');
+	}
+
+	if (parsed.metadata.teamId) {
+		const [teamRecord] = await tx.dbTransaction.wrappedTransaction
+			.select()
+			.from(team)
+			.where(eq(team.id, parsed.metadata.teamId))
+			.limit(1);
+		if (!teamRecord) {
+			throw new Error('Team not found');
+		}
+		if (organizationRecord.id !== teamRecord.organizationId) {
+			throw new Error('Team does not belong to organization');
+		}
+	}
+
+	const personToImport: typeof person.$inferInsert = {
+		...args.input,
+		dateOfBirth: args.input.dateOfBirth ? new Date(args.input.dateOfBirth) : null,
+		id: args.metadata.personId,
+		organizationId: args.metadata.organizationId,
+		addedFrom: args.metadata.addedFrom,
+		mostRecentActivityAt: new Date(),
+		createdAt: new Date(),
+		updatedAt: new Date()
+	};
+
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.insert(person)
+		.values(personToImport)
+		.returning();
+	if (!result) {
+		throw new Error('Unable to create person');
+	}
+
+	if (args.metadata.teamId) {
+		await tx.dbTransaction.wrappedTransaction.insert(personTeam).values({
+			personId: result.id,
+			teamId: args.metadata.teamId,
+			organizationId: args.metadata.organizationId,
+			createdAt: new Date()
+		});
+	}
+}
+
+export async function updatePerson({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateMutatorSchemaZeroOutput;
+}) {
+	const input = parse(updateMutatorSchemaZero, args);
+	const personRecord = await tx.run(
+		builder.person
+			.where('id', '=', input.metadata.personId)
+			.where('organizationId', '=', input.metadata.organizationId)
+			.where((expr) => personReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!personRecord) {
+		throw new Error('Person not found');
+	}
+	const updatedDateParsed = {
+		...input.input,
+		dateOfBirth: input.input.dateOfBirth ? new Date(input.input.dateOfBirth) : undefined
+	};
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.update(person)
+		.set({
+			...updatedDateParsed,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(person.id, input.metadata.personId),
+				eq(person.organizationId, input.metadata.organizationId)
+			)
+		)
+		.returning();
+	return result;
+}
+
+export async function deletePerson({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: DeleteMutatorSchemaZero;
+}) {
+	const parsed = parse(deleteMutatorSchemaZero, args);
+	const personRecord = await tx.run(
+		builder.person
+			.where('id', '=', parsed.metadata.personId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => personReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!personRecord) {
+		throw new Error('Person not found');
+	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(person)
+		.set({
+			deletedAt: new Date()
+		})
+		.where(
+			and(
+				eq(person.id, args.metadata.personId),
+				eq(person.organizationId, args.metadata.organizationId)
+			)
+		);
+	return;
+}
+
 export async function _getPersonByPhoneNumberUnsafe({
 	phoneNumber,
 	organizationId,
@@ -8,7 +162,7 @@ export async function _getPersonByPhoneNumberUnsafe({
 }: {
 	phoneNumber: string;
 	organizationId: string;
-	tx: Transaction;
+	tx: ServerTransaction;
 }) {
 	const [personRecord] = await tx.dbTransaction.wrappedTransaction
 		.select()
@@ -20,6 +174,29 @@ export async function _getPersonByPhoneNumberUnsafe({
 				isNull(person.deletedAt)
 			)
 		);
+	if (!personRecord) {
+		throw new Error('Person not found');
+	}
+	return personRecord;
+}
+
+export async function getPerson({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: { organizationId: string; personId: string };
+}) {
+	const personRecord = await tx.run(
+		builder.person
+			.where('organizationId', '=', args.organizationId)
+			.where('deletedAt', 'IS', null)
+			.where('id', '=', args.personId)
+			.where((expr) => personReadPermissions(expr, ctx))
+			.one()
+	);
 	if (!personRecord) {
 		throw new Error('Person not found');
 	}

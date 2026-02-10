@@ -1,4 +1,4 @@
-import { getTransaction, type Transaction } from '$lib/server/db/zeroDrizzle';
+import type { ServerTransaction } from '@rocicorp/zero';
 
 import { activity as activityTable } from '$lib/schema/drizzle';
 
@@ -9,15 +9,14 @@ export async function createActivityWhatsAppMessageIncoming({
 	personId,
 	referenceId,
 	unread = true,
-	tx: defaultTx
+	tx
 }: {
 	organizationId: string;
 	personId: string;
 	referenceId: string;
 	unread?: boolean;
-	tx?: Transaction;
+	tx: ServerTransaction;
 }) {
-	const tx = defaultTx || (await getTransaction());
 	const toInsert: typeof activityTable.$inferInsert = {
 		id: uuidv7(),
 		organizationId,
