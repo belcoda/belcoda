@@ -11,6 +11,7 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	const { params } = $props();
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
 	import type { ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
@@ -57,12 +58,14 @@
 									duration={1500}
 									onComplete={async () => {
 										if (window.confirm(t`Are you sure you want to delete this person?`)) {
-											z.mutate.person.delete({
-												metadata: {
-													personId: params.personId,
-													organizationId: appState.organizationId
-												}
-											});
+											z.mutate(
+												mutators.person.delete({
+													metadata: {
+														personId: params.personId,
+														organizationId: appState.organizationId
+													}
+												})
+											);
 											toast.success(t`Person deleted`);
 											goto(`/community`);
 										}

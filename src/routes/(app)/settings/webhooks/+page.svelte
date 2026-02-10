@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { getListFilter, appState } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
@@ -43,13 +44,15 @@
 				eventTypes: ['all'] as const
 			});
 
-			const response = z.mutate.webhook.create({
-				metadata: {
-					webhookId,
-					organizationId: appState.organizationId
-				},
-				input: parsed
-			});
+			const response = z.mutate(
+				mutators.webhook.create({
+					metadata: {
+						webhookId,
+						organizationId: appState.organizationId
+					},
+					input: parsed
+				})
+			);
 
 			await response.server;
 			toast.success(t`Webhook created successfully`);
@@ -74,7 +77,7 @@
 				}
 			});
 
-			z.mutate.webhook.delete(parsed);
+			z.mutate(mutators.webhook.delete(parsed));
 			toast.success(t`Webhook deleted`);
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message : t`Failed to delete webhook`);

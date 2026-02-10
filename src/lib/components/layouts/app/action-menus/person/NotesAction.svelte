@@ -8,6 +8,7 @@
 	import { type ListFilter } from '$lib/schema/helpers';
 	import { getListFilter } from '$lib/state.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { toast } from 'svelte-sonner';
 	import { t } from '$lib/index.svelte';
@@ -150,13 +151,15 @@
 												keywords={[tag.name]}
 												value={tag.id}
 												onSelect={() => {
-													z.mutate.person.addTag({
+z.mutate(
+													mutators.person.addTag({
 														metadata: {
 															organizationId: appState.organizationId,
 															personId: person.id,
 															tagId: tag.id
 														}
-													});
+													})
+												);
 													closeAndFocusTrigger();
 													toast.success(t`Added tag`, { duration: 1000 });
 												}}
@@ -191,13 +194,15 @@
 												keywords={[team.name]}
 												value={team.id}
 												onSelect={() => {
-													z.mutate.person.addToTeam({
+z.mutate(
+													mutators.person.addToTeam({
 														metadata: {
 															organizationId: appState.organizationId,
 															personId: person.id,
 															teamId: team.id
 														}
-													});
+													})
+												);
 													closeAndFocusTrigger();
 													toast.success(t`Person added to team`);
 												}}

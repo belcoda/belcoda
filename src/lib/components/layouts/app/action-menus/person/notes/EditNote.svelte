@@ -4,6 +4,7 @@
 	import { parse } from 'valibot';
 	import { MEDIUM_STRING_MAX_LENGTH } from '$lib/schema/helpers';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import {
 		updateMutatorSchemaZero,
@@ -38,7 +39,7 @@
 					personNoteId: note.id
 				}
 			});
-			const input = z.mutate.personNote.update(parsed);
+			const input = z.mutate(mutators.personNote.update(parsed));
 			toast.success('Note updated');
 			editOpen = false;
 		}

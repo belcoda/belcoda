@@ -11,6 +11,7 @@
 	import { parse } from 'valibot';
 	import { getTimeAgo } from '$lib/utils/time';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/state.svelte';
 	import { locale, t } from '$lib/index.svelte';
@@ -32,7 +33,7 @@
 					personNoteId: note.id
 				}
 			});
-			const input = z.mutate.personNote.delete(parsed);
+			const input = z.mutate(mutators.personNote.delete(parsed));
 			toast.success(t`Note deleted`);
 		}
 	}

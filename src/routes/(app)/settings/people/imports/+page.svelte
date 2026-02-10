@@ -2,6 +2,7 @@
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { getListFilter, appState } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
@@ -92,21 +93,25 @@
 
 			const importId = uuidv4();
 
-			await z.mutate.personImport.insert({
-				metadata: {
-					organizationId: appState.organizationId,
-					importId,
-					importedBy: appState.userId
-				},
-				input: {
-					csvUrl
-				}
-			});
+			await z.mutate(
+				mutators.personImport.insert({
+					metadata: {
+						organizationId: appState.organizationId,
+						importId,
+						importedBy: appState.userId
+					},
+					input: {
+						csvUrl
+					}
+				})
+			);
 
-			await z.mutate.personImport.triggerQueue({
-				personImportId: importId,
-				organizationId: appState.organizationId
-			});
+			await z.mutate(
+				mutators.personImport.triggerQueue({
+					personImportId: importId,
+					organizationId: appState.organizationId
+				})
+			);
 
 			toast.success(t`Import started successfully`);
 			uploadModalOpen = false;

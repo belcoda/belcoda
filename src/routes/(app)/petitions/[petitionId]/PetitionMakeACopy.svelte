@@ -13,6 +13,7 @@
 	import createForm from '$lib/form.svelte';
 	import { generateCreatePetitionZeroAsyncSchema } from '$lib/schema/petition/petition';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { slugify } from '$lib/utils/slug';
 	const newPetition = {
 		...petition,
@@ -31,17 +32,19 @@
 			initialData: newPetition,
 			onSubmit: async (data) => {
 				const petitionId = uuidv7();
-				const writePetition = z.mutate.petition.create({
-					metadata: {
-						organizationId: appState.organizationId,
-						teamId: appState.activeTeamId,
-						petitionId: petitionId
-					},
-					input: {
-						...data,
-						slug: slugify(data.title)
-					}
-				});
+				const writePetition = z.mutate(
+					mutators.petition.create({
+						metadata: {
+							organizationId: appState.organizationId,
+							teamId: appState.activeTeamId,
+							petitionId: petitionId
+						},
+						input: {
+							...data,
+							slug: slugify(data.title)
+						}
+					})
+				);
 				await writePetition.client;
 				await goto(`/petitions/${petitionId}`);
 			}

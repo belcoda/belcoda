@@ -2,6 +2,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { deleteMutatorSchemaZero } from '$lib/schema/person-note';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { parse } from 'valibot';
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/state.svelte';
@@ -21,7 +22,7 @@
 				personNoteId: noteId
 			}
 		});
-		const input = z.mutate.personNote.delete(parsed);
+		const input = z.mutate(mutators.personNote.delete(parsed));
 		toast.success(t`Note deleted`);
 	}
 </script>

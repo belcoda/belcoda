@@ -13,6 +13,7 @@
 	import createForm from '$lib/form.svelte';
 	import { generateCreateEventZeroAsyncSchema } from '$lib/schema/event';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { slugify } from '$lib/utils/slug';
 	const newEvent = {
 		...event,
@@ -32,19 +33,21 @@
 			initialData: newEvent,
 			onSubmit: async (data) => {
 				const eventId = uuidv7();
-				const writeEvent = z.mutate.event.create({
-					metadata: {
-						organizationId: appState.organizationId,
-						teamId: appState.activeTeamId,
-						eventId: eventId
-					},
-					input: {
-						...data,
-						slug: slugify(data.title),
-						startsAt: data.startsAt,
-						endsAt: data.endsAt
-					}
-				});
+				const writeEvent = z.mutate(
+					mutators.event.create({
+						metadata: {
+							organizationId: appState.organizationId,
+							teamId: appState.activeTeamId,
+							eventId: eventId
+						},
+						input: {
+							...data,
+							slug: slugify(data.title),
+							startsAt: data.startsAt,
+							endsAt: data.endsAt
+						}
+					})
+				);
 				await writeEvent.client;
 				await goto(`/events/${eventId}`);
 			}

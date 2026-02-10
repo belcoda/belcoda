@@ -2,6 +2,7 @@
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import queries from '$lib/zero/query/index';
 	const { params } = $props();
 	const petition = $derived.by(() => {
@@ -22,14 +23,16 @@
 	async function onSubmit(data: CreatePetitionZero | UpdatePetitionZero) {
 		if (!petition.data) return;
 		const parsed = parse(updatePetitionZero, data);
-		const updatedPetitionMutator = z.mutate.petition.update({
-			metadata: {
-				petitionId: petition.data.id,
-				organizationId: appState.organizationId,
-				teamId: appState.activeTeamId
-			},
-			input: parsed
-		});
+		const updatedPetitionMutator = z.mutate(
+			mutators.petition.update({
+				metadata: {
+					petitionId: petition.data.id,
+					organizationId: appState.organizationId,
+					teamId: appState.activeTeamId
+				},
+				input: parsed
+			})
+		);
 		await updatedPetitionMutator.client;
 		await goto(`/petitions/${petition.data.id}`);
 	}

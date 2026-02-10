@@ -10,6 +10,7 @@
 	} from '$lib/schema/person';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { v7 as uuidv7 } from 'uuid';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
@@ -49,7 +50,7 @@
 				}
 			};
 			const parsed = parse(createMutatorSchemaZero, toCreate);
-			const input = z.mutate.person.create(parsed);
+			const input = z.mutate(mutators.person.create(parsed));
 			onCreated(personId);
 		}
 	});

@@ -12,6 +12,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { v7 as uuidv7 } from 'uuid';
 	import { t } from '$lib/index.svelte';
@@ -56,7 +57,7 @@
 					}
 				}
 				const parsed = parse(createMutatorSchemaZero, toCreate);
-				const response = z.mutate.emailFromSignature.create(parsed);
+				const response = z.mutate(mutators.emailFromSignature.create(parsed));
 				await response.server;
 				toast.success(t`Email signature created successfully`);
 				isOpen = false;

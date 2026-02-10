@@ -20,6 +20,7 @@
 	import { t } from '$lib/index.svelte';
 
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
@@ -57,13 +58,15 @@
 								keywords={[tag.name]}
 								value={tag.id}
 								onSelect={() => {
-									z.mutate.person.addTag({
+								z.mutate(
+									mutators.person.addTag({
 										metadata: {
 											organizationId: appState.organizationId,
 											personId: personId,
 											tagId: tag.id
 										}
-									});
+									})
+								);
 									closeAndFocusTrigger();
 								}}
 							>

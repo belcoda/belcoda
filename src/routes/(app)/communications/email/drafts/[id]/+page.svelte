@@ -2,6 +2,7 @@
 	import { t } from '$lib/index.svelte';
 	import EmailForm from '$lib/components/forms/email/EmailForm.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { createDefaultEmailMessage } from '$lib/schema/email-message';
 	import queries from '$lib/zero/query/index';
@@ -59,51 +60,57 @@
 		if (!emailId) return;
 
 		if (emailExists) {
-			await z.mutate.emailMessage.update({
-				metadata: {
-					organizationId: appState.organizationId,
-					emailMessageId: emailId
-				},
-				input: {
-					subject,
-					body,
-					emailFromSignatureId,
-					recipients
-				}
-			});
+			await z.mutate(
+				mutators.emailMessage.update({
+					metadata: {
+						organizationId: appState.organizationId,
+						emailMessageId: emailId
+					},
+					input: {
+						subject,
+						body,
+						emailFromSignatureId,
+						recipients
+					}
+				})
+			);
 		} else {
 			//create the email
-			await z.mutate.emailMessage.create({
-				metadata: {
-					organizationId: appState.organizationId,
-					emailMessageId: emailId
-				},
-				input: {
-					subject: subject ?? null,
-					body: body ?? null,
-					emailFromSignatureId: emailFromSignatureId ?? null,
-					recipients,
-					previewTextOverride: null,
-					previewTextLock: false,
-					replyToOverride: null
-				}
-			});
+			await z.mutate(
+				mutators.emailMessage.create({
+					metadata: {
+						organizationId: appState.organizationId,
+						emailMessageId: emailId
+					},
+					input: {
+						subject: subject ?? null,
+						body: body ?? null,
+						emailFromSignatureId: emailFromSignatureId ?? null,
+						recipients,
+						previewTextOverride: null,
+						previewTextLock: false,
+						replyToOverride: null
+					}
+				})
+			);
 		}
 	}
 
 	async function handleSend(data: any) {
 		if (!emailId) return;
 
-		await z.mutate.emailMessage.send({
-			metadata: {
-				organizationId: appState.organizationId,
-				emailMessageId: emailId
-			},
-			input: {
-				subject: data.subject,
-				body: data.body
-			}
-		});
+		await z.mutate(
+			mutators.emailMessage.send({
+				metadata: {
+					organizationId: appState.organizationId,
+					emailMessageId: emailId
+				},
+				input: {
+					subject: data.subject,
+					body: data.body
+				}
+			})
+		);
 
 		goto('/communications/email/sent');
 	}
@@ -112,10 +119,12 @@
 		if (window.confirm(t`Are you sure you want to discard this email draft?`)) {
 			if (!emailId) return;
 
-			await z.mutate.emailMessage.delete({
-				id: emailId,
-				organizationId: appState.organizationId
-			});
+			await z.mutate(
+				mutators.emailMessage.delete({
+					id: emailId,
+					organizationId: appState.organizationId
+				})
+			);
 
 			goto('/communications/email/drafts');
 		}

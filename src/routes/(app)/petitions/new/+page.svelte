@@ -10,6 +10,7 @@
 	} from '$lib/schema/petition/petition';
 	import { parse } from 'valibot';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { goto } from '$app/navigation';
 	import { v7 as uuidv7 } from 'uuid';
@@ -17,14 +18,16 @@
 	async function onSubmit(data: CreatePetitionZero | UpdatePetitionZero) {
 		const id = uuidv7();
 		const parsed = parse(createPetitionZero, data);
-		const petition = z.mutate.petition.create({
-			metadata: {
-				petitionId: id,
-				organizationId: appState.organizationId,
-				teamId: appState.activeTeamId
-			},
-			input: parsed
-		});
+		const petition = z.mutate(
+			mutators.petition.create({
+				metadata: {
+					petitionId: id,
+					organizationId: appState.organizationId,
+					teamId: appState.activeTeamId
+				},
+				input: parsed
+			})
+		);
 		await petition.client;
 		await goto(`/petitions/${id}`);
 	}

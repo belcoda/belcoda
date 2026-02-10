@@ -6,6 +6,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { objectAsync, optional } from 'valibot';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 
 	import { phoneNumber } from '$lib/schema/helpers';
@@ -23,15 +24,17 @@
 			phoneNumber: person.phoneNumber || undefined
 		},
 		onSubmit: async (data) => {
-			const response = z.mutate.person.update({
-				metadata: {
-					organizationId: appState.organizationId,
-					personId: person.id
-				},
-				input: {
-					phoneNumber: data.phoneNumber
-				}
-			});
+			const response = z.mutate(
+				mutators.person.update({
+					metadata: {
+						organizationId: appState.organizationId,
+						personId: person.id
+					},
+					input: {
+						phoneNumber: data.phoneNumber
+					}
+				})
+			);
 			try {
 				await response.server;
 				edit = false;

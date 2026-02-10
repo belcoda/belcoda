@@ -21,6 +21,7 @@
 	import { t } from '$lib/index.svelte';
 
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
@@ -58,13 +59,15 @@
 								keywords={[team.name]}
 								value={team.id}
 								onSelect={() => {
-									z.mutate.person.addToTeam({
+								z.mutate(
+									mutators.person.addToTeam({
 										metadata: {
 											organizationId: appState.organizationId,
 											personId: personId,
 											teamId: team.id
 										}
-									});
+									})
+								);
 									closeAndFocusTrigger();
 								}}
 							>

@@ -6,6 +6,7 @@
 
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 	let { person }: { person: ReadPersonZero } = $props();
 	import { t } from '$lib/index.svelte';
@@ -19,15 +20,17 @@
 		onUpload={async (url) => {
 			try {
 				const parsedUrl = parse(urlSchema, url);
-				z.mutate.person.update({
-					metadata: {
-						organizationId: appState.organizationId,
-						personId: person.id
-					},
-					input: {
-						profilePicture: parsedUrl
-					}
-				});
+				z.mutate(
+					mutators.person.update({
+						metadata: {
+							organizationId: appState.organizationId,
+							personId: person.id
+						},
+						input: {
+							profilePicture: parsedUrl
+						}
+					})
+				);
 			} catch (error) {
 				toast.error(t`Could not update profile picture. Please try again.`);
 			}
