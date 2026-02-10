@@ -108,8 +108,11 @@
 
 			await z.mutate(
 				mutators.personImport.triggerQueue({
-					personImportId: importId,
-					organizationId: appState.organizationId
+					metadata: {
+						organizationId: appState.organizationId,
+						importId,
+						importedBy: appState.userId
+					}
 				})
 			);
 
