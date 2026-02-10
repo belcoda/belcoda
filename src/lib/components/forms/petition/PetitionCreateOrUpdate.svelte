@@ -30,10 +30,12 @@
 	} = $props();
 
 	import { generatePetitionTitleAsyncSchema } from '$lib/schema/petition/helpers';
+	/* svelte-ignore state_referenced_locally */
 	const { title, slug } = generatePetitionTitleAsyncSchema(appState.organizationId, petition?.id);
 	import { objectAsync } from 'valibot';
 
 	let { form, data, errors, Errors, Debug } = $state(
+		/* svelte-ignore state_referenced_locally */
 		petition
 			? createForm({
 					schema: objectAsync({
@@ -41,6 +43,7 @@
 						title: title,
 						slug: slug
 					}),
+					/* svelte-ignore state_referenced_locally */
 					initialData: petition,
 					onSubmit: async (data) => {
 						onSubmit(data);

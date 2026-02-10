@@ -116,7 +116,7 @@
 							await authClient.organization.setActive({
 								organizationId: organization.id
 							});
-							appState.setOrganizationId(organization.id);
+							appState.organizationId = organization.id;
 							await goto('/');
 						}}
 					>

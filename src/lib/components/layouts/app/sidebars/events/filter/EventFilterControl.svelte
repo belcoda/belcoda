@@ -2,7 +2,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { type Snippet } from 'svelte';
-	import type { ListPersonsInput } from '$lib/zero/query/person/list';
+	import { t } from '$lib/index.svelte';
 	import type { EventListFilter } from '$lib/zero/query/event/list';
 	let {
 		trigger,
@@ -15,9 +15,7 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
-	const teamList = $derived.by(() =>
-		z.createQuery(queries.team.list(teamsListFilter))
-	);
+	const teamList = $derived.by(() => z.createQuery(queries.team.list(teamsListFilter)));
 
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 

@@ -11,6 +11,7 @@
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	let filter: ListEventSignupsInput = $state({
 		...getListFilter(appState.organizationId),
+		/* svelte-ignore state_referenced_locally */
 		eventId: event.id
 	});
 	const eventSignups = $derived.by(() => {

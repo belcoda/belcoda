@@ -11,18 +11,17 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import { appState } from '$lib/state.svelte';
-	import { env } from '$env/dynamic/public';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { generateWhatsAppSignupLink, getEventLink } from '$lib/utils/events/link';
-	const whatsAppSignupLink = generateWhatsAppSignupLink(event.title, actionCode.id);
+	const whatsAppSignupLink = $derived(generateWhatsAppSignupLink(event.title, actionCode.id));
 	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte';
 	const clipboard = new UseClipboard();
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { dev } from '$app/environment';
 	import { toast } from 'svelte-sonner';
 	const eventSignupPageLink = getEventLink({
+		/* svelte-ignore state_referenced_locally */
 		eventSlug: event.slug,
 		organizationSlug: appState.activeOrganization.data?.slug || ''
 	});

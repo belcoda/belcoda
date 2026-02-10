@@ -20,11 +20,11 @@
 		note,
 		editOpen = $bindable(true)
 	}: { note: ReadPersonNoteWithUserZero; editOpen: boolean } = $props();
-	console.log(note);
 	import { toast } from 'svelte-sonner';
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: updatePersonNoteZero,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			note: note.note
 		},
 		onSubmit: async (data) => {

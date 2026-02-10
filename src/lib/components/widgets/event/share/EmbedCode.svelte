@@ -17,6 +17,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { getEventLink } from '$lib/utils/events/link';
 	const eventLink = getEventLink({
+		/* svelte-ignore state_referenced_locally */
 		eventSlug: event.slug,
 		organizationSlug: appState.activeOrganization.data?.slug || ''
 	});

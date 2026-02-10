@@ -11,6 +11,7 @@
 
 	let filter: PetitionSignatureListFilter = $state({
 		...getListFilter(appState.organizationId),
+		/* svelte-ignore state_referenced_locally */
 		petitionId: petition.id
 	});
 

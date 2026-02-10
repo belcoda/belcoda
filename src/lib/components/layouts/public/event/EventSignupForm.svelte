@@ -58,6 +58,7 @@
 	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
 	import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
 	const { person: personSurveyQuestionsRaw, custom: customSurveyQuestions } = getSurveyQuestions(
+		/* svelte-ignore state_referenced_locally */
 		event.settings.survey.collections[0].questions
 	);
 	const personSurveyQuestions = personSurveyQuestionsRaw.map((item) => item.type);
@@ -99,7 +100,9 @@
 
 	//form helperrs
 
+	/* svelte-ignore state_referenced_locally */
 	const surveySchema = getSurveySchema(event);
+	/* svelte-ignore state_referenced_locally */
 	const form = superForm(formProp, {
 		validators: valibot(surveySchema),
 		dataType: 'json',

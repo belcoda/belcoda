@@ -9,6 +9,7 @@
 	import { renderAddress, isAddressComplete } from '$lib/utils/string/address';
 	import { appState } from '$lib/state.svelte';
 	import { locale } from '$lib/index.svelte';
+	/* svelte-ignore state_referenced_locally */
 	const time = renderEventTime(event.startsAt, event.endsAt, locale.current, event.timezone);
 </script>
 
