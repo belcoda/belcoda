@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { activity, person } from '$lib/schema/drizzle';
 import { type ActivityType } from '$lib/schema/activity/types';
 import { and, eq } from 'drizzle-orm';

@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { sql } from 'drizzle-orm';
 import type { QueryContext } from '$lib/zero/schema';
 

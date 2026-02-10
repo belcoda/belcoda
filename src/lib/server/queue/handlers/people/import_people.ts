@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { personImport } from '$lib/schema/drizzle';
 import pino from '$lib/pino';
 import { eq } from 'drizzle-orm';

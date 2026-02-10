@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { organization, person as personTable } from '$lib/schema/drizzle';
 import { eq, and, sql } from 'drizzle-orm';
 import { getCountryCodeFromPhoneNumber } from '$lib/utils/phone';

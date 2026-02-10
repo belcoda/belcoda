@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import { verifySendSignature } from '$lib/server/api/utils/postmark';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { emailFromSignature } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
@@ -37,9 +37,7 @@ export async function PUT(event) {
 		}
 
 		// Check permissions
-		if (
-			![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(emailFromSignatureRecord.organizationId)
-		) {
+		if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(emailFromSignatureRecord.organizationId)) {
 			return error(403, 'You are not authorized to verify this email signature');
 		}
 

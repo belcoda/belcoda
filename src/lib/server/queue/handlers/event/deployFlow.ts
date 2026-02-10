@@ -1,5 +1,5 @@
 import { event } from '$lib/schema/drizzle';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { convertEventSignupFieldsToFlow } from '$lib/utils/whatsapp/flow_convert';
 import { deployFlow } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import type { WhatsappFlowInternal } from '$lib/schema/whatsapp/flows/schema';

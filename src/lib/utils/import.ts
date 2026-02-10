@@ -1,7 +1,7 @@
 import { parse } from 'fast-csv';
-import { db } from '$lib/server/db';
 import { person } from '$lib/schema/drizzle';
 import pino from '$lib/pino';
+import { drizzle } from '$lib/server/db';
 import { v4 as uuidv4 } from 'uuid';
 import { personSchema, type PersonSchema } from '$lib/schema/person';
 import { parse as valibotParse } from 'valibot';
@@ -69,7 +69,7 @@ export async function parseImportCsv(
 						};
 
 						const validatedPerson = valibotParse(personSchema, personDataWithId);
-						await db.insert(person).values(validatedPerson);
+						await drizzle.insert(person).values(validatedPerson);
 
 						successCount++;
 						log.debug({ row: i + 1 }, 'Person imported successfully');

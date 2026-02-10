@@ -1,5 +1,5 @@
 import { error, fail } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { petition, petitionSignature, organization, person } from '$lib/schema/drizzle';
 import { eq, and, isNull, count, desc } from 'drizzle-orm';
 import pino from '$lib/pino';

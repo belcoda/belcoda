@@ -1,5 +1,5 @@
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 
 export async function generatePreview({
 	type,

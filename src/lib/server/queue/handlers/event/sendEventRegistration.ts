@@ -1,5 +1,5 @@
 import { eventRegistration } from '$lib/server/utils/email/context/transactional/event_reminder_registration';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { eventSignup, organization, event, person, activity } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
 import { type Locale } from '$lib/utils/language';

@@ -1,5 +1,5 @@
 import pino from '$lib/pino';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { person as personTable, organization as organizationTable } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
 import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';

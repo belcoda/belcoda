@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import * as schema from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
 

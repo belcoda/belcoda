@@ -1,4 +1,5 @@
 import { parse } from 'valibot';
+import { db } from '$lib/server/db';
 import { renderValiError } from '$lib/schema/helpers';
 import {
 	incomingMessageSchema,
@@ -7,11 +8,8 @@ import {
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
-
-import {
-	extractActionCode,
-	getActionCodeFromCode
-} from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/action_code';
+import { _getActionCodeUnsafe } from '$lib/server/api/data/action/check';
+import { extractActionCode } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/action_code';
 
 import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
 
@@ -27,7 +25,6 @@ import { attendedEventHelper, signUpForEventHelper } from '$lib/server/api/data/
 import { getDetailsFromMessageByWabaId } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/get_details_from_message';
 import { handleFlowResponse } from '$lib/server/queue/handlers/whatsapp/handlers/flow';
 
-import { getTransaction, type Transaction } from '$lib/server/db/zeroDrizzle';
 import { convertIncomingWhatsAppMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/convert_incoming';
 
 import { v7 as uuidv7 } from 'uuid';
@@ -41,49 +38,81 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 		let organizationId: string | undefined = undefined;
 		let logActivity: boolean = true; //whether to log the activity to the timeline. Some messages (eg: emoji reactions, etc) are not meant to be logged to the timeline.
 		let insertedWhatsAppMessageId: string = uuidv7();
-
-		const tx = await getTransaction();
-
-		switch (parsed.whatsappInboundMessage.type) {
-			case 'text': {
-				const actionCode = extractActionCode(parsed.whatsappInboundMessage.text.body);
-				log.info(
-					{ actionCode, text: parsed.whatsappInboundMessage.text.body },
-					'Extracted action code from message'
-				);
-				if (actionCode) {
-					const actionCodeDetails = await getActionCodeFromCode(actionCode);
-					switch (actionCodeDetails?.type) {
-						case 'event_signup': {
-							//handle event signup
-							const event = await _getEventByIdUnsafe({
-								eventId: actionCodeDetails.referenceId,
-								tx
-							});
-							const flowId = event.settings.whatsappFlowId;
-							if (flowId) {
-								try {
-									await sendFlowMessage({
-										from: parsed.whatsappInboundMessage.to,
-										to: parsed.whatsappInboundMessage.from,
-										flowId: flowId,
-										flowCta: 'Register',
-										headerText: event.title,
-										bodyText: `Complete the registration form to sign up for ${event.title}`,
-										footerText: 'Tap to start registration'
-									});
-									log.info(
-										{
+		await db.transaction(async (tx) => {
+			switch (parsed.whatsappInboundMessage.type) {
+				case 'text': {
+					const actionCode = extractActionCode(parsed.whatsappInboundMessage.text.body);
+					log.info(
+						{ actionCode, text: parsed.whatsappInboundMessage.text.body },
+						'Extracted action code from message'
+					);
+					if (actionCode) {
+						const actionCodeDetails = await _getActionCodeUnsafe({ tx, code: actionCode });
+						switch (actionCodeDetails?.type) {
+							case 'event_signup': {
+								//handle event signup
+								const event = await _getEventByIdUnsafe({
+									eventId: actionCodeDetails.referenceId,
+									tx
+								});
+								const flowId = event.settings.whatsappFlowId;
+								if (flowId) {
+									try {
+										await sendFlowMessage({
+											from: parsed.whatsappInboundMessage.to,
+											to: parsed.whatsappInboundMessage.from,
+											flowId: flowId,
+											flowCta: 'Register',
+											headerText: event.title,
+											bodyText: `Complete the registration form to sign up for ${event.title}`,
+											footerText: 'Tap to start registration'
+										});
+										log.info(
+											{
+												eventId: event.id,
+												flowId,
+												personPhone: parsed.whatsappInboundMessage.from
+											},
+											'Sent flow message for event registration'
+										);
+										logActivity = false;
+										break;
+									} catch (error) {
+										log.error(error, 'Failed to send flow message for event registration');
+										const organization = await getOrganizationByIdUnsafe({
+											organizationId: event.organizationId,
+											tx
+										});
+										const countryCode =
+											safeGetCountryCodeFromPhoneNumber(parsed.whatsappInboundMessage.from) ||
+											organization.country;
+										const eventSignup = await signUpForEventHelper({
 											eventId: event.id,
-											flowId,
-											personPhone: parsed.whatsappInboundMessage.from
-										},
-										'Sent flow message for event registration'
+											personAction: {
+												subscribed: true,
+												country: countryCode,
+												phoneNumber: parsed.whatsappInboundMessage.from,
+												givenName:
+													parsed.whatsappInboundMessage.customerProfile?.name ??
+													parsed.whatsappInboundMessage.from
+											},
+											signupDetails: {
+												channel: { type: 'whatsapp' },
+												customFields: {}
+											},
+											organizationId: event.organizationId,
+											tx
+										});
+										personId = eventSignup.personId;
+										organizationId = event.organizationId;
+										logActivity = false;
+										break;
+									}
+								} else {
+									log.warn(
+										{ eventId: event.id },
+										'No flow deployed for event, registering immediately'
 									);
-									logActivity = false;
-									break;
-								} catch (error) {
-									log.error(error, 'Failed to send flow message for event registration');
 									const organization = await getOrganizationByIdUnsafe({
 										organizationId: event.organizationId,
 										tx
@@ -113,11 +142,13 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									logActivity = false;
 									break;
 								}
-							} else {
-								log.warn(
-									{ eventId: event.id },
-									'No flow deployed for event, registering immediately'
-								);
+							}
+							case 'event_attended': {
+								//handle event attended
+								const event = await _getEventByIdUnsafe({
+									eventId: actionCodeDetails.referenceId,
+									tx
+								});
 								const organization = await getOrganizationByIdUnsafe({
 									organizationId: event.organizationId,
 									tx
@@ -125,7 +156,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 								const countryCode =
 									safeGetCountryCodeFromPhoneNumber(parsed.whatsappInboundMessage.from) ||
 									organization.country;
-								const eventSignup = await signUpForEventHelper({
+								const eventSignup = await attendedEventHelper({
 									eventId: event.id,
 									personAction: {
 										subscribed: true,
@@ -144,157 +175,133 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 								});
 								personId = eventSignup.personId;
 								organizationId = event.organizationId;
-								logActivity = false;
 								break;
 							}
+							default:
+								//log and move on
+								log.warn(actionCodeDetails, 'Unknown action code');
+								break;
 						}
-						case 'event_attended': {
-							//handle event attended
-							const event = await _getEventByIdUnsafe({
-								eventId: actionCodeDetails.referenceId,
-								tx
-							});
-							const organization = await getOrganizationByIdUnsafe({
-								organizationId: event.organizationId,
-								tx
-							});
-							const countryCode =
-								safeGetCountryCodeFromPhoneNumber(parsed.whatsappInboundMessage.from) ||
-								organization.country;
-							const eventSignup = await attendedEventHelper({
-								eventId: event.id,
-								personAction: {
-									subscribed: true,
-									country: countryCode,
-									phoneNumber: parsed.whatsappInboundMessage.from,
-									givenName:
-										parsed.whatsappInboundMessage.customerProfile?.name ??
-										parsed.whatsappInboundMessage.from
-								},
-								signupDetails: {
-									channel: { type: 'whatsapp' },
-									customFields: {}
-								},
-								organizationId: event.organizationId,
-								tx
-							});
-							personId = eventSignup.personId;
-							organizationId = event.organizationId;
-							break;
-						}
-						default:
-							//log and move on
-							log.warn(actionCodeDetails, 'Unknown action code');
-							break;
 					}
-				}
-				break;
-			}
-			case 'image':
-				break;
-			case 'video':
-				break;
-			case 'audio':
-				break;
-			case 'document':
-				break;
-			case 'sticker':
-				break;
-			case 'location':
-				break;
-			case 'button': {
-				break;
-			}
-			case 'interactive': {
-				// interactive can be button_reply or nfm_reply (flow message)
-				if (parsed.whatsappInboundMessage.interactive.type === 'button_reply') {
 					break;
-				} else if (parsed.whatsappInboundMessage.interactive.type === 'nfm_reply') {
-					// Handle flow response messages
-					await handleFlowResponse({
-						flowName: parsed.whatsappInboundMessage.interactive.nfm_reply.name,
-						body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
-						response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
-						from: parsed.whatsappInboundMessage.from,
+				}
+				case 'image':
+					break;
+				case 'video':
+					break;
+				case 'audio':
+					break;
+				case 'document':
+					break;
+				case 'sticker':
+					break;
+				case 'location':
+					break;
+				case 'button': {
+					break;
+				}
+				case 'interactive': {
+					// interactive can be button_reply or nfm_reply (flow message)
+					if (parsed.whatsappInboundMessage.interactive.type === 'button_reply') {
+						break;
+					} else if (parsed.whatsappInboundMessage.interactive.type === 'nfm_reply') {
+						// Handle flow response messages
+						await handleFlowResponse({
+							flowName: parsed.whatsappInboundMessage.interactive.nfm_reply.name,
+							body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
+							response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
+							from: parsed.whatsappInboundMessage.from,
+							tx
+						});
+					}
+					break;
+				}
+				case 'reaction': {
+					// reaction is for emoji reactions
+					logActivity = false;
+					const messageActivity = await _findWhatsAppMessageByWamidIdUnsafe({
+						wamidId: parsed.whatsappInboundMessage.reaction.message_id,
 						tx
 					});
+
+					personId = messageActivity.personId || undefined;
+					organizationId = messageActivity.organizationId;
+					if (messageActivity.personId) {
+						await handleIncomingReaction({
+							messageId: messageActivity.id,
+							personId: messageActivity.personId,
+							phoneNumber: parsed.whatsappInboundMessage.from,
+							emoji: parsed.whatsappInboundMessage.reaction.emoji || null
+						});
+					}
+					break;
 				}
-				break;
+				default:
+					log.warn(parsed, 'Unknown message type');
+					break;
 			}
-			case 'reaction': {
-				// reaction is for emoji reactions
-				logActivity = false;
-				const messageActivity = await _findWhatsAppMessageByWamidIdUnsafe({
-					wamidId: parsed.whatsappInboundMessage.reaction.message_id,
+
+			if (!personId) {
+				throw new Error(
+					'Reached end of incoming message processing and was unable to determine person'
+				);
+			}
+
+			if (!organizationId) {
+				throw new Error(
+					'Reached end of incoming message processing and was unable to determine organization'
+				);
+			}
+
+			if (!organizationId || !personId) {
+				// get organization from wabaId if possible...
+				const { organization, person } = await getDetailsFromMessageByWabaId({
+					wabaId: parsed.whatsappInboundMessage.wabaId,
+					messageId: insertedWhatsAppMessageId,
+					personPhoneNumber: parsed.whatsappInboundMessage.from,
+					personName:
+						parsed.whatsappInboundMessage.customerProfile?.name ??
+						parsed.whatsappInboundMessage.from,
 					tx
 				});
-
-				personId = messageActivity.personId || undefined;
-				organizationId = messageActivity.organizationId;
-				if (messageActivity.personId) {
-					await handleIncomingReaction({
-						messageId: messageActivity.id,
-						personId: messageActivity.personId,
-						phoneNumber: parsed.whatsappInboundMessage.from,
-						emoji: parsed.whatsappInboundMessage.reaction.emoji || null
-					});
-				}
-				break;
+				organizationId = organization.id;
+				personId = person.id;
 			}
-			default:
-				log.warn(parsed, 'Unknown message type');
-				break;
-		}
-
-		if (!personId) {
-			throw new Error(
-				'Reached end of incoming message processing and was unable to determine person'
-			);
-		}
-
-		if (!organizationId) {
-			throw new Error(
-				'Reached end of incoming message processing and was unable to determine organization'
-			);
-		}
-
-		if (!organizationId || !personId) {
-			// get organization from wabaId if possible...
-			const { organization, person } = await getDetailsFromMessageByWabaId({
-				wabaId: parsed.whatsappInboundMessage.wabaId,
-				messageId: insertedWhatsAppMessageId,
-				personPhoneNumber: parsed.whatsappInboundMessage.from,
-				personName:
-					parsed.whatsappInboundMessage.customerProfile?.name ?? parsed.whatsappInboundMessage.from,
-				tx
-			});
-			organizationId = organization.id;
-			personId = person.id;
-		}
-		const whatsappMessage = await createWhatsAppMessage({
-			message: await convertIncomingWhatsAppMessage({
-				inboundMessage: parsed as IncomingMessage,
-				organizationId
-			}),
-			id: insertedWhatsAppMessageId,
-			type: 'incoming_api_message',
-			organizationId,
-			tx
-		});
-
-		// Don't create an activity for reaction messages (we'll add it to existing activity)
-		if (logActivity) {
-			if (!insertedWhatsAppMessageId) {
-				throw new Error('WhatsApp message was not inserted -- cannot create activity');
+			if (!organizationId) {
+				throw new Error(
+					'Reached the end of incoming message processing and was unable to determine organization'
+				);
 			}
-			const activity = await createActivityWhatsAppMessageIncoming({
-				personId,
+			if (!personId) {
+				throw new Error(
+					'Reached the end of incoming message processing and was unable to determine person'
+				);
+			}
+			const whatsappMessage = await createWhatsAppMessage({
+				message: await convertIncomingWhatsAppMessage({
+					inboundMessage: parsed as IncomingMessage,
+					organizationId
+				}),
+				id: insertedWhatsAppMessageId,
+				type: 'incoming_api_message',
 				organizationId,
-				referenceId: insertedWhatsAppMessageId,
 				tx
 			});
-			log.debug(activity, 'Activity created');
-		}
+
+			// Don't create an activity for reaction messages (we'll add it to existing activity)
+			if (logActivity) {
+				if (!insertedWhatsAppMessageId) {
+					throw new Error('WhatsApp message was not inserted -- cannot create activity');
+				}
+				const activity = await createActivityWhatsAppMessageIncoming({
+					personId,
+					organizationId,
+					referenceId: insertedWhatsAppMessageId,
+					tx
+				});
+				log.debug(activity, 'Activity created');
+			}
+		});
 	} catch (err) {
 		const renderedError = renderValiError(err);
 		if (renderedError.isValiError) {
