@@ -3,8 +3,7 @@
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
-	import { listEmailFromSignatures } from '$lib/zero/query/email_from_signature/list';
-	import { readOrganization } from '$lib/zero/query/organizations/read';
+	import queries from '$lib/zero/query/index';
 	import { env } from '$env/dynamic/public';
 	const { PUBLIC_POSTMARK_SENDING_DOMAIN } = env;
 	const postmarkSendingDomain = PUBLIC_POSTMARK_SENDING_DOMAIN || 'belcoda.com';
@@ -12,12 +11,10 @@
 		...getListFilter(appState.organizationId)
 	});
 	const emailFromSignatureList = $derived.by(() =>
-		z.createQuery(listEmailFromSignatures(appState.queryContext, emailFromSignatureListFilter))
+		z.createQuery(queries.emailFromSignature.list(emailFromSignatureListFilter))
 	);
 	const organization = $derived.by(() =>
-		z.createQuery(
-			readOrganization(appState.queryContext, { organizationId: appState.organizationId })
-		)
+		z.createQuery(queries.organization.read({ organizationId: appState.organizationId }))
 	);
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';

@@ -18,15 +18,14 @@
 	let open = $state(false);
 
 	// Teams and Tags
-	import { listTeams } from '$lib/zero/query/team/list';
-	import { listTags } from '$lib/zero/query/tag/list';
+	import queries from '$lib/zero/query/index';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 	const teamList = $derived.by(() =>
-		z.createQuery(listTeams(appState.queryContext, teamsListFilter))
+		z.createQuery(queries.team.list(teamsListFilter))
 	);
 	const personTeamList = $derived.by(() =>
 		z.createQuery(
-			listTeams(appState.queryContext, {
+			queries.team.list({
 				...teamsListFilter,
 				personId: person.id
 			})
@@ -35,15 +34,11 @@
 
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 	const tagList = $derived.by(() =>
-		z.createQuery(
-			listTags(appState.queryContext, {
-				...tagListFilter
-			})
-		)
+		z.createQuery(queries.tag.list({ ...tagListFilter }))
 	);
 	const personTagList = $derived.by(() =>
 		z.createQuery(
-			listTags(appState.queryContext, {
+			queries.tag.list({
 				...tagListFilter,
 				personId: person.id
 			})

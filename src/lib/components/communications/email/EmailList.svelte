@@ -4,7 +4,7 @@
 	import Send from '@lucide/svelte/icons/send';
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
-	import { listEmailMessages } from '$lib/zero/query/email_message/list';
+	import queries from '$lib/zero/query/index';
 	import { formatShortTimestamp } from '$lib/utils/date';
 
 	const { folder }: { folder?: string } = $props();
@@ -40,7 +40,7 @@
 	}));
 
 	const emailsQuery = $derived.by(() =>
-		z.createQuery(listEmailMessages(appState.queryContext, emailFilter))
+		z.createQuery(queries.emailMessage.list(emailFilter))
 	);
 
 	const emails = $derived(emailsQuery.data ?? []);

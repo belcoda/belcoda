@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
-	import { readPetition } from '$lib/zero/query/petition/read';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import queries from '$lib/zero/query/index';
 	const { params } = $props();
 	const petition = $derived.by(() => {
-		return z.createQuery(readPetition(appState.queryContext, { petitionId: params.petitionId }));
+		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
 	import PetitionCreateOrUpdate from '$lib/components/forms/petition/PetitionCreateOrUpdate.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';

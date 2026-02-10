@@ -14,7 +14,7 @@
 	import { v7 as uuidv7 } from 'uuid';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
-	import { readPerson } from '$lib/zero/query/person/read';
+	import queries from '$lib/zero/query/index';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { type ReadPersonZero } from '$lib/schema/person';
 	const personId = uuidv7();
@@ -53,7 +53,7 @@
 			onCreated(personId);
 		}
 	});
-	const foo = $derived.by(() => z.createQuery(readPerson(appState.queryContext, { personId })));
+	const foo = $derived.by(() => z.createQuery(queries.person.read({ personId })));
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import { person } from '$lib/schema/drizzle';
 </script>

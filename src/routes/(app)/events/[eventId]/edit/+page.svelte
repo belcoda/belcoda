@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
-	import { readEvent } from '$lib/zero/query/event/read';
 	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
 	import { appState } from '$lib/state.svelte';
 	const { params } = $props();
 	const event = $derived.by(() => {
-		return z.createQuery(readEvent(appState.queryContext, { eventId: params.eventId }));
+		return z.createQuery(queries.event.read({ eventId: params.eventId }));
 	});
 	import EventCreateOrUpdate from '$lib/components/forms/event/EventCreateOrUpdate.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';

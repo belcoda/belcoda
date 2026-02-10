@@ -3,11 +3,11 @@
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
-	import { listTags } from '$lib/zero/query/tag/list';
+	import queries from '$lib/zero/query/index';
 	let tagListFilter = $state({
 		...getListFilter(appState.organizationId)
 	});
-	const tagList = $derived.by(() => z.createQuery(listTags(appState.queryContext, tagListFilter)));
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';

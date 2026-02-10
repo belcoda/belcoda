@@ -7,17 +7,16 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import { appState } from '$lib/state.svelte';
-	import { readUser } from '$lib/zero/query/user/read';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { z } from '$lib/zero.svelte';
-	import { listMyTeams } from '$lib/zero/query/team/listMyTeams';
+	import queries from '$lib/zero/query/index';
 	import { t } from '$lib/index.svelte';
 	const userQuery = $derived.by(() =>
-		z.createQuery(readUser(appState.queryContext, { userId: appState.userId }))
+		z.createQuery(queries.user.read({ userId: appState.userId }))
 	);
 	const teamQuery = $derived.by(() =>
 		z.createQuery(
-			listMyTeams(appState.queryContext, {
+			queries.team.listMyTeams({
 				userId: appState.userId,
 				organizationId: appState.organizationId
 			})

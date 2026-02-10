@@ -15,22 +15,21 @@
 		hideActivityFilter?: boolean;
 	} = $props();
 
-	import { listTeams } from '$lib/zero/query/team/list';
-	import { listTags } from '$lib/zero/query/tag/list';
-	import { listEvents, type EventListFilter } from '$lib/zero/query/event/list';
+	import type { EventListFilter } from '$lib/zero/query/event/list';
 	import { getTimestampFromCalendarDate, getWeeksFromTodayCalendarDate } from '$lib/utils/date';
 	import { getLocalTimeZone } from '@internationalized/date';
 	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
 	const teamList = $derived.by(() =>
-		z.createQuery(listTeams(appState.queryContext, teamsListFilter))
+		z.createQuery(queries.team.list(teamsListFilter))
 	);
 
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
-	const tagList = $derived.by(() => z.createQuery(listTags(appState.queryContext, tagListFilter)));
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
 
 	const eventListFilter: EventListFilter = $state({
 		...getListFilter(appState.organizationId),
@@ -49,7 +48,7 @@
 	});
 
 	const eventList = $derived.by(() =>
-		z.createQuery(listEvents(appState.queryContext, eventListFilter))
+		z.createQuery(queries.event.list(eventListFilter))
 	);
 
 	import { tick } from 'svelte';

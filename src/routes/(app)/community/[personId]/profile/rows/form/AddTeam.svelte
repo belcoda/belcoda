@@ -20,20 +20,16 @@
 	const { personId }: { personId: string } = $props();
 	import { t } from '$lib/index.svelte';
 
-	import { listTeams } from '$lib/zero/query/team/list';
 	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 	const teamList = $derived.by(() =>
-		z.createQuery(
-			listTeams(appState.queryContext, {
-				...teamsListFilter
-			})
-		)
+		z.createQuery(queries.team.list({ ...teamsListFilter }))
 	);
 	const personTeamList = $derived.by(() =>
 		z.createQuery(
-			listTeams(appState.queryContext, {
+			queries.team.list({
 				...teamsListFilter,
 				personId: personId
 			})

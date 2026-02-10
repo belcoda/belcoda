@@ -10,7 +10,7 @@
 	import PlusCircle from '@lucide/svelte/icons/plus-circle';
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
-	import { listEmailMessages } from '$lib/zero/query/email_message/list';
+	import queries from '$lib/zero/query/index';
 
 	onMount(() => {
 		// Rediect to emails because it's the only module we have so far
@@ -30,11 +30,11 @@
 	});
 
 	const draftsQuery = $derived.by(() =>
-		z.createQuery(listEmailMessages(appState.queryContext, draftFilter))
+		z.createQuery(queries.emailMessage.list(draftFilter))
 	);
 
 	const sentQuery = $derived.by(() =>
-		z.createQuery(listEmailMessages(appState.queryContext, sentFilter))
+		z.createQuery(queries.emailMessage.list(sentFilter))
 	);
 
 	const drafts = $derived(draftsQuery.data ?? []);

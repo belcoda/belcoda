@@ -10,7 +10,8 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { z } from '$lib/zero.svelte';
-	import { listPetitions, type PetitionListFilter } from '$lib/zero/query/petition/list';
+	import queries from '$lib/zero/query/index';
+	import type { PetitionListFilter } from '$lib/zero/query/petition/list';
 	import { page } from '$app/state';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
@@ -22,7 +23,7 @@
 	});
 
 	const petitionList = $derived.by(() =>
-		z.createQuery(listPetitions(appState.queryContext, petitionListFilter))
+		z.createQuery(queries.petition.list(petitionListFilter))
 	);
 </script>
 

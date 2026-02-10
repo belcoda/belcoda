@@ -12,9 +12,10 @@
 	const { params } = $props();
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
-	import { readPerson, type ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
+	import queries from '$lib/zero/query/index';
+	import type { ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
 	const person = $derived.by(() => {
-		return z.createQuery(readPerson(appState.queryContext, { personId: params.personId }));
+		return z.createQuery(queries.person.read({ personId: params.personId }));
 	});
 	import { Button } from '$lib/components/ui/button/index.js';
 

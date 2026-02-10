@@ -3,7 +3,7 @@
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
-	import { listPersonImports } from '$lib/zero/query/person_import/list';
+	import queries from '$lib/zero/query/index';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -24,7 +24,7 @@
 		...getListFilter(appState.organizationId)
 	});
 	const personImportsQuery = $derived.by(() =>
-		z.createQuery(listPersonImports(appState.queryContext, personImportListFilter))
+		z.createQuery(queries.personImport.list(personImportListFilter))
 	);
 
 	const imports = $derived.by(() => {

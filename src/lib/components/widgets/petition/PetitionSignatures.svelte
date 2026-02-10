@@ -5,10 +5,8 @@
 	const { petition }: { petition: ReadPetitionZero } = $props();
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
-	import {
-		listPetitionSignatures,
-		type PetitionSignatureListFilter
-	} from '$lib/zero/query/petition_signature/list';
+	import type { PetitionSignatureListFilter } from '$lib/zero/query/petition_signature/list';
+	import queries from '$lib/zero/query/index';
 	import { type ReadPetitionSignatureZeroWithPerson } from '$lib/schema/petition/petition-signature';
 
 	let filter: PetitionSignatureListFilter = $state({
@@ -17,7 +15,7 @@
 	});
 
 	const petitionSignatures = $derived.by(() => {
-		return z.createQuery(listPetitionSignatures(appState.queryContext, filter));
+		return z.createQuery(queries.petitionSignature.list(filter));
 	});
 
 	let selectedSignatures = $state<ReadPetitionSignatureZeroWithPerson[]>([]);

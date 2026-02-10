@@ -4,7 +4,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { createDefaultEmailMessage } from '$lib/schema/email-message';
-	import { readEmailMessage } from '$lib/zero/query/email_message/read';
+	import queries from '$lib/zero/query/index';
 	import { page } from '$app/state';
 	import { goto, replaceState } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
@@ -18,7 +18,7 @@
 	const emailQuery = $derived.by(() => {
 		if (!emailId) return null;
 		const q = z.createQuery(
-			readEmailMessage(appState.queryContext, {
+			queries.emailMessage.read({
 				emailMessageId: emailId
 			})
 		);

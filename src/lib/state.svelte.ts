@@ -2,11 +2,7 @@ import type { QueryContext } from '$lib/zero/schema';
 import { type ListFilter } from '$lib/schema/helpers';
 
 import { z } from '$lib/zero.svelte';
-import { listOrganizations } from '$lib/zero/query/organizations/list';
-import { listMyTeams } from '$lib/zero/query/team/listMyTeams';
-import { readOrganization } from '$lib/zero/query/organizations/read';
-import { listUsers } from '$lib/zero/query/user/list';
-import { readUser } from '$lib/zero/query/user/read';
+import queries from '$lib/zero/query/index';
 
 const DEFAULT_LIST_FILTER: ListFilter = {
 	organizationId: '',
@@ -32,7 +28,7 @@ class AppState {
 	#queryContext: QueryContext | null = $state(null);
 
 	#organizations = $derived(
-		this.#queryContext ? z.createQuery(listOrganizations(this.#queryContext, {})) : null
+		this.#queryContext ? z.createQuery(queries.organization.list({})) : null
 	);
 	#activeOrganization = $derived.by(() => {
 		if (!this.#organizationId) {
@@ -41,9 +37,7 @@ class AppState {
 		if (!this.#queryContext) {
 			return null;
 		}
-		return z.createQuery(
-			readOrganization(this.#queryContext, { organizationId: this.#organizationId })
-		);
+		return z.createQuery(queries.organization.read({ organizationId: this.#organizationId }));
 	});
 
 	#adminOrgs = $derived(
@@ -65,7 +59,7 @@ class AppState {
 			return null;
 		}
 		return z.createQuery(
-			listMyTeams(this.#queryContext, {
+			queries.team.listMyTeams({
 				userId: this.#userId,
 				organizationId: this.#organizationId
 			})
@@ -76,18 +70,14 @@ class AppState {
 		if (!this.#queryContext || !this.#organizationId) {
 			return null;
 		}
-		return z.createQuery(listUsers(this.#queryContext, getListFilter(this.#organizationId)));
+		return z.createQuery(queries.user.list(getListFilter(this.#organizationId)));
 	});
 
 	#user = $derived.by(() => {
 		if (!this.#queryContext || !this.#userId) {
 			return null;
 		}
-		return z.createQuery(
-			readUser(this.#queryContext, {
-				userId: this.#userId
-			})
-		);
+		return z.createQuery(queries.user.read({ userId: this.#userId }));
 	});
 
 	#role = $derived(this.#activeOrganization?.data?.memberships[0].role ?? null);

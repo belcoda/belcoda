@@ -11,7 +11,8 @@
 	import EventFilter from '$lib/components/layouts/app/sidebars/events/filter/EventFilter.svelte';
 	import { type DateRange } from 'bits-ui';
 	import { z } from '$lib/zero.svelte';
-	import { listEvents, type EventListFilter } from '$lib/zero/query/event/list';
+	import queries from '$lib/zero/query/index';
+	import type { EventListFilter } from '$lib/zero/query/event/list';
 	import {
 		getMonthBoundFromCalendarDate,
 		getTimestampFromCalendarDate,
@@ -68,7 +69,7 @@
 	});
 
 	const eventList = $derived.by(() =>
-		z.createQuery(listEvents(appState.queryContext, { ...eventListFilter, dateRange: dateRange }))
+		z.createQuery(queries.event.list({ ...eventListFilter, dateRange: dateRange }))
 	);
 </script>
 

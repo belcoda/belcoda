@@ -2,18 +2,18 @@
 	import { t } from '$lib/index.svelte';
 	const { params } = $props();
 	import { appState, getListFilter } from '$lib/state.svelte';
-	import { listEventSignups, type ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
+	import type { ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
 	let filter: ListEventSignupsInput = $state({
 		...getListFilter(appState.organizationId),
 		eventId: params.eventId
 	});
 	const eventSignups = $derived.by(() => {
-		return z.createQuery(listEventSignups(appState.queryContext, filter));
+		return z.createQuery(queries.eventSignup.list(filter));
 	});
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
-	import { readEvent } from '$lib/zero/query/event/read';
 	import { ElementSize } from 'runed';
 
 	let tableContainer = $state() as HTMLElement;
@@ -21,7 +21,7 @@
 	import { watch } from 'runed';
 
 	const event = $derived.by(() => {
-		return z.createQuery(readEvent(appState.queryContext, { eventId: params.eventId }));
+		return z.createQuery(queries.event.read({ eventId: params.eventId }));
 	});
 
 	//@svelte-ignore state_referenced_locally

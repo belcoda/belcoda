@@ -2,7 +2,7 @@
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
-	import { listWebhooks } from '$lib/zero/query/webhook/list';
+	import queries from '$lib/zero/query/index';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -23,9 +23,7 @@
 	let webhookListFilter = $state({
 		...getListFilter(appState.organizationId)
 	});
-	const webhookList = $derived.by(() =>
-		z.createQuery(listWebhooks(appState.queryContext, webhookListFilter))
-	);
+	const webhookList = $derived.by(() => z.createQuery(queries.webhook.list(webhookListFilter)));
 
 	let createModalOpen = $state(false);
 	let name = $state('');

@@ -2,11 +2,10 @@
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	const { params } = $props();
-	import { readPetition } from '$lib/zero/query/petition/read';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
+	import queries from '$lib/zero/query/index';
 	const petition = $derived.by(() => {
-		return z.createQuery(readPetition(appState.queryContext, { petitionId: params.petitionId }));
+		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
