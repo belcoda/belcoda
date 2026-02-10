@@ -21,6 +21,7 @@
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			phoneNumber: person.phoneNumber || undefined
 		},
 		onSubmit: async (data) => {

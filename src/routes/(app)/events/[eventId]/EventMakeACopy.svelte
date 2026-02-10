@@ -16,8 +16,11 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { slugify } from '$lib/utils/slug';
 	const newEvent = {
+		/* svelte-ignore state_referenced_locally */
 		...event,
+		/* svelte-ignore state_referenced_locally */
 		title: `${t`Copy of`} ${event.title}`,
+		/* svelte-ignore state_referenced_locally */
 		slug: `copy-of-${event.slug}`,
 		published: false,
 		publishedAt: null,

@@ -9,7 +9,7 @@
 	import { page } from '$app/state';
 	import { goto, replaceState } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
-	import type { FilterGroupType } from '$lib/schema/filter/types';
+	import type { FilterGroupType } from '$lib/schema/person/filter';
 
 	const defaultCreateMode = page.url.searchParams.get('defaultCreateMode') === 'true';
 	replaceState(page.url.pathname, {});

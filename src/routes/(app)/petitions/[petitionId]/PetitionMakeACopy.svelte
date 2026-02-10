@@ -16,8 +16,11 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { slugify } from '$lib/utils/slug';
 	const newPetition = {
+		/* svelte-ignore state_referenced_locally */
 		...petition,
+		/* svelte-ignore state_referenced_locally */
 		title: `${t`Copy of`} ${petition.title}`,
+		/* svelte-ignore state_referenced_locally */
 		slug: `copy-of-${petition.slug}`,
 		published: false,
 		publishedAt: null,

@@ -8,6 +8,7 @@
 	import queries from '$lib/zero/query/index';
 	let filter: ListEventSignupsInput = $state({
 		...getListFilter(appState.organizationId),
+		/* svelte-ignore state_referenced_locally */
 		eventId: params.eventId
 	});
 	const eventSignups = $derived.by(() => {
@@ -57,7 +58,7 @@
 	let customColumns = $state<SurveyQuestion[]>([]);
 
 	import ConfigureColumns from './ConfigureColumns.svelte';
-
+	import { locale } from '$lib/index.svelte';
 	function getCustomColumnLabelById(id: string) {
 		return customColumns.find((column) => column.id === id)?.label;
 	}
@@ -74,7 +75,7 @@
 					row[header] = renderPersonColumn({
 						columnName: header,
 						signup: signup as ReadEventSignupZeroWithPerson,
-						locale: appState.locale
+						locale: locale.current
 					});
 				} else {
 					const typedSignup: ReadEventSignupZeroWithPerson =
@@ -214,18 +215,6 @@
 		{signup.person.position}
 	{:else if column === 'person.workplace'}
 		{signup.person.workplace}
-	{:else if column === 'person.socialMedia'}
-		{signup.person.socialMedia}
-	{:else if column === 'person.mostRecentActivityAt'}
-		{signup.person.mostRecentActivityAt}
-	{:else if column === 'person.mostRecentActivityPreview'}
-		{signup.person.mostRecentActivityPreview}
-	{:else if column === 'person.profilePicture'}
-		{signup.person.profilePicture}
-	{:else if column === 'person.addedFrom'}
-		{signup.person.addedFrom}
-	{:else if column === 'person.preferredLanguage'}
-		{signup.person.preferredLanguage}
 	{:else if column === 'person.region'}
 		{signup.person.region}
 	{:else if column === 'person.postcode'}

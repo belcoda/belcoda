@@ -24,11 +24,17 @@
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			addressLine1: person.addressLine1,
+			/* svelte-ignore state_referenced_locally */
 			addressLine2: person.addressLine2,
+			/* svelte-ignore state_referenced_locally */
 			locality: person.locality,
+			/* svelte-ignore state_referenced_locally */
 			region: person.region,
+			/* svelte-ignore state_referenced_locally */
 			postcode: person.postcode,
+			/* svelte-ignore state_referenced_locally */
 			country: person.country
 		},
 		onSubmit: async (data) => {

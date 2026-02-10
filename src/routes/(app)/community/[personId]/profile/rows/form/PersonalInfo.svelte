@@ -21,7 +21,9 @@
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			gender: person.gender,
+			/* svelte-ignore state_referenced_locally */
 			dateOfBirth: person.dateOfBirth ? new Date(person.dateOfBirth) : null
 		},
 		onSubmit: async (data) => {
@@ -51,6 +53,7 @@
 	import { dateToInputValue, inputValueToDate } from '$lib/utils/date';
 
 	let dateOfBirth = $state(
+		/* svelte-ignore state_referenced_locally */
 		person.dateOfBirth ? dateToInputValue(new Date(person.dateOfBirth)) : null
 	);
 

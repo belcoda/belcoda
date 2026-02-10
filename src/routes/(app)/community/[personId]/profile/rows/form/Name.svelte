@@ -22,7 +22,9 @@
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			givenName: person.givenName,
+			/* svelte-ignore state_referenced_locally */
 			familyName: person.familyName
 		},
 		onSubmit: async (data) => {

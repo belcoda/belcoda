@@ -19,6 +19,7 @@
 	} from '$lib/schema/petition/petition';
 	import { parse } from 'valibot';
 	import { goto } from '$app/navigation';
+	import { appState } from '$lib/state.svelte';
 
 	async function onSubmit(data: CreatePetitionZero | UpdatePetitionZero) {
 		if (!petition.data) return;
