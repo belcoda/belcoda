@@ -12,7 +12,6 @@ export default defineConfig({
 			heuristic: (msg) => {
 				const { details } = msg;
 				if (details.call === 't') {
-					console.log(msg);
 					return true as unknown as 'message'; // the type signature expects 'message' but a boolean is what seems to actually work
 				} else {
 					return false;
@@ -29,7 +28,6 @@ export default defineConfig({
 			heuristic: (msg) => {
 				const { details } = msg;
 				if (details.call === 't') {
-					console.log(msg);
 					return true as unknown as 'message'; // the type signature expects 'message' but a boolean is what seems to actually work
 				} else {
 					return false;

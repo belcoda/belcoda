@@ -6,7 +6,7 @@
 	let edit = $state(false);
 	import { cn } from '$lib/utils';
 	import { formatDate } from '$lib/utils/date';
-	import { renderGender } from '$lib/utils/person';
+	import { renderGender } from '$lib/utils/person/gender/render';
 	import * as Item from '$lib/components/ui/item/index.js';
 	import Building2Icon from '@lucide/svelte/icons/building-2';
 	import BriefcaseIcon from '@lucide/svelte/icons/briefcase';

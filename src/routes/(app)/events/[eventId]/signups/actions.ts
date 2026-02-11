@@ -102,7 +102,7 @@ export function generateStartingColumns(event: ReadEventZero) {
 }
 
 import { renderLocalizedCountryName, type CountryCode } from '$lib/utils/country';
-import { renderGender } from '$lib/utils/person';
+import { renderGender } from '$lib/utils/person/gender/render';
 import type { Locale } from '$lib/utils/language';
 
 export function renderPersonColumn({
