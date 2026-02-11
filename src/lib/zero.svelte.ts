@@ -54,59 +54,9 @@ export const z = new Proxy({} as Z, {
 	}
 });
 
-/* export const z = new Z({
-	cacheURL: publicEnv.PUBLIC_ZERO_SERVER,
-	schema,
-	mutators: createMutators(),
-	kvStore: 'idb',
-	userID: 'anon'
-}); */
-
 declare module '@rocicorp/zero' {
 	interface DefaultTypes {
 		context: QueryContext;
 		schema: Schema;
 	}
 }
-/* 
-function getCookie(name: string): string | null {
-	if (typeof document === 'undefined') {
-		return null;
-	}
-	const cookies = document.cookie.split('; ');
-	for (const cookie of cookies) {
-		const [key, value] = cookie.split('=');
-		if (key === name) return decodeURIComponent(value);
-	}
-	return null;
-}
-
-async function getToken() {
-	try {
-		const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
-		if (!jwt) {
-			//todo: refresh
-			throw new Error('No JWT found');
-		}
-		return jwt;
-	} catch (error) {
-		return null;
-	}
-}
-
-function getAuthData() {
-	try {
-		const jwt = getCookie(publicEnv.PUBLIC_ZERO_AUTH_COOKIE_NAME);
-		if (!jwt) {
-			throw new Error('No JWT found');
-		}
-		const decoded = jwtDecode(jwt);
-		if (!decoded.sub) {
-			throw new Error('No user ID found');
-		}
-		return decoded.sub;
-	} catch (error) {
-		return 'anonymous';
-	}
-}
- */
