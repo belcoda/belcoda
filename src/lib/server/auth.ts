@@ -93,7 +93,7 @@ export function buildBetterAuth(localeInput: string) {
 			},
 			crossSubDomainCookies: {
 				enabled: true,
-				domain: `.${publicEnv.PUBLIC_ROOT_DOMAIN}`
+				domain: `.belcoda.com`
 			},
 			cookiePrefix: 'belcoda',
 			ipAddress: {
