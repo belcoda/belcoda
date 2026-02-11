@@ -7,9 +7,18 @@ import { wuchale } from '@wuchale/vite-plugin';
 import { playwright } from '@vitest/browser-playwright';
 
 import dotenv from 'dotenv';
+import path from 'path';
 dotenv.config();
 
 export default defineConfig({
+	resolve: {
+		alias: {
+			'@noble/ciphers': path.resolve(
+				__dirname,
+				'node_modules/better-auth/node_modules/@noble/ciphers'
+			)
+		}
+	},
 	plugins: [
 		sentrySvelteKit({
 			org: 'belcoda',
