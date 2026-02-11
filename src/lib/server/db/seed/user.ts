@@ -1,13 +1,8 @@
 import { user as userTable } from '$lib/schema/drizzle';
 import { faker } from '@faker-js/faker';
 
-const {
-	OWNER_EMAIL_ADDRESS,
-	OWNER_FAMILY_NAME,
-	OWNER_GIVEN_NAME,
-	OWNER_PROFILE_PIC_URL,
-	OWNER_USER_ID_PLAYWRIGHT
-} = process.env;
+const { OWNER_EMAIL_ADDRESS, OWNER_FAMILY_NAME, OWNER_GIVEN_NAME, OWNER_PROFILE_PIC_URL } =
+	process.env;
 
 const EMAIL = OWNER_EMAIL_ADDRESS!.split(',');
 const GIVEN_NAME = OWNER_GIVEN_NAME!.split(',');
@@ -37,7 +32,7 @@ export function generateUsers(): (typeof userTable.$inferInsert)[] {
 	const users: (typeof userTable.$inferInsert)[] = [];
 	for (let i = 0; i < EMAIL.length; i++) {
 		const user: typeof userTable.$inferInsert = {
-			id: i === 0 ? OWNER_USER_ID_PLAYWRIGHT! : faker.string.uuid(),
+			id: faker.string.uuid(),
 			name: `${GIVEN_NAME[i]} ${FAMILY_NAME[i]}`,
 			email: EMAIL[i],
 			emailVerified: true,
