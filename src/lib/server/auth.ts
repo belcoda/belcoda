@@ -74,6 +74,8 @@ export function buildBetterAuth(localeInput: string) {
 			'https://staging.belcoda.com',
 			'http://localhost:5173',
 			'https://belcoda-zero.fly.dev',
+			'https://zero.staging.belcoda.com',
+			'https://zero.app.belcoda.com',
 			`.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 		],
 		session: {
