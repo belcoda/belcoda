@@ -8,7 +8,7 @@
 
 	import { renderLocalizedCountryName } from '$lib/utils/country';
 	import { getLocalizedLanguageName, type LanguageCode } from '$lib/utils/language';
-	import { renderGender } from '$lib/utils/person';
+	import { renderGender } from '$lib/utils/person/gender/render';
 </script>
 
 {#snippet renderFilter(text: string, image: Snippet)}
