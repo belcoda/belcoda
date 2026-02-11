@@ -1,0 +1,67 @@
+name: Fly Deploy Staging
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      # Install Node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24' # or your preferred version
+
+      - name: Install dependencies
+        run: npm ci --include=dev
+
+      # Start proxy and run drizzle stuff
+      - name: Generate and run Drizzle migrations
+        run: |
+          flyctl proxy 5432 -a belcodadb-staging &
+          PROXY_PID=$!
+          sleep 5
+
+          npx drizzle-kit migrate
+          npm run prepare
+          npm run db:seed
+
+          kill $PROXY_PID
+        env:
+          DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          OWNER_EMAIL_ADDRESS: ${{ vars.SEED_OWNER_EMAIL_ADDRESSES }} # comma separated list of email addresses
+          OWNER_GIVEN_NAME: ${{ vars.SEED_OWNER_GIVEN_NAMES }} # comma separated list of names
+          OWNER_FAMILY_NAME: ${{ vars.SEED_OWNER_FAMILY_NAMES }} # comma separated list of names
+          OWNER_PROFILE_PIC_URL: ${{ vars.SEED_OWNER_PROFILE_PIC_URLS }} # comma separated list of urls
+          PUBLIC_DEFAULT_WHATSAPP_NUMBER: ${{ vars.PUBLIC_DEFAULT_WHATSAPP_NUMBER }}
+          DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID: ${{ vars.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID }}
+          POSTMARK_SENDING_DOMAIN: ${{ vars.POSTMARK_SENDING_DOMAIN }}
+          PUBLIC_DEFAULT_WORKSPACE_LOGO: ${{ vars.PUBLIC_DEFAULT_WORKSPACE_LOGO }}
+          OWNER_WORKSPACE_ID_PLAYWRIGHT: ${{ secrets.OWNER_WORKSPACE_ID_PLAYWRIGHT }}
+          OWNER_PERSON_ID_PLAYWRIGHT: ${{ secrets.OWNER_PERSON_ID_PLAYWRIGHT }}
+          PLAYWRIGHT_SESSION_ID: ${{ secrets.PLAYWRIGHT_SESSION_ID }}
+
+      # Generate permissions.sql (from schema.ts)
+      - name: Generate permission SQL
+        run: npx zero-deploy-permissions --schema-path='./src/lib/z/schema.ts' --output-file='./deploy/permissions.sql'
+
+      # Apply permission SQL
+      - name: Apply permission SQL to DB
+        run: (cat ./deploy/permissions.sql; echo "\q") | flyctl pg connect -a belcodadb-staging -d belcoda_staging
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      # App deploy
+      - run: flyctl deploy -c deploy/fly.staging.toml --remote-only --build-arg PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN_STAGING }} --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN_STAGING }} --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      # Zero deploy
+      - run: flyctl deploy -c deploy/fly.zero.staging.toml --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
