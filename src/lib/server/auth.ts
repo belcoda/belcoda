@@ -13,8 +13,6 @@ import { getRequestEvent } from '$app/server';
 import { openAPI, apiKey, organization } from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
-import { dev } from '$app/environment';
-
 import { stripe } from '@better-auth/stripe';
 
 import Stripe from 'stripe';
@@ -90,6 +88,10 @@ export function buildBetterAuth(localeInput: string) {
 				generateId: () => {
 					return uuidv7();
 				}
+			},
+			crossSubDomainCookies: {
+				enabled: true,
+				domain: `.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 			},
 			cookiePrefix: 'belcoda',
 			ipAddress: {
