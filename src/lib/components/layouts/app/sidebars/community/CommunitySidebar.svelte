@@ -9,11 +9,12 @@
 	import { type ReadPersonZero } from '$lib/schema/person';
 	import { type PersonAddedFrom } from '$lib/schema/person/meta';
 	import { z } from '$lib/zero.svelte';
-	import { listPersons } from '$lib/zero/query/person/list';
+	import queries from '$lib/zero/query/index';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { type ActivityPreviewPayload } from '$lib/schema/activity/types';
+	import { t } from '$lib/index.svelte';
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		tagId: null,
@@ -21,7 +22,7 @@
 		mostRecentActivity: null
 	});
 	const personList = $derived.by(() =>
-		z.createQuery(listPersons(appState.queryContext, personListFilter))
+		z.createQuery(queries.person.list(personListFilter))
 	);
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
 </script>
@@ -36,7 +37,7 @@
 	<Sidebar.Root collapsible="none" class="flex w-full flex-1">
 		<Sidebar.Header class="gap-3.5 border-b p-4">
 			<div class="flex w-full items-center justify-between">
-				<div class="text-2xl font-bold text-foreground">Community</div>
+				<div class="text-2xl font-bold text-foreground">{t`Community`}</div>
 				<ActionsMenu />
 			</div>
 			<PersonFilter bind:filter={personListFilter} />
@@ -45,7 +46,7 @@
 			<Sidebar.Group class="p-0">
 				<Sidebar.GroupContent class="p-0">
 					{#if personList.details.type === 'error'}
-						<div class="px-2"><ErrorAlert>Error loading persons</ErrorAlert></div>
+						<div class="px-2"><ErrorAlert>{t`Error loading persons`}</ErrorAlert></div>
 					{/if}
 					{#each personList.data as person (person.id)}
 						{@render personItem(person)}

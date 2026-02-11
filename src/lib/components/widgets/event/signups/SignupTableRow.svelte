@@ -2,6 +2,7 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	import { type ReadEventZero } from '$lib/schema/event';
+	import { t } from '$lib/index.svelte';
 	let {
 		signup,
 		event,
@@ -26,13 +27,13 @@
 	</Table.Cell>
 	<Table.Cell>
 		{#if signup.status === 'attended'}
-			<Badge variant="default">Attended</Badge>
+			<Badge variant="default">{t`Attended`}</Badge>
 		{:else if signup.status === 'noshow'}
-			<Badge variant="destructive">No show</Badge>
+			<Badge variant="destructive">{t`No show`}</Badge>
 		{:else if signup.status === 'notattending'}
-			<Badge variant="secondary" class="opacity-70">Not attending</Badge>
+			<Badge variant="secondary" class="opacity-70">{t`Not attending`}</Badge>
 		{:else}
-			<Badge variant="outline">Signed up</Badge>
+			<Badge variant="outline">{t`Signed up`}</Badge>
 		{/if}
 	</Table.Cell>
 	<Table.Cell class="text-end">

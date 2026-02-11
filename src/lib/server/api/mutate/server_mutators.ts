@@ -1,32 +1,69 @@
-import type { MutatorParams } from '$lib/zero/schema';
+import { defineMutators } from '@rocicorp/zero';
+
 import * as person from '$lib/server/api/mutate/person';
 import * as personNote from '$lib/server/api/mutate/person_note';
+import * as personImport from '$lib/server/api/mutate/person_import';
 import * as eventSignup from '$lib/server/api/mutate/event_signup';
 import * as event from '$lib/server/api/mutate/event';
+import * as petition from '$lib/server/api/mutate/petition';
+import * as petitionSignature from '$lib/server/api/mutate/petition_signature';
+import * as emailFromSignature from '$lib/server/api/mutate/email_from_signature';
+import * as emailMessage from '$lib/server/api/mutate/email_message';
+import * as organization from '$lib/server/api/mutate/organization';
+import * as webhook from '$lib/server/api/mutate/webhook';
 
-export function createMutators(params: MutatorParams) {
-	return {
-		person: {
-			create: person.createPerson(params),
-			update: person.updatePerson(params),
-			delete: person.deletePerson(params),
-			addToTeam: person.addPersonToTeam(params),
-			removeFromTeam: person.removePersonFromTeam(params),
-			addTag: person.addPersonTag(params),
-			removeTag: person.removePersonTag(params)
-		},
-		personNote: {
-			create: personNote.createPersonNote(params),
-			update: personNote.updatePersonNote(params),
-			delete: personNote.deletePersonNote(params)
-		},
-		event: {
-			create: event.createEvent(params),
-			update: event.updateEvent(params)
-		},
-		eventSignup: {
-			create: eventSignup.createEventSignup(params),
-			update: eventSignup.updateEventSignup(params)
-		}
-	};
-}
+export const mutators = defineMutators({
+	person: {
+		create: person.createPerson,
+		update: person.updatePerson,
+		delete: person.deletePerson,
+		addToTeam: person.addPersonToTeam,
+		removeFromTeam: person.removePersonFromTeam,
+		addTag: person.addPersonTag,
+		removeTag: person.removePersonTag
+	},
+	personNote: {
+		create: personNote.createPersonNote,
+		update: personNote.updatePersonNote,
+		delete: personNote.deletePersonNote
+	},
+	event: {
+		create: event.createEvent,
+		update: event.updateEvent
+	},
+	eventSignup: {
+		create: eventSignup.createEventSignup,
+		update: eventSignup.updateEventSignup
+	},
+	petition: {
+		create: petition.createPetition,
+		update: petition.updatePetition
+	},
+	petitionSignature: {
+		create: petitionSignature.createPetitionSignature,
+		update: petitionSignature.updatePetitionSignature
+	},
+	emailFromSignature: {
+		create: emailFromSignature.createEmailFromSignature,
+		update: emailFromSignature.updateEmailFromSignature,
+		delete: emailFromSignature.deleteEmailFromSignature,
+		verify: emailFromSignature.verifyEmailFromSignature,
+		setDefault: emailFromSignature.setDefaultSignature,
+		updateSystemFromIdentity: emailFromSignature.updateSystemFromIdentity
+	},
+	emailMessage: {
+		create: emailMessage.createEmailMessage,
+		update: emailMessage.updateEmailMessage,
+		delete: emailMessage.deleteEmailMessage,
+		send: emailMessage.sendEmailMessage
+	},
+	organization: {
+		update: organization.updateOrganization,
+		updateWhatsappSettings: organization.updateOrganizationWhatsappSettings,
+		updateTheme: organization.updateTheme
+	},
+	webhook: {
+		create: webhook.createWebhook,
+		delete: webhook.deleteWebhook
+	}
+});

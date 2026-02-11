@@ -18,21 +18,19 @@
 	}
 
 	const { personId }: { personId: string } = $props();
+	import { t } from '$lib/index.svelte';
 
-	import { listTeams } from '$lib/zero/query/team/list';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 	const teamList = $derived.by(() =>
-		z.createQuery(
-			listTeams(appState.queryContext, {
-				...teamsListFilter
-			})
-		)
+		z.createQuery(queries.team.list({ ...teamsListFilter }))
 	);
 	const personTeamList = $derived.by(() =>
 		z.createQuery(
-			listTeams(appState.queryContext, {
+			queries.team.list({
 				...teamsListFilter,
 				personId: personId
 			})
@@ -44,16 +42,16 @@
 	<Popover.Trigger bind:ref={triggerRef}>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline" class="gap-2" role="combobox" aria-expanded={open}>
-				Add
+				{t`Add`}
 				<ChevronDownIcon class="size-4" />
 			</Button>
 		{/snippet}
 	</Popover.Trigger>
 	<Popover.Content class="p-0">
 		<Command.Root>
-			<Command.Input autofocus placeholder="Filter teams..." />
+			<Command.Input autofocus placeholder={t`Filter teams...`} />
 			<Command.List>
-				<Command.Empty class="text-sm text-muted-foreground">No teams found.</Command.Empty>
+				<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty>
 				<Command.Group>
 					{#each teamList.data as team (team.id)}
 						{#if !personTeamList.data.some((pt) => pt.id === team.id)}
@@ -61,13 +59,15 @@
 								keywords={[team.name]}
 								value={team.id}
 								onSelect={() => {
-									z.mutate.person.addToTeam({
+								z.mutate(
+									mutators.person.addToTeam({
 										metadata: {
 											organizationId: appState.organizationId,
 											personId: personId,
 											teamId: team.id
 										}
-									});
+									})
+								);
 									closeAndFocusTrigger();
 								}}
 							>

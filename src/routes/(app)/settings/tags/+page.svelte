@@ -1,15 +1,17 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
-	import { listTags } from '$lib/zero/query/tag/list';
+	import queries from '$lib/zero/query/index';
 	let tagListFilter = $state({
 		...getListFilter(appState.organizationId)
 	});
-	const tagList = $derived.by(() => z.createQuery(listTags(appState.queryContext, tagListFilter)));
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
 </script>
 
 <ContentLayout rootLink="/settings">
@@ -22,11 +24,11 @@
 	</Card.Root>
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<h1>Tags</h1>
+			<H2>{t`Tags`}</H2>
 			<ResponsiveModal>
-				<h1>Add Tag</h1>
+				<h1>{t`Add Tag`}</h1>
 				{#snippet trigger()}
-					<Button variant="outline">Add Tag</Button>
+					<Button variant="outline">{t`Add Tag`}</Button>
 				{/snippet}
 			</ResponsiveModal>
 		</div>

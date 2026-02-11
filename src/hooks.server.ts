@@ -1,4 +1,5 @@
-import type { Handle, ServerInit, RequestEvent } from '@sveltejs/kit';
+import * as Sentry from '@sentry/sveltekit';
+import type { Handle, RequestEvent } from '@sveltejs/kit';
 
 import { env } from '$env/dynamic/public';
 const { PUBLIC_ROOT_DOMAIN } = env;
@@ -49,9 +50,9 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 		event.url.pathname.startsWith('/logout') ||
 		event.url.pathname.startsWith('/api/docs') ||
 		event.url.pathname.startsWith('/verify-email') ||
-		event.url.pathname.startsWith('/api/utils/zero') ||
 		event.url.pathname.startsWith('/api/auth') || //this is for the better-auth api which handles its own authentication
-		event.url.pathname.startsWith('/webhooks')
+		event.url.pathname.startsWith('/webhooks') ||
+		event.url.pathname.startsWith('/sentry-example-page')
 	) {
 		log.debug(`Handling public route: ${event.url.pathname}`);
 
@@ -128,7 +129,7 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 					}
 				});
 				/* event.url.searchParams.delete('authToken'); //kill the token so it can't be used again
-				log.debug({ url: event.url.toString() }, '[DEBUG] Token deleted from search params'); */
+																log.debug({ url: event.url.toString() }, '[DEBUG] Token deleted from search params'); */
 				log.debug(
 					{ session, time: new Date().getTime() },
 					'[DEBUG] Session verified from one time token'
@@ -212,8 +213,10 @@ const handleLocale: Handle = async ({ event, resolve }) => {
 };
 
 export const handle = sequence(
+	Sentry.sentryHandle(),
 	handleLocale,
 	handleSecurityHeaders,
 	handlebetterAuth,
 	handleRequest
 );
+export const handleError = Sentry.handleErrorWithSentry();

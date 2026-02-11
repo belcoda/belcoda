@@ -10,7 +10,7 @@ import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 // it should return false otherwise
 
 export function personTeamReadPermissions(
-	builder: ExpressionBuilder<Schema, 'personTeam'>,
+	builder: ExpressionBuilder<'personTeam', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, or, cmp, exists } = builder;

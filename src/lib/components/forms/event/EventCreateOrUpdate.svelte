@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib';
+	import { t } from '$lib/index.svelte';
 	import SvelteLexical from '$lib/components/ui/wysiwyg/SvelteLexical.svelte';
 
 	import { useDebounce } from 'runed';
@@ -35,9 +35,11 @@
 		onSubmit: (data: CreateEventZero | UpdateEventZero) => void | Promise<void>;
 	} = $props();
 	import { generateEventTitleAsyncSchema } from '$lib/schema/event/helpers';
+	/* svelte-ignore state_referenced_locally */
 	const { title, slug } = generateEventTitleAsyncSchema(appState.organizationId, event?.id);
 	import { objectAsync } from 'valibot';
 	let { form, data, errors, Errors, Debug, helpers } = $state(
+		/* svelte-ignore state_referenced_locally */
 		event
 			? createForm({
 					schema: objectAsync({
@@ -74,7 +76,7 @@
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 
 	import DateTimeSelect from '$lib/components/forms/event/DateTimeSelect.svelte';
-	import StandardInformation from '$lib/components/forms/event/StandardInformation.svelte';
+	import EventSignupSurvey from '$lib/components/forms/event/EventSignupSurvey.svelte';
 	import { defaultEventSettings } from '$lib/schema/event/settings';
 
 	function setSlug(slug: string) {
@@ -108,7 +110,7 @@
 	</Card.Root>
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>Location</Card.Title>
+			<Card.Title>{t`Location`}</Card.Title>
 		</Card.Header>
 		<Card.Content class="space-y-6">
 			{@render locationTabs()}
@@ -116,9 +118,9 @@
 	</Card.Root>
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>Feature image</Card.Title>
+			<Card.Title>{t`Feature image`}</Card.Title>
 			<Card.Description
-				>This event will be displayed on the event page and in notifications and shared links.</Card.Description
+				>{t`This event will be displayed on the event page and in notifications and shared links.`}</Card.Description
 			>
 		</Card.Header>
 		<Card.Content class="space-y-6">
@@ -132,19 +134,19 @@
 	</Card.Root>
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>Event page</Card.Title>
+			<Card.Title>{t`Event page`}</Card.Title>
 		</Card.Header>
 		<Card.Content class="space-y-6">
-			<SvelteLexical />
+			<SvelteLexical bind:value={$data.description} />
 		</Card.Content>
 	</Card.Root>
 	{#if $data.settings && $data.settings.survey}
 		<Card.Root>
 			<Card.Header>
-				<Card.Title>Survey</Card.Title>
+				<Card.Title>{t`Survey`}</Card.Title>
 			</Card.Header>
 			<Card.Content class="space-y-6">
-				<StandardInformation bind:form bind:data bind:errors />
+				<EventSignupSurvey bind:form bind:data bind:errors />
 			</Card.Content>
 		</Card.Root>
 	{/if}
@@ -155,12 +157,12 @@
 	<Form.Field {form} name="title" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Title</Form.Label>
+				<Form.Label>{t`Title`}</Form.Label>
 				<InputGroup.Root>
 					<InputGroup.Input
 						bind:value={$data.title}
 						{...props}
-						placeholder="Title"
+						placeholder={t`Title`}
 						oninput={useDebounce(
 							() => {
 								if (!form.isTainted('slug')) {
@@ -181,10 +183,10 @@
 						<InputGroup.Addon align="block-end" class="flex items-center justify-end gap-2">
 							<InputGroup.Text>
 								<LinkIcon class="size-4" /><span class="font-mono text-xs"
-									>http{dev ? '' : 's'}://{appState.activeOrganization.data
+									>http{dev ? '' : 's'}://{appState.activeOrganization?.data
 										?.slug}.{PUBLIC_ROOT_DOMAIN}/events/{$data.slug}</span
 								>
-								<ResponsiveModal title="Edit event link" bind:open={editSlugOpen}>
+								<ResponsiveModal title={t`Edit event link`} bind:open={editSlugOpen}>
 									{#snippet trigger()}
 										<InputGroup.Button type="button">Edit</InputGroup.Button>
 									{/snippet}
@@ -196,14 +198,14 @@
 													bind:value={$data.slug}
 													{...props}
 													class="font-mono"
-													placeholder="Slug"
+													placeholder={t`Slug`}
 												/>
 											{/snippet}
 										</Form.Control>
 										<Form.Description>
-											This is a URL-friendly identifier for the event and is part of the event link.
+											{t`This is a URL-friendly identifier for the event and is part of the event link.
 											It must be unique and can only contain lowercase letters, numbers, and
-											hyphens.
+											hyphens.`}
 										</Form.Description>
 										<Form.FieldErrors />
 									</Form.Field>
@@ -216,7 +218,7 @@
 											onclick={() => {
 												form.validate('slug');
 												editSlugOpen = false;
-											}}>Save</Button
+											}}>{t`Save`}</Button
 										>
 									{/snippet}
 								</ResponsiveModal>
@@ -234,12 +236,12 @@
 	<Form.Field {form} name="shortDescription" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Description</Form.Label>
+				<Form.Label>{t`Description`}</Form.Label>
 				<InputGroup.Root>
 					<InputGroup.Textarea
 						bind:value={$data.shortDescription}
 						{...props}
-						placeholder="Description"
+						placeholder={t`Description`}
 						class="min-h-[80px]"
 					/>
 					{#if $data.description && $data.description.length > 0}
@@ -257,8 +259,8 @@
 {#snippet locationTabs()}
 	<Tabs.Root value="physical" class="w-full">
 		<Tabs.List>
-			<Tabs.Trigger value="physical"><MapPinIcon class="size-4" /> In person</Tabs.Trigger>
-			<Tabs.Trigger value="virtual"><VideoIcon class="size-4" /> Virtual</Tabs.Trigger>
+			<Tabs.Trigger value="physical"><MapPinIcon class="size-4" /> {t`In person`}</Tabs.Trigger>
+			<Tabs.Trigger value="virtual"><VideoIcon class="size-4" /> {t`Virtual`}</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="physical" class="mt-4 space-y-6">
 			{@render addressBlock()}
@@ -275,12 +277,12 @@
 			<Form.Field {form} name="addressLine1">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Address line 1</Form.Label>
+						<Form.Label>{t`Address line 1`}</Form.Label>
 						<InputGroup.Root>
 							<InputGroup.Input
 								bind:value={$data.addressLine1}
 								{...props}
-								placeholder="Address line 1"
+								placeholder={t`Address line 1`}
 							/>
 						</InputGroup.Root>
 					{/snippet}
@@ -291,12 +293,12 @@
 			<Form.Field {form} name="addressLine2">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Address line 2 (optional)</Form.Label>
+						<Form.Label>{t`Address line 2 (optional)`}</Form.Label>
 						<InputGroup.Root>
 							<InputGroup.Input
 								bind:value={$data.addressLine2}
 								{...props}
-								placeholder="Address line 2"
+								placeholder={t`Address line 2`}
 							/>
 						</InputGroup.Root>
 					{/snippet}
@@ -306,9 +308,9 @@
 		<Form.Field {form} name="locality">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>City/town</Form.Label>
+					<Form.Label>{t`City/town`}</Form.Label>
 					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.locality} {...props} placeholder="City/town" />
+						<InputGroup.Input bind:value={$data.locality} {...props} placeholder={t`City/town`} />
 					</InputGroup.Root>
 				{/snippet}
 			</Form.Control>
@@ -316,9 +318,9 @@
 		<Form.Field {form} name="region">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Region/state</Form.Label>
+					<Form.Label>{t`Region/state`}</Form.Label>
 					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.region} {...props} placeholder="Region/state" />
+						<InputGroup.Input bind:value={$data.region} {...props} placeholder={t`Region/state`} />
 					</InputGroup.Root>
 				{/snippet}
 			</Form.Control>
@@ -326,9 +328,9 @@
 		<Form.Field {form} name="postcode">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Postcode</Form.Label>
+					<Form.Label>{t`Postcode`}</Form.Label>
 					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.postcode} {...props} placeholder="Postcode" />
+						<InputGroup.Input bind:value={$data.postcode} {...props} placeholder={t`Postcode`} />
 					</InputGroup.Root>
 				{/snippet}
 			</Form.Control>
@@ -336,9 +338,9 @@
 		<Form.Field {form} name="country">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Country</Form.Label>
+					<Form.Label>{t`Country`}</Form.Label>
 					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.country} {...props} placeholder="Country" />
+						<InputGroup.Input bind:value={$data.country} {...props} placeholder={t`Country`} />
 					</InputGroup.Root>
 				{/snippet}
 			</Form.Control>
@@ -350,9 +352,9 @@
 	<Form.Field {form} name="onlineLink">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Online link</Form.Label>
+				<Form.Label>{t`Online link`}</Form.Label>
 				<InputGroup.Root>
-					<InputGroup.Input bind:value={$data.onlineLink} {...props} placeholder="Online link" />
+					<InputGroup.Input bind:value={$data.onlineLink} {...props} placeholder={t`Online link`} />
 					<InputGroup.Addon>
 						{#if $data.onlineLink && getMeetingPlatform($data.onlineLink) !== 'other'}
 							<img

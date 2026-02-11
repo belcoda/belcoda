@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ListPersonsInput } from '$lib/zero/query/person/list';
 	const {
 		mostRecentActivity,
@@ -56,5 +57,5 @@
 	src={null}
 	avatarTitle={avatarTitle() ?? '?'}
 	onRemove={() => onRemove()}
-	title={text() ?? 'Unknown activity filter'}
+	title={text() ?? t`Unknown activity filter`}
 />

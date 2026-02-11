@@ -22,22 +22,24 @@
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { getTimeAgo } from '$lib/utils/time';
-	const timeAgo = getTimeAgo(appState.locale);
+	import { locale, t } from '$lib/index.svelte';
+	const timeAgo = getTimeAgo(locale.current);
 	import PersonNote from '$lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte';
 	import PersonNoteForm from '$lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte';
 
-	import { listPersonNotes } from '$lib/zero/query/person_note/list';
+	import queries from '$lib/zero/query/index';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import { z } from '$lib/zero.svelte';
 	const notes = $derived.by(() =>
 		z.createQuery(
-			listPersonNotes(appState.queryContext, {
+			queries.personNote.list({
 				...getListFilter(appState.organizationId),
 				personId: person.id
 			})
 		)
 	);
+
 	import XIcon from '@lucide/svelte/icons/x';
 </script>
 
@@ -50,7 +52,7 @@
 	<Drawer.Content>
 		<Drawer.Header class="border-b">
 			<div class="mb-1 flex items-center justify-between">
-				<h2 class="text-xl font-medium">Notes</h2>
+				<h2 class="text-xl font-medium">{t`Notes`}</h2>
 				<Drawer.Close class={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
 					><XIcon class="size-4" /></Drawer.Close
 				>
@@ -74,8 +76,10 @@
 							<Empty.Media variant="icon">
 								<MessageCircleIcon />
 							</Empty.Media>
-							<Empty.Title>No notes found</Empty.Title>
-							<Empty.Description>Add a note to share information with the team</Empty.Description>
+							<Empty.Title>{t`No notes found`}</Empty.Title>
+							<Empty.Description
+								>{t`Add a note to share information with the team`}</Empty.Description
+							>
 						</Empty.Header>
 					</Empty.Root>
 				</div>

@@ -1,7 +1,8 @@
 import { organization as orgTable, emailFromSignature } from '$lib/schema/drizzle';
-import { env } from '$env/dynamic/private';
-const { POSTMARK_SENDING_DOMAIN } = env;
-import { db } from '$lib/server/db';
+import { env as publicEnv } from '$env/dynamic/public';
+const { PUBLIC_POSTMARK_SENDING_DOMAIN } = publicEnv;
+const postmarkSendingDomain = PUBLIC_POSTMARK_SENDING_DOMAIN || 'belcoda.com';
+import { drizzle } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 export async function getEmailSignature({
 	emailFromSignatureId,
@@ -14,10 +15,10 @@ export async function getEmailSignature({
 		return {
 			name: organization.settings.email.systemFromIdentity.name || organization.name,
 			replyTo: organization.settings.email.systemFromIdentity.replyTo,
-			emailAddress: `${organization.slug}@${POSTMARK_SENDING_DOMAIN}`
+			emailAddress: `${organization.slug}@${postmarkSendingDomain}`
 		};
 	}
-	const emailSignature = await db.query.emailFromSignature.findFirst({
+	const emailSignature = await drizzle.query.emailFromSignature.findFirst({
 		where: eq(emailFromSignature.id, emailFromSignatureId)
 	});
 	if (!emailSignature) {

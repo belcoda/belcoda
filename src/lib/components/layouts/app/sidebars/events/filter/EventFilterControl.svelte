@@ -2,27 +2,24 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { type Snippet } from 'svelte';
-	import { type ListPersonsInput } from '$lib/zero/query/person/list';
+	import { t } from '$lib/index.svelte';
+	import type { EventListFilter } from '$lib/zero/query/event/list';
 	let {
 		trigger,
 		filter = $bindable()
 	}: { trigger: Snippet<[{ props: Record<string, unknown> }]>; filter: EventListFilter } = $props();
 
-	import { listTeams } from '$lib/zero/query/team/list';
 	import type { ListFilter } from '$lib/schema/helpers';
-	import { listTags } from '$lib/zero/query/tag/list';
-	import { listEvents, type EventListFilter } from '$lib/zero/query/event/list';
 	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
-	const teamList = $derived.by(() =>
-		z.createQuery(listTeams(appState.queryContext, teamsListFilter))
-	);
+	const teamList = $derived.by(() => z.createQuery(queries.team.list(teamsListFilter)));
 
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
-	const tagList = $derived.by(() => z.createQuery(listTags(appState.queryContext, tagListFilter)));
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
 
 	import { tick } from 'svelte';
 	let open = $state(false);
@@ -48,12 +45,13 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end">
 		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>Teams</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubTrigger>{t`Teams`}</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent>
 				<Command.Root value={filter.teamId ?? ''}>
-					<Command.Input autofocus placeholder="Filter teams..." />
+					<Command.Input autofocus placeholder={t`Filter teams...`} />
 					<Command.List>
-						<Command.Empty class="text-sm text-muted-foreground">No teams found.</Command.Empty>
+						<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty
+						>
 						<Command.Group>
 							{#each teamList.data as team (team.id)}
 								<Command.Item
@@ -74,12 +72,12 @@
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>
 		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>Tags</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubTrigger>{t`Tags`}</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent>
 				<Command.Root value={filter.tagId ?? ''}>
-					<Command.Input autofocus placeholder="Filter tags..." />
+					<Command.Input autofocus placeholder={t`Filter tags...`} />
 					<Command.List>
-						<Command.Empty class="text-sm text-muted-foreground">No tags found.</Command.Empty>
+						<Command.Empty class="text-sm text-muted-foreground">{t`No tags found.`}</Command.Empty>
 						<Command.Group>
 							{#each tagList.data as tag (tag.id)}
 								<Command.Item
@@ -105,7 +103,7 @@
 		</DropdownMenu.Sub>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Label>Event type</DropdownMenu.Label>
+			<DropdownMenu.Label>{t`Event type`}</DropdownMenu.Label>
 			<DropdownMenu.CheckboxItem
 				checked={filter.eventType === 'online'}
 				onCheckedChange={(checked) => {
@@ -114,7 +112,7 @@
 					} else {
 						filter.eventType = null;
 					}
-				}}>Online</DropdownMenu.CheckboxItem
+				}}>{t`Online`}</DropdownMenu.CheckboxItem
 			>
 			<DropdownMenu.CheckboxItem
 				checked={filter.eventType === 'in-person'}
@@ -124,12 +122,12 @@
 					} else {
 						filter.eventType = null;
 					}
-				}}>In-person</DropdownMenu.CheckboxItem
+				}}>{t`In-person`}</DropdownMenu.CheckboxItem
 			>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Label>Status</DropdownMenu.Label>
+			<DropdownMenu.Label>{t`Status`}</DropdownMenu.Label>
 			<DropdownMenu.CheckboxItem
 				checked={filter.status === 'draft'}
 				onCheckedChange={(checked) => {
@@ -138,7 +136,7 @@
 					} else {
 						filter.status = null;
 					}
-				}}>Draft</DropdownMenu.CheckboxItem
+				}}>{t`Draft`}</DropdownMenu.CheckboxItem
 			>
 			<DropdownMenu.CheckboxItem
 				checked={filter.status === 'published'}
@@ -148,7 +146,16 @@
 					} else {
 						filter.status = null;
 					}
-				}}>Published</DropdownMenu.CheckboxItem
+				}}>{t`Published`}</DropdownMenu.CheckboxItem
+			>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.CheckboxItem
+				checked={filter.hasSignups ?? false}
+				onCheckedChange={(checked) => {
+					filter.hasSignups = checked;
+				}}>{t`Has signups`}</DropdownMenu.CheckboxItem
 			>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>

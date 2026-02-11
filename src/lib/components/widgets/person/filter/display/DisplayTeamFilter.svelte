@@ -1,10 +1,9 @@
 <script lang="ts">
 	const { teamId, onRemove }: { teamId: string; onRemove: () => void } = $props();
 
-	import { readTeam } from '$lib/zero/query/team/read';
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
-	const team = $derived.by(() => z.createQuery(readTeam(appState.queryContext, { teamId })));
+	import queries from '$lib/zero/query/index';
+	const team = $derived.by(() => z.createQuery(queries.team.read({ teamId })));
 	import DismissableAvatarBadge from '$lib/components/ui/custom-badge/dismissable-avatar-badge.svelte';
 </script>
 

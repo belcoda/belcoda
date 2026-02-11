@@ -6,9 +6,11 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { optional, objectAsync } from 'valibot';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
+	import { t } from '$lib/index.svelte';
 
 	const schema = objectAsync({
 		addressLine1: optional(personSchema.entries.addressLine1),
@@ -22,33 +24,41 @@
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			addressLine1: person.addressLine1,
+			/* svelte-ignore state_referenced_locally */
 			addressLine2: person.addressLine2,
+			/* svelte-ignore state_referenced_locally */
 			locality: person.locality,
+			/* svelte-ignore state_referenced_locally */
 			region: person.region,
+			/* svelte-ignore state_referenced_locally */
 			postcode: person.postcode,
+			/* svelte-ignore state_referenced_locally */
 			country: person.country
 		},
 		onSubmit: async (data) => {
-			const response = z.mutate.person.update({
-				metadata: {
-					organizationId: appState.organizationId,
-					personId: person.id
-				},
-				input: {
-					addressLine1: data.addressLine1,
-					addressLine2: data.addressLine2,
-					locality: data.locality,
-					region: data.region,
-					postcode: data.postcode,
-					country: data.country
-				}
-			});
+			const response = z.mutate(
+				mutators.person.update({
+					metadata: {
+						organizationId: appState.organizationId,
+						personId: person.id
+					},
+					input: {
+						addressLine1: data.addressLine1,
+						addressLine2: data.addressLine2,
+						locality: data.locality,
+						region: data.region,
+						postcode: data.postcode,
+						country: data.country
+					}
+				})
+			);
 			try {
 				await response.server;
 				edit = false;
 			} catch (error) {
-				toast.error('Could not update address. Please check that the address is valid.');
+				toast.error(t`Could not update address. Please check that the address is valid.`);
 			}
 		}
 	});
@@ -131,8 +141,10 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<div class="mt-3 flex items-center justify-end gap-2">
-		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>Cancel</Button>
-		<Button type="submit" size="sm">Save</Button>
+		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}
+			>{t`Cancel`}</Button
+		>
+		<Button type="submit" size="sm">{t`Save`}</Button>
 	</div>
 	<Debug {data} />
 </form>

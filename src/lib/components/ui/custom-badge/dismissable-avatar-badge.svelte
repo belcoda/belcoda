@@ -54,8 +54,11 @@
 		pink: 'hover:bg-pink-500/20',
 		gray: 'hover:bg-gray-500/20'
 	};
+	/* svelte-ignore state_referenced_locally */
 	const buttonColorClass = buttonColor[color];
+	/* svelte-ignore state_referenced_locally */
 	const avatarColorClass = avatarColor[color];
+	/* svelte-ignore state_referenced_locally */
 	const colorClass = colors[color];
 </script>
 

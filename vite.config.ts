@@ -1,3 +1,4 @@
+import { sentrySvelteKit } from '@sentry/sveltekit';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
@@ -5,8 +6,30 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { wuchale } from '@wuchale/vite-plugin';
 import { playwright } from '@vitest/browser-playwright';
 
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config();
+
 export default defineConfig({
-	plugins: [sveltekit(), tailwindcss(), wuchale('wuchale.config.ts'), devtoolsJson()],
+	resolve: {
+		alias: {
+			'@noble/ciphers': path.resolve(
+				__dirname,
+				'node_modules/better-auth/node_modules/@noble/ciphers'
+			)
+		}
+	},
+	plugins: [
+		sentrySvelteKit({
+			org: 'belcoda',
+			project: 'belcoda-belcoda-prod',
+			authToken: process.env.SENTRY_AUTH_TOKEN
+		}),
+		sveltekit(),
+		tailwindcss(),
+		wuchale('wuchale.config.ts'),
+		devtoolsJson()
+	],
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

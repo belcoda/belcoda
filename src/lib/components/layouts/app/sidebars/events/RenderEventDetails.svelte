@@ -8,7 +8,9 @@
 	import { renderEventTime } from '$lib/utils/date';
 	import { renderAddress, isAddressComplete } from '$lib/utils/string/address';
 	import { appState } from '$lib/state.svelte';
-	const time = renderEventTime(event.startsAt, event.endsAt, appState.locale, event.timezone);
+	import { locale } from '$lib/index.svelte';
+	/* svelte-ignore state_referenced_locally */
+	const time = renderEventTime(event.startsAt, event.endsAt, locale.current, event.timezone);
 </script>
 
 <div class="flex items-center gap-1 text-muted-foreground">
@@ -37,7 +39,7 @@
 				region: event.region,
 				postcode: event.postcode,
 				country: event.country,
-				locale: appState.locale
+				locale: locale.current
 			})}
 		</div>
 	</div>

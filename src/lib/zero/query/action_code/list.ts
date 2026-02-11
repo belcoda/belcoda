@@ -1,9 +1,8 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
-import { builder, type Schema } from '$lib/zero/schema';
+import { defineQuery } from '@rocicorp/zero';
+import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
-import { array, type InferOutput, object, nullable, optional, picklist } from 'valibot';
-import { listFilter, parseSchema, type ListFilter, uuid, unixTimestamp } from '$lib/schema/helpers';
+import { array, type InferOutput, object, nullable, optional } from 'valibot';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { readActionCodeZero, actionCodeType } from '$lib/schema/action-code';
 
 export const inputSchema = object({
@@ -13,16 +12,13 @@ export const inputSchema = object({
 export type EventListFilter = InferOutput<typeof inputSchema>;
 
 export function listActionCodesQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.actionCode
+	let q = builder.actionCode
 		.where('organizationId', '=', input.organizationId)
 		.where('referenceId', '=', input.referenceId!)
 		.where('deletedAt', 'IS', null)
@@ -30,12 +26,8 @@ export function listActionCodesQuery({
 	return q;
 }
 
-export const listActionCodes = syncedQueryWithContext(
-	'listActionCodes',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listActionCodesQuery({ ctx, input: filter });
-	}
-);
+export const listActionCodes = defineQuery(inputSchema, ({ args, ctx }) => {
+	return listActionCodesQuery({ ctx, input: args });
+});
 
 export const outputSchema = array(readActionCodeZero);

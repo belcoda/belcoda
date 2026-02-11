@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { type ReadEventZero } from '$lib/schema/event';
 	import { type ReadActionCodeZero } from '$lib/schema/action-code';
+	import { type ReadOrganizationZero } from '$lib/schema/organization';
 	let { event, actionCode }: { event: ReadEventZero; actionCode: ReadActionCodeZero } = $props();
+	import { t } from '$lib/index.svelte';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
@@ -10,37 +12,42 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import { appState } from '$lib/state.svelte';
-	import { env } from '$env/dynamic/public';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	const whatsAppSignupLink = $derived.by(() => {
-		return `https://wa.me/${appState.activeOrganization.data?.settings.whatsApp.number || env.PUBLIC_DEFAULT_WHATSAPP_NUMBER}/?text=${encodeURIComponent(`Send to check in to ${event.title} [#${actionCode.id}] (do not edit this message)`)}`;
-	});
+	import { generateWhatsAppSignupLink, getEventLink } from '$lib/utils/events/link';
+	const whatsAppSignupLink = $derived(
+		generateWhatsAppSignupLink({
+			eventTitle: event.title,
+			whatsAppNumber: appState.activeOrganization?.data?.settings.whatsApp?.number,
+			actionCode: actionCode.id
+		})
+	);
 	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte';
 	const clipboard = new UseClipboard();
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { dev } from '$app/environment';
 	import { toast } from 'svelte-sonner';
-	const eventSignupPageLink = $derived.by(() => {
-		return `http${dev ? '' : 's'}://${appState.activeOrganization.data?.slug}.${env.PUBLIC_ROOT_DOMAIN}/events/${event.slug}`;
+	const eventSignupPageLink = getEventLink({
+		/* svelte-ignore state_referenced_locally */
+		eventSlug: event.slug,
+		organizationSlug: appState.activeOrganization.data?.slug || ''
 	});
 </script>
 
 <div class="grid w-full max-w-md gap-4">
-	<div class="text-sm text-muted-foreground">Share this event with your audience</div>
+	<div class="text-sm text-muted-foreground">{t`Share this event with your audience`}</div>
 	<div class="space-y-2">
-		<Label>Event signup page link</Label>
+		<Label>{t`Event signup page link`}</Label>
 		<InputGroup.Root>
 			<InputGroup.Input value={eventSignupPageLink} readonly />
 			<InputGroup.Addon align="inline-end">
 				<InputGroup.Button
-					aria-label="Copy"
-					title="Copy"
+					aria-label={t`Copy`}
+					title={t`Copy`}
 					size="icon-xs"
 					onclick={() => {
 						clipboard.copy(eventSignupPageLink);
-						toast.success(`Copied to clipboard`);
+						toast.success(t`Copied to clipboard`);
 					}}
 				>
 					{#if clipboard.copied}
@@ -53,17 +60,17 @@
 		</InputGroup.Root>
 	</div>
 	<div class="space-y-2">
-		<Label>WhatsApp signup link</Label>
+		<Label>{t`WhatsApp signup link`}</Label>
 		<InputGroup.Root>
 			<InputGroup.Input value={whatsAppSignupLink} readonly />
 			<InputGroup.Addon align="inline-end">
 				<InputGroup.Button
-					aria-label="Copy"
-					title="Copy"
+					aria-label={t`Copy`}
+					title={t`Copy`}
 					size="icon-xs"
 					onclick={() => {
 						clipboard.copy(whatsAppSignupLink);
-						toast.success(`Copied to clipboard`);
+						toast.success(t`Copied to clipboard`);
 					}}
 				>
 					{#if clipboard.copied}
@@ -81,12 +88,12 @@
 {#snippet qrCode()}
 	<Collapsible.Root class="space-y-2">
 		<div class="flex items-center justify-between space-x-4">
-			<h4 class="text-sm font-semibold">View WhatsApp signup QR code</h4>
+			<h4 class="text-sm font-semibold">{t`View WhatsApp signup QR code`}</h4>
 			<Collapsible.Trigger
 				class={buttonVariants({ variant: 'ghost', size: 'sm', class: 'w-9 p-0' })}
 			>
 				<ChevronsUpDownIcon />
-				<span class="sr-only">Toggle</span>
+				<span class="sr-only">{t`Toggle`}</span>
 			</Collapsible.Trigger>
 		</div>
 		<Collapsible.Content class="space-y-2">
@@ -95,7 +102,7 @@
 					<Skeleton class="aspect-square size-24" />
 				</div>
 			{:then qrCode}
-				<img src={qrCode} alt="WhatsApp checkin link" class="mx-auto" />
+				<img src={qrCode} alt={t`WhatsApp checkin link`} class="mx-auto" />
 				<Button
 					variant="outline"
 					class="w-full"
@@ -106,7 +113,7 @@
 						link.click();
 					}}
 				>
-					<DownloadIcon /> Download QR code</Button
+					<DownloadIcon /> {t`Download QR code`}</Button
 				>
 			{/await}
 		</Collapsible.Content>

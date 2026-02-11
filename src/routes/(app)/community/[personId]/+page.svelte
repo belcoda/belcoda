@@ -5,11 +5,10 @@
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
 	import UserSearchIcon from '@lucide/svelte/icons/user-search';
 	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
 	const { params } = $props();
-	import { appState } from '$lib/state.svelte';
-	import { readPerson } from '$lib/zero/query/person/read';
 	const person = $derived.by(() => {
-		return z.createQuery(readPerson(appState.queryContext, { personId: params.personId }));
+		return z.createQuery(queries.person.read({ personId: params.personId }));
 	});
 	import RenderPerson from '$lib/components/widgets/render/RenderPerson.svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';

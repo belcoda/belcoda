@@ -3,6 +3,7 @@ import { organization as organizationTable } from '$lib/schema/drizzle';
 import { slugifyUnderscore } from '$lib/utils/slug';
 import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { faker } from '@faker-js/faker';
+import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 
 const { OWNER_EMAIL_ADDRESS, OWNER_ORGANIZATION_NAME, OWNER_ORGANIZATION_SLUG } = process.env;
 
@@ -26,19 +27,7 @@ export function generateOrganization({
 		createdAt: faker.date.recent({ days: 30 }),
 		updatedAt: faker.date.recent({ days: 20 }),
 		balance: 10000,
-		settings: {
-			email: {
-				systemFromIdentity: {
-					name: OWNER_ORGANIZATION_NAME!,
-					replyTo: firstOwnerEmail!
-				},
-				defaultFromSignatureId: null
-			},
-			whatsApp: {
-				number: null,
-				wabaId: null
-			}
-		}
+		settings: defaultOrganizationSettings()
 	};
 	return organization;
 }

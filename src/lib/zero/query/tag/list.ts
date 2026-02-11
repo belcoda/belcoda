@@ -1,7 +1,6 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object, optional, nullable } from 'valibot';
 import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
@@ -14,16 +13,13 @@ export const inputSchema = object({
 export type ListTagsInput = InferOutput<typeof inputSchema>;
 
 export function listTagsQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.tag
+	let q = builder.tag
 		.where((expr) => tagReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
@@ -34,16 +30,12 @@ export function listTagsQuery({
 	return q;
 }
 
-export const listTags = syncedQueryWithContext(
-	'listTags',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listTagsQuery({ ctx, input: filter });
-	}
-);
+export const listTags = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listTagsQuery({ ctx, input: args });
+});
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'tag'>,
+	builder: ExpressionBuilder<'tag', Schema>,
 	{ filter }: { filter: ListTagsInput }
 ) {
 	const isDeleted = filter.isDeleted ?? false;

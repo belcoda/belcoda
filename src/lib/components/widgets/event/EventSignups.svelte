@@ -3,16 +3,19 @@
 
 	import { type ReadEventZero } from '$lib/schema/event';
 	const { event }: { event: ReadEventZero } = $props();
+	import { t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
-	import { listEventSignups, type ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
+	import type { ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
+	import queries from '$lib/zero/query/index';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	let filter: ListEventSignupsInput = $state({
 		...getListFilter(appState.organizationId),
+		/* svelte-ignore state_referenced_locally */
 		eventId: event.id
 	});
 	const eventSignups = $derived.by(() => {
-		return z.createQuery(listEventSignups(appState.queryContext, filter));
+		return z.createQuery(queries.eventSignup.list(filter));
 	});
 	let selectedEventSignups = $state<ReadEventSignupZeroWithPerson[]>([]);
 
@@ -38,38 +41,38 @@
 					<DropdownMenu.Trigger>
 						<Button variant="outline" size="sm">
 							{#if !filter.status}
-								All signups
+								{t`All signups`}
 							{/if}
 							{#if filter.status === 'attended'}
-								Attended
+								{t`Attended`}
 							{/if}
 							{#if filter.status === 'noshow'}
-								No show
+								{t`No show`}
 							{/if}
 							{#if filter.status === 'notattending'}
-								Not attending
+								{t`Not attending`}
 							{/if}
 							{#if filter.status === 'signup'}
-								Signed up
+								{t`Signed up`}
 							{/if}
 							<ChevronDownIcon /></Button
 						>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
 						<DropdownMenu.CheckboxItem onclick={() => (filter.status = undefined)}
-							>All signups</DropdownMenu.CheckboxItem
+							>{t`All signups`}</DropdownMenu.CheckboxItem
 						>
 						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'attended')}
-							>Attended</DropdownMenu.CheckboxItem
+							>{t`Attended`}</DropdownMenu.CheckboxItem
 						>
 						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'noshow')}
-							>No show</DropdownMenu.CheckboxItem
+							>{t`No show`}</DropdownMenu.CheckboxItem
 						>
 						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'notattending')}
-							>Not attending</DropdownMenu.CheckboxItem
+							>{t`Not attending`}</DropdownMenu.CheckboxItem
 						>
 						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'signup')}
-							>Signed up</DropdownMenu.CheckboxItem
+							>{t`Signed up`}</DropdownMenu.CheckboxItem
 						>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
@@ -94,5 +97,5 @@
 	</Card.Content>
 </Card.Root>
 
-{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> Add signup</Button
+{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> {t`Add signup`}</Button
 	>{/snippet}

@@ -9,7 +9,6 @@
 		avatarImageClass?: string;
 	};
 	import { z } from '$lib/zero.svelte';
-	import { appState } from '$lib/state.svelte';
 	import { cn } from '$lib/utils.js';
 	const {
 		person: personProp,
@@ -18,7 +17,7 @@
 		avatarClass,
 		avatarImageClass
 	}: Props = $props();
-	import { readPerson } from '$lib/zero/query/person/read';
+	import queries from '$lib/zero/query/index';
 	const person = $derived.by(() => {
 		if (personProp) {
 			return {
@@ -26,10 +25,11 @@
 				data: personProp
 			};
 		} else {
-			return z.createQuery(readPerson(appState.queryContext, { personId }));
+			return z.createQuery(queries.person.read({ personId }));
 		}
 	});
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { t } from '$lib/index.svelte';
 </script>
 
 {#if person.details.type === 'unknown'}
@@ -41,7 +41,7 @@
 		</div>
 	</div>
 {:else if person.details.type === 'error'}
-	Error loading person
+	{t`Error loading person`}
 {:else if person.details.type === 'complete' && person.data}
 	<div class="flex items-center gap-2">
 		<div>

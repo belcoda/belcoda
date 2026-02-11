@@ -269,6 +269,6 @@ export function renderLocalizedCountryName(
 }
 
 export function isValidCountryCode(countryCode: string): boolean {
-	return countryCodes.includes(countryCode as CountryCode);
+	return countryCodes.includes(countryCode.toUpperCase() as CountryCode);
 }
 export const defaultCountryCode: CountryCode = 'US';

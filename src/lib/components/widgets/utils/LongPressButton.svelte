@@ -1,11 +1,18 @@
 <script lang="ts">
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
+	import { type Snippet } from 'svelte';
 	let {
 		duration = 1500,
 		disabled = false,
-		onComplete = () => {}
-	}: { duration?: number; disabled?: boolean; onComplete: () => void | Promise<void> } = $props();
+		onComplete = () => {},
+		children
+	}: {
+		duration?: number;
+		disabled?: boolean;
+		onComplete: () => void | Promise<void>;
+		children: Snippet;
+	} = $props();
 
 	let pressing = $state(false);
 	let progress = $state(0); // 0 → 1
@@ -70,10 +77,10 @@
 	<span
 		class="pointer-events-none absolute inset-0 bg-destructive/20"
 		style="width: {progress * 100}%"
-	/>
+	></span>
 
 	<!-- label -->
 	<span class="relative z-10">
-		<slot>Delete</slot>
+		{@render children?.()}
 	</span>
 </button>

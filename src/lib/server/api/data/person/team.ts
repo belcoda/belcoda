@@ -1,0 +1,85 @@
+import type { ServerTransaction } from '@rocicorp/zero';
+import { type QueryContext, builder } from '$lib/zero/schema';
+import { parse } from 'valibot';
+
+import {
+	addPersonToTeamMutatorSchemaZero,
+	type AddPersonToTeamMutatorSchemaZero
+} from '$lib/schema/person';
+import {
+	removePersonFromTeamMutatorSchemaZero,
+	type RemovePersonFromTeamMutatorSchemaZero
+} from '$lib/schema/person';
+import { personTeam } from '$lib/schema/drizzle';
+import { and, eq } from 'drizzle-orm';
+import { personReadPermissions } from '$lib/zero/query/person/permissions';
+import { teamReadPermissions } from '$lib/zero/query/team/permissions';
+
+import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
+
+export async function addPersonToTeam({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: AddPersonToTeamMutatorSchemaZero;
+}) {
+	const parsed = parse(addPersonToTeamMutatorSchemaZero, args);
+	const personRecord = await tx.run(
+		builder.person
+			.where('id', '=', parsed.metadata.personId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => personReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!personRecord) {
+		throw new Error('Person not found');
+	}
+
+	// make sure we have permissions for the team
+	const teamRecord = await tx.run(
+		builder.team
+			.where('id', '=', args.metadata.teamId)
+			.where('organizationId', '=', args.metadata.organizationId)
+			.where((expr) => teamReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!teamRecord) {
+		throw new Error('Team not found');
+	}
+
+	await tx.dbTransaction.wrappedTransaction.insert(personTeam).values({
+		personId: parsed.metadata.personId,
+		teamId: parsed.metadata.teamId,
+		organizationId: parsed.metadata.organizationId,
+		createdAt: new Date()
+	});
+}
+
+export async function removePersonFromTeam({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: RemovePersonFromTeamMutatorSchemaZero;
+}) {
+	const parsed = parse(removePersonFromTeamMutatorSchemaZero, args);
+	await getOrganizationByIdForAdminOrOwner({
+		organizationId: parsed.metadata.organizationId,
+		ctx,
+		tx
+	});
+	await tx.dbTransaction.wrappedTransaction
+		.delete(personTeam)
+		.where(
+			and(
+				eq(personTeam.personId, parsed.metadata.personId),
+				eq(personTeam.teamId, parsed.metadata.teamId),
+				eq(personTeam.organizationId, parsed.metadata.organizationId)
+			)
+		);
+}

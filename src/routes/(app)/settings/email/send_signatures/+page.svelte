@@ -1,0 +1,481 @@
+<script lang="ts">
+	import { t } from '$lib/index.svelte';
+	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
+	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { getListFilter, appState } from '$lib/state.svelte';
+	import queries from '$lib/zero/query/index';
+	import { env } from '$env/dynamic/public';
+	const { PUBLIC_POSTMARK_SENDING_DOMAIN } = env;
+	const postmarkSendingDomain = PUBLIC_POSTMARK_SENDING_DOMAIN || 'belcoda.com';
+	let emailFromSignatureListFilter = $state({
+		...getListFilter(appState.organizationId)
+	});
+	const emailFromSignatureList = $derived.by(() =>
+		z.createQuery(queries.emailFromSignature.list(emailFromSignatureListFilter))
+	);
+	const organization = $derived.by(() =>
+		z.createQuery(queries.organization.read({ organizationId: appState.organizationId }))
+	);
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import PlusIcon from '@lucide/svelte/icons/plus';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import Badge from '$lib/components/ui/colorbadge/badge.svelte';
+	import { Badge as ShadcnBadge } from '$lib/components/ui/badge/index.js';
+	import { Avatar, AvatarFallback } from '$lib/components/ui/avatar/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import InfoIcon from '@lucide/svelte/icons/info';
+	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-ccw';
+	import TrashIcon from '@lucide/svelte/icons/trash';
+	import LoaderIcon from '@lucide/svelte/icons/loader';
+	import PencilIcon from '@lucide/svelte/icons/pencil';
+	import SystemSignature from './_components/SystemSignature.svelte';
+	import CreateModal from './_components/CreateModal.svelte';
+	import EditModal from './_components/EditModal.svelte';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import { toast } from 'svelte-sonner';
+
+	let loadingArr: string[] = $state([]);
+
+	async function verifyEmailFromSignature(emailFromSignatureId: string) {
+		loadingArr.push(emailFromSignatureId);
+		try {
+			await z.mutate(
+				mutators.emailFromSignature.verify({
+					metadata: {
+						organizationId: appState.organizationId,
+						emailFromSignatureId
+					}
+				})
+			);
+			toast.success(t`Email signature verification status updated`);
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : t`Failed to verify email signature`;
+			toast.error(errorMessage);
+		} finally {
+			loadingArr = loadingArr.filter((id) => id !== emailFromSignatureId);
+		}
+	}
+
+	async function deleteEmailFromSignature(emailFromSignatureId: string) {
+		if (window.confirm(t`Are you sure you want to delete this email signature?`)) {
+			try {
+				await z.mutate(
+					mutators.emailFromSignature.delete({
+						metadata: {
+							organizationId: appState.organizationId,
+							emailFromSignatureId
+						}
+					})
+				);
+				toast.success(t`Email signature deleted successfully`);
+			} catch (error) {
+				const errorMessage =
+					error instanceof Error ? error.message : t`Failed to delete email signature`;
+				toast.error(errorMessage);
+			}
+		}
+	}
+
+	const systemEmailAddress = $derived(
+		organization.data ? `${organization.data.slug}@${postmarkSendingDomain}` : ''
+	);
+
+	const defaultSignatureId = $derived(
+		organization.data?.settings.email.defaultFromSignatureId || null
+	);
+
+	const signatureOptions = $derived.by(() => {
+		const options: { value: string; label: string }[] = [
+			{
+				value: '__system__',
+				label: t`System (${organization.data?.settings.email.systemFromIdentity.name || systemEmailAddress})`
+			}
+		];
+
+		if (emailFromSignatureList.data) {
+			for (const sig of emailFromSignatureList.data) {
+				options.push({
+					value: sig.id,
+					label: `${sig.name} <${sig.emailAddress}>`
+				});
+			}
+		}
+
+		return options;
+	});
+
+	const computedSelectedValue = $derived(
+		organization.data ? defaultSignatureId || '__system__' : '__system__'
+	);
+
+	let selectedSignatureValue = $state<string>('__system__');
+	let updatingDefault = $state(false);
+	const displayedSelectedSignatureValue = $derived(
+		updatingDefault ? selectedSignatureValue : computedSelectedValue
+	);
+
+	async function updateDefaultSignature(signatureId: string) {
+		updatingDefault = true;
+		try {
+			if (!organization.data) return;
+			const actualId = signatureId === '__system__' ? null : signatureId;
+			await z.mutate(
+				mutators.emailFromSignature.setDefault({
+					metadata: {
+						organizationId: appState.organizationId
+					},
+					input: {
+						defaultFromSignatureId: actualId
+					}
+				})
+			);
+			toast.success(t`Default send signature updated successfully`);
+		} catch (err) {
+			const errorMessage =
+				err instanceof Error ? err.message : t`Failed to update default send signature`;
+			toast.error(errorMessage);
+		} finally {
+			updatingDefault = false;
+		}
+	}
+</script>
+
+<ContentLayout rootLink="/settings">
+	<Alert.Root>
+		<AlertCircleIcon />
+		<Alert.Title>{t`Email from signatures`}</Alert.Title>
+		<Alert.Description>
+			<p>
+				{t`Email from signatures are the names and email addresses that are used to send emails on behalf
+  of the organization. You can add as many as you want, but they must be attached to a
+  non-public email address that you control.`}
+			</p>
+		</Alert.Description>
+	</Alert.Root>
+
+	{#if organization.data}
+		<Card.Root class="mt-6">
+			<Card.Header>
+				<Card.Title>{t`System send signature`}</Card.Title>
+				<Card.Description>
+					{t`This is the default send signature provided to every organization. You can customize the name and reply-to address.`}
+				</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				<SystemSignature
+					organizationId={organization.data.id}
+					name={organization.data.settings.email.systemFromIdentity.name}
+					replyTo={organization.data.settings.email.systemFromIdentity.replyTo}
+					emailAddress={systemEmailAddress}
+				/>
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root class="mt-6">
+			<Card.Header>
+				<Card.Title>{t`Default send signature`}</Card.Title>
+				<Card.Description>
+					{t`Choose which email signature will be used by default when sending emails. You can override this for individual emails.`}
+				</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				<div class="space-y-2">
+					{#key organization.data?.settings.email.defaultFromSignatureId}
+						<Select.Root
+							type="single"
+							value={displayedSelectedSignatureValue}
+							onValueChange={(value) => {
+								if (value) {
+									selectedSignatureValue = value;
+									updateDefaultSignature(value);
+								}
+							}}
+							disabled={updatingDefault}
+						>
+							<Select.Trigger class="w-full justify-between">
+								{signatureOptions.find((opt) => opt.value === displayedSelectedSignatureValue)
+									?.label || t`Select default signature`}
+							</Select.Trigger>
+							<Select.Content>
+								{#each signatureOptions as option}
+									<Select.Item value={option.value} label={option.label} />
+								{/each}
+							</Select.Content>
+						</Select.Root>
+					{/key}
+					{#if updatingDefault}
+						<p class="text-sm text-muted-foreground">{t`Updating...`}</p>
+					{/if}
+				</div>
+			</Card.Content>
+		</Card.Root>
+	{/if}
+
+	<Card.Root class="mt-6">
+		<Card.Header>
+			<Card.Title>{t`Custom send signatures`}</Card.Title>
+			<Card.Description>
+				{t`Additional email signatures that you can use to send emails. These must be verified with Postmark.`}
+			</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			<!-- Desktop Table View -->
+			<div class="hidden overflow-x-auto md:block">
+				<Table.Root>
+					<Table.Header>
+						<Table.Row>
+							<Table.Head>{t`Name & Email`}</Table.Head>
+							<Table.Head>{t`Reply-to`}</Table.Head>
+							<Table.Head>
+								<div class="flex items-center gap-2">
+									{t`Return path`}
+									<Tooltip.Root>
+										<Tooltip.Trigger>
+											<InfoIcon class="size-3 text-muted-foreground" />
+										</Tooltip.Trigger>
+										<Tooltip.Content>
+											{t`The return path domain is used for bounce handling.`}
+										</Tooltip.Content>
+									</Tooltip.Root>
+								</div>
+							</Table.Head>
+							<Table.Head>
+								<div class="flex items-center gap-2">
+									{t`Status`}
+									<Tooltip.Root>
+										<Tooltip.Trigger>
+											<InfoIcon class="size-3 text-muted-foreground" />
+										</Tooltip.Trigger>
+										<Tooltip.Content>
+											{t`Verification status from Postmark.`}
+										</Tooltip.Content>
+									</Tooltip.Root>
+								</div>
+							</Table.Head>
+							<Table.Head class="w-[100px]">{t`Actions`}</Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
+						{#each emailFromSignatureList.data as signature}
+							<Table.Row>
+								<Table.Cell>
+									<div class="flex items-center gap-3">
+										<Avatar>
+											<AvatarFallback>{signature.emailAddress[0]?.toUpperCase()}</AvatarFallback>
+										</Avatar>
+										<div>
+											<p class="text-sm font-semibold">{signature.name}</p>
+											<p class="font-mono text-sm text-muted-foreground">
+												{signature.emailAddress}
+											</p>
+										</div>
+									</div>
+								</Table.Cell>
+								<Table.Cell>
+									<p class="font-mono text-sm">
+										{signature.replyTo || signature.emailAddress}
+									</p>
+								</Table.Cell>
+								<Table.Cell>
+									{#if signature.returnPathDomain}
+										<div class="space-y-1">
+											<p class="text-sm">{signature.returnPathDomain}</p>
+											<Badge color={signature.returnPathDomainVerified ? 'green' : 'red'}>
+												{signature.returnPathDomainVerified ? t`Verified` : t`Not verified`}
+											</Badge>
+										</div>
+									{:else}
+										<Badge color="gray">{t`Not set`}</Badge>
+									{/if}
+								</Table.Cell>
+								<Table.Cell>
+									<Badge color={signature.verified ? 'green' : 'red'}>
+										{signature.verified ? t`Verified` : t`Not verified`}
+									</Badge>
+								</Table.Cell>
+								<Table.Cell>
+									<div class="flex items-center gap-2">
+										{#if signature.externalId}
+											<EditModal {signature}>
+												{#snippet trigger()}
+													<Tooltip.Root>
+														<Tooltip.Trigger>
+															<Button variant="ghost" size="icon-sm">
+																<PencilIcon class="size-4" />
+															</Button>
+														</Tooltip.Trigger>
+														<Tooltip.Content>
+															{t`Edit signature`}
+														</Tooltip.Content>
+													</Tooltip.Root>
+												{/snippet}
+											</EditModal>
+											<Tooltip.Root>
+												<Tooltip.Trigger>
+													<Button
+														variant="ghost"
+														size="icon-sm"
+														onclick={() => verifyEmailFromSignature(signature.id)}
+														disabled={loadingArr.includes(signature.id)}
+													>
+														{#if loadingArr.includes(signature.id)}
+															<LoaderIcon class="size-4 animate-spin" />
+														{:else}
+															<RefreshCcwIcon class="size-4" />
+														{/if}
+													</Button>
+												</Tooltip.Trigger>
+												<Tooltip.Content>
+													{t`Verify signature status`}
+												</Tooltip.Content>
+											</Tooltip.Root>
+											<Tooltip.Root>
+												<Tooltip.Trigger>
+													<Button
+														variant="ghost"
+														size="icon-sm"
+														onclick={() => deleteEmailFromSignature(signature.id)}
+													>
+														<TrashIcon class="size-4 text-destructive" />
+													</Button>
+												</Tooltip.Trigger>
+												<Tooltip.Content>
+													{t`Delete signature`}
+												</Tooltip.Content>
+											</Tooltip.Root>
+										{:else}
+											<ShadcnBadge variant="outline">{t`System`}</ShadcnBadge>
+										{/if}
+									</div>
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+						{#if emailFromSignatureList.details.type !== 'complete'}
+							<Table.Row>
+								<Table.Cell colspan={5} class="text-center text-muted-foreground">
+									{t`Loading...`}
+								</Table.Cell>
+							</Table.Row>
+						{/if}
+					</Table.Body>
+				</Table.Root>
+			</div>
+
+			<!-- Mobile Card View -->
+			<div class="space-y-4 md:hidden">
+				{#each emailFromSignatureList.data as signature}
+					<Card.Root>
+						<Card.Content class="pt-6">
+							<div class="space-y-4">
+								<div class="flex items-center gap-3">
+									<Avatar>
+										<AvatarFallback>{signature.emailAddress[0]?.toUpperCase()}</AvatarFallback>
+									</Avatar>
+									<div class="flex-1">
+										<p class="text-sm font-semibold">{signature.name}</p>
+										<p class="font-mono text-sm text-muted-foreground">
+											{signature.emailAddress}
+										</p>
+									</div>
+									<div class="flex items-center gap-2">
+										{#if signature.externalId}
+											<EditModal {signature}>
+												{#snippet trigger()}
+													<Button variant="ghost" size="icon">
+														<PencilIcon class="size-4" />
+													</Button>
+												{/snippet}
+											</EditModal>
+											<Button
+												variant="ghost"
+												size="icon"
+												onclick={() => verifyEmailFromSignature(signature.id)}
+												disabled={loadingArr.includes(signature.id)}
+											>
+												{#if loadingArr.includes(signature.id)}
+													<LoaderIcon class="size-4 animate-spin" />
+												{:else}
+													<RefreshCcwIcon class="size-4" />
+												{/if}
+											</Button>
+											<Button
+												variant="ghost"
+												size="icon"
+												onclick={() => deleteEmailFromSignature(signature.id)}
+											>
+												<TrashIcon class="size-4 text-destructive" />
+											</Button>
+										{:else}
+											<ShadcnBadge variant="outline">{t`System`}</ShadcnBadge>
+										{/if}
+									</div>
+								</div>
+
+								<div>
+									<p class="mb-1 text-xs font-medium text-muted-foreground uppercase">
+										{t`Reply-to`}
+									</p>
+									<p class="font-mono text-sm">
+										{signature.replyTo || signature.emailAddress}
+									</p>
+								</div>
+
+								<div>
+									<p class="mb-1 text-xs font-medium text-muted-foreground uppercase">
+										{t`Return path`}
+									</p>
+									{#if signature.returnPathDomain}
+										<div class="space-y-1">
+											<p class="text-sm">{signature.returnPathDomain}</p>
+											<Badge color={signature.returnPathDomainVerified ? 'green' : 'red'}>
+												{signature.returnPathDomainVerified ? t`Verified` : t`Not verified`}
+											</Badge>
+										</div>
+									{:else}
+										<Badge color="gray">{t`Not set`}</Badge>
+									{/if}
+								</div>
+
+								<div>
+									<p class="mb-1 text-xs font-medium text-muted-foreground uppercase">
+										{t`Status`}
+									</p>
+									<Badge color={signature.verified ? 'green' : 'red'}>
+										{signature.verified ? t`Verified` : t`Not verified`}
+									</Badge>
+								</div>
+							</div>
+						</Card.Content>
+					</Card.Root>
+				{/each}
+				{#if emailFromSignatureList.details.type !== 'complete'}
+					<Card.Root>
+						<Card.Content class="pt-6">
+							<p class="text-center text-muted-foreground">{t`Loading...`}</p>
+						</Card.Content>
+					</Card.Root>
+				{/if}
+			</div>
+		</Card.Content>
+	</Card.Root>
+
+	{#snippet header()}
+		<div class="flex items-center justify-between">
+			<H2>{t`Email from signatures`}</H2>
+			<CreateModal>
+				{#snippet trigger()}
+					<Button variant="outline">
+						<PlusIcon class="size-4" />
+						{t`New`}
+					</Button>
+				{/snippet}
+			</CreateModal>
+		</div>
+	{/snippet}
+</ContentLayout>

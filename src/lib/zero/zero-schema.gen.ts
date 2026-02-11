@@ -36,7 +36,10 @@ const actionCodeTable = {
     type: {
       type: "string",
       optional: false,
-      customType: null as unknown as "event_signup" | "event_attended",
+      customType: null as unknown as
+        | "event_signup"
+        | "event_attended"
+        | "petition_signed",
     },
     createdAt: {
       type: "number",
@@ -334,7 +337,7 @@ const emailMessageTable = {
     },
     emailFromSignatureId: {
       type: "string",
-      optional: false,
+      optional: true,
       customType: null as unknown as string,
       serverName: "email_from_signature_id",
     },
@@ -472,7 +475,11 @@ const eventTable = {
     description: {
       type: "json",
       optional: true,
-      customType: null as unknown as ReadonlyJSONValue,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "event",
+        "description"
+      >,
     },
     published: {
       type: "boolean",
@@ -889,6 +896,7 @@ const eventSignupTable = {
       optional: false,
       customType: null as unknown as {
         channel: { type: "eventPage" | "adminPanel" | "whatsapp" };
+        customFields: { [x: string]: string | number | boolean | string[] };
       },
     },
     status: {
@@ -1315,6 +1323,11 @@ const organizationTable = {
         email: {
           systemFromIdentity: { name: string | null; replyTo: string | null };
           defaultFromSignatureId: string | null;
+        };
+        theme: {
+          favicon: string | null;
+          primaryColor: string | null;
+          secondaryColor: string | null;
         };
       },
     },
@@ -1832,7 +1845,8 @@ const personTable = {
         | { type: "import"; importId: string }
         | { type: "added_manually"; userId: string }
         | { type: "added_from_event"; eventSignupId: string }
-        | { type: "added_from_petition"; petitionSignatureId: string },
+        | { type: "added_from_petition"; petitionSignatureId: string }
+        | { type: "incoming_whatsapp_message"; messageId: string },
       serverName: "added_from",
     },
     createdAt: {
@@ -2045,6 +2059,172 @@ const personTeamTable = {
   },
   primaryKey: ["personId", "teamId"],
   serverName: "person_team",
+} as const;
+const petitionTable = {
+  name: "petition",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    pointPersonId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "point_person_id",
+    },
+    slug: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    title: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    description: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ReadonlyJSONValue,
+    },
+    shortDescription: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "short_description",
+    },
+    published: {
+      type: "boolean",
+      optional: false,
+      customType: null as unknown as boolean,
+    },
+    petitionTarget: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "petition_target",
+    },
+    petitionText: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "petition_text",
+    },
+    featureImage: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "feature_image",
+    },
+    settings: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as ZeroCustomType<
+        typeof zeroSchema,
+        "petition",
+        "settings"
+      >,
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+    archivedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "archived_at",
+    },
+    deletedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "deleted_at",
+    },
+  },
+  primaryKey: ["id"],
+} as const;
+const petitionSignatureTable = {
+  name: "petitionSignature",
+  columns: {
+    id: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+    },
+    organizationId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "organization_id",
+    },
+    teamId: {
+      type: "string",
+      optional: true,
+      customType: null as unknown as string,
+      serverName: "team_id",
+    },
+    petitionId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "petition_id",
+    },
+    personId: {
+      type: "string",
+      optional: false,
+      customType: null as unknown as string,
+      serverName: "person_id",
+    },
+    details: {
+      type: "json",
+      optional: false,
+      customType: null as unknown as {
+        channel: { type: "adminPanel" | "whatsapp" | "petitionPage" };
+      },
+    },
+    responses: {
+      type: "json",
+      optional: true,
+      customType: null as unknown as ReadonlyJSONValue,
+    },
+    createdAt: {
+      type: "number",
+      optional: false,
+      customType: null as unknown as number,
+      serverName: "created_at",
+    },
+    updatedAt: {
+      type: "number",
+      optional: true,
+      customType: null as unknown as number,
+      serverName: "updated_at",
+    },
+  },
+  primaryKey: ["id"],
+  serverName: "petition_signature",
 } as const;
 const subscriptionTable = {
   name: "subscription",
@@ -2270,10 +2450,11 @@ const userTable = {
       customType: null as unknown as boolean,
       serverName: "two_factor_enabled",
     },
-    preferences: {
-      type: "json",
+    preferredLanguage: {
+      type: "string",
       optional: true,
-      customType: null as unknown as { preferredLanguage: "en" | "pt" | "es" },
+      customType: null as unknown as "en" | "pt" | "es",
+      serverName: "preferred_language",
     },
     createdAt: {
       type: "number",
@@ -2944,6 +3125,20 @@ const personRelationships = {
       cardinality: "many",
     },
   ],
+  petitions: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "petitionSignature",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["petitionId"],
+      destField: ["id"],
+      destSchema: "petition",
+      cardinality: "many",
+    },
+  ],
   org: [
     {
       sourceField: ["organizationId"],
@@ -2973,6 +3168,14 @@ const personRelationships = {
       sourceField: ["id"],
       destField: ["personId"],
       destSchema: "eventSignup",
+      cardinality: "many",
+    },
+  ],
+  petitionSignatures: [
+    {
+      sourceField: ["id"],
+      destField: ["personId"],
+      destSchema: "petitionSignature",
       cardinality: "many",
     },
   ],
@@ -3077,6 +3280,46 @@ const teamRelationships = {
       sourceField: ["id"],
       destField: ["teamId"],
       destSchema: "teamMember",
+      cardinality: "many",
+    },
+  ],
+} as const;
+const petitionRelationships = {
+  signers: [
+    {
+      sourceField: ["id"],
+      destField: ["petitionId"],
+      destSchema: "petitionSignature",
+      cardinality: "many",
+    },
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "many",
+    },
+  ],
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  team: [
+    {
+      sourceField: ["teamId"],
+      destField: ["id"],
+      destSchema: "team",
+      cardinality: "one",
+    },
+  ],
+  signatures: [
+    {
+      sourceField: ["id"],
+      destField: ["petitionId"],
+      destSchema: "petitionSignature",
       cardinality: "many",
     },
   ],
@@ -3363,6 +3606,32 @@ const personTagRelationships = {
     },
   ],
 } as const;
+const petitionSignatureRelationships = {
+  organization: [
+    {
+      sourceField: ["organizationId"],
+      destField: ["id"],
+      destSchema: "organization",
+      cardinality: "one",
+    },
+  ],
+  petition: [
+    {
+      sourceField: ["petitionId"],
+      destField: ["id"],
+      destSchema: "petition",
+      cardinality: "one",
+    },
+  ],
+  person: [
+    {
+      sourceField: ["personId"],
+      destField: ["id"],
+      destSchema: "person",
+      cardinality: "one",
+    },
+  ],
+} as const;
 const subscriptionRelationships = {
   organization: [
     {
@@ -3520,6 +3789,8 @@ export const schema = {
     personNote: personNoteTable,
     personTag: personTagTable,
     personTeam: personTeamTable,
+    petition: petitionTable,
+    petitionSignature: petitionSignatureTable,
     subscription: subscriptionTable,
     tag: tagTable,
     team: teamTable,
@@ -3538,6 +3809,7 @@ export const schema = {
     person: personRelationships,
     whatsappGroup: whatsappGroupRelationships,
     team: teamRelationships,
+    petition: petitionRelationships,
     activity: activityRelationships,
     apiKey: apiKeyRelationships,
     emailFromSignature: emailFromSignatureRelationships,
@@ -3551,6 +3823,7 @@ export const schema = {
     personNote: personNoteRelationships,
     personTeam: personTeamRelationships,
     personTag: personTagRelationships,
+    petitionSignature: petitionSignatureRelationships,
     subscription: subscriptionRelationships,
     teamMember: teamMemberRelationships,
     user: userRelationships,
@@ -3644,6 +3917,16 @@ export type PersonTag = Row<typeof personTagTable>;
  * This type is auto-generated from your Drizzle schema definition.
  */
 export type PersonTeam = Row<typeof personTeamTable>;
+/**
+ * Represents a row from the "petition" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type Petition = Row<typeof petitionTable>;
+/**
+ * Represents a row from the "petitionSignature" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type PetitionSignature = Row<typeof petitionSignatureTable>;
 /**
  * Represents a row from the "subscription" table.
  * This type is auto-generated from your Drizzle schema definition.

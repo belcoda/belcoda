@@ -12,7 +12,7 @@
 	};
 	import { cn } from '$lib/utils.js';
 	import { z } from '$lib/zero.svelte';
-	import { listPersons, listPersonByIdsArray } from '$lib/zero/query/person/list';
+	import queries from '$lib/zero/query/index';
 	let { trigger, personIdsToExclude = [], onSelected }: Props = $props();
 	import { appState, getListFilter } from '$lib/state.svelte';
 	let filter = $state({
@@ -20,21 +20,21 @@
 		tagId: null,
 		signupEventId: null,
 		mostRecentActivity: null,
+		/* svelte-ignore state_referenced_locally */
 		personIdsToExclude: personIdsToExclude
 	});
 	import { Debounced } from 'runed';
 	let debouncedFilter = new Debounced(() => filter, 1000);
-	const personList = $derived.by(() =>
-		z.createQuery(listPersons(appState.queryContext, debouncedFilter.current))
-	);
+	const personList = $derived.by(() => z.createQuery(queries.person.list(debouncedFilter.current)));
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { type ReadPersonZero } from '$lib/schema/person';
+	import { t } from '$lib/index.svelte';
 	import XIcon from '@lucide/svelte/icons/x';
 	let selectedPersonIds = $state<string[]>([]);
 	let selectedPeople = $derived.by(() =>
-		z.createQuery(listPersonByIdsArray(appState.queryContext, { ids: selectedPersonIds }))
+		z.createQuery(queries.person.listByIds({ ids: selectedPersonIds }))
 	);
 	let orderedPeople = $derived.by(() => {
 		if (!selectedPeople.data) {
@@ -84,7 +84,7 @@
 			{/if}
 		</ScrollArea>
 		{#if selectedPeople.data && selectedPeople.data.length > 0}
-			<div class="mt-2 -mb-1 font-medium">Selected ({selectedPeople.data.length})</div>
+			<div class="mt-2 -mb-1 font-medium">{t`Selected`} ({selectedPeople.data.length})</div>
 			<ScrollArea class="h-[150px] w-full rounded-md border">
 				{#each orderedPeople as person (person.id)}
 					{@render selectedPersonItem(person)}

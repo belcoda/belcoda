@@ -1,7 +1,6 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, object, optional, nullable } from 'valibot';
 import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
@@ -14,16 +13,13 @@ export const inputSchema = object({
 export type ListTeamsInput = InferOutput<typeof inputSchema>;
 
 export function listTeamsQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.team
+	let q = builder.team
 		.where((expr) => teamReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
@@ -35,16 +31,12 @@ export function listTeamsQuery({
 	return q;
 }
 
-export const listTeams = syncedQueryWithContext(
-	'listTeams',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listTeamsQuery({ ctx, input: filter });
-	}
-);
+export const listTeams = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listTeamsQuery({ ctx, input: args });
+});
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'team'>,
+	builder: ExpressionBuilder<'team', Schema>,
 	{ filter }: { filter: ListTeamsInput }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
@@ -53,6 +45,9 @@ function whereClause(
 		cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null),
 		cmp('id', 'NOT IN', filter.excludedIds)
 	];
+	if (filter.searchString && filter.searchString.length > 0) {
+		filterArr.push(cmp('name', 'ILIKE', `%${filter.searchString}%`));
+	}
 	if (filter.personId) {
 		filterArr.push(
 			exists('people', (pt) => {

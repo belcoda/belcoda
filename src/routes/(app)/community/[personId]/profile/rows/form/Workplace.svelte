@@ -6,11 +6,13 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { objectAsync } from 'valibot';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 
 	import { email } from '$lib/schema/helpers';
 
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
+	import { t } from '$lib/index.svelte';
 
 	const schema = objectAsync({
 		workplace: personSchema.entries.workplace,
@@ -20,25 +22,29 @@
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			workplace: person.workplace,
+			/* svelte-ignore state_referenced_locally */
 			position: person.position
 		},
 		onSubmit: async (data) => {
-			const response = z.mutate.person.update({
-				metadata: {
-					organizationId: appState.organizationId,
-					personId: person.id
-				},
-				input: {
-					workplace: data.workplace,
-					position: data.position
-				}
-			});
+			const response = z.mutate(
+				mutators.person.update({
+					metadata: {
+						organizationId: appState.organizationId,
+						personId: person.id
+					},
+					input: {
+						workplace: data.workplace,
+						position: data.position
+					}
+				})
+			);
 			try {
 				await response.server;
 				edit = false;
 			} catch (error) {
-				toast.error('Could not update workplace or position. Please try again.');
+				toast.error(t`Could not update workplace or position. Please try again.`);
 			}
 		}
 	});
@@ -51,7 +57,7 @@
 			{#snippet children({ props })}
 				<Input
 					type="text"
-					placeholder="Workplace"
+					placeholder={t`Workplace`}
 					{...props}
 					bind:value={$data.workplace as string}
 				/>
@@ -64,7 +70,7 @@
 			{#snippet children({ props })}
 				<Input
 					type="text"
-					placeholder="Position"
+					placeholder={t`Position`}
 					{...props}
 					bind:value={$data.position as string}
 				/>
@@ -73,8 +79,10 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<div class="mt-3 flex items-center justify-end gap-2">
-		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>Cancel</Button>
-		<Button type="submit" size="sm">Save</Button>
+		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}
+			>{t`Cancel`}</Button
+		>
+		<Button type="submit" size="sm">{t`Save`}</Button>
 	</div>
 	<Debug {data} />
 </form>

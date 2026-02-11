@@ -10,7 +10,7 @@ import { personReadPermissions } from '$lib/zero/query/person/permissions';
 // it should return false otherwise
 
 export function whatsappGroupMemberReadPermissions(
-	builder: ExpressionBuilder<Schema, 'whatsappGroupMember'>,
+	builder: ExpressionBuilder<'whatsappGroupMember', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, exists } = builder;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type Readable } from 'svelte/store';
 	import { type CreateEventZero, type UpdateEventZero } from '$lib/schema/event';
@@ -46,6 +47,7 @@
 	let startDateOpen = $state(false);
 	let endDateOpen = $state(false);
 	import { appState } from '$lib/state.svelte';
+	import { locale } from '$lib/index.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 
 	import * as Item from '$lib/components/ui/item/index.js';
@@ -77,7 +79,7 @@
 				$data.startsAt ?? new Date().getTime()
 			);
 			if ($data.endsAt && newStartsAt > $data.endsAt) {
-				toast.error('Start date must be before end date');
+				toast.error(t`Start date must be before end date`);
 				return;
 			}
 			$data.startsAt = newStartsAt;
@@ -96,7 +98,7 @@
 				$data.endsAt ?? new Date().getTime()
 			);
 			if ($data.startsAt && newEndsAt < $data.startsAt) {
-				toast.error('Start date must be before end date');
+				toast.error(t`Start date must be before end date`);
 				return;
 			}
 			$data.endsAt = newEndsAt;
@@ -155,18 +157,14 @@
 	<Form.Field {form} name="startsAt" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>{eventType === 'multiDayEvent' ? 'Start date' : 'Date'}</Form.Label>
+				<Form.Label>{eventType === 'multiDayEvent' ? t`Start date` : t`Date`}</Form.Label>
 				<Popover.Root bind:open={startDateOpen} {...props}>
 					<Popover.Trigger id="{id}-start-date">
 						{#snippet child({ props })}
 							<Button {...props} variant="outline" class="w-full justify-between font-normal">
 								{$data.startsAt
-									? renderDate(
-											$data.startsAt,
-											$data.timezone || getLocalTimeZone(),
-											appState.locale
-										)
-									: 'Select date'}
+									? renderDate($data.startsAt, $data.timezone || getLocalTimeZone(), locale.current)
+									: t`Select date`}
 								<ChevronDownIcon />
 							</Button>
 						{/snippet}
@@ -214,14 +212,14 @@
 	<Form.Field {form} name="endsAt" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>End date</Form.Label>
+				<Form.Label>{t`End date`}</Form.Label>
 				<Popover.Root bind:open={endDateOpen} {...props}>
 					<Popover.Trigger id="{id}-end-date">
 						{#snippet child({ props })}
 							<Button {...props} variant="outline" class="w-full justify-between font-normal">
 								{$data.endsAt
-									? renderDate($data.endsAt, $data.timezone || getLocalTimeZone(), appState.locale)
-									: 'Select date'}
+									? renderDate($data.endsAt, $data.timezone || getLocalTimeZone(), locale.current)
+									: t`Select date`}
 								<ChevronDownIcon />
 							</Button>
 						{/snippet}
@@ -244,7 +242,7 @@
 										.toDate()
 										.getTime();
 									if ($data.startsAt && newEndsAt < $data.startsAt) {
-										toast.error('End date must be after start date');
+										toast.error(t`End date must be after start date`);
 										return;
 									}
 									$data.endsAt = newEndsAt;
@@ -266,7 +264,7 @@
 	<Form.Field {form} name="startsAt">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>From</Form.Label>
+				<Form.Label>{t`From`}</Form.Label>
 
 				<Input
 					type="time"
@@ -284,7 +282,7 @@
 	<Form.Field {form} name="endsAt">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>To</Form.Label>
+				<Form.Label>{t`To`}</Form.Label>
 
 				<Input
 					type="time"
@@ -315,27 +313,27 @@
 		<div class="flex items-center space-x-2">
 			<RadioGroup.Item value="standardEvent" id="standardEvent" />
 			<Label for="standardEvent">
-				Standard event
+				{t`Standard event`}
 				<div class="text-sm font-normal text-muted-foreground">
-					Start and end at a specific time on the same day.
+					{t`Start and end at a specific time on the same day.`}
 				</div>
 			</Label>
 		</div>
 		<div class="flex items-center space-x-2">
 			<RadioGroup.Item value="allDayEvent" id="allDayEvent" />
 			<Label for="allDayEvent"
-				>All day event
+				>{t`All day event`}
 				<div class="text-sm font-normal text-muted-foreground">
-					Start and end at midnight on the same day (all day).
+					{t`Start and end at midnight on the same day (all day).`}
 				</div>
 			</Label>
 		</div>
 		<div class="flex items-center space-x-2">
 			<RadioGroup.Item value="multiDayEvent" id="multiDayEvent" />
 			<Label for="multiDayEvent"
-				>Multi-day event
+				>{t`Multi-day event`}
 				<div class="text-sm font-normal text-muted-foreground">
-					Start and end on different days.
+					{t`Start and end on different days.`}
 				</div>
 			</Label>
 		</div>
@@ -355,16 +353,15 @@
 							} else {
 								$data.settings = {
 									displayTimezone: v,
-									signupFields: $data.settings?.signupFields ?? { standard: [], custom: [] },
 									survey: { schemaVersion: '1.0.0', collections: [] }
 								};
 							}
 						}}
 					/>
 					<div class="flex flex-col gap-1">
-						<Form.Label>Display timezone on signup page and notifications</Form.Label>
+						<Form.Label>{t`Display timezone on signup page and notifications`}</Form.Label>
 						<Form.Description>
-							This will display the timezone on the signup page and notifications.
+							{t`This will display the timezone on the signup page and notifications.`}
 						</Form.Description>
 					</div>
 				</div>
@@ -380,7 +377,7 @@
 	<Form.Field {form} name="timezone">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Timezone</Form.Label>
+				<Form.Label>{t`Timezone`}</Form.Label>
 				<TimezoneSelect
 					value={$data.timezone}
 					onSelectChange={(v) => {
@@ -405,6 +402,6 @@
 		class={buttonVariants({ variant: 'ghost', size: 'default', class: 'w-9 p-0' })}
 	>
 		<ChevronsUpDownIcon />
-		<span class="sr-only">Toggle</span>
+		<span class="sr-only">{t`Toggle`}</span>
 	</Collapsible.Trigger>
 {/snippet}

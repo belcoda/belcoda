@@ -6,11 +6,13 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { objectAsync, optional } from 'valibot';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 
 	import { phoneNumber } from '$lib/schema/helpers';
 
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
+	import { t } from '$lib/index.svelte';
 	let valid = $state(false);
 	const schema = objectAsync({
 		phoneNumber: optional(phoneNumber)
@@ -19,24 +21,27 @@
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			phoneNumber: person.phoneNumber || undefined
 		},
 		onSubmit: async (data) => {
-			const response = z.mutate.person.update({
-				metadata: {
-					organizationId: appState.organizationId,
-					personId: person.id
-				},
-				input: {
-					phoneNumber: data.phoneNumber
-				}
-			});
+			const response = z.mutate(
+				mutators.person.update({
+					metadata: {
+						organizationId: appState.organizationId,
+						personId: person.id
+					},
+					input: {
+						phoneNumber: data.phoneNumber
+					}
+				})
+			);
 			try {
 				await response.server;
 				edit = false;
 			} catch (error) {
 				toast.error(
-					'Could not update phone number. Please check that the phone number is valid and does not belong to another person.'
+					t`Could not update phone number. Please check that the phone number is valid and does not belong to another person.`
 				);
 			}
 		}
@@ -60,8 +65,10 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<div class="mt-3 flex items-center justify-end gap-2">
-		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}>Cancel</Button>
-		<Button type="submit" size="sm" disabled={!valid}>Save</Button>
+		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}
+			>{t`Cancel`}</Button
+		>
+		<Button type="submit" size="sm" disabled={!valid}>{t`Save`}</Button>
 	</div>
 	<Debug {data} />
 </form>

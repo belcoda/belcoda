@@ -1,24 +1,43 @@
 import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
-import { type PersonAddedFrom, personAddedFrom } from '$lib/schema/person/meta';
-import { type EventSignupDetails, eventSignupDetails } from '$lib/schema/event/settings';
+import {
+	type EventSignupDetails,
+	eventSignupDetails,
+	type EventSignupStatus,
+	eventSignupStatus
+} from '$lib/schema/event/settings';
+
+import { type QueryContext, builder } from '$lib/zero/schema';
+
+import {
+	type CreateMutatorSchema,
+	createMutatorSchema,
+	type UpdateMutatorSchemaOutput,
+	updateMutatorSchema
+} from '$lib/schema/event-signup';
+
+import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
+import { personReadPermissions } from '$lib/zero/query/person/permissions';
+import { eventReadPermissions } from '$lib/zero/query/event/permissions';
+import { eventSignupReadPermissions } from '$lib/zero/query/event_signup/permissions';
 
 import { parse } from 'valibot';
 
 import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and } from 'drizzle-orm';
-import type { Transaction } from '$lib/server/db/zeroDrizzle';
+import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
 
+import { _getPersonByPhoneNumberUnsafe } from '$lib/server/api/data/person/person';
 export async function getEventByIdUnsafe({
 	eventId,
 	organizationId,
 	tx
 }: {
-	tx: Transaction;
+	tx: ServerTransaction;
 	eventId: string;
 	organizationId: string;
 }) {
@@ -37,7 +56,7 @@ export async function getEventSignupsByEventIdUnsafe({
 	organizationId,
 	tx
 }: {
-	tx: Transaction;
+	tx: ServerTransaction;
 	eventId: string;
 	organizationId: string;
 }) {
@@ -54,14 +73,20 @@ export async function signUpForEventHelper({
 	tx,
 	personAction,
 	signupDetails,
-	organizationId
+	organizationId,
+	skipMaxSignupsCheck = false,
+	skipNotifications = false,
+	defaultEventSignupId
 }: {
-	tx: Transaction;
+	tx: ServerTransaction;
 	eventId: string;
 	personAction: PersonActionHelper;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
+	skipMaxSignupsCheck?: boolean;
+	skipNotifications?: boolean;
+	defaultEventSignupId?: string;
 }) {
 	const parsedSignupDetails = parse(eventSignupDetails, signupDetails);
 	const parsedActionHelper = parse(personActionHelper, personAction);
@@ -70,17 +95,21 @@ export async function signUpForEventHelper({
 	if (!eventResult) {
 		throw new Error('Event not found');
 	}
-	if (eventResult.published) {
+	if (!eventResult.published) {
 		throw new Error('Event is not published');
 	}
 	// We could check if the event has started, but tbh we don't want to block the signup if the event has started
 
 	const eventSignups = await getEventSignupsByEventIdUnsafe({ eventId, organizationId, tx });
-	if (eventResult.maxSignups && eventResult.maxSignups <= eventSignups.length) {
+	if (
+		!skipMaxSignupsCheck &&
+		eventResult.maxSignups &&
+		eventResult.maxSignups <= eventSignups.length
+	) {
 		throw new Error('Event is full');
 	}
 
-	const eventSignupId = uuidv7();
+	const eventSignupId = defaultEventSignupId || uuidv7();
 
 	const personRecord = await findOrCreatePerson({
 		tx,
@@ -106,20 +135,23 @@ export async function signUpForEventHelper({
 	return eventSignupResult;
 }
 
+// the actual process of signing up for an event, broken off into its own function
 export async function signUpForEventUnsafe({
 	eventSignupId,
 	eventRecord,
 	personRecord,
 	organizationRecord,
 	tx,
-	details
+	details,
+	skipNotifications = false
 }: {
 	eventSignupId?: string;
-	tx: Transaction;
+	tx: ServerTransaction;
 	eventRecord: typeof event.$inferSelect;
 	personRecord: typeof person.$inferSelect;
 	organizationRecord: typeof organization.$inferSelect;
 	details: EventSignupDetails;
+	skipNotifications?: boolean;
 }) {
 	const id = eventSignupId || uuidv7();
 	const status = eventRecord.startsAt > new Date() ? 'signup' : 'attended';
@@ -142,7 +174,7 @@ export async function signUpForEventUnsafe({
 		throw new Error('Unable to create event signup');
 	}
 
-	if (details.channel.type === 'eventPage') {
+	if (!skipNotifications && details.channel.type === 'eventPage') {
 		// Send the signup notification
 		const queue = await getQueue();
 		queue.sendEventRegistration({
@@ -153,4 +185,239 @@ export async function signUpForEventUnsafe({
 	//TODO: Implement whatsapp notification
 
 	return insertedEventSignup;
+}
+
+export async function attendedEventHelper({
+	eventId,
+	teamId,
+	tx,
+	personAction,
+	signupDetails,
+	organizationId
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personAction: PersonActionHelper;
+	signupDetails: EventSignupDetails;
+	organizationId: string;
+	teamId?: string;
+}) {
+	const eventRecord = await getEventByIdUnsafe({ eventId, organizationId, tx });
+	if (!eventRecord) {
+		throw new Error('Event not found');
+	}
+	if (!eventRecord.published) {
+		throw new Error('Event is not published');
+	}
+
+	//find or create the person
+	const eventSignupIdIfNeeded = uuidv7();
+	const personRecord = await findOrCreatePerson({
+		personAction: personAction,
+		teamId,
+		addedFrom: {
+			type: 'added_from_event',
+			eventSignupId: eventSignupIdIfNeeded
+		},
+		organizationId,
+		tx
+	});
+
+	//either get the existing signup or create a new one
+	const eventSignupRecord = await getEventSignup({
+		personId: personRecord.id,
+		eventId,
+		organizationId,
+		tx
+	}).catch(async (error) => {
+		if (error instanceof Error && error.message === 'Event signup not found') {
+			const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
+			return await signUpForEventUnsafe({
+				eventSignupId: eventSignupIdIfNeeded,
+				eventRecord: eventRecord,
+				personRecord: personRecord,
+				organizationRecord: organizationRecord,
+				tx,
+				details: signupDetails,
+				skipNotifications: true
+			});
+		}
+		throw error;
+	});
+
+	// if the signup is not attended, update the status to attended
+	if (eventSignupRecord.status !== 'attended') {
+		await updateEventSignupStatus({
+			eventSignupId: eventSignupRecord.id,
+			organizationId,
+			status: 'attended',
+			tx
+		});
+	}
+	return eventSignupRecord;
+}
+
+export async function getEventSignup({
+	personId,
+	eventId,
+	organizationId,
+	tx
+}: {
+	personId: string;
+	eventId: string;
+	organizationId: string;
+	tx: ServerTransaction;
+}) {
+	const [eventSignupResult] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(eventSignup)
+		.where(
+			and(
+				eq(eventSignup.personId, personId),
+				eq(eventSignup.eventId, eventId),
+				eq(eventSignup.organizationId, organizationId)
+			)
+		);
+	if (!eventSignupResult) {
+		throw new Error('Event signup not found');
+	}
+	return eventSignupResult;
+}
+
+export async function updateEventSignupStatus({
+	eventSignupId,
+	organizationId,
+	status,
+	tx
+}: {
+	eventSignupId: string;
+	organizationId: string;
+	status: EventSignupStatus;
+	tx: ServerTransaction;
+}) {
+	const parsed = parse(eventSignupStatus, status);
+	const result = await tx.dbTransaction.wrappedTransaction
+		.update(eventSignup)
+		.set({ status: parsed })
+		.where(and(eq(eventSignup.id, eventSignupId), eq(eventSignup.organizationId, organizationId)))
+		.returning();
+	if (!result) {
+		throw new Error('Unable to update event signup');
+	}
+	return result;
+}
+
+export async function createEventSignup({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: CreateMutatorSchema;
+}) {
+	const parsed = parse(createMutatorSchema, args);
+	const organization = await tx.run(
+		builder.organization
+			.where('id', parsed.metadata.organizationId)
+			.where((expr) => organizationReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!organization) {
+		throw new Error('Organization not found');
+	}
+	const person = await tx.run(
+		builder.person
+			.where((expr) => personReadPermissions(expr, ctx))
+			.where('id', parsed.metadata.personId)
+			.where((expr) => personReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!person) {
+		throw new Error('Person not found');
+	}
+	const event = await tx.run(
+		builder.event
+			.where((expr) => eventReadPermissions(expr, ctx))
+			.where('id', parsed.metadata.eventId)
+			.where((expr) => eventReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!event) {
+		throw new Error('Event not found');
+	}
+	const eventSignupRecord: typeof eventSignup.$inferInsert = {
+		id: parsed.metadata.eventSignupId,
+		organizationId: parsed.metadata.organizationId,
+		eventId: parsed.metadata.eventId,
+		personId: parsed.metadata.personId,
+		details: parsed.input.details,
+		status: parsed.input.status,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	};
+
+	const [insertedEventSignup] = await tx.dbTransaction.wrappedTransaction
+		.insert(eventSignup)
+		.values(eventSignupRecord)
+		.returning();
+	if (!insertedEventSignup) {
+		throw new Error('Unable to create event signup');
+	}
+	const queue = await getQueue();
+	await queue.insertActivity({
+		organizationId: parsed.metadata.organizationId,
+		personId: parsed.metadata.personId,
+		userId: ctx.userId || undefined,
+		type: 'event_signup',
+		referenceId: parsed.metadata.eventSignupId,
+		unread: false
+	});
+
+	if (parsed.input.details.channel.type === 'eventPage') {
+		await queue.sendEventRegistration({
+			eventSignupId: parsed.metadata.eventSignupId,
+			locale: clampLocale(person.preferredLanguage || organization.defaultLanguage)
+		});
+	}
+
+	return insertedEventSignup;
+}
+
+export async function updateEventSignup({
+	args,
+	ctx,
+	tx
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateMutatorSchemaOutput;
+}) {
+	const parsed = parse(updateMutatorSchema, args);
+	const eventSignupRecord = await tx.run(
+		builder.eventSignup
+			.where('id', args.metadata.eventSignupId)
+			.where('organizationId', args.metadata.organizationId)
+			.where((expr) => eventSignupReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!eventSignupRecord) {
+		throw new Error('Event signup not found');
+	}
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.update(eventSignup)
+		.set({
+			status: args.input.status,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(eventSignup.id, args.metadata.eventSignupId),
+				eq(eventSignup.organizationId, args.metadata.organizationId)
+			)
+		)
+		.returning();
+	if (!result) {
+		throw new Error('Unable to update event signup');
+	}
 }

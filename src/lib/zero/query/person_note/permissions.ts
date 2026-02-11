@@ -7,7 +7,7 @@ import { personReadPermissions } from '$lib/zero/query/person/permissions';
 // it should return false otherwise
 
 export function personNoteReadPermissions(
-	builder: ExpressionBuilder<Schema, 'personNote'>,
+	builder: ExpressionBuilder<'personNote', Schema>,
 	ctx: QueryContext
 ) {
 	const { and, or, cmp, exists } = builder;

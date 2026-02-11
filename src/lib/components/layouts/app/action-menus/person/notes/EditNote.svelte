@@ -4,6 +4,7 @@
 	import { parse } from 'valibot';
 	import { MEDIUM_STRING_MAX_LENGTH } from '$lib/schema/helpers';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import {
 		updateMutatorSchemaZero,
@@ -13,16 +14,17 @@
 	import { appState } from '$lib/state.svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
+	import { t } from '$lib/index.svelte';
 
 	let {
 		note,
 		editOpen = $bindable(true)
 	}: { note: ReadPersonNoteWithUserZero; editOpen: boolean } = $props();
-	console.log(note);
 	import { toast } from 'svelte-sonner';
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: updatePersonNoteZero,
 		initialData: {
+			/* svelte-ignore state_referenced_locally */
 			note: note.note
 		},
 		onSubmit: async (data) => {
@@ -37,7 +39,7 @@
 					personNoteId: note.id
 				}
 			});
-			const input = z.mutate.personNote.update(parsed);
+			const input = z.mutate(mutators.personNote.update(parsed));
 			toast.success('Note updated');
 			editOpen = false;
 		}
@@ -51,7 +53,7 @@
 				<InputGroup.Root>
 					<InputGroup.Textarea
 						{...props}
-						placeholder="Edit note..."
+						placeholder={t`Edit note...`}
 						bind:value={$data.note}
 						onkeydown={(e) => {
 							if (e.key === 'Enter' && !e.shiftKey && (e.metaKey || e.ctrlKey)) {
@@ -74,10 +76,11 @@
 	</Form.Field>
 	<div class="flex justify-end gap-2">
 		<Button variant="outline" type="button" size="sm" onclick={() => (editOpen = false)}
-			>Cancel</Button
+			>{t`Cancel`}</Button
 		>
 		<Button variant="default" type="submit" size="sm">
-			<ArrowUpIcon /> Update note
+			<ArrowUpIcon />
+			{t`Update note`}
 		</Button>
 	</div>
 </form>

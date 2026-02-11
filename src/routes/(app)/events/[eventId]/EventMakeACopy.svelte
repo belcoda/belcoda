@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ReadEventZero } from '$lib/schema/event';
 	import { type Snippet } from 'svelte';
 	import { v7 as uuidv7 } from 'uuid';
@@ -12,10 +13,14 @@
 	import createForm from '$lib/form.svelte';
 	import { generateCreateEventZeroAsyncSchema } from '$lib/schema/event';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { slugify } from '$lib/utils/slug';
 	const newEvent = {
+		/* svelte-ignore state_referenced_locally */
 		...event,
-		title: `Copy of ${event.title}`,
+		/* svelte-ignore state_referenced_locally */
+		title: `${t`Copy of`} ${event.title}`,
+		/* svelte-ignore state_referenced_locally */
 		slug: `copy-of-${event.slug}`,
 		published: false,
 		publishedAt: null,
@@ -31,19 +36,21 @@
 			initialData: newEvent,
 			onSubmit: async (data) => {
 				const eventId = uuidv7();
-				const writeEvent = z.mutate.event.create({
-					metadata: {
-						organizationId: appState.organizationId,
-						teamId: appState.activeTeamId,
-						eventId: eventId
-					},
-					input: {
-						...data,
-						slug: slugify(data.title),
-						startsAt: data.startsAt,
-						endsAt: data.endsAt
-					}
-				});
+				const writeEvent = z.mutate(
+					mutators.event.create({
+						metadata: {
+							organizationId: appState.organizationId,
+							teamId: appState.activeTeamId,
+							eventId: eventId
+						},
+						input: {
+							...data,
+							slug: slugify(data.title),
+							startsAt: data.startsAt,
+							endsAt: data.endsAt
+						}
+					})
+				);
 				await writeEvent.client;
 				await goto(`/events/${eventId}`);
 			}
@@ -61,13 +68,13 @@
 		<Form.Field {form} name="title">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Event title</Form.Label>
-					<Input {...props} bind:value={$data.title} placeholder="Event title" />
+					<Form.Label>{t`Event title`}</Form.Label>
+					<Input {...props} bind:value={$data.title} placeholder={t`Event title`} />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<Button type="submit">Make a copy</Button>
+		<Button type="submit">{t`Make a copy`}</Button>
 		<Debug {data} hide={true} />
 	</form>
 </ResponsiveModal>

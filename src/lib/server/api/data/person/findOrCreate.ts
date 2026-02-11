@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { drizzle } from '$lib/server/db';
 import { person, personTeam } from '$lib/schema/drizzle';
 import { eq, or, and, isNull } from 'drizzle-orm';
 
@@ -8,14 +8,18 @@ import {
 	DEFAULT_SOCIAL_MEDIA,
 	type PersonAddedFrom
 } from '$lib/schema/person/meta';
-import type { Transaction } from '$lib/server/db/zeroDrizzle';
 
 import { v7 as uuidv7 } from 'uuid';
 import { parse } from 'valibot';
 
+import pino from '$lib/pino';
+import type { ServerTransaction } from '@rocicorp/zero';
+const log = pino(import.meta.url);
+
 export async function findOrCreatePerson({
 	personAction,
 	addedFrom,
+	updateExistingPerson = false,
 	tx,
 	organizationId,
 	teamId
@@ -23,8 +27,9 @@ export async function findOrCreatePerson({
 	personAction: PersonActionHelper;
 	addedFrom: PersonAddedFrom;
 	organizationId: string;
+	updateExistingPerson?: boolean;
 	teamId?: string;
-	tx: Transaction;
+	tx: ServerTransaction;
 }) {
 	const parsedActionHelper = parse(personActionHelper, personAction);
 	const parsedAddedFrom = parse(personAddedFrom, addedFrom);
@@ -49,7 +54,25 @@ export async function findOrCreatePerson({
 		);
 
 	if (personRecord) {
-		//Todo: Maybe we want to update the person here with the provided info at personAction
+		if (updateExistingPerson) {
+			try {
+				const [updatedPerson] = await tx.dbTransaction.wrappedTransaction
+					.update(person)
+					.set({
+						...parsedActionHelper,
+						preferredLanguage: parsedActionHelper.preferredLanguage || undefined,
+						updatedAt: new Date()
+					})
+					.where(eq(person.id, personRecord.id))
+					.returning();
+				if (!updatedPerson) {
+					throw new Error('Unable to update person');
+				}
+				return updatedPerson;
+			} catch (error) {
+				log.error({ error }, 'Unable to update person');
+			}
+		}
 		return personRecord;
 	}
 	// create a new person
@@ -78,7 +101,7 @@ export async function findOrCreatePerson({
 
 	//if teamId is provided, add the person to the team
 	if (teamId) {
-		await db.insert(personTeam).values({
+		await drizzle.insert(personTeam).values({
 			personId: insertedPerson.id,
 			teamId: teamId,
 			organizationId: organizationId,

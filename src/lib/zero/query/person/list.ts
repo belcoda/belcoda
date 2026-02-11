@@ -1,6 +1,5 @@
-import { syncedQueryWithContext, type ExpressionBuilder } from '@rocicorp/zero';
+import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
-import type { Query } from '$lib/server/db/zeroDrizzle';
 import { array, type InferOutput, optional, object, nullable, picklist } from 'valibot';
 import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
@@ -29,16 +28,13 @@ export const inputSchema = object({
 
 export type ListPersonsInput = InferOutput<typeof inputSchema>;
 export function listPersonsQuery({
-	tx,
 	ctx,
 	input
 }: {
-	tx?: Query;
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const zero = tx || builder;
-	let q = zero.person
+	let q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input, userId: ctx.userId }))
@@ -50,41 +46,46 @@ export function listPersonsQuery({
 	return q;
 }
 
-export const listPersons = syncedQueryWithContext(
-	'listPersons',
-	parseSchema(inputSchema),
-	(ctx: QueryContext, filter) => {
-		return listPersonsQuery({ ctx, input: filter });
-	}
-);
+export const listPersons = defineQuery(inputSchema, ({ ctx, args }) => {
+	return listPersonsQuery({ ctx, input: args });
+});
 
-export function listPersonByIdsArrayQuery({
-	tx,
+export function listFilteredPersonsQuery({
 	ctx,
 	input
 }: {
-	tx?: Query;
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const q = builder.person
+		.where((expr) => personReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input, userId: ctx.userId }))
+		.orderBy('mostRecentActivityAt', 'desc')
+		.limit(input.pageSize || 50);
+	return q;
+}
+
+export function listPersonByIdsArrayQuery({
+	ctx,
+	input
+}: {
 	ctx: QueryContext;
 	input: { ids: string[] };
 }) {
-	const zero = tx || builder;
-	const q = zero.person
+	const q = builder.person
 		.where('id', 'IN', input.ids)
 		.where((expr) => personReadPermissions(expr, ctx))
 		.limit(input.ids.length);
 	return q;
 }
 
-export const listPersonByIdsArray = syncedQueryWithContext(
-	'listPersonByIdsArray',
-	parseSchema(object({ ids: array(uuid) })),
-	(ctx: QueryContext, input) => {
-		return listPersonByIdsArrayQuery({ ctx, input });
-	}
-);
+export const listPersonByIdsArray = defineQuery(object({ ids: array(uuid) }), ({ ctx, args }) => {
+	return listPersonByIdsArrayQuery({ ctx, input: args });
+});
 
 function whereClause(
-	builder: ExpressionBuilder<Schema, 'person'>,
+	builder: ExpressionBuilder<'person', Schema>,
 	{ filter, userId }: { filter: InferOutput<typeof inputSchema>; userId: string }
 ) {
 	const isDeleted = filter.isDeleted ?? false;

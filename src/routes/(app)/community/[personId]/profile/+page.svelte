@@ -11,10 +11,12 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	const { params } = $props();
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
-	import { readPerson, type ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
+	import queries from '$lib/zero/query/index';
+	import type { ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
 	const person = $derived.by(() => {
-		return z.createQuery(readPerson(appState.queryContext, { personId: params.personId }));
+		return z.createQuery(queries.person.read({ personId: params.personId }));
 	});
 	import { Button } from '$lib/components/ui/button/index.js';
 
@@ -28,6 +30,7 @@
 	import NotesAction from '$lib/components/layouts/app/action-menus/person/NotesAction.svelte';
 	import TeamsRow from './rows/Teams.svelte';
 	import TagsRow from './rows/Tags.svelte';
+	import { t } from '$lib/index.svelte';
 </script>
 
 <ContentLayout rootLink={`/community/${params.personId}`} {header}>
@@ -46,27 +49,28 @@
 				{#if appState.isAdminOrOwner}
 					<Alert.Root variant="destructive" class="mt-8 mb-8">
 						<AlertCircleIcon />
-						<Alert.Title>Danger zone!</Alert.Title>
+						<Alert.Title>{t`Danger zone!`}</Alert.Title>
 						<Alert.Description>
-							Delete this person record permanently along with all associated data. Be careful, this
-							action cannot be undone.
+							{t`Delete this person record permanently along with all associated data. Be careful, this action cannot be undone.`}
 
 							<div class="mt-2">
 								<LongPressButton
 									duration={1500}
 									onComplete={async () => {
-										if (window.confirm('Are you sure you want to delete this person?')) {
-											z.mutate.person.delete({
-												metadata: {
-													personId: params.personId,
-													organizationId: appState.organizationId
-												}
-											});
-											toast.success('Person deleted');
+										if (window.confirm(t`Are you sure you want to delete this person?`)) {
+											z.mutate(
+												mutators.person.delete({
+													metadata: {
+														personId: params.personId,
+														organizationId: appState.organizationId
+													}
+												})
+											);
+											toast.success(t`Person deleted`);
 											goto(`/community`);
 										}
 									}}
-									>Delete
+									>{t`Delete`}
 								</LongPressButton>
 							</div>
 						</Alert.Description>

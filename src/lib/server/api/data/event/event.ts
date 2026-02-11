@@ -1,0 +1,228 @@
+import { drizzle } from '$lib/server/db';
+import { eq, and, isNull } from 'drizzle-orm';
+import { event, team } from '$lib/schema/drizzle';
+import type { ServerTransaction } from '@rocicorp/zero';
+import { type QueryContext, builder } from '$lib/zero/schema';
+import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
+import {
+	createEventZeroMutatorSchema,
+	type CreateEventZeroMutatorSchemaOutput,
+	updateEventZeroMutatorSchema,
+	type UpdateEventZeroMutatorSchemaOutput
+} from '$lib/schema/event';
+import { eventReadPermissions } from '$lib/zero/query/event/permissions';
+import { parse } from 'valibot';
+import { _insertActionCodeUnsafe } from '$lib/server/api/data/action/insert';
+import { getQueue } from '$lib/server/queue';
+
+export async function createEvent({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: CreateEventZeroMutatorSchemaOutput;
+}) {
+	const parsedInput = parse(createEventZeroMutatorSchema, args);
+	const organizationRecord = await tx.run(
+		builder.organization
+			.where('id', parsedInput.metadata.organizationId)
+			.where((expr) => organizationReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!organizationRecord) {
+		throw new Error('Organization not found');
+	}
+
+	if (parsedInput.metadata.teamId) {
+		const [teamRecord] = await tx.dbTransaction.wrappedTransaction
+			.select()
+			.from(team)
+			.where(eq(team.id, parsedInput.metadata.teamId))
+			.limit(1);
+		if (!teamRecord) {
+			throw new Error('Team not found');
+		}
+		if (organizationRecord.id !== teamRecord.organizationId) {
+			throw new Error('Team does not belong to organization');
+		}
+	}
+
+	const eventToCreate: typeof event.$inferInsert = {
+		...parsedInput.input,
+		...(parsedInput.input.teamId ? { teamId: parsedInput.input.teamId } : {}),
+		id: parsedInput.metadata.eventId,
+		organizationId: parsedInput.metadata.organizationId,
+		published: false,
+		startsAt: new Date(parsedInput.input.startsAt),
+		endsAt: new Date(parsedInput.input.endsAt),
+		createdAt: new Date(),
+		updatedAt: new Date()
+	};
+
+	await _insertActionCodeUnsafe({
+		tx,
+		args: {
+			organizationId: parsedInput.metadata.organizationId,
+			type: 'event_signup',
+			referenceId: parsedInput.metadata.eventId
+		}
+	});
+	await _insertActionCodeUnsafe({
+		tx,
+		args: {
+			organizationId: parsedInput.metadata.organizationId,
+			type: 'event_attended',
+			referenceId: parsedInput.metadata.eventId
+		}
+	});
+
+	async function getNextSlug(slug: string, count: number = 0): Promise<string> {
+		const slugToCheck = `${slug}${count > 0 ? `-${count}` : ''}`;
+		const result = await tx.run(
+			builder.event
+				.where('organizationId', '=', parsedInput.metadata.organizationId)
+				.where('slug', slugToCheck)
+				.where('deletedAt', 'IS', null)
+				.one()
+		);
+		if (!result) {
+			return await getNextSlug(slug, count + 1);
+		}
+		return slugToCheck;
+	}
+
+	async function getNextTitle(title: string, count: number = 0): Promise<string> {
+		const titleToCheck = `${title}${count > 0 ? ` ${count}` : ''}`;
+		const result = await tx.run(
+			builder.event
+				.where('organizationId', '=', parsedInput.metadata.organizationId)
+				.where('title', '=', titleToCheck)
+				.where('deletedAt', 'IS', null)
+				.one()
+		);
+		if (!result) {
+			return await getNextTitle(title, count + 1);
+		}
+		return titleToCheck;
+	}
+
+	const uniqueSlug = await getNextSlug(eventToCreate.slug);
+	const uniqueTitle = await getNextTitle(eventToCreate.title);
+
+	eventToCreate.slug = uniqueSlug;
+	eventToCreate.title = uniqueTitle;
+
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.insert(event)
+		.values(eventToCreate)
+		.returning();
+	if (!result) {
+		throw new Error('Unable to create event');
+	}
+
+	return result;
+}
+
+export async function updateEvent({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateEventZeroMutatorSchemaOutput;
+}) {
+	const parsed = parse(updateEventZeroMutatorSchema, args);
+	const eventRecord = await tx.run(
+		builder.event
+			.where('id', '=', parsed.metadata.eventId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => eventReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!eventRecord) {
+		throw new Error('Event not found');
+	}
+
+	const [updatedEvent] = await tx.dbTransaction.wrappedTransaction
+		.update(event)
+		.set({
+			...parsed.input,
+			startsAt: parsed.input.startsAt ? new Date(parsed.input.startsAt) : undefined,
+			endsAt: parsed.input.endsAt ? new Date(parsed.input.endsAt) : undefined,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(event.id, parsed.metadata.eventId),
+				eq(event.organizationId, parsed.metadata.organizationId)
+			)
+		)
+		.returning();
+
+	const structureChanged = !!(parsed.input.settings || parsed.input.title);
+	const publishedStatusChanged =
+		eventRecord?.published !== undefined && eventRecord?.published !== updatedEvent?.published;
+
+	if (structureChanged || publishedStatusChanged) {
+		const queue = await getQueue();
+		queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
+	}
+}
+
+export async function _getEventBySlugUnsafe({
+	eventSlug,
+	organizationId
+}: {
+	eventSlug: string;
+	organizationId: string;
+}) {
+	const eventObject = await drizzle.query.event.findFirst({
+		where: and(
+			eq(event.slug, eventSlug),
+			eq(event.organizationId, organizationId),
+			isNull(event.deletedAt)
+		)
+	});
+	return eventObject;
+}
+
+export async function _getEventByIdUnsafe({
+	eventId,
+	tx
+}: {
+	eventId: string;
+	tx: ServerTransaction;
+}) {
+	const [eventObject] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(event)
+		.where(and(eq(event.id, eventId), isNull(event.deletedAt)));
+	if (!eventObject) {
+		throw new Error('Event not found');
+	}
+	return eventObject;
+}
+
+export async function getEventById({
+	eventId,
+	ctx,
+	tx
+}: {
+	eventId: string;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const eventRecord = await tx.run(
+		builder.event
+			.where('id', '=', eventId)
+			.where((expr) => eventReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!eventRecord) {
+		throw new Error('Event not found');
+	}
+	return eventRecord;
+}

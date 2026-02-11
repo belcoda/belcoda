@@ -4,6 +4,7 @@
 	import { type Snippet } from 'svelte';
 	import { type ListFilter } from '$lib/schema/helpers';
 	import { type ListPersonsInput } from '$lib/zero/query/person/list';
+	import { t } from '$lib/index.svelte';
 	let {
 		trigger,
 		filter = $bindable(),
@@ -14,22 +15,21 @@
 		hideActivityFilter?: boolean;
 	} = $props();
 
-	import { listTeams } from '$lib/zero/query/team/list';
-	import { listTags } from '$lib/zero/query/tag/list';
-	import { listEvents, type EventListFilter } from '$lib/zero/query/event/list';
+	import type { EventListFilter } from '$lib/zero/query/event/list';
 	import { getTimestampFromCalendarDate, getWeeksFromTodayCalendarDate } from '$lib/utils/date';
 	import { getLocalTimeZone } from '@internationalized/date';
 	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
 	const teamList = $derived.by(() =>
-		z.createQuery(listTeams(appState.queryContext, teamsListFilter))
+		z.createQuery(queries.team.list(teamsListFilter))
 	);
 
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
-	const tagList = $derived.by(() => z.createQuery(listTags(appState.queryContext, tagListFilter)));
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
 
 	const eventListFilter: EventListFilter = $state({
 		...getListFilter(appState.organizationId),
@@ -48,7 +48,7 @@
 	});
 
 	const eventList = $derived.by(() =>
-		z.createQuery(listEvents(appState.queryContext, eventListFilter))
+		z.createQuery(queries.event.list(eventListFilter))
 	);
 
 	import { tick } from 'svelte';
@@ -75,12 +75,13 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end">
 		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>Teams</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubTrigger>{t`Teams`}</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent>
 				<Command.Root value={filter.teamId ?? ''}>
-					<Command.Input autofocus placeholder="Filter teams..." />
+					<Command.Input autofocus placeholder={t`Filter teams...`} />
 					<Command.List>
-						<Command.Empty class="text-sm text-muted-foreground">No teams found.</Command.Empty>
+						<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty
+						>
 						<Command.Group>
 							{#each teamList.data as team (team.id)}
 								<Command.Item
@@ -101,12 +102,12 @@
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>
 		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>Tags</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubTrigger>{t`Tags`}</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent>
 				<Command.Root value={filter.tagId ?? ''}>
-					<Command.Input autofocus placeholder="Filter tags..." />
+					<Command.Input autofocus placeholder={t`Filter tags...`} />
 					<Command.List>
-						<Command.Empty class="text-sm text-muted-foreground">No tags found.</Command.Empty>
+						<Command.Empty class="text-sm text-muted-foreground">{t`No tags found.`}</Command.Empty>
 						<Command.Group>
 							{#each tagList.data as tag (tag.id)}
 								<Command.Item
@@ -132,28 +133,28 @@
 		</DropdownMenu.Sub>
 		{#if !hideActivityFilter}
 			<DropdownMenu.Sub>
-				<DropdownMenu.SubTrigger>Activity</DropdownMenu.SubTrigger>
+				<DropdownMenu.SubTrigger>{t`Activity`}</DropdownMenu.SubTrigger>
 				<DropdownMenu.SubContent>
 					<DropdownMenu.Group>
 						<DropdownMenu.Item
 							onclick={() => {
 								filter.mostRecentActivity = '7days';
-							}}>Recent activity: 7 days</DropdownMenu.Item
+							}}>{t`Recent activity: 7 days`}</DropdownMenu.Item
 						>
 						<DropdownMenu.Item
 							onclick={() => {
 								filter.mostRecentActivity = '30days';
-							}}>Recent activity: 30 days</DropdownMenu.Item
+							}}>{t`Recent activity: 30 days`}</DropdownMenu.Item
 						>
 						<DropdownMenu.Item
 							onclick={() => {
 								filter.mostRecentActivity = '90days';
-							}}>Recent activity: 90 days</DropdownMenu.Item
+							}}>{t`Recent activity: 90 days`}</DropdownMenu.Item
 						>
 						<DropdownMenu.Item
 							onclick={() => {
 								filter.mostRecentActivity = '1year';
-							}}>Recent activity: 1 year</DropdownMenu.Item
+							}}>{t`Recent activity: 1 year`}</DropdownMenu.Item
 						>
 					</DropdownMenu.Group>
 					<DropdownMenu.Separator />
@@ -161,22 +162,22 @@
 						<DropdownMenu.Item
 							onclick={() => {
 								filter.mostRecentActivity = 'noactivity7days';
-							}}>No activity: 7 days</DropdownMenu.Item
+							}}>{t`No activity: 7 days`}</DropdownMenu.Item
 						>
 						<DropdownMenu.Item
 							onclick={() => {
 								filter.mostRecentActivity = 'noactivity30days';
-							}}>No activity: 30 days</DropdownMenu.Item
+							}}>{t`No activity: 30 days`}</DropdownMenu.Item
 						>
 						<DropdownMenu.Item
 							onclick={() => {
 								filter.mostRecentActivity = 'noactivity90days';
-							}}>No activity: 90 days</DropdownMenu.Item
+							}}>{t`No activity: 90 days`}</DropdownMenu.Item
 						>
 						<DropdownMenu.Item
 							onclick={() => {
 								filter.mostRecentActivity = 'noactivity1year';
-							}}>No activity: 1 year</DropdownMenu.Item
+							}}>{t`No activity: 1 year`}</DropdownMenu.Item
 						>
 					</DropdownMenu.Group>
 				</DropdownMenu.SubContent>

@@ -149,8 +149,8 @@ export type CreateMutatorSchemaOutput = v.InferOutput<typeof createMutatorSchema
 export const createEventZeroMutatorSchema = v.object({
 	input: v.object({
 		...createEventZero.entries,
-		startsAt: helpers.timestampToDate,
-		endsAt: helpers.timestampToDate
+		startsAt: helpers.unixTimestamp,
+		endsAt: helpers.unixTimestamp
 	}),
 	metadata: mutatorMetadata
 });
@@ -167,8 +167,8 @@ export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema
 export const updateEventZeroMutatorSchema = v.object({
 	input: v.object({
 		...updateEventZero.entries,
-		startsAt: helpers.timestampToDate,
-		endsAt: helpers.timestampToDate
+		startsAt: v.optional(helpers.unixTimestamp),
+		endsAt: v.optional(helpers.unixTimestamp)
 	}),
 	metadata: mutatorMetadata
 });

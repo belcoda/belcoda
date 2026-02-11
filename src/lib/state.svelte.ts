@@ -1,18 +1,11 @@
-import { z } from '$lib/zero.svelte';
-import { readOrganization } from '$lib/zero/query/organizations/read';
-import { listOrganizations } from '$lib/zero/query/organizations/list';
-import { listMyTeams } from '$lib/zero/query/team/listMyTeams';
-import { listUsers } from '$lib/zero/query/user/list';
-import { readUser } from '$lib/zero/query/user/read';
-import { type Locale } from '$lib/utils/language';
-import { type ListFilter } from '$lib/schema/helpers';
 import type { QueryContext } from '$lib/zero/schema';
-import { get } from '$lib/utils/http';
-import { queryContextSchema } from '$lib/zero/schema';
-export const STARTING_ORGANIZATION_ID = 'STARTING_ORGANIZATION_ID' as const;
-export const STARTING_STATE_USER_ID = 'STARTING_STATE_USER_ID' as const;
+import { type ListFilter } from '$lib/schema/helpers';
+
+import { z } from '$lib/zero.svelte';
+import queries from '$lib/zero/query/index';
+
 const DEFAULT_LIST_FILTER: ListFilter = {
-	organizationId: STARTING_ORGANIZATION_ID,
+	organizationId: '',
 	teamId: null,
 	pageSize: 25,
 	searchString: null,
@@ -28,113 +21,163 @@ export function getListFilter(
 	return filter;
 }
 
-// Define the class that holds all your state and logic
-class AuthStore {
-	// 1. Reactive State Variables (as class properties)
+class AppState {
+	#organizationId = $state<string | null>(null);
+	#activeTeamId = $state<string | null>(null);
+	#userId = $state<string | null>(null);
+	#queryContext: QueryContext | null = $state(null);
 
-	locale = $state<Locale>('en');
-
-	organizationId = $state<string>(STARTING_ORGANIZATION_ID);
-
-	userId = $state<string>(STARTING_STATE_USER_ID);
-
-	usersListFilter = $state<ListFilter>(getListFilter(this.organizationId));
-
-	activeTeamId = $state<string | null>(null); // used in filtering content when teamId is set
-
-	authTeams = $state<string[]>([]);
-	adminOrgs = $state<string[]>([]);
-	ownerOrgs = $state<string[]>([]);
-
-	queryContext = $derived({
-		userId: this.userId,
-		authTeams: this.authTeams,
-		adminOrgs: this.adminOrgs,
-		ownerOrgs: this.ownerOrgs
+	#organizations = $derived(
+		this.#queryContext ? z.createQuery(queries.organization.list({})) : null
+	);
+	#activeOrganization = $derived.by(() => {
+		if (!this.#organizationId) {
+			return null;
+		}
+		if (!this.#queryContext) {
+			return null;
+		}
+		return z.createQuery(queries.organization.read({ organizationId: this.#organizationId }));
 	});
 
-	organizations = z.createQuery(
-		listOrganizations(this.queryContext, {}),
-		false // don't enable the query until we have a userId loaded...
+	#adminOrgs = $derived(
+		this.#organizations?.data
+			?.filter((organization) =>
+				organization.memberships.some((membership) => membership.role === 'admin')
+			)
+			?.map((organization) => organization.id) ?? []
 	);
-
-	activeOrganization = z.createQuery(
-		readOrganization(this.queryContext, { organizationId: this.organizationId }),
-		false // don't enable the query until we have an organizationId loaded...
+	#ownerOrgs = $derived(
+		this.#organizations?.data
+			?.filter((organization) =>
+				organization.memberships.some((membership) => membership.role === 'owner')
+			)
+			?.map((organization) => organization.id) ?? []
 	);
-
-	role = $derived(this.activeOrganization.data?.memberships[0].role);
-	isAdmin = $derived(this.role === 'admin');
-	isOwner = $derived(this.role === 'owner');
-	isAdminOrOwner = $derived(this.isAdmin || this.isOwner);
-
-	organizationUsers = z.createQuery(
-		listUsers(this.queryContext, this.usersListFilter),
-		false // don't enable the query until we have a userId loaded...
-	);
-
-	myTeams = z.createQuery(
-		listMyTeams(this.queryContext, { userId: this.userId, organizationId: this.organizationId })
-	);
-
-	user = z.createQuery(readUser(this.queryContext, { userId: this.userId }));
-
-	// 2. Actions (mutators)
-
-	setLocale = (newLocale: Locale) => {
-		this.locale = newLocale;
-	};
-
-	setOrganizationId = (newOrganizationId: string) => {
-		this.organizationId = newOrganizationId;
-		this.usersListFilter.organizationId = newOrganizationId;
-		this.organizations.updateQuery(listOrganizations(this.queryContext, {}), true);
-		this.activeOrganization.updateQuery(
-			readOrganization(this.queryContext, { organizationId: newOrganizationId }),
-			true
+	#myTeams = $derived.by(() => {
+		if (!this.#queryContext || !this.#userId || !this.#organizationId) {
+			return null;
+		}
+		return z.createQuery(
+			queries.team.listMyTeams({
+				userId: this.#userId,
+				organizationId: this.#organizationId
+			})
 		);
-		this.organizationUsers.updateQuery(listUsers(this.queryContext, this.usersListFilter), true);
-		this.myTeams.updateQuery(
-			listMyTeams(this.queryContext, { userId: this.userId, organizationId: newOrganizationId }),
-			true
-		);
-	};
+	});
 
-	setUserId = (newUserId: string) => {
-		this.userId = newUserId;
-		this.user.updateQuery(readUser(this.queryContext, { userId: newUserId }));
-		this.organizations.updateQuery(listOrganizations(this.queryContext, {}), true);
-		this.activeOrganization.updateQuery(
-			readOrganization(this.queryContext, { organizationId: this.organizationId }),
-			true
-		);
-		this.organizationUsers.updateQuery(listUsers(this.queryContext, this.usersListFilter), true);
-		this.myTeams.updateQuery(
-			listMyTeams(this.queryContext, { userId: newUserId, organizationId: this.organizationId }),
-			true
-		);
-	};
+	#organizationUsers = $derived.by(() => {
+		if (!this.#queryContext || !this.#organizationId) {
+			return null;
+		}
+		return z.createQuery(queries.user.list(getListFilter(this.#organizationId)));
+	});
 
-	setActiveTeamId = (newTeamId: string | null) => {
-		this.activeTeamId = newTeamId;
-		// No need to update anything else, because the teamId isn't relevant for the user, org and other related queries...
-	};
+	#user = $derived.by(() => {
+		if (!this.#queryContext || !this.#userId) {
+			return null;
+		}
+		return z.createQuery(queries.user.read({ userId: this.#userId }));
+	});
 
-	setQueryContext = (newQueryContext: QueryContext) => {
-		this.userId = newQueryContext.userId;
-		this.authTeams = newQueryContext.authTeams;
-		this.adminOrgs = newQueryContext.adminOrgs;
-		this.ownerOrgs = newQueryContext.ownerOrgs;
-	};
+	#role = $derived(this.#activeOrganization?.data?.memberships[0].role ?? null);
+	#isAdmin = $derived(this.#role === 'admin');
+	#isOwner = $derived(this.#role === 'owner');
+	#isAdminOrOwner = $derived(this.#isAdmin || this.#isOwner);
 
-	async loadQueryContext() {
-		const queryContext = await get({
-			path: '/api/utils/auth/permissions',
-			schema: queryContextSchema
-		});
-		this.setQueryContext(queryContext);
+	init({
+		userId,
+		organizationId,
+		queryContext
+	}: {
+		userId: string;
+		organizationId: string;
+		queryContext: QueryContext;
+	}) {
+		this.#userId = userId;
+		this.#organizationId = organizationId;
+		this.#queryContext = queryContext;
+	}
+
+	get organizationId() {
+		if (!this.#organizationId) {
+			throw new Error('Organization ID is not set');
+		}
+		return this.#organizationId;
+	}
+	set organizationId(newOrganizationId: string) {
+		this.#organizationId = newOrganizationId;
+	}
+
+	get activeTeamId() {
+		return this.#activeTeamId;
+	}
+
+	set activeTeamId(newActiveTeamId: string | null) {
+		this.#activeTeamId = newActiveTeamId;
+	}
+
+	get userId() {
+		if (!this.#userId) {
+			throw new Error('User ID is not set');
+		}
+		return this.#userId;
+	}
+
+	get queryContext() {
+		if (!this.#queryContext) {
+			throw new Error('Query context is not set');
+		}
+		return this.#queryContext;
+	}
+
+	get organizations() {
+		if (!this.#organizations) {
+			throw new Error('Organizations are not set');
+		}
+		return this.#organizations;
+	}
+	get activeOrganization() {
+		if (!this.#activeOrganization) {
+			throw new Error('Active organization is not set');
+		}
+		return this.#activeOrganization;
+	}
+
+	get organizationUsers() {
+		if (!this.#organizationUsers) {
+			throw new Error('Organization users are not set');
+		}
+		return this.#organizationUsers;
+	}
+	get user() {
+		if (!this.#user) {
+			throw new Error('User is not set');
+		}
+		return this.#user;
+	}
+	get myTeams() {
+		if (!this.#myTeams) {
+			throw new Error('My teams are not set');
+		}
+		return this.#myTeams;
+	}
+
+	get role() {
+		if (!this.#role) {
+			throw new Error('Role is not set');
+		}
+		return this.#role;
+	}
+	get isAdmin() {
+		return this.#isAdmin;
+	}
+	get isOwner() {
+		return this.#isOwner;
+	}
+	get isAdminOrOwner() {
+		return this.#isAdminOrOwner;
 	}
 }
 
-// Singleton instance of the store
-export const appState = new AuthStore();
+export const appState = new AppState();

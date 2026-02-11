@@ -1,6 +1,7 @@
 <script lang="ts">
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 	import { type Readable } from 'svelte/store';
+	import { t } from '$lib/index.svelte';
 	type Errors = Readable<
 		{
 			path: string;
@@ -16,7 +17,7 @@
 		role="alert"
 	>
 		<div class="size-4"><CircleAlertIcon class="mt-1 size-4" /></div>
-		<span class="sr-only">There are some errors that need to be fixed</span>
+		<span class="sr-only">{t`There are some errors that need to be fixed`}</span>
 		<div>
 			{#each $errors as error}
 				<div>
