@@ -13,8 +13,6 @@ import { getRequestEvent } from '$app/server';
 import { openAPI, apiKey, organization } from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
-import { dev } from '$app/environment';
-
 import { stripe } from '@better-auth/stripe';
 
 import Stripe from 'stripe';
@@ -76,6 +74,8 @@ export function buildBetterAuth(localeInput: string) {
 			'https://staging.belcoda.com',
 			'http://localhost:5173',
 			'https://belcoda-zero.fly.dev',
+			'https://zero.staging.belcoda.com',
+			'https://zero.app.belcoda.com',
 			`.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 		],
 		session: {
@@ -90,6 +90,10 @@ export function buildBetterAuth(localeInput: string) {
 				generateId: () => {
 					return uuidv7();
 				}
+			},
+			crossSubDomainCookies: {
+				enabled: true,
+				domain: `.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 			},
 			cookiePrefix: 'belcoda',
 			ipAddress: {
