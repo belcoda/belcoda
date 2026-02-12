@@ -114,6 +114,8 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/tags/EditTag.svelte
+#: src/routes/(app)/settings/tags/NewTag.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Cancel"
 msgstr "Cancel"
@@ -194,6 +196,7 @@ msgstr "The return path domain is used for bounce handling."
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 msgid "Status"
 msgstr "Status"
 
@@ -206,6 +209,7 @@ msgstr "Verification status from Postmark."
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Actions"
 msgstr "Actions"
@@ -256,6 +260,7 @@ msgstr "Loading..."
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/tags/NewTag.svelte
 msgid "New"
 msgstr "New"
 
@@ -347,6 +352,7 @@ msgid "The email address cannot be changed."
 msgstr "The email address cannot be changed."
 
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/tags/EditTag.svelte
 msgid "Save changes"
 msgstr "Save changes"
 
@@ -491,6 +497,7 @@ msgstr "No teams found."
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
 msgid "Tags"
 msgstr "Tags"
@@ -1167,6 +1174,9 @@ msgstr "Create an account to get started"
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/tags/EditTag.svelte
+#: src/routes/(app)/settings/tags/NewTag.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
@@ -1880,10 +1890,8 @@ msgstr "Copy of"
 msgid "Event title"
 msgstr "Event title"
 
-#: src/routes/(app)/settings/tags/+page.svelte
-#: src/routes/(app)/settings/tags/+page.svelte
-msgid "Add Tag"
-msgstr "Add Tag"
+#~ msgid "Add Tag"
+#~ msgstr "Add Tag"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 msgid "Name is required"
@@ -1904,6 +1912,7 @@ msgstr "Key"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Created"
 msgstr "Created"
@@ -1962,6 +1971,7 @@ msgid "Creating..."
 msgstr "Creating..."
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/tags/NewTag.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Create"
 msgstr "Create"
@@ -2762,3 +2772,49 @@ msgstr "URL to the organization logo. It will be displayed on some public pages 
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "URL to the organization icon. It will be used in the menu and other Belcoda pages.Recommended size: 128x128px or 256x256px. Max size: 2MB."
 msgstr "URL to the organization icon. It will be used in the menu and other Belcoda pages.Recommended size: 128x128px or 256x256px. Max size: 2MB."
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Edit Tag"
+msgstr "Edit Tag"
+
+#: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Active"
+msgstr "Active"
+
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Inactive"
+msgstr "Inactive"
+
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Manage tags for organizing and categorizing your contacts."
+msgstr "Manage tags for organizing and categorizing your contacts."
+
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "No tags yet. Create your first tag to get started."
+msgstr "No tags yet. Create your first tag to get started."
+
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Loading tags..."
+msgstr "Loading tags..."
+
+#: src/routes/(app)/settings/tags/NewTag.svelte
+msgid "New Tag"
+msgstr "New Tag"
+
+#: src/routes/(app)/settings/tags/NewTag.svelte
+msgid "Create a new tag for organizing your contacts."
+msgstr "Create a new tag for organizing your contacts."
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+#: src/routes/(app)/settings/tags/NewTag.svelte
+msgid "e.g., Newsletter subscribers"
+msgstr "e.g., Newsletter subscribers"
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Update the tag name and status."
+msgstr "Update the tag name and status."
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Edit tag"
+msgstr "Edit tag"
