@@ -9,6 +9,7 @@ import * as emailFromSignature from '$lib/zero/mutate/email_from_signature';
 import * as emailMessage from '$lib/zero/mutate/email_message';
 import * as organization from '$lib/zero/mutate/organization';
 import * as webhook from '$lib/zero/mutate/webhook';
+import * as tag from '$lib/zero/mutate/tag';
 
 import { defineMutators } from '@rocicorp/zero';
 
@@ -69,5 +70,9 @@ export const mutators = defineMutators({
 	webhook: {
 		create: webhook.createWebhook,
 		delete: webhook.deleteWebhook
+	},
+	tag: {
+		update: tag.updateTag,
+		create: tag.createTag
 	}
 });

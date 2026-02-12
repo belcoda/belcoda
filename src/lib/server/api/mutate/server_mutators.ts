@@ -11,6 +11,7 @@ import * as emailFromSignature from '$lib/server/api/mutate/email_from_signature
 import * as emailMessage from '$lib/server/api/mutate/email_message';
 import * as organization from '$lib/server/api/mutate/organization';
 import * as webhook from '$lib/server/api/mutate/webhook';
+import * as tag from '$lib/server/api/mutate/tag';
 
 export const mutators = defineMutators({
 	person: {
@@ -65,5 +66,9 @@ export const mutators = defineMutators({
 	webhook: {
 		create: webhook.createWebhook,
 		delete: webhook.deleteWebhook
+	},
+	tag: {
+		create: tag.createTag,
+		update: tag.updateTag
 	}
 });
