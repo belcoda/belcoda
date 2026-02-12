@@ -62,3 +62,20 @@ export const updateMutatorSchema = v.object({
 	metadata: mutatorMetadata
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
+
+export const teamMemberMutatorMetadata = v.object({
+	organizationId: helpers.uuid,
+	teamId: helpers.uuid,
+	userId: helpers.uuid
+});
+export type TeamMemberMutatorMetadata = v.InferOutput<typeof teamMemberMutatorMetadata>;
+
+export const addUserToTeamMutatorSchema = v.object({
+	metadata: teamMemberMutatorMetadata
+});
+export type AddUserToTeamMutatorSchema = v.InferInput<typeof addUserToTeamMutatorSchema>;
+
+export const removeUserFromTeamMutatorSchema = v.object({
+	metadata: teamMemberMutatorMetadata
+});
+export type RemoveUserFromTeamMutatorSchema = v.InferInput<typeof removeUserFromTeamMutatorSchema>;
