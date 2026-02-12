@@ -37,7 +37,7 @@ export const settingsItems: {
 	{
 		title: () => t`Teams`,
 		group: 'Community',
-		url: '/settings/people/teams',
+		url: '/settings/teams',
 		keywords: ['teams', 'people', 'team'],
 		permissions: 'admin'
 	},
