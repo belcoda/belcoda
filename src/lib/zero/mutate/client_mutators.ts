@@ -10,6 +10,7 @@ import * as emailMessage from '$lib/zero/mutate/email_message';
 import * as organization from '$lib/zero/mutate/organization';
 import * as webhook from '$lib/zero/mutate/webhook';
 import * as tag from '$lib/zero/mutate/tag';
+import * as team from '$lib/zero/mutate/team';
 
 import { defineMutators } from '@rocicorp/zero';
 
@@ -74,5 +75,11 @@ export const mutators = defineMutators({
 	tag: {
 		update: tag.updateTag,
 		create: tag.createTag
+	},
+	team: {
+		create: team.createTeam,
+		update: team.updateTeam,
+		addUserToTeam: team.addUserToTeam,
+		removeUserFromTeam: team.removeUserFromTeam
 	}
 });

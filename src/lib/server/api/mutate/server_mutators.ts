@@ -12,6 +12,7 @@ import * as emailMessage from '$lib/server/api/mutate/email_message';
 import * as organization from '$lib/server/api/mutate/organization';
 import * as webhook from '$lib/server/api/mutate/webhook';
 import * as tag from '$lib/server/api/mutate/tag';
+import * as team from '$lib/server/api/mutate/team';
 
 export const mutators = defineMutators({
 	person: {
@@ -70,5 +71,11 @@ export const mutators = defineMutators({
 	tag: {
 		create: tag.createTag,
 		update: tag.updateTag
+	},
+	team: {
+		create: team.createTeam,
+		update: team.updateTeam,
+		addUserToTeam: team.addUserToTeam,
+		removeUserFromTeam: team.removeUserFromTeam
 	}
 });
