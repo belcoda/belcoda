@@ -10,23 +10,30 @@ type Props<T extends Record<string, unknown>, TInput extends Record<string, unkn
 	validateOnLoad?: boolean;
 	hideDebugger?: boolean;
 	onSubmit: (value: T, form: SuperValidated<TInput>) => Promise<void>;
+	onSubmitComplete?: (value: T, form: SuperValidated<TInput>) => Promise<void>;
 	class?: string;
 };
 
 export default function Form<
 	T extends Record<string, unknown>,
 	TInput extends Record<string, unknown>
->({ schema, initialData, validateOnLoad = true, onSubmit }: Props<T, TInput>) {
+>({ schema, initialData, validateOnLoad = true, onSubmit, onSubmitComplete }: Props<T, TInput>) {
 	const form = initialData
 		? //@ts-ignore There seems to be a type issue with defaulting to the generic initialData, but it works fine
 			superForm(defaults(initialData, valibot(schema)), {
 				SPA: true,
 				dataType: 'json',
 				validators: valibot(schema),
-				onUpdate({ form }) {
+				onUpdate({ form, cancel }) {
 					if (form.valid) {
 						// @ts-ignore Type error with generics? But also seems to work
-						onSubmit(form.data, form);
+						onSubmit(form.data, form, cancel);
+					}
+				},
+				onUpdated({ form }) {
+					if (form.valid && onSubmitComplete) {
+						// @ts-ignore Type error with generics? But also seems to work
+						onSubmitComplete(form.data, form);
 					}
 				}
 			})
@@ -38,6 +45,12 @@ export default function Form<
 					if (form.valid) {
 						// @ts-ignore Type error with generics? But also seems to work
 						onSubmit(form.data, form);
+					}
+				},
+				onUpdated({ form }) {
+					if (form.valid && onSubmitComplete) {
+						// @ts-ignore Type error with generics? But also seems to work
+						onSubmitComplete(form.data, form);
 					}
 				}
 			});
