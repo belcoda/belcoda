@@ -9,7 +9,7 @@ export const settingsItems: {
 	{
 		title: () => t`Configuration`,
 		group: 'Organization',
-		url: '/settings/organization/settings',
+		url: '/settings/organization/configuration',
 		keywords: ['organization', 'settings', 'preferences', 'config'],
 		permissions: 'admin'
 	},
