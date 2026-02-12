@@ -148,6 +148,12 @@ export type LanguageNativeName = (typeof isoLanguageCodes)[LanguageCode]['native
 
 export const languageCodes = Object.keys(isoLanguageCodes) as LanguageCode[];
 
+export function clampLanguageCode(languageCode: string): LanguageCode {
+	return languageCodes.includes(languageCode as LanguageCode)
+		? (languageCode as LanguageCode)
+		: 'en';
+}
+
 export function getLocalizedLanguageName(languageCode: LanguageCode): string {
 	return isoLanguageCodes[languageCode].native;
 }
