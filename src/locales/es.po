@@ -116,6 +116,8 @@ msgstr "Color de acento para estados de éxito y elementos secundarios en págin
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/tags/EditTag.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+#: src/routes/(app)/settings/teams/NewTeam.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Cancel"
 msgstr "Cancelar"
@@ -217,6 +219,7 @@ msgstr "La dirección de correo electrónico no puede ser cambiada."
 
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/tags/EditTag.svelte
+#: src/routes/(app)/settings/teams/EditTeam.svelte
 msgid "Save changes"
 msgstr "Guardar cambios"
 
@@ -298,6 +301,9 @@ msgstr "Estado de verificación de Postmark."
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Actions"
 msgstr "Acciones"
@@ -343,12 +349,15 @@ msgstr "Sistema"
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Loading..."
 msgstr "Cargando..."
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
+#: src/routes/(app)/settings/teams/NewTeam.svelte
 msgid "New"
 msgstr "Nuevo"
 
@@ -367,6 +376,7 @@ msgid "Error loading persons"
 msgstr "Error al cargar personas"
 
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Selected"
 msgstr "Seleccionado"
 
@@ -421,6 +431,7 @@ msgid "Billing"
 msgstr "Facturación"
 
 #: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Team"
 msgstr "Equipo"
 
@@ -478,6 +489,8 @@ msgstr "Filtro de actividad desconocido"
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
 msgid "Teams"
 msgstr "Equipos"
 
@@ -685,6 +698,7 @@ msgid "Added tag"
 msgstr "Etiqueta agregada"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Add to team"
 msgstr "Agregar al equipo"
 
@@ -773,6 +787,7 @@ msgstr "No especificado"
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Phone"
 msgstr "Teléfono"
 
@@ -791,6 +806,8 @@ msgstr "No contactar"
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(auth)/login/+page.svelte
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
@@ -990,6 +1007,7 @@ msgstr "No hay detalles de fallos disponibles"
 
 #: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Close"
@@ -1177,6 +1195,11 @@ msgstr "Crea una cuenta para comenzar"
 #: src/routes/(app)/settings/tags/+page.svelte
 #: src/routes/(app)/settings/tags/EditTag.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+#: src/routes/(app)/settings/teams/NewTeam.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
@@ -1913,6 +1936,7 @@ msgstr "Clave"
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Created"
 msgstr "Creado"
@@ -1972,6 +1996,7 @@ msgstr "Creando..."
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
+#: src/routes/(app)/settings/teams/NewTeam.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Create"
 msgstr "Crear"
@@ -2817,4 +2842,106 @@ msgstr ""
 
 #: src/routes/(app)/settings/tags/EditTag.svelte
 msgid "Edit tag"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/+page.svelte
+msgid "Manage teams for organizing people and users."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/+page.svelte
+msgid "No teams yet. Create your first team to get started."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/+page.svelte
+msgid "Loading teams..."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/NewTeam.svelte
+msgid "New Team"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/NewTeam.svelte
+msgid "Create a new team."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+#: src/routes/(app)/settings/teams/NewTeam.svelte
+msgid "e.g., Sales team"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+msgid "Edit Team"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+msgid "Update the team name."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+msgid "Edit team"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Team not found."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Back to teams"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "People on this team"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Contacts (people) that belong to this team."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "No people on this team yet."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Remove"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Add person"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Users on this team"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Organization members (users) who have access to this team."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "No users on this team yet."
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Add user"
+msgstr ""
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Loading team..."
+msgstr ""
+
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+msgid "Add User"
+msgstr ""
+
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+msgid "Select organization members to add to the team."
+msgstr ""
+
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+msgid "Error loading users."
+msgstr ""
+
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+msgid "No users available to add."
 msgstr ""
