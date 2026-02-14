@@ -1521,14 +1521,11 @@ msgstr "Timezone"
 msgid "Toggle"
 msgstr "Toggle"
 
-#. placeholder {0}: count.toString()
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "{0} recipients"
-msgstr "{0} recipients"
+#~ msgid "{0} recipients"
+#~ msgstr "{0} recipients"
 
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "1 recipient"
-msgstr "1 recipient"
+#~ msgid "1 recipient"
+#~ msgstr "1 recipient"
 
 #: src/lib/components/communications/email/EmailList.svelte
 msgid "Type to search..."
