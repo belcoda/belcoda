@@ -84,6 +84,7 @@ msgstr "Nome de exibição"
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Email address"
 msgstr "Endereço de e-mail"
 
@@ -153,6 +154,9 @@ msgstr "Opcional. O domínio de caminho de retorno é usado para tratamento de r
 #: src/routes/(app)/settings/tags/NewTag.svelte
 #: src/routes/(app)/settings/teams/EditTeam.svelte
 #: src/routes/(app)/settings/teams/NewTeam.svelte
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Cancel"
 msgstr "Cancelar"
@@ -220,6 +224,7 @@ msgstr "O endereço de e-mail não pode ser alterado."
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/tags/EditTag.svelte
 #: src/routes/(app)/settings/teams/EditTeam.svelte
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Save changes"
 msgstr "Salvar alterações"
 
@@ -304,6 +309,8 @@ msgstr "Status de verificação do Postmark."
 #: src/routes/(app)/settings/teams/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/users/+page.svelte
+#: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Actions"
 msgstr "Ações"
@@ -393,14 +400,20 @@ msgid "Invite?"
 msgstr "Convidar?"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Admin"
 msgstr "Administrador"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Member"
 msgstr "Membro"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Owner"
 msgstr "Proprietário"
 
@@ -774,6 +787,8 @@ msgstr "Pessoa excluída"
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/users/+page.svelte
+#: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(auth)/login/+page.svelte
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
@@ -1069,6 +1084,7 @@ msgstr "E-mail sem título"
 #: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+#: src/routes/(app)/settings/users/+page.svelte
 msgid "Sent"
 msgstr "Enviado"
 
@@ -1218,6 +1234,7 @@ msgstr "Crie uma conta para começar"
 #: src/routes/(app)/settings/teams/NewTeam.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
@@ -1783,6 +1800,7 @@ msgstr "Erro de envio!"
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Error"
 msgstr "Erro"
 
@@ -2898,6 +2916,7 @@ msgstr ""
 
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Remove"
 msgstr ""
 
@@ -2939,4 +2958,118 @@ msgstr ""
 
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "No users available to add."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "Users"
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "You don't have permission to manage users. Only admins and owners can access this page."
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "Members"
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "Users who are part of this organization."
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+#: src/routes/(app)/settings/users/+page.svelte
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+msgid "Role"
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "Joined"
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "No members found."
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "Loading members..."
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "Pending Invitations"
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "Invitations that have been sent but not yet accepted."
+msgstr ""
+
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "No pending invitations."
+msgstr ""
+
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+msgid "Please enter an email address"
+msgstr ""
+
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+msgid "Invite User"
+msgstr ""
+
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+msgid "Send an invitation to join your organization."
+msgstr ""
+
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+msgid "Invite"
+msgstr ""
+
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+msgid "user@example.com"
+msgstr ""
+
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+msgid "Sending..."
+msgstr ""
+
+#: src/routes/(app)/settings/users/InviteUserModal.svelte
+msgid "Send invitation"
+msgstr ""
+
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+msgid "Edit Role"
+msgstr ""
+
+#. placeholder {0}: userName
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+msgid "Change the role for {0}."
+msgstr ""
+
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+msgid "Edit role"
+msgstr ""
+
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+msgid "Saving..."
+msgstr ""
+
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
+msgid "You cannot remove yourself from the organization"
+msgstr ""
+
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
+msgid "Remove member"
+msgstr ""
+
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
+msgid "Remove Member"
+msgstr ""
+
+#. placeholder {0}: userName
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
+msgid "Are you sure you want to remove {0} from this organization? They will lose access to all organization resources immediately."
+msgstr ""
+
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
+msgid "Removing..."
 msgstr ""
