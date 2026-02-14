@@ -1,7 +1,7 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput, object, optional, picklist } from 'valibot';
+import { array, type InferOutput, object, optional, boolean } from 'valibot';
 import { listFilter, parseSchema, uuid } from '$lib/schema/helpers';
 import { eventSignupReadPermissions } from '$lib/zero/query/event_signup/permissions';
 import { readEventSignupZero } from '$lib/schema/event-signup';
