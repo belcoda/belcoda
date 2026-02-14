@@ -2945,3 +2945,11 @@ msgstr "Error loading users."
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "No users available to add."
 msgstr "No users available to add."
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again."
+msgstr "Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again."
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Delete signup"
+msgstr "Delete signup"
