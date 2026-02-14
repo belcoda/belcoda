@@ -21,6 +21,13 @@ export const settingsItems: {
 		permissions: 'admin'
 	},
 	{
+		title: () => t`Users`,
+		group: 'Organization',
+		url: '/settings/users',
+		keywords: ['users', 'members', 'invite', 'roles', 'permissions'],
+		permissions: 'admin'
+	},
+	{
 		title: () => t`Email from signatures`,
 		group: 'Email',
 		url: '/settings/email/send_signatures',

@@ -962,6 +962,12 @@ const invitationTable = {
 			type: 'string',
 			optional: false,
 			customType: null as unknown as string
+		},
+		createdAt: {
+			type: 'number',
+			optional: false,
+			customType: null as unknown as number,
+			serverName: 'created_at'
 		}
 	},
 	primaryKey: ['id']

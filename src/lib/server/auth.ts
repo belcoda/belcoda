@@ -35,6 +35,7 @@ import { type LanguageCode, clampLocale } from '$lib/utils/language';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
 import { passwordReset } from '$lib/server/utils/email/context/transactional/auth/password_reset';
+import { organizationInvitation } from '$lib/server/utils/email/context/transactional/auth/organization_invitation';
 
 export function buildBetterAuth(localeInput: string) {
 	const locale = clampLocale(localeInput as LanguageCode);
@@ -105,6 +106,22 @@ export function buildBetterAuth(localeInput: string) {
 		},
 		plugins: [
 			organization({
+				async sendInvitationEmail(data) {
+					const inviteLink = `${publicEnv.PUBLIC_ROOT_DOMAIN}/organization`;
+					const email = organizationInvitation({
+						url: inviteLink,
+						inviterName: data.inviter.user.name,
+						organizationName: data.organization.name,
+						locale
+					});
+					await sendTemplateEmail({
+						to: data.email,
+						from: 'Belcoda <noreply@belcoda.com>',
+						template: 'transactional',
+						stream: 'outbound',
+						context: email
+					});
+				},
 				schema: {
 					organization: {
 						additionalFields: {

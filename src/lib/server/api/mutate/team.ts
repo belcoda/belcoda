@@ -22,12 +22,15 @@ export const updateTeam = defineMutator(updateMutatorSchema, async ({ tx, args, 
 	await teamData.updateTeam({ tx, ctx, args });
 });
 
-export const addUserToTeam = defineMutator(addUserToTeamMutatorSchema, async ({ tx, args, ctx }) => {
-	if (tx.location !== 'server') {
-		throw new Error('addUserToTeam can only be called from the server');
+export const addUserToTeam = defineMutator(
+	addUserToTeamMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server') {
+			throw new Error('addUserToTeam can only be called from the server');
+		}
+		await teamMemberData.addUserToTeam({ tx, ctx, args });
 	}
-	await teamMemberData.addUserToTeam({ tx, ctx, args });
-});
+);
 
 export const removeUserFromTeam = defineMutator(
 	removeUserFromTeamMutatorSchema,
