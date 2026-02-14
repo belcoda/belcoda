@@ -43,7 +43,20 @@ export const eventSignupDetails = object({
 });
 export type EventSignupDetails = InferOutput<typeof eventSignupDetails>;
 
-export const eventSignupStatusList = ['signup', 'attended', 'noshow', 'notattending'] as const;
+//signup == someone who signed up
+//attended == someone who attended
+//noshow == someone who signed up but didn't attend
+//notattending == someone who responded to an invite by saying they could not attend
+//cancelled == someone who signed up but cancelled
+//deleted == someone who signed up but was deleted by a user or admin
+export const eventSignupStatusList = [
+	'signup',
+	'attended',
+	'noshow',
+	'notattending',
+	'cancelled',
+	'deleted'
+] as const;
 export const eventSignupStatus = picklist(eventSignupStatusList);
 export type EventSignupStatus = (typeof eventSignupStatusList)[number];
 
