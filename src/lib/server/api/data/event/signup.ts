@@ -169,6 +169,13 @@ export async function signUpForEventUnsafe({
 	const [insertedEventSignup] = await tx.dbTransaction.wrappedTransaction
 		.insert(eventSignup)
 		.values(eventSignupRecord)
+		.onConflictDoUpdate({
+			target: [eventSignup.eventId, eventSignup.personId],
+			set: {
+				status: eventSignupRecord.status,
+				updatedAt: new Date()
+			}
+		})
 		.returning();
 	if (!insertedEventSignup) {
 		throw new Error('Unable to create event signup');
@@ -346,6 +353,7 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
+
 	const eventSignupRecord: typeof eventSignup.$inferInsert = {
 		id: parsed.metadata.eventSignupId,
 		organizationId: parsed.metadata.organizationId,
@@ -360,6 +368,13 @@ export async function createEventSignup({
 	const [insertedEventSignup] = await tx.dbTransaction.wrappedTransaction
 		.insert(eventSignup)
 		.values(eventSignupRecord)
+		.onConflictDoUpdate({
+			target: [eventSignup.eventId, eventSignup.personId],
+			set: {
+				status: parsed.input.status,
+				updatedAt: new Date()
+			}
+		})
 		.returning();
 	if (!insertedEventSignup) {
 		throw new Error('Unable to create event signup');
