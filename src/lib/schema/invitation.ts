@@ -9,6 +9,7 @@ export const invitationSchema = v.object({
 	teamId: v.nullable(helpers.uuid),
 	role: helpers.mediumStringEmpty,
 	status: helpers.mediumStringEmpty,
+	createdAt: helpers.date,
 	expiresAt: helpers.date
 });
 export type InvitationSchema = v.InferOutput<typeof invitationSchema>;
