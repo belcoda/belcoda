@@ -8,6 +8,13 @@
       "when": 1770794664889,
       "tag": "0000_long_spacker_dave",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771043165542,
+      "tag": "0001_outstanding_captain_cross",
+      "breakpoints": true
     }
   ]
 }

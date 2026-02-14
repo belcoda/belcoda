@@ -205,6 +205,7 @@ export const invitation = pgTable('invitation', {
 	teamId: uuid('team_id').references(() => team.id),
 	role: text('role').notNull(),
 	status: text('status').notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'date' }).notNull()
 });
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
