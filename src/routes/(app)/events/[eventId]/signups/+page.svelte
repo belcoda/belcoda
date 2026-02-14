@@ -8,6 +8,7 @@
 	import queries from '$lib/zero/query/index';
 	let filter: ListEventSignupsInput = $state({
 		...getListFilter(appState.organizationId),
+		includeDeleted: true,
 		/* svelte-ignore state_referenced_locally */
 		eventId: params.eventId
 	});
