@@ -91,10 +91,13 @@ export function buildBetterAuth(localeInput: string) {
 					return uuidv7();
 				}
 			},
-			crossSubDomainCookies: {
-				enabled: true,
-				domain: `.belcoda.com`
-			},
+			// Only use crossSubDomainCookies on belcoda.com; on localhost it would set
+			// cookie domain=.belcoda.com, causing the OAuth state cookie to not be sent back
+			crossSubDomainCookies:
+				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('localhost') ||
+				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('127.0.0.1')
+					? { enabled: false }
+					: { enabled: true, domain: `.belcoda.com` },
 			cookiePrefix: 'belcoda',
 			ipAddress: {
 				ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] // Cloudflare specific header
