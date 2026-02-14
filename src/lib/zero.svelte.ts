@@ -13,7 +13,6 @@ class ZeroInstance {
 		return this.#z;
 	}
 	init(userId: string, queryContext: QueryContext) {
-		// @ts-expect-error - something with the typing of mutators object... let's see if it works tho
 		this.#z = new Z({
 			cacheURL: publicEnv.PUBLIC_ZERO_SERVER,
 			schema,
