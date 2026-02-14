@@ -880,7 +880,13 @@ const eventSignupTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'signup' | 'attended' | 'noshow' | 'notattending'
+			customType: null as unknown as
+				| 'signup'
+				| 'attended'
+				| 'noshow'
+				| 'notattending'
+				| 'cancelled'
+				| 'deleted'
 		},
 		signupNotificationSentAt: {
 			type: 'number',

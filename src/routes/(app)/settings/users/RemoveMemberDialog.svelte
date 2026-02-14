@@ -65,7 +65,12 @@
 
 <Tooltip.Root>
 	<Tooltip.Trigger>
-		<Button variant="ghost" size="icon-sm" onclick={open} class="text-destructive hover:text-destructive">
+		<Button
+			variant="ghost"
+			size="icon-sm"
+			onclick={open}
+			class="text-destructive hover:text-destructive"
+		>
 			<TrashIcon class="size-4" />
 		</Button>
 	</Tooltip.Trigger>

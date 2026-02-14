@@ -6,6 +6,7 @@ import { appState } from '$lib/state.svelte';
 import { locale, t } from '$lib/index.svelte';
 import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 import { type ReadEventZero } from '$lib/schema/event';
+import { type EventSignupStatus } from '$lib/schema/event/settings';
 
 import { v7 as uuidv7 } from 'uuid';
 
@@ -20,7 +21,7 @@ export function handleUpdateStatus({
 	organizationId: string;
 	personId: string;
 	eventId: string;
-	status: 'attended' | 'noshow' | 'notattending' | 'signup';
+	status: EventSignupStatus;
 }) {
 	z.mutate(
 		mutators.eventSignup.update({

@@ -20,7 +20,9 @@
 
 	let isOpen = $state(false);
 	/* svelte-ignore state_referenced_locally */
-	let selectedRole = $state<'member' | 'admin' | 'owner'>(currentRole as 'member' | 'admin' | 'owner');
+	let selectedRole = $state<'member' | 'admin' | 'owner'>(
+		currentRole as 'member' | 'admin' | 'owner'
+	);
 	let submitting = $state(false);
 
 	const ROLES = [

@@ -87,9 +87,7 @@
 				invitations = [];
 			} else {
 				// Filter to only show pending invitations
-				invitations = (result.data || []).filter(
-					(inv: any) => inv.status === 'pending'
-				);
+				invitations = (result.data || []).filter((inv: any) => inv.status === 'pending');
 			}
 		} catch (e) {
 			console.error('Error loading invitations:', e);
@@ -160,7 +158,10 @@
 						<Table.Body>
 							{#if userList.data && userList.data.length === 0}
 								<Table.Row>
-									<Table.Cell colspan={canChangeRoles ? 5 : 4} class="py-12 text-center text-muted-foreground">
+									<Table.Cell
+										colspan={canChangeRoles ? 5 : 4}
+										class="py-12 text-center text-muted-foreground"
+									>
 										{t`No members found.`}
 									</Table.Cell>
 								</Table.Row>
@@ -200,7 +201,10 @@
 								{/each}
 							{:else}
 								<Table.Row>
-									<Table.Cell colspan={canChangeRoles ? 5 : 4} class="py-8 text-center text-muted-foreground">
+									<Table.Cell
+										colspan={canChangeRoles ? 5 : 4}
+										class="py-8 text-center text-muted-foreground"
+									>
 										{t`Loading members...`}
 									</Table.Cell>
 								</Table.Row>
