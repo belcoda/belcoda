@@ -11,7 +11,8 @@ export const inputSchema = object({
 	...listFilter.entries,
 	eventId: optional(uuid),
 	tagId: optional(uuid),
-	status: optional(eventSignupStatus)
+	status: optional(eventSignupStatus),
+	includeDeleted: optional(boolean())
 });
 export type ListEventSignupsInput = InferOutput<typeof inputSchema>;
 
@@ -46,6 +47,9 @@ function whereClause(
 	const filterArr: Array<ReturnType<typeof exists> | ReturnType<typeof cmp>> = [];
 	if (filter.eventId) {
 		filterArr.push(cmp('eventId', '=', filter.eventId!));
+	}
+	if (filter.includeDeleted !== true) {
+		filterArr.push(cmp('status', 'IS NOT', 'deleted'));
 	}
 	if (filter.status) {
 		filterArr.push(cmp('status', '=', filter.status!));
