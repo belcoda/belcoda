@@ -13,6 +13,6 @@ fi
 
 echo "✅ Migrations up to date"
 
-npm run check:all
+npm run check
 
 
