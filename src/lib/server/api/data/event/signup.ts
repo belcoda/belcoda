@@ -24,7 +24,7 @@ import { parse } from 'valibot';
 
 import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, not, inArray, sql } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
@@ -174,7 +174,8 @@ export async function signUpForEventUnsafe({
 			set: {
 				status: eventSignupRecord.status,
 				updatedAt: new Date()
-			}
+			},
+			setWhere: sql`excluded.status not in ('attended', 'noshow')`
 		})
 		.returning();
 	if (!insertedEventSignup) {
@@ -373,7 +374,8 @@ export async function createEventSignup({
 			set: {
 				status: parsed.input.status,
 				updatedAt: new Date()
-			}
+			},
+			setWhere: sql`excluded.status not in ('attended', 'noshow')`
 		})
 		.returning();
 	if (!insertedEventSignup) {
