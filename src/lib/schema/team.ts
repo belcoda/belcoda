@@ -40,7 +40,7 @@ export const updateTeam = v.partial(
 	v.object({
 		name: teamSchema.entries.name,
 		parentTeamId: v.optional(v.nullable(teamSchema.entries.parentTeamId), null),
-		deletedAt: v.optional(v.nullable(helpers.timestampToDate), null)
+		deletedAt: v.optional(v.nullable(helpers.unixTimestamp), null)
 	})
 );
 export type UpdateTeam = v.InferInput<typeof updateTeam>;
