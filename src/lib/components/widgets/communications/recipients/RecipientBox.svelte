@@ -17,11 +17,13 @@
 		filter = $bindable({
 			...defaultFilterGroup,
 			filters: initialSelected
-		})
+		}),
+		onChange
 	}: {
 		disabled?: boolean;
 		initialSelected?: FilterType[];
 		filter?: FilterGroupType;
+		onChange?: (filter: FilterGroupType) => void | Promise<void>;
 	} = $props();
 
 	import OptionComponent from '$lib/components/widgets/communications/recipients/Option.svelte';
@@ -115,6 +117,7 @@
 
 	function setSelected(selected: FilterType[]) {
 		filter.filters = selected;
+		onChange?.(filter);
 	}
 
 	function getSearchString() {
@@ -165,6 +168,6 @@
 </MultiSelect>
 <div class="flex items-center justify-end">
 	{#if filter.filters.length > 1}
-		<AndOrToggle bind:mode={filter.type} />
+		<AndOrToggle bind:mode={filter.type} onChange={() => onChange?.(filter)} />
 	{/if}
 </div>

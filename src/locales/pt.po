@@ -1287,10 +1287,8 @@ msgstr "Enviamos um link de verificação para"
 msgid "Please click the link in the email to verify your account before signing in."
 msgstr "Por favor clique no link do e-mail para verificar sua conta antes de entrar."
 
-#. placeholder {0}: count.toString()
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "{0} recipients selected"
-msgstr "{0} destinatários selecionados"
+#~ msgid "{0} recipients selected"
+#~ msgstr "{0} destinatários selecionados"
 
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/lib/components/forms/event/DateTimeSelect.svelte
@@ -1303,17 +1301,14 @@ msgstr "De"
 msgid "Recipients"
 msgstr "Destinatários"
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "Select recipients..."
-msgstr "Selecionar destinatários..."
+#~ msgid "Select recipients..."
+#~ msgstr "Selecionar destinatários..."
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "No recipients selected"
-msgstr "Nenhum destinatário selecionado"
+#~ msgid "No recipients selected"
+#~ msgstr "Nenhum destinatário selecionado"
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "Select"
-msgstr "Selecionar"
+#~ msgid "Select"
+#~ msgstr "Selecionar"
 
 #: src/lib/components/forms/email/EmailForm.svelte
 msgid "Subject"

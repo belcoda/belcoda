@@ -1287,10 +1287,8 @@ msgstr "Tu correo ha sido verificado exitosamente"
 msgid "Your email address has been verified. You can now sign in to your account."
 msgstr "Tu dirección de correo ha sido verificada. Ahora puedes iniciar sesión en tu cuenta."
 
-#. placeholder {0}: count.toString()
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "{0} recipients selected"
-msgstr "{0} destinatarios seleccionados"
+#~ msgid "{0} recipients selected"
+#~ msgstr "{0} destinatarios seleccionados"
 
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/lib/components/forms/event/DateTimeSelect.svelte
@@ -1303,17 +1301,14 @@ msgstr "De"
 msgid "Recipients"
 msgstr "Destinatarios"
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "Select recipients..."
-msgstr "Seleccionar destinatarios..."
+#~ msgid "Select recipients..."
+#~ msgstr "Seleccionar destinatarios..."
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "No recipients selected"
-msgstr "Sin destinatarios seleccionados"
+#~ msgid "No recipients selected"
+#~ msgstr "Sin destinatarios seleccionados"
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "Select"
-msgstr "Seleccionar"
+#~ msgid "Select"
+#~ msgstr "Seleccionar"
 
 #: src/lib/components/forms/email/EmailForm.svelte
 msgid "Subject"
