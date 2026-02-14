@@ -121,6 +121,28 @@
 						status: 'notattending'
 					})}>{t`Cancel signup`}</DropdownMenu.Item
 			>
+			{#if signup.status !== 'deleted'}
+				<DropdownMenu.Group>
+					<DropdownMenu.Item
+						variant="destructive"
+						onclick={() => {
+							if (
+								window.confirm(
+									t`Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again.`
+								)
+							) {
+								handleUpdateStatus({
+									eventSignupId: signup.id,
+									organizationId: appState.organizationId,
+									personId: signup.personId,
+									eventId: signup.eventId,
+									status: 'deleted'
+								});
+							}
+						}}>{t`Delete signup`}</DropdownMenu.Item
+					>
+				</DropdownMenu.Group>
+			{/if}
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item onclick={() => (openDetailedSignup = true)}
 				>{t`View detailed signup`}</DropdownMenu.Item
