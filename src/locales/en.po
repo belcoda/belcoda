@@ -1533,14 +1533,11 @@ msgstr "Timezone"
 msgid "Toggle"
 msgstr "Toggle"
 
-#. placeholder {0}: count.toString()
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "{0} recipients"
-msgstr "{0} recipients"
+#~ msgid "{0} recipients"
+#~ msgstr "{0} recipients"
 
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "1 recipient"
-msgstr "1 recipient"
+#~ msgid "1 recipient"
+#~ msgstr "1 recipient"
 
 #: src/lib/components/communications/email/EmailList.svelte
 msgid "Type to search..."
@@ -2959,6 +2956,10 @@ msgstr "Error loading users."
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "No users available to add."
 msgstr "No users available to add."
+
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "[Error loading email body]"
+msgstr "[Error loading email body]"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/users/+page.svelte

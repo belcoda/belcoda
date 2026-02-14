@@ -1590,14 +1590,11 @@ msgstr "Tem certeza de que deseja remover esta pergunta?"
 msgid "Remove question"
 msgstr "Remover pergunta"
 
-#. placeholder {0}: count.toString()
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "{0} recipients"
-msgstr "{0} destinatários"
+#~ msgid "{0} recipients"
+#~ msgstr "{0} destinatários"
 
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "1 recipient"
-msgstr "1 destinatário"
+#~ msgid "1 recipient"
+#~ msgstr "1 destinatário"
 
 #: src/lib/components/communications/email/EmailList.svelte
 msgid "Type to search..."
@@ -2958,6 +2955,10 @@ msgstr ""
 
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "No users available to add."
+msgstr ""
+
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "[Error loading email body]"
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts

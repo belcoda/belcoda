@@ -6,7 +6,8 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
 	import { formatShortTimestamp } from '$lib/utils/date';
-
+	import type { EditorState } from 'lexical';
+	import { jsonToHtml } from '$lib/components/ui/wysiwyg/renderRichText';
 	const { folder }: { folder?: string } = $props();
 
 	const activeItem = $derived.by(() => {
@@ -39,25 +40,12 @@
 		isDraft: activeItem.isDraft
 	}));
 
-	const emailsQuery = $derived.by(() =>
-		z.createQuery(queries.emailMessage.list(emailFilter))
-	);
+	const emailsQuery = $derived.by(() => z.createQuery(queries.emailMessage.list(emailFilter)));
 
 	const emails = $derived(emailsQuery.data ?? []);
-	const recipientCountLabel = (count: number) => {
-		return t`${count.toString()} recipients`;
-	};
 
-	function getRecipientDisplay(email: (typeof emails)[0]) {
-		const count = email.estimatedRecipientCount;
-		if (count === 1) {
-			// For single recipient, we'd need to fetch the actual recipient name
-			// For now, show "1 recipient"
-			return t`1 recipient`;
-		}
-		return recipientCountLabel(count);
-	}
 	import { Input } from '$lib/components/ui/input/index.js';
+	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 </script>
 
 <div class="flex w-full flex-col bg-background md:w-[300px] md:shrink-0">
@@ -76,17 +64,25 @@
 					href="/communications/email/{folder}/{email.id}"
 					class="flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-muted"
 				>
-					<div class="flex w-full items-center gap-2">
-						<span>{getRecipientDisplay(email)}</span>
-						<span class="ms-auto text-xs text-muted-foreground"
-							>{formatShortTimestamp(email.updatedAt)}</span
-						>
+					<div class="flex w-full items-center justify-between gap-2">
+						<div class="line-clamp-1 font-medium">{email.subject || t`(No subject)`}</div>
+						<div class="text-xs text-nowrap text-muted-foreground">
+							{formatShortTimestamp(email.updatedAt)}
+						</div>
 					</div>
-					<span class="font-medium">{email.subject || t`(No subject)`}</span>
 					{#if email.previewTextOverride}
 						<span class="line-clamp-2 text-xs text-muted-foreground">
 							{email.previewTextOverride}
 						</span>
+					{:else if email.body}
+						{#await jsonToHtml(JSON.stringify(email.body))}
+							<Skeleton class="h-3 w-full" />
+							<Skeleton class="h-3 w-full" />
+						{:then html}
+							<span class="prose line-clamp-2 text-xs text-muted-foreground">{@html html}</span>
+						{:catch}
+							<span class="line-clamp-2 text-xs text-red-400">{t`[Error loading email body]`}</span>
+						{/await}
 					{/if}
 				</a>
 			{:else}
