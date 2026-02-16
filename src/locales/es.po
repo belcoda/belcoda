@@ -765,6 +765,7 @@ msgstr "Editar nota..."
 msgid "Update note"
 msgstr "Actualizar nota"
 
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
 msgid "Danger zone!"
 msgstr "¡Zona de peligro!"
@@ -2967,7 +2968,7 @@ msgstr ""
 
 #: src/lib/components/communications/email/EmailList.svelte
 msgid "[Error loading email body]"
-msgstr "" 
+msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/users/+page.svelte
@@ -3081,4 +3082,20 @@ msgstr ""
 
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Removing..."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Event deleted"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Delete event"
 msgstr ""

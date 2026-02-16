@@ -1,6 +1,6 @@
 import { drizzle } from '$lib/server/db';
 import { eq, and, isNull } from 'drizzle-orm';
-import { event, team } from '$lib/schema/drizzle';
+import { event, eventSignup, team } from '$lib/schema/drizzle';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -8,7 +8,9 @@ import {
 	createEventZeroMutatorSchema,
 	type CreateEventZeroMutatorSchemaOutput,
 	updateEventZeroMutatorSchema,
-	type UpdateEventZeroMutatorSchemaOutput
+	type UpdateEventZeroMutatorSchemaOutput,
+	deleteEventMutatorSchemaZero,
+	type DeleteEventMutatorSchemaZero
 } from '$lib/schema/event';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { parse } from 'valibot';
@@ -170,6 +172,48 @@ export async function updateEvent({
 		const queue = await getQueue();
 		queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
 	}
+}
+
+export async function deleteEvent({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: DeleteEventMutatorSchemaZero;
+}) {
+	const parsed = parse(deleteEventMutatorSchemaZero, args);
+	const eventRecord = await tx.run(
+		builder.event
+			.where('id', '=', parsed.metadata.eventId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => eventReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!eventRecord) {
+		throw new Error('Event not found');
+	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(eventSignup)
+		.set({ status: 'cancelled', updatedAt: new Date() })
+		.where(
+			and(
+				eq(eventSignup.eventId, parsed.metadata.eventId),
+				eq(eventSignup.organizationId, parsed.metadata.organizationId)
+			)
+		);
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(event)
+		.set({ deletedAt: new Date(), updatedAt: new Date() })
+		.where(
+			and(
+				eq(event.id, parsed.metadata.eventId),
+				eq(event.organizationId, parsed.metadata.organizationId)
+			)
+		);
 }
 
 export async function _getEventBySlugUnsafe({
