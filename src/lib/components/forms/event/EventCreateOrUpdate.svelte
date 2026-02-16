@@ -78,6 +78,12 @@
 	import DateTimeSelect from '$lib/components/forms/event/DateTimeSelect.svelte';
 	import EventSignupSurvey from '$lib/components/forms/event/EventSignupSurvey.svelte';
 	import { defaultEventSettings } from '$lib/schema/event/settings';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
+	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 
 	function setSlug(slug: string) {
 		$data.slug = slugify(slug);
@@ -149,6 +155,39 @@
 				<EventSignupSurvey bind:form bind:data bind:errors />
 			</Card.Content>
 		</Card.Root>
+	{/if}
+	{#if event}
+		<Alert.Root variant="destructive" class="mt-4">
+			<AlertCircleIcon />
+			<Alert.Title>{t`Danger zone!`}</Alert.Title>
+			<Alert.Description>
+				{t`Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone.`}
+				<div class="mt-2">
+					<Button
+						type="button"
+						variant="destructive"
+						onclick={async () => {
+							if (
+								window.confirm(
+									t`Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?`
+								)
+							) {
+								z.mutate(
+									mutators.event.delete({
+										metadata: {
+											eventId: event.id,
+											organizationId: appState.organizationId
+										}
+									})
+								);
+								toast.success(t`Event deleted`);
+								goto('/events');
+							}
+						}}>{t`Delete event`}</Button
+					>
+				</div>
+			</Alert.Description>
+		</Alert.Root>
 	{/if}
 	<Debug {data} hide={false} />
 </form>
