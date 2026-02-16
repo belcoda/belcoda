@@ -152,3 +152,24 @@ export async function updatePetition({
 			)
 		);
 }
+
+export async function getPetitionById({
+	petitionId,
+	ctx,
+	tx
+}: {
+	petitionId: string;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const petitionRecord = await tx.run(
+		builder.petition
+			.where('id', '=', petitionId)
+			.where((expr) => petitionReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!petitionRecord) {
+		throw new Error('Petition not found');
+	}
+	return petitionRecord;
+}
