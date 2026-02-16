@@ -765,6 +765,7 @@ msgstr "Edit note..."
 msgid "Update note"
 msgstr "Update note"
 
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
 msgid "Danger zone!"
 msgstr "Danger zone!"
@@ -3082,3 +3083,19 @@ msgstr "Edit role"
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Saving..."
 msgstr "Saving..."
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."
+msgstr "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?"
+msgstr "Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Event deleted"
+msgstr "Event deleted"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Delete event"
+msgstr "Delete event"

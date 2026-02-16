@@ -251,12 +251,8 @@ export let c = [
 	'E-mail verificado',
 	'Seu e-mail foi verificado com sucesso',
 	'Seu endereço de e-mail foi verificado. Agora você pode entrar na sua conta.',
-	[0, ' destinatários selecionados'],
 	'De',
 	'Destinatários',
-	'Selecionar destinatários...',
-	'Nenhum destinatário selecionado',
-	'Selecionar',
 	'Assunto',
 	'Digite o assunto do e-mail...',
 	'Mensagem',
@@ -302,8 +298,6 @@ export let c = [
 	'Isso exibirá o fuso horário na página de inscrição e notificações.',
 	'Fuso horário',
 	'Alternar',
-	[0, ' destinatários'],
-	'1 destinatário',
 	'Digite para buscar...',
 	'(Sem assunto)',
 	'Nenhum e-mail encontrado',
@@ -621,11 +615,7 @@ export let c = [
 	'Add User',
 	'Select organization members to add to the team.',
 	'Error loading users.',
-	'<<<<<<< HEAD',
-	'Temas e cores',
-	'Importações',
-	'Saldo de créditos',
-	'Chaves API',
+	'No users available to add.',
 	'Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again.',
 	'Delete signup',
 	'[Error loading email body]',
@@ -655,23 +645,17 @@ export let c = [
 		0,
 		' from this organization? They will lose access to all organization resources immediately.'
 	],
-	null,
+	'Removing...',
 	'Edit Role',
 	['Change the role for ', 0, '.'],
 	'Edit role',
-	'Saving...>>>>>>> develop',
-	null,
-	null
+	'Saving...',
+	'Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone.',
+	'Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?',
+	'Event deleted',
+	'Delete event',
+	'Temas e cores',
+	'Importações',
+	'Saldo de créditos',
+	'Chaves API'
 ];
-// only during dev, for HMR
-let latestVersion = -1;
-// @ts-ignore
-export function update({ version, data }) {
-	if (latestVersion >= version) {
-		return;
-	}
-	for (const [index, item] of data['pt'] ?? []) {
-		c[index] = item;
-	}
-	latestVersion = version;
-}

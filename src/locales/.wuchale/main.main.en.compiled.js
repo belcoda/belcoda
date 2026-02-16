@@ -251,12 +251,8 @@ export let c = [
 	'Email Verified',
 	'Your email has been successfully verified',
 	'Your email address has been verified. You can now sign in to your account.',
-	[0, ' recipients selected'],
 	'From',
 	'Recipients',
-	'Select recipients...',
-	'No recipients selected',
-	'Select',
 	'Subject',
 	'Enter email subject...',
 	'Message',
@@ -302,8 +298,6 @@ export let c = [
 	'This will display the timezone on the signup page and notifications.',
 	'Timezone',
 	'Toggle',
-	[0, ' recipients'],
-	'1 recipient',
 	'Type to search...',
 	'(No subject)',
 	'No emails found',
@@ -621,13 +615,9 @@ export let c = [
 	'Add User',
 	'Select organization members to add to the team.',
 	'Error loading users.',
-	'No users available to add.<<<<<<< HEAD',
-	'Themes & colors',
-	'Imports',
-	'Credit balance',
-	'API keys',
+	'No users available to add.',
 	'Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again.',
-	'Delete signup=======',
+	'Delete signup',
 	'[Error loading email body]',
 	'Users',
 	"You don't have permission to manage users. Only admins and owners can access this page.",
@@ -659,17 +649,13 @@ export let c = [
 	'Edit Role',
 	['Change the role for ', 0, '.'],
 	'Edit role',
-	'Saving...>>>>>>> develop'
+	'Saving...',
+	'Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone.',
+	'Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?',
+	'Event deleted',
+	'Delete event',
+	'Themes & colors',
+	'Imports',
+	'Credit balance',
+	'API keys'
 ];
-// only during dev, for HMR
-let latestVersion = -1;
-// @ts-ignore
-export function update({ version, data }) {
-	if (latestVersion >= version) {
-		return;
-	}
-	for (const [index, item] of data['en'] ?? []) {
-		c[index] = item;
-	}
-	latestVersion = version;
-}
