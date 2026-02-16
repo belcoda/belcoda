@@ -7,6 +7,7 @@ import {
 	type CreateMutatorSchemaOutput,
 	type UpdateMutatorSchemaOutput,
 	type SendMutatorSchemaOutput,
+	deleteMutatorSchema,
 	createMutatorSchema,
 	updateMutatorSchema,
 	sendMutatorSchema
@@ -46,9 +47,10 @@ export const updateEmailMessage = defineMutator(updateMutatorSchema, async ({ tx
 	});
 });
 
-export const deleteEmailMessage = defineMutator(updateMutatorSchema, async ({ tx, args, ctx }) => {
+export const deleteEmailMessage = defineMutator(deleteMutatorSchema, async ({ tx, args, ctx }) => {
 	tx.mutate.emailMessage.update({
-		id: args.metadata.emailMessageId,
+		id: args.id,
+		organizationId: args.organizationId,
 		deletedAt: new Date().getTime()
 	});
 });
