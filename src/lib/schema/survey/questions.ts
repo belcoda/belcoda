@@ -214,6 +214,7 @@ export function getSurveySchema(eventObj: EventSchema) {
 		customSurveyQuestions
 	);
 	return v.object({
+		theme: v.optional(v.picklist(['default', 'embed'])),
 		person: personActionHelperSchema,
 		customFields: customQuestionSurveySchema
 	});
