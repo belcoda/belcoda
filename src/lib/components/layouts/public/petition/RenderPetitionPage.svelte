@@ -16,6 +16,7 @@
 	import { env } from '$env/dynamic/public';
 	import { dev } from '$app/environment';
 	import { page } from '$app/state';
+	import WhatsAppPetitionSignup from './WhatsAppPetitionSignup.svelte';
 
 	const { data, form }: { data: any; form: any } = $props();
 
@@ -313,6 +314,15 @@
 						<PenLineIcon class="mr-2 size-5" />
 						{signingInProgress ? t`Signing...` : t`Sign this petition`}
 					</Button>
+
+					{#if data.whatsAppSignupLink}
+						<div class="flex items-center gap-2 py-2">
+							<div class="h-px flex-1 bg-gray-200"></div>
+							<span class="text-xs text-muted-foreground">{t`or`}</span>
+							<div class="h-px flex-1 bg-gray-200"></div>
+						</div>
+						<WhatsAppPetitionSignup whatsAppSignupLink={data.whatsAppSignupLink} />
+					{/if}
 
 					<p class="text-xs text-muted-foreground">
 						{t`By signing, you agree to receive updates about this petition and related campaigns.`}
