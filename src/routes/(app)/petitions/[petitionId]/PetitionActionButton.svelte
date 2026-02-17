@@ -15,11 +15,8 @@
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
-	import { env } from '$env/dynamic/public';
-	import { dev } from '$app/environment';
 	import PetitionMakeACopy from './PetitionMakeACopy.svelte';
-
-	const { PUBLIC_ROOT_DOMAIN } = env;
+	import PetitionShareModal from '$lib/components/widgets/petition/share/PetitionShareModal.svelte';
 
 	let openShareModal = $state(false);
 	let openMakeACopyModal = $state(false);
@@ -108,9 +105,6 @@
 </ButtonGroup.Root>
 
 <ResponsiveModal title={t`Share Petition`} bind:open={openShareModal}>
-	<div class="space-y-4">
-		<p class="text-sm text-muted-foreground">{t`Share functionality coming soon...`}</p>
-		<!-- TODO: Add petition share modal component -->
-	</div>
+	<PetitionShareModal petitionId={petition.id} />
 </ResponsiveModal>
 <PetitionMakeACopy {petition} bind:open={openMakeACopyModal} />
