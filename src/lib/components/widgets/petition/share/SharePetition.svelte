@@ -11,11 +11,12 @@
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { toast } from 'svelte-sonner';
-	const petitionPageLink = getPetitionLink({
-		/* svelte-ignore state_referenced_locally */
-		petitionSlug: petition.slug,
-		organizationSlug: appState.activeOrganization.data?.slug || ''
-	});
+	const petitionPageLink = $derived(
+		getPetitionLink({
+			petitionSlug: petition.slug,
+			organizationSlug: appState.activeOrganization.data?.slug || ''
+		})
+	);
 </script>
 
 <div class="grid w-full max-w-md gap-4">
