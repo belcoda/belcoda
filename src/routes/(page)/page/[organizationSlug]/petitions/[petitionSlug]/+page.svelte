@@ -7,14 +7,21 @@
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import PenLineIcon from '@lucide/svelte/icons/pen-line';
-	import EditIcon from '@lucide/svelte/icons/edit';
-	import ShareIcon from '@lucide/svelte/icons/share-2';
 	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
+	import ShareIcon from '@lucide/svelte/icons/share-2';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { formatDate } from '$lib/utils/date';
+	import UserNavBar from '$lib/components/layouts/public/UserNavBar.svelte';
+	import { env } from '$env/dynamic/public';
+	import { dev } from '$app/environment';
 
 	const { data, form } = $props();
+
+	const editPetitionUrl = $derived.by(() => {
+		const protocol = dev ? 'http' : 'https';
+		return `${protocol}://${env.PUBLIC_ROOT_DOMAIN}/petitions/${data.petition.id}/edit`;
+	});
 
 	// Calculate dynamic target (similar to change.org)
 	function calculateTarget(currentSignatures: number): number {
@@ -60,66 +67,56 @@
 	};
 </script>
 
-<div class="min-h-screen bg-background">
-	<!-- Hero Section -->
-	<div class="border-b bg-muted/30">
-		<div class="container mx-auto max-w-6xl px-4 py-8">
-			{#if data.isAdmin}
-				<div class="mb-4 flex justify-end gap-2">
-					<Button variant="outline" size="sm" href={`/petitions/${data.petition.id}`}>
-						<EditIcon class="size-4" />
-						{t`Edit`}
-					</Button>
-					<Button variant="outline" size="sm">
-						<ShareIcon class="size-4" />
-						{t`Share`}
-					</Button>
-				</div>
-			{/if}
+<svelte:head>
+	<title>{data.petition.title} - {data.organization.name}</title>
+	<meta name="description" content={data.petition.shortDescription} />
+	<meta name="robots" content="index, follow" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</svelte:head>
 
-			{#if data.petition.featureImage}
-				<img
-					src={data.petition.featureImage}
-					alt={data.petition.title}
-					class="mb-6 aspect-video w-full rounded-lg object-cover shadow-lg"
-				/>
-			{/if}
+<UserNavBar session={data.session} linkUrl={editPetitionUrl} linkText={t`Edit Petition`} />
 
-			<div>
-				<h1 class="mb-2 text-3xl font-bold md:text-4xl">{data.petition.title}</h1>
-				{#if data.petition.petitionTarget}
-					<p class="text-lg text-muted-foreground">{t`To:`} {data.petition.petitionTarget}</p>
-				{/if}
-			</div>
-		</div>
-	</div>
+<main class="min-h-screen bg-gray-50">
+	<div
+		class="relative h-96 w-full bg-cover bg-center bg-no-repeat"
+		style="background-image: url('{data.petition.featureImage || '/ui/placeholder.jpg'}')"
+	></div>
 
-	<div class="container mx-auto max-w-6xl px-4 py-8">
-		<div class="grid gap-8 lg:grid-cols-3">
-			<div class="lg:col-span-2">
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>{t`Petition Details`}</Card.Title>
-					</Card.Header>
-					<Card.Content class="prose max-w-none">
+	<div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+		<div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+			<div class="lg:col-span-1">
+				<div class="rounded-lg bg-white p-8 shadow-sm">
+					<div class="mb-8 space-y-6">
+						<h1 class="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+							{data.petition.title}
+						</h1>
+
+						{#if data.petition.petitionTarget}
+							<p class="text-lg text-muted-foreground">{t`To:`} {data.petition.petitionTarget}</p>
+						{/if}
+
 						{#if data.petition.shortDescription}
-							<p class="text-lg leading-relaxed">{data.petition.shortDescription}</p>
+							<div class="mt-4">
+								<p class="text-lg">{data.petition.shortDescription}</p>
+							</div>
 						{/if}
-						{#if data.petition.petitionText}
-							<div class="mt-4 whitespace-pre-wrap">{data.petition.petitionText}</div>
-						{/if}
-					</Card.Content>
-				</Card.Root>
+					</div>
 
-				<Card.Root class="mt-8">
-					<Card.Header>
-						<Card.Title>{t`Recent Signatures`}</Card.Title>
-						<p class="text-sm text-muted-foreground">
-							{petitionSignatureCount(formatNumber(data.signatureCount))}
-						</p>
-					</Card.Header>
-					<Card.Content>
-						{#if data.recentSignatures && data.recentSignatures.length > 0}
+					{#if data.petition.petitionText}
+						<div class="border-t border-gray-200 pt-8">
+							<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`Petition Statement`}</h2>
+							<div class="prose decorate-links space-y-4 whitespace-pre-wrap text-gray-700">
+								{data.petition.petitionText}
+							</div>
+						</div>
+					{/if}
+
+					{#if data.recentSignatures && data.recentSignatures.length > 0}
+						<div class="border-t border-gray-200 pt-8">
+							<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`Recent Signatures`}</h2>
+							<p class="mb-4 text-sm text-muted-foreground">
+								{petitionSignatureCount(formatNumber(data.signatureCount))}
+							</p>
 							<div class="space-y-3">
 								{#each data.recentSignatures as signature}
 									<div class="flex items-start gap-3 border-b pb-3 last:border-0 last:pb-0">
@@ -144,188 +141,178 @@
 									</div>
 								{/each}
 							</div>
-						{:else}
-							<p class="py-4 text-center text-sm text-muted-foreground">
-								{t`Be the first to sign this petition!`}
-							</p>
-						{/if}
-					</Card.Content>
-				</Card.Root>
+						</div>
+					{/if}
+				</div>
 			</div>
 
 			<div class="lg:col-span-1">
-				<div class="sticky top-4">
-					<Card.Root>
-						<Card.Header>
-							<div class="space-y-4">
+				<div class="sticky top-8">
+					<div class="rounded-lg bg-white p-6 shadow-sm">
+						<div class="mb-6 space-y-4">
+							<div class="flex items-baseline justify-between">
 								<div>
-									<div class="mb-2 flex items-baseline justify-between">
-										<div>
-											<div class="text-3xl font-bold">{formatNumber(data.signatureCount)}</div>
-											<div class="text-xs tracking-wide text-muted-foreground uppercase">
-												{t`signatures`}
-											</div>
-										</div>
-										<div class="text-right">
-											<div class="text-lg font-semibold">
-												{Math.round(progress)}%
-											</div>
-											<div class="text-xs text-muted-foreground">{t`of goal`}</div>
-										</div>
-									</div>
-									<Progress value={progress} class="h-2.5" />
-									<div class="mt-1 text-right text-xs text-muted-foreground">
-										Goal: {formatNumber(currentTarget)}
+									<div class="text-3xl font-bold">{formatNumber(data.signatureCount)}</div>
+									<div class="text-xs tracking-wide text-muted-foreground uppercase">
+										{t`signatures`}
 									</div>
 								</div>
-
-								{#if data.signatureCount > 0}
-									<div
-										class="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary"
-									>
-										{#if data.signatureCount >= currentTarget}
-											<div class="flex items-start gap-2">
-												<span class="text-lg">🎉</span>
-												<div>
-													{t`Goal reached! Keep the momentum going to make an even bigger
-													impact.`}
-												</div>
-											</div>
-										{:else}
-											{targetToGoal(
-												formatNumber(currentTarget - data.signatureCount),
-												formatNumber(currentTarget)
-											)}
-										{/if}
+								<div class="text-right">
+									<div class="text-lg font-semibold">
+										{Math.round(progress)}%
 									</div>
-								{/if}
+									<div class="text-xs text-muted-foreground">{t`of goal`}</div>
+								</div>
 							</div>
-						</Card.Header>
+							<Progress value={progress} class="h-2.5" />
+							<div class="text-right text-xs text-muted-foreground">
+								Goal: {formatNumber(currentTarget)}
+							</div>
 
-						<Card.Content>
-							{#if signatureSuccess}
-								<div class="space-y-4 text-center">
-									<CheckCircleIcon class="mx-auto size-16 text-green-600" />
-									<div>
-										<h3 class="text-lg font-semibold">{t`Thank you for signing!`}</h3>
-										<p class="text-sm text-muted-foreground">
-											{t`Your signature has been recorded and you'll receive updates about this petition.`}
-										</p>
-									</div>
-									<Button
-										variant="outline"
-										class="w-full"
-										onclick={() => {
-											window.location.reload();
-										}}
-									>
-										{t`Return to petition`}
-									</Button>
+							{#if data.signatureCount > 0}
+								<div
+									class="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary"
+								>
+									{#if data.signatureCount >= currentTarget}
+										<div class="flex items-start gap-2">
+											<span class="text-lg">🎉</span>
+											<div>
+												{t`Goal reached! Keep the momentum going to make an even bigger
+												impact.`}
+											</div>
+										</div>
+									{:else}
+										{targetToGoal(
+											formatNumber(currentTarget - data.signatureCount),
+											formatNumber(currentTarget)
+										)}
+									{/if}
 								</div>
-							{:else}
-								<form
-									method="POST"
-									action="?/sign"
-									class="space-y-4"
-									use:enhance={() => {
-										signingInProgress = true;
-										return async ({ result, update }) => {
-											await update();
-											signingInProgress = false;
+							{/if}
+						</div>
 
-											if (result.type === 'success' && result.data?.success) {
-												formValues = {
-													givenName: '',
-													familyName: '',
-													emailAddress: '',
-													phoneNumber: ''
-												};
-												// Refresh signature count
-												await invalidateAll();
-											}
-										};
+						{#if signatureSuccess}
+							<div class="space-y-4 text-center">
+								<CheckCircleIcon class="mx-auto size-16 text-green-600" />
+								<div>
+									<h3 class="text-lg font-semibold">{t`Thank you for signing!`}</h3>
+									<p class="text-sm text-muted-foreground">
+										{t`Your signature has been recorded and you'll receive updates about this petition.`}
+									</p>
+								</div>
+								<Button
+									variant="outline"
+									class="w-full"
+									onclick={() => {
+										window.location.reload();
 									}}
 								>
-									{#if form?.error}
-										<div
-											class="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
-										>
-											{form.error}
-										</div>
-									{/if}
+									{t`Return to petition`}
+								</Button>
+							</div>
+						{:else}
+							<form
+								method="POST"
+								action="?/sign"
+								class="space-y-4"
+								use:enhance={() => {
+									signingInProgress = true;
+									return async ({ result, update }) => {
+										await update();
+										signingInProgress = false;
 
-									<div class="space-y-2">
-										<Label for="givenName">{t`First name`}</Label>
-										<Input
-											id="givenName"
-											name="givenName"
-											bind:value={formValues.givenName}
-											placeholder={t`First name`}
-											required
-											disabled={signingInProgress}
-										/>
+										if (result.type === 'success' && result.data?.success) {
+											formValues = {
+												givenName: '',
+												familyName: '',
+												emailAddress: '',
+												phoneNumber: ''
+											};
+											// Refresh signature count
+											await invalidateAll();
+										}
+									};
+								}}
+							>
+								{#if form?.error}
+									<div
+										class="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
+									>
+										{form.error}
 									</div>
+								{/if}
 
-									<div class="space-y-2">
-										<Label for="familyName">{t`Last name`}</Label>
-										<Input
-											id="familyName"
-											name="familyName"
-											bind:value={formValues.familyName}
-											placeholder={t`Last name`}
-											required
-											disabled={signingInProgress}
-										/>
-									</div>
+								<div class="space-y-2">
+									<Label for="givenName">{t`First name`}</Label>
+									<Input
+										id="givenName"
+										name="givenName"
+										bind:value={formValues.givenName}
+										placeholder={t`First name`}
+										required
+										disabled={signingInProgress}
+									/>
+								</div>
 
-									<div class="space-y-2">
-										<Label for="emailAddress">{t`Email`}</Label>
-										<Input
-											id="emailAddress"
-											name="emailAddress"
-											type="email"
-											bind:value={formValues.emailAddress}
-											placeholder={t`your@email.com`}
-											required
-											disabled={signingInProgress}
-										/>
-									</div>
+								<div class="space-y-2">
+									<Label for="familyName">{t`Last name`}</Label>
+									<Input
+										id="familyName"
+										name="familyName"
+										bind:value={formValues.familyName}
+										placeholder={t`Last name`}
+										required
+										disabled={signingInProgress}
+									/>
+								</div>
 
-									<div class="space-y-2">
-										<Label for="phoneNumber">{t`Phone (optional)`}</Label>
-										<Input
-											id="phoneNumber"
-											name="phoneNumber"
-											type="tel"
-											bind:value={formValues.phoneNumber}
-											placeholder="+1234567890"
-											disabled={signingInProgress}
-										/>
-									</div>
+								<div class="space-y-2">
+									<Label for="emailAddress">{t`Email`}</Label>
+									<Input
+										id="emailAddress"
+										name="emailAddress"
+										type="email"
+										bind:value={formValues.emailAddress}
+										placeholder={t`your@email.com`}
+										required
+										disabled={signingInProgress}
+									/>
+								</div>
 
-									<Button type="submit" class="w-full" size="lg" disabled={signingInProgress}>
-										<PenLineIcon class="mr-2 size-5" />
-										{signingInProgress ? t`Signing...` : t`Sign this petition`}
-									</Button>
+								<div class="space-y-2">
+									<Label for="phoneNumber">{t`Phone (optional)`}</Label>
+									<Input
+										id="phoneNumber"
+										name="phoneNumber"
+										type="tel"
+										bind:value={formValues.phoneNumber}
+										placeholder="+1234567890"
+										disabled={signingInProgress}
+									/>
+								</div>
 
-									<p class="text-xs text-muted-foreground">
-										{t`By signing, you agree to receive updates about this petition and related campaigns.`}
-									</p>
-								</form>
-							{/if}
-						</Card.Content>
-					</Card.Root>
+								<Button type="submit" class="w-full" size="lg" disabled={signingInProgress}>
+									<PenLineIcon class="mr-2 size-5" />
+									{signingInProgress ? t`Signing...` : t`Sign this petition`}
+								</Button>
 
-					<Card.Root class="mt-4">
-						<Card.Content class="pt-6">
-							<Button variant="outline" class="w-full">
-								<ShareIcon class="mr-2 size-4" />
-								{t`Share this petition`}
-							</Button>
-						</Card.Content>
-					</Card.Root>
+								<p class="text-xs text-muted-foreground">
+									{t`By signing, you agree to receive updates about this petition and related campaigns.`}
+								</p>
+							</form>
+						{/if}
+					</div>
 				</div>
+
+				<Card.Root class="mt-4">
+					<Card.Content class="pt-6">
+						<Button variant="outline" class="w-full">
+							<ShareIcon class="mr-2 size-4" />
+							{t`Share this petition`}
+						</Button>
+					</Card.Content>
+				</Card.Root>
 			</div>
 		</div>
 	</div>
-</div>
+</main>
