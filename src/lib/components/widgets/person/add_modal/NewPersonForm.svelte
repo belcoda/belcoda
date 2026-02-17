@@ -54,17 +54,9 @@
 			onCreated(personId);
 		}
 	});
-	const foo = $derived.by(() => z.createQuery(queries.person.read({ personId })));
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
-	import { person } from '$lib/schema/drizzle';
 </script>
 
-{#if foo.data}
-	<div>
-		<h1>Person created</h1>
-		<p>Person ID: {foo.data.id} {foo.data.givenName} {foo.data.familyName}</p>
-	</div>
-{/if}
 <ScrollArea class="h-[calc(100vh-400px)]">
 	<form use:form.enhance class="flex flex-col gap-4 px-6">
 		<div class="col-span-2 mt-3 mb-8 flex w-full justify-center">
