@@ -21,7 +21,6 @@
 	});
 
 	import EmbedCode from './EmbedCode.svelte';
-	import CheckIn from './CheckIn.svelte';
 	import SharePetition from './SharePetition.svelte';
 </script>
 
@@ -29,7 +28,6 @@
 	<Tabs.List>
 		<Tabs.Trigger value="share">{t`Share`}</Tabs.Trigger>
 		<Tabs.Trigger value="embed">{t`Embed`}</Tabs.Trigger>
-		<Tabs.Trigger value="checkin">{t`Check-in`}</Tabs.Trigger>
 	</Tabs.List>
 	<Tabs.Content value="share">
 		{#if petition.data && actionCodeSigned}
@@ -39,11 +37,6 @@
 	<Tabs.Content value="embed">
 		{#if petition.data}
 			<EmbedCode petition={petition.data} />
-		{/if}
-	</Tabs.Content>
-	<Tabs.Content value="checkin">
-		{#if petition.data}
-			<CheckIn petition={petition.data} />
 		{/if}
 	</Tabs.Content>
 </Tabs.Root>
