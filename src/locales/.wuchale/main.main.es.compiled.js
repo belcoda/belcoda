@@ -654,21 +654,9 @@ export let c = [
 	'Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?',
 	'Event deleted',
 	'Delete event',
+	'Email saved',
 	'Temas y colores',
 	'Importaciones',
 	'Saldo de créditos',
-	'Claves API',
-	'Email saved'
+	'Claves API'
 ];
-// only during dev, for HMR
-let latestVersion = -1;
-// @ts-ignore
-export function update({ version, data }) {
-	if (latestVersion >= version) {
-		return;
-	}
-	for (const [index, item] of data['es'] ?? []) {
-		c[index] = item;
-	}
-	latestVersion = version;
-}
