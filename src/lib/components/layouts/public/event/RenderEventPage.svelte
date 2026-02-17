@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
-	import { type EventSchema } from '$lib/schema/event';
+	import { type EventSchema, type EventTheme } from '$lib/schema/event';
 	import { type OrganizationSchema } from '$lib/schema/organization';
 	import LinkIcon from '@lucide/svelte/icons/link';
 	import type { SurveySchema } from '$lib/schema/survey/questions';

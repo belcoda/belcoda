@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
-	import { type EventSchema } from '$lib/schema/event';
+	import { type EventSchema, type EventTheme } from '$lib/schema/event';
 	import type { OrganizationSchema } from '$lib/schema/organization';
 	import { renderEventTime } from '$lib/utils/date';
 	import { renderAddress } from '$lib/utils/string/address';
@@ -143,6 +143,7 @@
 					<div class="text-sm text-red-700">{submissionError}</div>
 				</div>
 			{/if}
+			<input type="hidden" name="theme" value={theme} />
 
 			<RenderError errors={allErrors} />
 

@@ -174,3 +174,12 @@ export const updateEventZeroMutatorSchema = v.object({
 });
 export type UpdateEventZeroMutatorSchema = v.InferInput<typeof updateEventZeroMutatorSchema>;
 export type UpdateEventZeroMutatorSchemaOutput = v.InferOutput<typeof updateEventZeroMutatorSchema>;
+
+export const eventThemes = ['default', 'embed'] as const;
+export const eventThemeSchema = v.picklist(eventThemes);
+export type EventTheme = v.InferOutput<typeof eventThemeSchema>;
+                                       
+export const deleteEventMutatorSchemaZero = v.object({
+	metadata: v.omit(mutatorMetadata, ['teamId'])
+});
+export type DeleteEventMutatorSchemaZero = v.InferOutput<typeof deleteEventMutatorSchemaZero>;

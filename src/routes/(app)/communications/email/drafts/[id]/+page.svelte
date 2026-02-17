@@ -121,11 +121,8 @@
 
 			await z.mutate(
 				mutators.emailMessage.delete({
-					input: {},
-					metadata: {
-						emailMessageId: emailId,
-						organizationId: appState.organizationId
-					}
+					id: emailId,
+					organizationId: appState.organizationId
 				})
 			);
 
