@@ -59,6 +59,7 @@
 			})
 		: createForm({
 				schema: createPersonZero,
+				validateOnLoad: false, // because we are adding some initial data
 				initialData: {
 					socialMedia: DEFAULT_SOCIAL_MEDIA,
 					country: appState.activeOrganization?.data?.country || defaultCountryCode,
@@ -91,226 +92,284 @@
 			});
 </script>
 
-<form use:form.enhance>
-	<ContentLayout rootLink="/community">
-		{#snippet header()}
-			<div class="flex items-center justify-between">
-				<h1 class="text-2xl font-bold">{person ? t`Edit Person` : t`Create Person`}</h1>
-			</div>
-		{/snippet}
-		<div class="mx-auto flex w-full max-w-4xl flex-col gap-4">
-			<Errors {errors} />
-			<Card.Root>
-				<Card.Content class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-					<div class="col-span-2 mt-3 mb-8 flex w-full justify-center">
-						<CroppedImageUpload
-							aspectRatio={1 / 1}
-							class="aspect-square h-60 w-60 rounded-full object-cover"
-							onUpload={async (url) => {
-								$data.profilePicture = url;
-							}}
-						/>
-					</div>
-					<Form.Field {form} name="givenName">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`Given name`}</Form.Label>
-								<Input {...props} bind:value={$data.givenName} />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="familyName">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`Family name`}</Form.Label>
-								<Input {...props} bind:value={$data.familyName} />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-				</Card.Content>
-			</Card.Root>
+<form use:form.enhance id="person-form">
+	<div class="mx-auto flex w-full max-w-4xl flex-col gap-4">
+		<Errors {errors} />
+		<Card.Root>
+			<Card.Content class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+				<div class="col-span-2 mt-3 mb-8 flex w-full justify-center">
+					<CroppedImageUpload
+						aspectRatio={1 / 1}
+						class="aspect-square h-60 w-60 rounded-full object-cover"
+						onUpload={async (url) => {
+							$data.profilePicture = url;
+						}}
+					/>
+				</div>
+				<Form.Field {form} name="givenName">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`Given name`}</Form.Label>
+							<Input {...props} bind:value={$data.givenName} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="familyName">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`Family name`}</Form.Label>
+							<Input {...props} bind:value={$data.familyName} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+			</Card.Content>
+		</Card.Root>
 
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>{t`Contact details`}</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-						<Form.Field {form} name="emailAddress">
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Contact details`}</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+					<Form.Field {form} name="emailAddress">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{t`Email address`}</Form.Label>
+								<Input {...props} bind:value={$data.emailAddress} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="phoneNumber">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{t`Phone number`}</Form.Label>
+								<Input {...props} bind:value={$data.phoneNumber} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<div class="col-span-2">
+						<Form.Field {form} name="subscribed">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>{t`Email address`}</Form.Label>
-									<Input {...props} bind:value={$data.emailAddress} />
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-						<Form.Field {form} name="phoneNumber">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>{t`Phone number`}</Form.Label>
-									<Input {...props} bind:value={$data.phoneNumber} />
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-						<div class="col-span-2">
-							<Form.Field {form} name="subscribed">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label
-											class="flex items-start gap-3 rounded-lg border p-3 hover:bg-accent/50 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950"
-										>
-											<Checkbox
-												{...props}
-												bind:checked={$data.subscribed}
-												class="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
-											/>
-											<div class="grid gap-1.5 font-normal">
-												<p class="text-sm leading-none font-medium">{t`Subscribed`}</p>
-												<p class="text-sm text-muted-foreground">
-													{t`If the person is subscribed, they will be able to receive notifications
+									<Form.Label
+										class="flex items-start gap-3 rounded-lg border p-3 hover:bg-accent/50 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950"
+									>
+										<Checkbox
+											{...props}
+											bind:checked={$data.subscribed}
+											class="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
+										/>
+										<div class="grid gap-1.5 font-normal">
+											<p class="text-sm leading-none font-medium">{t`Subscribed`}</p>
+											<p class="text-sm text-muted-foreground">
+												{t`If the person is subscribed, they will be able to receive notifications
 													and messages.`}
-												</p>
-											</div>
-										</Form.Label>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-						</div>
+											</p>
+										</div>
+									</Form.Label>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 					</div>
-				</Card.Content>
-			</Card.Root>
+				</div>
+			</Card.Content>
+		</Card.Root>
 
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Address`}</Card.Title>
+			</Card.Header>
+			<Card.Content class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+				<Form.Field {form} name="addressLine1">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`Address line 1`}</Form.Label>
+							<Input {...props} bind:value={$data.addressLine1} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="addressLine2">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`Address line 2`}</Form.Label>
+							<Input {...props} bind:value={$data.addressLine2} />
+							<Form.FieldErrors />
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+				<Form.Field {form} name="locality">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`City/town`}</Form.Label>
+							<Input {...props} bind:value={$data.locality} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="region">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`Region/state`}</Form.Label>
+							<Input {...props} bind:value={$data.region} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="postcode">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`Postcode`}</Form.Label>
+							<Input {...props} bind:value={$data.postcode} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="country">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`Country`}</Form.Label>
+							<CountrySelect
+								value={$data.country}
+								onSelectChange={(v) => {
+									$data.country = v as CountryCode;
+								}}
+								{...props}
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+			</Card.Content>
+		</Card.Root>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Language`}</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				<Form.Field {form} name="preferredLanguage">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{t`Preferred language`}</Form.Label>
+							<LanguageSelect
+								value={$data.preferredLanguage}
+								onSelectChange={(v) => {
+									$data.preferredLanguage = v as LanguageCode;
+								}}
+								{...props}
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+			</Card.Content>
+		</Card.Root>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Personal details`}</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+					<Form.Field {form} name="dateOfBirth">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{t`Date of birth`}</Form.Label>
+								<Input {...props} bind:value={$data.dateOfBirth} />
+							{/snippet}
+						</Form.Control>
+					</Form.Field>
+					<Form.Field {form} name="gender">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{t`Gender`}</Form.Label>
+								<GenderSelect {...props} bind:value={$data.gender as GenderOption} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="workplace">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{t`Workplace`}</Form.Label>
+								<Input {...props} bind:value={$data.workplace} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="position">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{t`Position`}</Form.Label>
+								<Input {...props} bind:value={$data.position} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
+			</Card.Content>
+		</Card.Root>
+		{#if $data.socialMedia}
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>{t`Address`}</Card.Title>
-				</Card.Header>
-				<Card.Content class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-					<Form.Field {form} name="addressLine1">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`Address line 1`}</Form.Label>
-								<Input {...props} bind:value={$data.addressLine1} />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="addressLine2">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`Address line 2`}</Form.Label>
-								<Input {...props} bind:value={$data.addressLine2} />
-								<Form.FieldErrors />
-							{/snippet}
-						</Form.Control>
-					</Form.Field>
-					<Form.Field {form} name="locality">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`City/town`}</Form.Label>
-								<Input {...props} bind:value={$data.locality} />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="region">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`Region/state`}</Form.Label>
-								<Input {...props} bind:value={$data.region} />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="postcode">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`Postcode`}</Form.Label>
-								<Input {...props} bind:value={$data.postcode} />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="country">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`Country`}</Form.Label>
-								<CountrySelect
-									value={$data.country}
-									onSelectChange={(v) => {
-										$data.country = v as CountryCode;
-									}}
-									{...props}
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-				</Card.Content>
-			</Card.Root>
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>{t`Language`}</Card.Title>
+					<Card.Title>{t`Social media`}</Card.Title>
 				</Card.Header>
 				<Card.Content>
-					<Form.Field {form} name="preferredLanguage">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>{t`Preferred language`}</Form.Label>
-								<LanguageSelect
-									value={$data.preferredLanguage}
-									onSelectChange={(v) => {
-										$data.preferredLanguage = v as LanguageCode;
-									}}
-									{...props}
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-				</Card.Content>
-			</Card.Root>
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>{t`Personal details`}</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-						<Form.Field {form} name="dateOfBirth">
+					<div class="grid grid-cols-1 gap-4">
+						<Form.Field {form} name="socialMedia.facebook">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>{t`Date of birth`}</Form.Label>
-									<Input {...props} bind:value={$data.dateOfBirth} />
-								{/snippet}
-							</Form.Control>
-						</Form.Field>
-						<Form.Field {form} name="gender">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>{t`Gender`}</Form.Label>
-									<GenderSelect {...props} bind:value={$data.gender as GenderOption} />
+									<Form.Label>{t`Facebook`}</Form.Label>
+									<Input {...props} bind:value={$data.socialMedia!.facebook} />
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
 						</Form.Field>
-						<Form.Field {form} name="workplace">
+						<Form.Field {form} name="socialMedia.twitter">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>{t`Workplace`}</Form.Label>
-									<Input {...props} bind:value={$data.workplace} />
+									<Form.Label>{t`Twitter`}</Form.Label>
+									<Input {...props} bind:value={$data.socialMedia!.twitter} />
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
 						</Form.Field>
-						<Form.Field {form} name="position">
+						<Form.Field {form} name="socialMedia.instagram">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>{t`Position`}</Form.Label>
-									<Input {...props} bind:value={$data.position} />
+									<Form.Label>{t`Instagram`}</Form.Label>
+									<Input {...props} bind:value={$data.socialMedia!.instagram} />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field {form} name="socialMedia.linkedIn">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{t`LinkedIn`}</Form.Label>
+									<Input {...props} bind:value={$data.socialMedia!.linkedIn} />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field {form} name="socialMedia.tiktok">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{t`TikTok`}</Form.Label>
+									<Input {...props} bind:value={$data.socialMedia!.tiktok} />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field {form} name="socialMedia.website">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{t`Website`}</Form.Label>
+									<Input {...props} bind:value={$data.socialMedia!.website} />
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
@@ -318,77 +377,6 @@
 					</div>
 				</Card.Content>
 			</Card.Root>
-			{#if $data.socialMedia}
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>{t`Social media`}</Card.Title>
-					</Card.Header>
-					<Card.Content>
-						<div class="grid grid-cols-1 gap-4">
-							<Form.Field {form} name="socialMedia.facebook">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>{t`Facebook`}</Form.Label>
-										<Input {...props} bind:value={$data.socialMedia!.facebook} />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="socialMedia.twitter">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>{t`Twitter`}</Form.Label>
-										<Input {...props} bind:value={$data.socialMedia!.twitter} />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="socialMedia.instagram">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>{t`Instagram`}</Form.Label>
-										<Input {...props} bind:value={$data.socialMedia!.instagram} />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="socialMedia.linkedIn">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>{t`LinkedIn`}</Form.Label>
-										<Input {...props} bind:value={$data.socialMedia!.linkedIn} />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="socialMedia.tiktok">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>{t`TikTok`}</Form.Label>
-										<Input {...props} bind:value={$data.socialMedia!.tiktok} />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="socialMedia.website">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>{t`Website`}</Form.Label>
-										<Input {...props} bind:value={$data.socialMedia!.website} />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-						</div>
-					</Card.Content>
-				</Card.Root>
-			{/if}
-		</div>
-		{#snippet footer()}
-			<div class="flex w-full justify-end gap-2">
-				<Button href="/community" variant="outline">{t`Cancel`}</Button>
-				<Button type="submit" onclick={() => form.submit()}>{t`Save`}</Button>
-			</div>
-		{/snippet}
-	</ContentLayout>
+		{/if}
+	</div>
 </form>
