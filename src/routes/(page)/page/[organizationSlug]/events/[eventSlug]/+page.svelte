@@ -5,10 +5,10 @@
 	import { page } from '$app/state';
 	import { env } from '$env/dynamic/public';
 	import { dev } from '$app/environment';
-
+	import { eventThemes, type EventTheme } from '$lib/schema/event';
 	const paramTheme = page.url.searchParams.get('theme') || 'default';
-	const themes = ['default', 'embed'];
-	const theme = themes.includes(paramTheme) ? (paramTheme as 'default' | 'embed') : 'default';
+	const themes = eventThemes;
+	const theme = themes.includes(paramTheme as EventTheme) ? (paramTheme as EventTheme) : 'default';
 
 	// Build the edit URL: strip the subdomain and go to the main app
 	const editEventUrl = $derived.by(() => {

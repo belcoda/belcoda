@@ -15,13 +15,17 @@
 	import queries from '$lib/zero/query/index';
 	let { trigger, personIdsToExclude = [], onSelected }: Props = $props();
 	import { appState, getListFilter } from '$lib/state.svelte';
+	function getFilter() {
+		return {
+			...getListFilter(appState.organizationId),
+			tagId: null,
+			signupEventId: null,
+			mostRecentActivity: null,
+			personIdsToExclude: personIdsToExclude
+		};
+	}
 	let filter = $state({
-		...getListFilter(appState.organizationId),
-		tagId: null,
-		signupEventId: null,
-		mostRecentActivity: null,
-		/* svelte-ignore state_referenced_locally */
-		personIdsToExclude: personIdsToExclude
+		...getFilter()
 	});
 	import { Debounced } from 'runed';
 	let debouncedFilter = new Debounced(() => filter, 1000);
@@ -59,6 +63,11 @@
 	description="Add a new person to the community"
 	{trigger}
 	bind:open={isOpen}
+	onOpenChange={(open: boolean) => {
+		if (open) {
+			filter = getFilter(); // this is needed to reset the filter when the modal is opened but it takes a second to update the query. Probably not the worst thing in the world to have a little bit of latency on, but would be nice to figure out a way to do this better in the future
+		}
+	}}
 >
 	{#if modalMode === 'list'}
 		<PersonFilter bind:filter />
@@ -71,7 +80,7 @@
 			)}
 		>
 			{#if personList.data && personList.data.length > 0}
-				{#each personList.data as person}
+				{#each personList.data as person (person.id)}
 					{@render personItem(person)}
 				{/each}
 			{/if}
@@ -111,6 +120,9 @@
 			disabled={selectedPersonIds.length === 0}
 			onclick={() => {
 				onSelected(selectedPersonIds);
+				selectedPersonIds = [];
+				filter = getFilter();
+
 				isOpen = false;
 			}}
 			>Add to event ({selectedPersonIds.length})

@@ -765,6 +765,7 @@ msgstr "Editar nota..."
 msgid "Update note"
 msgstr "Atualizar nota"
 
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
 msgid "Danger zone!"
 msgstr "Zona de perigo!"
@@ -3084,4 +3085,19 @@ msgstr ""
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid "Person created successfully"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Event deleted"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Delete event"
 msgstr ""
