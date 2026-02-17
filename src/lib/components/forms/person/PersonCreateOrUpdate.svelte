@@ -27,13 +27,17 @@
 	import type { CountryCode, LanguageCode } from '$lib/schema/helpers';
 	import type { GenderOption } from '$lib/utils/person';
 	import { v7 as uuidv7 } from 'uuid';
-	const { person, onCreated }: { person?: ReadPersonZero; onCreated?: (personId: string) => void } =
-		$props();
+	import { toast } from 'svelte-sonner';
+	const {
+		person,
+		onCreated
+	}: { person?: ReadPersonZero; onCreated?: (personId: string) => void | Promise<void> } = $props();
 	import { appState } from '$lib/state.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
 	/* svelte-ignore state_referenced_locally */
 	const { form, data, errors, Errors, helpers } = person
 		? createForm({
+				//update mode
 				schema: updatePersonZero,
 				/* svelte-ignore state_referenced_locally */
 				initialData: person,
@@ -58,6 +62,7 @@
 				}
 			})
 		: createForm({
+				//create mode
 				schema: createPersonZero,
 				validateOnLoad: false, // because we are adding some initial data
 				initialData: {
@@ -69,12 +74,7 @@
 					const personId = uuidv7();
 					const toCreate: CreateMutatorSchemaZeroInput = {
 						input: {
-							givenName: data.givenName,
-							familyName: data.familyName,
-							emailAddress: data.emailAddress,
-							phoneNumber: data.phoneNumber,
-							country: data.country,
-							preferredLanguage: data.preferredLanguage
+							...data
 						},
 						metadata: {
 							organizationId: appState.organizationId,
@@ -87,7 +87,9 @@
 					};
 					const parsed = parse(createMutatorSchemaZero, toCreate);
 					const input = z.mutate(mutators.person.create(parsed));
-					onCreated?.(personId);
+					await input.client;
+					toast.success(t`Person created successfully`);
+					await onCreated?.(personId);
 				}
 			});
 </script>
