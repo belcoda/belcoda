@@ -11,11 +11,24 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import createForm from '$lib/form.svelte';
-	import { createPersonZero, updatePersonZero, type ReadPersonZero } from '$lib/schema/person';
+	import {
+		createPersonZero,
+		updatePersonZero,
+		type ReadPersonZero,
+		createMutatorSchemaZero,
+		type CreateMutatorSchemaZeroInput,
+		updateMutatorSchemaZero,
+		type UpdateMutatorSchemaZeroInput
+	} from '$lib/schema/person';
+	import { parse } from 'valibot';
+	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { DEFAULT_SOCIAL_MEDIA } from '$lib/schema/person/meta';
 	import type { CountryCode, LanguageCode } from '$lib/schema/helpers';
 	import type { GenderOption } from '$lib/utils/person';
-	const { person }: { person?: ReadPersonZero } = $props();
+	import { v7 as uuidv7 } from 'uuid';
+	const { person, onCreated }: { person?: ReadPersonZero; onCreated?: (personId: string) => void } =
+		$props();
 	import { appState } from '$lib/state.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
 	/* svelte-ignore state_referenced_locally */
@@ -25,7 +38,23 @@
 				/* svelte-ignore state_referenced_locally */
 				initialData: person,
 				onSubmit: async (data) => {
-					console.log(data);
+					const toUpdate: UpdateMutatorSchemaZeroInput = {
+						input: {
+							givenName: data.givenName,
+							familyName: data.familyName,
+							emailAddress: data.emailAddress,
+							phoneNumber: data.phoneNumber,
+							country: data.country,
+							preferredLanguage: data.preferredLanguage
+						},
+						metadata: {
+							organizationId: appState.organizationId,
+							personId: person.id
+						}
+					};
+					const parsed = parse(updateMutatorSchemaZero, toUpdate);
+					const input = z.mutate(mutators.person.update(parsed));
+					onCreated?.(person.id);
 				}
 			})
 		: createForm({
@@ -36,7 +65,28 @@
 					preferredLanguage: appState.activeOrganization?.data?.defaultLanguage || 'en'
 				},
 				onSubmit: async (data) => {
-					console.log(data);
+					const personId = uuidv7();
+					const toCreate: CreateMutatorSchemaZeroInput = {
+						input: {
+							givenName: data.givenName,
+							familyName: data.familyName,
+							emailAddress: data.emailAddress,
+							phoneNumber: data.phoneNumber,
+							country: data.country,
+							preferredLanguage: data.preferredLanguage
+						},
+						metadata: {
+							organizationId: appState.organizationId,
+							personId: personId,
+							addedFrom: {
+								type: 'added_manually',
+								userId: appState.userId
+							}
+						}
+					};
+					const parsed = parse(createMutatorSchemaZero, toCreate);
+					const input = z.mutate(mutators.person.create(parsed));
+					onCreated?.(personId);
 				}
 			});
 </script>
