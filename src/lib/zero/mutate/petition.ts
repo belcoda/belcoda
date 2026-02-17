@@ -3,7 +3,8 @@ import { type Schema } from '$lib/zero/schema';
 import { defineMutator } from '@rocicorp/zero';
 import {
 	createPetitionZeroMutatorSchema,
-	updatePetitionZeroMutatorSchema
+	updatePetitionZeroMutatorSchema,
+	archivePetitionMutatorSchema
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
 
@@ -36,6 +37,17 @@ export const updatePetition = defineMutator(
 		tx.mutate.petition.update({
 			id: args.metadata.petitionId,
 			...args.input,
+			updatedAt: new Date().getTime()
+		});
+	}
+);
+
+export const archivePetition = defineMutator(
+	archivePetitionMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		tx.mutate.petition.update({
+			id: args.metadata.petitionId,
+			archivedAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
 		});
 	}

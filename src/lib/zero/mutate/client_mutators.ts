@@ -43,7 +43,8 @@ export const mutators = defineMutators({
 	},
 	petition: {
 		create: petition.createPetition,
-		update: petition.updatePetition
+		update: petition.updatePetition,
+		archive: petition.archivePetition
 	},
 	petitionSignature: {
 		create: petitionSignature.createPetitionSignature,

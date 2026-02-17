@@ -5,8 +5,10 @@ import { type QueryContext, builder } from '$lib/zero/schema';
 import {
 	type CreatePetitionZeroMutatorSchema,
 	type UpdatePetitionZeroMutatorSchema,
+	type ArchivePetitionMutatorSchema,
 	createPetitionZeroMutatorSchema,
-	updatePetitionZeroMutatorSchema
+	updatePetitionZeroMutatorSchema,
+	archivePetitionMutatorSchema
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
 
@@ -143,6 +145,41 @@ export async function updatePetition({
 		.update(petition)
 		.set({
 			...parsed.input,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(petition.id, parsed.metadata.petitionId),
+				eq(petition.organizationId, parsed.metadata.organizationId)
+			)
+		);
+}
+
+export async function archivePetition({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: ArchivePetitionMutatorSchema;
+}) {
+	const parsed = parse(archivePetitionMutatorSchema, args);
+	const petitionRecord = await tx.run(
+		builder.petition
+			.where('id', '=', parsed.metadata.petitionId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => petitionReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!petitionRecord) {
+		throw new Error('Petition not found');
+	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(petition)
+		.set({
+			archivedAt: new Date(),
 			updatedAt: new Date()
 		})
 		.where(
