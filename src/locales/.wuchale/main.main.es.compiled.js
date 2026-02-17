@@ -657,5 +657,18 @@ export let c = [
 	'Temas y colores',
 	'Importaciones',
 	'Saldo de créditos',
-	'Claves API'
+	'Claves API',
+	'Email saved'
 ];
+// only during dev, for HMR
+let latestVersion = -1;
+// @ts-ignore
+export function update({ version, data }) {
+	if (latestVersion >= version) {
+		return;
+	}
+	for (const [index, item] of data['es'] ?? []) {
+		c[index] = item;
+	}
+	latestVersion = version;
+}
