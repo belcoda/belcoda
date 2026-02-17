@@ -6,9 +6,9 @@
 	import { env } from '$env/dynamic/public';
 	import { dev } from '$app/environment';
 
-	const paramTheme = page.url.searchParams.get('theme') || 'default';
-	const themes = ['default', 'embed'];
-	const theme = themes.includes(paramTheme) ? (paramTheme as 'default' | 'embed') : 'default';
+	const paramLayout = page.url.searchParams.get('layout') || 'default';
+	const layouts = ['default', 'embed'];
+	const layout = layouts.includes(paramLayout) ? (paramLayout as 'default' | 'embed') : 'default';
 
 	// Build the edit URL: strip the subdomain and go to the main app
 	const editEventUrl = $derived.by(() => {
@@ -24,7 +24,7 @@
 <RenderEventPage
 	event={data.event}
 	organization={data.organization}
-	{theme}
+	{layout}
 	form={data.form}
 	whatsAppSignupLink={data.whatsAppSignupLink}
 />

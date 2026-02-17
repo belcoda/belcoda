@@ -13,13 +13,13 @@
 		session?: App.Locals['session'] | null;
 		form?: SuperValidated<SurveySchema>;
 		whatsAppSignupLink?: string;
-		theme: 'default' | 'embed';
+		layout: 'default' | 'embed';
 		success?: boolean;
 	};
 	const {
 		event,
 		organization,
-		theme = 'default',
+		layout = 'default',
 		signupCount = 0,
 		session,
 		whatsAppSignupLink,
@@ -47,7 +47,7 @@
 		<link rel="icon" href={organization.icon} />
 	{/if}
 </svelte:head>
-{#if theme === 'default'}
+{#if layout === 'default'}
 	<main class="min-h-screen bg-gray-50">
 		<div
 			class="relative h-96 w-full bg-cover bg-center bg-no-repeat"
@@ -131,7 +131,7 @@
 									{event}
 									{organization}
 									{session}
-									{theme}
+									{layout}
 									{whatsAppSignupLink}
 								/>
 							{/if}
@@ -144,7 +144,7 @@
 			</div>
 		</div>
 	</main>
-{:else if theme === 'embed'}
+{:else if layout === 'embed'}
 	<div class="mx-auto max-w-md bg-white">
 		{#if form && whatsAppSignupLink && !success}
 			<EventSignupForm
@@ -152,7 +152,7 @@
 				{form}
 				{event}
 				{organization}
-				{theme}
+				{layout}
 				{whatsAppSignupLink}
 			/>
 		{/if}

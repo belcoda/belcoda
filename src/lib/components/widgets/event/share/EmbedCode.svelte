@@ -11,8 +11,8 @@
 	import { toast } from 'svelte-sonner';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	let copied = $state(false);
-	type Theme = 'default';
-	let theme: Theme = $state('default');
+	type Layout = 'default';
+	let layout: Layout = $state('default');
 
 	import { appState } from '$lib/state.svelte';
 	import { getEventLink } from '$lib/utils/events/link';
@@ -23,9 +23,9 @@
 	});
 
 	const embedCode = $derived.by(() => {
-		switch (theme) {
+		switch (layout) {
 			case 'default':
-				return `<iframe src="${eventLink}?theme=embed" width="100%" height="100%" frameborder="0"></iframe>`;
+				return `<iframe src="${eventLink}?layout=embed" width="100%" height="100%" frameborder="0"></iframe>`;
 		}
 	});
 </script>
@@ -46,9 +46,9 @@
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content>
 					<DropdownMenu.CheckboxItem
-						checked={theme === 'default'}
-						onCheckedChange={() => (theme = 'default')}
-						>{t`Default theme`}</DropdownMenu.CheckboxItem
+						checked={layout === 'default'}
+						onCheckedChange={() => (layout = 'default')}
+						>{t`Default layout`}</DropdownMenu.CheckboxItem
 					>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
