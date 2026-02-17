@@ -16,7 +16,8 @@ export const petitionSignatureSchema = v.object({
 	details: petitionSignatureDetails,
 	responses: v.nullable(v.any()), // TODO: Define response schema when flows are ready
 	createdAt: helpers.date,
-	updatedAt: helpers.date
+	updatedAt: helpers.date,
+	deletedAt: v.nullable(helpers.date)
 });
 export type PetitionSignatureSchema = v.InferOutput<typeof petitionSignatureSchema>;
 
@@ -30,7 +31,8 @@ export type ReadPetitionSignatureRest = v.InferOutput<typeof readPetitionSignatu
 export const readPetitionSignatureZero = v.object({
 	...petitionSignatureSchema.entries,
 	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp
+	updatedAt: helpers.dateToTimestamp,
+	deletedAt: v.nullable(helpers.dateToTimestamp)
 });
 export type ReadPetitionSignatureZero = v.InferOutput<typeof readPetitionSignatureZero>;
 
@@ -77,6 +79,12 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const deleteMutatorSchema = v.object({
+	metadata: mutatorMetadata
+});
+export type DeleteMutatorSchema = v.InferInput<typeof deleteMutatorSchema>;
+export type DeleteMutatorSchemaOutput = v.InferOutput<typeof deleteMutatorSchema>;
 
 export const petitionSignatureHelper = v.object({
 	person: personActionHelper,

@@ -5,7 +5,9 @@ import {
 	createMutatorSchema,
 	type CreateMutatorSchemaOutput,
 	updateMutatorSchema,
-	type UpdateMutatorSchemaOutput
+	type UpdateMutatorSchemaOutput,
+	deleteMutatorSchema,
+	type DeleteMutatorSchemaOutput
 } from '$lib/schema/petition/petition-signature';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -270,4 +272,39 @@ export async function signPetitionUnsafe({
 	//TODO: Implement whatsapp notification
 
 	return insertedPetitionSignature;
+}
+
+export async function deletePetitionSignature({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: DeleteMutatorSchemaOutput;
+}) {
+	const parsed = parse(deleteMutatorSchema, args);
+	const petitionSignatureRecord = await tx.run(
+		builder.petitionSignature
+			.where('id', '=', parsed.metadata.petitionSignatureId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => petitionSignatureReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!petitionSignatureRecord) {
+		throw new Error('Petition signature not found');
+	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(petitionSignature)
+		.set({
+			deletedAt: new Date(),
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(petitionSignature.id, parsed.metadata.petitionSignatureId),
+				eq(petitionSignature.organizationId, parsed.metadata.organizationId)
+			)
+		);
 }
