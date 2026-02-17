@@ -8,7 +8,9 @@ import {
 	type ArchivePetitionMutatorSchema,
 	createPetitionZeroMutatorSchema,
 	updatePetitionZeroMutatorSchema,
-	archivePetitionMutatorSchema
+	archivePetitionMutatorSchema,
+	type DeletePetitionMutatorSchema,
+	deletePetitionMutatorSchema
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
 
@@ -180,6 +182,41 @@ export async function archivePetition({
 		.update(petition)
 		.set({
 			archivedAt: new Date(),
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(petition.id, parsed.metadata.petitionId),
+				eq(petition.organizationId, parsed.metadata.organizationId)
+			)
+		);
+}
+
+export async function deletePetition({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: DeletePetitionMutatorSchema;
+}) {
+	const parsed = parse(deletePetitionMutatorSchema, args);
+	const petitionRecord = await tx.run(
+		builder.petition
+			.where('id', '=', parsed.metadata.petitionId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => petitionReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!petitionRecord) {
+		throw new Error('Petition not found');
+	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(petition)
+		.set({
+			deletedAt: new Date(),
 			updatedAt: new Date()
 		})
 		.where(

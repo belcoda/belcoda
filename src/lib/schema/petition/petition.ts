@@ -151,3 +151,9 @@ export const archivePetitionMutatorSchema = v.object({
 });
 export type ArchivePetitionMutatorSchema = v.InferInput<typeof archivePetitionMutatorSchema>;
 export type ArchivePetitionMutatorSchemaOutput = v.InferOutput<typeof archivePetitionMutatorSchema>;
+
+export const deletePetitionMutatorSchema = v.object({
+	metadata: mutatorMetadata
+});
+export type DeletePetitionMutatorSchema = v.InferInput<typeof deletePetitionMutatorSchema>;
+export type DeletePetitionMutatorSchemaOutput = v.InferOutput<typeof deletePetitionMutatorSchema>;
