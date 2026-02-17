@@ -657,5 +657,19 @@ export let c = [
 	'Temas e cores',
 	'Importações',
 	'Saldo de créditos',
-	'Chaves API'
+	'Chaves API',
+	'All your people and teams in one place.',
+	"Learn more about Belcoda's community module"
 ];
+// only during dev, for HMR
+let latestVersion = -1;
+// @ts-ignore
+export function update({ version, data }) {
+	if (latestVersion >= version) {
+		return;
+	}
+	for (const [index, item] of data['pt'] ?? []) {
+		c[index] = item;
+	}
+	latestVersion = version;
+}

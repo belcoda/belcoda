@@ -375,6 +375,7 @@ msgstr "Este endereço de e-mail não pode ser alterado."
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/routes/(app)/community/+page.svelte
 msgid "Community"
 msgstr "Comunidade"
 
@@ -2293,6 +2294,7 @@ msgid "No signups found. Create a new signup to get started."
 msgstr "Nenhuma inscrição encontrada. Crie uma nova inscrição para começar."
 
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/routes/(app)/community/+page.svelte
 msgid "Add Person"
 msgstr "Adicionar pessoa"
 
@@ -3098,4 +3100,12 @@ msgstr ""
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Delete event"
+msgstr ""
+
+#: src/routes/(app)/community/+page.svelte
+msgid "All your people and teams in one place."
+msgstr ""
+
+#: src/routes/(app)/community/+page.svelte
+msgid "Learn more about Belcoda's community module"
 msgstr ""
