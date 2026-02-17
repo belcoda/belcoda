@@ -15,9 +15,7 @@
 	import { v7 as uuidv7 } from 'uuid';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
-	import queries from '$lib/zero/query/index';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { type ReadPersonZero } from '$lib/schema/person';
 	const personId = uuidv7();
 	type Props = {
 		modalMode: 'list' | 'create';
