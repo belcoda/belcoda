@@ -114,7 +114,7 @@
 								<Spinner class="mr-2 h-4 w-4" />
 								{t`Redirecting...`}
 							{:else}
-								{t`Buy $${amount}`}
+								{`Buy $${amount}`}
 							{/if}
 						</Button>
 					{/each}

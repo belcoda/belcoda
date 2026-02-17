@@ -118,7 +118,7 @@ export function buildBetterAuth(localeInput: string) {
 			}
 		}),
 		trustedOrigins: [
-			publicEnv.PUBLIC_ROOT_DOMAIN,
+			publicEnv.PUBLIC_ROOT_DOMAIN as string,
 			'https://app.belcoda.com',
 			'https://staging.belcoda.com',
 			'http://localhost:5173',

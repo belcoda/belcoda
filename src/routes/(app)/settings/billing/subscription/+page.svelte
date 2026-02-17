@@ -63,7 +63,9 @@
 			loading = true;
 			error = null;
 			const result = await authClient.subscription.list({
-				referenceId: appState.organizationId
+				query: {
+					referenceId: appState.organizationId
+				}
 			});
 			if (result.error) {
 				throw new Error(result.error.message || t`Failed to load subscription`);
