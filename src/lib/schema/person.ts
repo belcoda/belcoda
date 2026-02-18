@@ -96,10 +96,24 @@ export const createPerson = v.object({
 	profilePicture: v.optional(personSchema.entries.profilePicture)
 });
 export type CreatePerson = v.InferInput<typeof createPerson>;
-export const createPersonZero = v.object({
-	...createPerson.entries,
-	dateOfBirth: v.optional(v.nullable(helpers.unixTimestamp), null)
-});
+export const createPersonZero = v.pipe(
+	v.object({
+		...createPerson.entries,
+		dateOfBirth: v.optional(v.nullable(helpers.unixTimestamp), null)
+	}),
+	v.check((input) => {
+		if (!input.emailAddress && !input.phoneNumber) {
+			return false;
+		}
+		return true;
+	}, 'Either one of email or phone number is required'),
+	v.check((input) => {
+		if (!input.givenName && !input.familyName) {
+			return false;
+		}
+		return true;
+	}, 'Either one of given name or family name is required')
+);
 export type CreatePersonZero = v.InferOutput<typeof createPersonZero>;
 export const createPersonRest = v.object({
 	...createPerson.entries,

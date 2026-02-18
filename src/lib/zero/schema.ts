@@ -17,7 +17,8 @@ export const queryContextSchema = object({
 	userId: uuid,
 	authTeams: array(uuid),
 	adminOrgs: array(uuid),
-	ownerOrgs: array(uuid)
+	ownerOrgs: array(uuid),
+	otherOrgs: array(uuid)
 });
 
 export type QueryContext = {
@@ -25,6 +26,7 @@ export type QueryContext = {
 	authTeams: string[];
 	adminOrgs: string[];
 	ownerOrgs: string[];
+	otherOrgs: string[];
 };
 
 export type MutatorResult = Array<InferOutput<ObjectSchema<any, any>> | null>;

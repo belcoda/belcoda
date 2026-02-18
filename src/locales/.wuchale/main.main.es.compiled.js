@@ -325,7 +325,6 @@ export let c = [
 	'Cambiar tipo',
 	'¿Estás seguro de que quieres eliminar esta pregunta?',
 	'Eliminar pregunta',
-	'Editar persona',
 	'Crear persona',
 	'Datos de contacto',
 	'Si la persona está suscrita, podrá recibir notificaciones\ny mensajes.',
@@ -650,12 +649,26 @@ export let c = [
 	['Change the role for ', 0, '.'],
 	'Edit role',
 	'Saving...',
+	'Person created successfully',
 	'Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone.',
 	'Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?',
 	'Event deleted',
 	'Delete event',
+	'Email saved',
 	'Temas y colores',
 	'Importaciones',
 	'Saldo de créditos',
 	'Claves API'
 ];
+// only during dev, for HMR
+let latestVersion = -1;
+// @ts-ignore
+export function update({ version, data }) {
+	if (latestVersion >= version) {
+		return;
+	}
+	for (const [index, item] of data['es'] ?? []) {
+		c[index] = item;
+	}
+	latestVersion = version;
+}

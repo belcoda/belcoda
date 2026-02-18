@@ -12,7 +12,7 @@ import { parse } from 'valibot';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { team } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 export async function createPetition({
@@ -65,13 +65,14 @@ export async function createPetition({
 	});
 	async function getNextSlug(slug: string, count: number = 0): Promise<string> {
 		const slugToCheck = `${slug}${count > 0 ? `-${count}` : ''}`;
-		const result = await tx.run(
-			builder.petition
-				.where('organizationId', '=', parsed.metadata.organizationId)
-				.where('slug', '=', slugToCheck)
-				.where('deletedAt', 'IS', null)
-		);
-		if (result.length > 0) {
+		const result = await tx.dbTransaction.wrappedTransaction.query.petition.findFirst({
+			where: and(
+				eq(petition.organizationId, parsed.metadata.organizationId),
+				eq(petition.slug, slugToCheck),
+				isNull(petition.deletedAt)
+			)
+		});
+		if (result) {
 			return await getNextSlug(slug, count + 1);
 		}
 		return slugToCheck;
@@ -79,13 +80,14 @@ export async function createPetition({
 
 	async function getNextTitle(title: string, count: number = 0): Promise<string> {
 		const titleToCheck = `${title}${count > 0 ? ` ${count}` : ''}`;
-		const result = await tx.run(
-			builder.petition
-				.where('organizationId', '=', parsed.metadata.organizationId)
-				.where('title', '=', titleToCheck)
-				.where('deletedAt', 'IS', null)
-		);
-		if (result.length > 0) {
+		const result = await tx.dbTransaction.wrappedTransaction.query.petition.findFirst({
+			where: and(
+				eq(petition.organizationId, parsed.metadata.organizationId),
+				eq(petition.title, titleToCheck),
+				isNull(petition.deletedAt)
+			)
+		});
+		if (result) {
 			return await getNextTitle(title, count + 1);
 		}
 		return titleToCheck;
