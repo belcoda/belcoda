@@ -43,43 +43,38 @@ export async function POST(event) {
 	}
 
 	const user = session.user as typeof session.user & { stripeCustomerId?: string | null };
-	const checkoutSession = await stripeClient.checkout.sessions
-		.create({
-			mode: 'payment',
-			success_url: `${event.url.origin}/settings/billing/credit?credit_purchase=success`,
-			cancel_url: `${event.url.origin}/settings/billing/credit?credit_purchase=cancelled`,
-			...(user.stripeCustomerId
-				? {
-						customer: user.stripeCustomerId
-					}
-				: {
-						customer_email: session.user.email
-					}),
-			line_items: [
-				{
-					quantity: 1,
-					price_data: {
-						currency: 'usd',
-						unit_amount: amount * 100,
-						product_data: {
-							name: `Belcoda credit top-up ($${amount})`,
-							description: `Organization credit purchase (${organizationId})`
-						}
+	const checkoutSession = await stripeClient.checkout.sessions.create({
+		mode: 'payment',
+		success_url: `${event.url.origin}/settings/billing/credit?credit_purchase=success`,
+		cancel_url: `${event.url.origin}/settings/billing/credit?credit_purchase=cancelled`,
+		...(user.stripeCustomerId
+			? {
+					customer: user.stripeCustomerId
+				}
+			: {
+					customer_email: session.user.email
+				}),
+		line_items: [
+			{
+				quantity: 1,
+				price_data: {
+					currency: 'usd',
+					unit_amount: amount * 100,
+					product_data: {
+						name: `Belcoda credit top-up ($${amount})`,
+						description: `Organization credit purchase (${organizationId})`
 					}
 				}
-			],
-			client_reference_id: organizationId,
-			metadata: {
-				type: CREDIT_PURCHASE_METADATA_TYPE,
-				organizationId,
-				creditAmount: String(amount),
-				purchasedByUserId: session.user.id
 			}
-		})
-		.catch((err) => {
-			console.error(err);
-			return { error: 'Unable to create Stripe checkout session' };
-		});
+		],
+		client_reference_id: organizationId,
+		metadata: {
+			type: CREDIT_PURCHASE_METADATA_TYPE,
+			organizationId,
+			creditAmount: String(amount),
+			purchasedByUserId: session.user.id
+		}
+	});
 
 	if (!checkoutSession.url) {
 		return json({ error: 'Unable to create Stripe checkout session' }, { status: 500 });
