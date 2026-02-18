@@ -1430,7 +1430,6 @@ msgid "Postcode"
 msgstr "CEP"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
