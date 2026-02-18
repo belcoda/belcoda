@@ -8,7 +8,7 @@
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from 'svelte-sonner';
-	import { CREDIT_PURCHASE_AMOUNTS_USD } from '$lib/billing/credit';
+	import { CREDIT_PURCHASE_AMOUNTS_USD } from '$lib/utils/billing/credit';
 
 	type CheckoutResponse = {
 		url?: string;
@@ -64,6 +64,7 @@
 
 			window.location.href = payload.url;
 		} catch (err) {
+			console.error(err);
 			toast.error(err instanceof Error ? err.message : t`Unable to start Stripe checkout`);
 			purchasingAmount = null;
 		}
@@ -101,7 +102,9 @@
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>{t`Buy more credit`}</Card.Title>
-					<Card.Description>{t`Select a preset amount to continue in Stripe checkout.`}</Card.Description>
+					<Card.Description
+						>{t`Select a preset amount to continue in Stripe checkout.`}</Card.Description
+					>
 				</Card.Header>
 				<Card.Content class="grid gap-3 sm:grid-cols-3">
 					{#each CREDIT_PURCHASE_AMOUNTS_USD as amount}
@@ -114,7 +117,7 @@
 								<Spinner class="mr-2 h-4 w-4" />
 								{t`Redirecting...`}
 							{:else}
-								{`Buy $${amount}`}
+								{`Buy ${(amount * 100).toLocaleString()} credits (US$${amount})`}
 							{/if}
 						</Button>
 					{/each}
