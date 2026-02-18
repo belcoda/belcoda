@@ -464,7 +464,6 @@ msgstr "Petitions"
 #~ msgid "New person"
 #~ msgstr "New person"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Billing"
