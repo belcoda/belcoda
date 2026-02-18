@@ -1,7 +1,10 @@
 import { json } from '@sveltejs/kit';
 import { drizzle } from '$lib/server/db';
 import { stripeClient } from '$lib/server/stripe';
-import { CREDIT_PURCHASE_METADATA_TYPE, isCreditPurchaseAmountUsd } from '$lib/billing/credit';
+import {
+	CREDIT_PURCHASE_METADATA_TYPE,
+	isCreditPurchaseAmountUsd
+} from '$lib/server/utils/billing/credit';
 
 type CheckoutRequestBody = {
 	amount?: number;

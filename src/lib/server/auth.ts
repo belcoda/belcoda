@@ -22,7 +22,7 @@ import { stripeClient } from '$lib/server/stripe';
 import {
 	CREDIT_PURCHASE_METADATA_TYPE,
 	parseCreditPurchaseAmountUsd
-} from '$lib/billing/credit';
+} from '$lib/server/utils/billing/credit';
 
 import { LRUCache } from 'lru-cache';
 const cache = new LRUCache<string, string>({
@@ -189,18 +189,18 @@ export function buildBetterAuth(localeInput: string) {
 			}),
 			stripe({
 				stripeClient,
-				stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+				stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
 				createCustomerOnSignUp: true,
 				subscription: {
 					enabled: true,
 					plans: [
 						{
 							name: 'supported',
-							priceId: env.STRIPE_SUPPORTED_TIER_PRICE_ID || undefined
+							priceId: env.STRIPE_SUPPORTED_TIER_PRICE_ID
 						},
 						{
 							name: 'enterprise',
-							priceId: env.STRIPE_ENTERPRISE_TIER_PRICE_ID || undefined
+							priceId: env.STRIPE_ENTERPRISE_TIER_PRICE_ID
 						}
 					],
 					authorizeReference: async ({ user, referenceId }) => {
