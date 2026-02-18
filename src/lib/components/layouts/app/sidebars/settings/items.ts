@@ -1,105 +1,105 @@
 import { t } from '$lib/index.svelte';
 export const settingsItems: {
 	title: () => string;
-	group: string;
+	group: () => string;
 	url: string;
 	keywords: string[];
 	permissions: 'admin' | 'owner' | 'member';
 }[] = [
 	{
 		title: () => t`Configuration`,
-		group: 'Organization',
+		group: () => t`Organization`,
 		url: '/settings/organization/configuration',
 		keywords: ['organization', 'settings', 'preferences', 'config'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`Themes & colors`,
-		group: 'Organization',
+		group: () => t`Organization`,
 		url: '/settings/organization/themes',
 		keywords: ['themes', 'colors', 'icon', 'logo', 'branding'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`Users`,
-		group: 'Organization',
+		group: () => t`Organization`,
 		url: '/settings/users',
 		keywords: ['users', 'members', 'invite', 'roles', 'permissions'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`Email from signatures`,
-		group: 'Email',
+		group: () => t`Email`,
 		url: '/settings/email/send_signatures',
 		keywords: ['email', 'from', 'address', 'send', 'signature'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`Tags`,
-		group: 'Community',
+		group: () => t`Community`,
 		url: '/settings/tags',
 		keywords: ['tags', 'people', 'tag', 'tagging'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`Teams`,
-		group: 'Community',
+		group: () => t`Community`,
 		url: '/settings/teams',
 		keywords: ['teams', 'people', 'team'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`Imports`,
-		group: 'Community',
+		group: () => t`Community`,
 		url: '/settings/people/imports',
 		keywords: ['imports', 'people', 'import', 'csv'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`Exports`,
-		group: 'Community',
+		group: () => t`Community`,
 		url: '/settings/people/exports',
 		keywords: ['exports', 'people', 'export', 'csv'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`Subscription`,
-		group: 'Billing',
+		group: () => t`Billing`,
 		url: '/settings/billing/subscription',
 		keywords: ['subscription', 'billing', 'payments'],
 		permissions: 'owner'
 	},
 	{
 		title: () => t`Credit balance`,
-		group: 'Billing',
+		group: () => t`Billing`,
 		url: '/settings/billing/credit',
 		keywords: ['credit', 'balance', 'billing', 'payments', 'recharge'],
 		permissions: 'owner'
 	},
 	{
 		title: () => t`Webhooks`,
-		group: 'Developer',
+		group: () => t`Developer`,
 		url: '/settings/webhooks',
 		keywords: ['webhooks', 'hooks', 'api', 'events'],
 		permissions: 'owner'
 	},
 	{
 		title: () => t`API keys`,
-		group: 'Developer',
+		group: () => t`Developer`,
 		url: '/settings/api-keys',
 		keywords: ['api', 'api-key', 'api-keys'],
 		permissions: 'owner'
 	},
 	{
 		title: () => t`WhatsApp templates`,
-		group: 'WhatsApp',
+		group: () => t`WhatsApp`,
 		url: '/settings/whatsapp/templates',
 		keywords: ['whatsapp', 'templates'],
 		permissions: 'admin'
 	},
 	{
 		title: () => t`WhatsApp accounts`,
-		group: 'WhatsApp',
+		group: () => t`WhatsApp`,
 		url: '/settings/whatsapp/accounts',
 		keywords: ['whatsapp', 'accounts', 'onboarding', 'meta', 'embedded', 'wa'],
 		permissions: 'admin'
@@ -117,7 +117,7 @@ export function groupBy<T extends Record<string, any>>(array: T[], key: keyof T)
 	// and values are arrays of the original type T.
 	const groupedObject = array.reduce((acc: Record<string, T[]>, item: T) => {
 		// We ensure the grouping key value is treated as a string for object keys.
-		const groupKey = String(item[key]);
+		const groupKey = String(item[key]());
 
 		// If the group doesn't exist, initialize it with an empty array.
 		// The nullish coalescing operator (??) along with optional chaining
