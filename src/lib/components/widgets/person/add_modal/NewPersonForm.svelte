@@ -15,9 +15,7 @@
 	import { v7 as uuidv7 } from 'uuid';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
-	import queries from '$lib/zero/query/index';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { type ReadPersonZero } from '$lib/schema/person';
 	const personId = uuidv7();
 	type Props = {
 		modalMode: 'list' | 'create';
@@ -54,17 +52,9 @@
 			onCreated(personId);
 		}
 	});
-	const foo = $derived.by(() => z.createQuery(queries.person.read({ personId })));
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
-	import { person } from '$lib/schema/drizzle';
 </script>
 
-{#if foo.data}
-	<div>
-		<h1>Person created</h1>
-		<p>Person ID: {foo.data.id} {foo.data.givenName} {foo.data.familyName}</p>
-	</div>
-{/if}
 <ScrollArea class="h-[calc(100vh-400px)]">
 	<form use:form.enhance class="flex flex-col gap-4 px-6">
 		<div class="col-span-2 mt-3 mb-8 flex w-full justify-center">

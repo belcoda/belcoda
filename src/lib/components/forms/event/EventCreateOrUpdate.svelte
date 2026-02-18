@@ -49,7 +49,6 @@
 					}),
 					initialData: event,
 					onSubmit: async (data) => {
-						console.log(data);
 						onSubmit(data);
 					}
 				})
@@ -61,7 +60,6 @@
 					}),
 					validateOnLoad: false,
 					onSubmit: async (data) => {
-						console.log(data);
 						onSubmit(data);
 					}
 				})
@@ -84,6 +82,8 @@
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
+	import type { CountryCode } from '$lib/schema/helpers';
 
 	function setSlug(slug: string) {
 		$data.slug = slugify(slug);
@@ -378,9 +378,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{t`Country`}</Form.Label>
-					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.country} {...props} placeholder={t`Country`} />
-					</InputGroup.Root>
+					<CountrySelect {...props} bind:value={$data.country as CountryCode} />
 				{/snippet}
 			</Form.Control>
 		</Form.Field>

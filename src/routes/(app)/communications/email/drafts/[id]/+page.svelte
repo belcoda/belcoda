@@ -9,8 +9,10 @@
 	import { page } from '$app/state';
 	import { goto, replaceState } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
-	import type { FilterGroupType } from '$lib/schema/person/filter';
+	import { type FilterGroupType, defaultFilterGroup } from '$lib/schema/person/filter';
+	import { watch } from 'runed';
 
+	import { toast } from 'svelte-sonner';
 	const defaultCreateMode = page.url.searchParams.get('defaultCreateMode') === 'true';
 	replaceState(page.url.pathname, {});
 
@@ -27,6 +29,7 @@
 	});
 
 	const emailExists = $derived(!!(emailQuery?.details.type === 'complete' && emailQuery?.data));
+	const emailSearchComplete = $derived(emailQuery?.details.type === 'complete');
 
 	const email = $derived.by(() => {
 		if (!emailId) return null;
@@ -56,7 +59,37 @@
 		emailFromSignatureId: string | undefined;
 		recipients: FilterGroupType;
 	};
-	async function handleUpdate({ subject, body, emailFromSignatureId, recipients }: SaveEmailData) {
+
+	// SaveEmailData as $state runes (future bindables for EmailForm)
+	let subject = $state<string>('');
+	let body = $state<any>(null);
+	let emailFromSignatureId = $state<string | undefined>(undefined);
+	let recipients = $state<FilterGroupType>(JSON.parse(JSON.stringify(defaultFilterGroup)));
+
+	// Sync state from email (Zero query data or default) when it changes
+	watch(
+		() => email,
+		(curr) => {
+			if (curr) {
+				subject = curr.subject ?? '';
+				body = curr.body ?? null;
+				emailFromSignatureId = curr.emailFromSignatureId ?? undefined;
+				recipients = JSON.parse(JSON.stringify(curr.recipients || defaultFilterGroup));
+			}
+		}
+	);
+
+	async function handleUpdate(data?: SaveEmailData) {
+		// Update state from form callback (until EmailForm uses bindables)
+		if (data) {
+			subject = data.subject ?? '';
+			body = data.body ?? null;
+			emailFromSignatureId = data.emailFromSignatureId;
+			recipients = data.recipients
+				? JSON.parse(JSON.stringify(data.recipients))
+				: JSON.parse(JSON.stringify(defaultFilterGroup));
+		}
+
 		if (!emailId) return;
 
 		if (emailExists) {
@@ -67,15 +100,14 @@
 						emailMessageId: emailId
 					},
 					input: {
-						subject,
-						body,
-						emailFromSignatureId,
-						recipients
+						subject: $state.snapshot(subject),
+						body: $state.snapshot(body),
+						emailFromSignatureId: $state.snapshot(emailFromSignatureId),
+						recipients: $state.snapshot(recipients)
 					}
 				})
 			);
 		} else {
-			//create the email
 			await z.mutate(
 				mutators.emailMessage.create({
 					metadata: {
@@ -83,10 +115,10 @@
 						emailMessageId: emailId
 					},
 					input: {
-						subject: subject ?? null,
-						body: body ?? null,
-						emailFromSignatureId: emailFromSignatureId ?? null,
-						recipients,
+						subject: $state.snapshot(subject) ?? null,
+						body: $state.snapshot(body) ?? null,
+						emailFromSignatureId: $state.snapshot(emailFromSignatureId) ?? null,
+						recipients: $state.snapshot(recipients),
 						previewTextOverride: null,
 						previewTextLock: false,
 						replyToOverride: null
@@ -96,7 +128,8 @@
 		}
 	}
 
-	async function handleSend(data: any) {
+	async function handleSend() {
+		await handleUpdate();
 		if (!emailId) return;
 
 		await z.mutate(
@@ -106,8 +139,8 @@
 					emailMessageId: emailId
 				},
 				input: {
-					subject: data.subject,
-					body: data.body
+					subject,
+					body
 				}
 			})
 		);
@@ -141,6 +174,14 @@
 	{#snippet footer()}
 		<div class="flex w-full justify-end gap-2">
 			<Button variant="destructive" size="sm" onclick={handleDiscard}>{t`Discard`}</Button>
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={() => {
+					handleUpdate();
+					toast.success(t`Email saved`);
+				}}>{t`Save`}</Button
+			>
 			<Button variant="default" size="sm" onclick={handleSend}>{t`Send`}</Button>
 		</div>
 	{/snippet}
@@ -148,7 +189,7 @@
 		<div class="flex h-full items-center justify-center">
 			<p class="text-muted-foreground">{t`Invalid email ID`}</p>
 		</div>
-	{:else if email}
-		<EmailForm {email} {handleUpdate} />
+	{:else if emailSearchComplete}
+		<EmailForm bind:subject bind:body bind:recipients bind:emailFromSignatureId {handleUpdate} />
 	{/if}
 </ContentLayout>
