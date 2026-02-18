@@ -22,8 +22,10 @@
 	};
 
 	const canManageBilling = $derived(appState.isOwner);
-	const supportedTierFormUrl = publicEnv.PUBLIC_SUPPORTED_TIER_FORM_URL;
-	const enterpriseTierFormUrl = publicEnv.PUBLIC_ENTERPRISE_TIER_FORM_URL;
+	const supportedTierFormUrl =
+		'https://cal.com/django-merope-8wwjmi/belcoda-supported-tier-exploration-call';
+	const enterpriseTierFormUrl =
+		'https://cal.com/django-merope-8wwjmi/belcoda-network-exploration-call';
 
 	let loading = $state(true);
 	let openingPortal = $state(false);
