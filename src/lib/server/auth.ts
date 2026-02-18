@@ -22,7 +22,7 @@ import { stripeClient } from '$lib/server/stripe';
 import {
 	CREDIT_PURCHASE_METADATA_TYPE,
 	parseCreditPurchaseAmountUsd
-} from '$lib/server/utils/billing/credit';
+} from '$lib/utils/billing/credit';
 
 import { LRUCache } from 'lru-cache';
 const cache = new LRUCache<string, string>({
