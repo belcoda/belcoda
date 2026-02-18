@@ -654,6 +654,7 @@ export let c = [
 	'Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?',
 	'Event deleted',
 	'Delete event',
+	'Email saved',
 	'Temas y colores',
 	'Importaciones',
 	'Saldo de créditos',

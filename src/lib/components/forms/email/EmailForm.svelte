@@ -16,34 +16,25 @@
 	};
 
 	let {
-		email = $bindable(),
+		subject = $bindable(),
+		body = $bindable(),
+		recipients = $bindable(),
+		emailFromSignatureId = $bindable(),
 		handleUpdate
 	}: {
-		email: ReadEmailMessageZero;
+		subject: string;
+		body: any;
+		recipients: FilterGroupType;
+		emailFromSignatureId: string | undefined;
 		handleUpdate?: (data: UpdateEmailData) => void;
 	} = $props();
-
-	let subject = $state('');
-	let body = $state(null);
-	let recipients: FilterGroupType = $state(
-		JSON.parse(JSON.stringify(email.recipients || defaultFilterGroup))
-	);
-	let recipientCount = $derived(email?.estimatedRecipientCount || 0);
-
-	// $effect.pre runs before the DOM updates which prevents flickers
-	$effect.pre(() => {
-		if (email) {
-			subject = email.subject || '';
-			body = email.body || null;
-		}
-	});
 
 	import { useDebounce } from 'runed';
 	function triggerUpdate() {
 		handleUpdate?.({
 			subject,
 			body: body ? JSON.parse(JSON.stringify(body)) : null,
-			emailFromSignatureId: email?.emailFromSignatureId ?? undefined,
+			emailFromSignatureId: emailFromSignatureId ?? undefined,
 			recipients: JSON.parse(JSON.stringify(recipients || defaultFilterGroup))
 		});
 	}
@@ -57,10 +48,7 @@
 			<div class="space-y-2">
 				<Label for="recipients">{t`From`}</Label>
 				<div class="flex items-center gap-2">
-					<EmailFrom
-						bind:value={email.emailFromSignatureId}
-						onValueChange={debouncedTriggerUpdate}
-					/>
+					<EmailFrom bind:value={emailFromSignatureId} onValueChange={debouncedTriggerUpdate} />
 				</div>
 			</div>
 			<div class="space-y-2">
@@ -89,9 +77,7 @@
 
 			<div class="space-y-2">
 				<Label for="body">{t`Message`}</Label>
-				{#key email?.id}
-					<SvelteLexical bind:value={body} onChange={debouncedTriggerUpdate} />
-				{/key}
+				<SvelteLexical bind:value={body} onChange={debouncedTriggerUpdate} />
 			</div>
 		</div>
 	</div>

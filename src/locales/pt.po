@@ -880,6 +880,7 @@ msgstr "Sobrenome"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
@@ -3099,4 +3100,8 @@ msgstr ""
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Delete event"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Email saved"
 msgstr ""
