@@ -189,6 +189,7 @@ msgstr "The return path domain is used for bounce handling."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
@@ -440,6 +441,7 @@ msgstr "Team"
 #: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Subscription"
 msgstr "Subscription"
 
@@ -2672,6 +2674,8 @@ msgstr "Exports"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+#: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Credit balance"
 msgstr "Credit balance"
 
@@ -2710,3 +2714,100 @@ msgstr "WhatsApp templates are not currently supported, but will be added in a f
 #: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
 msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
 msgstr "WhatsApp accounts are not currently supported, but will be added in a future update."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Free"
+msgstr "Free"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Not available"
+msgstr "Not available"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact form URL is not configured."
+msgstr "Contact form URL is not configured."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "You don't have permission to manage billing. Only organization owners can access this page."
+msgstr "You don't have permission to manage billing. Only organization owners can access this page."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Current subscription"
+msgstr "Current subscription"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Your organization's Stripe subscription status and plan information."
+msgstr "Your organization's Stripe subscription status and plan information."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Loading subscription..."
+msgstr "Loading subscription..."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Plan"
+msgstr "Plan"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "No active paid subscription"
+msgstr "No active paid subscription"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Current period ends"
+msgstr "Current period ends"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Opening Stripe..."
+msgstr "Opening Stripe..."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Manage in Stripe"
+msgstr "Manage in Stripe"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Need a different plan?"
+msgstr "Need a different plan?"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Everyone starts on the Free tier. To move to Supported or Enterprise, submit a contact form and our team will follow up."
+msgstr "Everyone starts on the Free tier. To move to Supported or Enterprise, submit a contact form and our team will follow up."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact us for Supported tier"
+msgstr "Contact us for Supported tier"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact us for Enterprise tier"
+msgstr "Contact us for Enterprise tier"
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Credit purchase completed. Your balance will update shortly."
+msgstr "Credit purchase completed. Your balance will update shortly."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Credit purchase was cancelled."
+msgstr "Credit purchase was cancelled."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
+msgstr "You don't have permission to manage credit purchases. Only organization owners can access this page."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "This balance belongs to your organization and is shared across your workspace."
+msgstr "This balance belongs to your organization and is shared across your workspace."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Purchase additional credit with Stripe using one of the preset amounts below."
+msgstr "Purchase additional credit with Stripe using one of the preset amounts below."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Buy more credit"
+msgstr "Buy more credit"
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Select a preset amount to continue in Stripe checkout."
+msgstr "Select a preset amount to continue in Stripe checkout."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Redirecting..."
+msgstr "Redirecting..."
