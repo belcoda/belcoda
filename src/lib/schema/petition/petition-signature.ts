@@ -31,14 +31,14 @@ export type ReadPetitionSignatureRest = v.InferOutput<typeof readPetitionSignatu
 export const readPetitionSignatureZero = v.object({
 	...petitionSignatureSchema.entries,
 	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp,
+	updatedAt: v.nullable(helpers.dateToTimestamp),
 	deletedAt: v.nullable(helpers.dateToTimestamp)
 });
 export type ReadPetitionSignatureZero = v.InferOutput<typeof readPetitionSignatureZero>;
 
 export const readPetitionSignatureZeroWithPerson = v.object({
 	...readPetitionSignatureZero.entries,
-	person: readPersonZero
+	person: v.optional(readPersonZero)
 });
 export type ReadPetitionSignatureZeroWithPerson = v.InferOutput<
 	typeof readPetitionSignatureZeroWithPerson

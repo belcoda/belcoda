@@ -2,7 +2,7 @@
 	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 	import { type ReadPetitionZero } from '$lib/schema/petition/petition';
 	import { t } from '$lib/index.svelte';
-	const { petition }: { petition: ReadPetitionZero } = $props();
+	const { petition }: { petition: Readonly<ReadPetitionZero> } = $props();
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import type { PetitionSignatureListFilter } from '$lib/zero/query/petition_signature/list';
@@ -19,7 +19,7 @@
 		return z.createQuery(queries.petitionSignature.list(filter));
 	});
 
-	let selectedSignatures = $state<ReadPetitionSignatureZeroWithPerson[]>([]);
+	let selectedSignatures = $state<Readonly<ReadPetitionSignatureZeroWithPerson>[]>([]);
 
 	import * as Card from '$lib/components/ui/card/index.js';
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
@@ -43,8 +43,8 @@
 
 	<Card.Content>
 		<SignatureTable
-			signatures={petitionSignatures.data as ReadPetitionSignatureZeroWithPerson[]}
-			{petition}
+			signatures={petitionSignatures.data ?? []}
+			petition={petition}
 			bind:selectedSignatures
 			queryIsCompleted={petitionSignatures.details.type === 'complete'}
 		/>

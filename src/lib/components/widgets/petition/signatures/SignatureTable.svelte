@@ -66,7 +66,7 @@
 							checked={selectedSignatures.length === signatures.length}
 							onCheckedChange={(checked) => {
 								if (checked) {
-									selectedSignatures = signatures;
+									selectedSignatures = [...signatures];
 								} else {
 									selectedSignatures = [];
 								}

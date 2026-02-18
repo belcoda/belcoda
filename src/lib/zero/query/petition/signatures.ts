@@ -4,7 +4,7 @@ import type { QueryContext } from '$lib/zero/schema';
 import { array, object, type InferOutput } from 'valibot';
 import { uuid } from '$lib/schema/helpers';
 import { petitionSignatureReadPermissions } from './permissions.js';
-import { readPetitionSignatureZero } from '$lib/schema/petition/petition-signature';
+import { readPetitionSignatureZeroWithPerson } from '$lib/schema/petition/petition-signature';
 
 const inputSchema = object({
 	petitionId: uuid
@@ -26,4 +26,4 @@ export const listPetitionSignatures = defineQuery(inputSchema, ({ ctx, args }) =
 	return listPetitionSignaturesQuery({ ctx, input: args });
 });
 
-export const outputSchema = array(readPetitionSignatureZero);
+export const outputSchema = array(readPetitionSignatureZeroWithPerson);
