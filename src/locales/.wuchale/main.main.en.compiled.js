@@ -658,7 +658,9 @@ export let c = [
 	'Themes & colors',
 	'Imports',
 	'Credit balance',
-	'API keys'
+	'API keys',
+	'All your people and teams in one place.',
+	"Learn more about Belcoda's community module"
 ];
 // only during dev, for HMR
 let latestVersion = -1;
