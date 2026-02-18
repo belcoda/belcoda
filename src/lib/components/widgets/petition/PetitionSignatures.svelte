@@ -33,7 +33,11 @@
 			<div class="grow space-y-3">
 				<PersonFilter bind:filter hideActivityFilter={true} />
 			</div>
-			<div class="flex items-center gap-2"></div>
+			<div class="flex items-center gap-2">
+				<Button variant="ghost" size="sm" href="/petitions/{petition.id}/signatures">
+					{t`View all`}
+				</Button>
+			</div>
 		</Card.Title>
 	</Card.Header>
 
