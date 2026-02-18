@@ -40,10 +40,11 @@
 		);
 	}
 
-	function handleDeleteOrArchive() {
+	async function handleDeleteOrArchive() {
+		openDeleteDialog = false;
 		if (petition.published) {
 			// Archive published petitions
-			z.mutate(
+			const batch = z.mutate(
 				mutators.petition.archive({
 					metadata: {
 						petitionId: petition.id,
@@ -52,10 +53,11 @@
 					}
 				})
 			);
+			await batch.client;
 			toast.success(t`Petition archived`);
 		} else {
 			// Delete draft petitions
-			z.mutate(
+			const batch = z.mutate(
 				mutators.petition.delete({
 					metadata: {
 						petitionId: petition.id,
@@ -64,12 +66,10 @@
 					}
 				})
 			);
+			await batch.client;
 			toast.success(t`Petition deleted`);
 		}
-		openDeleteDialog = false;
-		// Give Zero time to sync before navigating otherwise the deleted item
-		// does not get removed from the list until the page is refreshed
-		setTimeout(() => goto('/petitions'), 500);
+		goto('/petitions');
 	}
 </script>
 
