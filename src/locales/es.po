@@ -443,7 +443,6 @@ msgstr "Alternar barra lateral"
 #~ msgid "New person"
 #~ msgstr "Nueva persona"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Billing"
@@ -3093,6 +3092,7 @@ msgstr ""
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid "Person created successfully"
+msgstr ""
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."

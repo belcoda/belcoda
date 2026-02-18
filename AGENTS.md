@@ -17,19 +17,19 @@ This document provides AI agents and developers with a comprehensive overview of
 
 ## Tech Stack
 
-| Technology | Purpose |
-|------------|---------|
-| **Svelte 5** | Reactive UI with runes (`$state`, `$derived`, `$props`, `$effect`) and snippets |
-| **SvelteKit** | Full-stack framework, routing, load functions, server actions |
-| **Zero** (`@rocicorp/zero`) | Real-time sync, offline-first client cache, query/mutate protocol |
-| **zero-svelte** | Svelte bindings for Zero (`z.createQuery`) |
-| **better-auth** | Authentication (email/password, Google OAuth, organizations, API keys, Stripe, one-time tokens) |
-| **shadcn-svelte** | UI components in `src/lib/components/ui/` (sidebar, form, select, etc.) |
-| **Drizzle ORM** | Database access, schema in `src/lib/schema/drizzle.ts` |
-| **drizzle-zero** | Generates Zero schema from Drizzle (`zero-schema.gen.ts`) |
-| **Valibot** | Schema validation for forms, mutators, and API inputs |
-| **Wuchale** | i18n (locales: en, es, pt) |
-| **Tailwind CSS 4** | Styling with CSS variables for theming |
+| Technology                  | Purpose                                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Svelte 5**                | Reactive UI with runes (`$state`, `$derived`, `$props`, `$effect`) and snippets                 |
+| **SvelteKit**               | Full-stack framework, routing, load functions, server actions                                   |
+| **Zero** (`@rocicorp/zero`) | Real-time sync, offline-first client cache, query/mutate protocol                               |
+| **zero-svelte**             | Svelte bindings for Zero (`z.createQuery`)                                                      |
+| **better-auth**             | Authentication (email/password, Google OAuth, organizations, API keys, Stripe, one-time tokens) |
+| **shadcn-svelte**           | UI components in `src/lib/components/ui/` (sidebar, form, select, etc.)                         |
+| **Drizzle ORM**             | Database access, schema in `src/lib/schema/drizzle.ts`                                          |
+| **drizzle-zero**            | Generates Zero schema from Drizzle (`zero-schema.gen.ts`)                                       |
+| **Valibot**                 | Schema validation for forms, mutators, and API inputs                                           |
+| **Wuchale**                 | i18n (locales: en, es, pt)                                                                      |
+| **Tailwind CSS 4**          | Styling with CSS variables for theming                                                          |
 
 ---
 
@@ -113,12 +113,12 @@ src/
 
 ### Route Groups
 
-| Group | Purpose | Auth | SSR |
-|-------|---------|------|-----|
-| `(auth)` | Login, signup, verify-email, organization | Public (redirect if logged in) | false |
-| `(app)` | Main app (community, events, petitions, communications, settings) | Required | false |
-| `(page)` | Public org pages (e.g. `/page/[org]/events/[slug]`) | Optional (OTP support) | **true** |
-| `(api)` | API routes, Zero query/push, webhooks | Varies | N/A |
+| Group    | Purpose                                                           | Auth                           | SSR      |
+| -------- | ----------------------------------------------------------------- | ------------------------------ | -------- |
+| `(auth)` | Login, signup, verify-email, organization                         | Public (redirect if logged in) | false    |
+| `(app)`  | Main app (community, events, petitions, communications, settings) | Required                       | false    |
+| `(page)` | Public org pages (e.g. `/page/[org]/events/[slug]`)               | Optional (OTP support)         | **true** |
+| `(api)`  | API routes, Zero query/push, webhooks                             | Varies                         | N/A      |
 
 ### Page Routes (`(page)`)
 
@@ -149,19 +149,22 @@ The data layer has three main parts:
 
 ```ts
 builder.person
-  .where('id', '=', input.personId)
-  .related('tags').limit(100)
-  .related('teams').limit(100)
-  .related('notes').limit(100)
-  .where((expr) => personReadPermissions(expr, ctx))
-  .one();
+	.where('id', '=', input.personId)
+	.related('tags')
+	.limit(100)
+	.related('teams')
+	.limit(100)
+	.related('notes')
+	.limit(100)
+	.where((expr) => personReadPermissions(expr, ctx))
+	.one();
 ```
 
 **Using queries in components**:
 
 ```ts
-z.createQuery(queries.person.read({ personId }))
-z.createQuery(queries.person.list(listFilter))
+z.createQuery(queries.person.read({ personId }));
+z.createQuery(queries.person.list(listFilter));
 ```
 
 ### QueryContext
@@ -300,11 +303,11 @@ z.createQuery(queries.person.list(listFilter))
 
 ## Quick Reference
 
-| Task | Location / Pattern |
-|------|-------------------|
-| Add a Zero query | `lib/zero/query/<entity>/` + register in `query/index.ts` |
-| Add a mutator | Client: `lib/zero/mutate/`, Server: `lib/server/api/mutate/`, Data: `lib/server/api/data/` |
-| Add permission logic | `lib/zero/query/<entity>/permissions.ts` |
-| Add a layout/sidebar | `(app)/<section>/+layout.svelte` + `UniversalLayout` + sidebar component |
-| Add a schema field to Zero | Update `drizzle-zero.config.ts` tables, run `npm run generate` |
-| Add i18n string | Use Wuchale `t` in Svelte; add to locale files |
+| Task                       | Location / Pattern                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------ |
+| Add a Zero query           | `lib/zero/query/<entity>/` + register in `query/index.ts`                                  |
+| Add a mutator              | Client: `lib/zero/mutate/`, Server: `lib/server/api/mutate/`, Data: `lib/server/api/data/` |
+| Add permission logic       | `lib/zero/query/<entity>/permissions.ts`                                                   |
+| Add a layout/sidebar       | `(app)/<section>/+layout.svelte` + `UniversalLayout` + sidebar component                   |
+| Add a schema field to Zero | Update `drizzle-zero.config.ts` tables, run `npm run generate`                             |
+| Add i18n string            | Use Wuchale `t` in Svelte; add to locale files                                             |
