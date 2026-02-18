@@ -435,20 +435,16 @@ msgstr "Sair"
 msgid "Toggle Sidebar"
 msgstr "Alternar barra lateral"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
-msgid "New person"
-msgstr "Nova pessoa"
+#~ msgid "New person"
+#~ msgstr "Nova pessoa"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
-msgid "Billing"
-msgstr "Faturamento"
+#~ msgid "Billing"
+#~ msgstr "Faturamento"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Team"
 msgstr "Equipe"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Subscription"
