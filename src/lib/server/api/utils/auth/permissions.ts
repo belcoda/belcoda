@@ -1,15 +1,22 @@
 import { drizzle } from '$lib/server/db';
 import { sql } from 'drizzle-orm';
 import type { QueryContext } from '$lib/zero/schema';
+import { _listOrganizationMembershipsByUserIdUnsafe } from '$lib/server/api/data/organization';
 
 export async function getQueryContext(userId: string): Promise<QueryContext> {
 	const authTeams = await getAuthedTeams(userId);
-	const { admin, owner } = await getAdminOwnerOrgs(userId);
+	const memberships = await _listOrganizationMembershipsByUserIdUnsafe({ userId });
+	const ownerOrgs = memberships.filter((m) => m.role === 'owner').map((m) => m.organizationId);
+	const adminOrgs = memberships.filter((m) => m.role === 'admin').map((m) => m.organizationId);
+	const otherOrgs = memberships
+		.filter((m) => m.role !== 'owner' && m.role !== 'admin')
+		.map((m) => m.organizationId);
 	return {
 		userId,
 		authTeams,
-		adminOrgs: admin,
-		ownerOrgs: owner
+		adminOrgs,
+		ownerOrgs,
+		otherOrgs
 	};
 }
 
