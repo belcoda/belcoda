@@ -21,3 +21,17 @@ export function petitionReadPermissions(
 
 	return or(...filterArr);
 }
+
+export function petitionSignatureReadPermissions(
+	builder: ExpressionBuilder<'petitionSignature', Schema>,
+	ctx: QueryContext
+) {
+	const { or, cmp } = builder;
+	const filterArr = [
+		cmp('teamId', 'IN', ctx.authTeams),
+		cmp('organizationId', 'IN', ctx.adminOrgs),
+		cmp('organizationId', 'IN', ctx.ownerOrgs)
+	];
+
+	return or(...filterArr);
+}
