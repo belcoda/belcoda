@@ -256,7 +256,7 @@
 												</Button>
 											</div>
 											<div class="space-y-2">
-												{#each $data.settings?.survey?.collections[0].questions[index].options as option, optionIndex (option)}
+												{#each $data.settings?.survey?.collections[0].questions[index].options as option, optionIndex (index + '-' + optionIndex)}
 													<div class="flex items-center gap-2">
 														<Form.Field
 															{form}
