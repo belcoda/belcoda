@@ -93,7 +93,7 @@ export const actions = {
 			});
 			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`);
 		} catch (err) {
-			return fail(400, err);
+			return fail(400, { error: err instanceof Error ? err.message : String(err) });
 		}
 	},
 	decline: async ({ request, params }) => {
@@ -131,7 +131,7 @@ export const actions = {
 			});
 			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/declined`);
 		} catch (err) {
-			return fail(400, err);
+			return fail(400, { error: err instanceof Error ? err.message : String(err) });
 		}
 	}
 };

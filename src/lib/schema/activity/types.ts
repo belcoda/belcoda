@@ -135,6 +135,11 @@ export const activityPreviewPayloads = v.variant('type', [
 		eventId: uuid
 	}),
 	v.object({
+		type: v.literal('event_not_attending'),
+		eventName: mediumString,
+		eventId: uuid
+	}),
+	v.object({
 		type: v.literal('event_signup_email_sent'),
 		eventName: mediumString,
 		eventId: uuid
