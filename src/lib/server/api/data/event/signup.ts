@@ -340,7 +340,7 @@ export async function declineEventHelper({
 		personId: personRecord.id,
 		userId: undefined,
 		type: 'event_not_attending',
-		referenceId: eventSignupId,
+		referenceId: insertedEventSignup.id,
 		unread: false
 	});
 

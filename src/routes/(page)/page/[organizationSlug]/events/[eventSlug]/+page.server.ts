@@ -59,26 +59,25 @@ export async function load({ locals, params, url }) {
 
 export const actions = {
 	signup: async ({ request, params }) => {
+		const organizationId = await _getOrganizationIdBySlugUnsafe({
+			organizationSlug: params.organizationSlug
+		});
+		if (!organizationId) {
+			return error(404, 'Organization not found');
+		}
+		const eventObj = await _getEventBySlugUnsafe({
+			eventSlug: params.eventSlug,
+			organizationId: organizationId
+		});
+		if (!eventObj) {
+			return error(404, 'Event not found');
+		}
+		const surveySchema = getSurveySchema(eventObj);
+		const form = await superValidate(request, valibot(surveySchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
 		try {
-			const organizationId = await _getOrganizationIdBySlugUnsafe({
-				organizationSlug: params.organizationSlug
-			});
-			if (!organizationId) {
-				return error(404, 'Organization not found');
-			}
-			const eventObj = await _getEventBySlugUnsafe({
-				eventSlug: params.eventSlug,
-				organizationId: organizationId
-			});
-			if (!eventObj) {
-				throw new Error('Event not found');
-			}
-			const surveySchema = getSurveySchema(eventObj);
-			const form = await superValidate(request, valibot(surveySchema));
-			if (!form.valid) {
-				return fail(400, { form });
-			}
-
 			await db.transaction(async (tx) => {
 				await signUpForEventHelper({
 					tx,
@@ -93,30 +92,29 @@ export const actions = {
 			});
 			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`);
 		} catch (err) {
-			return fail(400, { error: err instanceof Error ? err.message : String(err) });
+			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
 		}
 	},
 	decline: async ({ request, params }) => {
+		const organizationId = await _getOrganizationIdBySlugUnsafe({
+			organizationSlug: params.organizationSlug
+		});
+		if (!organizationId) {
+			return error(404, 'Organization not found');
+		}
+		const eventObj = await _getEventBySlugUnsafe({
+			eventSlug: params.eventSlug,
+			organizationId: organizationId
+		});
+		if (!eventObj) {
+			return error(404, 'Event not found');
+		}
+		const surveySchema = getSurveySchema(eventObj);
+		const form = await superValidate(request, valibot(surveySchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
 		try {
-			const organizationId = await _getOrganizationIdBySlugUnsafe({
-				organizationSlug: params.organizationSlug
-			});
-			if (!organizationId) {
-				return error(404, 'Organization not found');
-			}
-			const eventObj = await _getEventBySlugUnsafe({
-				eventSlug: params.eventSlug,
-				organizationId: organizationId
-			});
-			if (!eventObj) {
-				throw new Error('Event not found');
-			}
-			const surveySchema = getSurveySchema(eventObj);
-			const form = await superValidate(request, valibot(surveySchema));
-			if (!form.valid) {
-				return fail(400, { form });
-			}
-
 			await db.transaction(async (tx) => {
 				await declineEventHelper({
 					tx,
@@ -131,7 +129,7 @@ export const actions = {
 			});
 			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/declined`);
 		} catch (err) {
-			return fail(400, { error: err instanceof Error ? err.message : String(err) });
+			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
 		}
 	}
 };
