@@ -14,7 +14,7 @@ import { valibot } from 'sveltekit-superforms/adapters';
 import { parse } from 'valibot';
 import { getSurveySchema, type SurveySchema } from '$lib/schema/survey/questions';
 import { type EventSignupHelper, eventSignupHelper } from '$lib/schema/event-signup';
-import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
+import { signUpForEventHelper, declineEventHelper } from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
 import { event, session } from '$lib/schema/drizzle.js';
@@ -60,6 +60,9 @@ export async function load({ locals, params, url }) {
 export const actions = {
 	default: async ({ request, params }) => {
 		try {
+			const formData = await request.formData();
+			const action = (formData.get('action') as 'signup' | 'decline') || 'signup';
+
 			const organizationId = await _getOrganizationIdBySlugUnsafe({
 				organizationSlug: params.organizationSlug
 			});
@@ -78,35 +81,44 @@ export const actions = {
 			if (!form.valid) {
 				return fail(400, { form });
 			}
-			//sign up for the event
-			const helper: EventSignupHelper = {
-				organizationId: organizationId,
-				person: form.data.person,
-				addedFrom: {
-					type: 'added_from_event',
-					eventSignupId: eventObj.id
-				},
-				eventId: eventObj.id,
-				details: {
-					channel: { type: 'eventPage' },
-					customFields: form.data.customFields
-				}
-			};
 
-			await db.transaction(async (tx) => {
-				const eventSignup = await signUpForEventHelper({
-					tx,
-					eventId: eventObj.id,
-					personAction: form.data.person,
-					signupDetails: {
-						channel: { type: 'eventPage' },
-						customFields: form.data.customFields
-					},
-					organizationId
+			if (action === 'decline') {
+				// "I can't attend"
+				await db.transaction(async (tx) => {
+					await declineEventHelper({
+						tx,
+						eventId: eventObj.id,
+						personAction: form.data.person,
+						signupDetails: {
+							channel: { type: 'eventPage' },
+							customFields: form.data.customFields
+						},
+						organizationId
+					});
 				});
-			});
-
-			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`);
+				return redirect(
+					302,
+					`/page/${params.organizationSlug}/events/${params.eventSlug}/declined`
+				);
+			} else {
+				// signup
+				await db.transaction(async (tx) => {
+					await signUpForEventHelper({
+						tx,
+						eventId: eventObj.id,
+						personAction: form.data.person,
+						signupDetails: {
+							channel: { type: 'eventPage' },
+							customFields: form.data.customFields
+						},
+						organizationId
+					});
+				});
+				return redirect(
+					302,
+					`/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`
+				);
+			}
 		} catch (err) {
 			return fail(400, err);
 		}
