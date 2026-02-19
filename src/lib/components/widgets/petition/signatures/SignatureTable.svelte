@@ -35,18 +35,6 @@
 {#if queryIsCompleted && signatures.length === 0}
 	<Empty.Root>
 		<Empty.Header>
-			<Empty.Content>
-				<div class="flex gap-2">
-					<AddPersonModal
-						trigger={emptyAddPersonTrigger}
-						personIdsToExclude={[]}
-						onSelected={(personIds) => {
-							handleAddPerson({ petitionId: petition.id, personIds });
-						}}
-					/>
-					{#snippet emptyAddPersonTrigger()}<Button>{t`Add Person`}</Button>{/snippet}
-				</div>
-			</Empty.Content>
 			<Empty.Media variant="icon">
 				<PenLineIcon />
 			</Empty.Media>
