@@ -67,11 +67,6 @@
 		personActionHelper,
 		customSurveyQuestions
 	);
-	//create the schema for the form (this will be a dynamic schema based on the survey questions)
-	const schema = object({
-		person: personActionHelperSchema, //include the added additional person fields
-		customFields: customQuestionSurveySchema //include the custom fields from the survey
-	});
 	let submissionError: string | null = $state(null);
 	let submissionSuccess: boolean = $state(false);
 	import WhatsAppSignup from './WhatsAppSignup.svelte';
@@ -370,8 +365,12 @@
 				<div class="hidden lg:block">
 					<WhatsAppSignup {whatsAppSignupLink} />
 				</div>
-				<Button type="button" variant="ghost" class="w-full" disabled={$submitting}
-					>{t`I can't attend`}</Button
+				<Button
+					type="submit"
+					variant="ghost"
+					class="w-full"
+					disabled={$submitting}
+					formaction="?/decline">{t`I can't attend`}</Button
 				>
 			</div>
 

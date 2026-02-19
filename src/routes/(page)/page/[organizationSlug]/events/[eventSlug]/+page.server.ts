@@ -60,9 +60,6 @@ export async function load({ locals, params, url }) {
 export const actions = {
 	default: async ({ request, params }) => {
 		try {
-			const formData = await request.formData();
-			const action = (formData.get('action') as 'signup' | 'decline') || 'signup';
-
 			const organizationId = await _getOrganizationIdBySlugUnsafe({
 				organizationSlug: params.organizationSlug
 			});
@@ -82,43 +79,57 @@ export const actions = {
 				return fail(400, { form });
 			}
 
-			if (action === 'decline') {
-				// "I can't attend"
-				await db.transaction(async (tx) => {
-					await declineEventHelper({
-						tx,
-						eventId: eventObj.id,
-						personAction: form.data.person,
-						signupDetails: {
-							channel: { type: 'eventPage' },
-							customFields: form.data.customFields
-						},
-						organizationId
-					});
+			await db.transaction(async (tx) => {
+				await signUpForEventHelper({
+					tx,
+					eventId: eventObj.id,
+					personAction: form.data.person,
+					signupDetails: {
+						channel: { type: 'eventPage' },
+						customFields: form.data.customFields
+					},
+					organizationId
 				});
-				return redirect(
-					302,
-					`/page/${params.organizationSlug}/events/${params.eventSlug}/declined`
-				);
-			} else {
-				// signup
-				await db.transaction(async (tx) => {
-					await signUpForEventHelper({
-						tx,
-						eventId: eventObj.id,
-						personAction: form.data.person,
-						signupDetails: {
-							channel: { type: 'eventPage' },
-							customFields: form.data.customFields
-						},
-						organizationId
-					});
-				});
-				return redirect(
-					302,
-					`/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`
-				);
+			});
+			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`);
+		} catch (err) {
+			return fail(400, err);
+		}
+	},
+	decline: async ({ request, params }) => {
+		try {
+			const organizationId = await _getOrganizationIdBySlugUnsafe({
+				organizationSlug: params.organizationSlug
+			});
+			if (!organizationId) {
+				return error(404, 'Organization not found');
 			}
+			const eventObj = await _getEventBySlugUnsafe({
+				eventSlug: params.eventSlug,
+				organizationId: organizationId
+			});
+			if (!eventObj) {
+				throw new Error('Event not found');
+			}
+			const surveySchema = getSurveySchema(eventObj);
+			const form = await superValidate(request, valibot(surveySchema));
+			if (!form.valid) {
+				return fail(400, { form });
+			}
+
+			await db.transaction(async (tx) => {
+				await declineEventHelper({
+					tx,
+					eventId: eventObj.id,
+					personAction: form.data.person,
+					signupDetails: {
+						channel: { type: 'eventPage' },
+						customFields: form.data.customFields
+					},
+					organizationId
+				});
+			});
+			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/declined`);
 		} catch (err) {
 			return fail(400, err);
 		}
