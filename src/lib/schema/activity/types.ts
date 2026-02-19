@@ -12,6 +12,7 @@ export const activityTypesList = [
 	'team_removed', //referenceId: teamId
 
 	'event_signup', //referenceId: eventSignupId
+	'event_not_attending', //referenceId: eventSignupId
 	'event_attended', //referenceId: eventSignupId
 	'event_noshow', //referenceId: eventSignupId
 	'event_apology', //referenceId: eventSignupId
