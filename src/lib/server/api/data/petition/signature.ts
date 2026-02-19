@@ -74,7 +74,7 @@ export async function createPetitionSignature({
 		organizationId: parsed.metadata.organizationId,
 		petitionId: parsed.metadata.petitionId,
 		personId: parsed.metadata.personId,
-		teamId: petition.teamId,
+		teamId: petition.teamId ?? null,
 		details: parsed.input.details,
 		responses: parsed.input.responses,
 		createdAt: new Date(),
