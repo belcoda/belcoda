@@ -92,6 +92,12 @@ export const actions = {
 			});
 			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`);
 		} catch (err) {
+			if (
+				err instanceof redirect ||
+				(err && typeof err === 'object' && 'status' in err && 'location' in err)
+			) {
+				throw err;
+			}
 			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
 		}
 	},
@@ -129,6 +135,12 @@ export const actions = {
 			});
 			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/declined`);
 		} catch (err) {
+			if (
+				err instanceof redirect ||
+				(err && typeof err === 'object' && 'status' in err && 'location' in err)
+			) {
+				throw err;
+			}
 			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
 		}
 	}
