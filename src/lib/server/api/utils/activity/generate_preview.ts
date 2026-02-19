@@ -119,6 +119,25 @@ export async function generatePreview({
 				eventId: eventResult.id
 			};
 		}
+		case 'petition_signed': {
+			const petitionSignatureResult = await drizzle.query.petitionSignature.findFirst({
+				where: (row, { eq }) => eq(row.id, referenceId)
+			});
+			if (!petitionSignatureResult) {
+				throw new Error('Petition signature not found');
+			}
+			const petitionResult = await drizzle.query.petition.findFirst({
+				where: (row, { eq }) => eq(row.id, petitionSignatureResult.petitionId)
+			});
+			if (!petitionResult) {
+				throw new Error('Petition not found. Cannot generate preview.');
+			}
+			return {
+				type: 'petition_signed',
+				petitionName: petitionResult.title,
+				petitionId: petitionResult.id
+			};
+		}
 		default: {
 			throw new Error(`Unsupported activity type: ${type}`);
 		}
