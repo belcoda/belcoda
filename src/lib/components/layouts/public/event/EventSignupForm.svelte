@@ -358,7 +358,7 @@
 			{/if}
 
 			<div class="mt-4 flex flex-col gap-3">
-				<Button type="submit" class="w-full" disabled={$submitting}>
+				<Button type="submit" class="w-full" disabled={$submitting} formaction="?/signup">
 					{#if $delayed}<Spinner class="size-4" />{/if}
 					{t`Sign up now`}</Button
 				>

@@ -58,7 +58,7 @@ export async function load({ locals, params, url }) {
 }
 
 export const actions = {
-	default: async ({ request, params }) => {
+	signup: async ({ request, params }) => {
 		try {
 			const organizationId = await _getOrganizationIdBySlugUnsafe({
 				organizationSlug: params.organizationSlug
