@@ -199,7 +199,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			personId: true,
 			userId: true,
 			type: true,
-			payload: true,
+			referenceId: true,
 			unread: true,
 			createdAt: true
 		},
