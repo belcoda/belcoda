@@ -12,7 +12,7 @@ export const emailMessageSchema = v.object({
 	recipients: filterGroup,
 	previewTextOverride: v.nullable(helpers.mediumString),
 	previewTextLock: v.boolean(),
-	subject: v.nullable(helpers.mediumString),
+	subject: v.nullable(helpers.mediumStringEmpty),
 	body: v.nullable(v.any()),
 	sentBy: v.nullable(helpers.uuid),
 	startedAt: v.nullable(helpers.date),
