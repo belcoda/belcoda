@@ -3,6 +3,7 @@
 	import favicon from '$lib/assets/logo.png';
 	import { loadLocale } from 'wuchale/load-utils';
 	import '../locales/main.loader.svelte.js';
+	import '../locales/js.loader.js';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { locale } from '$lib/index.svelte';
 	const { data, children } = $props();

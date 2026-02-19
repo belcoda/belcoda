@@ -90,7 +90,8 @@ export const actions = {
 					organizationId
 				});
 			});
-			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`);
+      const theme = form.data.theme || 'default';
+			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up${theme ? `?theme=${theme}` : ''}`);
 		} catch (err) {
 			if (
 				err instanceof redirect ||
@@ -133,7 +134,11 @@ export const actions = {
 					organizationId
 				});
 			});
-			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/declined`);
+			const theme = form.data.theme || 'default';
+			return redirect(
+				302,
+				`/page/${params.organizationSlug}/events/${params.eventSlug}/declined${theme ? `?theme=${theme}` : ''}`
+			);
 		} catch (err) {
 			if (
 				err instanceof redirect ||
