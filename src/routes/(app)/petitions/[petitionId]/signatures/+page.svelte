@@ -3,6 +3,7 @@
 	const { params } = $props();
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
+	import { t } from '$lib/index.svelte';
 	
 	const petition = $derived.by(() => {
 		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
@@ -13,8 +14,12 @@
 	});
 	
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import PetitionListItem from '../PetitionListItem.svelte';
 	import SignatureTable from '$lib/components/widgets/petition/signatures/SignatureTable.svelte';
+	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
+	import { handleAddPerson } from '$lib/components/widgets/petition/signatures/signatureActions';
+	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 </script>
 
 <ContentLayout rootLink="/petitions/{params.petitionId}" {header}>
@@ -46,5 +51,16 @@
 				<Skeleton class="h-10 w-32 rounded-lg" />
 			{/if}
 		</div>
+		{#if petition.data}
+			<AddPersonModal
+				trigger={addPersonTrigger}
+				personIdsToExclude={[]}
+				onSelected={(personIds) => {
+					handleAddPerson({ petitionId: params.petitionId, personIds });
+				}}
+			/>
+		{/if}
 	</div>
 {/snippet}
+
+{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> {t`Add signature`}</Button>{/snippet}

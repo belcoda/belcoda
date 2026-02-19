@@ -25,6 +25,8 @@
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import SignatureTable from './signatures/SignatureTable.svelte';
+	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
+	import { handleAddPerson } from './signatures/signatureActions';
 </script>
 
 <Card.Root>
@@ -37,6 +39,13 @@
 				<Button variant="ghost" size="sm" href="/petitions/{petition.id}/signatures">
 					{t`View all`}
 				</Button>
+				<AddPersonModal
+					trigger={addPersonTrigger}
+					personIdsToExclude={petitionSignatures.data.map((sig) => sig.personId)}
+					onSelected={(personIds) => {
+						handleAddPerson({ petitionId: petition.id, personIds });
+					}}
+				/>
 			</div>
 		</Card.Title>
 	</Card.Header>
