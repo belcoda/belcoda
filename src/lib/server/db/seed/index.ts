@@ -14,18 +14,12 @@ import { generateTags } from './tag';
 
 async function main() {
 	console.assert(process.env.DATABASE_URL, 'DATABASE_URL is not set');
-	console.assert(process.env.PLAYWRIGHT_SESSION_ID, 'PLAYWRIGHT_SESSION_ID is not set');
-	console.assert(process.env.OWNER_USER_ID_PLAYWRIGHT, 'OWNER_USER_ID_PLAYWRIGHT is not set');
-	console.assert(
-		process.env.OWNER_ORGANIZATION_ID_PLAYWRIGHT,
-		'OWNER_ORGANIZATION_ID_PLAYWRIGHT is not set'
-	);
 	const db = drizzle(process.env.DATABASE_URL!);
 	await reset(db, schema); //reset the entire database...
 
 	// create organization
 	const organization = await generateOrganization({
-		id: process.env.OWNER_ORGANIZATION_ID_PLAYWRIGHT!
+		id: uuidv7()
 	});
 	await db.insert(schema.organization).values(organization).execute();
 
@@ -114,23 +108,6 @@ async function main() {
 			})
 			.execute();
 	}
-
-	//TODO: Update in better-auth branch
-	const [playwrightSession] = await db
-		.insert(schema.session)
-		.values({
-			id: process.env.PLAYWRIGHT_SESSION_ID || uuidv7(),
-			userId: users[0].id,
-			token: process.env.PLAYWRIGHT_SESSION_ID || uuidv7(),
-			ipAddress: '127.0.0.1',
-			userAgent:
-				'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) // 1 year
-		})
-		.returning()
-		.execute();
 
 	console.log('Seeding completed successfully');
 	process.exit(0);

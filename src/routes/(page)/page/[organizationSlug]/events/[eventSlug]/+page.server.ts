@@ -105,8 +105,11 @@ export const actions = {
 					organizationId
 				});
 			});
-
-			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up`);
+			const theme = form.data.theme || 'default';
+			return redirect(
+				302,
+				`/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up${theme ? `?theme=${theme}` : ''}`
+			);
 		} catch (err) {
 			return fail(400, err);
 		}

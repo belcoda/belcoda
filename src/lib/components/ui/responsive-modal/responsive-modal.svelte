@@ -13,14 +13,23 @@
 		description?: string;
 		children: Snippet;
 		trigger?: Snippet;
+		onOpenChange?: (open: boolean) => void;
 		footer?: Snippet;
 		open?: boolean;
 	};
-	let { title, description, children, trigger, footer, open = $bindable(false) }: Props = $props();
+	let {
+		title,
+		description,
+		children,
+		trigger,
+		footer,
+		open = $bindable(false),
+		onOpenChange
+	}: Props = $props();
 </script>
 
 {#if isDesktop.current}
-	<Dialog.Root bind:open>
+	<Dialog.Root bind:open {onOpenChange}>
 		{#if trigger}<Dialog.Trigger>{@render trigger?.()}</Dialog.Trigger>{/if}
 		<Dialog.Content class="sm:max-w-[425px]">
 			<Dialog.Header>

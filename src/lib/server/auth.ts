@@ -14,8 +14,6 @@ import { getRequestEvent } from '$app/server';
 import { openAPI, apiKey, organization } from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
-import { dev } from '$app/environment';
-
 import { stripe } from '@better-auth/stripe';
 import type Stripe from 'stripe';
 import { stripeClient } from '$lib/server/stripe';
@@ -39,6 +37,7 @@ import { type LanguageCode, clampLocale } from '$lib/utils/language';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
 import { passwordReset } from '$lib/server/utils/email/context/transactional/auth/password_reset';
+import { organizationInvitation } from '$lib/server/utils/email/context/transactional/auth/organization_invitation';
 
 async function canManageOrganizationBilling({
 	userId,
@@ -123,6 +122,8 @@ export function buildBetterAuth(localeInput: string) {
 			'https://staging.belcoda.com',
 			'http://localhost:5173',
 			'https://belcoda-zero.fly.dev',
+			'https://zero.staging.belcoda.com',
+			'https://zero.app.belcoda.com',
 			`.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 		],
 		session: {
@@ -138,6 +139,13 @@ export function buildBetterAuth(localeInput: string) {
 					return uuidv7();
 				}
 			},
+			// Only use crossSubDomainCookies on belcoda.com; on localhost it would set
+			// cookie domain=.belcoda.com, causing the OAuth state cookie to not be sent back
+			crossSubDomainCookies:
+				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('localhost') ||
+				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('127.0.0.1')
+					? { enabled: false }
+					: { enabled: true, domain: `.belcoda.com` },
 			cookiePrefix: 'belcoda',
 			ipAddress: {
 				ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] // Cloudflare specific header
@@ -145,6 +153,22 @@ export function buildBetterAuth(localeInput: string) {
 		},
 		plugins: [
 			organization({
+				async sendInvitationEmail(data) {
+					const inviteLink = `${publicEnv.PUBLIC_ROOT_DOMAIN}/organization`;
+					const email = organizationInvitation({
+						url: inviteLink,
+						inviterName: data.inviter.user.name,
+						organizationName: data.organization.name,
+						locale
+					});
+					await sendTemplateEmail({
+						to: data.email,
+						from: 'Belcoda <noreply@belcoda.com>',
+						template: 'transactional',
+						stream: 'outbound',
+						context: email
+					});
+				},
 				schema: {
 					organization: {
 						additionalFields: {

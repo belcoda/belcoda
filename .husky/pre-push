@@ -1,0 +1,18 @@
+# Generate database migrations
+if ! npm run db:generate; then
+    echo "❌ Failed to generate database migrations"
+    exit 1
+fi
+
+# Check for any changes in drizzle directory
+if [ -n "$(git status --porcelain ./drizzle/)" ]; then
+    echo "❌ Uncommitted migrations in ./drizzle/"
+    echo "Run: git add ./drizzle/ && git commit -m 'Add migrations'"
+    exit 1
+fi
+
+echo "✅ Migrations up to date"
+
+npm run check
+
+

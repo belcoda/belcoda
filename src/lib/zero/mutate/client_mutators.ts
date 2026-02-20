@@ -9,6 +9,8 @@ import * as emailFromSignature from '$lib/zero/mutate/email_from_signature';
 import * as emailMessage from '$lib/zero/mutate/email_message';
 import * as organization from '$lib/zero/mutate/organization';
 import * as webhook from '$lib/zero/mutate/webhook';
+import * as tag from '$lib/zero/mutate/tag';
+import * as team from '$lib/zero/mutate/team';
 
 import { defineMutators } from '@rocicorp/zero';
 
@@ -37,7 +39,9 @@ export const mutators = defineMutators({
 	},
 	event: {
 		create: event.createEvent,
-		update: event.updateEvent
+		update: event.updateEvent,
+		delete: event.deleteEvent,
+		archive: event.archiveEvent
 	},
 	petition: {
 		create: petition.createPetition,
@@ -69,5 +73,15 @@ export const mutators = defineMutators({
 	webhook: {
 		create: webhook.createWebhook,
 		delete: webhook.deleteWebhook
+	},
+	tag: {
+		update: tag.updateTag,
+		create: tag.createTag
+	},
+	team: {
+		create: team.createTeam,
+		update: team.updateTeam,
+		addUserToTeam: team.addUserToTeam,
+		removeUserFromTeam: team.removeUserFromTeam
 	}
 });

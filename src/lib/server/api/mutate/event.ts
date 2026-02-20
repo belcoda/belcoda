@@ -1,5 +1,10 @@
 import { defineMutator } from '@rocicorp/zero';
-import { createEventZeroMutatorSchema, updateEventZeroMutatorSchema } from '$lib/schema/event';
+import {
+	createEventZeroMutatorSchema,
+	updateEventZeroMutatorSchema,
+	deleteEventMutatorSchemaZero,
+	archiveEventMutatorSchemaZero
+} from '$lib/schema/event';
 import * as dataFunctions from '$lib/server/api/data/event/event';
 
 export const createEvent = defineMutator(
@@ -19,5 +24,25 @@ export const updateEvent = defineMutator(
 			throw new Error('updateEvent can only be called from the server');
 		}
 		await dataFunctions.updateEvent({ tx, ctx, args });
+	}
+);
+
+export const deleteEvent = defineMutator(
+	deleteEventMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server') {
+			throw new Error('deleteEvent can only be called from the server');
+		}
+		await dataFunctions.deleteEvent({ tx, ctx, args });
+	}
+);
+
+export const archiveEvent = defineMutator(
+	archiveEventMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server') {
+			throw new Error('archiveEvent can only be called from the server');
+		}
+		await dataFunctions.archiveEvent({ tx, ctx, args });
 	}
 );

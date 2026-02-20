@@ -44,7 +44,7 @@
 					>
 						<GradientBorder class="aspect-square w-full rounded-[0.3rem]">
 							<img
-								src={activeOrganization.data?.logo ||
+								src={activeOrganization.data?.icon ||
 									'https://belcoda-public-prod.s3.eu-central-1.amazonaws.com/system/images/logo-full.png'}
 								alt="logo"
 								class="aspect-square w-full rounded-[calc(0.3rem)]"
@@ -68,7 +68,7 @@
 			{#if activeOrganization.details.type === 'complete' && activeOrganization.data}
 				<div class="flex items-start gap-2 px-1 py-1.5 text-left text-sm">
 					<Avatar.Root class="size-12 rounded-sm">
-						<Avatar.Image src={activeOrganization.data.logo} alt={activeOrganization.data.name} />
+						<Avatar.Image src={activeOrganization.data.icon} alt={activeOrganization.data.name} />
 						<Avatar.Fallback class="rounded-lg"
 							>{activeOrganization.data.name.charAt(0)}</Avatar.Fallback
 						>

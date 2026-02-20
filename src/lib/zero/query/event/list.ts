@@ -12,6 +12,7 @@ export const inputSchema = object({
 	eventType: optional(nullable(picklist(['online', 'in-person']))),
 	status: optional(nullable(picklist(['draft', 'published', 'cancelled']))),
 	hasSignups: optional(nullable(boolean())),
+	isArchived: optional(nullable(boolean())),
 	dateRange: optional(
 		nullable(
 			object({ start: optional(nullable(unixTimestamp)), end: optional(nullable(unixTimestamp)) })
@@ -48,8 +49,12 @@ function whereClause(
 	{ filter }: { filter: InferOutput<typeof inputSchema> }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
+	const isArchived = filter.isArchived ?? false;
 	const { and, cmp, or, exists } = builder;
-	const filterArr = [cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null)];
+	const filterArr = [
+		cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null),
+		cmp('archivedAt', isArchived ? 'IS NOT' : 'IS', null)
+	];
 	if (filter.dateRange) {
 		if (filter.dateRange.start) {
 			filterArr.push(cmp('startsAt', '>=', filter.dateRange.start));

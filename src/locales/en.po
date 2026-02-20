@@ -426,19 +426,15 @@ msgstr "Events"
 msgid "Petitions"
 msgstr "Petitions"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
-msgid "New person"
-msgstr "New person"
+#~ msgid "New person"
+#~ msgstr "New person"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
-msgid "Billing"
-msgstr "Billing"
+#~ msgid "Billing"
+#~ msgstr "Billing"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
-msgid "Team"
-msgstr "Team"
+#~ msgid "Team"
+#~ msgstr "Team"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
@@ -1238,10 +1234,8 @@ msgstr "Your email has been successfully verified"
 msgid "Your email address has been verified. You can now sign in to your account."
 msgstr "Your email address has been verified. You can now sign in to your account."
 
-#. placeholder {0}: count.toString()
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "{0} recipients selected"
-msgstr "{0} recipients selected"
+#~ msgid "{0} recipients selected"
+#~ msgstr "{0} recipients selected"
 
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/lib/components/forms/event/DateTimeSelect.svelte
@@ -1254,17 +1248,14 @@ msgstr "From"
 msgid "Recipients"
 msgstr "Recipients"
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "Select recipients..."
-msgstr "Select recipients..."
+#~ msgid "Select recipients..."
+#~ msgstr "Select recipients..."
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "No recipients selected"
-msgstr "No recipients selected"
+#~ msgid "No recipients selected"
+#~ msgstr "No recipients selected"
 
-#: src/lib/components/forms/email/EmailForm.svelte
-msgid "Select"
-msgstr "Select"
+#~ msgid "Select"
+#~ msgstr "Select"
 
 #: src/lib/components/forms/email/EmailForm.svelte
 msgid "Subject"
@@ -1488,14 +1479,11 @@ msgstr "Timezone"
 msgid "Toggle"
 msgstr "Toggle"
 
-#. placeholder {0}: count.toString()
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "{0} recipients"
-msgstr "{0} recipients"
+#~ msgid "{0} recipients"
+#~ msgstr "{0} recipients"
 
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "1 recipient"
-msgstr "1 recipient"
+#~ msgid "1 recipient"
+#~ msgstr "1 recipient"
 
 #: src/lib/components/communications/email/EmailList.svelte
 msgid "Type to search..."
@@ -2811,3 +2799,16 @@ msgstr "Select a preset amount to continue in Stripe checkout."
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Redirecting..."
 msgstr "Redirecting..."
+
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "[Error loading email body]"
+msgstr "[Error loading email body]"
+to continue in Stripe checkout."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Redirecting..."
+msgstr "Redirecting..."
+
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "[Error loading email body]"
+msgstr "[Error loading email body]"
