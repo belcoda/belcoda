@@ -1,11 +1,10 @@
-import { type Transaction } from '@rocicorp/zero';
-import { type Schema } from '$lib/zero/schema';
 import { defineMutator } from '@rocicorp/zero';
 import {
 	createPetitionZeroMutatorSchema,
-	updatePetitionZeroMutatorSchema
+	updatePetitionZeroMutatorSchema,
+	archivePetitionMutatorSchema,
+	deletePetitionMutatorSchema
 } from '$lib/schema/petition/petition';
-import { parse } from 'valibot';
 
 export const createPetition = defineMutator(
 	createPetitionZeroMutatorSchema,
@@ -36,6 +35,28 @@ export const updatePetition = defineMutator(
 		tx.mutate.petition.update({
 			id: args.metadata.petitionId,
 			...args.input,
+			updatedAt: new Date().getTime()
+		});
+	}
+);
+
+export const archivePetition = defineMutator(
+	archivePetitionMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		tx.mutate.petition.update({
+			id: args.metadata.petitionId,
+			archivedAt: new Date().getTime(),
+			updatedAt: new Date().getTime()
+		});
+	}
+);
+
+export const deletePetition = defineMutator(
+	deletePetitionMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		tx.mutate.petition.update({
+			id: args.metadata.petitionId,
+			deletedAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
 		});
 	}
