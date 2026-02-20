@@ -76,11 +76,13 @@
 
 				<div>
 					<h3 class="mb-2 text-sm font-medium text-muted-foreground">{t`Message`}</h3>
-					{#if parsedBody()}
-						<SvelteLexical value={parsedBody()} disabled={true} />
-					{:else}
-						<p class="text-muted-foreground">{t`(No content)`}</p>
-					{/if}
+					{#key emailId}
+						{#if parsedBody()}
+							<SvelteLexical value={parsedBody()} disabled={true} />
+						{:else}
+							<p class="text-muted-foreground">{t`(No content)`}</p>
+						{/if}
+					{/key}
 				</div>
 			</div>
 		</div>
