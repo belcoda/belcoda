@@ -453,7 +453,6 @@ msgstr "Facturación"
 msgid "Team"
 msgstr "Equipo"
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Subscription"
@@ -503,7 +502,6 @@ msgid "Unknown activity filter"
 msgstr "Filtro de actividad desconocido"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
@@ -528,7 +526,6 @@ msgid "No teams found."
 msgstr "No se encontraron equipos."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
@@ -2117,7 +2114,6 @@ msgstr "Tipos de evento"
 msgid "Loading webhooks..."
 msgstr "Cargando webhooks..."
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Webhooks"
@@ -2729,41 +2725,34 @@ msgstr "Presencial"
 msgid "Configuration"
 msgstr "Configuración"
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Themes & colors"
 msgstr "Temas y colores"
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Imports"
 msgstr "Importaciones"
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports"
 msgstr "Exportaciones"
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Credit balance"
 msgstr "Saldo de créditos"
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "API keys"
 msgstr "Claves API"
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "WhatsApp templates"
 msgstr "Plantillas de WhatsApp"
 
-#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
 msgid "WhatsApp accounts"
