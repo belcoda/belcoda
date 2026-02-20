@@ -1931,9 +1931,8 @@ msgstr "Copy of"
 msgid "Event title"
 msgstr "Event title"
 
-#: src/routes/(app)/settings/tags/+page.svelte
-msgid "Add Tag"
-msgstr "Add Tag"
+#~ msgid "Add Tag"
+#~ msgstr "Add Tag"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 msgid "Name is required"
