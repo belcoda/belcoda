@@ -289,6 +289,7 @@ msgstr "O domínio de caminho de retorno é usado para tratamento de rejeições
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
@@ -454,6 +455,7 @@ msgstr "Equipe"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Subscription"
 msgstr "Assinatura"
 
@@ -2731,6 +2733,8 @@ msgstr "Exportações"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+#: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Credit balance"
 msgstr "Saldo de créditos"
 
@@ -2764,6 +2768,103 @@ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
 msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Free"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Not available"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact form URL is not configured."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "You don't have permission to manage billing. Only organization owners can access this page."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Current subscription"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Your organization's Stripe subscription status and plan information."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Loading subscription..."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Plan"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "No active paid subscription"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Current period ends"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Opening Stripe..."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Manage in Stripe"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Need a different plan?"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Everyone starts on the Free tier. To move to Supported or Enterprise, submit a contact form and our team will follow up."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact us for Supported tier"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact us for Enterprise tier"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Credit purchase completed. Your balance will update shortly."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Credit purchase was cancelled."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "This balance belongs to your organization and is shared across your workspace."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Purchase additional credit with Stripe using one of the preset amounts below."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Buy more credit"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Select a preset amount to continue in Stripe checkout."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Redirecting..."
 msgstr ""
 
 #: src/routes/(app)/settings/+page.svelte
@@ -3131,4 +3232,20 @@ msgstr ""
 
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Email saved"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later."
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "This event will be archived and hidden from the public. Signups will be closed. Are you sure?"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Event archived"
+msgstr ""
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Archive event"
 msgstr ""

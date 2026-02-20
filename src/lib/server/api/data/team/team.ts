@@ -27,10 +27,7 @@ export async function createTeam({
 		.select()
 		.from(team)
 		.where(
-			and(
-				eq(team.name, parsed.input.name),
-				eq(team.organizationId, parsed.metadata.organizationId)
-			)
+			and(eq(team.name, parsed.input.name), eq(team.organizationId, parsed.metadata.organizationId))
 		)
 		.limit(1);
 	if (existingTeam) {

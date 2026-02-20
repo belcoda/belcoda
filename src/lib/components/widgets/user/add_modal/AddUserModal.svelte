@@ -42,7 +42,7 @@
 	{trigger}
 	bind:open={isOpen}
 >
-		<div class="space-y-2">
+	<div class="space-y-2">
 		<ScrollArea class="h-[200px] w-full rounded-md border">
 			{#if usersQuery.details.type === 'error'}
 				<div class="py-4 text-center text-muted-foreground">{t`Error loading users.`}</div>
@@ -69,7 +69,10 @@
 								onCheckedChange={(checked) => {
 									if (checked) {
 										selectedUserIds = [user.id, ...selectedUserIds];
-										selectedUsers = [{ id: user.id, name: user.name, email: user.email }, ...selectedUsers];
+										selectedUsers = [
+											{ id: user.id, name: user.name, email: user.email },
+											...selectedUsers
+										];
 									} else {
 										selectedUserIds = selectedUserIds.filter((id) => id !== user.id);
 										selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
@@ -101,9 +104,9 @@
 							class="text-muted-foreground"
 							size="sm"
 							onclick={() => {
-							selectedUserIds = selectedUserIds.filter((id) => id !== user.id);
-							selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
-						}}
+								selectedUserIds = selectedUserIds.filter((id) => id !== user.id);
+								selectedUsers = selectedUsers.filter((u) => u.id !== user.id);
+							}}
 						>
 							<XIcon />
 						</Button>

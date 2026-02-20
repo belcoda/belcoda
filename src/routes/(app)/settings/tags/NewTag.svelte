@@ -44,7 +44,11 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Name`}</Form.Label>
-						<Input type="text" bind:value={$data.name} placeholder={t`e.g., Newsletter subscribers`} />
+						<Input
+							type="text"
+							bind:value={$data.name}
+							placeholder={t`e.g., Newsletter subscribers`}
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />

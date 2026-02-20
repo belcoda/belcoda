@@ -20,9 +20,7 @@
 
 	const teamId = $derived(page.params.teamId ?? '');
 
-	const team = $derived.by(() =>
-		z.createQuery(queries.team.read({ teamId }))
-	);
+	const team = $derived.by(() => z.createQuery(queries.team.read({ teamId })));
 
 	const peopleFilter = $derived({
 		...getListFilter(appState.organizationId),
@@ -41,15 +39,15 @@
 
 	function handleAddPeople(personIds: string[]) {
 		for (const personId of personIds) {
-					z.mutate(
-						mutators.person.addToTeam({
-							metadata: {
-								organizationId: appState.organizationId,
-								teamId,
-								personId
-							}
-						})
-					);
+			z.mutate(
+				mutators.person.addToTeam({
+					metadata: {
+						organizationId: appState.organizationId,
+						teamId,
+						personId
+					}
+				})
+			);
 		}
 	}
 
@@ -138,11 +136,16 @@
 													name1={person.givenName || person.familyName || person.emailAddress || ''}
 													name2={person.familyName}
 												/>
-												{person.givenName} {person.familyName}
+												{person.givenName}
+												{person.familyName}
 											</div>
 										</Table.Cell>
-										<Table.Cell class="text-muted-foreground">{person.emailAddress ?? '—'}</Table.Cell>
-										<Table.Cell class="text-muted-foreground">{person.phoneNumber ?? '—'}</Table.Cell>
+										<Table.Cell class="text-muted-foreground"
+											>{person.emailAddress ?? '—'}</Table.Cell
+										>
+										<Table.Cell class="text-muted-foreground"
+											>{person.phoneNumber ?? '—'}</Table.Cell
+										>
 										<Table.Cell class="text-right">
 											<Button
 												variant="ghost"
@@ -164,10 +167,7 @@
 						</Table.Body>
 					</Table.Root>
 					<div class="mt-4">
-						<AddPersonModal
-							personIdsToExclude={personIdsOnTeam}
-							onSelected={handleAddPeople}
-						>
+						<AddPersonModal personIdsToExclude={personIdsOnTeam} onSelected={handleAddPeople}>
 							{#snippet trigger()}
 								<Button variant="outline"><UserPlusIcon class="size-4" /> {t`Add person`}</Button>
 							{/snippet}
@@ -208,11 +208,7 @@
 										<Table.Cell class="font-medium">{user.name}</Table.Cell>
 										<Table.Cell class="text-muted-foreground">{user.email}</Table.Cell>
 										<Table.Cell class="text-right">
-											<Button
-												variant="ghost"
-												size="sm"
-												onclick={() => handleRemoveUser(user.id)}
-											>
+											<Button variant="ghost" size="sm" onclick={() => handleRemoveUser(user.id)}>
 												{t`Remove`}
 											</Button>
 										</Table.Cell>
@@ -228,10 +224,7 @@
 						</Table.Body>
 					</Table.Root>
 					<div class="mt-4">
-						<AddUserModal
-							userIdsToExclude={userIdsOnTeam}
-							onSelected={handleAddUsers}
-						>
+						<AddUserModal userIdsToExclude={userIdsOnTeam} onSelected={handleAddUsers}>
 							{#snippet trigger()}
 								<Button variant="outline"><UserPlusIcon class="size-4" /> {t`Add user`}</Button>
 							{/snippet}
