@@ -68,13 +68,13 @@
 
 	// Sync state from email (Zero query data or default) when it changes
 	watch(
-		() => email,
-		(curr) => {
-			if (curr) {
-				subject = curr.subject ?? '';
-				body = curr.body ?? null;
-				emailFromSignatureId = curr.emailFromSignatureId ?? undefined;
-				recipients = JSON.parse(JSON.stringify(curr.recipients || defaultFilterGroup));
+		() => emailId,
+		() => {
+			if (email) {
+				subject = email.subject ?? '';
+				body = email.body ?? null;
+				emailFromSignatureId = email.emailFromSignatureId ?? undefined;
+				recipients = JSON.parse(JSON.stringify(email.recipients || defaultFilterGroup));
 			}
 		}
 	);
