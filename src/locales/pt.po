@@ -753,13 +753,13 @@ msgstr "Nota excluída"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Name.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "Edit"
 msgstr "Editar"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 msgid "Delete"
 msgstr "Excluir"
@@ -792,6 +792,7 @@ msgstr "Pessoa excluída"
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
@@ -801,7 +802,6 @@ msgstr "Pessoa excluída"
 #: src/routes/(auth)/login/+page.svelte
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "Email"
 msgstr "E-mail"
 
@@ -870,6 +870,10 @@ msgstr "Copiado!"
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
 msgid "Copy"
 msgstr "Copiar"
@@ -1031,6 +1035,7 @@ msgid "No failure details available"
 msgstr "Nenhum detalhe de falha disponível"
 
 #: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+#: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -1682,6 +1687,7 @@ msgstr "Fuso horário"
 
 #: src/lib/components/forms/event/DateTimeSelect.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "Toggle"
 msgstr "Alternar"
 
@@ -1849,18 +1855,18 @@ msgstr "Saiba mais"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
-#: src/routes/(app)/petitions/[petitionId]/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Published"
 msgstr "Publicado"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
-#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Draft"
 msgstr "Rascunho"
 
-#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Target:"
 msgstr "Destinatário:"
 
@@ -1869,8 +1875,8 @@ msgid "New event"
 msgstr "Novo evento"
 
 #: src/lib/components/widgets/event/share/EventShareModal.svelte
+#: src/lib/components/widgets/petition/share/PetitionShareModal.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "Share"
 msgstr "Compartilhar"
 
@@ -1895,9 +1901,8 @@ msgstr "Editar petição"
 msgid "Detailed signatures table"
 msgstr "Tabela de assinaturas detalhada"
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
-msgid "View petition page"
-msgstr "Ver página da petição"
+#~ msgid "View petition page"
+#~ msgstr "Ver página da petição"
 
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 msgid "Preview petition page"
@@ -1913,9 +1918,8 @@ msgstr "Fazer uma cópia"
 msgid "Share Petition"
 msgstr "Compartilhar petição"
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
-msgid "Share functionality coming soon..."
-msgstr "Funcionalidade de compartilhamento em breve..."
+#~ msgid "Share functionality coming soon..."
+#~ msgstr "Funcionalidade de compartilhamento em breve..."
 
 #: src/routes/(app)/petitions/new/+page.svelte
 msgid "New petition"
@@ -2153,10 +2157,12 @@ msgid "Choose how you'd like to proceed with your signup."
 msgstr "Escolha como deseja prosseguir com sua inscrição."
 
 #: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+#: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
 msgid "Open WhatsApp"
 msgstr "Abrir WhatsApp"
 
 #: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
+#: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
 msgid "Or scan QR code"
 msgstr "Ou escaneie o código QR"
 
@@ -2169,17 +2175,20 @@ msgid "Scan with your phone to sign up via WhatsApp"
 msgstr "Escaneie com seu telefone para se inscrever via WhatsApp"
 
 #: src/lib/components/widgets/event/share/EmbedCode.svelte
+#: src/lib/components/widgets/petition/share/EmbedCode.svelte
 msgid "Copy to embed in your website"
 msgstr "Copiar para incorporar no seu site"
 
-#: src/lib/components/widgets/event/share/EmbedCode.svelte
-msgid "Default theme"
-msgstr "Tema padrão"
+#~ msgid "Default theme"
+#~ msgstr "Tema padrão"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/event/share/EmbedCode.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/petition/share/EmbedCode.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "Copied to clipboard"
 msgstr "Copiado para a área de transferência"
 
@@ -2248,14 +2257,17 @@ msgstr "Evento não publicado"
 msgid "This event is not published yet. Please check back later."
 msgstr "Este evento ainda não foi publicado. Por favor volte mais tarde."
 
+#: src/lib/components/layouts/public/event/EventDeclineSuccess.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Not joining this event"
 msgstr "Não participará deste evento"
 
+#: src/lib/components/layouts/public/event/EventDeclineSuccess.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "You declined an invitation to"
 msgstr "Você recusou um convite para"
 
+#: src/lib/components/layouts/public/event/EventDeclineSuccess.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "We'll let the organiser know you can't attend."
 msgstr "Informaremos ao organizador que você não pode comparecer."
@@ -2266,11 +2278,13 @@ msgstr "Escaneie este código QR para marcar presença via WhatsApp"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "WhatsApp checkin link"
 msgstr "Link de check-in do WhatsApp"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "Download QR code"
 msgstr "Baixar código QR"
 
@@ -2279,6 +2293,7 @@ msgid "Copy WhatsApp checkin link"
 msgstr "Copiar link de check-in do WhatsApp"
 
 #: src/lib/components/widgets/event/share/EventShareModal.svelte
+#: src/lib/components/widgets/petition/share/PetitionShareModal.svelte
 msgid "Embed"
 msgstr "Incorporar"
 
@@ -2372,10 +2387,12 @@ msgid "Event signup page link"
 msgstr "Link da página de inscrição do evento"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "WhatsApp signup link"
 msgstr "Link de inscrição do WhatsApp"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "View WhatsApp signup QR code"
 msgstr "Ver código QR de inscrição do WhatsApp"
 
@@ -2606,91 +2623,88 @@ msgid "Send"
 msgstr "Enviar"
 
 #. placeholder {0}: count
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "{0} people have signed this petition"
 msgstr "{0} pessoas assinaram esta petição"
 
 #. placeholder {0}: current
 #. placeholder {1}: target
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "{0} more signatures needed to reach {1}"
 msgstr "{0} assinaturas mais necessárias para alcançar {1}"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "To:"
 msgstr "Para:"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
-msgid "Petition Details"
-msgstr "Detalhes da petição"
+#~ msgid "Petition Details"
+#~ msgstr "Detalhes da petição"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Recent Signatures"
 msgstr "Assinaturas recentes"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
-msgid "Be the first to sign this petition!"
-msgstr "Seja o primeiro a assinar esta petição!"
+#~ msgid "Be the first to sign this petition!"
+#~ msgstr "Seja o primeiro a assinar esta petição!"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "signatures"
 msgstr "assinaturas"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "of goal"
 msgstr "da meta"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
-msgid ""
-"Goal reached! Keep the momentum going to make an even bigger\n"
-"impact."
-msgstr ""
-"Meta atingida! Mantenha o ritmo para causar um impacto\n"
-"ainda maior."
+#~ msgid ""
+#~ "Goal reached! Keep the momentum going to make an even bigger\n"
+#~ "impact."
+#~ msgstr ""
+#~ "Meta atingida! Mantenha o ritmo para causar um impacto\n"
+#~ "ainda maior."
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Thank you for signing!"
 msgstr "Obrigado por assinar!"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Your signature has been recorded and you'll receive updates about this petition."
 msgstr "Sua assinatura foi registrada e você receberá atualizações sobre esta petição."
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Return to petition"
 msgstr "Voltar à petição"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "First name"
 msgstr "Nome"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Last name"
 msgstr "Sobrenome"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "your@email.com"
 msgstr "seu@email.com"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Phone (optional)"
 msgstr "Telefone (opcional)"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Signing..."
 msgstr "Assinando..."
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Sign this petition"
 msgstr "Assinar esta petição"
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "By signing, you agree to receive updates about this petition and related campaigns."
 msgstr "Ao assinar, você concorda em receber atualizações sobre esta petição e campanhas relacionadas."
 
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Share this petition"
 msgstr "Compartilhar esta petição"
 
@@ -3248,4 +3262,86 @@ msgstr ""
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Archive event"
+msgstr ""
+
+#: src/lib/components/widgets/event/share/EmbedCode.svelte
+#: src/lib/components/widgets/petition/share/EmbedCode.svelte
+msgid "Default layout"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Petition archived"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Petition deleted"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Archive petition"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Delete petition"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Archive this petition?"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Delete this petition?"
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "This petition will be archived. You can still view it in the archived petitions list."
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "This draft petition will be permanently deleted. This action cannot be undone."
+msgstr ""
+
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "Archive"
+msgstr ""
+
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
+msgid "Share this petition with your audience"
+msgstr ""
+
+#: src/lib/components/widgets/petition/share/SharePetition.svelte
+msgid "Petition page link"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
+#: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
+msgid "Sign petition via WhatsApp"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
+msgid "Choose how you'd like to sign this petition."
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
+msgid "WhatsApp Petition Signup QR Code"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
+msgid "Scan with your phone to sign via WhatsApp"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+msgid "Edit Petition"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+msgid "Petition Statement"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+msgid "Goal reached! Keep the momentum going to make an even bigger impact."
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+msgid "or"
 msgstr ""

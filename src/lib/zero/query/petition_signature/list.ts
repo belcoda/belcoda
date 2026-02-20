@@ -21,6 +21,7 @@ export function listPetitionSignaturesQuery({
 	input: InferOutput<typeof inputSchema>;
 }) {
 	let q = builder.petitionSignature
+		.related('person')
 		.where((expr) => petitionSignatureReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))

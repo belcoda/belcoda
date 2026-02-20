@@ -7,6 +7,8 @@ import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
 import { parse } from 'valibot';
 import { signPetitionFormSchema } from '$lib/schema/petition/petition-signature';
 import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
+import { _getPetitionActionCodeUnsafe } from '$lib/server/api/data/petition/check';
+import { generateWhatsAppPetitionLink } from '$lib/utils/petitions/link';
 
 const log = pino(import.meta.url);
 
@@ -61,6 +63,16 @@ export async function load({ params, locals }) {
 		.orderBy(desc(petitionSignature.createdAt))
 		.limit(10);
 
+	const actionCode = await _getPetitionActionCodeUnsafe({ petitionId: petitionData.id });
+
+	const whatsAppSignupLink = actionCode
+		? generateWhatsAppPetitionLink({
+				petitionTitle: petitionData.title,
+				whatsAppNumber: org.settings?.whatsApp?.number,
+				actionCode: actionCode.id
+			})
+		: null;
+
 	const session = locals.session;
 	const userId = session?.user?.id;
 	let isAdmin = false;
@@ -89,7 +101,8 @@ export async function load({ params, locals }) {
 		signatureCount: signatureCount?.count || 0,
 		recentSignatures: serializedSignatures,
 		session,
-		isAdmin
+		isAdmin,
+		whatsAppSignupLink
 	};
 }
 

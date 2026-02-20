@@ -3,8 +3,8 @@
 	import IconRefresh from '@lucide/svelte/icons/refresh-cw';
 
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import { type ReadEventZero } from '$lib/schema/event';
-	const { event }: { event: ReadEventZero } = $props();
+	import { type ReadPetitionZero } from '$lib/schema/petition/petition';
+	const { petition }: { petition: ReadPetitionZero } = $props();
 	import { t } from '$lib/index.svelte';
 
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -15,17 +15,18 @@
 	let layout: Layout = $state('default');
 
 	import { appState } from '$lib/state.svelte';
-	import { getEventLink } from '$lib/utils/events/link';
-	const eventLink = getEventLink({
-		/* svelte-ignore state_referenced_locally */
-		eventSlug: event.slug,
-		organizationSlug: appState.activeOrganization.data?.slug || ''
-	});
+	import { getPetitionLink } from '$lib/utils/petitions/link';
+	const petitionLink = $derived(
+		getPetitionLink({
+			petitionSlug: petition.slug,
+			organizationSlug: appState.activeOrganization.data?.slug || ''
+		})
+	);
 
 	const embedCode = $derived.by(() => {
 		switch (layout) {
 			case 'default':
-				return `<iframe src="${eventLink}?layout=embed" width="100%" height="100%" frameborder="0"></iframe>`;
+				return `<iframe src="${petitionLink}?layout=embed" width="100%" height="600" frameborder="0"></iframe>`;
 		}
 	});
 </script>

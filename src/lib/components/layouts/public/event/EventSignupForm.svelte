@@ -12,7 +12,7 @@
 	import { valibot } from 'sveltekit-superforms/adapters';
 	import { type SurveySchema, getSurveySchema } from '$lib/schema/survey/questions';
 	type Props = {
-		theme: EventTheme;
+		layout: 'default' | 'embed';
 		event: EventSchema;
 		organization: OrganizationSchema;
 		currentSignups: number;
@@ -28,7 +28,7 @@
 		whatsAppSignupLink,
 		session,
 		form: formProp,
-		theme = 'default'
+		layout = 'default'
 	}: Props = $props();
 
 	const primaryColor = $derived(
@@ -118,9 +118,9 @@
 				</p>
 			</div>
 		{/if}
-		{#if theme === 'default'}
+		{#if layout === 'default'}
 			<h3 class="mb-6 text-lg font-semibold text-gray-900">{t`Join this event`}</h3>
-		{:else if theme === 'embed'}
+		{:else if layout === 'embed'}
 			<div class="mb-6">
 				<h3 class="mb-2 text-lg font-semibold text-gray-900">{event.title}</h3>
 				<p class="mb-2 text-sm text-gray-600">{event.shortDescription}</p>
@@ -138,7 +138,7 @@
 					<div class="text-sm text-red-700">{submissionError}</div>
 				</div>
 			{/if}
-			<input type="hidden" name="theme" value={theme} />
+			<input type="hidden" name="layout" value={layout} />
 
 			<RenderError errors={allErrors} />
 
