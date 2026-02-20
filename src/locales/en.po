@@ -2628,6 +2628,7 @@ msgid "{0} people have signed this petition"
 msgstr "{0} people have signed this petition"
 
 #. placeholder {0}: current
+#. placeholder {1}: target
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "{0} more signatures needed to reach {1}"
 msgstr "{0} more signatures needed to reach {1}"
@@ -2675,13 +2676,11 @@ msgstr "Return to petition"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "First name"
 msgstr "First name"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "Last name"
 msgstr "Last name"
 

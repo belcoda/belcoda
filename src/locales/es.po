@@ -2676,13 +2676,11 @@ msgstr "Volver a la petición"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "First name"
 msgstr "Nombre"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
-#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "Last name"
 msgstr "Apellido"
 
