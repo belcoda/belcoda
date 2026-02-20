@@ -139,8 +139,8 @@
 					emailMessageId: emailId
 				},
 				input: {
-					subject,
-					body
+					subject: $state.snapshot(subject),
+					body: $state.snapshot(body)
 				}
 			})
 		);
