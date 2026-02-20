@@ -176,4 +176,16 @@ export async function sendEmailMessage({
 				eq(emailMessage.organizationId, parsed.metadata.organizationId)
 			)
 		);
+
+	// Queue the email for processing
+	const queue = await getQueue();
+	await queue.processEmailMessage({
+		emailMessageId: parsed.metadata.emailMessageId,
+		organizationId: parsed.metadata.organizationId
+	});
+
+	log.debug(
+		{ emailMessageId: parsed.metadata.emailMessageId },
+		'Email message queued for processing'
+	);
 }

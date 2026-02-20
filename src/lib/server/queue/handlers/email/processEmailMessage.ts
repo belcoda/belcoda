@@ -1,0 +1,145 @@
+import { drizzle } from '$lib/server/db';
+import { emailMessage, person, organization } from '$lib/schema/drizzle';
+import { eq, and, inArray, sql } from 'drizzle-orm';
+import { getQueue } from '$lib/server/queue';
+import { getPersonIdsFromFilter } from '$lib/server/utils/person/filter';
+import { getEmailSignature } from '$lib/server/utils/email/signature';
+import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
+import pino from '$lib/pino';
+
+const log = pino(import.meta.url);
+
+export async function processEmailMessage({
+	emailMessageId,
+	organizationId
+}: {
+	emailMessageId: string;
+	organizationId: string;
+}) {
+	log.debug({ emailMessageId, organizationId }, 'Processing email message');
+
+	const email = await drizzle.query.emailMessage.findFirst({
+		where: and(eq(emailMessage.id, emailMessageId), eq(emailMessage.organizationId, organizationId))
+	});
+
+	if (!email) {
+		throw new Error('Email message not found');
+	}
+
+	if (email.completedAt) {
+		log.debug({ emailMessageId }, 'Email already processed, skipping');
+		return;
+	}
+
+	const org = await drizzle.query.organization.findFirst({
+		where: eq(organization.id, organizationId)
+	});
+
+	if (!org) {
+		throw new Error('Organization not found');
+	}
+
+	const signature = await getEmailSignature({
+		emailFromSignatureId: email.emailFromSignatureId,
+		organization: org
+	});
+
+	const personIds = await getPersonIdsFromFilter({
+		filter: email.recipients,
+		organizationId
+	});
+
+	const estimatedCount = personIds.length;
+
+	// Update estimated recipient count
+	await drizzle
+		.update(emailMessage)
+		.set({
+			estimatedRecipientCount: estimatedCount,
+			updatedAt: new Date()
+		})
+		.where(
+			and(eq(emailMessage.id, emailMessageId), eq(emailMessage.organizationId, organizationId))
+		);
+
+	if (estimatedCount === 0) {
+		log.debug({ emailMessageId }, 'No recipients found for email');
+		await drizzle
+			.update(emailMessage)
+			.set({
+				completedAt: new Date(),
+				updatedAt: new Date()
+			})
+			.where(
+				and(eq(emailMessage.id, emailMessageId), eq(emailMessage.organizationId, organizationId))
+			);
+		return;
+	}
+
+	const recipients = await drizzle.query.person.findMany({
+		where: and(
+			eq(person.organizationId, organizationId),
+			inArray(person.id, personIds),
+			sql`${person.emailAddress} IS NOT NULL`
+		)
+	});
+
+	let successfulCount = 0;
+	let failedCount = 0;
+
+	const queue = await getQueue();
+
+	for (const recipient of recipients) {
+		if (!recipient.emailAddress) continue;
+
+		try {
+			// For now, we use a simple template. In the future, we could use
+			// a custom template based on the email body (stored as Lexical JSON)
+			await sendTemplateEmail({
+				to: recipient.emailAddress,
+				from: `${signature.name} <${signature.emailAddress}>`,
+				replyTo: signature.replyTo || undefined,
+				template: 'broadcast-message', // Using the broadcast template
+				stream: 'broadcast',
+				context: {
+					subject: email.subject || '',
+					body: email.body ? JSON.stringify(email.body) : '', // Lexical content
+					organizationName: org.name
+				}
+			});
+
+			successfulCount++;
+
+			await queue.insertActivity({
+				organizationId,
+				personId: recipient.id,
+				type: 'email_outgoing',
+				referenceId: emailMessageId,
+				unread: false
+			});
+
+			log.debug({ personId: recipient.id, emailMessageId }, 'Email sent successfully');
+		} catch (err) {
+			failedCount++;
+			log.error({ err, personId: recipient.id, emailMessageId }, 'Failed to send email');
+		}
+	}
+
+	// Update final counts
+	await drizzle
+		.update(emailMessage)
+		.set({
+			successfulRecipientCount: successfulCount,
+			failedRecipientCount: failedCount,
+			completedAt: new Date(),
+			updatedAt: new Date()
+		})
+		.where(
+			and(eq(emailMessage.id, emailMessageId), eq(emailMessage.organizationId, organizationId))
+		);
+
+	log.debug(
+		{ emailMessageId, estimatedCount, successfulCount, failedCount },
+		'Email message processing completed'
+	);
+}
