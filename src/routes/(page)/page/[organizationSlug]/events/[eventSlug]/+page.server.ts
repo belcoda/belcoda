@@ -90,8 +90,11 @@ export const actions = {
 					organizationId
 				});
 			});
-      const theme = form.data.theme || 'default';
-			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up${theme ? `?theme=${theme}` : ''}`);
+			const theme = form.data.theme || 'default';
+			return redirect(
+				302,
+				`/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up${theme ? `?layout=${theme}` : ''}`
+			);
 		} catch (err) {
 			if (
 				err instanceof redirect ||
@@ -137,7 +140,7 @@ export const actions = {
 			const theme = form.data.theme || 'default';
 			return redirect(
 				302,
-				`/page/${params.organizationSlug}/events/${params.eventSlug}/declined${theme ? `?theme=${theme}` : ''}`
+				`/page/${params.organizationSlug}/events/${params.eventSlug}/declined${theme ? `?layout=${theme}` : ''}`
 			);
 		} catch (err) {
 			if (
