@@ -15,6 +15,11 @@ import {
 	updateMutatorSchema,
 	sendMutatorSchema
 } from '$lib/schema/email-message';
+import { getQueue } from '$lib/server/queue';
+import { countPersonsFromFilter } from '$lib/server/utils/person/filter';
+import pino from '$lib/pino';
+
+const log = pino(import.meta.url);
 
 export async function createEmailMessage({
 	tx,
@@ -161,6 +166,17 @@ export async function sendEmailMessage({
 		throw new Error('Email message has already been sent');
 	}
 
+	// Calculate estimated recipient count from the filter
+	const estimatedRecipientCount = await countPersonsFromFilter({
+		filter: emailMessageRecord.recipients,
+		organizationId: parsed.metadata.organizationId
+	});
+
+	log.debug(
+		{ emailMessageId: parsed.metadata.emailMessageId, estimatedRecipientCount },
+		'Calculated estimated recipient count'
+	);
+
 	await tx.dbTransaction.wrappedTransaction
 		.update(emailMessage)
 		.set({
@@ -168,6 +184,7 @@ export async function sendEmailMessage({
 			body: parsed.input.body ?? emailMessageRecord.body,
 			startedAt: new Date(),
 			sentBy: ctx.userId,
+			estimatedRecipientCount,
 			updatedAt: new Date()
 		})
 		.where(
