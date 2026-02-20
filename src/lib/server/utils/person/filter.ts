@@ -257,9 +257,9 @@ function processExcludeFilters(filters: FilterType[]): SQL<unknown>[] {
 // We could import these from drizzle orm but they need us to add
 // null checks in many places. Defining them here makes them easier to use
 function or(...conditions: SQL<unknown>[]) {
-	return sql`(${conditions.join(' OR ')})`;
+	return sql`(${sql.join(conditions, sql` OR `)})`;
 }
 
 function and(...conditions: SQL<unknown>[]) {
-	return sql`(${conditions.join(' AND ')})`;
+	return sql`(${sql.join(conditions, sql` AND `)})`;
 }
