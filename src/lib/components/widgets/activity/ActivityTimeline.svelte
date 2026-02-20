@@ -30,7 +30,11 @@
 </script>
 
 <div class="space-y-4">
-	{#if activityQuery.data}
+	{#if activityQuery.data === undefined}
+		<div class="text-center text-sm text-gray-400">Loading activities...</div>
+	{:else if activityQuery.data.length === 0}
+		<div class="text-center text-sm text-gray-400">No activities yet</div>
+	{:else}
 		{#each activityQuery.data as activity (activity.id)}
 			<ActivityRenderer {activity} />
 		{/each}
