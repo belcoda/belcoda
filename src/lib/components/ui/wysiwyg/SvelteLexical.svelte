@@ -10,11 +10,8 @@
 		LinkPlugin,
 		ItalicButton,
 		LinkNode,
-		AutoLinkNode,
-		AutoLinkPlugin,
 		RichTextPlugin,
 		InsertLink,
-		FloatingLinkEditorPlugin,
 		StrikethroughButton,
 		Toolbar,
 		UnderlineButton,
@@ -27,36 +24,65 @@
 		onChange,
 		disabled = false
 	}: {
-		value?: any;
+		value?: unknown;
 		disabled?: boolean;
-		onChange?: (state: any) => void;
+		onChange?: (state: unknown) => void;
 	} = $props();
 
-	const initialConfig = {
+	const EMPTY_EDITOR_FINGERPRINT = '__belcoda_lexical_empty__';
+
+	function toEditorStateJson(state: unknown): string | undefined {
+		if (state === null || state === undefined) return undefined;
+		try {
+			return JSON.stringify(state);
+		} catch {
+			return undefined;
+		}
+	}
+
+	function getEditorStateFingerprint(state: unknown): string {
+		return toEditorStateJson(state) ?? EMPTY_EDITOR_FINGERPRINT;
+	}
+
+	let composerKey = $state(0);
+	let initialEditorState = $state<string | undefined>(toEditorStateJson(value));
+	let lastAppliedFingerprint = $state(getEditorStateFingerprint(value));
+
+	$effect(() => {
+		const nextFingerprint = getEditorStateFingerprint(value);
+		if (nextFingerprint === lastAppliedFingerprint) return;
+
+		initialEditorState = toEditorStateJson(value);
+		lastAppliedFingerprint = nextFingerprint;
+		composerKey += 1;
+	});
+
+	const initialConfig = $derived.by(() => ({
 		theme,
 		namespace: 'belcoda_wysiwyg',
 		nodes: [LinkNode],
-		editable: (() => !disabled)(),
-		editorState: value ? JSON.stringify(value) : undefined,
+		editable: !disabled,
+		editorState: initialEditorState,
 		onError: (error: Error) => {
 			throw error;
 		}
-	};
+	}));
 
 	function handleChange(editorState: EditorState) {
 		const state = structuredClone(editorState.toJSON());
+		lastAppliedFingerprint = getEditorStateFingerprint(state);
 		value = state;
 		onChange?.(state);
 	}
 </script>
 
-<Composer {initialConfig}>
-	<div
-		class="editor-shell svelte-lexical focus-within:rounded-lg focus-within:border focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50"
-	>
-		{#if !disabled}
-			<Toolbar>
-				{#snippet children({ editor, activeEditor, blockType })}
+{#key composerKey}
+	<Composer {initialConfig}>
+		<div
+			class="editor-shell svelte-lexical focus-within:rounded-lg focus-within:border focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50"
+		>
+			{#if !disabled}
+				<Toolbar>
 					<FontFamilyDropDown />
 					<FontSizeDropDown />
 					<Divider />
@@ -68,25 +94,25 @@
 					<InsertLink />
 					<Divider />
 					<DropDownAlign />
-				{/snippet}
-			</Toolbar>
-		{/if}
-		<div class="editor-container">
-			<div class="editor-scroller group">
-				<div class="editor group">
-					<ContentEditable />
+				</Toolbar>
+			{/if}
+			<div class="editor-container">
+				<div class="editor-scroller group">
+					<div class="editor group">
+						<ContentEditable />
+					</div>
 				</div>
+				<RichTextPlugin />
+				<LinkPlugin />
+				<OnChangePlugin
+					onChange={handleChange}
+					ignoreHistoryMergeTagChange={true}
+					ignoreSelectionChange={true}
+				/>
 			</div>
-			<RichTextPlugin />
-			<LinkPlugin />
-			<OnChangePlugin
-				onChange={handleChange}
-				ignoreHistoryMergeTagChange={true}
-				ignoreSelectionChange={true}
-			/>
 		</div>
-	</div>
-</Composer>
+	</Composer>
+{/key}
 
 <style>
 	.editor-shell.svelte-lexical {
