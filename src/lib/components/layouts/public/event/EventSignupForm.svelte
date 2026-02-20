@@ -138,7 +138,7 @@
 					<div class="text-sm text-red-700">{submissionError}</div>
 				</div>
 			{/if}
-			<input type="hidden" name="theme" value={theme} />
+			<input type="hidden" name="layout" value={layout} />
 
 			<RenderError errors={allErrors} />
 
