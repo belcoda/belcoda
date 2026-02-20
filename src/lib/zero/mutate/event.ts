@@ -5,7 +5,8 @@ import { defineMutator } from '@rocicorp/zero';
 import {
 	createEventZeroMutatorSchema,
 	updateEventZeroMutatorSchema,
-	deleteEventMutatorSchemaZero
+	deleteEventMutatorSchemaZero,
+	archiveEventMutatorSchemaZero
 } from '$lib/schema/event';
 import { parse } from 'valibot';
 
@@ -62,6 +63,17 @@ export const deleteEvent = defineMutator(
 		tx.mutate.event.update({
 			id: args.metadata.eventId,
 			deletedAt: new Date().getTime(),
+			updatedAt: new Date().getTime()
+		});
+	}
+);
+
+export const archiveEvent = defineMutator(
+	archiveEventMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
+		tx.mutate.event.update({
+			id: args.metadata.eventId,
+			archivedAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
 		});
 	}
