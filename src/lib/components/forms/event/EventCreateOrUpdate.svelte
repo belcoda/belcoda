@@ -49,7 +49,6 @@
 					}),
 					initialData: event,
 					onSubmit: async (data) => {
-						console.log(data);
 						onSubmit(data);
 					}
 				})
@@ -61,7 +60,6 @@
 					}),
 					validateOnLoad: false,
 					onSubmit: async (data) => {
-						console.log(data);
 						onSubmit(data);
 					}
 				})
@@ -84,6 +82,8 @@
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
+	import type { CountryCode } from '$lib/schema/helpers';
 
 	function setSlug(slug: string) {
 		$data.slug = slugify(slug);
@@ -161,31 +161,59 @@
 			<AlertCircleIcon />
 			<Alert.Title>{t`Danger zone!`}</Alert.Title>
 			<Alert.Description>
-				{t`Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone.`}
-				<div class="mt-2">
-					<Button
-						type="button"
-						variant="destructive"
-						onclick={async () => {
-							if (
-								window.confirm(
-									t`Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?`
-								)
-							) {
-								z.mutate(
-									mutators.event.delete({
-										metadata: {
-											eventId: event.id,
-											organizationId: appState.organizationId
-										}
-									})
-								);
-								toast.success(t`Event deleted`);
-								goto('/events');
-							}
-						}}>{t`Delete event`}</Button
-					>
-				</div>
+				{#if event.published}
+					{t`Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later.`}
+					<div class="mt-2">
+						<Button
+							type="button"
+							variant="destructive"
+							onclick={async () => {
+								if (
+									window.confirm(
+										t`This event will be archived and hidden from the public. Signups will be closed. Are you sure?`
+									)
+								) {
+									z.mutate(
+										mutators.event.archive({
+											metadata: {
+												eventId: event.id,
+												organizationId: appState.organizationId
+											}
+										})
+									);
+									toast.success(t`Event archived`);
+									goto('/events');
+								}
+							}}>{t`Archive event`}</Button
+						>
+					</div>
+				{:else}
+					{t`Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone.`}
+					<div class="mt-2">
+						<Button
+							type="button"
+							variant="destructive"
+							onclick={async () => {
+								if (
+									window.confirm(
+										t`Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?`
+									)
+								) {
+									z.mutate(
+										mutators.event.delete({
+											metadata: {
+												eventId: event.id,
+												organizationId: appState.organizationId
+											}
+										})
+									);
+									toast.success(t`Event deleted`);
+									goto('/events');
+								}
+							}}>{t`Delete event`}</Button
+						>
+					</div>
+				{/if}
 			</Alert.Description>
 		</Alert.Root>
 	{/if}
@@ -378,9 +406,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{t`Country`}</Form.Label>
-					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.country} {...props} placeholder={t`Country`} />
-					</InputGroup.Root>
+					<CountrySelect {...props} bind:value={$data.country as CountryCode} />
 				{/snippet}
 			</Form.Control>
 		</Form.Field>

@@ -94,7 +94,6 @@ msgstr "Secondary Color"
 msgid "Accent color for success states and secondary elements on public pages."
 msgstr "Accent color for success states and secondary elements on public pages."
 
-#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -103,6 +102,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/person/new/+page.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
@@ -198,6 +198,7 @@ msgstr "The return path domain is used for bounce handling."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
@@ -375,6 +376,11 @@ msgstr "Save changes"
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/community/+page.svelte
 msgid "Community"
 msgstr "Community"
 
@@ -456,22 +462,21 @@ msgstr "Events"
 msgid "Petitions"
 msgstr "Petitions"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
-msgid "New person"
-msgstr "New person"
+#~ msgid "New person"
+#~ msgstr "New person"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Billing"
 msgstr "Billing"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Team"
 msgstr "Team"
 
-#: src/lib/components/layouts/app/sidebars/community/ActionsMenu.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Subscription"
 msgstr "Subscription"
 
@@ -698,6 +703,8 @@ msgid "Call"
 msgstr "Call"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 msgid "WhatsApp"
 msgstr "WhatsApp"
@@ -784,6 +791,7 @@ msgstr "Person deleted"
 
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
@@ -879,14 +887,15 @@ msgid "Family name"
 msgstr "Family name"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/person/new/+page.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
@@ -1454,7 +1463,6 @@ msgid "Postcode"
 msgstr "Postcode"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
@@ -1656,11 +1664,10 @@ msgstr "Are you sure you want to remove this question?"
 msgid "Remove question"
 msgstr "Remove question"
 
-#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
-msgid "Edit Person"
-msgstr "Edit Person"
+#~ msgid "Edit Person"
+#~ msgstr "Edit Person"
 
-#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(app)/community/person/new/+page.svelte
 msgid "Create Person"
 msgstr "Create Person"
 
@@ -2347,6 +2354,7 @@ msgid "No signups found. Create a new signup to get started."
 msgstr "No signups found. Create a new signup to get started."
 
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/routes/(app)/community/+page.svelte
 msgid "Add Person"
 msgstr "Add Person"
 
@@ -2720,6 +2728,8 @@ msgstr "Exports"
 
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+#: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Credit balance"
 msgstr "Credit balance"
 
@@ -2760,6 +2770,115 @@ msgstr "WhatsApp templates are not currently supported, but will be added in a f
 msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
 msgstr "WhatsApp accounts are not currently supported, but will be added in a future update."
 
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Free"
+msgstr "Free"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Not available"
+msgstr "Not available"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact form URL is not configured."
+msgstr "Contact form URL is not configured."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "You don't have permission to manage billing. Only organization owners can access this page."
+msgstr "You don't have permission to manage billing. Only organization owners can access this page."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Current subscription"
+msgstr "Current subscription"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Your organization's Stripe subscription status and plan information."
+msgstr "Your organization's Stripe subscription status and plan information."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Loading subscription..."
+msgstr "Loading subscription..."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Plan"
+msgstr "Plan"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "No active paid subscription"
+msgstr "No active paid subscription"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Current period ends"
+msgstr "Current period ends"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Opening Stripe..."
+msgstr "Opening Stripe..."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Manage in Stripe"
+msgstr "Manage in Stripe"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Need a different plan?"
+msgstr "Need a different plan?"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Everyone starts on the Free tier. To move to Supported or Enterprise, submit a contact form and our team will follow up."
+msgstr "Everyone starts on the Free tier. To move to Supported or Enterprise, submit a contact form and our team will follow up."
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact us for Supported tier"
+msgstr "Contact us for Supported tier"
+
+#: src/routes/(app)/settings/billing/subscription/+page.svelte
+msgid "Contact us for Enterprise tier"
+msgstr "Contact us for Enterprise tier"
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Credit purchase completed. Your balance will update shortly."
+msgstr "Credit purchase completed. Your balance will update shortly."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Credit purchase was cancelled."
+msgstr "Credit purchase was cancelled."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
+msgstr "You don't have permission to manage credit purchases. Only organization owners can access this page."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "This balance belongs to your organization and is shared across your workspace."
+msgstr "This balance belongs to your organization and is shared across your workspace."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Purchase additional credit with Stripe using one of the preset amounts below."
+msgstr "Purchase additional credit with Stripe using one of the preset amounts below."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Buy more credit"
+msgstr "Buy more credit"
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Select a preset amount to continue in Stripe checkout."
+msgstr "Select a preset amount to continue in Stripe checkout."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Redirecting..."
+msgstr "Redirecting..."
+
+#: src/lib/components/communications/email/EmailList.svelte
+msgid "[Error loading email body]"
+msgstr "[Error loading email body]"
+
+#: src/routes/(app)/community/+page.svelte
+msgid "All your people and teams in one place."
+msgstr "All your people and teams in one place."
+
+#: src/routes/(app)/community/+page.svelte
+msgid "Learn more about Belcoda's community module"
+msgstr "Learn more about Belcoda's community module"
+
 #: src/routes/(app)/settings/+page.svelte
 msgid "Edit workspace settings"
 msgstr "Edit workspace settings"
@@ -2768,212 +2887,41 @@ msgstr "Edit workspace settings"
 msgid "Manage your workspace settings, including branding, email settings, and more."
 msgstr "Manage your workspace settings, including branding, email settings, and more."
 
-#: src/routes/(app)/settings/organization/configuration/+page.svelte
-msgid "Are you sure you want to cancel?"
-msgstr "Are you sure you want to cancel?"
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later."
+msgstr "Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later."
 
-#~ msgid "Organization Configuration"
-#~ msgstr "Organization Configuration"
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "This event will be archived and hidden from the public. Signups will be closed. Are you sure?"
+msgstr "This event will be archived and hidden from the public. Signups will be closed. Are you sure?"
 
-#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
-msgid "Default Language"
-msgstr "Default Language"
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Event archived"
+msgstr "Event archived"
 
-#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
-msgid "Default Timezone"
-msgstr "Default Timezone"
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Archive event"
+msgstr "Archive event"
 
-#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
-msgid "Organization logo"
-msgstr "Organization logo"
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."
+msgstr "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."
 
-#~ msgid "URL to the organization logo. Recommended size: 16:9 ratio. Max size: 2MB."
-#~ msgstr "URL to the organization logo. Recommended size: 16:9 ratio. Max size: 2MB."
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?"
+msgstr "Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?"
 
-#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
-msgid "Organization icon"
-msgstr "Organization icon"
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Event deleted"
+msgstr "Event deleted"
 
-#~ msgid "URL to the organization icon. Recommended size: 1:1 ratio. Max size: 2MB."
-#~ msgstr "URL to the organization icon. Recommended size: 1:1 ratio. Max size: 2MB."
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Delete event"
+msgstr "Delete event"
 
-#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
-msgid "Organization configuration updated successfully"
-msgstr "Organization configuration updated successfully"
-
-#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
-msgid "URL to the organization logo. It will be displayed on some public pages (depending on other settings). Recommended size: 16:9 ratio. Max size: 2MB."
-msgstr "URL to the organization logo. It will be displayed on some public pages (depending on other settings). Recommended size: 16:9 ratio. Max size: 2MB."
-
-#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
-msgid "URL to the organization icon. It will be used in the menu and other Belcoda pages.Recommended size: 128x128px or 256x256px. Max size: 2MB."
-msgstr "URL to the organization icon. It will be used in the menu and other Belcoda pages.Recommended size: 128x128px or 256x256px. Max size: 2MB."
-
-#: src/routes/(app)/settings/tags/EditTag.svelte
-msgid "Edit Tag"
-msgstr "Edit Tag"
-
-#: src/routes/(app)/settings/tags/+page.svelte
-#: src/routes/(app)/settings/tags/EditTag.svelte
-msgid "Active"
-msgstr "Active"
-
-#: src/routes/(app)/settings/tags/+page.svelte
-msgid "Inactive"
-msgstr "Inactive"
-
-#: src/routes/(app)/settings/tags/+page.svelte
-msgid "Manage tags for organizing and categorizing your contacts."
-msgstr "Manage tags for organizing and categorizing your contacts."
-
-#: src/routes/(app)/settings/tags/+page.svelte
-msgid "No tags yet. Create your first tag to get started."
-msgstr "No tags yet. Create your first tag to get started."
-
-#: src/routes/(app)/settings/tags/+page.svelte
-msgid "Loading tags..."
-msgstr "Loading tags..."
-
-#: src/routes/(app)/settings/tags/NewTag.svelte
-msgid "New Tag"
-msgstr "New Tag"
-
-#: src/routes/(app)/settings/tags/NewTag.svelte
-msgid "Create a new tag for organizing your contacts."
-msgstr "Create a new tag for organizing your contacts."
-
-#: src/routes/(app)/settings/tags/EditTag.svelte
-#: src/routes/(app)/settings/tags/NewTag.svelte
-msgid "e.g., Newsletter subscribers"
-msgstr "e.g., Newsletter subscribers"
-
-#: src/routes/(app)/settings/tags/EditTag.svelte
-msgid "Update the tag name and status."
-msgstr "Update the tag name and status."
-
-#: src/routes/(app)/settings/tags/EditTag.svelte
-msgid "Edit tag"
-msgstr "Edit tag"
-
-#: src/routes/(app)/settings/teams/+page.svelte
-msgid "Manage teams for organizing people and users."
-msgstr "Manage teams for organizing people and users."
-
-#: src/routes/(app)/settings/teams/+page.svelte
-msgid "No teams yet. Create your first team to get started."
-msgstr "No teams yet. Create your first team to get started."
-
-#: src/routes/(app)/settings/teams/+page.svelte
-msgid "Loading teams..."
-msgstr "Loading teams..."
-
-#: src/routes/(app)/settings/teams/NewTeam.svelte
-msgid "New Team"
-msgstr "New Team"
-
-#: src/routes/(app)/settings/teams/NewTeam.svelte
-msgid "Create a new team."
-msgstr "Create a new team."
-
-#: src/routes/(app)/settings/teams/EditTeam.svelte
-#: src/routes/(app)/settings/teams/NewTeam.svelte
-msgid "e.g., Sales team"
-msgstr "e.g., Sales team"
-
-#: src/routes/(app)/settings/teams/EditTeam.svelte
-msgid "Edit Team"
-msgstr "Edit Team"
-
-#: src/routes/(app)/settings/teams/EditTeam.svelte
-msgid "Update the team name."
-msgstr "Update the team name."
-
-#: src/routes/(app)/settings/teams/EditTeam.svelte
-msgid "Edit team"
-msgstr "Edit team"
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "Team not found."
-msgstr "Team not found."
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "Back to teams"
-msgstr "Back to teams"
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "People on this team"
-msgstr "People on this team"
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "Contacts (people) that belong to this team."
-msgstr "Contacts (people) that belong to this team."
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "No people on this team yet."
-msgstr "No people on this team yet."
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
-msgid "Remove"
-msgstr "Remove"
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "Add person"
-msgstr "Add person"
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "Users on this team"
-msgstr "Users on this team"
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "Organization members (users) who have access to this team."
-msgstr "Organization members (users) who have access to this team."
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "No users on this team yet."
-msgstr "No users on this team yet."
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "Add user"
-msgstr "Add user"
-
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-msgid "Loading team..."
-msgstr "Loading team..."
-
-#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
-msgid "Add User"
-msgstr "Add User"
-
-#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
-msgid "Select organization members to add to the team."
-msgstr "Select organization members to add to the team."
-
-#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
-msgid "Error loading users."
-msgstr "Error loading users."
-
-#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
-msgid "No users available to add."
-msgstr "No users available to add."
-
-#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
-msgid "Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again."
-msgstr "Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again."
-
-#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
-msgid "Delete signup"
-msgstr "Delete signup"
-
-#: src/lib/components/communications/email/EmailList.svelte
-msgid "[Error loading email body]"
-msgstr "[Error loading email body]"
-
-#: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/users/+page.svelte
-msgid "Users"
-msgstr "Users"
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Person created successfully"
+msgstr "Person created successfully"
 
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "You don't have permission to manage users. Only admins and owners can access this page."
@@ -3018,6 +2966,11 @@ msgstr "Invitations that have been sent but not yet accepted."
 msgid "No pending invitations."
 msgstr "No pending invitations."
 
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/users/+page.svelte
+msgid "Users"
+msgstr "Users"
+
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Please enter an email address"
 msgstr "Please enter an email address"
@@ -3046,6 +2999,40 @@ msgstr "Sending..."
 msgid "Send invitation"
 msgstr "Send invitation"
 
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+msgid "Edit Role"
+msgstr "Edit Role"
+
+#. placeholder {0}: userName
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+msgid "Change the role for {0}."
+msgstr "Change the role for {0}."
+
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+msgid "Edit role"
+msgstr "Edit role"
+
+#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+msgid "Saving..."
+msgstr "Saving..."
+
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+msgid "Edit Team"
+msgstr "Edit Team"
+
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+msgid "Update the team name."
+msgstr "Update the team name."
+
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+msgid "Edit team"
+msgstr "Edit team"
+
+#: src/routes/(app)/settings/teams/EditTeam.svelte
+#: src/routes/(app)/settings/teams/NewTeam.svelte
+msgid "e.g., Sales team"
+msgstr "e.g., Sales team"
+
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "You cannot remove yourself from the organization"
 msgstr "You cannot remove yourself from the organization"
@@ -3067,35 +3054,189 @@ msgstr "Are you sure you want to remove {0} from this organization? They will lo
 msgid "Removing..."
 msgstr "Removing..."
 
-#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
-msgid "Edit Role"
-msgstr "Edit Role"
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
+msgid "Remove"
+msgstr "Remove"
 
-#. placeholder {0}: userName
-#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
-msgid "Change the role for {0}."
-msgstr "Change the role for {0}."
+#: src/routes/(app)/settings/teams/NewTeam.svelte
+msgid "New Team"
+msgstr "New Team"
 
-#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
-msgid "Edit role"
-msgstr "Edit role"
+#: src/routes/(app)/settings/teams/NewTeam.svelte
+msgid "Create a new team."
+msgstr "Create a new team."
 
-#: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
-msgid "Saving..."
-msgstr "Saving..."
+#: src/routes/(app)/settings/tags/NewTag.svelte
+msgid "New Tag"
+msgstr "New Tag"
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."
-msgstr "Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone."
+#: src/routes/(app)/settings/tags/NewTag.svelte
+msgid "Create a new tag for organizing your contacts."
+msgstr "Create a new tag for organizing your contacts."
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?"
-msgstr "Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?"
+#: src/routes/(app)/settings/tags/EditTag.svelte
+#: src/routes/(app)/settings/tags/NewTag.svelte
+msgid "e.g., Newsletter subscribers"
+msgstr "e.g., Newsletter subscribers"
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Event deleted"
-msgstr "Event deleted"
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Manage tags for organizing and categorizing your contacts."
+msgstr "Manage tags for organizing and categorizing your contacts."
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Delete event"
-msgstr "Delete event"
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "No tags yet. Create your first tag to get started."
+msgstr "No tags yet. Create your first tag to get started."
+
+#: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Active"
+msgstr "Active"
+
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Inactive"
+msgstr "Inactive"
+
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Loading tags..."
+msgstr "Loading tags..."
+
+#: src/routes/(app)/settings/teams/+page.svelte
+msgid "Manage teams for organizing people and users."
+msgstr "Manage teams for organizing people and users."
+
+#: src/routes/(app)/settings/teams/+page.svelte
+msgid "No teams yet. Create your first team to get started."
+msgstr "No teams yet. Create your first team to get started."
+
+#: src/routes/(app)/settings/teams/+page.svelte
+msgid "Loading teams..."
+msgstr "Loading teams..."
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Edit Tag"
+msgstr "Edit Tag"
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Update the tag name and status."
+msgstr "Update the tag name and status."
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Edit tag"
+msgstr "Edit tag"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again."
+msgstr "Are you sure you want to delete this signup? The person will not be notified, but they can still sign up again."
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Delete signup"
+msgstr "Delete signup"
+
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+msgid "Add User"
+msgstr "Add User"
+
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+msgid "Select organization members to add to the team."
+msgstr "Select organization members to add to the team."
+
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+msgid "Error loading users."
+msgstr "Error loading users."
+
+#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+msgid "No users available to add."
+msgstr "No users available to add."
+
+#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
+msgid "Organization configuration updated successfully"
+msgstr "Organization configuration updated successfully"
+
+#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
+msgid "Default Language"
+msgstr "Default Language"
+
+#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
+msgid "Default Timezone"
+msgstr "Default Timezone"
+
+#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
+msgid "Organization logo"
+msgstr "Organization logo"
+
+#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
+msgid "URL to the organization logo. It will be displayed on some public pages (depending on other settings). Recommended size: 16:9 ratio. Max size: 2MB."
+msgstr "URL to the organization logo. It will be displayed on some public pages (depending on other settings). Recommended size: 16:9 ratio. Max size: 2MB."
+
+#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
+msgid "Organization icon"
+msgstr "Organization icon"
+
+#: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
+msgid "URL to the organization icon. It will be used in the menu and other Belcoda pages.Recommended size: 128x128px or 256x256px. Max size: 2MB."
+msgstr "URL to the organization icon. It will be used in the menu and other Belcoda pages.Recommended size: 128x128px or 256x256px. Max size: 2MB."
+
+#: src/routes/(app)/settings/organization/configuration/+page.svelte
+msgid "Are you sure you want to cancel?"
+msgstr "Are you sure you want to cancel?"
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Team not found."
+msgstr "Team not found."
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Back to teams"
+msgstr "Back to teams"
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "People on this team"
+msgstr "People on this team"
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Contacts (people) that belong to this team."
+msgstr "Contacts (people) that belong to this team."
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "No people on this team yet."
+msgstr "No people on this team yet."
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Add person"
+msgstr "Add person"
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Users on this team"
+msgstr "Users on this team"
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Organization members (users) who have access to this team."
+msgstr "Organization members (users) who have access to this team."
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "No users on this team yet."
+msgstr "No users on this team yet."
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Add user"
+msgstr "Add user"
+
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Loading team..."
+msgstr "Loading team..."
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Email saved"
+msgstr "Email saved"
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Organization"
+msgstr "Organization"
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Developer"
+msgstr "Developer"

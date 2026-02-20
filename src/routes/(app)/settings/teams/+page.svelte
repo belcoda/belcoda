@@ -53,7 +53,8 @@
 											{team.name}
 										</a>
 									</Table.Cell>
-									<Table.Cell class="text-muted-foreground">{formatDate(team.createdAt)}</Table.Cell>
+									<Table.Cell class="text-muted-foreground">{formatDate(team.createdAt)}</Table.Cell
+									>
 									<Table.Cell class="text-right">
 										<EditTeam {team} />
 									</Table.Cell>

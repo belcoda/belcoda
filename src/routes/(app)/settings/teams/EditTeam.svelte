@@ -33,9 +33,9 @@
 						...data,
 						deletedAt:
 							data.deletedAt != null
-								? (typeof data.deletedAt === 'number'
-										? data.deletedAt
-										: (data.deletedAt as Date).getTime())
+								? typeof data.deletedAt === 'number'
+									? data.deletedAt
+									: (data.deletedAt as Date).getTime()
 								: null
 					}
 				})
@@ -46,11 +46,7 @@
 	let isOpen = $state(false);
 </script>
 
-<ResponsiveModal
-	title={t`Edit Team`}
-	description={t`Update the team name.`}
-	bind:open={isOpen}
->
+<ResponsiveModal title={t`Edit Team`} description={t`Update the team name.`} bind:open={isOpen}>
 	{#snippet trigger()}
 		<Tooltip.Root>
 			<Tooltip.Trigger>
