@@ -14,7 +14,7 @@ import { valibot } from 'sveltekit-superforms/adapters';
 import { parse } from 'valibot';
 import { getSurveySchema, type SurveySchema } from '$lib/schema/survey/questions';
 import { type EventSignupHelper, eventSignupHelper } from '$lib/schema/event-signup';
-import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
+import { signUpForEventHelper, declineEventHelper } from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
 import { event, session } from '$lib/schema/drizzle.js';
@@ -58,43 +58,72 @@ export async function load({ locals, params, url }) {
 }
 
 export const actions = {
-	default: async ({ request, params }) => {
+	signup: async ({ request, params }) => {
+		const organizationId = await _getOrganizationIdBySlugUnsafe({
+			organizationSlug: params.organizationSlug
+		});
+		if (!organizationId) {
+			return error(404, 'Organization not found');
+		}
+		const eventObj = await _getEventBySlugUnsafe({
+			eventSlug: params.eventSlug,
+			organizationId: organizationId
+		});
+		if (!eventObj) {
+			return error(404, 'Event not found');
+		}
+		const surveySchema = getSurveySchema(eventObj);
+		const form = await superValidate(request, valibot(surveySchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
 		try {
-			const organizationId = await _getOrganizationIdBySlugUnsafe({
-				organizationSlug: params.organizationSlug
-			});
-			if (!organizationId) {
-				return error(404, 'Organization not found');
-			}
-			const eventObj = await _getEventBySlugUnsafe({
-				eventSlug: params.eventSlug,
-				organizationId: organizationId
-			});
-			if (!eventObj) {
-				throw new Error('Event not found');
-			}
-			const surveySchema = getSurveySchema(eventObj);
-			const form = await superValidate(request, valibot(surveySchema));
-			if (!form.valid) {
-				return fail(400, { form });
-			}
-			//sign up for the event
-			const helper: EventSignupHelper = {
-				organizationId: organizationId,
-				person: form.data.person,
-				addedFrom: {
-					type: 'added_from_event',
-					eventSignupId: eventObj.id
-				},
-				eventId: eventObj.id,
-				details: {
-					channel: { type: 'eventPage' },
-					customFields: form.data.customFields
-				}
-			};
-
 			await db.transaction(async (tx) => {
-				const eventSignup = await signUpForEventHelper({
+				await signUpForEventHelper({
+					tx,
+					eventId: eventObj.id,
+					personAction: form.data.person,
+					signupDetails: {
+						channel: { type: 'eventPage' },
+						customFields: form.data.customFields
+					},
+					organizationId
+				});
+			});
+      const theme = form.data.theme || 'default';
+			return redirect(302, `/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up${theme ? `?theme=${theme}` : ''}`);
+		} catch (err) {
+			if (
+				err instanceof redirect ||
+				(err && typeof err === 'object' && 'status' in err && 'location' in err)
+			) {
+				throw err;
+			}
+			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
+		}
+	},
+	decline: async ({ request, params }) => {
+		const organizationId = await _getOrganizationIdBySlugUnsafe({
+			organizationSlug: params.organizationSlug
+		});
+		if (!organizationId) {
+			return error(404, 'Organization not found');
+		}
+		const eventObj = await _getEventBySlugUnsafe({
+			eventSlug: params.eventSlug,
+			organizationId: organizationId
+		});
+		if (!eventObj) {
+			return error(404, 'Event not found');
+		}
+		const surveySchema = getSurveySchema(eventObj);
+		const form = await superValidate(request, valibot(surveySchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+		try {
+			await db.transaction(async (tx) => {
+				await declineEventHelper({
 					tx,
 					eventId: eventObj.id,
 					personAction: form.data.person,
@@ -108,10 +137,16 @@ export const actions = {
 			const theme = form.data.theme || 'default';
 			return redirect(
 				302,
-				`/page/${params.organizationSlug}/events/${params.eventSlug}/signed-up${theme ? `?theme=${theme}` : ''}`
+				`/page/${params.organizationSlug}/events/${params.eventSlug}/declined${theme ? `?theme=${theme}` : ''}`
 			);
 		} catch (err) {
-			return fail(400, err);
+			if (
+				err instanceof redirect ||
+				(err && typeof err === 'object' && 'status' in err && 'location' in err)
+			) {
+				throw err;
+			}
+			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
 		}
 	}
 };
