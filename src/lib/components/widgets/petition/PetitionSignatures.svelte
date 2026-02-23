@@ -2,7 +2,7 @@
 	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 	import { type ReadPetitionZero } from '$lib/schema/petition/petition';
 	import { t } from '$lib/index.svelte';
-	const { petition }: { petition: ReadPetitionZero } = $props();
+	const { petition }: { petition: Readonly<ReadPetitionZero> } = $props();
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import type { PetitionSignatureListFilter } from '$lib/zero/query/petition_signature/list';
@@ -19,12 +19,14 @@
 		return z.createQuery(queries.petitionSignature.list(filter));
 	});
 
-	let selectedSignatures = $state<ReadPetitionSignatureZeroWithPerson[]>([]);
+	let selectedSignatures = $state<Readonly<ReadPetitionSignatureZeroWithPerson>[]>([]);
 
 	import * as Card from '$lib/components/ui/card/index.js';
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import SignatureTable from './signatures/SignatureTable.svelte';
+	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
+	import { handleAddPerson } from './signatures/signatureActions';
 </script>
 
 <Card.Root>
@@ -33,14 +35,25 @@
 			<div class="grow space-y-3">
 				<PersonFilter bind:filter hideActivityFilter={true} />
 			</div>
-			<div class="flex items-center gap-2"></div>
+			<div class="flex items-center gap-2">
+				<Button variant="ghost" size="sm" href="/petitions/{petition.id}/signatures">
+					{t`View all`}
+				</Button>
+				<AddPersonModal
+					trigger={addPersonTrigger}
+					personIdsToExclude={petitionSignatures.data.map((sig) => sig.personId)}
+					onSelected={(personIds) => {
+						handleAddPerson({ petitionId: petition.id, personIds });
+					}}
+				/>
+			</div>
 		</Card.Title>
 	</Card.Header>
 
 	<Card.Content>
 		<SignatureTable
-			signatures={petitionSignatures.data as ReadPetitionSignatureZeroWithPerson[]}
-			{petition}
+			signatures={petitionSignatures.data ?? []}
+			petition={petition}
 			bind:selectedSignatures
 			queryIsCompleted={petitionSignatures.details.type === 'complete'}
 		/>

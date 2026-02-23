@@ -2179,6 +2179,12 @@ const petitionSignatureTable = {
 			optional: true,
 			customType: null as unknown as number,
 			serverName: 'updated_at'
+		},
+		deletedAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'deleted_at'
 		}
 	},
 	primaryKey: ['id'],

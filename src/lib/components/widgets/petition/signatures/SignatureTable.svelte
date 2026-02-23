@@ -16,13 +16,17 @@
 	} = $props();
 
 	import * as Table from '$lib/components/ui/table/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 
 	import SignatureTableRow from './SignatureTableRow.svelte';
+	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
 
 	import PenLineIcon from '@lucide/svelte/icons/pen-line';
+	import { handleAddPerson } from './signatureActions';
+	
 	const signatureCountLabel = (count: number) => {
 		return t`${count.toString()} signatures`;
 	};
@@ -50,7 +54,7 @@
 							checked={selectedSignatures.length === signatures.length}
 							onCheckedChange={(checked) => {
 								if (checked) {
-									selectedSignatures = signatures;
+									selectedSignatures = [...signatures];
 								} else {
 									selectedSignatures = [];
 								}

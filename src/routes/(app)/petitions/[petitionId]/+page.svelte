@@ -13,13 +13,15 @@
 </script>
 
 <ContentLayout rootLink="/petitions" {header}>
-	{#if petition.details.type === 'complete' && petition.data}
-		<PetitionSignatures petition={petition.data} />
-	{:else}
-		<Skeleton class="h-48 w-full" />
-		<Skeleton class="h-48 w-full" />
-		<Skeleton class="h-48 w-full" />
-	{/if}
+	{#key params.petitionId}
+		{#if petition.details.type === 'complete' && petition.data}
+			<PetitionSignatures petition={petition.data} />
+		{:else}
+			<Skeleton class="h-48 w-full" />
+			<Skeleton class="h-48 w-full" />
+			<Skeleton class="h-48 w-full" />
+		{/if}
+	{/key}
 </ContentLayout>
 
 {#snippet header()}
