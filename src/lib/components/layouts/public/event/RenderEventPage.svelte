@@ -6,6 +6,7 @@
 	import type { SurveySchema } from '$lib/schema/survey/questions';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import EventSignUpSuccess from '$lib/components/layouts/public/event/EventSignUpSuccess.svelte';
+	import EventDeclineSuccess from '$lib/components/layouts/public/event/EventDeclineSuccess.svelte';
 	type Props = {
 		event: EventSchema;
 		organization: OrganizationSchema;
@@ -13,18 +14,20 @@
 		session?: App.Locals['session'] | null;
 		form?: SuperValidated<SurveySchema>;
 		whatsAppSignupLink?: string;
-		theme: EventTheme;
+		layout: 'default' | 'embed';
 		success?: boolean;
+		declined?: boolean;
 	};
 	const {
 		event,
 		organization,
-		theme = 'default',
+		layout = 'default',
 		signupCount = 0,
 		session,
 		whatsAppSignupLink,
 		form,
-		success = false
+		success = false,
+		declined = false
 	}: Props = $props();
 
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
@@ -47,7 +50,7 @@
 		<link rel="icon" href={organization.icon} />
 	{/if}
 </svelte:head>
-{#if theme === 'default'}
+{#if layout === 'default'}
 	<main class="min-h-screen bg-gray-50">
 		<div
 			class="relative h-96 w-full bg-cover bg-center bg-no-repeat"
@@ -124,19 +127,22 @@
 				<div class="lg:col-span-1">
 					<div class="sticky top-8">
 						<div class="rounded-lg bg-white p-6 shadow-sm">
-							{#if form && whatsAppSignupLink && !success}
+							{#if form && whatsAppSignupLink && !success && !declined}
 								<EventSignupForm
 									{form}
 									{currentSignups}
 									{event}
 									{organization}
 									{session}
-									{theme}
+									{layout}
 									{whatsAppSignupLink}
 								/>
 							{/if}
 							{#if success}
 								<EventSignUpSuccess {event} {organization} />
+							{/if}
+							{#if declined}
+								<EventDeclineSuccess {event} {organization} />
 							{/if}
 						</div>
 					</div>
@@ -144,20 +150,23 @@
 			</div>
 		</div>
 	</main>
-{:else if theme === 'embed'}
+{:else if layout === 'embed'}
 	<div class="mx-auto max-w-md bg-white">
-		{#if form && whatsAppSignupLink && !success}
+		{#if form && whatsAppSignupLink && !success && !declined}
 			<EventSignupForm
 				{currentSignups}
 				{form}
 				{event}
 				{organization}
-				{theme}
+				{layout}
 				{whatsAppSignupLink}
 			/>
 		{/if}
 		{#if success}
 			<EventSignUpSuccess {event} {organization} />
+		{/if}
+		{#if declined}
+			<EventDeclineSuccess {event} {organization} />
 		{/if}
 	</div>
 {/if}

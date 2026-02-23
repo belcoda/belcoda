@@ -161,31 +161,59 @@
 			<AlertCircleIcon />
 			<Alert.Title>{t`Danger zone!`}</Alert.Title>
 			<Alert.Description>
-				{t`Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone.`}
-				<div class="mt-2">
-					<Button
-						type="button"
-						variant="destructive"
-						onclick={async () => {
-							if (
-								window.confirm(
-									t`Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?`
-								)
-							) {
-								z.mutate(
-									mutators.event.delete({
-										metadata: {
-											eventId: event.id,
-											organizationId: appState.organizationId
-										}
-									})
-								);
-								toast.success(t`Event deleted`);
-								goto('/events');
-							}
-						}}>{t`Delete event`}</Button
-					>
-				</div>
+				{#if event.published}
+					{t`Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later.`}
+					<div class="mt-2">
+						<Button
+							type="button"
+							variant="destructive"
+							onclick={async () => {
+								if (
+									window.confirm(
+										t`This event will be archived and hidden from the public. Signups will be closed. Are you sure?`
+									)
+								) {
+									z.mutate(
+										mutators.event.archive({
+											metadata: {
+												eventId: event.id,
+												organizationId: appState.organizationId
+											}
+										})
+									);
+									toast.success(t`Event archived`);
+									goto('/events');
+								}
+							}}>{t`Archive event`}</Button
+						>
+					</div>
+				{:else}
+					{t`Delete this event permanently. Any signups will be cancelled (they will not be notified). This action cannot be undone.`}
+					<div class="mt-2">
+						<Button
+							type="button"
+							variant="destructive"
+							onclick={async () => {
+								if (
+									window.confirm(
+										t`Any signups will be cancelled (they will not be notified). The event will be deleted and cannot be recovered. Are you sure?`
+									)
+								) {
+									z.mutate(
+										mutators.event.delete({
+											metadata: {
+												eventId: event.id,
+												organizationId: appState.organizationId
+											}
+										})
+									);
+									toast.success(t`Event deleted`);
+									goto('/events');
+								}
+							}}>{t`Delete event`}</Button
+						>
+					</div>
+				{/if}
 			</Alert.Description>
 		</Alert.Root>
 	{/if}

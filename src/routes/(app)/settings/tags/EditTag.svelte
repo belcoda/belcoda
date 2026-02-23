@@ -55,7 +55,11 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Name`}</Form.Label>
-						<Input type="text" bind:value={$data.name} placeholder={t`e.g., Newsletter subscribers`} />
+						<Input
+							type="text"
+							bind:value={$data.name}
+							placeholder={t`e.g., Newsletter subscribers`}
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -65,7 +69,7 @@
 					{#snippet children({ props })}
 						<div class="flex items-center gap-2">
 							<Checkbox {...props} bind:checked={$data.active} />
-							<Form.Label class="font-normal cursor-pointer">{t`Active`}</Form.Label>
+							<Form.Label class="cursor-pointer font-normal">{t`Active`}</Form.Label>
 						</div>
 					{/snippet}
 				</Form.Control>

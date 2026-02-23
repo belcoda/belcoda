@@ -5,10 +5,10 @@
 	import { page } from '$app/state';
 	import { env } from '$env/dynamic/public';
 	import { dev } from '$app/environment';
-	import { eventThemes, type EventTheme } from '$lib/schema/event';
-	const paramTheme = page.url.searchParams.get('theme') || 'default';
-	const themes = eventThemes;
-	const theme = themes.includes(paramTheme as EventTheme) ? (paramTheme as EventTheme) : 'default';
+
+	const paramLayout = page.url.searchParams.get('layout') || 'default';
+	const layouts = ['default', 'embed'];
+	const layout = layouts.includes(paramLayout) ? (paramLayout as 'default' | 'embed') : 'default';
 
 	// Build the edit URL: strip the subdomain and go to the main app
 	const editEventUrl = $derived.by(() => {
@@ -24,7 +24,7 @@
 <RenderEventPage
 	event={data.event}
 	organization={data.organization}
-	{theme}
+	{layout}
 	form={data.form}
 	whatsAppSignupLink={data.whatsAppSignupLink}
 />

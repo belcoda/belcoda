@@ -30,11 +30,7 @@
 	let isOpen = $state(false);
 </script>
 
-<ResponsiveModal
-	title={t`New Team`}
-	description={t`Create a new team.`}
-	bind:open={isOpen}
->
+<ResponsiveModal title={t`New Team`} description={t`Create a new team.`} bind:open={isOpen}>
 	{#snippet trigger()}
 		<Button variant="outline"><PlusIcon /> {t`New`}</Button>
 	{/snippet}

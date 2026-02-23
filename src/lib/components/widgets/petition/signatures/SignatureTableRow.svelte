@@ -50,23 +50,23 @@
 			/>
 			<div class="flex grow items-center gap-2">
 				<Avatar
-					src={signature.person.profilePicture}
+					src={signature.person?.profilePicture}
 					class="size-6"
-					name1={signature.person.givenName ||
-						signature.person.familyName ||
-						signature.person.emailAddress ||
+					name1={signature.person?.givenName ||
+						signature.person?.familyName ||
+						signature.person?.emailAddress ||
 						''}
-					name2={signature.person.familyName}
+					name2={signature.person?.familyName}
 				/>
 				<div class="flex flex-col">
 					<div class="text-sm font-medium">
-						{signature.person.givenName}
-						{signature.person.familyName}
+						{signature.person?.givenName || ''}
+						{signature.person?.familyName || ''}
 					</div>
 					<div class="line-clamp-1 max-w-full text-xs text-muted-foreground">
-						{#if signature.person.emailAddress}
+						{#if signature.person?.emailAddress}
 							{signature.person.emailAddress}
-						{:else if signature.person.phoneNumber}
+						{:else if signature.person?.phoneNumber}
 							{signature.person.phoneNumber}
 						{/if}
 					</div>

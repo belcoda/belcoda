@@ -10,7 +10,9 @@ import {
 	updateEventZeroMutatorSchema,
 	type UpdateEventZeroMutatorSchemaOutput,
 	deleteEventMutatorSchemaZero,
-	type DeleteEventMutatorSchemaZero
+	type DeleteEventMutatorSchemaZero,
+	archiveEventMutatorSchemaZero,
+	type ArchiveEventMutatorSchemaZero
 } from '$lib/schema/event';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { parse } from 'valibot';
@@ -188,6 +190,10 @@ export async function deleteEvent({
 		throw new Error('Event not found');
 	}
 
+	if (eventRecord.published) {
+		throw new Error('Cannot delete a published event. Archive it instead.');
+	}
+
 	await tx.dbTransaction.wrappedTransaction
 		.update(eventSignup)
 		.set({ status: 'cancelled', updatedAt: new Date() })
@@ -201,6 +207,42 @@ export async function deleteEvent({
 	await tx.dbTransaction.wrappedTransaction
 		.update(event)
 		.set({ deletedAt: new Date(), updatedAt: new Date() })
+		.where(
+			and(
+				eq(event.id, parsed.metadata.eventId),
+				eq(event.organizationId, parsed.metadata.organizationId)
+			)
+		);
+}
+
+export async function archiveEvent({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: ArchiveEventMutatorSchemaZero;
+}) {
+	const parsed = parse(archiveEventMutatorSchemaZero, args);
+	const eventRecord = await tx.run(
+		builder.event
+			.where('id', '=', parsed.metadata.eventId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => eventReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!eventRecord) {
+		throw new Error('Event not found');
+	}
+
+	if (!eventRecord.published) {
+		throw new Error('Cannot archive a draft event. Delete it instead.');
+	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(event)
+		.set({ archivedAt: new Date(), updatedAt: new Date() })
 		.where(
 			and(
 				eq(event.id, parsed.metadata.eventId),
