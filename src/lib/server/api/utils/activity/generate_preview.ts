@@ -138,8 +138,39 @@ export async function generatePreview({
 				eventId: eventResult.id
 			};
 		}
+		case 'email_outgoing': {
+			const emailResult = await drizzle.query.emailMessage.findFirst({
+				where: (row, { eq }) => eq(row.id, referenceId)
+			});
+			if (!emailResult) {
+				throw new Error('Email message not found');
+			}
+			const bodyStart = extractTextFromLexical(emailResult.body);
+			return {
+				type: 'email_outgoing',
+				subject: emailResult.subject ?? '',
+				bodyStart,
+				emailMessageId: emailResult.id
+			};
+		}
 		default: {
 			throw new Error(`Unsupported activity type: ${type}`);
 		}
 	}
+}
+
+function extractTextFromLexical(body: unknown): string {
+	if (!body || typeof body !== 'object') return '';
+	const node = body as Record<string, unknown>;
+	let text = '';
+	if (node.type === 'text' && typeof node.text === 'string') {
+		text += node.text;
+	}
+	if (Array.isArray(node.children)) {
+		for (const child of node.children) {
+			text += extractTextFromLexical(child);
+			if (text.length >= 100) break;
+		}
+	}
+	return text.substring(0, 100);
 }
