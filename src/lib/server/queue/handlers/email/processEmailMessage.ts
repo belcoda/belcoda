@@ -6,6 +6,8 @@ import { getPersonIdsFromFilter } from '$lib/server/utils/person/filter';
 import { getEmailSignature } from '$lib/server/utils/email/signature';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import pino from '$lib/pino';
+import { env } from '$env/dynamic/private';
+const { POSTMARK_MESSAGE_TEMPLATE_ALIAS } = env;
 
 const log = pino(import.meta.url);
 
@@ -90,7 +92,13 @@ export async function processEmailMessage({
 	const queue = await getQueue();
 
 	for (const recipient of recipients) {
-		if (!recipient.emailAddress) continue;
+		if (!recipient.emailAddress) {
+			log.warn(
+				{ personId: recipient.id, emailMessageId },
+				'Skipping recipient with no email address'
+			);
+			continue;
+		}
 
 		try {
 			// For now, we use a simple template. In the future, we could use
@@ -99,7 +107,7 @@ export async function processEmailMessage({
 				to: recipient.emailAddress,
 				from: `${signature.name} <${signature.emailAddress}>`,
 				replyTo: signature.replyTo || undefined,
-				template: 'broadcast-message', // Using the broadcast template
+				template: POSTMARK_MESSAGE_TEMPLATE_ALIAS,
 				stream: 'broadcast',
 				context: {
 					subject: email.subject || '',
