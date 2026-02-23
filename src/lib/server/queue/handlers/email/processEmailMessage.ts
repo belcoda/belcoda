@@ -8,6 +8,8 @@ import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import pino from '$lib/pino';
 import { env } from '$env/dynamic/private';
 const { POSTMARK_MESSAGE_TEMPLATE_ALIAS } = env;
+import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+const lexicalRenderer = new LexicalHtmlRenderer();
 
 const log = pino(import.meta.url);
 
@@ -111,7 +113,7 @@ export async function processEmailMessage({
 				stream: 'broadcast',
 				context: {
 					subject: email.subject || '',
-					body: email.body ? JSON.stringify(email.body) : '', // Lexical content
+					body: email.body ? await lexicalRenderer.render(JSON.stringify(email.body)) : '',
 					organizationName: org.name
 				}
 			});
