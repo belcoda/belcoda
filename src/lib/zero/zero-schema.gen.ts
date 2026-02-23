@@ -86,6 +86,7 @@ const activityTable = {
 				| 'team_added'
 				| 'team_removed'
 				| 'event_signup'
+				| 'event_not_attending'
 				| 'event_signup_email_sent'
 				| 'event_reminder_email_sent'
 				| 'event_attended'
@@ -1784,6 +1785,7 @@ const personTable = {
 				| { type: 'team_added'; teamName: string; teamId: string }
 				| { type: 'team_removed'; teamName: string; teamId: string }
 				| { type: 'event_signup'; eventName: string; eventId: string }
+				| { type: 'event_not_attending'; eventName: string; eventId: string }
 				| { type: 'event_signup_email_sent'; eventName: string; eventId: string }
 				| { type: 'event_reminder_email_sent'; eventName: string; eventId: string }
 				| { type: 'event_attended'; eventName: string; eventId: string }

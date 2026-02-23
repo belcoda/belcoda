@@ -2,7 +2,12 @@ import { type Transaction } from '@rocicorp/zero';
 import { type Schema } from '$lib/zero/schema';
 import { defineMutator } from '@rocicorp/zero';
 
-import { createEventZeroMutatorSchema, updateEventZeroMutatorSchema } from '$lib/schema/event';
+import {
+	createEventZeroMutatorSchema,
+	updateEventZeroMutatorSchema,
+	deleteEventMutatorSchemaZero,
+	archiveEventMutatorSchemaZero
+} from '$lib/schema/event';
 import { parse } from 'valibot';
 
 export const createEvent = defineMutator(
@@ -47,6 +52,28 @@ export const updateEvent = defineMutator(
 		tx.mutate.event.update({
 			id: args.metadata.eventId,
 			...args.input,
+			updatedAt: new Date().getTime()
+		});
+	}
+);
+
+export const deleteEvent = defineMutator(
+	deleteEventMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
+		tx.mutate.event.update({
+			id: args.metadata.eventId,
+			deletedAt: new Date().getTime(),
+			updatedAt: new Date().getTime()
+		});
+	}
+);
+
+export const archiveEvent = defineMutator(
+	archiveEventMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
+		tx.mutate.event.update({
+			id: args.metadata.eventId,
+			archivedAt: new Date().getTime(),
 			updatedAt: new Date().getTime()
 		});
 	}

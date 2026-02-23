@@ -12,6 +12,7 @@ export const activityTypesList = [
 	'team_removed', //referenceId: teamId
 
 	'event_signup', //referenceId: eventSignupId
+	'event_not_attending', //referenceId: eventSignupId
 	'event_attended', //referenceId: eventSignupId
 	'event_noshow', //referenceId: eventSignupId
 	'event_apology', //referenceId: eventSignupId
@@ -130,6 +131,11 @@ export const activityPreviewPayloads = v.variant('type', [
 	}),
 	v.object({
 		type: v.literal('event_signup'),
+		eventName: mediumString,
+		eventId: uuid
+	}),
+	v.object({
+		type: v.literal('event_not_attending'),
 		eventName: mediumString,
 		eventId: uuid
 	}),

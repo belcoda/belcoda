@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
-	import { type EventSchema } from '$lib/schema/event';
+	import { type EventSchema, type EventTheme } from '$lib/schema/event';
 	import type { OrganizationSchema } from '$lib/schema/organization';
 	import { renderEventTime } from '$lib/utils/date';
 	import { renderAddress } from '$lib/utils/string/address';
@@ -67,11 +67,6 @@
 		personActionHelper,
 		customSurveyQuestions
 	);
-	//create the schema for the form (this will be a dynamic schema based on the survey questions)
-	const schema = object({
-		person: personActionHelperSchema, //include the added additional person fields
-		customFields: customQuestionSurveySchema //include the custom fields from the survey
-	});
 	let submissionError: string | null = $state(null);
 	let submissionSuccess: boolean = $state(false);
 	import WhatsAppSignup from './WhatsAppSignup.svelte';
@@ -143,6 +138,7 @@
 					<div class="text-sm text-red-700">{submissionError}</div>
 				</div>
 			{/if}
+			<input type="hidden" name="layout" value={layout} />
 
 			<RenderError errors={allErrors} />
 
@@ -363,15 +359,19 @@
 			{/if}
 
 			<div class="mt-4 flex flex-col gap-3">
-				<Button type="submit" class="w-full" disabled={$submitting}>
+				<Button type="submit" class="w-full" disabled={$submitting} formaction="?/signup">
 					{#if $delayed}<Spinner class="size-4" />{/if}
 					{t`Sign up now`}</Button
 				>
 				<div class="hidden lg:block">
 					<WhatsAppSignup {whatsAppSignupLink} />
 				</div>
-				<Button type="button" variant="ghost" class="w-full" disabled={$submitting}
-					>{t`I can't attend`}</Button
+				<Button
+					type="submit"
+					variant="ghost"
+					class="w-full"
+					disabled={$submitting}
+					formaction="?/decline">{t`I can't attend`}</Button
 				>
 			</div>
 

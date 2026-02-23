@@ -6,16 +6,19 @@
 	const isMobile = new IsMobile();
 	import Fuse from 'fuse.js';
 	let searchString = $state('');
-	const fuse = new Fuse(settingsItems, {
-		includeScore: true,
-		keys: ['title', 'keywords', 'items.title', 'items.keywords'],
-		threshold: 0.2
-	});
+
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import { settingsItems, groupBy } from '$lib/components/layouts/app/sidebars/settings/items';
 
 	import { appState } from '$lib/state.svelte';
+
+	const fuse = new Fuse(settingsItems, {
+		includeScore: true,
+		keys: ['title', 'keywords', 'items.title', 'items.keywords'],
+		threshold: 0.2
+	});
+
 	const result = $derived.by(() => {
 		if (searchString === '') {
 			const filteredItems = settingsItems.filter((item) => {

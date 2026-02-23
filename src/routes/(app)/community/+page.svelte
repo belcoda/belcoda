@@ -4,7 +4,6 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
 	import UserSearchIcon from '@lucide/svelte/icons/user-search';
-	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
 	import { t } from '$lib/index.svelte';
 </script>
 
@@ -14,18 +13,18 @@
 			<Empty.Media variant="icon">
 				<UserSearchIcon />
 			</Empty.Media>
-			<Empty.Title>Community</Empty.Title>
-			<Empty.Description>All your people and teams in one place.</Empty.Description>
+			<Empty.Title>{t`Community`}</Empty.Title>
+			<Empty.Description>{t`All your people and teams in one place.`}</Empty.Description>
 		</Empty.Header>
 		<Empty.Content>
 			<div class="flex gap-2">
-				<AddPersonModal {trigger} personIdsToExclude={[]} onSelected={(personIds) => {}} />
-				{#snippet trigger()}<Button>Add Person</Button>{/snippet}
+				<Button href="/community/person/new">{t`Add Person`}</Button>
 			</div>
 		</Empty.Content>
 		<Button variant="link" class="text-muted-foreground" size="sm">
-			<a href="#/">
-				Learn more about Belcoda's community module <ExternalLinkIcon class="inline" />
+			<a href="https://www.belcoda.com/features/organizing" target="_blank">
+				{t`Learn more about Belcoda's community module`}
+				<ExternalLinkIcon class="inline" />
 			</a>
 		</Button>
 	</Empty.Root>
