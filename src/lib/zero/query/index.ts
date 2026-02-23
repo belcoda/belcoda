@@ -1,5 +1,8 @@
 import { defineQueries } from '@rocicorp/zero';
 
+// activity
+import { listActivity } from '$lib/zero/query/activity/list';
+
 // action_code
 import { listActionCodes } from '$lib/zero/query/action_code/list';
 
@@ -60,6 +63,8 @@ import { listWebhooks } from '$lib/zero/query/webhook/list';
 
 // Re-export all queries
 export {
+	// activity
+	listActivity,
 	// action_code
 	listActionCodes,
 	// email_from_signature
@@ -106,6 +111,9 @@ export {
 };
 
 export default defineQueries({
+	activity: {
+		list: listActivity
+	},
 	actionCode: {
 		list: listActionCodes
 	},

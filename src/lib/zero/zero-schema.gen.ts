@@ -97,6 +97,12 @@ const activityTable = {
 				| 'petition_removed'
 				| 'note_added'
 		},
+		referenceId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'reference_id'
+		},
 		unread: {
 			type: 'boolean',
 			optional: false,

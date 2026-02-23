@@ -23,6 +23,6 @@ export type ReadActivityRest = v.InferOutput<typeof readActivityRest>;
 
 export const readActivityZero = v.object({
 	...activitySchema.entries,
-	createdAt: helpers.dateToString
+	createdAt: helpers.dateToTimestamp
 });
 export type ReadActivityZero = v.InferOutput<typeof readActivityZero>;
