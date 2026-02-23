@@ -109,7 +109,14 @@ export async function processEmailMessage({
 			});
 
 			successfulCount++;
+			log.debug({ personId: recipient.id, emailMessageId }, 'Email sent successfully');
+		} catch (err) {
+			failedCount++;
+			log.error({ err, personId: recipient.id, emailMessageId }, 'Failed to send email');
+			continue;
+		}
 
+		try {
 			await queue.insertActivity({
 				organizationId,
 				personId: recipient.id,
@@ -117,11 +124,11 @@ export async function processEmailMessage({
 				referenceId: emailMessageId,
 				unread: false
 			});
-
-			log.debug({ personId: recipient.id, emailMessageId }, 'Email sent successfully');
 		} catch (err) {
-			failedCount++;
-			log.error({ err, personId: recipient.id, emailMessageId }, 'Failed to send email');
+			log.error(
+				{ err, personId: recipient.id, emailMessageId },
+				'Failed to insert activity for email send'
+			);
 		}
 	}
 
