@@ -119,10 +119,12 @@ export async function getQueue() {
 
 		global.__queue__ = queueInstance;
 	} else if (dev) {
-		log.info('HMR detected: Refreshing queue workers...');
-		// In dev, we stop existing workers so the new code in allHandlersMap is used
-		await stopQueues(global.__queue__);
-		await createAndStartQueues(global.__queue__);
+		// NOTE: HMR for queue workers is not supported.
+		// Queue workers run background jobs via pg-boss, and their handler
+		// code is registered once at startup. To pick up changes in handlers,
+		// you must restart the dev server. HMR reloads the module but the
+		// running worker processes retain references to the old handler code.
+		log.debug('Queue workers do not support HMR. Restart the server to see handler changes.');
 	}
 
 	return global.__queue__;
