@@ -37,8 +37,8 @@
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
 
-	function updatePublished(checked: boolean) {
-		z.mutate(
+	async function updatePublished(checked: boolean) {
+		await z.mutate(
 			mutators.event.update({
 				metadata: {
 					eventId: event.id,
@@ -52,12 +52,17 @@
 		);
 	}
 
-	function handlePublishChange(checked: boolean) {
-		updatePublished(checked);
-		if (checked) {
-			toast.success('Event published');
-		} else {
-			toast.success('Event unpublished');
+	async function handlePublishChange(checked: boolean) {
+		try {
+			await updatePublished(checked);
+			if (checked) {
+				toast.success('Event published');
+			} else {
+				toast.success('Event unpublished');
+			}
+		} catch (error) {
+			toast.error('Failed to update event');
+			console.error('Error updating event published status:', error);
 		}
 	}
 
