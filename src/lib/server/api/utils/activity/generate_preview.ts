@@ -1,6 +1,12 @@
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
 import { drizzle } from '$lib/server/db';
 
+interface LexicalNode {
+	type?: unknown;
+	text?: unknown;
+	children?: unknown;
+}
+
 export async function generatePreview({
 	type,
 	referenceId
@@ -161,7 +167,7 @@ export async function generatePreview({
 
 function extractTextFromLexical(body: unknown): string {
 	if (!body || typeof body !== 'object') return '';
-	const node = body as Record<string, unknown>;
+	const node = body as LexicalNode;
 	let text = '';
 	if (node.type === 'text' && typeof node.text === 'string') {
 		text += node.text;

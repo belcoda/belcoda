@@ -6,6 +6,8 @@
 	import { type FilterGroupType, defaultFilterGroup } from '$lib/schema/person/filter';
 	import type { ReadEmailMessageZero } from '$lib/schema/email-message';
 
+	import type { SerializedEditorState } from 'lexical';
+
 	let {
 		email,
 		emailExists
@@ -16,13 +18,13 @@
 
 	type SaveEmailData = {
 		subject: string | undefined;
-		body: any | undefined; // body's type can be different things depending on lexical's config. leaving it as 'any' for now
+		body: SerializedEditorState | null | undefined;
 		emailFromSignatureId: string | undefined;
 		recipients: FilterGroupType;
 	};
 
 	let subject = $state<string>(email.subject ?? '');
-	let body = $state<any>(email.body ?? null);
+	let body = $state<SerializedEditorState | null>(email.body ?? null);
 	let emailFromSignatureId = $state<string | undefined>(email.emailFromSignatureId ?? undefined);
 	let recipients = $state<FilterGroupType>(
 		JSON.parse(JSON.stringify(email.recipients || defaultFilterGroup))
