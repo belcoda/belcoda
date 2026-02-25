@@ -4,7 +4,7 @@
 	import EventCreateOrUpdate from '$lib/components/forms/event/EventCreateOrUpdate.svelte';
 	import EventCreatedModal from '$lib/components/widgets/event/EventCreatedModal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { type CreateEventZero, type UpdateEventZero, createEventZero } from '$lib/schema/event';
+	import { type CreateEventZero, type UpdateEventZero, createEventZero, readEventZero } from '$lib/schema/event';
 	import { parse } from 'valibot';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
@@ -34,7 +34,7 @@
 		);
 		await event.client;
 		// Fetch the created event data for the modal
-		createdEvent = {
+		createdEvent = parse(readEventZero, {
 			id,
 			...parsed,
 			createdAt: Date.now(),
@@ -45,7 +45,7 @@
 			deletedAt: null,
 			archivedAt: null,
 			cancelledAt: null
-		} as ReadEventZero;
+		});
 		modalOpen = true;
 	}
 
@@ -64,6 +64,7 @@
 	<EventCreatedModal
 		event={createdEvent}
 		{organization}
+		mode="create"
 		bind:open={modalOpen}
 		onOpenChange={(open) => {
 			if (!open) handleModalClose();

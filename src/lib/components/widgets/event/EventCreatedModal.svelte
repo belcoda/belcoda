@@ -26,11 +26,13 @@
 	let {
 		event,
 		organization,
+		mode = 'create',
 		open = $bindable(false),
 		onOpenChange
 	}: {
 		event: ReadEventZero;
 		organization: ReadOrganizationZero;
+		mode?: 'create' | 'edit';
 		open?: boolean;
 		onOpenChange?: (open: boolean) => void;
 	} = $props();
@@ -70,10 +72,6 @@
 		goto(`/events/${event.id}/preview`);
 	}
 
-	function handleClose() {
-		onOpenChange?.(false);
-	}
-
 	const eventTimeData = $derived.by(() => {
 		const startsAt = event.startsAt ? new Date(event.startsAt).getTime() : Date.now();
 		const endsAt = event.endsAt ? new Date(event.endsAt).getTime() : startsAt + 3600000;
@@ -85,7 +83,7 @@
 	<Dialog.Root bind:open {onOpenChange}>
 		<Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
 			<Dialog.Header class="relative">
-				<Dialog.Title>{t`Event Created!`}</Dialog.Title>
+				<Dialog.Title>{mode === 'create' ? t`Event Created!` : t`Event Updated!`}</Dialog.Title>
 				<Dialog.Description>
 					{t`Here's a preview of how your event will appear to your audience.`}
 				</Dialog.Description>
@@ -102,7 +100,7 @@
 	<Drawer.Root bind:open {onOpenChange}>
 		<Drawer.Content class="max-h-[90vh]">
 			<Drawer.Header class="relative text-start">
-				<Drawer.Title>{t`Event Created!`}</Drawer.Title>
+				<Drawer.Title>{mode === 'create' ? t`Event Created!` : t`Event Updated!`}</Drawer.Title>
 				<Drawer.Description>
 					{t`Here's a preview of how your event will appear to your audience.`}
 				</Drawer.Description>

@@ -76,6 +76,7 @@
 	<EventCreatedModal
 		event={updatedEvent}
 		{organization}
+		mode="edit"
 		bind:open={showModal}
 		onOpenChange={(open) => {
 			if (!open) handleModalClose();
