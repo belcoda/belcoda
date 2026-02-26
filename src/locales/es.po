@@ -541,6 +541,7 @@ msgstr "Etiquetas"
 msgid "Filter tags..."
 msgstr "Filtrar etiquetas..."
 
+#: src/lib/components/flow/test/nodes/tag_add/Combobox.svelte
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
@@ -3333,4 +3334,24 @@ msgstr ""
 
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "Petition page link"
+msgstr ""
+
+#: src/lib/components/flow/test/nodes/event_signup/Combobox.svelte
+msgid "Select an event..."
+msgstr ""
+
+#: src/lib/components/flow/test/nodes/event_signup/Combobox.svelte
+msgid "Search event..."
+msgstr ""
+
+#: src/lib/components/flow/test/nodes/event_signup/Combobox.svelte
+msgid "No events found."
+msgstr ""
+
+#: src/lib/components/flow/test/nodes/tag_add/Combobox.svelte
+msgid "Select a tag..."
+msgstr ""
+
+#: src/lib/components/flow/test/nodes/tag_add/Combobox.svelte
+msgid "Search tag..."
 msgstr ""

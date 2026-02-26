@@ -93,6 +93,7 @@
 		"@types/country-list": "^2.1.4",
 		"@wuchale/svelte": "^0.17.5",
 		"@wuchale/vite-plugin": "^0.15.3",
+		"@xyflow/svelte": "^1.5.0",
 		"awesome-phonenumber": "^7.6.0",
 		"better-auth": "^1.4.1",
 		"country-list": "^2.4.1",

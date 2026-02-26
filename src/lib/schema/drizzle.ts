@@ -64,6 +64,8 @@ import { type EventSignupDetails, type EventSignupStatus } from '$lib/schema/eve
 import { type SocialMedia, type PersonAddedFrom } from '$lib/schema/person/meta';
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
 import type { PetitionSettingsSchema, PetitionSignatureDetails } from './petition/settings';
+import type { SavedFlowSchema } from '$lib/schema/whatsapp-thread';
+
 type Permissions = {
 	[resourceType: string]: ('read' | 'write' | 'delete')[];
 };
@@ -564,13 +566,7 @@ export const whatsappThread = pgTable('whatsapp_thread', {
 		.notNull()
 		.references(() => organization.id),
 	teamId: uuid('team_id').references(() => team.id),
-	recipients: jsonb('recipients').$type<FilterGroupType>().notNull(),
-	templateId: uuid('templateId')
-		.references((): AnyPgColumn => whatsappTemplate.id)
-		.notNull(),
-	templateMessage: jsonb('template_message').$type<WhatsappTemplateMessage>().notNull(),
-	messages: jsonb('messages').$type<WhatsappMessage[]>().notNull(),
-	actions: jsonb('actions').$type<Record<string, WhatsappMessageActions[]>>().notNull(),
+	flow: jsonb('flow').$type<SavedFlowSchema>().notNull(),
 	sentBy: uuid('sent_by').references(() => user.id),
 	startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }),
 	completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' }),
@@ -1151,10 +1147,6 @@ export const whatsappThreadRelations = relations(whatsappThread, ({ many, one })
 	organization: one(organization, {
 		fields: [whatsappThread.organizationId],
 		references: [organization.id]
-	}),
-	template: one(whatsappTemplate, {
-		fields: [whatsappThread.templateId],
-		references: [whatsappTemplate.id]
 	}),
 	team: one(team, {
 		fields: [whatsappThread.teamId],
