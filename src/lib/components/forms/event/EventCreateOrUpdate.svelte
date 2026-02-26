@@ -7,7 +7,7 @@
 	import { getMeetingPlatform, getMeetingPlatformLogoUrl } from '$lib/utils/events/meeting_link';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
+	import Input from '$lib/components/ui/custom/input.svelte';
 	import { getLocalTimeZone, parseAbsolute } from '@internationalized/date';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { env } from '$env/dynamic/public';
@@ -345,13 +345,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Address line 1`}</Form.Label>
-						<InputGroup.Root>
-							<InputGroup.Input
-								bind:value={$data.addressLine1}
-								{...props}
-								placeholder={t`Address line 1`}
-							/>
-						</InputGroup.Root>
+						<Input bind:value={$data.addressLine1} {...props} placeholder={t`Address line 1`} />
 					{/snippet}
 				</Form.Control>
 			</Form.Field>
@@ -361,13 +355,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Address line 2 (optional)`}</Form.Label>
-						<InputGroup.Root>
-							<InputGroup.Input
-								bind:value={$data.addressLine2}
-								{...props}
-								placeholder={t`Address line 2`}
-							/>
-						</InputGroup.Root>
+						<Input bind:value={$data.addressLine2} {...props} placeholder={t`Address line 2`} />
 					{/snippet}
 				</Form.Control>
 			</Form.Field>
@@ -376,9 +364,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{t`City/town`}</Form.Label>
-					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.locality} {...props} placeholder={t`City/town`} />
-					</InputGroup.Root>
+					<Input bind:value={$data.locality} {...props} placeholder={t`City/town`} />
 				{/snippet}
 			</Form.Control>
 		</Form.Field>
@@ -386,9 +372,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{t`Region/state`}</Form.Label>
-					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.region} {...props} placeholder={t`Region/state`} />
-					</InputGroup.Root>
+					<Input bind:value={$data.region} {...props} placeholder={t`Region/state`} />
 				{/snippet}
 			</Form.Control>
 		</Form.Field>
@@ -396,9 +380,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{t`Postcode`}</Form.Label>
-					<InputGroup.Root>
-						<InputGroup.Input bind:value={$data.postcode} {...props} placeholder={t`Postcode`} />
-					</InputGroup.Root>
+					<Input bind:value={$data.postcode} {...props} placeholder={t`Postcode`} />
 				{/snippet}
 			</Form.Control>
 		</Form.Field>
