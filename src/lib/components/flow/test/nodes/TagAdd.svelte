@@ -4,15 +4,19 @@
 		useSvelteFlow,
 		type NodeProps,
 		Handle,
+		type Node,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
-	import type { TagAddNodeData } from '../types';
-	let { id, data }: NodeProps<TagAddNodeData> = $props();
+	import type { TagAddData } from '../types';
+	let { id, data }: NodeProps<Node<TagAddData, 'tagAdd'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	/*svelte-ignore state_referenced_locally */
 	let tagId = $state(data.tagId ?? null);
-
+	$effect(() => {
+		updateNodeData(id, { tagId });
+		updateNodeInternals(id);
+	});
 	import TagAddCombobox from './tag_add/Combobox.svelte';
 </script>
 

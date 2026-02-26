@@ -1,11 +1,11 @@
-import { type FlowNode } from '../types';
 import type { Node, Edge } from '@xyflow/svelte';
 import { v4 as uuidv4 } from 'uuid';
 import { findPositionRadial } from '../placeNode';
-export function startingNodes(): { nodes: FlowNode[]; edges: Edge[] } {
+import type { NodeType } from '../types';
+export function startingNodes(): { nodes: Node[]; edges: Edge[] } {
 	const targetingNodeId = uuidv4();
 	const messageNodeId = uuidv4();
-	const nodes: FlowNode[] = [
+	const nodes: Node[] = [
 		{
 			id: targetingNodeId,
 			type: 'targeting' as const,
@@ -13,7 +13,19 @@ export function startingNodes(): { nodes: FlowNode[]; edges: Edge[] } {
 			data: { recipients: [] }
 		}
 	];
-	const position = findPositionRadial(0, 0, 120, 80, nodes) || { x: 0, y: 0 };
+	const position = findPositionRadial(
+		0,
+		0,
+		120,
+		80,
+		nodes.map((node) => {
+			return {
+				position: node.position,
+				width: node.width || 260,
+				height: node.height || 100
+			};
+		})
+	) || { x: 0, y: 0 };
 	nodes.push({
 		id: messageNodeId,
 		type: 'message' as const,
@@ -25,20 +37,22 @@ export function startingNodes(): { nodes: FlowNode[]; edges: Edge[] } {
 			id: uuidv4(),
 			source: targetingNodeId,
 			target: messageNodeId,
-			type: 'test-edge' as const
+			type: 'edge' as const
 		}
 	];
 	return { nodes, edges };
 }
-
-type NodeType = 'message' | 'eventSignup' | 'tagAdd';
-export function addNode(nodeType: NodeType, parentNode: FlowNode, nodes: FlowNode[]) {
+export function addNode(nodeType: NodeType, parentNode: Node, nodes: Node[]) {
 	const position = findPositionRadial(
 		parentNode.position.x,
 		parentNode.position.y,
 		400,
 		100,
-		nodes
+		nodes.map((node) => ({
+			position: node.position,
+			width: node.width || 260,
+			height: node.height || 100
+		}))
 	) || { x: 0, y: 0 };
 	switch (nodeType) {
 		case 'message':

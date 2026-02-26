@@ -2,11 +2,8 @@
 anchor = (ax, ay) (usually parent node)
 nodeWidth, nodeHeight
 padding (extra spacing between nodes) */
-import { type XYPosition } from '@xyflow/svelte';
 type NodeRect = {
-	id: string;
-	type: string;
-	position: XYPosition;
+	position: { x: number; y: number };
 	width: number;
 	height: number;
 };
@@ -45,8 +42,6 @@ export function findPositionRadial(
 			const y = anchorY + radius * Math.sin(rad);
 
 			const candidate: NodeRect = {
-				id: 'new',
-				type: 'node',
 				position: { x, y },
 				width: width,
 				height: height

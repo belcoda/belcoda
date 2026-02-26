@@ -4,19 +4,19 @@
 		useSvelteFlow,
 		type NodeProps,
 		Handle,
+		type Node,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
-	import { Plus, Trash2, Image as ImageIcon, X } from '@lucide/svelte';
-	import type { EventSignupNodeData } from '../types';
-	let { id, data }: NodeProps<EventSignupNodeData> = $props();
+	import type { EventSignupData } from '../types';
+	let { id, data }: NodeProps<Node<EventSignupData, 'eventSignup'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	/*svelte-ignore state_referenced_locally */
 	let eventId = $state(data.eventId ?? null);
-	/* $effect(() => {
+	$effect(() => {
 		updateNodeData(id, { eventId });
 		updateNodeInternals(id);
-	}); */
+	});
 
 	import EventSignupCombobox from './event_signup/Combobox.svelte';
 </script>

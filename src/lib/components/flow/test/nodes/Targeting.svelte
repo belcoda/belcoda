@@ -4,19 +4,20 @@
 		useSvelteFlow,
 		type NodeProps,
 		Handle,
-		useUpdateNodeInternals
+		useUpdateNodeInternals,
+		type Node
 	} from '@xyflow/svelte';
-	import { Plus, Trash2, Image as ImageIcon, X } from '@lucide/svelte';
-	import type { EventSignupNodeData } from '../types';
-	let { id, data }: NodeProps<EventSignupNodeData> = $props();
+	import { defaultFilterGroup } from '$lib/schema/person/filter';
+	import type { TargetingData } from '../types';
+	let { id, data }: NodeProps<Node<TargetingData, 'targeting'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	/*svelte-ignore state_referenced_locally */
-	let eventId = $state(data.eventId ?? null);
-	/* $effect(() => {
-		updateNodeData(id, { eventId });
+	let filter = $state(data.filter || defaultFilterGroup);
+	$effect(() => {
+		updateNodeData(id, { filter });
 		updateNodeInternals(id);
-	}); */
+	});
 
 	import RecipientBox from '$lib/components/widgets/communications/recipients/RecipientBox.svelte';
 </script>
@@ -29,7 +30,7 @@
 			Recipients:
 		</div>
 		<div class=" p-2">
-			<RecipientBox />
+			<RecipientBox bind:filter />
 		</div>
 	</div>
 	<Handle type="source" position={Position.Bottom} class="h-3! w-3!" />
