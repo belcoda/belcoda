@@ -29,14 +29,11 @@ export async function createOrganization(name: string, slug: string) {
 	const { error, data } = await authClient.organization.create({
 		name,
 		slug,
-		//@ts-expect-error - country is not a valid property according to the better-auth schema despite it being configured in the auth server settings
 		country,
 		defaultLanguage: languageCode,
 		defaultTimezone: timezone,
 		settings,
 		balance,
-		createdAt,
-		updatedAt,
 		logo,
 		icon
 	});
