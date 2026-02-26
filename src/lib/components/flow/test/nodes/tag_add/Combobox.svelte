@@ -17,7 +17,7 @@
 		onSelectChange,
 		...props
 	}: {
-		value: string | undefined;
+		value: string | null | undefined;
 		class?: string;
 		triggerRef?: HTMLButtonElement | null;
 		onSelectChange?: (value: string) => void;
@@ -61,7 +61,7 @@
 			<Button
 				{...props}
 				variant="outline"
-				class="w-full justify-between"
+				class="w-full justify-between overflow-hidden"
 				role="combobox"
 				aria-expanded={open}
 			>
