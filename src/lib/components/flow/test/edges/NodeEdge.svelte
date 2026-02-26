@@ -1,13 +1,5 @@
 <script lang="ts">
-	import {
-		BaseEdge,
-		EdgeLabel,
-		EdgeToolbar,
-		getBezierPath,
-		useEdges,
-		type EdgeProps
-	} from '@xyflow/svelte';
-	import XIcon from '@lucide/svelte/icons/x';
+	import { BaseEdge, EdgeToolbar, getBezierPath, useEdges, type EdgeProps } from '@xyflow/svelte';
 	let { id, sourceX, sourceY, targetX, targetY }: EdgeProps = $props();
 	import CogIcon from '@lucide/svelte/icons/cog';
 	import UnlinkIcon from '@lucide/svelte/icons/unlink';
