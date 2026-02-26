@@ -4,15 +4,15 @@
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	import { t } from '$lib/index.svelte';
-	
+
 	const petition = $derived.by(() => {
 		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
-	
+
 	const signatures = $derived.by(() => {
 		return z.createQuery(queries.petition.signatures({ petitionId: params.petitionId }));
 	});
-	
+
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import PetitionListItem from '../PetitionListItem.svelte';
@@ -29,7 +29,8 @@
 				Total signatures: {signatures.data?.length ?? 0}
 			</p>
 			{#if petition.data}
-				<SignatureTable 
+				<SignatureTable
+					selectedSignatures={[]}
 					signatures={signatures.data ?? []}
 					petition={petition.data}
 					queryIsCompleted={signatures.details.type === 'complete'}
@@ -46,7 +47,7 @@
 		<div>
 			{#if petition.data && petition.data.title}
 				<PetitionListItem petition={petition.data} />
-				<span class="text-muted-foreground ml-2">- Signatures</span>
+				<span class="ml-2 text-muted-foreground">- Signatures</span>
 			{:else}
 				<Skeleton class="h-10 w-32 rounded-lg" />
 			{/if}
@@ -63,4 +64,5 @@
 	</div>
 {/snippet}
 
-{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> {t`Add signature`}</Button>{/snippet}
+{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> {t`Add signature`}</Button
+	>{/snippet}
