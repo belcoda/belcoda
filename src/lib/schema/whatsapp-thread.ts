@@ -5,16 +5,34 @@ import { whatsappMessage as whatsappMessageSchema } from '$lib/schema/whatsapp/m
 import { filterGroup } from '$lib/schema/person/filter';
 import { whatsappTemplateMessage as whatsappTemplateMessageSchema } from '$lib/schema/whatsapp/message';
 import { whatsappMessageActionsSchema } from '$lib/schema/whatsapp/actions';
+import type { SavedFlow } from '$lib/components/flow/test/types';
+export const savedFlowSchema = v.object({
+	nodes: v.array(
+		v.object({
+			id: v.string(),
+			type: v.string(),
+			position: v.object({
+				x: v.number(),
+				y: v.number()
+			})
+		})
+	),
+	edges: v.array(
+		v.object({
+			id: v.string(),
+			source: v.string(),
+			target: v.string(),
+			type: v.string()
+		})
+	)
+});
+export type SavedFlowSchema = v.InferOutput<typeof savedFlowSchema>;
 
 export const whatsappThreadSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
 	teamId: v.nullable(helpers.uuid),
-	recipients: filterGroup,
-	templateId: helpers.uuid,
-	templateMessage: whatsappTemplateMessageSchema,
-	messages: v.array(whatsappMessageSchema),
-	actions: v.record(v.string(), v.array(whatsappMessageActionsSchema)),
+	flow: savedFlowSchema,
 	sentBy: v.nullable(helpers.uuid),
 	startedAt: v.nullable(helpers.date),
 	completedAt: v.nullable(helpers.date),
@@ -50,11 +68,7 @@ export const readWhatsappThreadZero = v.object({
 export type ReadWhatsappThreadZero = v.InferOutput<typeof readWhatsappThreadZero>;
 
 export const createWhatsappThread = v.object({
-	recipients: whatsappThreadSchema.entries.recipients,
-	templateId: whatsappThreadSchema.entries.templateId,
-	templateMessage: whatsappThreadSchema.entries.templateMessage,
-	messages: whatsappThreadSchema.entries.messages,
-	actions: whatsappThreadSchema.entries.actions
+	flow: savedFlowSchema
 });
 export type CreateWhatsappThread = v.InferInput<typeof createWhatsappThread>;
 
