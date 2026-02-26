@@ -1,59 +1,95 @@
 <script lang="ts">
-	import { SvelteFlow, Background, Panel } from '@xyflow/svelte';
+	import {
+		SvelteFlow,
+		SvelteFlowProvider,
+		Background,
+		Panel,
+		type EdgeTypes
+	} from '@xyflow/svelte';
 
 	import '@xyflow/svelte/dist/style.css';
-	import type { WhatsAppNodeData } from './types';
-
-	let nodes: WhatsAppNodeData[] = $state.raw([
-		{
-			id: 'node-1',
-			type: 'message',
-			position: { x: 0, y: 0 },
-			data: { text: 'some text', buttons: [], imageUrl: null }
-		},
-		{
-			id: 'node-2',
-			type: 'message',
-			position: { x: 250, y: 500 },
-			data: { text: 'some text', buttons: [], imageUrl: null }
-		},
-		{
-			id: 'node-3',
-			type: 'message',
-			position: { x: 500, y: 500 },
-			data: { text: 'some text', buttons: [], imageUrl: null }
-		}
-	]);
-
-	let edges = $state.raw([]);
+	import type { FlowNode } from './types';
+	import TestEdge from './edges/TestEdge.svelte';
+	import { findPositionRadial } from './placeNode';
+	import { startingNodes, addNode } from './nodes/addNode';
+	const edgeTypes: EdgeTypes = {
+		'test-edge': TestEdge
+	};
+	const { nodes: startingNodesList, edges: startingEdgesList } = startingNodes();
+	let nodes: FlowNode[] = $state.raw(startingNodesList);
+	let edges = $state.raw(startingEdgesList);
 	import Message from './nodes/Message.svelte';
-	const nodeTypes = { message: Message };
+	import EventSignup from './nodes/EventSignup.svelte';
+	import TagAdd from './nodes/TagAdd.svelte';
+	import Targeting from './nodes/Targeting.svelte';
+	const nodeTypes = {
+		message: Message,
+		eventSignup: EventSignup,
+		targeting: Targeting,
+		tagAdd: TagAdd
+	};
 	import { Button } from '$lib/components/ui/button/index.js';
-	import PlusIcon from '@lucide/svelte/icons/plus';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 </script>
 
 <div class="h-full w-full">
-	<SvelteFlow bind:nodes bind:edges fitView {nodeTypes}>
-		<Panel position="top-left">
-			<Button
-				variant="outline"
-				size="sm"
-				onclick={() => {
-					nodes = [
-						...nodes,
-						{
-							id: 'node-' + nodes.length + 1,
-							type: 'message',
-							position: { x: 0, y: 0 },
-							data: { text: 'some text', buttons: [], imageUrl: null }
-						}
-					];
-				}}
-			>
-				<PlusIcon />
-				Add Node
-			</Button>
-		</Panel>
-		<Background />
-	</SvelteFlow>
+	<SvelteFlowProvider>
+		<SvelteFlow
+			bind:nodes
+			bind:edges
+			fitView
+			{nodeTypes}
+			{edgeTypes}
+			defaultEdgeOptions={{ type: 'test-edge' }}
+		>
+			<Panel position="top-right">
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<Button variant="default" size="sm">
+							<ChevronDownIcon />
+							Add Node
+						</Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content>
+						<DropdownMenu.Item
+							onclick={() => {
+								const newNode = addNode('message', nodes[nodes.length - 1], $state.snapshot(nodes));
+								if (newNode) {
+									nodes = [...nodes, newNode];
+								}
+							}}
+						>
+							Message
+						</DropdownMenu.Item>
+						<DropdownMenu.Item
+							onclick={() => {
+								const newNode = addNode(
+									'eventSignup',
+									nodes[nodes.length - 1],
+									$state.snapshot(nodes)
+								);
+								if (newNode) {
+									nodes = [...nodes, newNode];
+								}
+							}}
+						>
+							Event Signup
+						</DropdownMenu.Item>
+						<DropdownMenu.Item
+							onclick={() => {
+								const newNode = addNode('tagAdd', nodes[nodes.length - 1], $state.snapshot(nodes));
+								if (newNode) {
+									nodes = [...nodes, newNode];
+								}
+							}}
+						>
+							Tag Add
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			</Panel>
+			<Background />
+		</SvelteFlow>
+	</SvelteFlowProvider>
 </div>
