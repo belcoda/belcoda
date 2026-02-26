@@ -101,6 +101,7 @@
 								const finalNode = nodesSnapshot[nodeLength - 1];
 								const newNode = addNode(
 									'message',
+									//@ts-ignore
 									nodesSnapshot[nodesSnapshot.length - 1] as Node,
 									nodesSnapshot as Node[]
 								);
