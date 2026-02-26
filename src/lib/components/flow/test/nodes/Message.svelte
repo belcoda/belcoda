@@ -4,10 +4,16 @@
 		useSvelteFlow,
 		type NodeProps,
 		Handle,
+		NodeToolbar,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import { Plus, Trash2, Image as ImageIcon, X } from '@lucide/svelte';
 	import type { WhatsAppNodeData } from '../types';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import ImagePlusIcon from '@lucide/svelte/icons/image-plus';
+	import RectangleEllipsisIcon from '@lucide/svelte/icons/rectangle-ellipsis';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { cn } from '$lib/utils.js';
 
 	let { id, data }: NodeProps<WhatsAppNodeData> = $props();
 	const { updateNodeData } = useSvelteFlow();
@@ -17,6 +23,7 @@
 	let text = $state(data.text ?? 'Hello! Choose an option:');
 	let buttons = $state(data.buttons ?? [{ id: 'btn-1', label: 'Option 1' }]);
 	let imageUrl = $state(data.imageUrl ?? null);
+	let hideImage = $state(data.hideImage ?? false);
 
 	// Sync changes back to the Flow state
 	$effect(() => {
@@ -36,6 +43,31 @@
 	};
 </script>
 
+<NodeToolbar position={Position.Right}>
+	<div class="flex flex-col gap-2">
+		{#if !imageUrl}
+			<Button
+				variant="default"
+				class="rounded-full"
+				size="icon"
+				title="Add image"
+				onclick={() => {
+					imageUrl =
+						'https://fastly.picsum.photos/id/106/2592/1728.jpg?hmac=E1-3Hac5ffuCVwYwexdHImxbMFRsv83exZ2EhlYxkgY';
+				}}><ImagePlusIcon /></Button
+			>
+		{/if}
+		{#if buttons.length < 3}
+			<Button
+				variant="default"
+				class="rounded-full"
+				size="icon"
+				onclick={addButton}
+				title="Add button"><RectangleEllipsisIcon /></Button
+			>
+		{/if}
+	</div>
+</NodeToolbar>
 <div class="relative w-[260px] font-sans drop-shadow-md">
 	<Handle type="target" position={Position.Top} class="z-20 h-3! w-3!" />
 
@@ -50,51 +82,39 @@
 					<X size={14} />
 				</button>
 			</div>
-		{:else}
-			<button
-				onclick={() => (imageUrl = 'https://picsum.photos/seed/wa/400/200')}
-				class="nodrag w-full border-b border-[#b7e4ac] bg-[#f8f9fa]/50 p-2 text-[11px] font-medium text-[#008069] transition-colors hover:bg-white/50"
-			>
-				+ ADD IMAGE HEADER
-			</button>
 		{/if}
 
-		<div class="p-3">
-			<textarea
-				bind:value={text}
-				class="nodrag w-full resize-none border-none bg-transparent text-[14.5px] leading-relaxed text-[#111b21] outline-none"
-				rows="2"
-				placeholder="Type message..."
-			></textarea>
-		</div>
+		<Textarea
+			bind:value={text}
+			class={cn(
+				'w-full resize-none border-none bg-transparent text-[14.5px] leading-relaxed text-[#111b21] outline-none',
+				buttons.length > 0 && 'rounded-b-none',
+				imageUrl && 'rounded-t-none'
+			)}
+			placeholder="Type message..."
+		></Textarea>
+		{#if buttons.length > 0}
+			<div class="flex flex-col bg-white/50">
+				{#each buttons as btn, i (btn.id)}
+					<div class="group relative flex items-center border-t border-[#b7e4ac]">
+						<input
+							bind:value={btn.label}
+							class="nodrag w-full bg-transparent p-2.5 text-center text-sm font-medium text-[#00a884] outline-none"
+						/>
 
-		<div class="flex flex-col bg-white/50">
-			{#each buttons as btn, i (btn.id)}
-				<div class="group relative flex items-center border-t border-[#b7e4ac]">
-					<input
-						bind:value={btn.label}
-						class="nodrag w-full bg-transparent p-2.5 text-center text-sm font-medium text-[#00a884] outline-none"
-					/>
+						<button
+							class="nodrag absolute left-2 p-1 text-red-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-600"
+							onclick={() => removeButton(i)}
+						>
+							<Trash2 size={14} />
+						</button>
 
-					<button
-						class="nodrag absolute left-2 p-1 text-red-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-600"
-						onclick={() => removeButton(i)}
-					>
-						<Trash2 size={14} />
-					</button>
-
-					<Handle type="source" id={btn.id} position={Position.Right} class="h-3! w-3!" />
-				</div>
-			{/each}
-
-			{#if buttons.length < 3}
-				<button
-					class="nodrag flex items-center justify-center gap-1 border-t border-[#b7e4ac] bg-white/30 p-2 text-xs text-gray-500 transition-colors hover:text-[#008069]"
-					onclick={addButton}
-				>
-					<Plus size={14} /> Add Button
-				</button>
-			{/if}
-		</div>
+						<Handle type="source" id={btn.id} position={Position.Right} class="h-3! w-3!" />
+					</div>
+				{/each}
+			</div>
+		{:else}
+			<Handle type="source" position={Position.Bottom} class="h-3! w-3!" />
+		{/if}
 	</div>
 </div>
