@@ -1496,6 +1496,7 @@ msgid "Website"
 msgstr "Site"
 
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Add signature"
 msgstr "Adicionar assinatura"
 
