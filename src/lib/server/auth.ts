@@ -279,3 +279,5 @@ export function buildBetterAuth(localeInput: string) {
 		}
 	});
 }
+
+export type BetterAuth = ReturnType<typeof buildBetterAuth>;
