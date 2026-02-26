@@ -5,7 +5,6 @@ import { whatsappMessage as whatsappMessageSchema } from '$lib/schema/whatsapp/m
 import { filterGroup } from '$lib/schema/person/filter';
 import { whatsappTemplateMessage as whatsappTemplateMessageSchema } from '$lib/schema/whatsapp/message';
 import { whatsappMessageActionsSchema } from '$lib/schema/whatsapp/actions';
-import type { SavedFlow } from '$lib/components/flow/test/types';
 export const savedFlowSchema = v.object({
 	nodes: v.array(
 		v.object({
