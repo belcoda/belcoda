@@ -49,6 +49,29 @@ export const createOrganization = v.object({
 });
 export type CreateOrganization = v.InferInput<typeof createOrganization>;
 
+export const newOrganizationFromWebsiteForm = v.object({
+	name: organizationSchema.entries.name,
+	slug: organizationSchema.entries.slug,
+	icon: v.optional(organizationSchema.entries.icon, null),
+	website: v.optional(
+		v.pipe(
+			helpers.domainNameOrUrl,
+			v.transform((value) => new URL(value).toString())
+		)
+	),
+	additionalDetails: v.object({
+		organizationSize: v.picklist(['1', '2-10', '11-50', '50-500', '500+']),
+		organizationFocus: v.picklist(['community-org-charity', 'business', 'advocacy', 'political']),
+		howDidYouDiscover: v.picklist([
+			'search-engine',
+			'referral',
+			'training-conference',
+			'resources',
+			'social-media'
+		])
+	})
+});
+
 export const updateOrganization = v.partial(
 	v.object({
 		logo: organizationSchema.entries.logo,
