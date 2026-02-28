@@ -9,9 +9,9 @@
 	let loading = $state(false);
 	let error: string | undefined = $state(undefined);
 	import { createOrganization } from './actions';
-	import { newOrganizationSchema } from './schema';
+	import { createOrganization as createOrganizationSchema } from '$lib/schema/organization';
 	const { form, data, Errors, Debug, errors } = createForm({
-		schema: newOrganizationSchema,
+		schema: createOrganizationSchema,
 		onSubmit: async (formData) => {
 			try {
 				loading = true;
@@ -35,6 +35,7 @@
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { dev } from '$app/environment';
 	import { env } from '$env/dynamic/public';
+	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 </script>
 
 <AuthLayout
@@ -126,6 +127,18 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
+			<Form.Field class="icon">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>{t`Organization logo (optional)`}</Form.Label>
+						<Form.Description
+							>{t`Your organization's logo. It should be square and less than 2MB`}</Form.Description
+						>
+						<CroppedImageUpload aspectRatio={1 / 1} onUpload={(url) => {}} />
+					{/snippet}
+				</Form.Control>
+			</Form.Field>
+
 			<div class="flex justify-between gap-2">
 				<Button type="button" href="/organization" variant="outline" class="w-auto"
 					>{t`Back`}</Button
