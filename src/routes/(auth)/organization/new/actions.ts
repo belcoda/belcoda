@@ -2,6 +2,7 @@ import type { CountryCode } from '$lib/utils/country';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 import { authClient } from '$lib/auth-client';
 import { locale } from '$lib/index.svelte';
+import { getLocalTimeZone } from '@internationalized/date';
 export async function getCurrentCountry(): Promise<CountryCode> {
 	try {
 		//get the country from the IP address of the user
@@ -17,11 +18,9 @@ export async function getCurrentCountry(): Promise<CountryCode> {
 export async function createOrganization(name: string, slug: string) {
 	const country = await getCurrentCountry();
 	const languageCode = locale.current;
-	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const timezone = getLocalTimeZone();
 	const settings = defaultOrganizationSettings();
 	const balance = 1;
-	const createdAt = new Date();
-	const updatedAt = new Date();
 	const logo =
 		'https://belcoda-public-prod.s3.eu-central-1.amazonaws.com/system/images/logo-full.png';
 	const icon =
