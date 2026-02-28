@@ -127,16 +127,24 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<Form.Field class="icon">
+
+			<Form.Field {form} name="logo" class="w-full">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Organization logo (optional)`}</Form.Label>
 						<Form.Description
 							>{t`Your organization's logo. It should be square and less than 2MB`}</Form.Description
 						>
-						<CroppedImageUpload aspectRatio={1 / 1} onUpload={(url) => {}} />
+						<CroppedImageUpload
+							aspectRatio={1 / 1}
+							onUpload={(url) => {
+								$data.icon = url;
+								$data.logo = url;
+							}}
+						/>
 					{/snippet}
 				</Form.Control>
+				<Form.FieldErrors />
 			</Form.Field>
 
 			<div class="flex justify-between gap-2">
