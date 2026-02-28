@@ -36,7 +36,6 @@
 	import { dev } from '$app/environment';
 	import { env } from '$env/dynamic/public';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
-	import { Field } from 'formsnap';
 </script>
 
 <AuthLayout
