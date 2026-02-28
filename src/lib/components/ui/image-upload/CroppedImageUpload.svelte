@@ -25,7 +25,7 @@
 	type Props = {
 		fileUrl?: string | null | undefined;
 		class?: string;
-		onUpload?: (url: string) => Promise<void>;
+		onUpload?: (url: string) => Promise<void> | void;
 		aspectRatio?: number;
 	};
 	let {
