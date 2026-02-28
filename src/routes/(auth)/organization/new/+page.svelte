@@ -36,6 +36,7 @@
 	import { dev } from '$app/environment';
 	import { env } from '$env/dynamic/public';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
+	import { Field } from 'formsnap';
 </script>
 
 <AuthLayout
@@ -147,6 +148,15 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
+			<Form.Field {form} name="website" class="w-full">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>{t`Website (optional)`}</Form.Label>
+						<Input {...props} name="website" bind:value={$data.website} />
+					{/snippet}
+				</Form.Control>
+			</Form.Field>
+
 			<div class="flex justify-between gap-2">
 				<Button type="button" href="/organization" variant="outline" class="w-auto"
 					>{t`Back`}</Button
@@ -157,3 +167,8 @@
 		</form>
 	{/if}
 </AuthLayout>
+
+{#snippet otherInfo()}
+	{@const options = []}
+	{@const otherOptions = []}
+{/snippet}
