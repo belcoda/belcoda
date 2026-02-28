@@ -1,4 +1,4 @@
-import type { CountryCode } from '$lib/utils/country';
+import { type CountryCode, countryCodes, defaultCountryCode } from '$lib/utils/country';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 import { authClient } from '$lib/auth-client';
 import { locale } from '$lib/index.svelte';
@@ -7,8 +7,12 @@ export async function getCurrentCountry(): Promise<CountryCode> {
 	try {
 		//get the country from the IP address of the user
 		const countryResponse = await fetch('https://ipwho.is/').then((res) => res.json());
-		const country = countryResponse.country_code.toLowerCase() as CountryCode;
-		return country;
+		const country = countryResponse.country_code.toUpperCase() as CountryCode;
+		if (countryCodes.includes(country)) {
+			return country;
+		} else {
+			return defaultCountryCode;
+		}
 	} catch (err) {
 		console.error(`Error getting current country: ${err}`);
 		return 'US';
