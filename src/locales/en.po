@@ -1859,6 +1859,7 @@ msgstr "New petition"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Published"
@@ -2226,6 +2227,7 @@ msgid "I can't attend"
 msgstr "I can't attend"
 
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
 msgid "Event not published"
 msgstr "Event not published"
 
@@ -3328,6 +3330,33 @@ msgstr "Share this petition with your audience"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "Petition page link"
 msgstr "Petition page link"
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "Event Created!"
+msgstr "Event Created!"
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "Event Updated!"
+msgstr "Event Updated!"
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "Here's a preview of how your event will appear to your audience."
+msgstr "Here's a preview of how your event will appear to your audience."
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "This event is not published yet. Toggle the switch below to make it visible to your audience."
+msgstr "This event is not published yet. Toggle the switch below to make it visible to your audience."
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "Publish event"
+msgstr "Publish event"
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "View full page"
+msgstr "View full page"
 
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 msgid "View all"
