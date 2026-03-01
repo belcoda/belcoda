@@ -53,12 +53,7 @@ export const newOrganizationFromWebsiteForm = v.object({
 	name: organizationSchema.entries.name,
 	slug: organizationSchema.entries.slug,
 	icon: v.optional(organizationSchema.entries.icon, null),
-	website: v.optional(
-		v.pipe(
-			helpers.domainNameOrUrl,
-			v.transform((value) => new URL(value).toString())
-		)
-	),
+	website: v.optional(helpers.domainNameOrUrl),
 	additionalDetails: v.object({
 		organizationSize: v.picklist(['1', '2-10', '11-50', '50-500', '500+']),
 		organizationFocus: v.picklist(['community-org-charity', 'business', 'advocacy', 'political']),
