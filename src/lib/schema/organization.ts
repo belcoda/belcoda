@@ -68,9 +68,21 @@ export const newOrganizationFromWebsiteForm = v.object({
 			'training-conference',
 			'resources',
 			'social-media'
-		])
+		]),
+		features: v.object({
+			storingMemberOrSupporterData: v.boolean(),
+			growingOurListOfSupportersOrMembers: v.boolean(),
+			sendingWhatsAppMessagesToMembersOrSupporters: v.boolean(),
+			sendingEmailsToMembersOrSupporters: v.boolean(),
+			runningEvents: v.boolean(),
+			runningPolicyCampaignsWithOnlinePetitions: v.boolean(),
+			makingSureAllDataIsSyncedAndUpToDate: v.boolean(),
+			other: v.boolean(),
+			otherDetail: helpers.shortStringEmpty
+		})
 	})
 });
+export type NewOrganizationFromWebsiteForm = v.InferOutput<typeof newOrganizationFromWebsiteForm>;
 
 export const updateOrganization = v.partial(
 	v.object({
