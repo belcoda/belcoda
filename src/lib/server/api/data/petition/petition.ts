@@ -5,14 +5,18 @@ import { type QueryContext, builder } from '$lib/zero/schema';
 import {
 	type CreatePetitionZeroMutatorSchema,
 	type UpdatePetitionZeroMutatorSchema,
+	type ArchivePetitionMutatorSchema,
 	createPetitionZeroMutatorSchema,
-	updatePetitionZeroMutatorSchema
+	updatePetitionZeroMutatorSchema,
+	archivePetitionMutatorSchema,
+	type DeletePetitionMutatorSchema,
+	deletePetitionMutatorSchema
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { team } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 export async function createPetition({
@@ -65,13 +69,14 @@ export async function createPetition({
 	});
 	async function getNextSlug(slug: string, count: number = 0): Promise<string> {
 		const slugToCheck = `${slug}${count > 0 ? `-${count}` : ''}`;
-		const result = await tx.run(
-			builder.petition
-				.where('organizationId', '=', parsed.metadata.organizationId)
-				.where('slug', '=', slugToCheck)
-				.where('deletedAt', 'IS', null)
-		);
-		if (result.length > 0) {
+		const result = await tx.dbTransaction.wrappedTransaction.query.petition.findFirst({
+			where: and(
+				eq(petition.organizationId, parsed.metadata.organizationId),
+				eq(petition.slug, slugToCheck),
+				isNull(petition.deletedAt)
+			)
+		});
+		if (result) {
 			return await getNextSlug(slug, count + 1);
 		}
 		return slugToCheck;
@@ -79,13 +84,14 @@ export async function createPetition({
 
 	async function getNextTitle(title: string, count: number = 0): Promise<string> {
 		const titleToCheck = `${title}${count > 0 ? ` ${count}` : ''}`;
-		const result = await tx.run(
-			builder.petition
-				.where('organizationId', '=', parsed.metadata.organizationId)
-				.where('title', '=', titleToCheck)
-				.where('deletedAt', 'IS', null)
-		);
-		if (result.length > 0) {
+		const result = await tx.dbTransaction.wrappedTransaction.query.petition.findFirst({
+			where: and(
+				eq(petition.organizationId, parsed.metadata.organizationId),
+				eq(petition.title, titleToCheck),
+				isNull(petition.deletedAt)
+			)
+		});
+		if (result) {
 			return await getNextTitle(title, count + 1);
 		}
 		return titleToCheck;
@@ -151,4 +157,95 @@ export async function updatePetition({
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
 		);
+}
+
+export async function archivePetition({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: ArchivePetitionMutatorSchema;
+}) {
+	const parsed = parse(archivePetitionMutatorSchema, args);
+	const petitionRecord = await tx.run(
+		builder.petition
+			.where('id', '=', parsed.metadata.petitionId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => petitionReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!petitionRecord) {
+		throw new Error('Petition not found');
+	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(petition)
+		.set({
+			archivedAt: new Date(),
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(petition.id, parsed.metadata.petitionId),
+				eq(petition.organizationId, parsed.metadata.organizationId)
+			)
+		);
+}
+
+export async function deletePetition({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: DeletePetitionMutatorSchema;
+}) {
+	const parsed = parse(deletePetitionMutatorSchema, args);
+	const petitionRecord = await tx.run(
+		builder.petition
+			.where('id', '=', parsed.metadata.petitionId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => petitionReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!petitionRecord) {
+		throw new Error('Petition not found');
+	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(petition)
+		.set({
+			deletedAt: new Date(),
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(petition.id, parsed.metadata.petitionId),
+				eq(petition.organizationId, parsed.metadata.organizationId)
+			)
+		);
+}
+
+export async function getPetitionById({
+	petitionId,
+	ctx,
+	tx
+}: {
+	petitionId: string;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const petitionRecord = await tx.run(
+		builder.petition
+			.where('id', '=', petitionId)
+			.where((expr) => petitionReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!petitionRecord) {
+		throw new Error('Petition not found');
+	}
+	return petitionRecord;
 }

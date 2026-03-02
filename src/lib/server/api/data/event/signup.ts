@@ -24,7 +24,7 @@ import { parse } from 'valibot';
 
 import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, not, inArray, sql } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
@@ -169,6 +169,14 @@ export async function signUpForEventUnsafe({
 	const [insertedEventSignup] = await tx.dbTransaction.wrappedTransaction
 		.insert(eventSignup)
 		.values(eventSignupRecord)
+		.onConflictDoUpdate({
+			target: [eventSignup.eventId, eventSignup.personId],
+			set: {
+				status: eventSignupRecord.status,
+				updatedAt: new Date()
+			},
+			setWhere: sql`excluded.status not in ('attended', 'noshow')`
+		})
 		.returning();
 	if (!insertedEventSignup) {
 		throw new Error('Unable to create event signup');
@@ -255,6 +263,88 @@ export async function attendedEventHelper({
 		});
 	}
 	return eventSignupRecord;
+}
+
+export async function declineEventHelper({
+	eventId,
+	teamId,
+	tx,
+	personAction,
+	signupDetails,
+	organizationId
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personAction: PersonActionHelper;
+	signupDetails: EventSignupDetails;
+	organizationId: string;
+	teamId?: string;
+}) {
+	const parsedSignupDetails = parse(eventSignupDetails, signupDetails);
+	const parsedActionHelper = parse(personActionHelper, personAction);
+
+	const eventRecord = await getEventByIdUnsafe({ eventId, organizationId, tx });
+	if (!eventRecord) {
+		throw new Error('Event not found');
+	}
+	if (!eventRecord.published) {
+		throw new Error('Event is not published');
+	}
+
+	const eventSignupId = uuidv7();
+
+	const personRecord = await findOrCreatePerson({
+		tx,
+		personAction: parsedActionHelper,
+		addedFrom: {
+			type: 'added_from_event',
+			eventSignupId
+		},
+		organizationId,
+		teamId
+	});
+
+	const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
+
+	// Create event signup with notattending status
+	const eventSignupRecord: typeof eventSignup.$inferInsert = {
+		id: eventSignupId,
+		organizationId: organizationRecord.id,
+		eventId: eventRecord.id,
+		personId: personRecord.id,
+		details: parsedSignupDetails,
+		status: 'notattending',
+		createdAt: new Date(),
+		updatedAt: new Date()
+	};
+
+	const [insertedEventSignup] = await tx.dbTransaction.wrappedTransaction
+		.insert(eventSignup)
+		.values(eventSignupRecord)
+		.onConflictDoUpdate({
+			target: [eventSignup.eventId, eventSignup.personId],
+			set: {
+				status: eventSignupRecord.status,
+				updatedAt: new Date()
+			},
+			setWhere: sql`excluded.status not in ('attended', 'noshow')`
+		})
+		.returning();
+	if (!insertedEventSignup) {
+		throw new Error('Unable to create event signup');
+	}
+
+	const queue = await getQueue();
+	await queue.insertActivity({
+		organizationId,
+		personId: personRecord.id,
+		userId: undefined,
+		type: 'event_not_attending',
+		referenceId: insertedEventSignup.id,
+		unread: false
+	});
+
+	return insertedEventSignup;
 }
 
 export async function getEventSignup({
@@ -346,6 +436,7 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
+
 	const eventSignupRecord: typeof eventSignup.$inferInsert = {
 		id: parsed.metadata.eventSignupId,
 		organizationId: parsed.metadata.organizationId,
@@ -360,6 +451,14 @@ export async function createEventSignup({
 	const [insertedEventSignup] = await tx.dbTransaction.wrappedTransaction
 		.insert(eventSignup)
 		.values(eventSignupRecord)
+		.onConflictDoUpdate({
+			target: [eventSignup.eventId, eventSignup.personId],
+			set: {
+				status: parsed.input.status,
+				updatedAt: new Date()
+			},
+			setWhere: sql`excluded.status not in ('attended', 'noshow')`
+		})
 		.returning();
 	if (!insertedEventSignup) {
 		throw new Error('Unable to create event signup');

@@ -15,11 +15,13 @@
 
 	let {
 		value = $bindable(undefined),
+		class: className,
 		triggerRef = $bindable(null!),
 		onSelectChange,
 		...props
 	}: {
 		value: string | undefined;
+		class?: string;
 		triggerRef?: HTMLButtonElement | null;
 		onSelectChange?: (value: string) => void;
 	} = $props();
@@ -38,7 +40,7 @@
 </script>
 
 <Popover.Root bind:open>
-	<Popover.Trigger bind:ref={triggerRef}>
+	<Popover.Trigger bind:ref={triggerRef} class={className}>
 		{#snippet child({ props })}
 			<Button
 				{...props}

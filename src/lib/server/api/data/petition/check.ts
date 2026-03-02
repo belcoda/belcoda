@@ -1,6 +1,6 @@
 import { drizzle } from '$lib/server/db';
 import { eq, isNull, and, not } from 'drizzle-orm';
-import { petition } from '$lib/schema/drizzle';
+import { petition, actionCode } from '$lib/schema/drizzle';
 export async function checkPetitionSlug({
 	slug,
 	organizationId,
@@ -44,4 +44,15 @@ export async function checkPetitionTitle({
 		where: and(...where)
 	});
 	return result ? true : false;
+}
+
+export async function _getPetitionActionCodeUnsafe({ petitionId }: { petitionId: string }) {
+	const result = await drizzle.query.actionCode.findFirst({
+		where: and(
+			eq(actionCode.referenceId, petitionId),
+			eq(actionCode.type, 'petition_signed'),
+			isNull(actionCode.deletedAt)
+		)
+	});
+	return result;
 }

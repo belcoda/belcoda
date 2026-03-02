@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { drizzle } from '$lib/server/db';
 import * as schema from '$lib/schema/drizzle';
+import { eq, sql } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 
 import { env } from '$env/dynamic/private';
@@ -13,14 +14,13 @@ import { getRequestEvent } from '$app/server';
 import { openAPI, apiKey, organization } from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
-import { dev } from '$app/environment';
-
 import { stripe } from '@better-auth/stripe';
-
-import Stripe from 'stripe';
-const stripeClient = new Stripe(env.STRIPE_SECRET_KEY, {
-	apiVersion: '2025-11-17.clover' // Latest API version as of Stripe SDK v20.0.0
-});
+import type Stripe from 'stripe';
+import { stripeClient } from '$lib/server/stripe';
+import {
+	CREDIT_PURCHASE_METADATA_TYPE,
+	parseCreditPurchaseAmountUsd
+} from '$lib/utils/billing/credit';
 
 import { LRUCache } from 'lru-cache';
 const cache = new LRUCache<string, string>({
@@ -37,6 +37,52 @@ import { type LanguageCode, clampLocale } from '$lib/utils/language';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
 import { passwordReset } from '$lib/server/utils/email/context/transactional/auth/password_reset';
+import { organizationInvitation } from '$lib/server/utils/email/context/transactional/auth/organization_invitation';
+
+async function canManageOrganizationBilling({
+	userId,
+	referenceId
+}: {
+	userId: string;
+	referenceId: string;
+}) {
+	const member = await drizzle.query.member.findFirst({
+		where: (row, { eq, and }) => and(eq(row.userId, userId), eq(row.organizationId, referenceId))
+	});
+	if (!member) {
+		return false;
+	}
+	return member.role === 'owner';
+}
+
+async function applyCreditTopUpFromStripeEvent(event: Stripe.Event) {
+	if (event.type !== 'checkout.session.completed') {
+		return;
+	}
+
+	const checkoutSession = event.data.object as Stripe.Checkout.Session;
+	if (checkoutSession.mode !== 'payment' || checkoutSession.payment_status !== 'paid') {
+		return;
+	}
+
+	if (checkoutSession.metadata?.type !== CREDIT_PURCHASE_METADATA_TYPE) {
+		return;
+	}
+
+	const organizationId = checkoutSession.metadata.organizationId;
+	const creditAmount = parseCreditPurchaseAmountUsd(checkoutSession.metadata.creditAmount);
+	if (!organizationId || !creditAmount) {
+		return;
+	}
+
+	await drizzle
+		.update(schema.organization)
+		.set({
+			balance: sql`${schema.organization.balance} + ${creditAmount}`,
+			updatedAt: new Date()
+		})
+		.where(eq(schema.organization.id, organizationId));
+}
 
 export function buildBetterAuth(localeInput: string) {
 	const locale = clampLocale(localeInput as LanguageCode);
@@ -71,11 +117,13 @@ export function buildBetterAuth(localeInput: string) {
 			}
 		}),
 		trustedOrigins: [
-			publicEnv.PUBLIC_ROOT_DOMAIN,
+			publicEnv.PUBLIC_ROOT_DOMAIN as string,
 			'https://app.belcoda.com',
 			'https://staging.belcoda.com',
 			'http://localhost:5173',
 			'https://belcoda-zero.fly.dev',
+			'https://zero.staging.belcoda.com',
+			'https://zero.app.belcoda.com',
 			`.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 		],
 		session: {
@@ -91,6 +139,13 @@ export function buildBetterAuth(localeInput: string) {
 					return uuidv7();
 				}
 			},
+			// Only use crossSubDomainCookies on belcoda.com; on localhost it would set
+			// cookie domain=.belcoda.com, causing the OAuth state cookie to not be sent back
+			crossSubDomainCookies:
+				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('localhost') ||
+				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('127.0.0.1')
+					? { enabled: false }
+					: { enabled: true, domain: `.belcoda.com` },
 			cookiePrefix: 'belcoda',
 			ipAddress: {
 				ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] // Cloudflare specific header
@@ -98,6 +153,22 @@ export function buildBetterAuth(localeInput: string) {
 		},
 		plugins: [
 			organization({
+				async sendInvitationEmail(data) {
+					const inviteLink = `${publicEnv.PUBLIC_ROOT_DOMAIN}/organization`;
+					const email = organizationInvitation({
+						url: inviteLink,
+						inviterName: data.inviter.user.name,
+						organizationName: data.organization.name,
+						locale
+					});
+					await sendTemplateEmail({
+						to: data.email,
+						from: 'Belcoda <noreply@belcoda.com>',
+						template: 'transactional',
+						stream: 'outbound',
+						context: email
+					});
+				},
 				schema: {
 					organization: {
 						additionalFields: {
@@ -142,8 +213,30 @@ export function buildBetterAuth(localeInput: string) {
 			}),
 			stripe({
 				stripeClient,
-				stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-				createCustomerOnSignUp: true
+				stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+				createCustomerOnSignUp: true,
+				subscription: {
+					enabled: true,
+					plans: [
+						{
+							name: 'supported',
+							priceId: env.STRIPE_SUPPORTED_TIER_PRICE_ID
+						},
+						{
+							name: 'enterprise',
+							priceId: env.STRIPE_ENTERPRISE_TIER_PRICE_ID
+						}
+					],
+					authorizeReference: async ({ user, referenceId }) => {
+						return canManageOrganizationBilling({
+							userId: user.id,
+							referenceId
+						});
+					}
+				},
+				onEvent: async (event) => {
+					await applyCreditTopUpFromStripeEvent(event);
+				}
 			}),
 			oneTimeToken()
 		],
@@ -169,26 +262,6 @@ export function buildBetterAuth(localeInput: string) {
 				}
 			}
 		},
-		subscription: {
-			// ... other subscription options
-			authorizeReference: async ({
-				user,
-				referenceId,
-				action
-			}: {
-				user: any;
-				referenceId: string;
-				action: any;
-			}) => {
-				const member = await drizzle.query.member.findFirst({
-					where: (row, { eq, and }) =>
-						and(eq(row.userId, user.id), eq(row.organizationId, referenceId))
-				});
-				if (!member) return false;
-
-				return member.role === 'owner';
-			}
-		},
 		secondaryStorage: {
 			get: async (key: string) => {
 				const value = cache.get(key);
@@ -206,3 +279,5 @@ export function buildBetterAuth(localeInput: string) {
 		}
 	});
 }
+
+export type BetterAuth = ReturnType<typeof buildBetterAuth>;

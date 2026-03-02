@@ -145,3 +145,15 @@ export const petitionSignatureInputSchema = v.pipe(
 );
 
 export type PetitionSignatureInput = v.InferOutput<typeof petitionSignatureInputSchema>;
+
+export const archivePetitionMutatorSchema = v.object({
+	metadata: mutatorMetadata
+});
+export type ArchivePetitionMutatorSchema = v.InferInput<typeof archivePetitionMutatorSchema>;
+export type ArchivePetitionMutatorSchemaOutput = v.InferOutput<typeof archivePetitionMutatorSchema>;
+
+export const deletePetitionMutatorSchema = v.object({
+	metadata: mutatorMetadata
+});
+export type DeletePetitionMutatorSchema = v.InferInput<typeof deletePetitionMutatorSchema>;
+export type DeletePetitionMutatorSchemaOutput = v.InferOutput<typeof deletePetitionMutatorSchema>;

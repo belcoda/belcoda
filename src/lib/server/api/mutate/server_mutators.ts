@@ -11,6 +11,8 @@ import * as emailFromSignature from '$lib/server/api/mutate/email_from_signature
 import * as emailMessage from '$lib/server/api/mutate/email_message';
 import * as organization from '$lib/server/api/mutate/organization';
 import * as webhook from '$lib/server/api/mutate/webhook';
+import * as tag from '$lib/server/api/mutate/tag';
+import * as team from '$lib/server/api/mutate/team';
 
 export const mutators = defineMutators({
 	person: {
@@ -29,7 +31,9 @@ export const mutators = defineMutators({
 	},
 	event: {
 		create: event.createEvent,
-		update: event.updateEvent
+		update: event.updateEvent,
+		delete: event.deleteEvent,
+		archive: event.archiveEvent
 	},
 	eventSignup: {
 		create: eventSignup.createEventSignup,
@@ -37,11 +41,14 @@ export const mutators = defineMutators({
 	},
 	petition: {
 		create: petition.createPetition,
-		update: petition.updatePetition
+		update: petition.updatePetition,
+		archive: petition.archivePetition,
+		delete: petition.deletePetition
 	},
 	petitionSignature: {
 		create: petitionSignature.createPetitionSignature,
-		update: petitionSignature.updatePetitionSignature
+		update: petitionSignature.updatePetitionSignature,
+		delete: petitionSignature.deletePetitionSignature
 	},
 	emailFromSignature: {
 		create: emailFromSignature.createEmailFromSignature,
@@ -65,5 +72,15 @@ export const mutators = defineMutators({
 	webhook: {
 		create: webhook.createWebhook,
 		delete: webhook.deleteWebhook
+	},
+	tag: {
+		create: tag.createTag,
+		update: tag.updateTag
+	},
+	team: {
+		create: team.createTeam,
+		update: team.updateTeam,
+		addUserToTeam: team.addUserToTeam,
+		removeUserFromTeam: team.removeUserFromTeam
 	}
 });

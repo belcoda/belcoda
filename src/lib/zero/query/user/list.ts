@@ -17,14 +17,24 @@ export function listUsersQuery({
 }) {
 	let q = builder.user
 		.where((expr) => userReadPermissions(expr, ctx))
-		.where(({ and, or, cmp, exists }) => {
+		.where(({ exists }) => {
 			return exists('orgMemberships', (m) => {
 				return m.whereExists('organization', (o) => {
 					return o.where('id', '=', input.organizationId);
 				});
 			});
-		})
-		.limit(input.pageSize);
+		});
+	if (input.teamId) {
+		q = q.where(({ exists }) => {
+			return exists('teamMemberships', (tm) => {
+				return tm.where('teamId', '=', input.teamId!);
+			});
+		});
+	}
+	if (input.excludedIds?.length) {
+		q = q.where(({ cmp }) => cmp('id', 'NOT IN', input.excludedIds));
+	}
+	q = q.limit(input.pageSize);
 	if (input.startAfter) {
 		q = q.start({ id: input.startAfter });
 	}

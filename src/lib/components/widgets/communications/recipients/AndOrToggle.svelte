@@ -3,11 +3,20 @@
 	import { t } from '$lib/index.svelte';
 	type Props = {
 		mode: 'and' | 'or';
+		onChange?: (mode: 'and' | 'or') => void | Promise<void>;
 	};
-	let { mode = $bindable('and') }: Props = $props();
+	let { mode = $bindable('and'), onChange }: Props = $props();
+
+	function getMode() {
+		return mode;
+	}
+	function setMode(newMode: 'and' | 'or') {
+		mode = newMode;
+		onChange?.(newMode);
+	}
 </script>
 
-<ToggleGroup.Root bind:value={mode} type="single" class="mt-1 flex items-center">
+<ToggleGroup.Root bind:value={getMode, setMode} type="single" class="mt-1 flex items-center">
 	<div class="flex items-center rounded-lg border border-gray-200 shadow">
 		<ToggleGroup.Item
 			aria-label={t`toggle and`}

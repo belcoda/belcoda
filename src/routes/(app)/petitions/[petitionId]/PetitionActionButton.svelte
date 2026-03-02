@@ -4,6 +4,7 @@
 	let { petition }: { petition: ReadPetitionZero } = $props();
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
+	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
@@ -15,23 +16,14 @@
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
-	import { env } from '$env/dynamic/public';
-	import { dev } from '$app/environment';
 	import PetitionMakeACopy from './PetitionMakeACopy.svelte';
-
-	const { PUBLIC_ROOT_DOMAIN } = env;
+	import PetitionShareModal from '$lib/components/widgets/petition/share/PetitionShareModal.svelte';
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
+	import { goto } from '$app/navigation';
 
 	let openShareModal = $state(false);
 	let openMakeACopyModal = $state(false);
-
-	const petitionPageUrl = $derived(() => {
-		const orgSlug = appState.activeOrganization.data?.slug;
-		if (!orgSlug || !petition.slug) {
-			return '#';
-		}
-		const protocol = dev ? 'http' : 'https';
-		return `${protocol}://${orgSlug}.${PUBLIC_ROOT_DOMAIN}/page/${orgSlug}/petitions/${petition.slug}`;
-	});
+	let openDeleteDialog = $state(false);
 
 	function updatePublished(checked: boolean) {
 		z.mutate(
@@ -46,6 +38,38 @@
 				}
 			})
 		);
+	}
+
+	async function handleDeleteOrArchive() {
+		openDeleteDialog = false;
+		if (petition.published) {
+			// Archive published petitions
+			const batch = z.mutate(
+				mutators.petition.archive({
+					metadata: {
+						petitionId: petition.id,
+						teamId: appState.activeTeamId,
+						organizationId: appState.organizationId
+					}
+				})
+			);
+			await batch.client;
+			toast.success(t`Petition archived`);
+		} else {
+			// Delete draft petitions
+			const batch = z.mutate(
+				mutators.petition.delete({
+					metadata: {
+						petitionId: petition.id,
+						teamId: appState.activeTeamId,
+						organizationId: appState.organizationId
+					}
+				})
+			);
+			await batch.client;
+			toast.success(t`Petition deleted`);
+		}
+		goto('/petitions');
 	}
 </script>
 
@@ -98,18 +122,28 @@
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>
+				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
+					{t`Make a copy`}
+				</DropdownMenu.Item>
+			</DropdownMenu.Group>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Group>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={petitionPageUrl()} target="_blank" rel="noopener noreferrer"
-							>{#if petition.published}{t`View petition page`}{:else}{t`Preview petition page`}{/if}</a
+						<a {...props} href="/petitions/{petition.id}/preview" target="_blank" rel="noopener noreferrer"
+							>{t`Preview petition page`}</a
 						>
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>
-				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
-					{t`Make a copy`}
+				<DropdownMenu.Item
+					class="w-full text-destructive"
+					onclick={() => (openDeleteDialog = true)}
+				>
+					<TrashIcon class="size-4 mr-2" />
+					{petition.published ? t`Archive petition` : t`Delete petition`}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 		</DropdownMenu.Content>
@@ -117,9 +151,17 @@
 </ButtonGroup.Root>
 
 <ResponsiveModal title={t`Share Petition`} bind:open={openShareModal}>
-	<div class="space-y-4">
-		<p class="text-sm text-muted-foreground">{t`Share functionality coming soon...`}</p>
-		<!-- TODO: Add petition share modal component -->
-	</div>
+	<PetitionShareModal petitionId={petition.id} />
 </ResponsiveModal>
 <PetitionMakeACopy {petition} bind:open={openMakeACopyModal} />
+
+<ConfirmDialog
+	bind:open={openDeleteDialog}
+	title={petition.published ? t`Archive this petition?` : t`Delete this petition?`}
+	description={petition.published
+		? t`This petition will be archived. You can still view it in the archived petitions list.`
+		: t`This draft petition will be permanently deleted. This action cannot be undone.`}
+	confirmText={petition.published ? t`Archive` : t`Delete`}
+	confirmVariant="destructive"
+	onConfirm={handleDeleteOrArchive}
+/>

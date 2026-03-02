@@ -199,7 +199,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			personId: true,
 			userId: true,
 			type: true,
-			payload: true,
+			referenceId: true,
 			unread: true,
 			createdAt: true
 		},
@@ -399,7 +399,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			details: true,
 			responses: true,
 			createdAt: true,
-			updatedAt: true
+			updatedAt: true,
+			deletedAt: true
 		},
 		personNote: {
 			id: true,

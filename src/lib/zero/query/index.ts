@@ -1,5 +1,8 @@
 import { defineQueries } from '@rocicorp/zero';
 
+// activity
+import { listActivity } from '$lib/zero/query/activity/list';
+
 // action_code
 import { listActionCodes } from '$lib/zero/query/action_code/list';
 
@@ -36,6 +39,7 @@ import { listPersonNotes } from '$lib/zero/query/person_note/list';
 // petition
 import { listPetitions } from '$lib/zero/query/petition/list';
 import { readPetition } from '$lib/zero/query/petition/read';
+import { listPetitionSignatures as listPetitionSignaturesForPetition } from '$lib/zero/query/petition/signatures';
 
 // petition_signature
 import { listPetitionSignatures } from '$lib/zero/query/petition_signature/list';
@@ -59,6 +63,8 @@ import { listWebhooks } from '$lib/zero/query/webhook/list';
 
 // Re-export all queries
 export {
+	// activity
+	listActivity,
 	// action_code
 	listActionCodes,
 	// email_from_signature
@@ -105,6 +111,9 @@ export {
 };
 
 export default defineQueries({
+	activity: {
+		list: listActivity
+	},
 	actionCode: {
 		list: listActionCodes
 	},
@@ -141,7 +150,8 @@ export default defineQueries({
 	},
 	petition: {
 		list: listPetitions,
-		read: readPetition
+		read: readPetition,
+		signatures: listPetitionSignaturesForPetition
 	},
 	petitionSignature: {
 		list: listPetitionSignatures,

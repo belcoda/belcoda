@@ -17,8 +17,8 @@ export function generateOrganization({
 	const name = OWNER_ORGANIZATION_NAME!;
 	const organization: { id: string } & typeof organizationTable.$inferInsert = {
 		id: id,
-		name,
-		slug: OWNER_ORGANIZATION_SLUG!,
+		name: 'Beltest',
+		slug: 'beltest',
 		country: selectOneOfArray([...countryCodes]) as CountryCode,
 		logo: 'https://belcoda-public-prod.s3.eu-central-1.amazonaws.com/system/images/logo-full.png',
 		icon: 'https://belcoda-public-prod.s3.eu-central-1.amazonaws.com/system/images/logo-full.png',

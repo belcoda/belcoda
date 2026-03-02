@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	const { params } = $props();
 	import { z } from '$lib/zero.svelte';
@@ -8,50 +7,28 @@
 		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import PetitionSignatures from '$lib/components/widgets/petition/PetitionSignatures.svelte';
-	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
 	import PetitionActionButton from './PetitionActionButton.svelte';
+	import PetitionListItem from './PetitionListItem.svelte';
 </script>
 
 <ContentLayout rootLink="/petitions" {header}>
-	{#if petition.details.type === 'complete' && petition.data}
-		<PetitionSignatures petition={petition.data} />
-	{:else}
-		<Skeleton class="h-48 w-full" />
-		<Skeleton class="h-48 w-full" />
-		<Skeleton class="h-48 w-full" />
-	{/if}
+	{#key params.petitionId}
+		{#if petition.details.type === 'complete' && petition.data}
+			<PetitionSignatures petition={petition.data} />
+		{:else}
+			<Skeleton class="h-48 w-full" />
+			<Skeleton class="h-48 w-full" />
+			<Skeleton class="h-48 w-full" />
+		{/if}
+	{/key}
 </ContentLayout>
 
 {#snippet header()}
 	<div class="flex items-center justify-between">
 		<div>
 			{#if petition.data && petition.data.title}
-				<div class="flex w-full items-center justify-start gap-3">
-					<div class="w-12">
-						<Avatar
-							src={petition.data.featureImage}
-							name1={petition.data.title}
-							class="size-12 rounded-lg"
-							imageClass="rounded-lg object-cover"
-						/>
-					</div>
-					<div>
-						<div class="flex items-center gap-2">
-							<div class="text-lg font-medium">{petition.data.title}</div>
-							<ColorBadge color={petition.data.published ? 'green' : 'gray'}>
-								{petition.data.published ? t`Published` : t`Draft`}
-							</ColorBadge>
-						</div>
-						{#if petition.data.petitionTarget}
-							<div class="text-sm text-muted-foreground">
-								{t`Target:`}
-								{petition.data.petitionTarget}
-							</div>
-						{/if}
-					</div>
-				</div>
+				<PetitionListItem petition={petition.data} />
 			{:else}
 				<Skeleton class="h-10 w-20 rounded-lg" />
 			{/if}

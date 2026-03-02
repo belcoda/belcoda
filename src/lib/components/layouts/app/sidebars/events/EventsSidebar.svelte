@@ -84,7 +84,7 @@
 		<Sidebar.Header class="gap-3.5 border-b p-4">
 			<div class="flex w-full items-center justify-between">
 				<div class="text-2xl font-bold text-foreground">{t`Events`}</div>
-				<Button href="/events" variant="outline"><CalendarPlusIcon class="size-5" /></Button>
+				<Button href="/events/new" variant="outline"><CalendarPlusIcon class="size-5" /></Button>
 			</div>
 			<EventCalendar
 				bind:value
