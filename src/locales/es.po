@@ -1859,6 +1859,7 @@ msgstr "Nueva petición"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Published"
@@ -2226,6 +2227,7 @@ msgid "I can't attend"
 msgstr "No puedo asistir"
 
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
 msgid "Event not published"
 msgstr "Evento no publicado"
 
@@ -3352,4 +3354,31 @@ msgstr ""
 
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 msgid "Are you sure you want to delete this signature?"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "Event Created!"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "Event Updated!"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "Here's a preview of how your event will appear to your audience."
+msgstr ""
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "This event is not published yet. Toggle the switch below to make it visible to your audience."
+msgstr ""
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "Publish event"
+msgstr ""
+
+#: src/lib/components/widgets/event/EventCreatedModal.svelte
+msgid "View full page"
 msgstr ""
