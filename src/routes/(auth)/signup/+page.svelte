@@ -21,7 +21,7 @@
 			provider: 'google',
 			callbackURL: '/',
 			errorCallbackURL: '/signup?error=true',
-			newUserCallbackURL: '/welcome'
+			newUserCallbackURL: '/organization/new'
 		});
 	}
 
