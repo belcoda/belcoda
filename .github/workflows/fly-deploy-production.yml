@@ -1,0 +1,44 @@
+name: Fly Deploy Production
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      # Install Node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24' # or your preferred version
+
+      - name: Install dependencies
+        run: npm ci --include=dev
+
+      # Start proxy and run drizzle stuff
+      - name: Generate and run Drizzle migrations
+        run: |
+          flyctl proxy 5432 -a belcodadb &
+          PROXY_PID=$!
+          sleep 5
+
+          npx drizzle-kit migrate
+
+          kill $PROXY_PID
+        env:
+          DATABASE_URL: ${{ secrets.PROXIED_PRODUCTION_DATABASE_URL }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      # App deploy
+      - run: flyctl deploy -c deploy/fly.production.toml --remote-only --build-arg PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN_STAGING }} --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN_STAGING }} --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      # Zero deploy
+      - run: flyctl deploy -c deploy/fly.zero.production.toml --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
