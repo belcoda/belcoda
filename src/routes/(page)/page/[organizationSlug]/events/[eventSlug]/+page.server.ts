@@ -197,15 +197,14 @@ async function getDetails(
 	}
 
 	const actionCode = await _getEventActionCodeUnsafe({ eventId: eventObj.id });
-	if (!actionCode) {
-		throw new Error('Action code not found');
-	}
 
-	const whatsAppSignupLink = generateWhatsAppSignupLink({
-		eventTitle: eventObj.title,
-		whatsAppNumber: organizationObj.settings.whatsApp?.number,
-		actionCode: actionCode.id
-	});
+	const whatsAppSignupLink = actionCode
+		? generateWhatsAppSignupLink({
+				eventTitle: eventObj.title,
+				whatsAppNumber: organizationObj.settings.whatsApp?.number,
+				actionCode: actionCode.id
+			})
+		: null;
 
 	return { event: eventObj, organization: organizationObj, whatsAppSignupLink, actionCode };
 }
