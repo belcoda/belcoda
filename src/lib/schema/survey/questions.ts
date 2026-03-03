@@ -201,7 +201,7 @@ export const surveyQuestionResponse = v.record(
 export type SurveyQuestionResponse = v.InferOutput<typeof surveyQuestionResponse>;
 
 export function getSurveySchema(eventObj: EventSchema) {
-	const survey = eventObj.settings.survey.collections[0].questions;
+	const survey = eventObj.settings.survey?.collections?.[0]?.questions ?? [];
 	const customSurveyQuestions = survey.filter((question) => question.type.startsWith('custom.'));
 	const personSurveyQuestions = survey
 		.filter((question) => question.type.startsWith('person.'))
