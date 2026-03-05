@@ -50,7 +50,7 @@
 			if (email) return email;
 			return t`[Select a email]`;
 		} else {
-			return `${appState.activeOrganization.data?.settings.email.systemFromIdentity.name || appState.activeOrganization.data?.name} <${getSystemEmailAddress(appState.activeOrganization.data as ReadOrganizationZero)}>`;
+			return `${appState.activeOrganization.data?.settings.email.systemFromIdentity?.name || appState.activeOrganization.data?.name} <${getSystemEmailAddress(appState.activeOrganization.data as ReadOrganizationZero)}>`;
 		}
 	}
 </script>
@@ -63,7 +63,7 @@
 		<Select.Content>
 			<Select.Item
 				value="system"
-				label={`${appState.activeOrganization.data?.settings.email.systemFromIdentity.name || appState.activeOrganization.data?.name} <${getSystemEmailAddress(appState.activeOrganization.data as ReadOrganizationZero)}>`}
+				label={`${appState.activeOrganization.data?.settings.email.systemFromIdentity?.name || appState.activeOrganization.data?.name} <${getSystemEmailAddress(appState.activeOrganization.data as ReadOrganizationZero)}>`}
 			/>
 			{#each listSignature.data as option}
 				<Select.Item value={option.id} label={renderEmailFrom(option) ?? undefined} />
