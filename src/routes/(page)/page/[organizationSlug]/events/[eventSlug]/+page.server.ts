@@ -44,9 +44,19 @@ export async function load({ locals, params, url }) {
 	const surveySchema = getSurveySchema(eventObj);
 	const form = await superValidate(valibot(surveySchema));
 
+	let renderedDescription: string | null = null;
+	if (eventObj.description?.root?.children?.length) {
+		try {
+			renderedDescription = await lexicalRenderer.render(eventObj.description);
+		} catch (err) {
+			log.warn({ err, eventId: eventObj.id }, 'Failed to render event description');
+			renderedDescription = null;
+		}
+	}
+
 	const renderedEvent = {
 		...eventObj,
-		description: eventObj.description ? await lexicalRenderer.render(eventObj.description) : null
+		description: renderedDescription
 	};
 	return {
 		event: renderedEvent,
@@ -72,7 +82,7 @@ export const actions = {
 		if (!eventObj) {
 			return error(404, 'Event not found');
 		}
-		const surveySchema = getSurveySchema(eventObj);
+		const surveySchema = getSurveySchemaForSuperforms(eventObj);
 		const form = await superValidate(request, valibot(surveySchema));
 		if (!form.valid) {
 			return fail(400, { form });
@@ -119,7 +129,7 @@ export const actions = {
 		if (!eventObj) {
 			return error(404, 'Event not found');
 		}
-		const surveySchema = getSurveySchema(eventObj);
+		const surveySchema = getSurveySchemaForSuperforms(eventObj);
 		const form = await superValidate(request, valibot(surveySchema));
 		if (!form.valid) {
 			return fail(400, { form });
