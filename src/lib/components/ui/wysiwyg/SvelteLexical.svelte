@@ -18,7 +18,10 @@
 		StrikethroughButton,
 		Toolbar,
 		UnderlineButton,
-		OnChangePlugin
+		OnChangePlugin,
+		BlockFormatDropDown,
+		HeadingDropDownItem,
+		HeadingNode
 	} from 'svelte-lexical';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
@@ -35,7 +38,7 @@
 	const initialConfig = {
 		theme,
 		namespace: 'belcoda_wysiwyg',
-		nodes: [LinkNode],
+		nodes: [LinkNode, HeadingNode],
 		editable: (() => !disabled)(),
 		editorState: value ? JSON.stringify(value) : undefined,
 		onError: (error: Error) => {
@@ -59,6 +62,12 @@
 				{#snippet children({ editor, activeEditor, blockType })}
 					<FontFamilyDropDown />
 					<FontSizeDropDown />
+					<Divider />
+					<BlockFormatDropDown>
+						<HeadingDropDownItem headingSize="h1" />
+						<HeadingDropDownItem headingSize="h2" />
+						<HeadingDropDownItem headingSize="h3" />
+					</BlockFormatDropDown>
 					<Divider />
 					<BoldButton />
 					<ItalicButton />
