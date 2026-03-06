@@ -21,7 +21,11 @@
 		OnChangePlugin,
 		BlockFormatDropDown,
 		HeadingDropDownItem,
-		HeadingNode
+		HeadingNode,
+		ImagePlugin,
+		ImageNode,
+		InsertDropDown,
+		InsertImageDropDownItem
 	} from 'svelte-lexical';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
@@ -38,7 +42,7 @@
 	const initialConfig = {
 		theme,
 		namespace: 'belcoda_wysiwyg',
-		nodes: [LinkNode, HeadingNode],
+		nodes: [LinkNode, HeadingNode, ImageNode],
 		editable: (() => !disabled)(),
 		editorState: value ? JSON.stringify(value) : undefined,
 		onError: (error: Error) => {
@@ -76,6 +80,10 @@
 					<Divider />
 					<InsertLink />
 					<Divider />
+					<InsertDropDown>
+						<InsertImageDropDownItem onclick={() => {}} />
+					</InsertDropDown>
+					<Divider />
 					<DropDownAlign />
 				{/snippet}
 			</Toolbar>
@@ -88,6 +96,7 @@
 			</div>
 			<RichTextPlugin />
 			<LinkPlugin />
+			<ImagePlugin />
 			<OnChangePlugin
 				onChange={handleChange}
 				ignoreHistoryMergeTagChange={true}
