@@ -33,6 +33,10 @@ export const personAddedFrom = variant('type', [
 		type: literal('seeds')
 	}),
 	object({
+		type: literal('migration'),
+		importId: uuid
+	}),
+	object({
 		type: literal('import'),
 		importId: uuid
 	}),
