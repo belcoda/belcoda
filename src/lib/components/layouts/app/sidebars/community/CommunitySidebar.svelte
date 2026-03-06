@@ -34,7 +34,7 @@
 	{#if !isMobile.current}
 		<DesktopNavSidebar />
 	{/if}
-	<Sidebar.Root collapsible="none" class="flex w-full flex-1">
+	<Sidebar.Root collapsible="none" class="flex w-full min-w-0 flex-1">
 		<Sidebar.Header class="gap-3.5 border-b p-4">
 			<div class="flex w-full items-center justify-between">
 				<div class="text-2xl font-bold text-foreground">{t`Community`}</div>
@@ -64,7 +64,7 @@
 		class:text-sidebar-accent-foreground={page.url.pathname.startsWith(`/community/${person.id}`)}
 		class="flex w-full items-center justify-between gap-2 border-b px-3 py-3 last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
 	>
-		<div class="flex items-center gap-2">
+		<div class="flex min-w-0 flex-1 items-center gap-2">
 			<div>
 				<Avatar
 					class="aspect-square size-11 shrink-0"
@@ -73,17 +73,17 @@
 					src={person.profilePicture}
 				/>
 			</div>
-			<div>
-				<div class="text-sm font-medium">
+			<div class="min-w-0 flex-1">
+				<div class="truncate text-sm font-medium">
 					{person.givenName}
 					{person.familyName}
 				</div>
-				<div class="line-clamp-1 text-xs text-muted-foreground">
+				<div class="truncate text-xs text-muted-foreground">
 					{@render renderActivityPreview(person.mostRecentActivityPreview, person.addedFrom)}
 				</div>
 			</div>
 		</div>
-		<div>
+		<div class="shrink-0">
 			<div class="text-xs whitespace-nowrap text-muted-foreground">
 				{formatShortTimestamp(person.mostRecentActivityAt)}
 			</div>
@@ -162,6 +162,8 @@
 			<div class="italic">Added from seed data (should only appear in dev)</div>
 		{:else if addedFrom.type === 'import'}
 			<div class="italic">Imported from CSV</div>
+		{:else if addedFrom.type === 'migration'}
+			<div class="italic">Migrated</div>
 		{:else if addedFrom.type === 'added_manually'}
 			<div class="italic">Added to the organization</div>
 		{:else if addedFrom.type === 'added_from_event'}
