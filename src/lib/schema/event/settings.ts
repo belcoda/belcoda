@@ -18,9 +18,9 @@ import { whatsappFlowInternalSchema } from '$lib/schema/whatsapp/flows/schema';
 export const eventSettingsSchema = object({
 	displayTimezone: boolean(),
 	survey: surveySchema,
-	whatsappFlowId: optional(shortString),
-	whatsappFlowYCloudId: optional(shortString),
-	whatsappFlowCreatedAt: optional(unixTimestamp),
+	whatsappFlowId: optional(nullable(shortString), null),
+	whatsappFlowYCloudId: optional(nullable(shortString), null),
+	whatsappFlowCreatedAt: optional(nullable(unixTimestamp), null),
 	attachments: optional(
 		array(
 			object({
