@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { getActiveEditor, ModalDialog, CloseCircleButton, InsertImage } from 'svelte-lexical';
+	import { getActiveEditor, InsertImage } from 'svelte-lexical';
 	import { tick } from 'svelte';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -9,25 +10,23 @@
 
 	const activeEditor = getActiveEditor();
 
-	let { showModal = $bindable(false) } = $props();
+	let open = $state(false);
 	let altText = $state('');
 	let imageUrl = $state('');
-	let uploadedImageUrl = $state('');
 	let activeTab = $state('url');
 	let isUploading = $state(false);
 	let selectedFile: File | null = $state(null);
 
-	export function open() {
-		showModal = true;
+	export function show() {
+		open = true;
 		altText = '';
 		imageUrl = '';
-		uploadedImageUrl = '';
 		selectedFile = null;
 		isUploading = false;
 	}
 
 	async function close() {
-		showModal = false;
+		open = false;
 		await tick();
 	}
 
@@ -40,7 +39,7 @@
 		if (!selectedFile) return;
 		isUploading = true;
 		try {
-			uploadedImageUrl = await processAndUploadFile(selectedFile);
+			const uploadedImageUrl = await processAndUploadFile(selectedFile);
 			InsertImage($activeEditor, { altText, src: uploadedImageUrl });
 			close();
 		} catch (err) {
@@ -57,12 +56,11 @@
 	}
 </script>
 
-<ModalDialog bind:showModal>
-	<div class="w-[400px] p-4">
-		<div class="mb-4 flex items-center justify-between">
-			<h2 class="text-lg font-semibold">Insert Image</h2>
-			<CloseCircleButton on:click={close} />
-		</div>
+<Dialog.Root bind:open>
+	<Dialog.Content class="sm:max-w-[425px]">
+		<Dialog.Header>
+			<Dialog.Title>Insert Image</Dialog.Title>
+		</Dialog.Header>
 
 		<Tabs.Root bind:value={activeTab} class="w-full">
 			<Tabs.List class="grid w-full grid-cols-2">
@@ -70,7 +68,7 @@
 				<Tabs.Trigger value="upload">Upload</Tabs.Trigger>
 			</Tabs.List>
 
-			<Tabs.Content value="url" class="space-y-4">
+			<Tabs.Content value="url" class="space-y-4 pt-4">
 				<div class="space-y-2">
 					<Label for="image-url">Image URL</Label>
 					<Input
@@ -93,7 +91,7 @@
 				</Button>
 			</Tabs.Content>
 
-			<Tabs.Content value="upload" class="space-y-4">
+			<Tabs.Content value="upload" class="space-y-4 pt-4">
 				<div class="space-y-2">
 					<Label for="image-upload">Upload Image</Label>
 					<Input
@@ -126,5 +124,5 @@
 				</Button>
 			</Tabs.Content>
 		</Tabs.Root>
-	</div>
-</ModalDialog>
+	</Dialog.Content>
+</Dialog.Root>

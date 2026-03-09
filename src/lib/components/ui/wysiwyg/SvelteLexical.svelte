@@ -84,7 +84,7 @@
 					<InsertLink />
 					<Divider />
 					<InsertDropDown>
-						<InsertImageDropDownItem onclick={() => imageDialog?.open()} />
+						<InsertImageDropDownItem onclick={() => imageDialog?.show()} />
 					</InsertDropDown>
 					<Divider />
 					<DropDownAlign />
@@ -121,5 +121,7 @@
 		margin: auto;
 		max-width: 90vw;
 		max-height: 90vh;
+		border: none;
+		padding: 0;
 	}
 </style>
