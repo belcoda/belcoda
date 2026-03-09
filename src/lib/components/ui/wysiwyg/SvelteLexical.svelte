@@ -25,7 +25,8 @@
 		ImagePlugin,
 		ImageNode,
 		InsertDropDown,
-		InsertImageDropDownItem
+		InsertImageDropDownItem,
+		InsertImageDialog
 	} from 'svelte-lexical';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
@@ -38,6 +39,8 @@
 		disabled?: boolean;
 		onChange?: (state: any) => void;
 	} = $props();
+
+	let imageDialog: ReturnType<typeof InsertImageDialog> | undefined = $state(undefined);
 
 	const initialConfig = {
 		theme,
@@ -81,10 +84,11 @@
 					<InsertLink />
 					<Divider />
 					<InsertDropDown>
-						<InsertImageDropDownItem onclick={() => {}} />
+						<InsertImageDropDownItem onclick={() => imageDialog?.open()} />
 					</InsertDropDown>
 					<Divider />
 					<DropDownAlign />
+					<InsertImageDialog bind:this={imageDialog} />
 				{/snippet}
 			</Toolbar>
 		{/if}
@@ -109,5 +113,13 @@
 <style>
 	.editor-shell.svelte-lexical {
 		margin: 0 auto !important;
+	}
+
+	:global(dialog) {
+		position: fixed;
+		inset: 0;
+		margin: auto;
+		max-width: 90vw;
+		max-height: 90vh;
 	}
 </style>
