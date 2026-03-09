@@ -2,8 +2,6 @@
 	import { t } from '$lib/index.svelte';
 	import { authClient } from '$lib/auth-client';
 	import { appState } from '$lib/state.svelte';
-	import { parse } from 'valibot';
-	import { type ReadOrganizationRest, readOrganizationRest } from '$lib/schema/organization';
 	const organizations = authClient.useListOrganizations;
 
 	import AuthLayout from '$lib/components/widgets/AuthLayout.svelte';
