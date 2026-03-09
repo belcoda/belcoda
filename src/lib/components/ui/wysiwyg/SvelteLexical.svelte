@@ -25,9 +25,9 @@
 		ImagePlugin,
 		ImageNode,
 		InsertDropDown,
-		InsertImageDropDownItem,
-		InsertImageDialog
+		InsertImageDropDownItem
 	} from 'svelte-lexical';
+	import InsertImageCombinedDialog from './InsertImageCombinedDialog.svelte';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
 	let {
@@ -40,7 +40,7 @@
 		onChange?: (state: any) => void;
 	} = $props();
 
-	let imageDialog: ReturnType<typeof InsertImageDialog> | undefined = $state(undefined);
+	let imageDialog: ReturnType<typeof InsertImageCombinedDialog> | undefined = $state(undefined);
 
 	const initialConfig = {
 		theme,
@@ -88,7 +88,7 @@
 					</InsertDropDown>
 					<Divider />
 					<DropDownAlign />
-					<InsertImageDialog bind:this={imageDialog} />
+					<InsertImageCombinedDialog bind:this={imageDialog} />
 				{/snippet}
 			</Toolbar>
 		{/if}
