@@ -160,6 +160,8 @@
 		<!-- No ativity preview... Let's just say when the person was added-->
 		{#if addedFrom.type === 'seeds'}
 			<div class="italic">Added from seed data (should only appear in dev)</div>
+		{:else if addedFrom.type === 'migration'}
+			<div class="italic">Migrated</div>
 		{:else if addedFrom.type === 'import'}
 			<div class="italic">Imported from CSV</div>
 		{:else if addedFrom.type === 'added_manually'}
