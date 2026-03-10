@@ -43,6 +43,8 @@
 		}
 	};
 
+	let anchorElem = $state<HTMLElement | null>(null);
+
 	function handleChange(editorState: EditorState) {
 		const state = structuredClone(editorState.toJSON());
 		value = state;
@@ -72,13 +74,14 @@
 			</Toolbar>
 		{/if}
 		<div class="editor-container">
-			<div class="editor-scroller group">
+			<div class="editor-scroller group" bind:this={anchorElem}>
 				<div class="editor group">
 					<ContentEditable />
 				</div>
 			</div>
 			<RichTextPlugin />
 			<LinkPlugin />
+			<FloatingLinkEditorPlugin {anchorElem} />
 			<OnChangePlugin
 				onChange={handleChange}
 				ignoreHistoryMergeTagChange={true}
@@ -91,5 +94,8 @@
 <style>
 	.editor-shell.svelte-lexical {
 		margin: 0 auto !important;
+	}
+	.editor-container {
+		position: relative;
 	}
 </style>
