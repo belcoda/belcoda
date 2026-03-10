@@ -53,6 +53,8 @@
 		}
 	};
 
+	let anchorElem = $state<HTMLElement | null>(null);
+
 	function handleChange(editorState: EditorState) {
 		const state = structuredClone(editorState.toJSON());
 		value = state;
@@ -93,14 +95,18 @@
 			</Toolbar>
 		{/if}
 		<div class="editor-container">
-			<div class="editor-scroller group">
+			<div class="editor-scroller group" bind:this={anchorElem}>
 				<div class="editor group">
 					<ContentEditable />
 				</div>
 			</div>
 			<RichTextPlugin />
 			<LinkPlugin />
+<<<<<<< kenneth/feature/lexical-headings-and-images
 			<ImagePlugin />
+=======
+			<FloatingLinkEditorPlugin {anchorElem} />
+>>>>>>> develop
 			<OnChangePlugin
 				onChange={handleChange}
 				ignoreHistoryMergeTagChange={true}
@@ -114,6 +120,7 @@
 	.editor-shell.svelte-lexical {
 		margin: 0 auto !important;
 	}
+<<<<<<< kenneth/feature/lexical-headings-and-images
 
 	:global(dialog) {
 		position: fixed;
@@ -123,5 +130,9 @@
 		max-height: 90vh;
 		border: none;
 		padding: 0;
+=======
+	.editor-container {
+		position: relative;
+>>>>>>> develop
 	}
 </style>

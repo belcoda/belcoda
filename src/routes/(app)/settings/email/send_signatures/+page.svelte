@@ -94,7 +94,7 @@
 		const options: { value: string; label: string }[] = [
 			{
 				value: '__system__',
-				label: t`System (${organization.data?.settings.email.systemFromIdentity.name || systemEmailAddress})`
+				label: t`System (${organization.data?.settings.email.systemFromIdentity?.name || systemEmailAddress})`
 			}
 		];
 
@@ -170,8 +170,8 @@
 			<Card.Content>
 				<SystemSignature
 					organizationId={organization.data.id}
-					name={organization.data.settings.email.systemFromIdentity.name}
-					replyTo={organization.data.settings.email.systemFromIdentity.replyTo}
+					name={organization.data.settings.email.systemFromIdentity?.name ?? null}
+					replyTo={organization.data.settings.email.systemFromIdentity?.replyTo ?? null}
 					emailAddress={systemEmailAddress}
 				/>
 			</Card.Content>

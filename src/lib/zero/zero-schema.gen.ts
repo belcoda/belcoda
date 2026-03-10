@@ -1322,6 +1322,7 @@ const organizationTable = {
 					primaryColor: string | null;
 					secondaryColor: string | null;
 				};
+				website: { homepageUrl?: string | null | undefined };
 			}
 		},
 		balance: {
