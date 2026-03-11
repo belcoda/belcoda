@@ -21,9 +21,7 @@
 		signupEventId: null,
 		mostRecentActivity: null
 	});
-	const personList = $derived.by(() =>
-		z.createQuery(queries.person.list(personListFilter))
-	);
+	const personList = $derived.by(() => z.createQuery(queries.person.list(personListFilter)));
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
 </script>
 
@@ -161,11 +159,9 @@
 		{#if addedFrom.type === 'seeds'}
 			<div class="italic">Added from seed data (should only appear in dev)</div>
 		{:else if addedFrom.type === 'migration'}
-			<div class="italic">Migrated</div>
+			<div class="italic">Data migration</div>
 		{:else if addedFrom.type === 'import'}
 			<div class="italic">Imported from CSV</div>
-		{:else if addedFrom.type === 'migration'}
-			<div class="italic">Migrated</div>
 		{:else if addedFrom.type === 'added_manually'}
 			<div class="italic">Added to the organization</div>
 		{:else if addedFrom.type === 'added_from_event'}
