@@ -67,7 +67,7 @@
 							<ChevronLeftIcon />
 							Back
 						</Button>
-						{#if dev}
+						<!-- {#if dev}
 							<Button
 								variant="outline"
 								size="sm"
@@ -75,7 +75,7 @@
 							>
 								Snapshot
 							</Button>
-						{/if}
+						{/if} -->
 					</div>
 				</Panel>
 			{/if}
