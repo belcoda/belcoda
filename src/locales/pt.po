@@ -3385,29 +3385,6 @@ msgstr ""
 msgid "View full page"
 msgstr ""
 
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-msgid "Event Created!"
-msgstr ""
-
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-msgid "Event Updated!"
-msgstr ""
-
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-msgid "Here's a preview of how your event will appear to your audience."
-msgstr ""
-
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-msgid "This event is not published yet. Toggle the switch below to make it visible to your audience."
-msgstr ""
-
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-msgid "Publish event"
-msgstr ""
-
-#: src/lib/components/widgets/event/EventCreatedModal.svelte
-msgid "View full page"
-msgstr ""
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+msgid "Compose WhatsApp"
+msgstr "Compor WhatsApp"

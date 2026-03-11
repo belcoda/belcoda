@@ -3379,3 +3379,7 @@ msgstr "Publish event"
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
 msgid "View full page"
 msgstr "View full page"
+
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+msgid "Compose WhatsApp"
+msgstr "Compose WhatsApp"
