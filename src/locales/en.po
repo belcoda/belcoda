@@ -1204,7 +1204,7 @@ msgstr "Or continue with"
 msgid "Invited by {0}"
 msgstr "Invited by {0}"
 
-#. placeholder {0}: error.message
+#. placeholder {0}: err.message
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Error loading invitation: {0}"
 msgstr "Error loading invitation: {0}"
@@ -3595,3 +3595,19 @@ msgstr "Create an account using the email address {0} to get started."
 #: src/routes/(auth)/signup/+page.svelte
 msgid "an organization"
 msgstr "an organization"
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Are you sure you want to decline this invitation? You will need to contact an organizational admin to get invited again."
+msgstr "Are you sure you want to decline this invitation? You will need to contact an organizational admin to get invited again."
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Failed to accept invitation"
+msgstr "Failed to accept invitation"
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Failed to decline invitation"
+msgstr "Failed to decline invitation"
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Logout"
+msgstr "Logout"

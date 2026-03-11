@@ -1151,7 +1151,7 @@ msgstr "Por favor aguarde enquanto encerramos sua sessão..."
 msgid "Invited by {0}"
 msgstr "Convidado por {0}"
 
-#. placeholder {0}: error.message
+#. placeholder {0}: err.message
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Error loading invitation: {0}"
 msgstr "Erro ao carregar convite: {0}"
@@ -3600,4 +3600,20 @@ msgstr ""
 
 #: src/routes/(auth)/signup/+page.svelte
 msgid "an organization"
+msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Are you sure you want to decline this invitation? You will need to contact an organizational admin to get invited again."
+msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Failed to accept invitation"
+msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Failed to decline invitation"
+msgstr ""
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Logout"
 msgstr ""
