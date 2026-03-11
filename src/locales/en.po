@@ -1209,9 +1209,8 @@ msgstr "Invited by {0}"
 msgid "Error loading invitation: {0}"
 msgstr "Error loading invitation: {0}"
 
-#: src/routes/(auth)/organization/RenderInvitation.svelte
-msgid "Accept / Reject"
-msgstr "Accept / Reject"
+#~ msgid "Accept / Reject"
+#~ msgstr "Accept / Reject"
 
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Welcome to Belcoda"
@@ -3562,3 +3561,37 @@ msgstr "If you prefer, you can continue to your organization without first booki
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 msgid "Getting started with Belcoda"
 msgstr "Getting started with Belcoda"
+
+#~ msgid "Accept"
+#~ msgstr "Accept"
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Decline invitation"
+msgstr "Decline invitation"
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Accept invitation"
+msgstr "Accept invitation"
+
+#~ msgid "You are invited to join an organization"
+#~ msgstr "You are invited to join an organization"
+
+#~ msgid "Create an account using the email address {0} to accept the invitation."
+#~ msgstr "Create an account using the email address {0} to accept the invitation."
+
+#~ msgid "You are invited to join {0} on Belcoda"
+#~ msgstr "You are invited to join {0} on Belcoda"
+
+#. placeholder {0}: invitationOrganizationName || t`an organization`
+#: src/routes/(auth)/signup/+page.svelte
+msgid "You're invited to {0}"
+msgstr "You're invited to {0}"
+
+#. placeholder {0}: invitationEmail
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Create an account using the email address {0} to get started."
+msgstr "Create an account using the email address {0} to get started."
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "an organization"
+msgstr "an organization"
