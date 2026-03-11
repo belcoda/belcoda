@@ -6,7 +6,7 @@ export const surveyCollectionSchema = v.pipe(
 	v.object({
 		id: helpers.uuid,
 		title: helpers.shortString,
-		description: v.optional(v.nullable(helpers.mediumString)),
+		description: v.optional(v.nullable(helpers.mediumStringEmpty)),
 		questions: v.array(surveyQuestionSchema),
 		nextCollectionId: v.optional(v.nullable(helpers.uuid)),
 		previousCollectionId: v.optional(v.nullable(helpers.uuid))

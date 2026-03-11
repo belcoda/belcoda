@@ -82,7 +82,7 @@ export const actions = {
 		if (!eventObj) {
 			return error(404, 'Event not found');
 		}
-		const surveySchema = getSurveySchemaForSuperforms(eventObj);
+		const surveySchema = getSurveySchema(eventObj);
 		const form = await superValidate(request, valibot(surveySchema));
 		if (!form.valid) {
 			return fail(400, { form });
@@ -129,7 +129,7 @@ export const actions = {
 		if (!eventObj) {
 			return error(404, 'Event not found');
 		}
-		const surveySchema = getSurveySchemaForSuperforms(eventObj);
+		const surveySchema = getSurveySchema(eventObj);
 		const form = await superValidate(request, valibot(surveySchema));
 		if (!form.valid) {
 			return fail(400, { form });
