@@ -154,7 +154,7 @@ export function buildBetterAuth(localeInput: string) {
 		plugins: [
 			organization({
 				async sendInvitationEmail(data) {
-					const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${data.email}&invitationOrganizationName=${data.organization.name}`;
+					const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
 					const email = organizationInvitation({
 						url: inviteLink,
 						inviterName: data.inviter.user.name,
