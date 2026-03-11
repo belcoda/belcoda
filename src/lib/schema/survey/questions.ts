@@ -32,7 +32,7 @@ export const surveyQuestionBase = v.object({
 	id: helpers.uuid,
 	type: surveyQuestionTypeSchema,
 	label: helpers.shortString,
-	description: v.optional(helpers.mediumString),
+	description: v.optional(v.nullable(helpers.mediumStringEmpty)),
 	required: v.boolean()
 });
 
