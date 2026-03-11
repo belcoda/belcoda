@@ -142,7 +142,7 @@ msgstr "Theme Settings"
 msgid "Are you sure you want to delete this email signature?"
 msgstr "Are you sure you want to delete this email signature?"
 
-#. placeholder {0}: organization.data?.settings.email.systemFromIdentity.name || systemEmailAddress
+#. placeholder {0}: organization.data?.settings.email.systemFromIdentity?.name || systemEmailAddress
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "System ({0})"
 msgstr "System ({0})"
