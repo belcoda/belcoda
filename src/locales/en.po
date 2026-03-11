@@ -3349,9 +3349,8 @@ msgstr "Select a tag..."
 msgid "Search tag..."
 msgstr "Search tag..."
 
-#: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
-msgid "Are you sure you want to delete this signature?"
-msgstr "Are you sure you want to delete this signature?"
+#~ msgid "Are you sure you want to delete this signature?"
+#~ msgstr "Are you sure you want to delete this signature?"
 
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
