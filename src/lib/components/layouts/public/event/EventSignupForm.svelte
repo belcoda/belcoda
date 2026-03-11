@@ -80,6 +80,7 @@
 	import type { CountryCode } from '$lib/utils/country';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
+import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import AddToCalendarDropdown from './AddToCalendarDropdown.svelte';
 	import PhoneNumberInput from '$lib/components/ui/custom-select/phone-number/phone-number.svelte';
 	import DateOfBirth from '$lib/components/ui/custom-select/date-of-birth/date-of-birth.svelte';
@@ -350,6 +351,25 @@
 								{#snippet children({ props })}
 									<Form.Label>{field.label}</Form.Label>
 									<Input type="number" {...props} bind:value={$data.customFields[field.id]} />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{:else if field.type === 'custom.radioGroup'}
+						<Form.Field {form} name={`customFields.${field.id}`}>
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{field.label}</Form.Label>
+									<RadioGroup.Root {...props} bind:value={$data.customFields[field.id]}>
+										{#each field.options || [] as option}
+											<div class="flex items-center space-x-2">
+												<RadioGroup.Item value={option} id={`${field.id}-${option}`} />
+												<label for={`${field.id}-${option}`} class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+													{option}
+												</label>
+											</div>
+										{/each}
+									</RadioGroup.Root>
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
