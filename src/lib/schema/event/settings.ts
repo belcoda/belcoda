@@ -65,7 +65,9 @@ import { v4 as uuidv4 } from 'uuid';
 export function defaultEventSettings(): EventSettings {
 	return {
 		displayTimezone: true,
-
+		whatsappFlowId: null,
+		whatsappFlowYCloudId: null,
+		whatsappFlowCreatedAt: null,
 		survey: {
 			schemaVersion: '1.0.0',
 			collections: [
