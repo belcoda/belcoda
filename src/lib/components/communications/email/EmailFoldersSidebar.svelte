@@ -25,16 +25,24 @@
 </script>
 
 <div class="flex h-full w-[180px] flex-col border-r bg-background">
-	<div class="border-b p-3">
+	<div class="flex flex-col gap-2 border-b p-3">
 		<Button href="/communications/email/drafts/new" class="w-full" size="sm">
-			<span class="icon-[mdi--email] size-4"></span> {t`Compose`}
+			<span class="icon-[mdi--email] size-4"></span>
+			{t`Compose`}
+		</Button>
+		<Button href="/communications/whatsapp/test" class="w-full" size="sm" variant="outline">
+			<span class="icon-[mdi--email] size-4"></span>
+			{t`Compose WhatsApp`}
 		</Button>
 	</div>
 	<nav class="flex flex-col gap-0.5 p-2">
 		{#each navMain as item (item.title)}
 			<a
 				href={item.url}
-				class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted {activeFolder?.title === item.title ? 'bg-muted font-medium' : ''}"
+				class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted {activeFolder?.title ===
+				item.title
+					? 'bg-muted font-medium'
+					: ''}"
 			>
 				<item.icon class="size-4" />
 				<span>{item.title}</span>
