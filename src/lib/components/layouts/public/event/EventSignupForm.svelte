@@ -80,6 +80,9 @@
 	import type { CountryCode } from '$lib/utils/country';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
+import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
+import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+import * as Select from '$lib/components/ui/select/index.js';
 	import AddToCalendarDropdown from './AddToCalendarDropdown.svelte';
 	import PhoneNumberInput from '$lib/components/ui/custom-select/phone-number/phone-number.svelte';
 	import DateOfBirth from '$lib/components/ui/custom-select/date-of-birth/date-of-birth.svelte';
@@ -350,6 +353,74 @@
 								{#snippet children({ props })}
 									<Form.Label>{field.label}</Form.Label>
 									<Input type="number" {...props} bind:value={$data.customFields[field.id]} />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{:else if field.type === 'custom.radioGroup'}
+						<Form.Field {form} name={`customFields.${field.id}`}>
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{field.label}</Form.Label>
+									<RadioGroup.Root {...props} bind:value={$data.customFields[field.id]}>
+										{#each field.options || [] as option}
+											<div class="flex items-center space-x-2">
+												<RadioGroup.Item value={option} id={`${field.id}-${option}`} />
+												<label for={`${field.id}-${option}`} class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+													{option}
+												</label>
+											</div>
+										{/each}
+									</RadioGroup.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{:else if field.type === 'custom.checkboxGroup'}
+						<Form.Field {form} name={`customFields.${field.id}`}>
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{field.label}</Form.Label>
+									<div class="space-y-2">
+										{#each field.options || [] as option}
+											<div class="flex items-center space-x-2">
+												<Checkbox
+													id={`${field.id}-${option}`}
+													checked={$data.customFields[field.id]?.includes(option)}
+													onCheckedChange={(checked) => {
+														const current = $data.customFields[field.id] || [];
+														if (checked) {
+															$data.customFields[field.id] = [...current, option];
+														} else {
+															$data.customFields[field.id] = current.filter((v: string) => v !== option);
+														}
+													}}
+												/>
+												<label for={`${field.id}-${option}`} class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+													{option}
+												</label>
+											</div>
+										{/each}
+									</div>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{:else if field.type === 'custom.dropdown'}
+						<Form.Field {form} name={`customFields.${field.id}`}>
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{field.label}</Form.Label>
+									<Select.Root type="single" {...props} bind:value={$data.customFields[field.id]}>
+										<Select.Trigger class="w-full">
+											{$data.customFields[field.id] || `Select ${field.label}`}
+										</Select.Trigger>
+										<Select.Content>
+											{#each field.options || [] as option}
+												<Select.Item value={option}>{option}</Select.Item>
+											{/each}
+										</Select.Content>
+									</Select.Root>
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
