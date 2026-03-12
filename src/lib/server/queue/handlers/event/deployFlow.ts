@@ -28,9 +28,9 @@ export async function deployEventWhatsAppFlow({ eventId }: { eventId: string }) 
 		eventTitle: eventResult.title,
 		organizationId: eventResult.organizationId,
 		settings: eventResult.settings,
-		existingFlowId: eventResult.settings.whatsappFlowId,
-		existingFlowYCloudId: eventResult.settings.whatsappFlowYCloudId,
-		existingFlowCreatedAt: eventResult.settings.whatsappFlowCreatedAt
+		existingFlowId: eventResult.settings.whatsappFlowId || undefined,
+		existingFlowYCloudId: eventResult.settings.whatsappFlowYCloudId || undefined,
+		existingFlowCreatedAt: eventResult.settings.whatsappFlowCreatedAt || undefined
 	});
 
 	const flow = await deployFlow({

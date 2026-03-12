@@ -33,6 +33,10 @@ export const personAddedFrom = variant('type', [
 		type: literal('seeds')
 	}),
 	object({
+		type: literal('migration'),
+		importId: uuid
+	}),
+	object({
 		type: literal('import'),
 		importId: uuid
 	}),
@@ -51,6 +55,9 @@ export const personAddedFrom = variant('type', [
 	object({
 		type: literal('incoming_whatsapp_message'),
 		messageId: uuid
+	}),
+	object({
+		type: literal('migration')
 	})
 ]);
 export type PersonAddedFrom = InferOutput<typeof personAddedFrom>;

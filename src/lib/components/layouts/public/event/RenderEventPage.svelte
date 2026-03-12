@@ -13,7 +13,7 @@
 		signupCount?: number;
 		session?: App.Locals['session'] | null;
 		form?: SuperValidated<SurveySchema>;
-		whatsAppSignupLink?: string;
+		whatsAppSignupLink?: string | null;
 		layout: 'default' | 'embed';
 		success?: boolean;
 		declined?: boolean;

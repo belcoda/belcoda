@@ -14,7 +14,11 @@ import { valibot } from 'sveltekit-superforms/adapters';
 import { parse } from 'valibot';
 import { getSurveySchema, type SurveySchema } from '$lib/schema/survey/questions';
 import { type EventSignupHelper, eventSignupHelper } from '$lib/schema/event-signup';
-import { signUpForEventHelper, declineEventHelper } from '$lib/server/api/data/event/signup';
+import {
+	signUpForEventHelper,
+	declineEventHelper,
+	getEventSignupsByEventIdUnsafe
+} from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
 import { event, session } from '$lib/schema/drizzle.js';
@@ -36,7 +40,8 @@ export async function load({ locals, params, url }) {
 	const {
 		event: eventObj,
 		organization: organizationObj,
-		whatsAppSignupLink
+		whatsAppSignupLink,
+		signupCount
 	} = await db.transaction(async (tx) => {
 		return await getDetails(params.eventSlug, params.organizationSlug, tx, locals.session);
 	});
@@ -44,14 +49,25 @@ export async function load({ locals, params, url }) {
 	const surveySchema = getSurveySchema(eventObj);
 	const form = await superValidate(valibot(surveySchema));
 
+	let renderedDescription: string | null = null;
+	if (eventObj.description?.root?.children?.length) {
+		try {
+			renderedDescription = await lexicalRenderer.render(eventObj.description);
+		} catch (err) {
+			log.warn({ err, eventId: eventObj.id }, 'Failed to render event description');
+			renderedDescription = null;
+		}
+	}
+
 	const renderedEvent = {
 		...eventObj,
-		description: eventObj.description ? await lexicalRenderer.render(eventObj.description) : null
+		description: renderedDescription
 	};
 	return {
 		event: renderedEvent,
 		organization: organizationObj,
 		whatsAppSignupLink,
+		signupCount,
 		form,
 		session: locals.session
 	};
@@ -197,15 +213,27 @@ async function getDetails(
 	}
 
 	const actionCode = await _getEventActionCodeUnsafe({ eventId: eventObj.id });
-	if (!actionCode) {
-		throw new Error('Action code not found');
-	}
 
-	const whatsAppSignupLink = generateWhatsAppSignupLink({
-		eventTitle: eventObj.title,
-		whatsAppNumber: organizationObj.settings.whatsApp?.number,
-		actionCode: actionCode.id
+	const whatsAppSignupLink = actionCode
+		? generateWhatsAppSignupLink({
+				eventTitle: eventObj.title,
+				whatsAppNumber: organizationObj.settings.whatsApp?.number,
+				actionCode: actionCode.id
+			})
+		: null;
+
+	const eventSignups = await getEventSignupsByEventIdUnsafe({
+		eventId: eventObj.id,
+		organizationId,
+		tx
 	});
+	const signupCount = eventSignups.length;
 
-	return { event: eventObj, organization: organizationObj, whatsAppSignupLink, actionCode };
+	return {
+		event: eventObj,
+		organization: organizationObj,
+		whatsAppSignupLink,
+		actionCode,
+		signupCount
+	};
 }
