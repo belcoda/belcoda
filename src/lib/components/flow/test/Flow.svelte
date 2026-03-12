@@ -67,21 +67,22 @@
 							<ChevronLeftIcon />
 							Back
 						</Button>
-						<!-- {#if dev}
-							<Button
-								variant="outline"
-								size="sm"
-								onclick={() => alert(JSON.stringify($state.snapshot({ nodes, edges })))}
-							>
-								Snapshot
-							</Button>
-						{/if} -->
 					</div>
 				</Panel>
 			{/if}
 			<Panel position="bottom-right">
 				<div class="flex items-center gap-2">
-					<Button variant="outline" size="sm">Discard</Button>
+					{#if dev}
+						<Button
+							variant="outline"
+							size="sm"
+							onclick={() => alert(JSON.stringify($state.snapshot({ nodes, edges })))}
+						>
+							Snapshot
+						</Button>
+					{/if}
+					<Button variant="destructive" size="sm">Discard</Button>
+					<Button variant="outline" size="sm">Save</Button>
 					<Button variant="default" size="sm">Send</Button>
 				</div>
 			</Panel>
