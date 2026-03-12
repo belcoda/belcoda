@@ -11,7 +11,8 @@
 		type NodeTypes
 	} from '@xyflow/svelte';
 	import { startingNodes, addNode } from './nodes/addNode.js';
-	const { backButtonUrl }: { backButtonUrl?: string } = $props();
+	const { backButtonUrl, disabled = false }: { backButtonUrl?: string; disabled?: boolean } =
+		$props();
 	//nodes
 	import Message from './nodes/Message.svelte';
 	import EventSignup from './nodes/EventSignup.svelte';
@@ -46,6 +47,9 @@
 <div class="h-full w-full">
 	<SvelteFlowProvider>
 		<SvelteFlow
+			elementsSelectable={!disabled}
+			nodesDraggable={!disabled}
+			nodesConnectable={!disabled}
 			proOptions={{
 				hideAttribution: true
 			}}
@@ -70,82 +74,86 @@
 					</div>
 				</Panel>
 			{/if}
-			<Panel position="bottom-right">
-				<div class="flex items-center gap-2">
-					{#if dev}
-						<Button
-							variant="outline"
-							size="sm"
-							onclick={() => alert(JSON.stringify($state.snapshot({ nodes, edges })))}
-						>
-							Snapshot
-						</Button>
-					{/if}
-					<Button variant="destructive" size="sm">Discard</Button>
-					<Button variant="outline" size="sm">Save</Button>
-					<Button variant="default" size="sm">Send</Button>
-				</div>
-			</Panel>
-			<Panel position="top-right">
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger>
-						<Button variant="default" size="sm">
-							<ChevronDownIcon />
-							Add Node
-						</Button>
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content>
-						<DropdownMenu.Item
-							onclick={() => {
-								const nodesSnapshot = $state.snapshot(nodes);
-								const nodeLength = nodesSnapshot.length;
-								const finalNode = nodesSnapshot[nodeLength - 1];
-								const newNode = addNode(
-									'message',
-									//@ts-ignore
-									nodesSnapshot[nodesSnapshot.length - 1] as Node,
-									nodesSnapshot as Node[]
-								);
-								if (newNode) {
-									nodes = [...nodes, newNode];
-								}
-							}}
-						>
-							Message
-						</DropdownMenu.Item>
-						<DropdownMenu.Item
-							onclick={() => {
-								const nodesSnapshot = $state.snapshot(nodes);
-								const newNode = addNode(
-									'eventSignup',
-									nodesSnapshot[nodesSnapshot.length - 1] as Node,
-									nodesSnapshot as Node[]
-								);
-								if (newNode) {
-									nodes = [...nodes, newNode];
-								}
-							}}
-						>
-							Event Signup
-						</DropdownMenu.Item>
-						<DropdownMenu.Item
-							onclick={() => {
-								const nodesSnapshot = $state.snapshot(nodes);
-								const newNode = addNode(
-									'tagAdd',
-									nodesSnapshot[nodesSnapshot.length - 1] as Node,
-									nodesSnapshot as Node[]
-								);
-								if (newNode) {
-									nodes = [...nodes, newNode];
-								}
-							}}
-						>
-							Tag Add
-						</DropdownMenu.Item>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
-			</Panel>
+			{#if !disabled}
+				<Panel position="bottom-right">
+					<div class="flex items-center gap-2">
+						{#if dev}
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={() => alert(JSON.stringify($state.snapshot({ nodes, edges })))}
+							>
+								Snapshot
+							</Button>
+						{/if}
+						<Button variant="destructive" size="sm">Discard</Button>
+						<Button variant="outline" size="sm">Save</Button>
+						<Button variant="default" size="sm">Send</Button>
+					</div>
+				</Panel>
+			{/if}
+			{#if !disabled}
+				<Panel position="top-right">
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							<Button variant="default" size="sm">
+								<ChevronDownIcon />
+								Add Node
+							</Button>
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content>
+							<DropdownMenu.Item
+								onclick={() => {
+									const nodesSnapshot = $state.snapshot(nodes);
+									const nodeLength = nodesSnapshot.length;
+									const finalNode = nodesSnapshot[nodeLength - 1];
+									const newNode = addNode(
+										'message',
+										//@ts-ignore
+										nodesSnapshot[nodesSnapshot.length - 1] as Node,
+										nodesSnapshot as Node[]
+									);
+									if (newNode) {
+										nodes = [...nodes, newNode];
+									}
+								}}
+							>
+								Message
+							</DropdownMenu.Item>
+							<DropdownMenu.Item
+								onclick={() => {
+									const nodesSnapshot = $state.snapshot(nodes);
+									const newNode = addNode(
+										'eventSignup',
+										nodesSnapshot[nodesSnapshot.length - 1] as Node,
+										nodesSnapshot as Node[]
+									);
+									if (newNode) {
+										nodes = [...nodes, newNode];
+									}
+								}}
+							>
+								Event Signup
+							</DropdownMenu.Item>
+							<DropdownMenu.Item
+								onclick={() => {
+									const nodesSnapshot = $state.snapshot(nodes);
+									const newNode = addNode(
+										'tagAdd',
+										nodesSnapshot[nodesSnapshot.length - 1] as Node,
+										nodesSnapshot as Node[]
+									);
+									if (newNode) {
+										nodes = [...nodes, newNode];
+									}
+								}}
+							>
+								Tag Add
+							</DropdownMenu.Item>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+				</Panel>
+			{/if}
 			<Background />
 		</SvelteFlow>
 	</SvelteFlowProvider>
