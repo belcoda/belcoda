@@ -18,8 +18,16 @@
 		StrikethroughButton,
 		Toolbar,
 		UnderlineButton,
-		OnChangePlugin
+		OnChangePlugin,
+		BlockFormatDropDown,
+		HeadingDropDownItem,
+		HeadingNode,
+		ImagePlugin,
+		ImageNode,
+		InsertDropDown,
+		InsertImageDropDownItem
 	} from 'svelte-lexical';
+	import InsertImageCombinedDialog from './InsertImageCombinedDialog.svelte';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
 	let {
@@ -32,10 +40,12 @@
 		onChange?: (state: any) => void;
 	} = $props();
 
+	let imageDialog: ReturnType<typeof InsertImageCombinedDialog> | undefined = $state(undefined);
+
 	const initialConfig = {
 		theme,
 		namespace: 'belcoda_wysiwyg',
-		nodes: [LinkNode],
+		nodes: [LinkNode, HeadingNode, ImageNode],
 		editable: (() => !disabled)(),
 		editorState: value ? JSON.stringify(value) : undefined,
 		onError: (error: Error) => {
@@ -62,6 +72,12 @@
 					<FontFamilyDropDown />
 					<FontSizeDropDown />
 					<Divider />
+					<BlockFormatDropDown>
+						<HeadingDropDownItem headingSize="h1" />
+						<HeadingDropDownItem headingSize="h2" />
+						<HeadingDropDownItem headingSize="h3" />
+					</BlockFormatDropDown>
+					<Divider />
 					<BoldButton />
 					<ItalicButton />
 					<UnderlineButton />
@@ -69,7 +85,12 @@
 					<Divider />
 					<InsertLink />
 					<Divider />
+					<InsertDropDown>
+						<InsertImageDropDownItem onclick={() => imageDialog?.show()} />
+					</InsertDropDown>
+					<Divider />
 					<DropDownAlign />
+					<InsertImageCombinedDialog bind:this={imageDialog} />
 				{/snippet}
 			</Toolbar>
 		{/if}
@@ -81,7 +102,11 @@
 			</div>
 			<RichTextPlugin />
 			<LinkPlugin />
+<<<<<<< kenneth/feature/lexical-headings-and-images
+			<ImagePlugin />
+=======
 			<FloatingLinkEditorPlugin {anchorElem} />
+>>>>>>> develop
 			<OnChangePlugin
 				onChange={handleChange}
 				ignoreHistoryMergeTagChange={true}
@@ -95,7 +120,19 @@
 	.editor-shell.svelte-lexical {
 		margin: 0 auto !important;
 	}
+<<<<<<< kenneth/feature/lexical-headings-and-images
+
+	:global(dialog) {
+		position: fixed;
+		inset: 0;
+		margin: auto;
+		max-width: 90vw;
+		max-height: 90vh;
+		border: none;
+		padding: 0;
+=======
 	.editor-container {
 		position: relative;
+>>>>>>> develop
 	}
 </style>
