@@ -5,6 +5,7 @@
 		type NodeProps,
 		Handle,
 		type Node,
+		useStore,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import type { TagAddData } from '../types';
@@ -18,9 +19,13 @@
 		updateNodeInternals(id);
 	});
 	import TagAddCombobox from './tag_add/Combobox.svelte';
+	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
+	const isDisabled = $derived(
+		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
+	);
 </script>
 
-<div class="relative w-[260px] font-sans drop-shadow-md">
+<div class="relative w-[260px] font-sans drop-shadow-md" class:pointer-events-none={isDisabled}>
 	<Handle type="target" position={Position.Top} class="z-20 h-3! w-3!" />
 
 	<div class="rounded-lg border border-[#b7e4ac] bg-[#d9fdd3]">
