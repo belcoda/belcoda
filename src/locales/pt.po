@@ -460,7 +460,6 @@ msgstr "Assinatura"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
 #: src/routes/(app)/communications/+page.svelte
 msgid "Communications"
 msgstr "Comunicações"
@@ -700,7 +699,9 @@ msgstr "Enviar e-mail"
 msgid "Call"
 msgstr "Ligar"
 
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
@@ -787,8 +788,10 @@ msgstr "Tem certeza de que deseja excluir esta pessoa?"
 msgid "Person deleted"
 msgstr "Pessoa excluída"
 
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
@@ -1094,7 +1097,9 @@ msgid "Untitled Email"
 msgstr "E-mail sem título"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1202,11 +1207,14 @@ msgid "Or continue with"
 msgstr "Ou continue com"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 msgid "Drafts"
 msgstr "Rascunhos"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 msgid "Compose"
 msgstr "Compor"
 
@@ -1608,15 +1616,18 @@ msgstr "Remover pergunta"
 #~ msgstr "1 destinatário"
 
 #: src/lib/components/communications/email/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 msgid "Type to search..."
 msgstr "Digite para buscar..."
 
 #: src/lib/components/communications/email/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "(No subject)"
 msgstr "(Sem assunto)"
 
 #: src/lib/components/communications/email/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 msgid "No emails found"
 msgstr "Nenhum e-mail encontrado"
 
@@ -2559,9 +2570,8 @@ msgstr "A petição que você está procurando não foi encontrada."
 msgid "Return to Home"
 msgstr "Voltar ao início"
 
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
-msgid "Compose Email"
-msgstr "Compor e-mail"
+#~ msgid "Compose Email"
+#~ msgstr "Compor e-mail"
 
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
@@ -3080,6 +3090,7 @@ msgid "Delete signup"
 msgstr ""
 
 #: src/lib/components/communications/email/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 msgid "[Error loading email body]"
 msgstr ""
 
@@ -3386,5 +3397,23 @@ msgid "View full page"
 msgstr ""
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 msgid "Compose WhatsApp"
 msgstr "Compor WhatsApp"
+
+#~ msgid "Email Folders"
+#~ msgstr ""
+
+#~ msgid "New WhatsApp"
+#~ msgstr ""
+
+#~ msgid "New email"
+#~ msgstr ""
+
+#~ msgid "New thread"
+#~ msgstr ""
+
+#: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+msgid "Compose email"
+msgstr ""
