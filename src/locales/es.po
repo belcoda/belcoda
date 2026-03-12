@@ -3617,3 +3617,98 @@ msgstr ""
 #: src/routes/(auth)/organization/+page.svelte
 msgid "Logout"
 msgstr ""
+
+#. placeholder {0}: activityPreview.tagName
+#. placeholder {0}: activityPreview.teamName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added to {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.tagName
+#. placeholder {0}: activityPreview.teamName
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Removed from {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed up for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Email sent for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Reminder email sent for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Attended {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No show for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Apology for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.petitionName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed petition {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.petitionName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Removed petition {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.userName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} added note:"
+msgstr ""
+
+#. placeholder {0}: activityPreview.type
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Unknown activity {0}"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added from seed data (should only appear in dev)"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Data migration"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Imported from CSV"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added to the organization"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Joined through an event"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed a petition"
+msgstr ""
+
+#. placeholder {0}: JSON.stringify(addedFrom)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added from an unknown source [{0}]"
+msgstr ""
