@@ -169,7 +169,8 @@ export async function sendEmailMessage({
 	// Calculate estimated recipient count from the filter
 	const estimatedRecipientCount = await countPersonsFromFilter({
 		filter: emailMessageRecord.recipients,
-		organizationId: parsed.metadata.organizationId
+		organizationId: parsed.metadata.organizationId,
+		ctx
 	});
 
 	log.debug(

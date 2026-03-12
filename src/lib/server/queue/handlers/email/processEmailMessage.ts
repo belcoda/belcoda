@@ -9,6 +9,7 @@ import pino from '$lib/pino';
 import { env } from '$env/dynamic/private';
 const { POSTMARK_MESSAGE_TEMPLATE_ALIAS } = env;
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+import type { QueryContext } from '$lib/zero/schema';
 const lexicalRenderer = new LexicalHtmlRenderer();
 
 const log = pino(import.meta.url);
@@ -48,9 +49,20 @@ export async function processEmailMessage({
 		organization: org
 	});
 
+	// Create a system-level QueryContext for the background job
+	// This grants admin permissions for the organization to access all persons
+	const ctx: QueryContext = {
+		userId: email.sentBy || '',
+		authTeams: [],
+		adminOrgs: [organizationId],
+		ownerOrgs: [],
+		otherOrgs: []
+	};
+
 	const personIds = await getPersonIdsFromFilter({
 		filter: email.recipients,
-		organizationId
+		organizationId,
+		ctx
 	});
 
 	const estimatedCount = personIds.length;
