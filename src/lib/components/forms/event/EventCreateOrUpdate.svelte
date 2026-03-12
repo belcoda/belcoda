@@ -7,7 +7,7 @@
 	import { getMeetingPlatform, getMeetingPlatformLogoUrl } from '$lib/utils/events/meeting_link';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import Input from '$lib/components/ui/custom/input.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
 	import { getLocalTimeZone, parseAbsolute } from '@internationalized/date';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { env } from '$env/dynamic/public';
