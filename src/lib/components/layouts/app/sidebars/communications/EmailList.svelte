@@ -6,7 +6,6 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
 	import { formatShortTimestamp } from '$lib/utils/date';
-	import type { EditorState } from 'lexical';
 	import { jsonToHtml } from '$lib/components/ui/wysiwyg/renderRichText';
 	const { folder }: { folder?: string } = $props();
 
