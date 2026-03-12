@@ -102,11 +102,8 @@
 			</div>
 			<RichTextPlugin />
 			<LinkPlugin />
-<<<<<<< kenneth/feature/lexical-headings-and-images
 			<ImagePlugin />
-=======
 			<FloatingLinkEditorPlugin {anchorElem} />
->>>>>>> develop
 			<OnChangePlugin
 				onChange={handleChange}
 				ignoreHistoryMergeTagChange={true}
@@ -117,10 +114,10 @@
 </Composer>
 
 <style>
-	.editor-shell.svelte-lexical {
+	.editor-shell,
+	.svelte-lexical {
 		margin: 0 auto !important;
 	}
-<<<<<<< kenneth/feature/lexical-headings-and-images
 
 	:global(dialog) {
 		position: fixed;
@@ -130,9 +127,9 @@
 		max-height: 90vh;
 		border: none;
 		padding: 0;
-=======
+	}
+
 	.editor-container {
 		position: relative;
->>>>>>> develop
 	}
 </style>
