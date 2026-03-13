@@ -540,6 +540,7 @@ msgstr "Etiquetas"
 msgid "Filter tags..."
 msgstr "Filtrar etiquetas..."
 
+#: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/flow/test/nodes/tag_add/Combobox.svelte
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
@@ -3349,22 +3350,27 @@ msgstr ""
 msgid "Petition page link"
 msgstr ""
 
+#: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 #: src/lib/components/flow/test/nodes/event_signup/Combobox.svelte
 msgid "Select an event..."
 msgstr ""
 
+#: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 #: src/lib/components/flow/test/nodes/event_signup/Combobox.svelte
 msgid "Search event..."
 msgstr ""
 
+#: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 #: src/lib/components/flow/test/nodes/event_signup/Combobox.svelte
 msgid "No events found."
 msgstr ""
 
+#: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/flow/test/nodes/tag_add/Combobox.svelte
 msgid "Select a tag..."
 msgstr ""
 
+#: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/flow/test/nodes/tag_add/Combobox.svelte
 msgid "Search tag..."
 msgstr ""
@@ -3416,4 +3422,24 @@ msgstr "Redactar WhatsApp"
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 msgid "Compose email"
+msgstr ""
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "Search templates..."
+msgstr ""
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "No templates found."
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "WhatsApp not activated"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Activate WhatsApp"
 msgstr ""
