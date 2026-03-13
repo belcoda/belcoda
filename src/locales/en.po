@@ -3656,13 +3656,16 @@ msgstr "Search templates..."
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No templates found."
-msgstr "No templates found."
+msgstr "No templates found.<<<<<<< HEAD"
 
-#~ msgid "WhatsApp not activated"
-#~ msgstr "WhatsApp not activated"
+#: src/lib/components/flow/Flow.svelte
+msgid "WhatsApp not activated"
+msgstr "WhatsApp not activated"
 
-#~ msgid "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
-#~ msgstr "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
+#: src/lib/components/flow/Flow.svelte
+msgid "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
+msgstr "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
 
-#~ msgid "Activate WhatsApp"
-#~ msgstr "Activate WhatsApp"
+#: src/lib/components/flow/Flow.svelte
+msgid "Activate WhatsApp"
+msgstr "Activate WhatsApp>>>>>>> django/whatsapp-svelteflow/template-message"

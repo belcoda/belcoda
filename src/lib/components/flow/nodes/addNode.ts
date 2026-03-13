@@ -2,7 +2,14 @@ import type { Node, Edge } from '@xyflow/svelte';
 import { v4 as uuidv4 } from 'uuid';
 import { findPositionRadial } from '../placeNode';
 import type { NodeType } from '../types';
-export function startingNodes(): { nodes: Node[]; edges: Edge[] } {
+export function startingNodes({
+	defaultTemplateId
+}: {
+	defaultTemplateId: string | null | undefined;
+}): {
+	nodes: Node[];
+	edges: Edge[];
+} {
 	const targetingNodeId = uuidv4();
 	const messageNodeId = uuidv4();
 	const nodes: Node[] = [
@@ -28,9 +35,9 @@ export function startingNodes(): { nodes: Node[]; edges: Edge[] } {
 	) || { x: 0, y: 0 };
 	nodes.push({
 		id: messageNodeId,
-		type: 'message' as const,
+		type: 'templateMessage' as const,
 		position: position,
-		data: { text: 'Your message here', buttons: [], imageUrl: null }
+		data: { templateId: defaultTemplateId }
 	});
 	const edges = [
 		{

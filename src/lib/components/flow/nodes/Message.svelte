@@ -9,11 +9,12 @@
 		NodeToolbar,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
-	import { Plus, Trash2, Image as ImageIcon, X } from '@lucide/svelte';
+	import { Plus, Trash2, Image as ImageIcon, X, ImageMinusIcon } from '@lucide/svelte';
 	import type { WhatsAppMessageData } from '../types';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import ImagePlusIcon from '@lucide/svelte/icons/image-plus';
 	import RectangleEllipsisIcon from '@lucide/svelte/icons/rectangle-ellipsis';
+	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { cn } from '$lib/utils.js';
 
@@ -25,7 +26,6 @@
 	let text = $state(data.text ?? 'Hello! Choose an option:');
 	let buttons = $state(data.buttons ?? [{ id: 'btn-1', label: 'Option 1' }]);
 	let imageUrl = $state(data.imageUrl ?? null);
-	let hideImage = $state(data.hideImage ?? false);
 
 	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
 	const isDisabled = $derived(
@@ -64,6 +64,16 @@
 							'https://fastly.picsum.photos/id/106/2592/1728.jpg?hmac=E1-3Hac5ffuCVwYwexdHImxbMFRsv83exZ2EhlYxkgY';
 					}}><ImagePlusIcon /></Button
 				>
+			{:else}
+				<Button
+					variant="default"
+					class="rounded-full"
+					size="icon"
+					title="Remove image"
+					onclick={() => {
+						imageUrl = null;
+					}}><ImageMinusIcon size={14} /></Button
+				>
 			{/if}
 			{#if buttons.length < 3}
 				<Button
@@ -81,15 +91,13 @@
 
 		<div class="rounded-lg border border-[#b7e4ac] bg-[#d9fdd3]">
 			{#if imageUrl}
-				<div class="group relative flex h-32 items-center justify-center rounded-t-lg bg-[#c0e8b6]">
-					<img src={imageUrl} alt="Header" class="h-full w-full rounded-t-lg object-cover" />
-					<button
-						onclick={() => (imageUrl = null)}
-						class="nodrag absolute top-1 right-1 rounded-full bg-black/20 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/40"
-					>
-						<X size={14} />
-					</button>
-				</div>
+				<CroppedImageUpload
+					class="h-full w-full rounded-b-none p-0"
+					fileUrl={imageUrl}
+					onUpload={async (url) => {
+						imageUrl = url;
+					}}
+				/>
 			{/if}
 
 			<Textarea

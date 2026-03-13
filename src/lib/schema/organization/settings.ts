@@ -19,7 +19,8 @@ export function defaultThemeSettings(): ThemeSettingsSchema {
 
 export const whatsappOrganizationSettingsSchema = v.object({
 	wabaId: v.optional(v.nullable(helpers.shortString), null),
-	number: v.optional(v.nullable(helpers.phoneNumber), null)
+	number: v.optional(v.nullable(helpers.phoneNumber), null),
+	defaultTemplateId: v.optional(v.nullable(helpers.uuid), null)
 });
 
 export type WhatsappOrganizationSettingsSchema = v.InferOutput<
@@ -29,7 +30,8 @@ export type WhatsappOrganizationSettingsSchema = v.InferOutput<
 export function defaultWhatsappOrganizationSettings(): WhatsappOrganizationSettingsSchema {
 	return {
 		wabaId: null,
-		number: null
+		number: null,
+		defaultTemplateId: null
 	};
 }
 
