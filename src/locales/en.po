@@ -3416,9 +3416,8 @@ msgstr "View full page"
 #~ msgid "What is your organization's focus?"
 #~ msgstr "What is your organization's focus?"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Select an option"
-msgstr "Select an option"
+#~ msgid "Select an option"
+#~ msgstr "Select an option"
 
 #~ msgid "1-10 employees"
 #~ msgstr "1-10 employees"
