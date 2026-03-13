@@ -25,7 +25,6 @@
 	let text = $state(data.text ?? 'Hello! Choose an option:');
 	let buttons = $state(data.buttons ?? [{ id: 'btn-1', label: 'Option 1' }]);
 	let imageUrl = $state(data.imageUrl ?? null);
-	let hideImage = $state(data.hideImage ?? false);
 
 	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
 	const isDisabled = $derived(
