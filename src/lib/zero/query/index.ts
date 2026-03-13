@@ -57,6 +57,10 @@ import { readUser } from '$lib/zero/query/user/read';
 // webhook
 import { listWebhooks } from '$lib/zero/query/webhook/list';
 
+//whatsapp
+import { readWhatsappTemplate } from '$lib/zero/query/whatsapp_template/read';
+import { listWhatsappTemplates } from '$lib/zero/query/whatsapp_template/list';
+
 // Re-export all queries
 export {
 	// action_code
@@ -101,10 +105,17 @@ export {
 	listUsers,
 	readUser,
 	// webhook
-	listWebhooks
+	listWebhooks,
+	// whatsapp template
+	readWhatsappTemplate,
+	listWhatsappTemplates
 };
 
 export default defineQueries({
+	whatsappTemplate: {
+		read: readWhatsappTemplate,
+		list: listWhatsappTemplates
+	},
 	actionCode: {
 		list: listActionCodes
 	},
