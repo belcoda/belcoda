@@ -3656,7 +3656,7 @@ msgstr "Search templates..."
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No templates found."
-msgstr "No templates found.<<<<<<< HEAD"
+msgstr "No templates found."
 
 #: src/lib/components/flow/Flow.svelte
 msgid "WhatsApp not activated"
@@ -3668,4 +3668,4 @@ msgstr "In order to use WhatsApp messaging features, you need to activate your o
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Activate WhatsApp"
-msgstr "Activate WhatsApp>>>>>>> django/whatsapp-svelteflow/template-message"
+msgstr "Activate WhatsApp"
