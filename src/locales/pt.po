@@ -494,6 +494,7 @@ msgstr "Buscar..."
 msgid "Back"
 msgstr "Voltar"
 
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 msgid "Create person"
 msgstr "Criar pessoa"
@@ -717,6 +718,7 @@ msgstr "Tag adicionada"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Add to team"
 msgstr "Adicionar à equipe"
 
@@ -1037,6 +1039,7 @@ msgstr "Nenhum detalhe de falha disponível"
 #: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
 #: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -1498,6 +1501,8 @@ msgid "Website"
 msgstr "Site"
 
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Add signature"
 msgstr "Adicionar assinatura"
@@ -2317,6 +2322,7 @@ msgid "No signups found. Create a new signup to get started."
 msgstr "Nenhuma inscrição encontrada. Crie uma nova inscrição para começar."
 
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/routes/(app)/community/+page.svelte
 msgid "Add Person"
 msgstr "Adicionar pessoa"
@@ -3711,4 +3717,20 @@ msgstr ""
 #. placeholder {0}: JSON.stringify(addedFrom)
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Added from an unknown source [{0}]"
+msgstr ""
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Add to event"
+msgstr ""
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Add a new person to the community"
+msgstr ""
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "No people found"
+msgstr ""
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Create new person?"
 msgstr ""
