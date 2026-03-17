@@ -12,72 +12,99 @@ import { v7 as uuidv7 } from 'uuid';
 import { selectOneOfArray } from './utils';
 import { generateTags } from './tag';
 
-async function main() {
-	console.assert(process.env.DATABASE_URL, 'DATABASE_URL is not set');
-	const db = drizzle(process.env.DATABASE_URL!);
-	await reset(db, schema); //reset the entire database...
+// Helper function to generate random number within range
+function randomBetween(min: number, max: number): number {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Type for database instance
+type DbInstance = ReturnType<typeof drizzle>;
+
+/**
+ * Seed a single organization with data
+ */
+async function seedOrganization(
+	db: DbInstance,
+	organizationIndex: number,
+	stressMode: boolean = false
+) {
+	const orgId = uuidv7();
+
+	// Determine counts based on stress mode
+	const counts = stressMode
+		? {
+				people: randomBetween(10000, 50000),
+				events: randomBetween(250, 2500),
+				petitions: randomBetween(250, 2500),
+				teams: randomBetween(100, 500)
+			}
+		: {
+				people: 50,
+				events: 20,
+				petitions: 15,
+				teams: 5
+			};
+
+	console.log(
+		`[Org ${organizationIndex + 1}] Creating org with ${counts.people} people, ${counts.events} events, ${counts.petitions} petitions, ${counts.teams} teams`
+	);
 
 	// create organization
 	const organization = await generateOrganization({
-		id: uuidv7()
+		id: orgId,
+		index: organizationIndex,
+		isStressTest: stressMode
 	});
 	await db.insert(schema.organization).values(organization).execute();
 
-	// create users
-	const users = await generateUsers();
+	// create users (always use env user as admin, plus test accounts)
+	const users = await generateUsers({ organizationId: orgId, index: organizationIndex });
 	await db.insert(schema.user).values(users).execute();
 
-	// create membership of organization
+	// create memberships
 	for (const user of users) {
 		await db
 			.insert(schema.member)
 			.values({
 				id: uuidv7(),
 				userId: user.id,
-				organizationId: organization.id,
+				organizationId: orgId,
 				role: 'owner',
 				createdAt: new Date()
 			})
 			.execute();
 	}
 
-	//create events
-	const { events, actionCodes } = await generateEvents(20, {
-		organizationId: organization.id,
+	// create events
+	const { events, actionCodes } = await generateEvents(counts.events, {
+		organizationId: orgId,
 		teamId: undefined,
 		pointPersonId: undefined
 	});
 	await db.insert(schema.event).values(events).execute();
 	await db.insert(schema.actionCode).values(actionCodes).execute();
 
-	//create petitions
-	const { petitions, actionCodes: petitionActionCodes } = await generatePetitions(15, {
-		organizationId: organization.id,
-		teamId: undefined,
-		pointPersonId: undefined
-	});
+	// create petitions
+	const { petitions, actionCodes: petitionActionCodes } = await generatePetitions(
+		counts.petitions,
+		{
+			organizationId: orgId,
+			teamId: undefined,
+			pointPersonId: undefined
+		}
+	);
 	await db.insert(schema.petition).values(petitions).execute();
 	await db.insert(schema.actionCode).values(petitionActionCodes).execute();
 
 	// create people
-	const people = await generatePeople(50, organization.id);
+	const people = await generatePeople(counts.people, orgId);
 	await db.insert(schema.person).values(people).execute();
-	/* for (const person of people) {
-		const activities = await generateActivity({
-			personId: person.id,
-			userId: users[0].id,
-			organizationId: organization.id
-		});
-		if (activities.length > 0) {
-			await db.insert(schema.activity).values(activities).execute();
-		}
-	} */
 
 	// create teams
-	const teams = generateTeam(organization.id);
+	const teams = generateTeam(orgId, counts.teams);
 	await db.insert(schema.team).values(teams).execute();
 
-	//add people to teams randomly
+	// add people to teams randomly
 	for (const person of people) {
 		const team = selectOneOfArray(teams);
 		await db
@@ -85,17 +112,17 @@ async function main() {
 			.values({
 				personId: person.id,
 				teamId: team.id,
-				organizationId: organization.id,
+				organizationId: orgId,
 				createdAt: new Date()
 			})
 			.execute();
 	}
 
-	//inser tags
-	const tags = generateTags(organization.id);
+	// insert tags
+	const tags = generateTags(orgId);
 	await db.insert(schema.tag).values(tags).execute();
 
-	//add tags to people randomly
+	// add tags to people randomly
 	for (const person of people) {
 		const tag = selectOneOfArray(tags);
 		await db
@@ -103,10 +130,35 @@ async function main() {
 			.values({
 				personId: person.id,
 				tagId: tag.id,
-				organizationId: organization.id,
+				organizationId: orgId,
 				createdAt: new Date()
 			})
 			.execute();
+	}
+}
+
+async function main() {
+	console.assert(process.env.DATABASE_URL, 'DATABASE_URL is not set');
+	const db = drizzle(process.env.DATABASE_URL!);
+
+	// Check for --stress flag
+	const isStressMode = process.argv.includes('--stress');
+	const orgCount = isStressMode ? 100 : 1;
+
+	console.log(`Starting seed in ${isStressMode ? 'STRESS' : 'NORMAL'} mode`);
+	console.log(`Will create ${orgCount} organization(s)`);
+
+	// Reset database once
+	await reset(db, schema);
+
+	// Seed organizations
+	for (let i = 0; i < orgCount; i++) {
+		try {
+			await seedOrganization(db, i, isStressMode);
+		} catch (error) {
+			console.error(`Error seeding organization ${i + 1}:`, error);
+			throw error;
+		}
 	}
 
 	console.log('Seeding completed successfully');

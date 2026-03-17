@@ -10,15 +10,29 @@ const { OWNER_EMAIL_ADDRESS, OWNER_ORGANIZATION_NAME, OWNER_ORGANIZATION_SLUG } 
 const firstOwnerEmail = OWNER_EMAIL_ADDRESS!.split(',')[0];
 
 export function generateOrganization({
-	id
+	id,
+	index = 0,
+	isStressTest = false
 }: {
 	id: string;
+	index?: number;
+	isStressTest?: boolean;
 }): { id: string } & typeof organizationTable.$inferInsert {
-	const name = OWNER_ORGANIZATION_NAME!;
+	let name: string;
+	let slug: string;
+
+	if (isStressTest) {
+		name = `Stress Org ${index + 1}`;
+		slug = `stress-org-${index + 1}`;
+	} else {
+		name = OWNER_ORGANIZATION_NAME!;
+		slug = OWNER_ORGANIZATION_SLUG!;
+	}
+
 	const organization: { id: string } & typeof organizationTable.$inferInsert = {
 		id: id,
-		name: 'Beltest',
-		slug: 'beltest',
+		name: name,
+		slug: slug,
 		country: selectOneOfArray([...countryCodes]) as CountryCode,
 		logo: 'https://belcoda-public-prod.s3.eu-central-1.amazonaws.com/system/images/logo-full.png',
 		icon: 'https://belcoda-public-prod.s3.eu-central-1.amazonaws.com/system/images/logo-full.png',
