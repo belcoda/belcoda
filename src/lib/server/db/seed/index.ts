@@ -34,11 +34,11 @@ async function seedOrganization(
 	// Determine counts based on stress mode
 	const counts = stressMode
 		? {
-				people: randomBetween(10000, 50000),
-				events: randomBetween(250, 2500),
-				petitions: randomBetween(250, 2500),
-				teams: randomBetween(100, 500),
-				activities: 200000
+				people: randomBetween(1000, 5000),
+				events: randomBetween(50, 250),
+				petitions: randomBetween(50, 250),
+				teams: randomBetween(10, 50),
+				activities: 50000
 			}
 		: {
 				people: 50,
@@ -65,29 +65,33 @@ async function seedOrganization(
 	await db.insert(schema.user).values(users).execute();
 
 	// create memberships
-	for (const user of users) {
-		await db
-			.insert(schema.member)
-			.values({
-				id: uuidv7(),
-				userId: user.id,
-				organizationId: orgId,
-				role: 'owner',
-				createdAt: new Date()
-			})
-			.execute();
-	}
+	const memberValues = users.map((user) => ({
+		id: uuidv7(),
+		userId: user.id,
+		organizationId: orgId,
+		role: 'owner' as const,
+		createdAt: new Date()
+	}));
+	await db.insert(schema.member).values(memberValues).execute();
 
-	// create events
+	// create events (in batches if large)
 	const { events, actionCodes } = await generateEvents(counts.events, {
 		organizationId: orgId,
 		teamId: undefined,
 		pointPersonId: undefined
 	});
-	await db.insert(schema.event).values(events).execute();
-	await db.insert(schema.actionCode).values(actionCodes).execute();
+	const eventBatchSize = 10;
+	for (let i = 0; i < events.length; i += eventBatchSize) {
+		const batch = events.slice(i, i + eventBatchSize);
+		await db.insert(schema.event).values(batch).execute();
+	}
+	const actionCodeBatchSize = 100;
+	for (let i = 0; i < actionCodes.length; i += actionCodeBatchSize) {
+		const batch = actionCodes.slice(i, i + actionCodeBatchSize);
+		await db.insert(schema.actionCode).values(batch).execute();
+	}
 
-	// create petitions
+	// create petitions (in batches if large)
 	const { petitions, actionCodes: petitionActionCodes } = await generatePetitions(
 		counts.petitions,
 		{
@@ -96,50 +100,68 @@ async function seedOrganization(
 			pointPersonId: undefined
 		}
 	);
-	await db.insert(schema.petition).values(petitions).execute();
-	await db.insert(schema.actionCode).values(petitionActionCodes).execute();
+	const petitionBatchSize = 10;
+	for (let i = 0; i < petitions.length; i += petitionBatchSize) {
+		const batch = petitions.slice(i, i + petitionBatchSize);
+		await db.insert(schema.petition).values(batch).execute();
+	}
+	for (let i = 0; i < petitionActionCodes.length; i += actionCodeBatchSize) {
+		const batch = petitionActionCodes.slice(i, i + actionCodeBatchSize);
+		await db.insert(schema.actionCode).values(batch).execute();
+	}
 
-	// create people
+	// create people (in batches if large)
 	const people = await generatePeople(counts.people, orgId);
-	await db.insert(schema.person).values(people).execute();
+	const peopleBatchSize = 20;
+	for (let i = 0; i < people.length; i += peopleBatchSize) {
+		const batch = people.slice(i, i + peopleBatchSize);
+		await db.insert(schema.person).values(batch).execute();
+	}
 
 	// create teams
 	const teams = generateTeam(orgId, counts.teams);
 	await db.insert(schema.team).values(teams).execute();
 
-	// add people to teams randomly
+	// add people to teams randomly (in batches)
+	const personTeamBatchSize = 100;
+	const personTeamValues = [];
 	for (const person of people) {
 		const team = selectOneOfArray(teams);
-		await db
-			.insert(schema.personTeam)
-			.values({
-				personId: person.id,
-				teamId: team.id,
-				organizationId: orgId,
-				createdAt: new Date()
-			})
-			.execute();
+		personTeamValues.push({
+			personId: person.id,
+			teamId: team.id,
+			organizationId: orgId,
+			createdAt: new Date()
+		});
+	}
+	for (let i = 0; i < personTeamValues.length; i += personTeamBatchSize) {
+		const batch = personTeamValues.slice(i, i + personTeamBatchSize);
+		await db.insert(schema.personTeam).values(batch).execute();
 	}
 
 	// insert tags
 	const tags = generateTags(orgId);
 	await db.insert(schema.tag).values(tags).execute();
 
-	// add tags to people randomly
+	// add tags to people randomly (in batches)
+	const personTagBatchSize = 100;
+	const personTagValues = [];
 	for (const person of people) {
 		const tag = selectOneOfArray(tags);
-		await db
-			.insert(schema.personTag)
-			.values({
-				personId: person.id,
-				tagId: tag.id,
-				organizationId: orgId,
-				createdAt: new Date()
-			})
-			.execute();
+		personTagValues.push({
+			personId: person.id,
+			tagId: tag.id,
+			organizationId: orgId,
+			createdAt: new Date()
+		});
+	}
+	for (let i = 0; i < personTagValues.length; i += personTagBatchSize) {
+		const batch = personTagValues.slice(i, i + personTagBatchSize);
+		await db.insert(schema.personTag).values(batch).execute();
 	}
 
-	// generate activities
+	// generate activities in batches to avoid stack overflow
+	const activitiesBatchSize = 100;
 	const activities = generateActivities({
 		organizationId: orgId,
 		peopleIds: people.map((p) => p.id),
@@ -150,7 +172,12 @@ async function seedOrganization(
 		tagIds: tags.map((t) => t.id),
 		count: counts.activities
 	});
-	await db.insert(schema.activity).values(activities).execute();
+
+	// Insert activities in batches
+	for (let i = 0; i < activities.length; i += activitiesBatchSize) {
+		const batch = activities.slice(i, i + activitiesBatchSize);
+		await db.insert(schema.activity).values(batch).execute();
+	}
 }
 
 async function main() {
