@@ -167,7 +167,11 @@
 						</Table.Body>
 					</Table.Root>
 					<div class="mt-4">
-						<AddPersonModal personIdsToExclude={personIdsOnTeam} onSelected={handleAddPeople}>
+						<AddPersonModal
+							personIdsToExclude={personIdsOnTeam}
+							onSelected={handleAddPeople}
+							actionText={t`Add to team`}
+						>
 							{#snippet trigger()}
 								<Button variant="outline"><UserPlusIcon class="size-4" /> {t`Add person`}</Button>
 							{/snippet}
