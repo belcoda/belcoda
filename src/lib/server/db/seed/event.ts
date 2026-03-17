@@ -19,24 +19,15 @@ export function generateEvents(
 	const events: (typeof eventTable.$inferInsert)[] = [];
 	const usedNames = new Set<string>();
 	const usedSlugs = new Set<string>();
+	const orgIdShort = options.organizationId.slice(0, 8);
 	for (let i = 0; i < count; i++) {
 		let eventName: string;
 		let slug: string;
 		let isOnline = faker.datatype.boolean(0.5);
 
-		// Generate unique name and slug
-		let attempts = 0;
-		do {
-			eventName = selectOneOfArray(eventNames);
-			slug = slugify(eventName);
-			attempts++;
-
-			// If we've tried too many times with the same name, add a suffix
-			if (attempts > 5) {
-				eventName = `${eventName} ${faker.number.int({ min: 1, max: 999 })}`;
-				slug = slugify(eventName);
-			}
-		} while (usedNames.has(eventName) || usedSlugs.has(slug));
+		const eventId = ids[i];
+		slug = eventId;
+		eventName = `Event ${i}`;
 
 		// Add to used sets
 		usedNames.add(eventName);

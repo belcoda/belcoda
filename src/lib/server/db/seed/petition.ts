@@ -17,24 +17,15 @@ export function generatePetitions(
 	const petitions: (typeof petitionTable.$inferInsert)[] = [];
 	const usedTitles = new Set<string>();
 	const usedSlugs = new Set<string>();
+	const orgIdShort = options.organizationId.slice(0, 8);
 
 	for (let i = 0; i < count; i++) {
 		let petitionTitle: string;
 		let slug: string;
 
-		// Generate unique title and slug
-		let attempts = 0;
-		do {
-			petitionTitle = selectOneOfArray(petitionTitles);
-			slug = slugify(petitionTitle);
-			attempts++;
-
-			// If we've tried too many times with the same title, add a suffix
-			if (attempts > 5) {
-				petitionTitle = `${petitionTitle} ${faker.number.int({ min: 1, max: 999 })}`;
-				slug = slugify(petitionTitle);
-			}
-		} while (usedTitles.has(petitionTitle) || usedSlugs.has(slug));
+		const petitionId = ids[i];
+		slug = petitionId;
+		petitionTitle = `Petition ${i}`;
 
 		// Add to used sets
 		usedTitles.add(petitionTitle);
