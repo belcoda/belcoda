@@ -10,14 +10,37 @@ export function generatePeople(
 	teamId?: string
 ): (typeof personTable.$inferInsert)[] {
 	const people: (typeof personTable.$inferInsert)[] = [];
+	const usedEmails = new Set<string>();
+
 	for (let i = 0; i < count; i++) {
+		let emailAddress: string | null = null;
+
+		// Generate unique email (50% chance)
+		if (Math.random() < 0.5) {
+			let email: string;
+			let attempts = 0;
+			do {
+				email = faker.internet.email().toLocaleLowerCase();
+				attempts++;
+				// If too many collisions, use index-based email
+				if (attempts > 10) {
+					email = `person-${organizationId.slice(0, 8)}-${i}@example.com`;
+				}
+			} while (usedEmails.has(email) && attempts < 20);
+
+			if (!usedEmails.has(email)) {
+				emailAddress = email;
+				usedEmails.add(email);
+			}
+		}
+
 		const person: typeof personTable.$inferInsert = {
 			id: faker.string.uuid(),
 			familyName: faker.person.lastName(),
 			givenName: faker.person.firstName(),
 			organizationId,
 			dateOfBirth: faker.date.birthdate({ min: 18, max: 65, mode: 'age' }),
-			emailAddress: randomOrNull(0.5, faker.internet.email().toLocaleLowerCase()),
+			emailAddress,
 			profilePicture: randomOrNull(0.9, faker.image.avatar()),
 			phoneNumber: randomOrNull(0.8, faker.phone.number({ style: 'international' })),
 			country: selectOneOfArray([...countryCodes]) as CountryCode,
