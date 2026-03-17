@@ -6,6 +6,7 @@ import { generateTeam } from '$lib/server/db/seed/team';
 import { generateUsers } from '$lib/server/db/seed/user';
 import { generateOrganization } from '$lib/server/db/seed/organization';
 import { generatePeople } from '$lib/server/db/seed/person';
+import { generateActivities } from '$lib/server/db/seed/activity';
 import * as schema from '$lib/schema/drizzle';
 
 import { v7 as uuidv7 } from 'uuid';
@@ -36,17 +37,19 @@ async function seedOrganization(
 				people: randomBetween(10000, 50000),
 				events: randomBetween(250, 2500),
 				petitions: randomBetween(250, 2500),
-				teams: randomBetween(100, 500)
+				teams: randomBetween(100, 500),
+				activities: 200000
 			}
 		: {
 				people: 50,
 				events: 20,
 				petitions: 15,
-				teams: 5
+				teams: 5,
+				activities: 100
 			};
 
 	console.log(
-		`[Org ${organizationIndex + 1}] Creating org with ${counts.people} people, ${counts.events} events, ${counts.petitions} petitions, ${counts.teams} teams`
+		`[Org ${organizationIndex + 1}] Creating org with ${counts.people} people, ${counts.events} events, ${counts.petitions} petitions, ${counts.teams} teams, ${counts.activities} activities`
 	);
 
 	// create organization
@@ -135,6 +138,19 @@ async function seedOrganization(
 			})
 			.execute();
 	}
+
+	// generate activities
+	const activities = generateActivities({
+		organizationId: orgId,
+		peopleIds: people.map((p) => p.id),
+		userIds: users.map((u) => u.id),
+		eventIds: events.map((e) => e.id),
+		petitionIds: petitions.map((p) => p.id),
+		teamIds: teams.map((t) => t.id),
+		tagIds: tags.map((t) => t.id),
+		count: counts.activities
+	});
+	await db.insert(schema.activity).values(activities).execute();
 }
 
 async function main() {
