@@ -8,6 +8,28 @@ import {
 	type UserRole
 } from './helpers/auth';
 
+/**
+ * Usage:
+ * ```ts
+ * import { test } from '../fixtures';
+ *
+ * test('admin can access settings', async ({ page, loginAs }) => {
+ *   await loginAs('admin');
+ *   await page.goto('/settings');
+ * });
+ *
+ * test('role escalation', async ({ page, loginAs }) => {
+ *   await loginAs('member');
+ *   await page.goto('/admin-only');
+ *   await expect(page).toHaveURL('/unauthorized'); // member can't access
+ *
+ *   await loginAs('admin'); // switch to admin
+ *   await page.goto('/admin-only');
+ *   await expect(page).toHaveURL('/admin-only'); // admin can access
+ * });
+ * ```
+ */
+
 const AUTH_DIR = join(process.cwd(), 'playwright', '.auth');
 
 type Fixtures = {
