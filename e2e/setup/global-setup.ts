@@ -11,6 +11,19 @@ import {
 } from '../helpers/auth';
 import { BASE_URL } from '../helpers/config';
 
+/**
+ * Setup for E2E Tests
+ * Creates test users via better-auth API and saves authenticated storage states.
+ * Shared auth utilities are in ../helpers/auth.ts
+ *
+ * Test Users Created:
+ * - e2e-owner@belcoda.test (owner role)
+ * - e2e-admin@belcoda.test (admin role)
+ * - e2e-member@belcoda.test (member role)
+ *
+ * Google OAuth is skipped per better-auth recommendations.
+ */
+
 const AUTH_DIR = join(process.cwd(), 'playwright', '.auth');
 
 async function createOrganization(_userEmail: string, orgName: string, sessionToken: string) {
