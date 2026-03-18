@@ -3688,8 +3688,9 @@ msgstr ""
 "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
 "messaging features."
 
-#~ msgid "WhatsApp Business Account"
-#~ msgstr "WhatsApp Business Account"
+#: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
+msgid "WhatsApp Business Account"
+msgstr "WhatsApp Business Account"
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""

@@ -3460,8 +3460,9 @@ msgid ""
 "messaging features."
 msgstr ""
 
-#~ msgid "WhatsApp Business Account"
-#~ msgstr ""
+#: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
+msgid "WhatsApp Business Account"
+msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
