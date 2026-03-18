@@ -717,7 +717,6 @@ msgstr "Added tag"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
-#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Add to team"
 msgstr "Add to team"
 
@@ -1738,8 +1737,6 @@ msgid "Website"
 msgstr "Website"
 
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
-#: src/lib/components/widgets/petition/PetitionSignatures.svelte
-#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Add signature"
 msgstr "Add signature"
