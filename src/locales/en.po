@@ -3706,3 +3706,11 @@ msgstr "Signed a petition"
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Added from an unknown source [{0}]"
 msgstr "Added from an unknown source [{0}]"
+
+#: src/lib/components/ui/custom-select/time/time-input.svelte
+msgid "Type or select time..."
+msgstr "Type or select time..."
+
+#: src/lib/components/ui/custom-select/time/time-input.svelte
+msgid "No times found."
+msgstr "No times found."

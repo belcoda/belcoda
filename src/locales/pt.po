@@ -3712,3 +3712,11 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Added from an unknown source [{0}]"
 msgstr ""
+
+#: src/lib/components/ui/custom-select/time/time-input.svelte
+msgid "Type or select time..."
+msgstr ""
+
+#: src/lib/components/ui/custom-select/time/time-input.svelte
+msgid "No times found."
+msgstr ""
