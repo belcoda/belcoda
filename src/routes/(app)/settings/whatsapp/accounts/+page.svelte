@@ -7,5 +7,10 @@
 </script>
 
 <ContentLayout rootLink="/settings/people/exports">
+	{#snippet header()}
+		<div class="flex items-center justify-between">
+			<h1 class="text-2xl font-bold">{t`WhatsApp Business Account`}</h1>
+		</div>
+	{/snippet}
 	<EmbeddedFlow />
 </ContentLayout>

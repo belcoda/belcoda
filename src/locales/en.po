@@ -2760,7 +2760,6 @@ msgid "WhatsApp templates"
 msgstr "WhatsApp templates"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
 msgid "WhatsApp accounts"
 msgstr "WhatsApp accounts"
 
@@ -2780,9 +2779,8 @@ msgstr "Exports are not currently supported, but will be added in a future updat
 msgid "WhatsApp templates are not currently supported, but will be added in a future update."
 msgstr "WhatsApp templates are not currently supported, but will be added in a future update."
 
-#: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
-msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
-msgstr "WhatsApp accounts are not currently supported, but will be added in a future update."
+#~ msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
+#~ msgstr "WhatsApp accounts are not currently supported, but will be added in a future update."
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Free"
@@ -3669,3 +3667,64 @@ msgstr "In order to use WhatsApp messaging features, you need to activate your o
 #: src/lib/components/flow/Flow.svelte
 msgid "Activate WhatsApp"
 msgstr "Activate WhatsApp"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "The WhatsApp signup was cancelled. If you want to try again, click the button below."
+msgstr "The WhatsApp signup was cancelled. If you want to try again, click the button below."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Launch WhatsApp signup"
+msgstr "Launch WhatsApp signup"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "WhatsApp Business Account Activated"
+msgstr "WhatsApp Business Account Activated"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid ""
+"Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
+"messaging features."
+msgstr ""
+"Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
+"messaging features."
+
+#~ msgid "WhatsApp Business Account"
+#~ msgstr "WhatsApp Business Account"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid ""
+"A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
+"one by clicking the button below."
+msgstr ""
+"A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
+"one by clicking the button below."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid ""
+"When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
+"and create a WhatsApp Business Account."
+msgstr ""
+"When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
+"and create a WhatsApp Business Account."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "In doing so, you will authorize Belcoda to send and receive messages on your behalf."
+msgstr "In doing so, you will authorize Belcoda to send and receive messages on your behalf."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "After creating the WhatsApp Business Account, you will be redirected back to Belcoda."
+msgstr "After creating the WhatsApp Business Account, you will be redirected back to Belcoda."
+
+#. placeholder {0}: appState.activeOrganization?.data?.settings.whatsApp.number
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Your WhatsApp Business Account number is {0}"
+msgstr "Your WhatsApp Business Account number is {0}"
+
+#. placeholder {0}: appState.activeOrganization?.data?.settings.whatsApp.wabaId
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Your WhatsApp Business Account ID is {0}"
+msgstr "Your WhatsApp Business Account ID is {0}"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Activate WhatsApp Business Account"
+msgstr "Activate WhatsApp Business Account"
