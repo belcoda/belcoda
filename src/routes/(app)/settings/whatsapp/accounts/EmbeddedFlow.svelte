@@ -149,7 +149,7 @@
 {:else}
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>{t`WhatsApp Business Account`}</Card.Title>
+			<Card.Title>{t`Activate WhatsApp Business Account`}</Card.Title>
 		</Card.Header>
 		<Card.Content class="space-y-2 text-sm text-muted-foreground">
 			<p>
