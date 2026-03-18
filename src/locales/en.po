@@ -717,6 +717,7 @@ msgstr "Added tag"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Add to team"
 msgstr "Add to team"
 
@@ -1737,6 +1738,8 @@ msgid "Website"
 msgstr "Website"
 
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Add signature"
 msgstr "Add signature"
@@ -3706,3 +3709,15 @@ msgstr "Signed a petition"
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Added from an unknown source [{0}]"
 msgstr "Added from an unknown source [{0}]"
+
+#~ msgid "Add to event"
+#~ msgstr "Add to event"
+
+#~ msgid "Add a new person to the community"
+#~ msgstr "Add a new person to the community"
+
+#~ msgid "No people found"
+#~ msgstr "No people found"
+
+#~ msgid "Create new person?"
+#~ msgstr "Create new person?"
