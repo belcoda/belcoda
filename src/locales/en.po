@@ -25,6 +25,7 @@ msgstr "Date and time"
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/routes/(app)/preferences/language/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
 msgstr "Language"
 
@@ -203,6 +204,7 @@ msgstr "The return path domain is used for bounce handling."
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Status"
 msgstr "Status"
 
@@ -751,6 +753,7 @@ msgstr "Note deleted"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Name.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Edit"
 msgstr "Edit"
 
@@ -891,6 +894,7 @@ msgstr "Family name"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
@@ -1237,6 +1241,7 @@ msgstr "Create an account to get started"
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Name"
@@ -2621,6 +2626,7 @@ msgstr "Are you sure you want to discard this email draft?"
 msgid "Email Draft"
 msgstr "Email Draft"
 
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Discard"
@@ -2775,9 +2781,8 @@ msgstr "Configuration"
 msgid "Exports are not currently supported, but will be added in a future update."
 msgstr "Exports are not currently supported, but will be added in a future update."
 
-#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
-msgid "WhatsApp templates are not currently supported, but will be added in a future update."
-msgstr "WhatsApp templates are not currently supported, but will be added in a future update."
+#~ msgid "WhatsApp templates are not currently supported, but will be added in a future update."
+#~ msgstr "WhatsApp templates are not currently supported, but will be added in a future update."
 
 #~ msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
 #~ msgstr "WhatsApp accounts are not currently supported, but will be added in a future update."
@@ -3729,3 +3734,156 @@ msgstr "Your WhatsApp Business Account ID is {0}"
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Activate WhatsApp Business Account"
 msgstr "Activate WhatsApp Business Account"
+
+#~ msgid "No WhatsApp templates found"
+#~ msgstr "No WhatsApp templates found"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Create template"
+msgstr "Create template"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "No business account activated"
+msgstr "No business account activated"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "You must activate a business account before creating templates"
+msgstr "You must activate a business account before creating templates"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Activate business account"
+msgstr "Activate business account"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "No templates found"
+msgstr "No templates found"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Create a new template and submit it for approval to get started."
+msgstr "Create a new template and submit it for approval to get started."
+
+#~ msgid "Locale"
+#~ msgstr "Locale"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Approved"
+msgstr "Approved"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Rejected"
+msgstr "Rejected"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "In appeal"
+msgstr "In appeal"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Pending deletion"
+msgstr "Pending deletion"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Disabled"
+msgstr "Disabled"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Paused"
+msgstr "Paused"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "The header text must be 60 characters or less"
+msgstr "The header text must be 60 characters or less"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "The body text must be 1024 characters or less"
+msgstr "The body text must be 1024 characters or less"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Template headers can only have 1 variable"
+msgstr "Template headers can only have 1 variable"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Add variable"
+msgstr "Add variable"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Example values"
+msgstr "Example values"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Provide examples of the values you might use in your templates. These will be used in the WhatsApp template review process. You will be able to change these values when you send a message."
+msgstr "Provide examples of the values you might use in your templates. These will be used in the WhatsApp template review process. You will be able to change these values when you send a message."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Variables"
+msgstr "Variables"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Variables are placeholders for dynamic values that will be replaced with actual values when you send a message. You can add variables using the \"Add new variable\" button or by typing text in double curly brackets."
+msgstr "Variables are placeholders for dynamic values that will be replaced with actual values when you send a message. You can add variables using the \"Add new variable\" button or by typing text in double curly brackets."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Delete variable"
+msgstr "Delete variable"
+
+#: src/routes/(app)/settings/whatsapp/templates/new/+page.svelte
+msgid "New WhatsApp template"
+msgstr "New WhatsApp template"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Invalid template data. Please try again."
+msgstr "Invalid template data. Please try again."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Template name"
+msgstr "Template name"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Can only contain lowercase latin alphabet letters, numbers, and underscores."
+msgstr "Can only contain lowercase latin alphabet letters, numbers, and underscores."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Create new template"
+msgstr "Create new template"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Add text header"
+msgstr "Add text header"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Add image header"
+msgstr "Add image header"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Header"
+msgstr "Header"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Example image"
+msgstr "Example image"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Please upload an example of the kind of image you'll be using when you send messages using this template. This is useful for the template review process. When you actually send a message, you will be able to select a new image."
+msgstr "Please upload an example of the kind of image you'll be using when you send messages using this template. This is useful for the template review process. When you actually send a message, you will be able to select a new image."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Body text"
+msgstr "Body text"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Add buttons"
+msgstr "Add buttons"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Buttons"
+msgstr "Buttons"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Add button"
+msgstr "Add button"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "You can only add up to 10 buttons per template."
+msgstr "You can only add up to 10 buttons per template."
