@@ -6,7 +6,7 @@
 	import EmbeddedFlow from './EmbeddedFlow.svelte';
 </script>
 
-<ContentLayout rootLink="/settings/people/exports">
+<ContentLayout rootLink="/settings">
 	{#snippet header()}
 		<div class="flex items-center justify-between">
 			<h1 class="text-2xl font-bold">{t`WhatsApp Business Account`}</h1>
