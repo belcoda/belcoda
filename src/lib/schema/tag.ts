@@ -7,7 +7,8 @@ export const tagSchema = v.object({
 	name: helpers.shortString,
 	active: v.boolean(),
 	createdAt: helpers.date,
-	updatedAt: helpers.date
+	updatedAt: helpers.date,
+	deletedAt: v.nullable(helpers.date)
 });
 
 export type TagSchema = v.InferOutput<typeof tagSchema>;
@@ -17,14 +18,16 @@ export const readTagRest = v.object({
 	name: tagSchema.entries.name,
 	active: tagSchema.entries.active,
 	createdAt: helpers.dateToString,
-	updatedAt: helpers.dateToString
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString)
 });
 export type ReadTagRest = v.InferOutput<typeof readTagRest>;
 
 export const readTagZero = v.object({
 	...tagSchema.entries,
 	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp
+	updatedAt: helpers.dateToTimestamp,
+	deletedAt: v.nullable(helpers.dateToTimestamp)
 });
 export type ReadTagZero = v.InferOutput<typeof readTagZero>;
 
