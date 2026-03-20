@@ -61,3 +61,8 @@ export const updateMutatorSchema = v.object({
 	metadata: mutatorMetadata
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
+
+export const deleteMutatorSchema = v.object({
+	metadata: mutatorMetadata
+});
+export type DeleteMutatorSchema = v.InferOutput<typeof deleteMutatorSchema>;
