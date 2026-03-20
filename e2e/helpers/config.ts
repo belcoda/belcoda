@@ -1,2 +1,1 @@
-// TODO: Make this pic from the environment
-export const BASE_URL = 'http://localhost:5173';
+export const BASE_URL = process.env.PUBLIC_HOST ?? 'http://localhost:5173';
