@@ -14,7 +14,7 @@
 
 	let tagListFilter = $state({
 		...getListFilter(appState.organizationId),
-		includeDeleted: true
+		includeInactive: true
 	});
 	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
 </script>
