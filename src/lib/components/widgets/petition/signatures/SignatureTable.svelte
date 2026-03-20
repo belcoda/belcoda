@@ -22,11 +22,9 @@
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 
 	import SignatureTableRow from './SignatureTableRow.svelte';
-	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
 
 	import PenLineIcon from '@lucide/svelte/icons/pen-line';
-	import { handleAddPerson } from './signatureActions';
-	
+
 	const signatureCountLabel = (count: number) => {
 		return t`${count.toString()} signatures`;
 	};
