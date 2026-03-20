@@ -25,3 +25,7 @@ vite.config.ts.timestamp-*
 
 # Wuchale
 src/locales/.wuchale/
+
+# Playwright
+playwright/
+playwright-report/

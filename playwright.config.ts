@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const BASE_URL = process.env.PUBLIC_HOST ?? 'http://localhost:5173';
+
 export default defineConfig({
 	testDir: 'e2e',
 	fullyParallel: false,
@@ -8,12 +10,12 @@ export default defineConfig({
 	workers: 1,
 	reporter: 'html',
 	use: {
-		baseURL: 'http://localhost:5173',
+		baseURL: BASE_URL,
 		trace: 'on-first-retry'
 	},
 	webServer: {
 		command: 'npm run dev',
-		url: 'http://localhost:5173',
+		url: BASE_URL,
 		reuseExistingServer: !process.env.CI
 	},
 	globalSetup: './e2e/setup/global-setup.ts',
