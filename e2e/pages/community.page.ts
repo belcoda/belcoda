@@ -12,13 +12,10 @@ export class CommunityPage {
 	constructor(page: Page) {
 		this.page = page;
 		this.heading = page.locator('h1');
-		this.sidebar = page.locator('[data-testid="sidebar"], aside, .sidebar');
-		this.userMenu = page
-			.locator('button')
-			.filter({ has: page.locator('img[alt]') })
-			.first();
-		this.orgMenu = page.locator('[data-testid="org-menu"], button:has-text("Organization")');
-		this.settingsLink = page.locator('a[href="/settings"], a:has-text("Settings")');
+		this.sidebar = page.locator('[data-slot="sidebar-content"]');
+		this.userMenu = page.locator('[data-slot="sidebar-footer"] button[aria-haspopup="menu"]');
+		this.orgMenu = page.locator('[data-slot="sidebar-header"] button[aria-haspopup="menu"]');
+		this.settingsLink = page.locator('a[href="/settings"]');
 		this.logoutButton = page.locator('a[href="/logout"]');
 	}
 
@@ -27,7 +24,7 @@ export class CommunityPage {
 	}
 
 	async expectLoaded() {
-		await this.page.waitForLoadState('networkidle');
+		await this.page.locator('a[href="/community"][data-sidebar="menu-button"]').waitFor({ state: 'visible' });
 	}
 
 	async openUserMenu() {
