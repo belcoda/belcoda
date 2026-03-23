@@ -3,9 +3,31 @@ import {
 	type WhatsappMessage,
 	type WhatsappActions
 } from '$lib/schema/whatsapp/message';
+import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import type { LanguageCode } from '$lib/utils/language';
 import type { YCloudWhatsappMessage } from '$lib/schema/whatsapp/ycloud/message';
-import type { WhatsappTemplateMessageNodeData } from '$lib/schema/flow';
+import type { WhatsappTemplateMessageNodeData, WhatsappMessageNodeData } from '$lib/schema/flow';
+import { v4 as uuidv4 } from 'uuid';
+
+export function convertNodeToFullMessage({
+	messageNode,
+	messageId
+}: {
+	messageNode: WhatsappMessageNodeData;
+	messageId: string;
+}): WhatsappMessage {
+	return {
+		id: messageId,
+		text: messageNode.text,
+		image_url: messageNode.imageUrl,
+		buttons: messageNode.buttons.map((button) => ({
+			text: button.label,
+			action: button.id
+		})),
+		emojiReactions: [],
+		replyToMessageId: undefined
+	};
+}
 
 export function convertWhatsAppTemplateMessageToApiFormat({
 	templateMessage,
@@ -108,6 +130,52 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 			components: components
 		}
 	};
+}
+
+export function createMessageFromTemplateAndTemplateMessage({
+	templateMessage,
+	template,
+	messageId
+}: {
+	templateMessage: WhatsappTemplateMessageNodeData;
+	template: TemplateMessageComponents;
+	messageId: string;
+}) {
+	let returnObject: WhatsappMessage = {
+		id: messageId,
+		emojiReactions: [],
+		buttons: []
+	};
+	let templateHeader = template.find((t) => t.type === 'HEADER');
+	let templateBody = template.find((t) => t.type === 'BODY');
+	let templateButtons = template.find((t) => t.type === 'BUTTONS');
+	if (templateHeader && templateMessage.header) {
+		if (templateHeader.format === 'IMAGE') {
+			returnObject.image_url = templateMessage.header.imageUrl;
+		}
+		if (templateHeader.format === 'TEXT' && templateMessage.header?.templateStrings) {
+			const baseString = templateHeader.text;
+			//replace the {{n}} in baseString with the values from templateMessage.header.templateStrings
+			const replacedString = baseString.replace(/{{(\d+)}}/g, (match, p1) => {
+				return templateMessage.header?.templateStrings?.[parseInt(p1) - 1] || match;
+			});
+			returnObject.headerText = replacedString;
+		}
+	}
+	if (templateBody && templateMessage.body && templateMessage.body?.templateStrings) {
+		const baseString = templateBody.text;
+		//replace the {{n}} in baseString with the values from templateMessage.body.templateStrings
+		const replacedString = baseString.replace(/{{(\d+)}}/g, (match, p1) => {
+			return templateMessage.body?.templateStrings?.[parseInt(p1) - 1] || match;
+		});
+		returnObject.text = replacedString;
+	}
+	if (templateButtons && templateButtons.buttons && templateMessage.buttons) {
+		returnObject.buttons = templateButtons.buttons.map((button, index) => {
+			return { text: button.text, action: templateMessage.buttons?.[index]?.id || uuidv4() };
+		});
+	}
+	return returnObject;
 }
 
 export function createExternalId({
