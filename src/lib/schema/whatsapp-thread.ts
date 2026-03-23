@@ -1,37 +1,12 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-
-import { whatsappMessage as whatsappMessageSchema } from '$lib/schema/whatsapp/message';
-import { filterGroup } from '$lib/schema/person/filter';
-import { whatsappTemplateMessage as whatsappTemplateMessageSchema } from '$lib/schema/whatsapp/message';
-import { whatsappMessageActionsSchema } from '$lib/schema/whatsapp/actions';
-export const savedFlowSchema = v.object({
-	nodes: v.array(
-		v.object({
-			id: v.string(),
-			type: v.string(),
-			position: v.object({
-				x: v.number(),
-				y: v.number()
-			})
-		})
-	),
-	edges: v.array(
-		v.object({
-			id: v.string(),
-			source: v.string(),
-			target: v.string(),
-			type: v.string()
-		})
-	)
-});
-export type SavedFlowSchema = v.InferOutput<typeof savedFlowSchema>;
+import { flowSchema } from '$lib/schema/flow/index';
 
 export const whatsappThreadSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
 	teamId: v.nullable(helpers.uuid),
-	flow: savedFlowSchema,
+	flow: flowSchema,
 	sentBy: v.nullable(helpers.uuid),
 	startedAt: v.nullable(helpers.date),
 	completedAt: v.nullable(helpers.date),
@@ -67,7 +42,7 @@ export const readWhatsappThreadZero = v.object({
 export type ReadWhatsappThreadZero = v.InferOutput<typeof readWhatsappThreadZero>;
 
 export const createWhatsappThread = v.object({
-	flow: savedFlowSchema
+	flow: flowSchema
 });
 export type CreateWhatsappThread = v.InferInput<typeof createWhatsappThread>;
 
