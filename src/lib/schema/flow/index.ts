@@ -38,14 +38,17 @@ const targetingNode = v.object({
 	})
 });
 
+export const whatsappMessageNodeData = v.object({
+	text: helpers.mediumString,
+	imageUrl: v.optional(helpers.url),
+	buttons: v.array(v.object({ id: helpers.uuid, label: helpers.mediumString }))
+});
+export type WhatsappMessageNodeData = v.InferOutput<typeof whatsappMessageNodeData>;
+
 const messageNode = v.object({
 	...nodeBase.entries,
 	type: v.literal('message'),
-	data: v.object({
-		text: helpers.mediumString,
-		imageUrl: v.optional(helpers.url),
-		buttons: v.array(v.object({ id: helpers.uuid, label: helpers.mediumString }))
-	})
+	data: whatsappMessageNodeData
 });
 
 export const whatsappTemplateMessageNodeData = v.object({
