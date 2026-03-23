@@ -5,20 +5,21 @@ import {
 } from '$lib/schema/whatsapp/message';
 import type { LanguageCode } from '$lib/utils/language';
 import type { YCloudWhatsappMessage } from '$lib/schema/whatsapp/ycloud/message';
+import type { WhatsappTemplateMessageNodeData } from '$lib/schema/flow';
 
 export function convertWhatsAppTemplateMessageToApiFormat({
 	templateMessage,
-	actions,
-	activityId,
+	nodeId,
+	whatsappThreadId,
 	whatsappMessageId,
 	from,
 	to,
 	name,
 	language
 }: {
-	templateMessage: WhatsappTemplateMessage;
-	actions: WhatsappActions;
-	activityId: string;
+	templateMessage: WhatsappTemplateMessageNodeData;
+	nodeId: string;
+	whatsappThreadId: string;
 	whatsappMessageId: string;
 	from: string;
 	to: string;
@@ -27,30 +28,29 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 }): YCloudWhatsappMessage {
 	const components = [];
 	if (templateMessage.header) {
-		if (templateMessage.header.image_url) {
+		if (templateMessage.header.imageUrl) {
 			components.push({
 				type: 'header' as const,
 				parameters: [
 					{
 						type: 'image' as const,
 						image: {
-							link: templateMessage.header.image_url
+							link: templateMessage.header.imageUrl
 						}
 					}
 				]
 			});
 		}
 		if (
-			templateMessage.header.text &&
-			templateMessage.header.parameters &&
-			templateMessage.header.parameters.length > 0
+			templateMessage.header.templateStrings &&
+			templateMessage.header.templateStrings.length > 0
 		) {
 			components.push({
 				type: 'header' as const,
-				parameters: templateMessage.header.parameters.map((param) => {
+				parameters: templateMessage.header.templateStrings.map((param) => {
 					return {
 						type: 'text' as const,
-						text: param.text
+						text: param
 					};
 				})
 			});
@@ -60,10 +60,10 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	components.push({
 		type: 'body' as const,
 		parameters:
-			templateMessage.body.parameters?.map((param) => {
+			templateMessage.body?.templateStrings?.map((param) => {
 				return {
 					type: 'text' as const,
-					text: param.text
+					text: param
 				};
 			}) || []
 	});
@@ -71,7 +71,7 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	if (templateMessage.buttons && templateMessage.buttons.length > 0) {
 		templateMessage.buttons.forEach((button, index) => {
 			// Validate that parameters array exists and has at least one element
-			if (!button.parameters || button.parameters.length === 0) {
+			if (!button || !button.id) {
 				throw new Error(
 					`Button at index ${index} has no parameters array or empty parameters array`
 				);
@@ -84,7 +84,7 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 				parameters: [
 					{
 						type: 'payload' as const,
-						payload: button.parameters[0].payload
+						payload: `${whatsappThreadId}:${nodeId}:${button.id}`
 					}
 				]
 			});
@@ -94,7 +94,11 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 		from: from,
 		to: to,
 		type: 'template',
-		externalId: createExternalId(whatsappMessageId, templateMessage.id, activityId),
+		externalId: createExternalId({
+			whatsappMessageId: whatsappMessageId,
+			whatsappThreadId: whatsappThreadId,
+			nodeId: nodeId
+		}),
 		template: {
 			name: name,
 			language: {
@@ -106,40 +110,50 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	};
 }
 
-export function createExternalId(
-	whatsappMessageId: string | null,
-	templateMessageId: string,
-	activityId: string
-) {
-	return `${whatsappMessageId ? whatsappMessageId : 'UNKNOWN'}:${templateMessageId}:${activityId}`;
+export function createExternalId({
+	whatsappMessageId,
+	whatsappThreadId,
+	nodeId
+}: {
+	whatsappMessageId: string | null;
+	whatsappThreadId: string;
+	nodeId: string | null;
+}) {
+	return `${whatsappThreadId}:${nodeId || 'UNKNOWN'}:${whatsappMessageId || 'UNKNOWN'}`;
 }
 
 export function extractExternalId(externalId: string): {
 	whatsappMessageId: string | 'UNKNOWN';
-	templateMessageId: string;
-	activityId: string;
+	whatsappThreadId: string;
+	nodeId: string | 'UNKNOWN';
 } {
-	const [whatsappMessageId, templateMessageId, activityId] = externalId.split(':');
-	if (!whatsappMessageId || !templateMessageId || !activityId) {
+	const [whatsappThreadId, nodeId, whatsappMessageId] = externalId.split(':');
+	if (!whatsappThreadId || !nodeId || !whatsappMessageId) {
 		throw new Error(`Invalid externalId: ${externalId}`);
 	}
-	return { whatsappMessageId, templateMessageId, activityId };
+	return { whatsappThreadId, nodeId, whatsappMessageId };
 }
 
 export function convertWhatsappMessageToApiFormat({
 	whatsappMessage,
-	activityId,
+	nodeId,
+	whatsappThreadId,
 	whatsappMessageId,
 	from,
 	to
 }: {
 	whatsappMessage: WhatsappMessage;
-	activityId: string;
+	nodeId: string | null;
+	whatsappThreadId: string;
 	whatsappMessageId: string | null;
 	from: string;
 	to: string;
 }): YCloudWhatsappMessage {
-	const externalId = createExternalId(whatsappMessageId, whatsappMessage.id, activityId);
+	const externalId = createExternalId({
+		whatsappMessageId: whatsappMessageId,
+		whatsappThreadId: whatsappThreadId,
+		nodeId: nodeId
+	});
 	if (whatsappMessage.buttons) {
 		return generateInteractiveMessage({
 			buttons: whatsappMessage.buttons,
