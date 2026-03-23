@@ -64,7 +64,7 @@ import { type EventSignupDetails, type EventSignupStatus } from '$lib/schema/eve
 import { type SocialMedia, type PersonAddedFrom } from '$lib/schema/person/meta';
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
 import type { PetitionSettingsSchema, PetitionSignatureDetails } from './petition/settings';
-import type { SavedFlowSchema } from '$lib/schema/whatsapp-thread';
+import type { Flow as FlowSchema } from '$lib/schema/flow';
 
 type Permissions = {
 	[resourceType: string]: ('read' | 'write' | 'delete')[];
@@ -566,7 +566,7 @@ export const whatsappThread = pgTable('whatsapp_thread', {
 		.notNull()
 		.references(() => organization.id),
 	teamId: uuid('team_id').references(() => team.id),
-	flow: jsonb('flow').$type<SavedFlowSchema>().notNull(),
+	flow: jsonb('flow').$type<FlowSchema>().notNull(),
 	sentBy: uuid('sent_by').references(() => user.id),
 	startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }),
 	completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' }),
