@@ -48,24 +48,27 @@ const messageNode = v.object({
 	})
 });
 
+export const whatsappTemplateMessageNodeData = v.object({
+	templateId: helpers.uuid,
+	header: v.optional(
+		v.object({
+			templateStrings: v.optional(v.array(helpers.shortString)),
+			imageUrl: v.optional(helpers.url)
+		})
+	),
+	body: v.optional(
+		v.object({
+			templateStrings: v.optional(v.array(helpers.shortString))
+		})
+	),
+	buttons: v.optional(v.array(v.object({ id: helpers.uuid })))
+});
+export type WhatsappTemplateMessageNodeData = v.InferOutput<typeof whatsappTemplateMessageNodeData>;
+
 const templateMessageNode = v.object({
 	...nodeBase.entries,
 	type: v.literal('templateMessage'),
-	data: v.object({
-		templateId: helpers.uuid,
-		header: v.optional(
-			v.object({
-				templateStrings: v.optional(v.array(helpers.shortString)),
-				imageUrl: v.optional(helpers.url)
-			})
-		),
-		body: v.optional(
-			v.object({
-				templateStrings: v.optional(v.array(helpers.shortString))
-			})
-		),
-		buttons: v.optional(v.array(v.object({ id: helpers.uuid })))
-	})
+	data: whatsappTemplateMessageNodeData
 });
 
 const nodeSchema = v.variant('type', [
