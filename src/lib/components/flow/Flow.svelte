@@ -11,12 +11,28 @@
 		Background,
 		Panel,
 		type Node,
+		type Edge,
 		type EdgeTypes,
 		type NodeTypes
 	} from '@xyflow/svelte';
 	import { startingNodes, addNode } from './nodes/addNode.js';
-	const { backButtonUrl, disabled = false }: { backButtonUrl?: string; disabled?: boolean } =
-		$props();
+	const {
+		backButtonUrl,
+		disabled = false,
+		nodes: inputNodes,
+		edges: inputEdges,
+		onSave = ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {},
+		onSend = ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {},
+		onDiscard = () => {}
+	}: {
+		backButtonUrl?: string;
+		disabled?: boolean;
+		nodes: Node[];
+		edges: Edge[];
+		onSave?: ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => void;
+		onSend?: ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => void;
+		onDiscard?: () => void;
+	} = $props();
 	//nodes
 	import Message from './nodes/Message.svelte';
 	import EventSignup from './nodes/EventSignup.svelte';
@@ -42,8 +58,10 @@
 	const { nodes: startingNodesList, edges: startingEdgesList } = startingNodes({
 		defaultTemplateId: appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
 	});
-	let nodes: Node[] = $state.raw(startingNodesList);
-	let edges = $state.raw(startingEdgesList);
+	/* svelte_ignore state_referenced_locally */
+	let nodes: Node[] = $state.raw(inputNodes ?? startingNodesList);
+	/* svelte_ignore state_referenced_locally */
+	let edges = $state.raw(inputEdges ?? startingEdgesList);
 
 	//components
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -101,9 +119,13 @@
 									Snapshot
 								</Button>
 							{/if}
-							<Button variant="destructive" size="sm">Discard</Button>
-							<Button variant="outline" size="sm">Save</Button>
-							<Button variant="default" size="sm">Send</Button>
+							<Button variant="destructive" size="sm" onclick={onDiscard}>Discard</Button>
+							<Button variant="outline" size="sm" onclick={() => onSave({ nodes, edges })}
+								>Save</Button
+							>
+							<Button variant="default" size="sm" onclick={() => onSend({ nodes, edges })}
+								>Send</Button
+							>
 						</div>
 					</Panel>
 				{/if}

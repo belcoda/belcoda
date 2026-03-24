@@ -2,22 +2,20 @@ import type { Node, Edge } from '@xyflow/svelte';
 import { v4 as uuidv4 } from 'uuid';
 import { findPositionRadial } from '../placeNode';
 import type { NodeType } from '../types';
+import { flowSchema, type Flow } from '$lib/schema/flow/index';
 export function startingNodes({
 	defaultTemplateId
 }: {
 	defaultTemplateId: string | null | undefined;
-}): {
-	nodes: Node[];
-	edges: Edge[];
-} {
+}): Flow {
 	const targetingNodeId = uuidv4();
 	const messageNodeId = uuidv4();
-	const nodes: Node[] = [
+	const nodes: Flow['nodes'] = [
 		{
 			id: targetingNodeId,
 			type: 'targeting' as const,
 			position: { x: 0, y: 0 },
-			data: { recipients: [] }
+			data: { filterGroup: { type: 'and', filters: [], exclude: [] } }
 		}
 	];
 	const position = findPositionRadial(
@@ -33,12 +31,14 @@ export function startingNodes({
 			};
 		})
 	) || { x: 0, y: 0 };
-	nodes.push({
-		id: messageNodeId,
-		type: 'templateMessage' as const,
-		position: position,
-		data: { templateId: defaultTemplateId }
-	});
+	if (defaultTemplateId) {
+		nodes.push({
+			id: messageNodeId,
+			type: 'templateMessage' as const,
+			position: position,
+			data: { templateId: defaultTemplateId }
+		});
+	}
 	const edges = [
 		{
 			id: uuidv4(),
