@@ -151,7 +151,8 @@ export async function sendWhatsappTemplateMessage({
 		const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
 			templateMessage: message,
 			template: template.components,
-			messageId: whatsappMessageId
+			messageId: whatsappMessageId,
+			threadId: threadId
 		});
 		const messageToInsert: typeof whatsappMessageTable.$inferInsert = {
 			id: messageId,
@@ -159,11 +160,14 @@ export async function sendWhatsappTemplateMessage({
 			personId: personId,
 			userId: sendingUserId,
 			type: 'outgoing_api_message',
+			status: 'pending',
 			message: combinedTemplateMessage,
 			externalId: ycloudResponseId,
 			wamidId: null,
 			createdAt: new Date(),
-			updatedAt: new Date()
+			updatedAt: new Date(),
+			readAt: null,
+			deliveredAt: null
 		};
 		await tx.dbTransaction.wrappedTransaction.insert(whatsappMessageTable).values(messageToInsert);
 
