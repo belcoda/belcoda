@@ -55,6 +55,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									eventId: actionCodeDetails.referenceId,
 									tx
 								});
+								organizationId = event.organizationId;
 								const flowId = event.settings.whatsappFlowId;
 								if (flowId) {
 									try {
@@ -75,7 +76,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											},
 											'Sent flow message for event registration'
 										);
-										organizationId = event.organizationId;
 										logActivity = false;
 										break;
 									} catch (error) {
@@ -105,7 +105,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											tx
 										});
 										personId = eventSignup.personId;
-										organizationId = event.organizationId;
 										logActivity = false;
 										break;
 									}
@@ -139,7 +138,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 										tx
 									});
 									personId = eventSignup.personId;
-									organizationId = event.organizationId;
 									logActivity = false;
 									break;
 								}
