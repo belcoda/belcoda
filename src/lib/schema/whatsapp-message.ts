@@ -6,7 +6,7 @@ import {
 	whatsappMessageActivityTypeSchema
 } from '$lib/schema/whatsapp/message';
 
-export const whatsappMessageStatus = v.picklist(['delivered', 'read', 'failed']);
+export const whatsappMessageStatus = v.picklist(['delivered', 'read', 'failed', 'pending']);
 export type WhatsappMessageStatus = v.InferOutput<typeof whatsappMessageStatus>;
 
 export const whatsappMessageSchema = v.object({
