@@ -37,7 +37,7 @@ import type { ActivitySchema } from '$lib/schema/activity';
 import type { WhatsappGroupSchema } from '$lib/schema/whatsapp-group';
 import type { WhatsappTemplateSchema } from '$lib/schema/whatsapp-template';
 import type { WhatsappThreadSchema } from '$lib/schema/whatsapp-thread';
-import type { WhatsappMessageSchema } from '$lib/schema/whatsapp-message';
+import type { WhatsappMessageSchema, WhatsappMessageStatus } from '$lib/schema/whatsapp-message';
 import type { EmailFromSignatureSchema } from '$lib/schema/email-from-signature';
 import type { EmailMessageSchema } from '$lib/schema/email-message';
 import type { EventSchema } from '$lib/schema/event';
@@ -568,6 +568,8 @@ export const whatsappThread = pgTable('whatsapp_thread', {
 	teamId: uuid('team_id').references(() => team.id),
 	flow: jsonb('flow').$type<FlowSchema>().notNull(),
 	sentBy: uuid('sent_by').references(() => user.id),
+	title: text('title'), // used for interface purposes
+	description: text('description'), // used for interface purposes
 	startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }),
 	completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' }),
 	estimatedRecipientCount: integer('estimated_recipient_count').notNull(),
@@ -599,7 +601,13 @@ export const whatsappMessage = pgTable('whatsapp_message', {
 	type: text('type').$type<WhatsappMessageActivityType>().notNull(),
 	message: jsonb('message').$type<WhatsappMessage>().notNull(),
 	userId: uuid('user_id').references(() => user.id),
-	personId: uuid('person_id').references(() => person.id),
+	personId: uuid('person_id')
+		.notNull()
+		.references(() => person.id),
+	status: text('status').$type<WhatsappMessageStatus>().notNull(),
+	statusMessage: text('status_message'),
+	deliveredAt: timestamp('delivered_at', { withTimezone: true, mode: 'date' }),
+	readAt: timestamp('read_at', { withTimezone: true, mode: 'date' }),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 });
@@ -618,19 +626,13 @@ export const whatsappSendQueue = pgTable(
 		personId: uuid('person_id')
 			.notNull()
 			.references(() => person.id),
-		messageId: uuid('message_id')
+		threadId: uuid('thread_id')
 			.notNull()
 			.references(() => whatsappThread.id),
-		status: text('status').notNull(),
-		statusMessage: text('status_message'),
-		attempts: integer('attempts').notNull(),
-		externalId: text('external_id'),
-		startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }),
-		completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' }),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 	},
-	(table) => [unique('whatsapp_send_queue_unique').on(table.personId, table.messageId)]
+	(table) => [unique('whatsapp_send_queue_unique').on(table.personId, table.threadId)]
 );
 
 //email schema
