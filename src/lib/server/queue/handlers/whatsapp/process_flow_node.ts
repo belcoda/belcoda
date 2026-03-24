@@ -8,6 +8,7 @@ import {
 	sendWhatsappMessage,
 	sendWhatsappTemplateMessage
 } from '$lib/server/utils/whatsapp/send_message';
+import { v7 as uuidv7 } from 'uuid';
 
 export async function processFlowNodeAction({
 	nodeId,
@@ -95,6 +96,10 @@ export async function processFlowNodeAction({
 	//check edges for any nodes with source of message id
 	const followUpNodes = thread.flow.edges.filter((edge) => edge.source === nodeId);
 	for (const followUpNode of followUpNodes) {
+		if (followUpNode.sourceHandle) {
+			//this means it's a button action, so we don't want to trigger it automatically for those nodes, right? Only on incoming button press
+			continue;
+		}
 		const followUpNodeData = thread.flow.nodes.find((node) => node.id === followUpNode.target);
 		if (!followUpNodeData) {
 			throw new Error('Follow up node not found');
