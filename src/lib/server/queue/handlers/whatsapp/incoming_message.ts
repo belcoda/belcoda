@@ -75,6 +75,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											},
 											'Sent flow message for event registration'
 										);
+										organizationId = event.organizationId;
 										logActivity = false;
 										break;
 									} catch (error) {
@@ -206,13 +207,15 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 						break;
 					} else if (parsed.whatsappInboundMessage.interactive.type === 'nfm_reply') {
 						// Handle flow response messages
-						await handleFlowResponse({
+						const flowResult = await handleFlowResponse({
 							flowName: parsed.whatsappInboundMessage.interactive.nfm_reply.name,
 							body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
 							response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
 							from: parsed.whatsappInboundMessage.from,
 							tx
 						});
+						personId = flowResult.personId;
+						organizationId = flowResult.organizationId;
 					}
 					break;
 				}
