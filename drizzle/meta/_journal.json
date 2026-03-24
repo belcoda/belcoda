@@ -15,6 +15,13 @@
       "when": 1771043165542,
       "tag": "0001_outstanding_captain_cross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774357128714,
+      "tag": "0002_fresh_ultragirl",
+      "breakpoints": true
     }
   ]
 }
