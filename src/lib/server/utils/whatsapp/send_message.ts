@@ -71,6 +71,7 @@ export async function sendWhatsappMessage({
 			type: 'outgoing_api_message',
 			message: whatsappMessage,
 			externalId: ycloudResponseId,
+			status: 'pending',
 			wamidId: null,
 			createdAt: new Date(),
 			updatedAt: new Date()
