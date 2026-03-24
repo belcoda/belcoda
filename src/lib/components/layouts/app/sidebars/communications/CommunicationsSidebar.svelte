@@ -3,6 +3,7 @@
 	import DesktopNavSidebar from '$lib/components/layouts/app/navigation/DesktopNavSidebar.svelte';
 	import FoldersSidebar from '$lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte';
 	import EmailList from '$lib/components/layouts/app/sidebars/communications/EmailList.svelte';
+	import WhatsAppList from '$lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte';
 	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 	import { page } from '$app/state';
 
@@ -43,7 +44,11 @@
 		<Sidebar.Content class="p-0">
 			<div class="flex h-full flex-1 overflow-hidden">
 				<!-- Email List -->
-				<EmailList {folder} />
+				{#if isEmail}
+					<EmailList {folder} />
+				{:else if isWhatsApp}
+					<WhatsAppList {folder} />
+				{/if}
 			</div>
 		</Sidebar.Content>
 	</Sidebar.Root>
