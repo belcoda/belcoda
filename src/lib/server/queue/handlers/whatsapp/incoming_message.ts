@@ -245,18 +245,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 					break;
 			}
 
-			if (!personId) {
-				throw new Error(
-					'Reached end of incoming message processing and was unable to determine person'
-				);
-			}
-
-			if (!organizationId) {
-				throw new Error(
-					'Reached end of incoming message processing and was unable to determine organization'
-				);
-			}
-
 			if (!organizationId || !personId) {
 				// get organization from wabaId if possible...
 				const { organization, person } = await getDetailsFromMessageByWabaId({
