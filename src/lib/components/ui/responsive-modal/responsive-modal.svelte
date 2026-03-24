@@ -36,23 +36,23 @@
 				{#if title}<Dialog.Title>{title}</Dialog.Title>{/if}
 				{#if description}<Dialog.Description>{description}</Dialog.Description>{/if}
 			</Dialog.Header>
-			<form class="grid items-start gap-4">
+			<div class="grid items-start gap-4">
 				{@render children?.()}
-			</form>
+			</div>
 			{#if footer}<Dialog.Footer class="pt-2">{@render footer?.()}</Dialog.Footer>{/if}
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open>
 		{#if trigger}<Drawer.Trigger>{@render trigger?.()}</Drawer.Trigger>{/if}
-		<Drawer.Content>
+		<Drawer.Content class="pb-4">
 			<Drawer.Header class="text-start">
 				{#if title}<Drawer.Title>{title}</Drawer.Title>{/if}
 				{#if description}<Drawer.Description>{description}</Drawer.Description>{/if}
 			</Drawer.Header>
-			<form class="grid items-start gap-4 px-4">
+			<div class="grid items-start gap-4 overflow-y-auto px-4">
 				{@render children?.()}
-			</form>
+			</div>
 			{#if footer}<Drawer.Footer class="pt-2">{@render footer?.()}</Drawer.Footer>{/if}
 		</Drawer.Content>
 	</Drawer.Root>
