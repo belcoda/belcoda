@@ -135,11 +135,13 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 export function createMessageFromTemplateAndTemplateMessage({
 	templateMessage,
 	template,
-	messageId
+	messageId,
+	threadId
 }: {
 	templateMessage: WhatsappTemplateMessageNodeData;
 	template: TemplateMessageComponents;
 	messageId: string;
+	threadId: string;
 }) {
 	let returnObject: WhatsappMessage = {
 		id: messageId,
@@ -172,7 +174,14 @@ export function createMessageFromTemplateAndTemplateMessage({
 	}
 	if (templateButtons && templateButtons.buttons && templateMessage.buttons) {
 		returnObject.buttons = templateButtons.buttons.map((button, index) => {
-			return { text: button.text, action: templateMessage.buttons?.[index]?.id || uuidv4() };
+			return {
+				text: button.text,
+				action: createButtonActionString({
+					threadId: threadId,
+					nodeId: messageId,
+					buttonId: templateMessage.buttons?.[index]?.id || uuidv4()
+				})
+			};
 		});
 	}
 	return returnObject;
@@ -227,6 +236,8 @@ export function convertWhatsappMessageToApiFormat({
 			buttons: whatsappMessage.buttons,
 			text: whatsappMessage.text,
 			imageUrl: whatsappMessage.image_url,
+			threadId: whatsappThreadId,
+			messageId: whatsappMessageId,
 			to: to,
 			from: from,
 			externalId: externalId
@@ -285,7 +296,9 @@ function generateInteractiveMessage({
 	imageUrl,
 	to,
 	from,
-	externalId
+	externalId,
+	threadId,
+	messageId
 }: {
 	buttons: { text: string; action: string }[];
 	text?: string;
@@ -293,6 +306,8 @@ function generateInteractiveMessage({
 	to: string;
 	from: string;
 	externalId: string;
+	threadId: string;
+	messageId: string | null;
 }): YCloudWhatsappMessage {
 	const header = imageUrl
 		? {
@@ -317,7 +332,11 @@ function generateInteractiveMessage({
 						type: 'reply',
 						reply: {
 							title: button.text,
-							id: button.action
+							id: createButtonActionString({
+								threadId: threadId,
+								nodeId: messageId || '[UNKNWON_MESSAGE_ID]',
+								buttonId: button.action
+							})
 						}
 					};
 				})
@@ -346,4 +365,28 @@ function generateTextMessage({
 			body: text
 		}
 	};
+}
+
+export function createButtonActionString({
+	threadId,
+	nodeId,
+	buttonId
+}: {
+	threadId: string;
+	nodeId: string;
+	buttonId: string;
+}) {
+	return `${threadId}:${nodeId}:${buttonId}`;
+}
+
+export function extractButtonActionString(actionString: string): {
+	threadId: string;
+	nodeId: string;
+	buttonId: string;
+} {
+	const [threadId, nodeId, buttonId] = actionString.split(':');
+	if (!threadId || !nodeId || !buttonId) {
+		throw new Error(`Invalid actionString: ${actionString}`);
+	}
+	return { threadId, nodeId, buttonId };
 }
