@@ -619,22 +619,6 @@ type WhatsappMessageDrizzleMatchesValibot = IsTrue<
 	typeof whatsappMessage.$inferSelect extends WhatsappMessageSchema ? true : false
 >;
 
-export const whatsappSendQueue = pgTable(
-	'whatsapp_send_queue',
-	{
-		id: uuid('id').primaryKey(),
-		personId: uuid('person_id')
-			.notNull()
-			.references(() => person.id),
-		threadId: uuid('thread_id')
-			.notNull()
-			.references(() => whatsappThread.id),
-		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
-		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
-	},
-	(table) => [unique('whatsapp_send_queue_unique').on(table.personId, table.threadId)]
-);
-
 //email schema
 
 export const emailFromSignature = pgTable('email_from_signature', {
