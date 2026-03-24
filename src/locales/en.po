@@ -1564,6 +1564,7 @@ msgstr "Toggle"
 
 #: src/lib/components/communications/email/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Type to search..."
 msgstr "Type to search..."
 
@@ -3887,3 +3888,20 @@ msgstr "Add button"
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 msgid "You can only add up to 10 buttons per template."
 msgstr "You can only add up to 10 buttons per template."
+
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+msgid "(No title)"
+msgstr "(No title)"
+
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+msgid "No WhatsApp threads found"
+msgstr "No WhatsApp threads found"
+
+#~ msgid "Add Node"
+#~ msgstr "Add Node"
+
+#~ msgid "Tag Add"
+#~ msgstr "Tag Add"
+
+#~ msgid "Select a draft from the list to edit your flow"
+#~ msgstr "Select a draft from the list to edit your flow"
