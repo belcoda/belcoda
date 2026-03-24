@@ -4,10 +4,18 @@ import { type FilterGroupType, filterGroup } from '$lib/schema/person/filter';
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
-const nodeType = v.picklist(['message', 'eventSignup', 'tagAdd', 'targeting', 'templateMessage']);
+export const nodeType = v.picklist([
+	'message',
+	'eventSignup',
+	'tagAdd',
+	'targeting',
+	'templateMessage'
+]);
 
 const nodeBase = v.object({
 	id: helpers.uuid,
+	width: v.optional(v.number()),
+	height: v.optional(v.number()),
 	position: v.object({
 		x: v.number(),
 		y: v.number()
@@ -83,6 +91,7 @@ const nodeSchema = v.variant('type', [
 ]);
 
 const edgeSchema = v.object({
+	id: helpers.uuid,
 	type: v.literal('edge'),
 	source: helpers.uuid,
 	target: helpers.uuid,

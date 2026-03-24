@@ -11,6 +11,8 @@ export const whatsappThreadSchema = v.object({
 	startedAt: v.nullable(helpers.date),
 	completedAt: v.nullable(helpers.date),
 	estimatedRecipientCount: helpers.count,
+	title: v.nullable(helpers.mediumString),
+	description: v.nullable(helpers.mediumString),
 	successfulRecipientCount: helpers.count,
 	failedRecipientCount: helpers.count,
 	estimatedCost: v.nullable(helpers.integer),
@@ -71,3 +73,8 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const deleteMutatorSchema = v.object({
+	id: whatsappThreadSchema.entries.id,
+	organizationId: whatsappThreadSchema.entries.organizationId
+});
