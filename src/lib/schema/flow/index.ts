@@ -11,6 +11,7 @@ export const nodeType = v.picklist([
 	'targeting',
 	'templateMessage'
 ]);
+export type NodeType = v.InferOutput<typeof nodeType>;
 
 const nodeBase = v.object({
 	id: helpers.uuid,
@@ -21,66 +22,77 @@ const nodeBase = v.object({
 		y: v.number()
 	})
 });
+export type FlowNodeBase = v.InferOutput<typeof nodeBase>;
 
+const eventSignupData = v.object({
+	eventId: helpers.uuid
+});
+export type EventSignupData = v.InferOutput<typeof eventSignupData>;
 const eventSignupNode = v.object({
 	...nodeBase.entries,
 	type: v.literal('eventSignup'),
-	data: v.object({
-		eventId: helpers.uuid
-	})
+	data: eventSignupData
 });
+export type EventSignupNodeData = v.InferOutput<typeof eventSignupNode>;
 
+const tagAddData = v.object({
+	tagId: helpers.uuid
+});
+export type TagAddData = v.InferOutput<typeof tagAddData>;
 const tagAddNode = v.object({
 	...nodeBase.entries,
 	type: v.literal('tagAdd'),
-	data: v.object({
-		tagId: helpers.uuid
-	})
+	data: tagAddData
 });
+export type TagAddNodeData = v.InferOutput<typeof tagAddNode>;
 
+const targetingData = v.object({
+	filter: filterGroup
+});
+export type TargetingData = v.InferOutput<typeof targetingData>;
 const targetingNode = v.object({
 	...nodeBase.entries,
 	type: v.literal('targeting'),
-	data: v.object({
-		filterGroup: filterGroup
-	})
+	data: targetingData
 });
+export type TargetingNodeData = v.InferOutput<typeof targetingNode>;
 
 export const whatsappMessageNodeData = v.object({
 	text: helpers.mediumString,
 	imageUrl: v.optional(helpers.url),
 	buttons: v.array(v.object({ id: helpers.uuid, label: helpers.mediumString }))
 });
-export type WhatsappMessageNodeData = v.InferOutput<typeof whatsappMessageNodeData>;
-
+export type WhatsappMessageData = v.InferOutput<typeof whatsappMessageNodeData>;
 const messageNode = v.object({
 	...nodeBase.entries,
 	type: v.literal('message'),
 	data: whatsappMessageNodeData
 });
+export type MessageNodeData = v.InferOutput<typeof messageNode>;
 
 export const whatsappTemplateMessageNodeData = v.object({
 	templateId: helpers.uuid,
 	header: v.optional(
 		v.object({
-			templateStrings: v.optional(v.array(helpers.shortString)),
-			imageUrl: v.optional(helpers.url)
+			templateStrings: v.optional(v.array(helpers.shortStringEmpty)),
+			imageUrl: v.optional(v.nullable(helpers.url))
 		})
 	),
 	body: v.optional(
 		v.object({
-			templateStrings: v.optional(v.array(helpers.shortString))
+			templateStrings: v.optional(v.array(helpers.shortStringEmpty))
 		})
 	),
 	buttons: v.optional(v.array(v.object({ id: helpers.uuid })))
 });
-export type WhatsappTemplateMessageNodeData = v.InferOutput<typeof whatsappTemplateMessageNodeData>;
+export type WhatsappTemplateMessageData = v.InferOutput<typeof whatsappTemplateMessageNodeData>;
 
 const templateMessageNode = v.object({
 	...nodeBase.entries,
 	type: v.literal('templateMessage'),
 	data: whatsappTemplateMessageNodeData
 });
+export type TemplateMessageNode = v.InferOutput<typeof templateMessageNode>;
 
 const nodeSchema = v.variant('type', [
 	eventSignupNode,
@@ -91,8 +103,7 @@ const nodeSchema = v.variant('type', [
 ]);
 
 const edgeSchema = v.object({
-	id: helpers.uuid,
-	type: v.literal('edge'),
+	id: helpers.mediumString,
 	source: helpers.uuid,
 	target: helpers.uuid,
 	sourceHandle: v.optional(helpers.uuid),
