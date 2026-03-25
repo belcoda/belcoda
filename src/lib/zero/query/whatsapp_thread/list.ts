@@ -5,9 +5,11 @@ import { array, type InferOutput, object } from 'valibot';
 import { listFilter } from '$lib/schema/helpers';
 import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';
 import { readWhatsappThreadZero } from '$lib/schema/whatsapp-thread';
+import { optional, boolean } from 'valibot';
 
 export const inputSchema = object({
-	...listFilter.entries
+	...listFilter.entries,
+	reverseCron: optional(boolean())
 });
 export type ListWhatsappThreadsInput = InferOutput<typeof inputSchema>;
 
@@ -26,7 +28,11 @@ export function listWhatsappThreadsQuery({
 	if (input.startAfter) {
 		q = q.start({ id: input.startAfter });
 	}
-
+	if (input.reverseCron) {
+		q = q.orderBy('updatedAt', 'desc');
+	} else {
+		q = q.orderBy('updatedAt', 'asc');
+	}
 	return q;
 }
 

@@ -35,7 +35,8 @@
 	const emailFilter = $derived.by(() => ({
 		...getListFilter(appState.organizationId),
 		searchString: search,
-		isDraft: activeItem.isDraft
+		isDraft: activeItem.isDraft,
+		reverseCron: true
 	}));
 
 	const whatsappThreadsQuery = $derived.by(() =>

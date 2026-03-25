@@ -8,7 +8,8 @@ import { readEmailMessageZero } from '$lib/schema/email-message';
 
 export const inputSchema = object({
 	...listFilter.entries,
-	isDraft: optional(nullable(boolean()))
+	isDraft: optional(nullable(boolean())),
+	reverseCron: optional(boolean())
 });
 export type ListEmailMessagesInput = InferOutput<typeof inputSchema>;
 
@@ -23,7 +24,7 @@ export function listEmailMessagesQuery({
 		.where((expr) => emailMessageReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
-		.orderBy('updatedAt', 'desc')
+		.orderBy('updatedAt', input.reverseCron ? 'desc' : 'asc')
 		.limit(input.pageSize || 50);
 	if (input.startAfter) {
 		q = q.start({ id: input.startAfter });
