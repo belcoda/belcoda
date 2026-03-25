@@ -6,14 +6,14 @@ import {
 import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import type { LanguageCode } from '$lib/utils/language';
 import type { YCloudWhatsappMessage } from '$lib/schema/whatsapp/ycloud/message';
-import type { WhatsappTemplateMessageNodeData, WhatsappMessageNodeData } from '$lib/schema/flow';
+import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
 import { v4 as uuidv4 } from 'uuid';
 
 export function convertNodeToFullMessage({
 	messageNode,
 	messageId
 }: {
-	messageNode: WhatsappMessageNodeData;
+	messageNode: WhatsappMessageData;
 	messageId: string;
 }): WhatsappMessage {
 	return {
@@ -39,7 +39,7 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	name,
 	language
 }: {
-	templateMessage: WhatsappTemplateMessageNodeData;
+	templateMessage: WhatsappTemplateMessageData;
 	nodeId: string;
 	whatsappThreadId: string;
 	whatsappMessageId: string;
@@ -138,7 +138,7 @@ export function createMessageFromTemplateAndTemplateMessage({
 	messageId,
 	threadId
 }: {
-	templateMessage: WhatsappTemplateMessageNodeData;
+	templateMessage: WhatsappTemplateMessageData;
 	template: TemplateMessageComponents;
 	messageId: string;
 	threadId: string;
@@ -151,6 +151,12 @@ export function createMessageFromTemplateAndTemplateMessage({
 	let templateHeader = template.find((t) => t.type === 'HEADER');
 	let templateBody = template.find((t) => t.type === 'BODY');
 	let templateButtons = template.find((t) => t.type === 'BUTTONS');
+	console.log('templateMessage', {
+		templateHeader,
+		templateBody,
+		templateButtons,
+		templateMessage
+	});
 	if (templateHeader && templateMessage.header) {
 		if (templateHeader.format === 'IMAGE') {
 			returnObject.image_url = templateMessage.header.imageUrl;
