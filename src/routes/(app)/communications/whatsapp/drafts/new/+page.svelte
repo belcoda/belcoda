@@ -6,7 +6,6 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import { startingNodes } from '$lib/components/flow/nodes/addNode';
-	import type { Node, Edge } from '@xyflow/svelte';
 	onMount(async () => {
 		const id = uuidv7();
 		const { nodes: startingNodesList, edges: startingEdgesList } = startingNodes({
