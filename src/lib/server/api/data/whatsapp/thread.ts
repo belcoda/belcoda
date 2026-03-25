@@ -1,10 +1,15 @@
-import { whatsappThread as whatsappThreadTable } from '$lib/schema/drizzle';
+import {
+	whatsappTemplate as whatsappTemplateTable,
+	whatsappThread as whatsappThreadTable
+} from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import { builder } from '$lib/zero/schema';
 import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';
-
+import { createMessageFromTemplateAndTemplateMessage } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
+import { type Flow } from '$lib/schema/flow/index';
+import { getQueue } from '$lib/server/queue/index';
 import {
 	updateWhatsappThread as updateWhatsappThreadSchema,
 	createWhatsappThread as createWhatsappThreadSchema,
@@ -14,6 +19,7 @@ import {
 import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
+import { db } from '$lib/server/db';
 
 export async function createWhatsappThread({
 	args,
@@ -70,10 +76,21 @@ export async function updateWhatsappThread({
 	if (parsed.flow === undefined) {
 		throw new Error('No fields to update');
 	}
+
+	const { title, description } = await buildThreadMetadata({
+		threadId: args.id,
+		organizationId: args.organizationId,
+		tx,
+		flow: parsed.flow
+	});
+	console.log('title', title);
+	console.log('description', description);
 	const updated = await tx.dbTransaction.wrappedTransaction
 		.update(whatsappThreadTable)
 		.set({
 			flow: parsed.flow,
+			title,
+			description,
 			updatedAt: new Date()
 		})
 		.where(
@@ -121,4 +138,43 @@ export async function deleteWhatsappThread({
 				eq(whatsappThreadTable.organizationId, args.organizationId)
 			)
 		);
+}
+
+export async function buildThreadMetadata({
+	flow,
+	organizationId,
+	tx,
+	threadId
+}: {
+	flow: Flow;
+	organizationId: string;
+	threadId: string;
+	tx: ServerTransaction;
+}) {
+	const templateMessageNode = flow.nodes.find((node) => node.type === 'templateMessage');
+	if (!templateMessageNode) {
+		throw new Error('Template message node not found');
+	}
+	const templateId = templateMessageNode.data.templateId;
+
+	const template = await tx.dbTransaction.wrappedTransaction.query.whatsappTemplate.findFirst({
+		where: and(
+			eq(whatsappTemplateTable.id, templateId),
+			eq(whatsappTemplateTable.organizationId, organizationId)
+		)
+	});
+	if (!template) {
+		throw new Error('Template not found');
+	}
+
+	const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
+		templateMessage: templateMessageNode.data,
+		template: template.components,
+		messageId: templateMessageNode.id,
+		threadId: threadId
+	});
+	console.log('combinedTemplateMessage', combinedTemplateMessage);
+	const title = combinedTemplateMessage.headerText || combinedTemplateMessage.text;
+	const description = combinedTemplateMessage.headerText ? combinedTemplateMessage.text : null;
+	return { title, description };
 }
