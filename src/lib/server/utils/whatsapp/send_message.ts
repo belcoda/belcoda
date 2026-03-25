@@ -12,7 +12,7 @@ import {
 	whatsappTemplate as whatsappTemplateTable
 } from '$lib/schema/drizzle';
 import { sendWhatsappMessage as sendWhatsappMessageToYCloud } from './ycloud/ycloud_api';
-import type { WhatsappTemplateMessageNodeData, WhatsappMessageNodeData } from '$lib/schema/flow';
+import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
 
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
@@ -33,7 +33,7 @@ export async function sendWhatsappMessage({
 	messageId,
 	organizationId
 }: {
-	message: WhatsappMessageNodeData;
+	message: WhatsappMessageData;
 	organizationId: string;
 	threadId: string;
 	nodeId: string;
@@ -109,7 +109,7 @@ export async function sendWhatsappTemplateMessage({
 	messageId,
 	organizationId
 }: {
-	message: WhatsappTemplateMessageNodeData;
+	message: WhatsappTemplateMessageData;
 	organizationId: string;
 	templateId: string;
 	threadId: string;
