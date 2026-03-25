@@ -24,8 +24,7 @@ export async function buildSendQueue({
 		if (templateMessageNode.type !== 'templateMessage') {
 			throw new Error('Second node in node array was not a template message node');
 		}
-		const filterGroup = thread.flow.nodes.find((node) => node.type === 'targeting')?.data
-			.filterGroup;
+		const filterGroup = thread.flow.nodes.find((node) => node.type === 'targeting')?.data.filter;
 		if (!filterGroup) {
 			throw new Error('Filter group not found');
 		}
