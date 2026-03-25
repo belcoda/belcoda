@@ -1,6 +1,12 @@
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
 import { drizzle } from '$lib/server/db';
 
+interface LexicalNode {
+	type?: unknown;
+	text?: unknown;
+	children?: unknown;
+}
+
 export async function generatePreview({
 	type,
 	referenceId
@@ -119,6 +125,25 @@ export async function generatePreview({
 				eventId: eventResult.id
 			};
 		}
+		case 'petition_signed': {
+			const petitionSignatureResult = await drizzle.query.petitionSignature.findFirst({
+				where: (row, { eq }) => eq(row.id, referenceId)
+			});
+			if (!petitionSignatureResult) {
+				throw new Error('Petition signature not found');
+			}
+			const petitionResult = await drizzle.query.petition.findFirst({
+				where: (row, { eq }) => eq(row.id, petitionSignatureResult.petitionId)
+			});
+			if (!petitionResult) {
+				throw new Error('Petition not found. Cannot generate preview.');
+			}
+			return {
+				type: 'petition_signed',
+				petitionName: petitionResult.title,
+				petitionId: petitionResult.id
+			};
+		}
 		case 'event_not_attending': {
 			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)
@@ -138,8 +163,39 @@ export async function generatePreview({
 				eventId: eventResult.id
 			};
 		}
+		case 'email_outgoing': {
+			const emailResult = await drizzle.query.emailMessage.findFirst({
+				where: (row, { eq }) => eq(row.id, referenceId)
+			});
+			if (!emailResult) {
+				throw new Error('Email message not found');
+			}
+			const bodyStart = extractTextFromLexical(emailResult.body);
+			return {
+				type: 'email_outgoing',
+				subject: emailResult.subject ?? '',
+				bodyStart,
+				emailMessageId: emailResult.id
+			};
+		}
 		default: {
 			throw new Error(`Unsupported activity type: ${type}`);
 		}
 	}
+}
+
+function extractTextFromLexical(body: unknown): string {
+	if (!body || typeof body !== 'object') return '';
+	const node = body as LexicalNode;
+	let text = '';
+	if (node.type === 'text' && typeof node.text === 'string') {
+		text += node.text;
+	}
+	if (Array.isArray(node.children)) {
+		for (const child of node.children) {
+			text += extractTextFromLexical(child);
+			if (text.length >= 100) break;
+		}
+	}
+	return text.substring(0, 100);
 }

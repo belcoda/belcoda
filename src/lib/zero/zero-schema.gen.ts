@@ -97,6 +97,12 @@ const activityTable = {
 				| 'petition_removed'
 				| 'note_added'
 		},
+		referenceId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'reference_id'
+		},
 		unread: {
 			type: 'boolean',
 			optional: false,
@@ -1320,6 +1326,7 @@ const organizationTable = {
 					primaryColor: string | null;
 					secondaryColor: string | null;
 				};
+				website: { homepageUrl?: string | null | undefined };
 			}
 		},
 		balance: {
@@ -1830,11 +1837,13 @@ const personTable = {
 			optional: false,
 			customType: null as unknown as
 				| { type: 'seeds' }
+				| { type: 'migration'; importId: string }
 				| { type: 'import'; importId: string }
 				| { type: 'added_manually'; userId: string }
 				| { type: 'added_from_event'; eventSignupId: string }
 				| { type: 'added_from_petition'; petitionSignatureId: string }
-				| { type: 'incoming_whatsapp_message'; messageId: string },
+				| { type: 'incoming_whatsapp_message'; messageId: string }
+				| { type: 'migration' },
 			serverName: 'added_from'
 		},
 		createdAt: {
@@ -2201,6 +2210,12 @@ const petitionSignatureTable = {
 			optional: true,
 			customType: null as unknown as number,
 			serverName: 'updated_at'
+		},
+		deletedAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'deleted_at'
 		}
 	},
 	primaryKey: ['id'],

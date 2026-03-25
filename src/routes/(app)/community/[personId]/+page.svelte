@@ -19,10 +19,11 @@
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 	import NotesAction from '$lib/components/layouts/app/action-menus/person/NotesAction.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import ActivityTimeline from '$lib/components/widgets/activity/ActivityTimeline.svelte';
 </script>
 
 <ContentLayout rootLink="/community" {header} {footer}>
-	<div>&nbsp;</div>
+	<ActivityTimeline personId={params.personId} />
 </ContentLayout>
 
 {#snippet header()}

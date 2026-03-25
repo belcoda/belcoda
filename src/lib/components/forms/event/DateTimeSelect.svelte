@@ -348,13 +348,8 @@
 						{...props}
 						checked={$data.settings?.displayTimezone}
 						onCheckedChange={(v) => {
-							if (v && $data.settings) {
+							if ($data.settings) {
 								$data.settings.displayTimezone = v;
-							} else {
-								$data.settings = {
-									displayTimezone: v,
-									survey: { schemaVersion: '1.0.0', collections: [] }
-								};
 							}
 						}}
 					/>

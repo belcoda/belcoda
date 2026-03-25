@@ -10,10 +10,14 @@
 	import { zero } from '$lib/zero.svelte';
 	zero.init(userId, queryContext);
 	appState.init({ userId, organizationId: defaultActiveOrganizationId, queryContext });
+
+	//conditional onboarding components based on the user's onboarding status
+	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
 </script>
 
 <!-- This is an important check to ensure that we always have a valid userId and active organization Id. These will be used with confidence throughout the rest of the application interface -->
 {#if zero.instance && appState.user?.details.type === 'complete' && appState.activeOrganization?.details.type === 'complete' && appState.organizations?.details.type === 'complete'}
+	<Onboarding />
 	{@render children()}
 {:else}
 	<div class="flex h-screen w-screen items-center justify-center">

@@ -133,6 +133,7 @@ msgstr "Opcional. O domínio de caminho de retorno é usado para tratamento de r
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
@@ -233,7 +234,7 @@ msgstr "Salvar alterações"
 msgid "Are you sure you want to delete this email signature?"
 msgstr "Tem certeza de que deseja excluir esta assinatura de e-mail?"
 
-#. placeholder {0}: organization.data?.settings.email.systemFromIdentity.name || systemEmailAddress
+#. placeholder {0}: organization.data?.settings.email.systemFromIdentity?.name || systemEmailAddress
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "System ({0})"
 msgstr "Sistema ({0})"
@@ -494,6 +495,7 @@ msgstr "Buscar..."
 msgid "Back"
 msgstr "Voltar"
 
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 msgid "Create person"
 msgstr "Criar pessoa"
@@ -721,6 +723,7 @@ msgstr "Tag adicionada"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Add to team"
 msgstr "Adicionar à equipe"
 
@@ -761,6 +764,7 @@ msgstr "Editar"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -911,6 +915,7 @@ msgstr "Sobrenome"
 #: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
 #: src/routes/(app)/petitions/new/+page.svelte
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Save"
 msgstr "Salvar"
 
@@ -1043,6 +1048,8 @@ msgstr "Nenhum detalhe de falha disponível"
 #: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
 #: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+#: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
@@ -1158,14 +1165,13 @@ msgstr "Por favor aguarde enquanto encerramos sua sessão..."
 msgid "Invited by {0}"
 msgstr "Convidado por {0}"
 
-#. placeholder {0}: error.message
+#. placeholder {0}: err.message
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Error loading invitation: {0}"
 msgstr "Erro ao carregar convite: {0}"
 
-#: src/routes/(auth)/organization/RenderInvitation.svelte
-msgid "Accept / Reject"
-msgstr "Aceitar / Rejeitar"
+#~ msgid "Accept / Reject"
+#~ msgstr "Aceitar / Rejeitar"
 
 #: src/routes/(auth)/login/+page.svelte
 msgid "Welcome back"
@@ -1363,6 +1369,7 @@ msgstr "Esta imagem será exibida na página da petição e nos links compartilh
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Title"
 msgstr "Título"
 
@@ -1481,6 +1488,7 @@ msgid "Gender"
 msgstr "Gênero"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Social media"
 msgstr "Redes sociais"
 
@@ -1509,6 +1517,9 @@ msgid "Website"
 msgstr "Site"
 
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Add signature"
 msgstr "Adicionar assinatura"
 
@@ -2078,9 +2089,8 @@ msgstr "Enviamos um e-mail de redefinição de senha para o endereço fornecido.
 msgid "Create a new organization to get started"
 msgstr "Crie uma nova organização para começar"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "The name of your organization. You cannot change it later."
-msgstr "O nome da sua organização. Você não poderá alterá-lo depois."
+#~ msgid "The name of your organization. You cannot change it later."
+#~ msgstr "O nome da sua organização. Você não poderá alterá-lo depois."
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Create Organization"
@@ -2332,6 +2342,7 @@ msgid "No signups found. Create a new signup to get started."
 msgstr "Nenhuma inscrição encontrada. Crie uma nova inscrição para começar."
 
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/routes/(app)/community/+page.svelte
 msgid "Add Person"
 msgstr "Adicionar pessoa"
@@ -2368,6 +2379,7 @@ msgid "OR"
 msgstr "OU"
 
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Additional details"
 msgstr "Detalhes adicionais"
 
@@ -3352,7 +3364,7 @@ msgstr ""
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "or"
-msgstr ""
+msgstr "<<<<<<< HEAD"
 
 #: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 #: src/lib/components/flow/test/nodes/event_signup/Combobox.svelte
@@ -3377,7 +3389,7 @@ msgstr ""
 #: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/flow/test/nodes/tag_add/Combobox.svelte
 msgid "Search tag..."
-msgstr ""
+msgstr "=======>>>>>>> develop"
 
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
@@ -3404,7 +3416,7 @@ msgstr ""
 
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
 msgid "View full page"
-msgstr ""
+msgstr "<<<<<<< HEAD"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
@@ -3671,5 +3683,364 @@ msgstr ""
 #~ msgid "Tag Add"
 #~ msgstr ""
 
-#~ msgid "Select a draft from the list to edit your flow"
+msgid "Select a draft from the list to edit your flow"
+msgstr "======="
+
+#: src/lib/components/widgets/petition/PetitionSignatures.svelte
+msgid "View all"
+msgstr ""
+
+#: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
+msgid "Delete signature?"
+msgstr ""
+
+#: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
+msgid "This action cannot be undone. The signature will be permanently removed."
+msgstr ""
+
+#: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
+msgid "Are you sure you want to delete this signature?"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Organization name"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Edit organization slug"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid ""
+"This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
+"It must be unique and can only contain lowercase letters, numbers, and\n"
+"hyphens."
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Organization logo (optional)"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Your organization's logo. It should be square and less than 2MB"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Website (optional)"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Community organization or charity"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Business or corporation"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Advocacy or policy campaign"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Political party & election campaign"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "What is your organization's focus?"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Select an option"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "1-10 employees"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "11-50 employees"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "50-500 employees"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "500+ employees"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "How many people are in your organization?"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Only include staff or core volunteers who are actively involved in the organization's main operations."
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Please provide some additional details about your organization to help us better understand your needs."
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Search engine"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Referral"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Training or conference"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Resources"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "How did you discover Belcoda?"
+msgstr ""
+
+#~ msgid "What features are you interested in?"
 #~ msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Select all that apply"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Storing member or supporter data"
+msgstr ""
+
+#~ msgid "Growing our list of supporters or members"
+#~ msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Sending WhatsApp messages to members or supporters"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Sending emails to members or supporters"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Running events"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Running policy campaigns with online petitions"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Making sure all data is synced and up to date"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Other"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Other (detail)"
+msgstr ""
+
+#~ msgid "What wil you use Belcoda for?"
+#~ msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "What will you use Belcoda for?"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Growing your list of supporters or members"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/onboarding/+page.svelte
+msgid "Hit the ground running"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/onboarding/+page.svelte
+msgid "Book a time to talk with our team, we'll give recommendations on how to make the most out of Belcoda."
+msgstr ""
+
+#: src/routes/(auth)/organization/new/onboarding/+page.svelte
+msgid "Continue to your organization"
+msgstr ""
+
+#~ msgid "You can always book a time to talk with our team later."
+#~ msgstr ""
+
+#~ msgid "You can continue to your organization without first booking a time."
+#~ msgstr ""
+
+#: src/routes/(auth)/organization/new/onboarding/+page.svelte
+msgid "If you prefer, you can continue to your organization without first booking a time."
+msgstr ""
+
+#~ msgid "Onboarding Video"
+#~ msgstr ""
+
+#: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
+msgid "Getting started with Belcoda"
+msgstr ""
+
+#~ msgid "Accept"
+#~ msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Decline invitation"
+msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Accept invitation"
+msgstr ""
+
+#~ msgid "You are invited to join an organization"
+#~ msgstr ""
+
+#~ msgid "Create an account using the email address {0} to accept the invitation."
+#~ msgstr ""
+
+#~ msgid "You are invited to join {0} on Belcoda"
+#~ msgstr ""
+
+#. placeholder {0}: invitationOrganizationName || t`an organization`
+#: src/routes/(auth)/signup/+page.svelte
+msgid "You're invited to {0}"
+msgstr ""
+
+#. placeholder {0}: invitationEmail
+#: src/routes/(auth)/signup/+page.svelte
+msgid "Create an account using the email address {0} to get started."
+msgstr ""
+
+#: src/routes/(auth)/signup/+page.svelte
+msgid "an organization"
+msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Are you sure you want to decline this invitation? You will need to contact an organizational admin to get invited again."
+msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Failed to accept invitation"
+msgstr ""
+
+#: src/routes/(auth)/organization/RenderInvitation.svelte
+msgid "Failed to decline invitation"
+msgstr ""
+
+#: src/routes/(auth)/organization/+page.svelte
+msgid "Logout"
+msgstr ""
+
+#. placeholder {0}: activityPreview.tagName
+#. placeholder {0}: activityPreview.teamName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added to {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.tagName
+#. placeholder {0}: activityPreview.teamName
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Removed from {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed up for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Email sent for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Reminder email sent for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Attended {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No show for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Apology for {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.petitionName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed petition {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.petitionName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Removed petition {0}"
+msgstr ""
+
+#. placeholder {0}: activityPreview.userName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} added note:"
+msgstr ""
+
+#. placeholder {0}: activityPreview.type
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Unknown activity {0}"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added from seed data (should only appear in dev)"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Data migration"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Imported from CSV"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added to the organization"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Joined through an event"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed a petition"
+msgstr ""
+
+#. placeholder {0}: JSON.stringify(addedFrom)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added from an unknown source [{0}]"
+msgstr ""
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Add to event"
+msgstr ""
+
+#~ msgid "Add a new person to the community"
+#~ msgstr ""
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "No people found"
+msgstr ""
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Create new person?"
+msgstr ">>>>>>> develop"

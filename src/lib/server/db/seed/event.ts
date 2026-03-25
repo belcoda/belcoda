@@ -74,7 +74,10 @@ export function generateEvents(
 							previousCollectionId: null
 						}
 					]
-				}
+				},
+				whatsappFlowId: null,
+				whatsappFlowYCloudId: null,
+				whatsappFlowCreatedAt: null
 			},
 			signupTag: null,
 			attendanceTag: null,

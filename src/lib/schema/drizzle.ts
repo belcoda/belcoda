@@ -875,7 +875,8 @@ export const petitionSignature = pgTable(
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
 			.notNull()
-			.$onUpdate(() => new Date())
+			.$onUpdate(() => new Date()),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
 	},
 	(table) => [unique('petition_signature_unique').on(table.petitionId, table.personId)]
 );

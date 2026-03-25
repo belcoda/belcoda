@@ -43,6 +43,10 @@ export const emailOrganizationSettingsSchema = v.object({
 	defaultFromSignatureId: v.optional(v.nullable(helpers.uuid), null)
 });
 
+export const websiteOrganizationSettingsSchema = v.object({
+	homepageUrl: v.optional(v.nullable(helpers.domainNameOrUrl))
+});
+
 export type EmailOrganizationSettingsSchema = v.InferOutput<typeof emailOrganizationSettingsSchema>;
 
 export function defaultEmailOrganizationSettings(): EmailOrganizationSettingsSchema {
@@ -58,7 +62,8 @@ export function defaultEmailOrganizationSettings(): EmailOrganizationSettingsSch
 export const organizationSettingsSchema = v.object({
 	whatsApp: whatsappOrganizationSettingsSchema,
 	email: emailOrganizationSettingsSchema,
-	theme: themeSettingsSchema
+	theme: themeSettingsSchema,
+	website: websiteOrganizationSettingsSchema
 });
 
 export type OrganizationSettingsSchema = v.InferOutput<typeof organizationSettingsSchema>;
@@ -72,7 +77,10 @@ export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 	return {
 		whatsApp: defaultWhatsappOrganizationSettings(),
 		email: defaultEmailOrganizationSettings(),
-		theme: defaultThemeSettings()
+		theme: defaultThemeSettings(),
+		website: {
+			homepageUrl: null
+		}
 	};
 }
 

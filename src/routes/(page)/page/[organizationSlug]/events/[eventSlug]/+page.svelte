@@ -26,5 +26,6 @@
 	organization={data.organization}
 	{layout}
 	form={data.form}
-	whatsAppSignupLink={data.whatsAppSignupLink}
+	whatsAppSignupLink={data.whatsAppSignupLink ?? undefined}
+	signupCount={data.signupCount ?? undefined}
 />

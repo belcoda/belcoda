@@ -494,6 +494,7 @@ msgstr "Search..."
 msgid "Back"
 msgstr "Back"
 
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 msgid "Create person"
 msgstr "Create person"
@@ -1038,6 +1039,7 @@ msgstr "No failure details available"
 #: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
 #: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -2376,6 +2378,7 @@ msgid "No signups found. Create a new signup to get started."
 msgstr "No signups found. Create a new signup to get started."
 
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/routes/(app)/community/+page.svelte
 msgid "Add Person"
 msgstr "Add Person"
@@ -3616,74 +3619,112 @@ msgid "Logout"
 msgstr "Logout"
 
 #. placeholder {0}: activityPreview.teamName
+#. placeholder {0}: activityPreview.tagName
+#. placeholder {0}: activityPreview.teamName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Added to {0}"
 msgstr "Added to {0}"
 
+#. placeholder {0}: activityPreview.tagName
 #. placeholder {0}: activityPreview.teamName
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Removed from {0}"
-msgstr "Removed from {0}"
+msgstr "Removed from {0}<<<<<<< HEAD"
 
-#~ msgid "Signed up for {0}"
-#~ msgstr "Signed up for {0}"
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed up for {0}"
+msgstr "Signed up for {0}"
 
-#~ msgid "Email sent for {0}"
-#~ msgstr "Email sent for {0}"
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Email sent for {0}"
+msgstr "Email sent for {0}"
 
-#~ msgid "Reminder email sent for {0}"
-#~ msgstr "Reminder email sent for {0}"
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Reminder email sent for {0}"
+msgstr "Reminder email sent for {0}"
 
-#~ msgid "Attended {0}"
-#~ msgstr "Attended {0}"
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Attended {0}"
+msgstr "Attended {0}"
 
-#~ msgid "No show for {0}"
-#~ msgstr "No show for {0}"
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No show for {0}"
+msgstr "No show for {0}"
 
-#~ msgid "Apology for {0}"
-#~ msgstr "Apology for {0}"
+#. placeholder {0}: activityPreview.eventName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Apology for {0}"
+msgstr "Apology for {0}"
 
-#~ msgid "Signed petition {0}"
-#~ msgstr "Signed petition {0}"
+#. placeholder {0}: activityPreview.petitionName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed petition {0}"
+msgstr "Signed petition {0}"
 
-#~ msgid "Removed petition {0}"
-#~ msgstr "Removed petition {0}"
+#. placeholder {0}: activityPreview.petitionName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Removed petition {0}"
+msgstr "Removed petition {0}"
 
-#~ msgid "{0} added note:"
-#~ msgstr "{0} added note:"
+#. placeholder {0}: activityPreview.userName
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} added note:"
+msgstr "{0} added note:"
 
-#~ msgid "Unknown activity {0}"
-#~ msgstr "Unknown activity {0}"
+#. placeholder {0}: activityPreview.type
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Unknown activity {0}"
+msgstr "Unknown activity {0}"
 
-#~ msgid "Added from seed data (should only appear in dev)"
-#~ msgstr "Added from seed data (should only appear in dev)"
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added from seed data (should only appear in dev)"
+msgstr "Added from seed data (should only appear in dev)"
 
-#~ msgid "Data migration"
-#~ msgstr "Data migration"
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Data migration"
+msgstr "Data migration"
 
-#~ msgid "Imported from CSV"
-#~ msgstr "Imported from CSV"
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Imported from CSV"
+msgstr "Imported from CSV"
 
-#~ msgid "Added to the organization"
-#~ msgstr "Added to the organization"
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added to the organization"
+msgstr "Added to the organization"
 
-#~ msgid "Joined through an event"
-#~ msgstr "Joined through an event"
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Joined through an event"
+msgstr "Joined through an event"
 
-#~ msgid "Signed a petition"
-#~ msgstr "Signed a petition"
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Signed a petition"
+msgstr "Signed a petition"
 
-#~ msgid "Added from an unknown source [{0}]"
-#~ msgstr "Added from an unknown source [{0}]"
+#. placeholder {0}: JSON.stringify(addedFrom)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Added from an unknown source [{0}]"
+msgstr "Added from an unknown source [{0}]"
 
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 msgid "Add to event"
 msgstr "Add to event"
 
-#~ msgid "Add a new person to the community"
-#~ msgstr "Add a new person to the community"
+msgid "Add a new person to the community"
+msgstr "Add a new person to the community<<<<<<< HEAD"
 
-#~ msgid "No people found"
-#~ msgstr "No people found"
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "No people found"
+msgstr "No people found"
 
-#~ msgid "Create new person?"
-#~ msgstr "Create new person?"
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Create new person?"
+msgstr "Create new person?>>>>>>> develop"

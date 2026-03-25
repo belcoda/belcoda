@@ -1,0 +1,1 @@
+ALTER TABLE "petition_signature" ADD COLUMN "deleted_at" timestamp with time zone;

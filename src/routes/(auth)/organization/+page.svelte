@@ -2,8 +2,6 @@
 	import { t } from '$lib/index.svelte';
 	import { authClient } from '$lib/auth-client';
 	import { appState } from '$lib/state.svelte';
-	import { parse } from 'valibot';
-	import { type ReadOrganizationRest, readOrganizationRest } from '$lib/schema/organization';
 	const organizations = authClient.useListOrganizations;
 
 	import AuthLayout from '$lib/components/widgets/AuthLayout.svelte';
@@ -46,9 +44,15 @@
 	</div>
 </AuthLayout>
 {#snippet footer()}
-	<div class="text-center text-xs text-muted-foreground">
-		<a href="/" class="underline underline-offset-4">{t`Back to dashboard`}</a>
-	</div>
+	{#if $organizations.data && $organizations.data.length > 0}
+		<div class="text-center text-xs text-muted-foreground">
+			<a href="/" class="underline underline-offset-4">{t`Back to dashboard`}</a>
+		</div>
+	{:else}
+		<div class="text-center text-xs text-muted-foreground">
+			<a href="/logout" class="underline underline-offset-4">{t`Logout`}</a>
+		</div>
+	{/if}
 {/snippet}
 
 {#snippet invitationList()}
@@ -58,7 +62,9 @@
 	{:then invitations}
 		{#if invitations.data && invitations.data.length > 0}
 			{#each invitations.data as invitation (invitation.id)}
-				<RenderInvitation invitationId={invitation.id} />
+				{#if invitation.status === 'pending'}
+					<RenderInvitation invitationId={invitation.id} />
+				{/if}
 			{/each}
 		{/if}
 	{:catch error}
@@ -108,8 +114,8 @@
 				{/snippet}
 			</Item.Root>
 		{/each}
-		{@render createOrganizationItem()}
 	{/if}
+	{@render createOrganizationItem()}
 {/snippet}
 
 {#snippet createOrganizationItem()}

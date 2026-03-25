@@ -10,3 +10,10 @@ export function getSystemEmailAddress(organization: ReadOrganizationZero | undef
 	if (!organization) return '';
 	return `${organization.slug}@${postmarkSendingDomain}`;
 }
+
+// takes a URL or domain name and adds https:// before it, either replacing http:// or being appended
+export function httpsifyUrl(input: string): string {
+	if (input.startsWith(`https://`)) return input;
+	if (input.startsWith('http://')) return input.replace('http://', 'https://');
+	return `https://${input}`;
+}

@@ -86,7 +86,8 @@
 			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
-		{#if teamQuery.details.type === 'complete' && teamQuery.data && teamQuery.data.length > 0}
+		<!-- For now, remove team menu. We can add it back in later -->
+		<!-- {#if teamQuery.details.type === 'complete' && teamQuery.data && teamQuery.data.length > 0}
 			<DropdownMenu.Group>
 				{#each teamQuery.data as team, index (index)}
 					<DropdownMenu.Item>
@@ -98,7 +99,7 @@
 				{/each}
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
-		{/if}
+		{/if} -->
 		<DropdownMenu.Item>
 			<a href="/logout" class="flex w-full items-center gap-2" data-sveltekit-preload-data="tap">
 				<LogOutIcon />

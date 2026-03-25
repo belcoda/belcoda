@@ -10,12 +10,22 @@
 		return z.createQuery(queries.event.read({ eventId: params.eventId }));
 	});
 	import EventCreateOrUpdate from '$lib/components/forms/event/EventCreateOrUpdate.svelte';
+	import EventCreatedModal from '$lib/components/widgets/event/EventCreatedModal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 
 	import { type UpdateEventZero, updateEventZero, type CreateEventZero } from '$lib/schema/event';
+	import type { ReadEventZero } from '$lib/schema/event';
+	import type { ReadOrganizationZero } from '$lib/schema/organization';
 	import { parse } from 'valibot';
 	import { goto } from '$app/navigation';
+
+	let showModal = $state(false);
+	let updatedEvent = $state<ReadEventZero | null>(null);
+
+	const organization = $derived(
+		appState.activeOrganization.data as ReadOrganizationZero | undefined
+	);
 
 	async function onSubmit(data: CreateEventZero | UpdateEventZero) {
 		if (!event.data) return;
@@ -31,7 +41,15 @@
 			})
 		);
 		await updatedEventMutator.client;
-		await goto(`/events/${event.data.id}`);
+		// Show modal with updated event data
+		updatedEvent = { ...event.data, ...parsed } as ReadEventZero;
+		showModal = true;
+	}
+
+	function handleModalClose() {
+		if (updatedEvent) {
+			goto(`/events/${updatedEvent.id}`);
+		}
 	}
 </script>
 
@@ -55,3 +73,15 @@
 		<Button type="submit" form="event-form">{t`Save`}</Button>
 	</div>
 {/snippet}
+
+{#if updatedEvent && organization}
+	<EventCreatedModal
+		event={updatedEvent}
+		{organization}
+		mode="edit"
+		bind:open={showModal}
+		onOpenChange={(open) => {
+			if (!open) handleModalClose();
+		}}
+	/>
+{/if}

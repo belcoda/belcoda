@@ -4,14 +4,18 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 
-	import * as Card from '$lib/components/ui/card/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 
 	import { Input } from '$lib/components/ui/input/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
-	import { cn } from '$lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { onMount } from 'svelte';
+	import CheckCircle2Icon from '@lucide/svelte/icons/check-circle-2';
+	const invitationEmail = page.url.searchParams.get('invitationEmail');
+	const invitationOrganizationName = page.url.searchParams.get('invitationOrganizationName');
 	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 	const id = $props.id();
 
@@ -61,6 +65,11 @@
 			);
 		}
 	});
+	onMount(() => {
+		if (invitationEmail) {
+			$data.email = invitationEmail;
+		}
+	});
 </script>
 
 <AuthLayout
@@ -69,6 +78,7 @@
 	description={t`Create an account to get started`}
 	{footer}
 >
+	{@render invitationMessage()}
 	{#if success}
 		{@render successMessage()}
 	{:else}
@@ -108,6 +118,7 @@
 								type="email"
 								autocomplete="email"
 								placeholder={t`email@example.com`}
+								disabled={!!invitationEmail}
 								bind:value={$data.email}
 							/>
 							<Form.FieldErrors />
@@ -186,12 +197,9 @@
 	</div>
 {/snippet}
 
-{#snippet orCreateAccountUsingEmailAndPassword()}<div
-		class="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border"
-	>
-		<span class="relative z-10 bg-card px-2 text-muted-foreground">
-			{t`Or create an account using email and password`}
-		</span>
+{#snippet orCreateAccountUsingEmailAndPassword()}
+	<div class="border-t border-border pt-4 text-center text-sm text-muted-foreground">
+		{t`Or create an account using email and password`}
 	</div>
 {/snippet}
 
@@ -205,4 +213,18 @@
 		</div>
 		<Button variant="outline" onclick={() => goto('/login')}>{t`Go to Login`}</Button>
 	</div>
+{/snippet}
+
+{#snippet invitationMessage()}
+	{#if invitationEmail}
+		<Alert.Root class="mb-6">
+			<CheckCircle2Icon />
+			<Alert.Title
+				>{t`You're invited to ${invitationOrganizationName || t`an organization`}`}</Alert.Title
+			>
+			<Alert.Description
+				>{t`Create an account using the email address ${invitationEmail} to get started.`}</Alert.Description
+			>
+		</Alert.Root>
+	{/if}
 {/snippet}

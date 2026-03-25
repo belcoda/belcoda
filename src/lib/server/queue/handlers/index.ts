@@ -5,3 +5,4 @@ export { deployEventWhatsAppFlow } from '$lib/server/queue/handlers/event/deploy
 export { handleIncomingMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message';
 export { handleWhatsappTemplateReviewed } from '$lib/server/queue/handlers/whatsapp/template_reviewed';
 export { processFlowNodeAction } from '$lib/server/queue/handlers/whatsapp/process_flow_node';
+export { processEmailMessage } from '$lib/server/queue/handlers/email/processEmailMessage';
