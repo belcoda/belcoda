@@ -151,15 +151,9 @@ export function createMessageFromTemplateAndTemplateMessage({
 	let templateHeader = template.find((t) => t.type === 'HEADER');
 	let templateBody = template.find((t) => t.type === 'BODY');
 	let templateButtons = template.find((t) => t.type === 'BUTTONS');
-	console.log('templateMessage', {
-		templateHeader,
-		templateBody,
-		templateButtons,
-		templateMessage
-	});
 	if (templateHeader && templateMessage.header) {
 		if (templateHeader.format === 'IMAGE') {
-			returnObject.image_url = templateMessage.header.imageUrl;
+			returnObject.image_url = templateMessage.header.imageUrl || undefined;
 		}
 		if (templateHeader.format === 'TEXT' && templateMessage.header?.templateStrings) {
 			const baseString = templateHeader.text;
