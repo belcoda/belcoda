@@ -1,8 +1,7 @@
 import type { Node, Edge } from '@xyflow/svelte';
 import { v4 as uuidv4 } from 'uuid';
 import { findPositionRadial } from '../placeNode';
-import type { NodeType } from '../types';
-import { flowSchema, type Flow } from '$lib/schema/flow/index';
+import { flowSchema, type Flow, type NodeType } from '$lib/schema/flow/index';
 export function startingNodes({
 	defaultTemplateId
 }: {
@@ -15,7 +14,7 @@ export function startingNodes({
 			id: targetingNodeId,
 			type: 'targeting' as const,
 			position: { x: 0, y: 0 },
-			data: { filterGroup: { type: 'and', filters: [], exclude: [] } }
+			data: { filter: { type: 'and', filters: [], exclude: [] } }
 		}
 	];
 	const position = findPositionRadial(

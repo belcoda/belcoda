@@ -9,7 +9,7 @@
 		useStore
 	} from '@xyflow/svelte';
 	import { defaultFilterGroup } from '$lib/schema/person/filter';
-	import type { TargetingData } from '../types';
+	import type { TargetingData } from '$lib/schema/flow/index';
 	let { id, data }: NodeProps<Node<TargetingData, 'targeting'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
@@ -35,7 +35,7 @@
 			Recipients:
 		</div>
 		<div class=" p-2">
-			<RecipientBox bind:filter />
+			<RecipientBox initialSelected={filter.filters} bind:filter />
 		</div>
 	</div>
 	<Handle type="source" position={Position.Bottom} class="h-3! w-3!" />

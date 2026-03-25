@@ -12,10 +12,10 @@
 	} from '@xyflow/svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import type { TemplateMessageData } from '../types';
+	import type { WhatsappTemplateMessageData } from '$lib/schema/flow/index';
 
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
-	let { id, data }: NodeProps<Node<TemplateMessageData, 'templateMessage'>> = $props();
+	let { id, data }: NodeProps<Node<WhatsappTemplateMessageData, 'templateMessage'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 
@@ -36,7 +36,12 @@
 
 	// Sync changes back to the Flow state
 	$effect(() => {
-		updateNodeData(id, { headerValues, bodyValues, buttons, headerImageUrl, templateId });
+		updateNodeData(id, {
+			header: { templateStrings: headerValues, imageUrl: headerImageUrl },
+			body: { templateStrings: bodyValues },
+			buttons,
+			templateId
+		});
 		updateNodeInternals(id);
 	});
 	import { watch } from 'runed';

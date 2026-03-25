@@ -8,7 +8,7 @@
 		useStore,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
-	import type { TagAddData } from '../types';
+	import type { TagAddData } from '$lib/schema/flow/index';
 	let { id, data }: NodeProps<Node<TagAddData, 'tagAdd'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();

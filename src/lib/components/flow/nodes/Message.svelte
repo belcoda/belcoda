@@ -10,7 +10,7 @@
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import { Plus, Trash2, Image as ImageIcon, X, ImageMinusIcon } from '@lucide/svelte';
-	import type { WhatsAppMessageData } from '../types';
+	import type { WhatsappMessageData } from '$lib/schema/flow/index';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import ImagePlusIcon from '@lucide/svelte/icons/image-plus';
 	import RectangleEllipsisIcon from '@lucide/svelte/icons/rectangle-ellipsis';
@@ -18,7 +18,7 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { cn } from '$lib/utils.js';
 
-	let { id, data }: NodeProps<Node<WhatsAppMessageData, 'message'>> = $props();
+	let { id, data }: NodeProps<Node<WhatsappMessageData, 'message'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 

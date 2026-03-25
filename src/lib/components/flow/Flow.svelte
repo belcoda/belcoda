@@ -16,31 +16,32 @@
 		type NodeTypes
 	} from '@xyflow/svelte';
 	import { startingNodes, addNode } from './nodes/addNode.js';
+	import type { Flow } from '$lib/schema/flow';
 	const {
 		backButtonUrl,
 		disabled = false,
 		nodes: inputNodes,
 		edges: inputEdges,
-		onSave = ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {},
-		onSend = ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {},
-		onDiscard = () => {}
+		onSave = async ({ nodes, edges }: Flow) => {},
+		onSend = async ({ nodes, edges }: Flow) => {},
+		onDiscard = async () => {}
 	}: {
 		backButtonUrl?: string;
 		disabled?: boolean;
 		nodes: Node[];
 		edges: Edge[];
-		onSave?: ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => void;
-		onSend?: ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => void;
-		onDiscard?: () => void;
+		onSave?: ({ nodes, edges }: Flow) => Promise<void>;
+		onSend?: ({ nodes, edges }: Flow) => Promise<void>;
+		onDiscard?: () => Promise<void>;
 	} = $props();
 	//nodes
-	import Message from './nodes/Message.svelte';
-	import EventSignup from './nodes/EventSignup.svelte';
-	import TagAdd from './nodes/TagAdd.svelte';
-	import Targeting from './nodes/Targeting.svelte';
-	import TemplateMessage from './nodes/TemplateMessage.svelte';
+	import Message from '$lib/components/flow/nodes/Message.svelte';
+	import EventSignup from '$lib/components/flow/nodes/EventSignup.svelte';
+	import TagAdd from '$lib/components/flow/nodes/TagAdd.svelte';
+	import Targeting from '$lib/components/flow/nodes/Targeting.svelte';
+	import TemplateMessage from '$lib/components/flow/nodes/TemplateMessage.svelte';
 	//edges
-	import NodeEdge from './edges/NodeEdge.svelte';
+	import NodeEdge from '$lib/components/flow/edges/NodeEdge.svelte';
 
 	//types
 	const edgeTypes: EdgeTypes = {
@@ -120,11 +121,23 @@
 								</Button>
 							{/if}
 							<Button variant="destructive" size="sm" onclick={onDiscard}>Discard</Button>
-							<Button variant="outline" size="sm" onclick={() => onSave({ nodes, edges })}
-								>Save</Button
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={() =>
+									onSave({
+										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
+										edges: $state.snapshot(edges) as Flow['edges']
+									})}>Save</Button
 							>
-							<Button variant="default" size="sm" onclick={() => onSend({ nodes, edges })}
-								>Send</Button
+							<Button
+								variant="default"
+								size="sm"
+								onclick={() =>
+									onSend({
+										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
+										edges: $state.snapshot(edges) as Flow['edges']
+									})}>Send</Button
 							>
 						</div>
 					</Panel>

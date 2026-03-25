@@ -8,7 +8,7 @@
 		useStore,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
-	import type { EventSignupData } from '../types';
+	import type { EventSignupData } from '$lib/schema/flow/index';
 	let { id, data }: NodeProps<Node<EventSignupData, 'eventSignup'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
