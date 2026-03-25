@@ -1854,30 +1854,20 @@ msgstr "Subir una imagen"
 msgid "(Max size: {0})"
 msgstr "(Tamaño máx: {0})"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "No Projects Yet"
-msgstr "Sin proyectos aún"
+#~ msgid "No Projects Yet"
+#~ msgstr "Sin proyectos aún"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "You haven't created any projects yet. Get started by creating your first project."
-msgstr "Aún no has creado ningún proyecto. Comienza creando tu primer proyecto."
+#~ msgid "You haven't created any projects yet. Get started by creating your first project."
+#~ msgstr "Aún no has creado ningún proyecto. Comienza creando tu primer proyecto."
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Create Project"
-msgstr "Crear proyecto"
+#~ msgid "Create Project"
+#~ msgstr "Crear proyecto"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Import Project"
-msgstr "Importar proyecto"
+#~ msgid "Import Project"
+#~ msgstr "Importar proyecto"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Learn More"
-msgstr "Aprende más"
+#~ msgid "Learn More"
+#~ msgstr "Aprende más"
 
 #: src/routes/(app)/petitions/new/+page.svelte
 msgid "New petition"
@@ -2475,10 +2465,12 @@ msgid "No timezones found."
 msgstr "No se encontraron zonas horarias."
 
 #: src/routes/(app)/communications/email/drafts/+page.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/+page.svelte
 msgid "No draft selected"
 msgstr "Sin borrador seleccionado"
 
 #: src/routes/(app)/communications/email/drafts/+page.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/+page.svelte
 msgid "Select a draft from the list to view its details"
 msgstr "Selecciona un borrador de la lista para ver sus detalles"
 
@@ -4043,3 +4035,31 @@ msgstr ""
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 msgid "Create new person?"
 msgstr ">>>>>>> develop"
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "No WhatsApp Drafts Yet"
+msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "You haven't created any WhatsApp drafts yet. Get started by creating your first WhatsApp draft."
+msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Create WhatsApp Draft"
+msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Are you sure you want to send this WhatsApp draft?"
+msgstr ""
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "No Email Drafts Yet"
+msgstr ""
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "You haven't created any email drafts yet. Get started by creating your first email draft."
+msgstr ""
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "Create Email Draft"
+msgstr ""

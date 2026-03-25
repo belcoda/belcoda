@@ -1849,30 +1849,20 @@ msgstr "Upload an image"
 msgid "(Max size: {0})"
 msgstr "(Max size: {0})"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "No Projects Yet"
-msgstr "No Projects Yet"
+#~ msgid "No Projects Yet"
+#~ msgstr "No Projects Yet"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "You haven't created any projects yet. Get started by creating your first project."
-msgstr "You haven't created any projects yet. Get started by creating your first project."
+#~ msgid "You haven't created any projects yet. Get started by creating your first project."
+#~ msgstr "You haven't created any projects yet. Get started by creating your first project."
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Create Project"
-msgstr "Create Project"
+#~ msgid "Create Project"
+#~ msgstr "Create Project"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Import Project"
-msgstr "Import Project"
+#~ msgid "Import Project"
+#~ msgstr "Import Project"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Learn More"
-msgstr "Learn More"
+#~ msgid "Learn More"
+#~ msgstr "Learn More"
 
 #: src/routes/(app)/petitions/new/+page.svelte
 msgid "New petition"
@@ -2470,10 +2460,12 @@ msgid "No timezones found."
 msgstr "No timezones found."
 
 #: src/routes/(app)/communications/email/drafts/+page.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/+page.svelte
 msgid "No draft selected"
 msgstr "No draft selected"
 
 #: src/routes/(app)/communications/email/drafts/+page.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/+page.svelte
 msgid "Select a draft from the list to view its details"
 msgstr "Select a draft from the list to view its details"
 
@@ -4005,3 +3997,31 @@ msgstr "No WhatsApp threads found"
 #: src/routes/(app)/settings/whatsapp/templates/new/+page.svelte
 msgid "New WhatsApp template"
 msgstr "New WhatsApp template"
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "No WhatsApp Drafts Yet"
+msgstr "No WhatsApp Drafts Yet"
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "You haven't created any WhatsApp drafts yet. Get started by creating your first WhatsApp draft."
+msgstr "You haven't created any WhatsApp drafts yet. Get started by creating your first WhatsApp draft."
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Create WhatsApp Draft"
+msgstr "Create WhatsApp Draft"
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Are you sure you want to send this WhatsApp draft?"
+msgstr "Are you sure you want to send this WhatsApp draft?"
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "No Email Drafts Yet"
+msgstr "No Email Drafts Yet"
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "You haven't created any email drafts yet. Get started by creating your first email draft."
+msgstr "You haven't created any email drafts yet. Get started by creating your first email draft."
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "Create Email Draft"
+msgstr "Create Email Draft"
