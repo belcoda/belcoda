@@ -3909,9 +3909,8 @@ msgstr "You can only add up to 10 buttons per template."
 #~ msgid "WhatsApp Business Account"
 #~ msgstr "WhatsApp Business Account"
 
-#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
-msgid "Create template"
-msgstr "Create template"
+#~ msgid "Create template"
+#~ msgstr "Create template"
 
 #~ msgid "Approved"
 #~ msgstr "Approved"
