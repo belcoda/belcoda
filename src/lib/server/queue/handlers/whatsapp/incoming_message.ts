@@ -55,6 +55,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									eventId: actionCodeDetails.referenceId,
 									tx
 								});
+								organizationId = event.organizationId;
 								const flowId = event.settings.whatsappFlowId;
 								if (flowId) {
 									try {
@@ -104,7 +105,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											tx
 										});
 										personId = eventSignup.personId;
-										organizationId = event.organizationId;
 										logActivity = false;
 										break;
 									}
@@ -138,7 +138,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 										tx
 									});
 									personId = eventSignup.personId;
-									organizationId = event.organizationId;
 									logActivity = false;
 									break;
 								}
@@ -206,13 +205,15 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 						break;
 					} else if (parsed.whatsappInboundMessage.interactive.type === 'nfm_reply') {
 						// Handle flow response messages
-						await handleFlowResponse({
+						const flowResult = await handleFlowResponse({
 							flowName: parsed.whatsappInboundMessage.interactive.nfm_reply.name,
 							body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
 							response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
 							from: parsed.whatsappInboundMessage.from,
 							tx
 						});
+						personId = flowResult.personId;
+						organizationId = flowResult.organizationId;
 					}
 					break;
 				}
@@ -240,18 +241,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				default:
 					log.warn(parsed, 'Unknown message type');
 					break;
-			}
-
-			if (!personId) {
-				throw new Error(
-					'Reached end of incoming message processing and was unable to determine person'
-				);
-			}
-
-			if (!organizationId) {
-				throw new Error(
-					'Reached end of incoming message processing and was unable to determine organization'
-				);
 			}
 
 			if (!organizationId || !personId) {
