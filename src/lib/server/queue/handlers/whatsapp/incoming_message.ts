@@ -6,11 +6,15 @@ import {
 	type IncomingMessage
 } from '$lib/schema/whatsapp/ycloud/incoming_message';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
+import { getPersonIdFromButtonAction } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/get_details_from_message';
 import pino from '$lib/pino';
+import { and, eq } from 'drizzle-orm';
+import { whatsappThread } from '$lib/schema/drizzle';
+import { extractButtonActionString } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
 const log = pino(import.meta.url);
 import { _getActionCodeUnsafe } from '$lib/server/api/data/action/check';
 import { extractActionCode } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/action_code';
-
+import { getQueue } from '$lib/server/queue';
 import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
 
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
@@ -28,6 +32,7 @@ import { handleFlowResponse } from '$lib/server/queue/handlers/whatsapp/handlers
 import { convertIncomingWhatsAppMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/convert_incoming';
 
 import { v7 as uuidv7 } from 'uuid';
+import { TicketX } from '@lucide/svelte';
 export async function handleIncomingMessage(incomingMessage: unknown) {
 	try {
 		const parsed = parse(incomingMessageSchema, incomingMessage);
@@ -55,6 +60,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									eventId: actionCodeDetails.referenceId,
 									tx
 								});
+								organizationId = event.organizationId;
 								const flowId = event.settings.whatsappFlowId;
 								if (flowId) {
 									try {
@@ -104,7 +110,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											tx
 										});
 										personId = eventSignup.personId;
-										organizationId = event.organizationId;
 										logActivity = false;
 										break;
 									}
@@ -138,7 +143,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 										tx
 									});
 									personId = eventSignup.personId;
-									organizationId = event.organizationId;
 									logActivity = false;
 									break;
 								}
@@ -198,21 +202,57 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				case 'location':
 					break;
 				case 'button': {
+					// TODO: handle button messages
 					break;
 				}
 				case 'interactive': {
 					// interactive can be button_reply or nfm_reply (flow message)
 					if (parsed.whatsappInboundMessage.interactive.type === 'button_reply') {
+						// get the button id, which should give me the thread Id and node Id...
+						const buttonActionString = parsed.whatsappInboundMessage.interactive.button_reply.id;
+						const { threadId, nodeId, buttonId } = extractButtonActionString(buttonActionString);
+						const threadObject =
+							await tx.dbTransaction.wrappedTransaction.query.whatsappThread.findFirst({
+								where: eq(whatsappThread.id, threadId)
+							});
+						if (!threadObject) {
+							throw new Error('Thread not found');
+						}
+						const nextNode = extractNextNodeFromButtonAction(threadObject, buttonId);
+						const organization = await getOrganizationByIdUnsafe({
+							organizationId: threadObject.organizationId,
+							tx
+						});
+						const personId = await getPersonIdFromButtonAction({
+							personPhoneNumber: parsed.whatsappInboundMessage.from,
+							personName:
+								parsed.whatsappInboundMessage.customerProfile?.name ??
+								parsed.whatsappInboundMessage.from,
+							organizationId: threadObject.organizationId,
+							organizationCountry: organization.country,
+							messageId: insertedWhatsAppMessageId,
+							tx
+						});
+						const queue = await getQueue();
+						queue.processFlowNodeAction({
+							nodeId: nextNode,
+							personId,
+							organizationId: threadObject.organizationId,
+							threadId: threadObject.id
+						});
 						break;
+						// TODO: handle button reply messages
 					} else if (parsed.whatsappInboundMessage.interactive.type === 'nfm_reply') {
 						// Handle flow response messages
-						await handleFlowResponse({
+						const flowResult = await handleFlowResponse({
 							flowName: parsed.whatsappInboundMessage.interactive.nfm_reply.name,
 							body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
 							response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
 							from: parsed.whatsappInboundMessage.from,
 							tx
 						});
+						personId = flowResult.personId;
+						organizationId = flowResult.organizationId;
 					}
 					break;
 				}
@@ -240,18 +280,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				default:
 					log.warn(parsed, 'Unknown message type');
 					break;
-			}
-
-			if (!personId) {
-				throw new Error(
-					'Reached end of incoming message processing and was unable to determine person'
-				);
-			}
-
-			if (!organizationId) {
-				throw new Error(
-					'Reached end of incoming message processing and was unable to determine organization'
-				);
 			}
 
 			if (!organizationId || !personId) {
@@ -283,6 +311,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 					inboundMessage: parsed as IncomingMessage,
 					organizationId
 				}),
+				personId,
 				id: insertedWhatsAppMessageId,
 				type: 'incoming_api_message',
 				organizationId,
@@ -312,4 +341,17 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 			log.error(err, 'Failed to process incoming message');
 		}
 	}
+}
+
+function extractNextNodeFromButtonAction(
+	thread: typeof whatsappThread.$inferSelect,
+	buttonId: string
+) {
+	// there should be a handle at either source or source handle...
+	const edges = thread.flow.edges;
+	const edge = edges.filter((edge) => edge.source === buttonId || edge.sourceHandle === buttonId);
+	if (edge.length === 0) {
+		throw new Error('Edge not found');
+	}
+	return edge[0].target; // once we have nodes that have more than one input, we will need to update this to handle targetHandle
 }

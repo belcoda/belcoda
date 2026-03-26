@@ -56,6 +56,7 @@
 			<AddPersonModal
 				trigger={addPersonTrigger}
 				personIdsToExclude={[]}
+				actionText={t`Add signature`}
 				onSelected={(personIds) => {
 					handleAddPerson({ petitionId: params.petitionId, personIds });
 				}}

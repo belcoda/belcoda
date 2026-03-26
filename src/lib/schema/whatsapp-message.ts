@@ -6,6 +6,9 @@ import {
 	whatsappMessageActivityTypeSchema
 } from '$lib/schema/whatsapp/message';
 
+export const whatsappMessageStatus = v.picklist(['delivered', 'read', 'failed', 'pending']);
+export type WhatsappMessageStatus = v.InferOutput<typeof whatsappMessageStatus>;
+
 export const whatsappMessageSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
@@ -14,8 +17,12 @@ export const whatsappMessageSchema = v.object({
 	wamidId: v.nullable(helpers.mediumString),
 	type: whatsappMessageActivityTypeSchema,
 	message: whatsappMessageObjectSchema,
+	status: whatsappMessageStatus,
+	statusMessage: v.nullable(helpers.mediumString),
+	deliveredAt: v.nullable(helpers.date),
+	readAt: v.nullable(helpers.date),
 	userId: v.nullable(helpers.uuid),
-	personId: v.nullable(helpers.uuid),
+	personId: helpers.uuid,
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });

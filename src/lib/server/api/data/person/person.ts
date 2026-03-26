@@ -202,3 +202,22 @@ export async function getPerson({
 	}
 	return personRecord;
 }
+
+export async function _getPersonByIdUnsafe({
+	personId,
+	organizationId,
+	tx
+}: {
+	personId: string;
+	organizationId: string;
+	tx: ServerTransaction;
+}) {
+	const [personRecord] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(person)
+		.where(and(eq(person.id, personId), eq(person.organizationId, organizationId)));
+	if (!personRecord) {
+		throw new Error('Person not found');
+	}
+	return personRecord;
+}

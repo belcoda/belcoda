@@ -42,6 +42,7 @@
 				<AddPersonModal
 					trigger={addPersonTrigger}
 					personIdsToExclude={petitionSignatures.data.map((sig) => sig.personId)}
+					actionText={t`Add signature`}
 					onSelected={(personIds) => {
 						handleAddPerson({ petitionId: petition.id, personIds });
 					}}
@@ -53,7 +54,7 @@
 	<Card.Content>
 		<SignatureTable
 			signatures={petitionSignatures.data ?? []}
-			petition={petition}
+			{petition}
 			bind:selectedSignatures
 			queryIsCompleted={petitionSignatures.details.type === 'complete'}
 		/>

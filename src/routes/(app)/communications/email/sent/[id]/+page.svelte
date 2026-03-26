@@ -20,6 +20,19 @@
 	});
 
 	const email = $derived(emailQuery?.data);
+
+	// Parse body from JSON string if needed
+	const parsedBody = $derived(() => {
+		if (!email?.body) return null;
+		if (typeof email.body === 'string') {
+			try {
+				return JSON.parse(email.body);
+			} catch {
+				return null;
+			}
+		}
+		return email.body;
+	});
 </script>
 
 {#if !emailId}
@@ -63,11 +76,13 @@
 
 				<div>
 					<h3 class="mb-2 text-sm font-medium text-muted-foreground">{t`Message`}</h3>
-					{#if email.body}
-						<SvelteLexical value={email.body} disabled={true} />
-					{:else}
-						<p class="text-muted-foreground">{t`(No content)`}</p>
-					{/if}
+					{#key emailId}
+						{#if parsedBody()}
+							<SvelteLexical value={parsedBody()} disabled={true} />
+						{:else}
+							<p class="text-muted-foreground">{t`(No content)`}</p>
+						{/if}
+					{/key}
 				</div>
 			</div>
 		</div>

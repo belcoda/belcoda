@@ -86,9 +86,7 @@
 						bind:value={altText}
 					/>
 				</div>
-				<Button class="w-full" disabled={!imageUrl} onclick={insertUrlImage}>
-					Insert Image
-				</Button>
+				<Button class="w-full" disabled={!imageUrl} onclick={insertUrlImage}>Insert Image</Button>
 			</Tabs.Content>
 
 			<Tabs.Content value="upload" class="space-y-4 pt-4">
@@ -111,11 +109,7 @@
 						disabled={isUploading}
 					/>
 				</div>
-				<Button
-					class="w-full"
-					disabled={!selectedFile || isUploading}
-					onclick={uploadAndInsert}
-				>
+				<Button class="w-full" disabled={!selectedFile || isUploading} onclick={uploadAndInsert}>
 					{#if isUploading}
 						Uploading...
 					{:else}

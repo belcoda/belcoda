@@ -31,7 +31,10 @@ import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
 
-import { _getPersonByPhoneNumberUnsafe } from '$lib/server/api/data/person/person';
+import {
+	_getPersonByPhoneNumberUnsafe,
+	_getPersonByIdUnsafe
+} from '$lib/server/api/data/person/person';
 export async function getEventByIdUnsafe({
 	eventId,
 	organizationId,
@@ -67,29 +70,28 @@ export async function getEventSignupsByEventIdUnsafe({
 	return eventSignups;
 }
 
-export async function signUpForEventHelper({
+export async function signUpForEventWithId({
 	eventId,
 	teamId,
 	tx,
-	personAction,
-	signupDetails,
+	personId,
 	organizationId,
+	signupDetails,
 	skipMaxSignupsCheck = false,
 	skipNotifications = false,
 	defaultEventSignupId
 }: {
-	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper;
-	signupDetails: EventSignupDetails;
-	organizationId: string;
 	teamId?: string;
+	tx: ServerTransaction;
+	personId: string;
+	organizationId: string;
+	signupDetails: EventSignupDetails;
 	skipMaxSignupsCheck?: boolean;
 	skipNotifications?: boolean;
 	defaultEventSignupId?: string;
 }) {
 	const parsedSignupDetails = parse(eventSignupDetails, signupDetails);
-	const parsedActionHelper = parse(personActionHelper, personAction);
 
 	const eventResult = await getEventByIdUnsafe({ eventId, organizationId, tx });
 	if (!eventResult) {
@@ -111,16 +113,10 @@ export async function signUpForEventHelper({
 
 	const eventSignupId = defaultEventSignupId || uuidv7();
 
-	const personRecord = await findOrCreatePerson({
-		tx,
-		personAction: parsedActionHelper,
-		addedFrom: {
-			type: 'added_from_event',
-			eventSignupId
-		},
-		organizationId,
-		teamId
-	});
+	const personRecord = await _getPersonByIdUnsafe({ personId, organizationId, tx });
+	if (!personRecord) {
+		throw new Error('Person not found');
+	}
 
 	const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
 
@@ -133,6 +129,54 @@ export async function signUpForEventHelper({
 		details: parsedSignupDetails
 	});
 	return eventSignupResult;
+}
+
+export async function signUpForEventHelper({
+	eventId,
+	teamId,
+	tx,
+	personAction,
+	signupDetails,
+	organizationId,
+	skipMaxSignupsCheck = false,
+	skipNotifications = false,
+	defaultEventSignupId
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personAction: PersonActionHelper;
+	signupDetails: EventSignupDetails;
+	organizationId: string;
+	teamId?: string;
+	skipMaxSignupsCheck?: boolean;
+	skipNotifications?: boolean;
+	defaultEventSignupId?: string;
+}) {
+	const parsedActionHelper = parse(personActionHelper, personAction);
+
+	const eventSignupId = defaultEventSignupId || uuidv7();
+	const personRecord = await findOrCreatePerson({
+		tx,
+		personAction: parsedActionHelper,
+		addedFrom: {
+			type: 'added_from_event',
+			eventSignupId
+		},
+		organizationId,
+		teamId
+	});
+
+	return await signUpForEventWithId({
+		eventId,
+		teamId,
+		tx,
+		personId: personRecord.id,
+		organizationId,
+		signupDetails,
+		skipMaxSignupsCheck,
+		skipNotifications,
+		defaultEventSignupId: eventSignupId
+	});
 }
 
 // the actual process of signing up for an event, broken off into its own function

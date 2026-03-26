@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const BASE_URL = process.env.PUBLIC_HOST ?? 'http://localhost:5173';
+const BASE_URL = process.env.E2E_BASE_URL || process.env.PUBLIC_HOST || 'http://localhost:5173';
 
 export default defineConfig({
 	testDir: 'e2e',

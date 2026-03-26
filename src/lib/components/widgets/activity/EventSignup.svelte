@@ -13,9 +13,7 @@
 
 	// Fetch the event signup details using the referenceId
 	const eventSignup = $derived.by(() => {
-		return z.createQuery(
-			queries.eventSignup.read({ eventSignupId: activity.referenceId })
-		);
+		return z.createQuery(queries.eventSignup.read({ eventSignupId: activity.referenceId }));
 	});
 
 	// Fetch the event details
@@ -27,7 +25,9 @@
 
 {#if eventSignup.data && event?.data}
 	<div class="w-full px-4 py-2 text-center text-sm text-gray-400">
-		<div class="text-xs">{dateUtils.formatShortTimestamp(new Date(activity.createdAt).getTime())}</div>
+		<div class="text-xs">
+			{dateUtils.formatShortTimestamp(new Date(activity.createdAt).getTime())}
+		</div>
 		<div class="flex items-center justify-center gap-1">
 			Signed up for
 			<a class="flex items-center gap-1" href={`/events/${event.data.id}`}>

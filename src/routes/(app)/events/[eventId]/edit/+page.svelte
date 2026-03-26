@@ -23,7 +23,9 @@
 	let showModal = $state(false);
 	let updatedEvent = $state<ReadEventZero | null>(null);
 
-	const organization = $derived(appState.activeOrganization.data as ReadOrganizationZero | undefined);
+	const organization = $derived(
+		appState.activeOrganization.data as ReadOrganizationZero | undefined
+	);
 
 	async function onSubmit(data: CreateEventZero | UpdateEventZero) {
 		if (!event.data) return;

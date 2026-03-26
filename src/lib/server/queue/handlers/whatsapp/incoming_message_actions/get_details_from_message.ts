@@ -4,6 +4,7 @@ import { eq, and, sql } from 'drizzle-orm';
 import { getCountryCodeFromPhoneNumber } from '$lib/utils/phone';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import type { CountryCode } from '$lib/utils/country';
 
 export async function getDetailsFromMessageByWabaId({
 	wabaId,
@@ -47,4 +48,33 @@ export async function getDetailsFromMessageByWabaId({
 	});
 
 	return { organization: orgResult[0], person };
+}
+
+export async function getPersonIdFromButtonAction({
+	personPhoneNumber,
+	personName,
+	organizationId,
+	organizationCountry,
+	messageId,
+	tx
+}: {
+	personPhoneNumber: string;
+	personName: string;
+	messageId: string;
+	organizationId: string;
+	organizationCountry: CountryCode;
+	tx: ServerTransaction;
+}) {
+	const person = await findOrCreatePerson({
+		personAction: {
+			phoneNumber: personPhoneNumber,
+			givenName: personName,
+			country: getCountryCodeFromPhoneNumber(personPhoneNumber) || organizationCountry,
+			subscribed: false
+		},
+		addedFrom: { type: 'incoming_whatsapp_message', messageId },
+		organizationId,
+		tx
+	});
+	return person.id;
 }
