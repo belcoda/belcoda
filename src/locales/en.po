@@ -4025,3 +4025,11 @@ msgstr "You haven't created any email drafts yet. Get started by creating your f
 #: src/routes/(app)/communications/email/+page.svelte
 msgid "Create Email Draft"
 msgstr "Create Email Draft"
+
+#: src/routes/(app)/settings/whatsapp/templates/[id]/+page.svelte
+msgid "Edit WhatsApp template"
+msgstr "Edit WhatsApp template"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Template language"
+msgstr "Template language"

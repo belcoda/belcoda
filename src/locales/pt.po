@@ -4063,3 +4063,11 @@ msgstr ""
 #: src/routes/(app)/communications/email/+page.svelte
 msgid "Create Email Draft"
 msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/templates/[id]/+page.svelte
+msgid "Edit WhatsApp template"
+msgstr ""
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Template language"
+msgstr ""
