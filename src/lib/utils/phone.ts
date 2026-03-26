@@ -1243,6 +1243,8 @@ export function getDialingCode(countryCode: CountryCode): string {
 	return country.dial_code;
 }
 
+import { defaultCountryCode } from '$lib/utils/country';
+
 import {
 	getExample,
 	parsePhoneNumber,
@@ -1253,8 +1255,12 @@ export function getPhoneNumberExample(
 	countryCode: CountryCode,
 	type: PhoneNumberTypes = 'mobile'
 ): ParsedPhoneNumber {
-	const phoneNumber = getExample(countryCode, type);
-	return phoneNumber;
+	try {
+		const phoneNumber = getExample(countryCode, type);
+		return phoneNumber;
+	} catch (error) {
+		return getExample(defaultCountryCode, type);
+	}
 }
 
 export function normalizePhoneNumber(phoneNumber: string): string {

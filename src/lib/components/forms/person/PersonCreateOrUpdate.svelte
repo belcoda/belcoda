@@ -8,6 +8,7 @@
 	import GenderSelect from '$lib/components/ui/custom-select/gender/gender.svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
+	import PhoneNumberInput from '$lib/components/ui/custom-select/phone-number/phone-number.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import createForm from '$lib/form.svelte';
@@ -92,6 +93,9 @@
 					await onCreated?.(personId);
 				}
 			});
+	const country = $state(
+		$data.country || appState.activeOrganization?.data?.country || defaultCountryCode
+	);
 </script>
 
 <form use:form.enhance id="person-form">
@@ -148,7 +152,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Phone number`}</Form.Label>
-								<Input {...props} bind:value={$data.phoneNumber} />
+								<PhoneNumberInput {country} {...props} bind:value={$data.phoneNumber} />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
