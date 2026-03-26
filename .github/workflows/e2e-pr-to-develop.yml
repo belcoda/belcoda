@@ -31,6 +31,17 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
+      - name: Build app
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
+          STRIPE_SECRET_KEY: sk_test_dummy
+          STRIPE_WEBHOOK_SECRET: whsec_dummy
+          BETTER_AUTH_SECRET: dummy_secret_for_tests
+          ZERO_AUTH_SECRET: dummy_zero_secret
+          ZERO_UPSTREAM_DB: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
+          ZERO_REPLICA_FILE: /tmp/sync-replica.db
+
       - name: Start database proxy and run e2e tests
         run: |
           # Start proxy to staging database
