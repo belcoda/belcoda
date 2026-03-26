@@ -2887,7 +2887,6 @@ msgid "Redirecting..."
 msgstr "Redirecting..."
 
 #: src/lib/components/communications/email/EmailList.svelte
-#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 msgid "[Error loading email body]"
 msgstr "[Error loading email body]"
 

@@ -3098,7 +3098,6 @@ msgid "Delete signup"
 msgstr ""
 
 #: src/lib/components/communications/email/EmailList.svelte
-#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 msgid "[Error loading email body]"
 msgstr ""
 
