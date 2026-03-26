@@ -1,0 +1,54 @@
+name: E2E (PR to develop)
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+jobs:
+  e2e:
+    if: ${{ github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --include=dev
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Run e2e tests against staging
+        run: |
+          # Start proxy to staging database
+          flyctl proxy 5432 -a belcodadb-staging &
+          PROXY_PID=$!
+          sleep 5
+
+          # Run tests
+          npm run test:e2e
+          TEST_EXIT=$?
+
+          # Cleanup proxy
+          kill $PROXY_PID 2>/dev/null || true
+
+          exit $TEST_EXIT
+        env:
+          DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
+          ZERO_UPSTREAM_DB: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
+          ZERO_REPLICA_FILE: /tmp/sync-replica.db
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          E2E_BASE_URL: 'staging.belcoda.com'

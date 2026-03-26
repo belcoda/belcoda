@@ -16,8 +16,7 @@ export async function POST({ request, url }) {
 		const queue = await getQueue();
 		switch (body.type) {
 			case 'whatsapp.template.reviewed':
-				//TODO: implement template reviewed logic when needed
-				//await queue.handleWhatsappTemplateReviewed(body);
+				await queue.handleWhatsappTemplateReviewed(body);
 				break;
 			case 'whatsapp.inbound_message.received':
 				await queue.handleIncomingMessage(body);

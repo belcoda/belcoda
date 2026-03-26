@@ -13,7 +13,6 @@
 		renderLocalPhoneNumber,
 		isValidInternationalPhoneNumber
 	} from '$lib/utils/phone';
-	import { appState } from '$lib/state.svelte';
 	import { locale, t } from '$lib/index.svelte';
 	import { cn } from '$lib/utils.js';
 
@@ -43,8 +42,6 @@
 
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 
 	const unsortedOptions = countryCodes.map((item) => {
@@ -90,7 +87,7 @@
 		if (!selectedCountry) return t`Phone number`;
 		const selectedOption = options.find((item) => item.value === selectedCountry);
 		if (!selectedOption) return t`Phone number`;
-		const ph = getPhoneNumberExample(selectedOption.value).number?.national;
+		const ph = getPhoneNumberExample(selectedOption.value || defaultCountryCode).number?.national;
 		if (!ph) return t`Phone number`;
 		return ph;
 	});

@@ -25,6 +25,7 @@ msgstr "Date and time"
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/routes/(app)/preferences/language/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
 msgstr "Language"
 
@@ -204,6 +205,7 @@ msgstr "The return path domain is used for bounce handling."
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Status"
 msgstr "Status"
 
@@ -444,7 +446,6 @@ msgstr "Toggle Sidebar"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
 #: src/routes/(app)/communications/+page.svelte
 msgid "Communications"
 msgstr "Communications"
@@ -494,6 +495,7 @@ msgstr "Search..."
 msgid "Back"
 msgstr "Back"
 
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 msgid "Create person"
 msgstr "Create person"
@@ -538,6 +540,7 @@ msgstr "Tags"
 msgid "Filter tags..."
 msgstr "Filter tags..."
 
+#: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
@@ -701,6 +704,7 @@ msgid "Call"
 msgstr "Call"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
@@ -717,6 +721,7 @@ msgstr "Added tag"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Add to team"
 msgstr "Add to team"
 
@@ -751,6 +756,7 @@ msgstr "Note deleted"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Name.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Edit"
 msgstr "Edit"
 
@@ -790,6 +796,7 @@ msgstr "Person deleted"
 
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
@@ -891,6 +898,7 @@ msgstr "Family name"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
@@ -1037,6 +1045,7 @@ msgstr "No failure details available"
 #: src/lib/components/layouts/public/event/WhatsAppSignup.svelte
 #: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -1085,7 +1094,8 @@ msgid "Untitled Email"
 msgstr "Untitled Email"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1147,11 +1157,13 @@ msgid "Create a new organization"
 msgstr "Create a new organization"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 msgid "Drafts"
 msgstr "Drafts"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 msgid "Compose"
 msgstr "Compose"
 
@@ -1234,6 +1246,7 @@ msgstr "Create an account to get started"
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Name"
 msgstr "Name"
@@ -1382,6 +1395,7 @@ msgid "Description"
 msgstr "Description"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Petition target"
 msgstr "Petition target"
 
@@ -1555,15 +1569,19 @@ msgstr "Toggle"
 #~ msgstr "1 recipient"
 
 #: src/lib/components/communications/email/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Type to search..."
 msgstr "Type to search..."
 
 #: src/lib/components/communications/email/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "(No subject)"
 msgstr "(No subject)"
 
 #: src/lib/components/communications/email/EmailList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 msgid "No emails found"
 msgstr "No emails found"
 
@@ -1737,6 +1755,8 @@ msgid "Website"
 msgstr "Website"
 
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Add signature"
 msgstr "Add signature"
@@ -1830,30 +1850,20 @@ msgstr "Upload an image"
 msgid "(Max size: {0})"
 msgstr "(Max size: {0})"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "No Projects Yet"
-msgstr "No Projects Yet"
+#~ msgid "No Projects Yet"
+#~ msgstr "No Projects Yet"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "You haven't created any projects yet. Get started by creating your first project."
-msgstr "You haven't created any projects yet. Get started by creating your first project."
+#~ msgid "You haven't created any projects yet. Get started by creating your first project."
+#~ msgstr "You haven't created any projects yet. Get started by creating your first project."
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Create Project"
-msgstr "Create Project"
+#~ msgid "Create Project"
+#~ msgstr "Create Project"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Import Project"
-msgstr "Import Project"
+#~ msgid "Import Project"
+#~ msgstr "Import Project"
 
-#: src/routes/(app)/communications/email/+page.svelte
-#: src/routes/(app)/communications/whatsapp/+page.svelte
-msgid "Learn More"
-msgstr "Learn More"
+#~ msgid "Learn More"
+#~ msgstr "Learn More"
 
 #: src/routes/(app)/petitions/new/+page.svelte
 msgid "New petition"
@@ -1862,6 +1872,7 @@ msgstr "New petition"
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Published"
@@ -2373,6 +2384,7 @@ msgid "No signups found. Create a new signup to get started."
 msgstr "No signups found. Create a new signup to get started."
 
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/routes/(app)/community/+page.svelte
 msgid "Add Person"
 msgstr "Add Person"
@@ -2450,10 +2462,12 @@ msgid "No timezones found."
 msgstr "No timezones found."
 
 #: src/routes/(app)/communications/email/drafts/+page.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/+page.svelte
 msgid "No draft selected"
 msgstr "No draft selected"
 
 #: src/routes/(app)/communications/email/drafts/+page.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/+page.svelte
 msgid "Select a draft from the list to view its details"
 msgstr "Select a draft from the list to view its details"
 
@@ -2481,9 +2495,8 @@ msgstr "Create New Email"
 msgid "Belcoda icon"
 msgstr "Belcoda icon"
 
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
-msgid "Compose Email"
-msgstr "Compose Email"
+#~ msgid "Compose Email"
+#~ msgstr "Compose Email"
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
@@ -2617,6 +2630,7 @@ msgstr "Are you sure you want to discard this email draft?"
 msgid "Email Draft"
 msgstr "Email Draft"
 
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Discard"
@@ -2756,7 +2770,6 @@ msgid "WhatsApp templates"
 msgstr "WhatsApp templates"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
 msgid "WhatsApp accounts"
 msgstr "WhatsApp accounts"
 
@@ -2772,13 +2785,11 @@ msgstr "Configuration"
 msgid "Exports are not currently supported, but will be added in a future update."
 msgstr "Exports are not currently supported, but will be added in a future update."
 
-#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
-msgid "WhatsApp templates are not currently supported, but will be added in a future update."
-msgstr "WhatsApp templates are not currently supported, but will be added in a future update."
+#~ msgid "WhatsApp templates are not currently supported, but will be added in a future update."
+#~ msgstr "WhatsApp templates are not currently supported, but will be added in a future update."
 
-#: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
-msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
-msgstr "WhatsApp accounts are not currently supported, but will be added in a future update."
+#~ msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
+#~ msgstr "WhatsApp accounts are not currently supported, but will be added in a future update."
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Free"
@@ -3357,6 +3368,7 @@ msgid "Publish event"
 msgstr "Publish event"
 
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "View full page"
 msgstr "View full page"
 
@@ -3706,3 +3718,350 @@ msgstr "Signed a petition"
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Added from an unknown source [{0}]"
 msgstr "Added from an unknown source [{0}]"
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Add to event"
+msgstr "Add to event"
+
+#~ msgid "Add a new person to the community"
+#~ msgstr "Add a new person to the community"
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "No people found"
+msgstr "No people found"
+
+#: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
+msgid "Create new person?"
+msgstr "Create new person?"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "WhatsApp not activated"
+msgstr "WhatsApp not activated"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
+msgstr "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Activate WhatsApp"
+msgstr "Activate WhatsApp"
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Petition Created!"
+msgstr "Petition Created!"
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Petition Updated!"
+msgstr "Petition Updated!"
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Here's a summary of your petition details."
+msgstr "Here's a summary of your petition details."
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Petition not published"
+msgstr "Petition not published"
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "This petition is not published yet. Toggle the switch below to make it visible to your audience."
+msgstr "This petition is not published yet. Toggle the switch below to make it visible to your audience."
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Petition text"
+msgstr "Petition text"
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Publish petition"
+msgstr "Publish petition"
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "No Email Drafts Yet"
+msgstr "No Email Drafts Yet"
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "You haven't created any email drafts yet. Get started by creating your first email draft."
+msgstr "You haven't created any email drafts yet. Get started by creating your first email draft."
+
+#: src/routes/(app)/communications/email/+page.svelte
+msgid "Create Email Draft"
+msgstr "Create Email Draft"
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "No WhatsApp Drafts Yet"
+msgstr "No WhatsApp Drafts Yet"
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "You haven't created any WhatsApp drafts yet. Get started by creating your first WhatsApp draft."
+msgstr "You haven't created any WhatsApp drafts yet. Get started by creating your first WhatsApp draft."
+
+#: src/routes/(app)/communications/whatsapp/+page.svelte
+msgid "Create WhatsApp Draft"
+msgstr "Create WhatsApp Draft"
+
+#: src/lib/components/flow/nodes/tag_add/Combobox.svelte
+msgid "Select a tag..."
+msgstr "Select a tag..."
+
+#: src/lib/components/flow/nodes/tag_add/Combobox.svelte
+msgid "Search tag..."
+msgstr "Search tag..."
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "Search templates..."
+msgstr "Search templates..."
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "No templates found."
+msgstr "No templates found."
+
+#: src/lib/components/flow/nodes/event_signup/Combobox.svelte
+msgid "Select an event..."
+msgstr "Select an event..."
+
+#: src/lib/components/flow/nodes/event_signup/Combobox.svelte
+msgid "Search event..."
+msgstr "Search event..."
+
+#: src/lib/components/flow/nodes/event_signup/Combobox.svelte
+msgid "No events found."
+msgstr "No events found."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "The header text must be 60 characters or less"
+msgstr "The header text must be 60 characters or less"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "The body text must be 1024 characters or less"
+msgstr "The body text must be 1024 characters or less"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Template headers can only have 1 variable"
+msgstr "Template headers can only have 1 variable"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Add variable"
+msgstr "Add variable"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Example values"
+msgstr "Example values"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Provide examples of the values you might use in your templates. These will be used in the WhatsApp template review process. You will be able to change these values when you send a message."
+msgstr "Provide examples of the values you might use in your templates. These will be used in the WhatsApp template review process. You will be able to change these values when you send a message."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Variables"
+msgstr "Variables"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Variables are placeholders for dynamic values that will be replaced with actual values when you send a message. You can add variables using the \"Add new variable\" button or by typing text in double curly brackets."
+msgstr "Variables are placeholders for dynamic values that will be replaced with actual values when you send a message. You can add variables using the \"Add new variable\" button or by typing text in double curly brackets."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+#: src/lib/components/forms/whatsapp/templates/EditComponentText.svelte
+msgid "Delete variable"
+msgstr "Delete variable"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Invalid template data. Please try again."
+msgstr "Invalid template data. Please try again."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Template name"
+msgstr "Template name"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Can only contain lowercase latin alphabet letters, numbers, and underscores."
+msgstr "Can only contain lowercase latin alphabet letters, numbers, and underscores."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Template language"
+msgstr "Template language"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Create new template"
+msgstr "Create new template"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Add text header"
+msgstr "Add text header"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Add image header"
+msgstr "Add image header"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Header"
+msgstr "Header"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Example image"
+msgstr "Example image"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Please upload an example of the kind of image you'll be using when you send messages using this template. This is useful for the template review process. When you actually send a message, you will be able to select a new image."
+msgstr "Please upload an example of the kind of image you'll be using when you send messages using this template. This is useful for the template review process. When you actually send a message, you will be able to select a new image."
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Body text"
+msgstr "Body text"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Add buttons"
+msgstr "Add buttons"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Buttons"
+msgstr "Buttons"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "Add button"
+msgstr "Add button"
+
+#: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
+msgid "You can only add up to 10 buttons per template."
+msgstr "You can only add up to 10 buttons per template."
+
+#: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
+msgid "WhatsApp Business Account"
+msgstr "WhatsApp Business Account"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Create template"
+msgstr "Create template"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Approved"
+msgstr "Approved"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Rejected"
+msgstr "Rejected"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "In appeal"
+msgstr "In appeal"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Pending deletion"
+msgstr "Pending deletion"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Disabled"
+msgstr "Disabled"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Paused"
+msgstr "Paused"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "No templates found"
+msgstr "No templates found"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Create a new template and submit it for approval to get started."
+msgstr "Create a new template and submit it for approval to get started."
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "No business account activated"
+msgstr "No business account activated"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "You must activate a business account before creating templates"
+msgstr "You must activate a business account before creating templates"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Activate business account"
+msgstr "Activate business account"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "The WhatsApp signup was cancelled. If you want to try again, click the button below."
+msgstr "The WhatsApp signup was cancelled. If you want to try again, click the button below."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "WhatsApp Business Account Activated"
+msgstr "WhatsApp Business Account Activated"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid ""
+"Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
+"messaging features."
+msgstr ""
+"Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
+"messaging features."
+
+#. placeholder {0}: appState.activeOrganization?.data?.settings.whatsApp.number
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Your WhatsApp Business Account number is {0}"
+msgstr "Your WhatsApp Business Account number is {0}"
+
+#. placeholder {0}: appState.activeOrganization?.data?.settings.whatsApp.wabaId
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Your WhatsApp Business Account ID is {0}"
+msgstr "Your WhatsApp Business Account ID is {0}"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Activate WhatsApp Business Account"
+msgstr "Activate WhatsApp Business Account"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid ""
+"A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
+"one by clicking the button below."
+msgstr ""
+"A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
+"one by clicking the button below."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid ""
+"When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
+"and create a WhatsApp Business Account."
+msgstr ""
+"When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
+"and create a WhatsApp Business Account."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "In doing so, you will authorize Belcoda to send and receive messages on your behalf."
+msgstr "In doing so, you will authorize Belcoda to send and receive messages on your behalf."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "After creating the WhatsApp Business Account, you will be redirected back to Belcoda."
+msgstr "After creating the WhatsApp Business Account, you will be redirected back to Belcoda."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Launch WhatsApp signup"
+msgstr "Launch WhatsApp signup"
+
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+msgid "Compose email"
+msgstr "Compose email"
+
+#: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+msgid "Compose WhatsApp"
+msgstr "Compose WhatsApp"
+
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+msgid "(No title)"
+msgstr "(No title)"
+
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+msgid "No WhatsApp threads found"
+msgstr "No WhatsApp threads found"
+
+#: src/routes/(app)/settings/whatsapp/templates/new/+page.svelte
+msgid "New WhatsApp template"
+msgstr "New WhatsApp template"
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Are you sure you want to send this WhatsApp draft?"
+msgstr "Are you sure you want to send this WhatsApp draft?"
+
+#: src/routes/(app)/settings/whatsapp/templates/[id]/+page.svelte
+msgid "Edit WhatsApp template"
+msgstr "Edit WhatsApp template"

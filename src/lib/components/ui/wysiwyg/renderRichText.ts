@@ -43,6 +43,20 @@ const hasRoot = (json: string) => {
 	}
 };
 
+export const jsonToText = (json: string): string => {
+	try {
+		const parsed = JSON.parse(json);
+		const extractText = (node: any): string => {
+			if (node.type === 'text') return node.text ?? '';
+			if (node.children) return node.children.map(extractText).join(' ');
+			return '';
+		};
+		return extractText(parsed.root ?? parsed).trim();
+	} catch {
+		return '';
+	}
+};
+
 export const jsonToHtml = (json: string) => {
 	if (hasRoot(json)) {
 		const editor = createEditor({

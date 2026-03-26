@@ -4,7 +4,12 @@
 	import EventCreateOrUpdate from '$lib/components/forms/event/EventCreateOrUpdate.svelte';
 	import EventCreatedModal from '$lib/components/widgets/event/EventCreatedModal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { type CreateEventZero, type UpdateEventZero, createEventZero, readEventZero } from '$lib/schema/event';
+	import {
+		type CreateEventZero,
+		type UpdateEventZero,
+		createEventZero,
+		readEventZero
+	} from '$lib/schema/event';
 	import { parse } from 'valibot';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
@@ -17,7 +22,9 @@
 	let createdEvent = $state<ReadEventZero | null>(null);
 	let modalOpen = $state(false);
 
-	const organization = $derived(appState.activeOrganization.data as ReadOrganizationZero | undefined);
+	const organization = $derived(
+		appState.activeOrganization.data as ReadOrganizationZero | undefined
+	);
 
 	async function onSubmit(data: CreateEventZero | UpdateEventZero) {
 		const id = uuidv7();
