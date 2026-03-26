@@ -31,35 +31,24 @@ jobs:
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Build app
-        run: npm run build
-        env:
-          DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          STRIPE_SECRET_KEY: sk_test_dummy
-          STRIPE_WEBHOOK_SECRET: whsec_dummy
-          BETTER_AUTH_SECRET: dummy_secret_for_tests
-          ZERO_AUTH_SECRET: dummy_zero_secret
-          ZERO_UPSTREAM_DB: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          ZERO_REPLICA_FILE: /tmp/sync-replica.db
-
-      - name: Start database proxy and run e2e tests
+      - name: Run e2e tests against staging
         run: |
           # Start proxy to staging database
           flyctl proxy 5432 -a belcodadb-staging &
           PROXY_PID=$!
           sleep 5
 
-          # Run tests with real database
+          # Run tests
           npm run test:e2e
+          TEST_EXIT=$?
 
           # Cleanup proxy
-          kill $PROXY_PID
+          kill $PROXY_PID 2>/dev/null || true
+
+          exit $TEST_EXIT
         env:
           DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          STRIPE_SECRET_KEY: sk_test_dummy
-          STRIPE_WEBHOOK_SECRET: whsec_dummy
-          BETTER_AUTH_SECRET: dummy_secret_for_tests
-          ZERO_AUTH_SECRET: dummy_zero_secret
           ZERO_UPSTREAM_DB: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
           ZERO_REPLICA_FILE: /tmp/sync-replica.db
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          E2E_BASE_URL: 'staging.belcoda.com'
