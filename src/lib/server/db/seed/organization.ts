@@ -10,6 +10,7 @@ const {
 	OWNER_ORGANIZATION_NAME,
 	OWNER_ORGANIZATION_SLUG,
 	SYSTEM_WABA_ID,
+	DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID,
 	PUBLIC_DEFAULT_WHATSAPP_NUMBER
 } = process.env;
 
@@ -39,7 +40,7 @@ export function generateOrganization({
 			...defaultOrganizationSettings(),
 			whatsApp: {
 				...defaultOrganizationSettings().whatsApp,
-				wabaId: SYSTEM_WABA_ID || null,
+				wabaId: DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID || SYSTEM_WABA_ID || null,
 				number: PUBLIC_DEFAULT_WHATSAPP_NUMBER || null,
 				defaultTemplateId: defaultWhatsappTemplateId
 			}
