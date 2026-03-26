@@ -91,17 +91,18 @@
 
 {#snippet variablesTable(items: string[])}
 	<div class="relative w-full overflow-x-auto">
-		<div class="flex items-center justify-end gap-2">
+		<div class="mb-2 flex items-center justify-end gap-2">
 			{#if type === 'header' && items.length >= 1}
 				<span class="text-sm text-gray-500">{t`Template headers can only have 1 variable`}</span>
 			{/if}
-			<button
+			<Button
 				onclick={addNewVariable}
-				class="btn"
+				variant="outline"
+				size="sm"
 				disabled={type === 'header' && items.length >= 1}
 			>
 				{t`Add variable`}
-			</button>
+			</Button>
 		</div>
 		{#if items.length > 0}
 			<Alert.Root>

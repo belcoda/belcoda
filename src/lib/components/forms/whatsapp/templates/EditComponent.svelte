@@ -154,7 +154,7 @@
 			{@render createButtons()}
 		{/if}
 		<div class="mt-4 flex items-center justify-end gap-2">
-			<a class="btn" href="/settings/whatsapp/templates"> {t`Discard`} </a>
+			<Button variant="outline" href="/settings/whatsapp/templates">{t`Discard`}</Button>
 			<Button variant="default" size="sm" onclick={saveTemplate}
 				>{mode === 'edit' ? t`Save` : t`Create new template`}</Button
 			>
