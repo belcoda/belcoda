@@ -14,7 +14,7 @@
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	/*svelte-ignore state_referenced_locally */
-	let filter = $state(data.filter || defaultFilterGroup);
+	let filter = $state((() => structuredClone(data.filter))() || defaultFilterGroup);
 	$effect(() => {
 		updateNodeData(id, { filter });
 		updateNodeInternals(id);
@@ -35,7 +35,7 @@
 			Recipients:
 		</div>
 		<div class=" p-2">
-			<RecipientBox initialSelected={filter.filters} bind:filter />
+			<RecipientBox bind:filter />
 		</div>
 	</div>
 	<Handle type="source" position={Position.Bottom} class="h-3! w-3!" />

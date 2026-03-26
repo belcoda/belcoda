@@ -116,7 +116,7 @@
 	}
 
 	function setSelected(selected: FilterType[]) {
-		filter.filters = selected;
+		filter.filters = selected.map((s) => ({ ...s }));
 		onChange?.(filter);
 	}
 
