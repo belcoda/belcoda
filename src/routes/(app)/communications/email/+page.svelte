@@ -7,27 +7,21 @@
 	import UserSearchIcon from '@lucide/svelte/icons/user-search';
 </script>
 
-<ContentLayout rootLink="/community">
+<ContentLayout rootLink="/communications">
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
 				<UserSearchIcon />
 			</Empty.Media>
-			<Empty.Title>{t`No Projects Yet`}</Empty.Title>
+			<Empty.Title>{t`No Email Drafts Yet`}</Empty.Title>
 			<Empty.Description>
-				{t`You haven't created any projects yet. Get started by creating your first project.`}
+				{t`You haven't created any email drafts yet. Get started by creating your first email draft.`}
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content>
 			<div class="flex gap-2">
-				<Button>{t`Create Project`}</Button>
-				<Button variant="outline">{t`Import Project`}</Button>
+				<Button href="/communications/email/drafts/new">{t`Create Email Draft`}</Button>
 			</div>
 		</Empty.Content>
-		<Button variant="link" class="text-muted-foreground" size="sm">
-			<a href="#/">
-				{t`Learn More`} <ExternalLinkIcon class="inline" />
-			</a>
-		</Button>
 	</Empty.Root>
 </ContentLayout>

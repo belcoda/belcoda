@@ -142,8 +142,8 @@ export async function generatePreview({
 				type: 'petition_signed',
 				petitionName: petitionResult.title,
 				petitionId: petitionResult.id
-      };
-    }
+			};
+		}
 		case 'event_not_attending': {
 			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)

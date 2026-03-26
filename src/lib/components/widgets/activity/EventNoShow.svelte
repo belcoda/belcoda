@@ -12,9 +12,7 @@
 	const { activity }: Props = $props();
 
 	const eventSignup = $derived.by(() => {
-		return z.createQuery(
-			queries.eventSignup.read({ eventSignupId: activity.referenceId })
-		);
+		return z.createQuery(queries.eventSignup.read({ eventSignupId: activity.referenceId }));
 	});
 
 	const event = $derived.by(() => {

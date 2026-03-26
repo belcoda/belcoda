@@ -49,7 +49,7 @@
 	<div class="text-sm">
 		{t`Are you sure you want to delete this signature?`}
 	</div>
-	
+
 	{#snippet footer()}
 		<Button variant="outline" onclick={() => (confirmDeleteOpen = false)}>{t`Cancel`}</Button>
 		<Button

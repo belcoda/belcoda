@@ -1,6 +1,6 @@
 ## Queue System (pg-boss)
 
-Background jobs are processed using [pg-boss](https://github.com/timgit/pg-boss). 
+Background jobs are processed using [pg-boss](https://github.com/timgit/pg-boss).
 
 ### HMR Limitation
 

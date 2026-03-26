@@ -61,6 +61,12 @@ import { readUser } from '$lib/zero/query/user/read';
 // webhook
 import { listWebhooks } from '$lib/zero/query/webhook/list';
 
+//whatsapp
+import { readWhatsappTemplate } from '$lib/zero/query/whatsapp_template/read';
+import { listWhatsappTemplates } from '$lib/zero/query/whatsapp_template/list';
+import { readWhatsappThread } from '$lib/zero/query/whatsapp_thread/read';
+import { listWhatsappThreads } from '$lib/zero/query/whatsapp_thread/list';
+
 // Re-export all queries
 export {
 	// activity
@@ -107,10 +113,24 @@ export {
 	listUsers,
 	readUser,
 	// webhook
-	listWebhooks
+	listWebhooks,
+	// whatsapp template
+	readWhatsappTemplate,
+	listWhatsappTemplates,
+	// whatsapp thread
+	readWhatsappThread,
+	listWhatsappThreads
 };
 
 export default defineQueries({
+	whatsappTemplate: {
+		read: readWhatsappTemplate,
+		list: listWhatsappTemplates
+	},
+	whatsappThread: {
+		read: readWhatsappThread,
+		list: listWhatsappThreads
+	},
 	activity: {
 		list: listActivity
 	},

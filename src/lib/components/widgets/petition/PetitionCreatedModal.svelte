@@ -60,7 +60,9 @@
 	<Dialog.Root bind:open {onOpenChange}>
 		<Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
 			<Dialog.Header class="relative">
-				<Dialog.Title>{mode === 'create' ? t`Petition Created!` : t`Petition Updated!`}</Dialog.Title>
+				<Dialog.Title
+					>{mode === 'create' ? t`Petition Created!` : t`Petition Updated!`}</Dialog.Title
+				>
 				<Dialog.Description>
 					{t`Here's a summary of your petition details.`}
 				</Dialog.Description>
@@ -77,7 +79,9 @@
 	<Drawer.Root bind:open {onOpenChange}>
 		<Drawer.Content class="max-h-[90vh]">
 			<Drawer.Header class="relative text-start">
-				<Drawer.Title>{mode === 'create' ? t`Petition Created!` : t`Petition Updated!`}</Drawer.Title>
+				<Drawer.Title
+					>{mode === 'create' ? t`Petition Created!` : t`Petition Updated!`}</Drawer.Title
+				>
 				<Drawer.Description>
 					{t`Here's a summary of your petition details.`}
 				</Drawer.Description>
@@ -99,7 +103,9 @@
 		{#if !petition.published}
 			<div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
 				<div class="flex items-start gap-3">
-					<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-100">
+					<div
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-100"
+					>
 						<CircleAlertIcon class="size-5 text-yellow-600" />
 					</div>
 					<div class="flex-1">
@@ -143,7 +149,9 @@
 
 					{#if petition.petitionText}
 						<div class="flex items-start space-x-3">
-							<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100">
+							<div
+								class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100"
+							>
 								<FileTextIcon class="size-5 text-gray-600" />
 							</div>
 							<div>

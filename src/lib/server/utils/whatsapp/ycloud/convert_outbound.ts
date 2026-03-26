@@ -3,22 +3,45 @@ import {
 	type WhatsappMessage,
 	type WhatsappActions
 } from '$lib/schema/whatsapp/message';
+import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import type { LanguageCode } from '$lib/utils/language';
 import type { YCloudWhatsappMessage } from '$lib/schema/whatsapp/ycloud/message';
+import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
+import { v4 as uuidv4 } from 'uuid';
+
+export function convertNodeToFullMessage({
+	messageNode,
+	messageId
+}: {
+	messageNode: WhatsappMessageData;
+	messageId: string;
+}): WhatsappMessage {
+	return {
+		id: messageId,
+		text: messageNode.text,
+		image_url: messageNode.imageUrl,
+		buttons: messageNode.buttons.map((button) => ({
+			text: button.label,
+			action: button.id
+		})),
+		emojiReactions: [],
+		replyToMessageId: undefined
+	};
+}
 
 export function convertWhatsAppTemplateMessageToApiFormat({
 	templateMessage,
-	actions,
-	activityId,
+	nodeId,
+	whatsappThreadId,
 	whatsappMessageId,
 	from,
 	to,
 	name,
 	language
 }: {
-	templateMessage: WhatsappTemplateMessage;
-	actions: WhatsappActions;
-	activityId: string;
+	templateMessage: WhatsappTemplateMessageData;
+	nodeId: string;
+	whatsappThreadId: string;
 	whatsappMessageId: string;
 	from: string;
 	to: string;
@@ -27,30 +50,29 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 }): YCloudWhatsappMessage {
 	const components = [];
 	if (templateMessage.header) {
-		if (templateMessage.header.image_url) {
+		if (templateMessage.header.imageUrl) {
 			components.push({
 				type: 'header' as const,
 				parameters: [
 					{
 						type: 'image' as const,
 						image: {
-							link: templateMessage.header.image_url
+							link: templateMessage.header.imageUrl
 						}
 					}
 				]
 			});
 		}
 		if (
-			templateMessage.header.text &&
-			templateMessage.header.parameters &&
-			templateMessage.header.parameters.length > 0
+			templateMessage.header.templateStrings &&
+			templateMessage.header.templateStrings.length > 0
 		) {
 			components.push({
 				type: 'header' as const,
-				parameters: templateMessage.header.parameters.map((param) => {
+				parameters: templateMessage.header.templateStrings.map((param) => {
 					return {
 						type: 'text' as const,
-						text: param.text
+						text: param
 					};
 				})
 			});
@@ -60,10 +82,10 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	components.push({
 		type: 'body' as const,
 		parameters:
-			templateMessage.body.parameters?.map((param) => {
+			templateMessage.body?.templateStrings?.map((param) => {
 				return {
 					type: 'text' as const,
-					text: param.text
+					text: param
 				};
 			}) || []
 	});
@@ -71,7 +93,7 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	if (templateMessage.buttons && templateMessage.buttons.length > 0) {
 		templateMessage.buttons.forEach((button, index) => {
 			// Validate that parameters array exists and has at least one element
-			if (!button.parameters || button.parameters.length === 0) {
+			if (!button || !button.id) {
 				throw new Error(
 					`Button at index ${index} has no parameters array or empty parameters array`
 				);
@@ -84,7 +106,7 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 				parameters: [
 					{
 						type: 'payload' as const,
-						payload: button.parameters[0].payload
+						payload: `${whatsappThreadId}:${nodeId}:${button.id}`
 					}
 				]
 			});
@@ -94,7 +116,11 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 		from: from,
 		to: to,
 		type: 'template',
-		externalId: createExternalId(whatsappMessageId, templateMessage.id, activityId),
+		externalId: createExternalId({
+			whatsappMessageId: whatsappMessageId,
+			whatsappThreadId: whatsappThreadId,
+			nodeId: nodeId
+		}),
 		template: {
 			name: name,
 			language: {
@@ -106,45 +132,112 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	};
 }
 
-export function createExternalId(
-	whatsappMessageId: string | null,
-	templateMessageId: string,
-	activityId: string
-) {
-	return `${whatsappMessageId ? whatsappMessageId : 'UNKNOWN'}:${templateMessageId}:${activityId}`;
+export function createMessageFromTemplateAndTemplateMessage({
+	templateMessage,
+	template,
+	messageId,
+	threadId
+}: {
+	templateMessage: WhatsappTemplateMessageData;
+	template: TemplateMessageComponents;
+	messageId: string;
+	threadId: string;
+}) {
+	let returnObject: WhatsappMessage = {
+		id: messageId,
+		emojiReactions: [],
+		buttons: []
+	};
+	let templateHeader = template.find((t) => t.type === 'HEADER');
+	let templateBody = template.find((t) => t.type === 'BODY');
+	let templateButtons = template.find((t) => t.type === 'BUTTONS');
+	if (templateHeader && templateMessage.header) {
+		if (templateHeader.format === 'IMAGE') {
+			returnObject.image_url = templateMessage.header.imageUrl || undefined;
+		}
+		if (templateHeader.format === 'TEXT' && templateMessage.header?.templateStrings) {
+			const baseString = templateHeader.text;
+			//replace the {{n}} in baseString with the values from templateMessage.header.templateStrings
+			const replacedString = baseString.replace(/{{(\d+)}}/g, (match, p1) => {
+				return templateMessage.header?.templateStrings?.[parseInt(p1) - 1] || match;
+			});
+			returnObject.headerText = replacedString;
+		}
+	}
+	if (templateBody && templateMessage.body && templateMessage.body?.templateStrings) {
+		const baseString = templateBody.text;
+		//replace the {{n}} in baseString with the values from templateMessage.body.templateStrings
+		const replacedString = baseString.replace(/{{(\d+)}}/g, (match, p1) => {
+			return templateMessage.body?.templateStrings?.[parseInt(p1) - 1] || match;
+		});
+		returnObject.text = replacedString;
+	}
+	if (templateButtons && templateButtons.buttons && templateMessage.buttons) {
+		returnObject.buttons = templateButtons.buttons.map((button, index) => {
+			return {
+				text: button.text,
+				action: createButtonActionString({
+					threadId: threadId,
+					nodeId: messageId,
+					buttonId: templateMessage.buttons?.[index]?.id || uuidv4()
+				})
+			};
+		});
+	}
+	return returnObject;
+}
+
+export function createExternalId({
+	whatsappMessageId,
+	whatsappThreadId,
+	nodeId
+}: {
+	whatsappMessageId: string | null;
+	whatsappThreadId: string;
+	nodeId: string | null;
+}) {
+	return `${whatsappThreadId}:${nodeId || 'UNKNOWN'}:${whatsappMessageId || 'UNKNOWN'}`;
 }
 
 export function extractExternalId(externalId: string): {
 	whatsappMessageId: string | 'UNKNOWN';
-	templateMessageId: string;
-	activityId: string;
+	whatsappThreadId: string;
+	nodeId: string | 'UNKNOWN';
 } {
-	const [whatsappMessageId, templateMessageId, activityId] = externalId.split(':');
-	if (!whatsappMessageId || !templateMessageId || !activityId) {
+	const [whatsappThreadId, nodeId, whatsappMessageId] = externalId.split(':');
+	if (!whatsappThreadId || !nodeId || !whatsappMessageId) {
 		throw new Error(`Invalid externalId: ${externalId}`);
 	}
-	return { whatsappMessageId, templateMessageId, activityId };
+	return { whatsappThreadId, nodeId, whatsappMessageId };
 }
 
 export function convertWhatsappMessageToApiFormat({
 	whatsappMessage,
-	activityId,
+	nodeId,
+	whatsappThreadId,
 	whatsappMessageId,
 	from,
 	to
 }: {
 	whatsappMessage: WhatsappMessage;
-	activityId: string;
+	nodeId: string | null;
+	whatsappThreadId: string;
 	whatsappMessageId: string | null;
 	from: string;
 	to: string;
 }): YCloudWhatsappMessage {
-	const externalId = createExternalId(whatsappMessageId, whatsappMessage.id, activityId);
+	const externalId = createExternalId({
+		whatsappMessageId: whatsappMessageId,
+		whatsappThreadId: whatsappThreadId,
+		nodeId: nodeId
+	});
 	if (whatsappMessage.buttons) {
 		return generateInteractiveMessage({
 			buttons: whatsappMessage.buttons,
 			text: whatsappMessage.text,
 			imageUrl: whatsappMessage.image_url,
+			threadId: whatsappThreadId,
+			messageId: whatsappMessageId,
 			to: to,
 			from: from,
 			externalId: externalId
@@ -203,7 +296,9 @@ function generateInteractiveMessage({
 	imageUrl,
 	to,
 	from,
-	externalId
+	externalId,
+	threadId,
+	messageId
 }: {
 	buttons: { text: string; action: string }[];
 	text?: string;
@@ -211,6 +306,8 @@ function generateInteractiveMessage({
 	to: string;
 	from: string;
 	externalId: string;
+	threadId: string;
+	messageId: string | null;
 }): YCloudWhatsappMessage {
 	const header = imageUrl
 		? {
@@ -235,7 +332,11 @@ function generateInteractiveMessage({
 						type: 'reply',
 						reply: {
 							title: button.text,
-							id: button.action
+							id: createButtonActionString({
+								threadId: threadId,
+								nodeId: messageId || '[UNKNWON_MESSAGE_ID]',
+								buttonId: button.action
+							})
 						}
 					};
 				})
@@ -264,4 +365,28 @@ function generateTextMessage({
 			body: text
 		}
 	};
+}
+
+export function createButtonActionString({
+	threadId,
+	nodeId,
+	buttonId
+}: {
+	threadId: string;
+	nodeId: string;
+	buttonId: string;
+}) {
+	return `${threadId}:${nodeId}:${buttonId}`;
+}
+
+export function extractButtonActionString(actionString: string): {
+	threadId: string;
+	nodeId: string;
+	buttonId: string;
+} {
+	const [threadId, nodeId, buttonId] = actionString.split(':');
+	if (!threadId || !nodeId || !buttonId) {
+		throw new Error(`Invalid actionString: ${actionString}`);
+	}
+	return { threadId, nodeId, buttonId };
 }

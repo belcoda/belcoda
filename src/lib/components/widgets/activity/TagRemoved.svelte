@@ -18,7 +18,9 @@
 
 {#if tag.data}
 	<div class="w-full px-4 py-2 text-center text-sm text-gray-400">
-		<div class="text-xs">{dateUtils.formatShortTimestamp(new Date(activity.createdAt).getTime())}</div>
+		<div class="text-xs">
+			{dateUtils.formatShortTimestamp(new Date(activity.createdAt).getTime())}
+		</div>
 		<div class="flex items-center justify-center gap-1">
 			Removed from
 			<a class="flex items-center gap-1" href={`/settings/tags/${tag.data.id}`}>
