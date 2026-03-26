@@ -4065,3 +4065,7 @@ msgstr "Are you sure you want to send this WhatsApp draft?"
 #: src/routes/(app)/settings/whatsapp/templates/[id]/+page.svelte
 msgid "Edit WhatsApp template"
 msgstr "Edit WhatsApp template"
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Delete tag"
+msgstr "Delete tag"

@@ -107,7 +107,8 @@ export const tag = pgTable(
 		name: text('name').notNull(),
 		active: boolean('active').notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
-		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
 	},
 	(table) => [unique('tag_name_unique').on(table.name, table.organizationId)]
 );

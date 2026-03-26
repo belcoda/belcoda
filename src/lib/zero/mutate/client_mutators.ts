@@ -81,7 +81,8 @@ export const mutators = defineMutators({
 	},
 	tag: {
 		update: tag.updateTag,
-		create: tag.createTag
+		create: tag.createTag,
+		delete: tag.deleteTag
 	},
 	team: {
 		create: team.createTeam,

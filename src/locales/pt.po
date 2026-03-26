@@ -4104,3 +4104,7 @@ msgstr ""
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Publish petition"
 msgstr ""
+
+#: src/routes/(app)/settings/tags/EditTag.svelte
+msgid "Delete tag"
+msgstr ""

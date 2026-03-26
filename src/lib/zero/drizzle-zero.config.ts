@@ -32,7 +32,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			name: true,
 			active: true,
 			createdAt: true,
-			updatedAt: true
+			updatedAt: true,
+			deletedAt: true
 		},
 		team: {
 			id: true,
