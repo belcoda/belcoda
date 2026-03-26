@@ -1400,6 +1400,7 @@ msgid "Description"
 msgstr "Descrição"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Petition target"
 msgstr "Destinatário da petição"
 
@@ -1872,6 +1873,7 @@ msgstr "(Tamanho máx: {0})"
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Published"
@@ -3405,6 +3407,7 @@ msgid "Publish event"
 msgstr ""
 
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "View full page"
 msgstr "<<<<<<< HEAD"
 
@@ -4069,4 +4072,35 @@ msgstr ""
 
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 msgid "Template language"
+msgstr ""
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Petition Created!"
+msgstr ""
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Petition Updated!"
+msgstr ""
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Here's a summary of your petition details."
+msgstr ""
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Petition not published"
+msgstr ""
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "This petition is not published yet. Toggle the switch below to make it visible to your audience."
+msgstr ""
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Petition text"
+msgstr ""
+
+#: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+msgid "Publish petition"
 msgstr ""
