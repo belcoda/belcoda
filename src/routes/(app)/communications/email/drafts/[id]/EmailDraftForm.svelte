@@ -7,6 +7,7 @@
 	import type { ReadEmailMessageZero } from '$lib/schema/email-message';
 
 	import type { SerializedEditorState } from 'lexical';
+	import { untrack } from 'svelte';
 
 	let {
 		email,
@@ -23,11 +24,13 @@
 		recipients: FilterGroupType;
 	};
 
-	let subject = $state<string>(email.subject ?? '');
-	let body = $state<SerializedEditorState | null>(email.body ?? null);
-	let emailFromSignatureId = $state<string | undefined>(email.emailFromSignatureId ?? undefined);
+	let subject = $state<string>(untrack(() => email.subject ?? ''));
+	let body = $state<SerializedEditorState | null>(untrack(() => email.body ?? null));
+	let emailFromSignatureId = $state<string | undefined>(
+		untrack(() => email.emailFromSignatureId ?? undefined)
+	);
 	let recipients = $state<FilterGroupType>(
-		JSON.parse(JSON.stringify(email.recipients || defaultFilterGroup))
+		untrack(() => JSON.parse(JSON.stringify(email.recipients || defaultFilterGroup)))
 	);
 
 	async function persist(data?: SaveEmailData) {
@@ -97,4 +100,10 @@
 	}
 </script>
 
-<EmailForm bind:subject bind:body bind:recipients bind:emailFromSignatureId handleUpdate={persist} />
+<EmailForm
+	bind:subject
+	bind:body
+	bind:recipients
+	bind:emailFromSignatureId
+	handleUpdate={persist}
+/>
