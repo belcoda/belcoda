@@ -17,7 +17,13 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 </script>
 
-<Sidebar.Provider style={isMobile.current ? '--sidebar-width: 100%;' : page.url.pathname.includes('/communications/email') ? '--sidebar-width: 550px;' : '--sidebar-width: 450px;'}>
+<Sidebar.Provider
+	style={isMobile.current
+		? '--sidebar-width: 100%;'
+		: page.url.pathname.startsWith('/communications')
+			? '--sidebar-width: 550px;'
+			: '--sidebar-width: 450px;'}
+>
 	{#if isMobile.current}
 		<!-- mobile layout -->
 		{#if isRoot}

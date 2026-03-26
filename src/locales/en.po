@@ -444,7 +444,6 @@ msgstr "Toggle Sidebar"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
 #: src/routes/(app)/communications/+page.svelte
 msgid "Communications"
 msgstr "Communications"
@@ -1085,7 +1084,6 @@ msgid "Untitled Email"
 msgstr "Untitled Email"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1147,7 +1145,6 @@ msgid "Create a new organization"
 msgstr "Create a new organization"
 
 #: src/lib/components/communications/email/EmailFoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
 msgid "Drafts"
 msgstr "Drafts"
 
@@ -2481,9 +2478,8 @@ msgstr "Create New Email"
 msgid "Belcoda icon"
 msgstr "Belcoda icon"
 
-#: src/lib/components/layouts/app/sidebars/communications/CommunicationsSidebar.svelte
-msgid "Compose Email"
-msgstr "Compose Email"
+#~ msgid "Compose Email"
+#~ msgstr "Compose Email"
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."

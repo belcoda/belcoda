@@ -221,7 +221,7 @@ export async function handleFlowResponse({
 					tx
 				});
 
-				return eventSignup;
+				return { personId: eventSignup.personId, organizationId: event.organizationId };
 			}
 
 			default:

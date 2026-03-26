@@ -112,12 +112,14 @@ export async function createWhatsAppMessage({
 	message,
 	type,
 	organizationId,
+	personId,
 	tx
 }: {
 	id: string;
 	message: WhatsappMessage;
 	organizationId: string;
 	type: WhatsappMessageActivityType;
+	personId: string;
 	tx: ServerTransaction;
 }) {
 	const parsed = await parse(whatsappMessageObjectSchema, message);
@@ -126,6 +128,8 @@ export async function createWhatsAppMessage({
 		id: insertedId,
 		message: parsed,
 		type,
+		personId,
+		status: 'pending',
 		organizationId,
 		createdAt: new Date(),
 		updatedAt: new Date()

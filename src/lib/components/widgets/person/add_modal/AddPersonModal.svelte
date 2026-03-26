@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { type Snippet } from 'svelte';
 	import UserPenIcon from '@lucide/svelte/icons/user-pen';
@@ -9,11 +10,17 @@
 		trigger: Snippet;
 		personIdsToExclude: string[];
 		onSelected: (personIds: string[]) => void;
+		actionText?: string;
 	};
 	import { cn } from '$lib/utils.js';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
-	let { trigger, personIdsToExclude = [], onSelected }: Props = $props();
+	let {
+		trigger,
+		personIdsToExclude = [],
+		onSelected,
+		actionText = t`Add to event`
+	}: Props = $props();
 	import { appState, getListFilter } from '$lib/state.svelte';
 	function getFilter() {
 		return {
@@ -34,7 +41,6 @@
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { type ReadPersonZero } from '$lib/schema/person';
-	import { t } from '$lib/index.svelte';
 	import XIcon from '@lucide/svelte/icons/x';
 	let selectedPersonIds = $state<string[]>([]);
 	let selectedPeople = $derived.by(() =>
@@ -59,8 +65,7 @@
 </script>
 
 <ResponsiveModal
-	title="Add Person"
-	description="Add a new person to the community"
+	title={t`Add Person`}
 	{trigger}
 	bind:open={isOpen}
 	onOpenChange={(open: boolean) => {
@@ -115,7 +120,7 @@
 
 {#snippet listModalFooter()}
 	<div class="flex items-center justify-end gap-2">
-		<Button variant="outline" onclick={() => (isOpen = false)}>Close</Button>
+		<Button variant="outline" onclick={() => (isOpen = false)}>{t`Close`}</Button>
 		<Button
 			disabled={selectedPersonIds.length === 0}
 			onclick={() => {
@@ -125,7 +130,7 @@
 
 				isOpen = false;
 			}}
-			>Add to event ({selectedPersonIds.length})
+			>{actionText} ({selectedPersonIds.length})
 		</Button>
 	</div>
 {/snippet}
@@ -202,10 +207,10 @@
 		<div class="flex size-10 items-center justify-center rounded-lg bg-muted">
 			<UserPenIcon class="size-6 text-muted-foreground" />
 		</div>
-		<div class="text-base font-medium">No people found</div>
-		<div class="text-sm text-muted-foreground">Create new person?</div>
+		<div class="text-base font-medium">{t`No people found`}</div>
+		<div class="text-sm text-muted-foreground">{t`Create new person?`}</div>
 		<div class="mt-2">
-			<Button onclick={() => (modalMode = 'create')}>Create person</Button>
+			<Button onclick={() => (modalMode = 'create')}>{t`Create person`}</Button>
 		</div>
 	</div>
 {/snippet}

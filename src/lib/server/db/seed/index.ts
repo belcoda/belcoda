@@ -12,16 +12,22 @@ import { v7 as uuidv7 } from 'uuid';
 import { selectOneOfArray } from './utils';
 import { generateTags } from './tag';
 
+import { generateWhatsappTemplates } from '$lib/server/db/seed/whatsapp/template';
+
 async function main() {
 	console.assert(process.env.DATABASE_URL, 'DATABASE_URL is not set');
 	const db = drizzle(process.env.DATABASE_URL!);
 	await reset(db, schema); //reset the entire database...
-
+	const defaultWhatsappTemplateId = uuidv7();
+	const organizationId = uuidv7();
 	// create organization
 	const organization = await generateOrganization({
-		id: uuidv7()
+		id: organizationId,
+		defaultWhatsappTemplateId
 	});
 	await db.insert(schema.organization).values(organization).execute();
+	const whatsappTemplates = generateWhatsappTemplates(organizationId, defaultWhatsappTemplateId);
+	await db.insert(schema.whatsappTemplate).values(whatsappTemplates).execute();
 
 	// create users
 	const users = await generateUsers();

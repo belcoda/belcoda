@@ -5,7 +5,7 @@
 	import DownloadIcon from '@lucide/svelte/icons/download';
 </script>
 
-<ContentLayout rootLink="/settings/people/exports">
+<ContentLayout rootLink="/settings">
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
