@@ -69,7 +69,7 @@
 										<Button
 											variant="outline"
 											size="sm"
-											href="/settings/whatsapp/templates/edit/{template.id}"
+											href="/settings/whatsapp/templates/{template.id}"
 										>
 											{t`Edit`}
 										</Button>

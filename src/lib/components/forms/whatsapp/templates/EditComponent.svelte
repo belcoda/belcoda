@@ -5,6 +5,7 @@
 
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import XIcon from '@lucide/svelte/icons/x';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { env } from '$env/dynamic/public';
 	const { PUBLIC_HOST } = env;
 	import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template/index';
@@ -135,6 +136,7 @@
 			<p class="text-sm text-gray-500">
 				{t`Can only contain lowercase latin alphabet letters, numbers, and underscores.`}
 			</p>
+			<Label>{t`Template language`}</Label>
 			<LanguageSelect bind:value={locale} />
 		</div>
 		<hr class="my-4 border-gray-200" />
@@ -153,8 +155,8 @@
 		{/if}
 		<div class="mt-4 flex items-center justify-end gap-2">
 			<a class="btn" href="/settings/whatsapp/templates"> {t`Discard`} </a>
-			<button class="btn-blue" onclick={saveTemplate}
-				>{mode === 'edit' ? t`Save` : t`Create new template`}</button
+			<Button variant="default" size="sm" onclick={saveTemplate}
+				>{mode === 'edit' ? t`Save` : t`Create new template`}</Button
 			>
 		</div>
 	</div>
@@ -163,8 +165,9 @@
 {#snippet createNewHeader()}
 	<div class="flex h-40 w-full items-center justify-center">
 		<div class="flex flex-col gap-2">
-			<button
-				class="btn flex items-center gap-2"
+			<Button
+				variant="outline"
+				size="sm"
 				onclick={() => {
 					components.push({
 						type: 'HEADER',
@@ -172,17 +175,18 @@
 						text: '',
 						example: { header_text: [] }
 					});
-				}}><PlusIcon class="size-4" /> {t`Add text header`}</button
+				}}><PlusIcon class="size-4" /> {t`Add text header`}</Button
 			>
-			<button
-				class="btn flex items-center gap-2"
+			<Button
+				variant="outline"
+				size="sm"
 				onclick={() => {
 					components.push({
 						type: 'HEADER',
 						format: 'IMAGE',
 						example: { header_url: [`${PUBLIC_HOST}/ui/placeholder.jpg`] }
 					});
-				}}><PlusIcon class="size-4" /> {t`Add image header`}</button
+				}}><PlusIcon class="size-4" /> {t`Add image header`}</Button
 			>
 		</div>
 	</div>
@@ -193,11 +197,13 @@
 		<div class="flex items-center justify-between">
 			<h4 class="text-lg font-bold">{t`Header`}</h4>
 			<div>
-				<button
+				<Button
+					variant="outline"
+					size="icon-sm"
 					class="cursor-pointer"
 					onclick={() => {
 						components.splice(headerIndex, 1);
-					}}><XIcon class="size-4" /></button
+					}}><XIcon class="size-4" /></Button
 				>
 			</div>
 		</div>
@@ -249,14 +255,15 @@
 {#snippet createButtons()}
 	<div class="flex h-40 w-full items-center justify-center">
 		<div class="flex flex-col gap-2">
-			<button
-				class="btn flex items-center gap-2"
+			<Button
+				variant="default"
+				size="sm"
 				onclick={() => {
 					components.push({
 						type: 'BUTTONS',
 						buttons: [{ type: 'QUICK_REPLY', text: '[Button text]' }]
 					});
-				}}><PlusIcon class="size-4" /> {t`Add buttons`}</button
+				}}><PlusIcon class="size-4" /> {t`Add buttons`}</Button
 			>
 		</div>
 	</div>
@@ -267,11 +274,12 @@
 		<div class="flex items-center justify-between">
 			<h4 class="text-lg font-bold">{t`Buttons`}</h4>
 			<div>
-				<button
-					class="cursor-pointer"
+				<Button
+					variant="outline"
+					size="icon-sm"
 					onclick={() => {
 						components.splice(headerIndex, 1);
-					}}><XIcon class="size-4" /></button
+					}}><XIcon class="size-4" /></Button
 				>
 			</div>
 		</div>
@@ -279,21 +287,21 @@
 			{#each components[buttonsIndex].buttons as _, index}
 				<div class="flex items-center gap-4">
 					<Input bind:value={components[buttonsIndex].buttons[index].text} />
-					<button class="cursor-pointer" onclick={() => deleteButton(index)}
-						><XIcon class="size-4" /></button
+					<Button variant="outline" size="icon-sm" onclick={() => deleteButton(index)}
+						><XIcon class="size-4" /></Button
 					>
 				</div>
 			{/each}
 			{#if numberOfButtons < 9}
 				<!-- Maximum 10 buttons per template  -->
 				<div class="flex justify-end">
-					<button
+					<Button
 						class="btn flex items-center gap-2"
 						onclick={() => {
 							if (components[buttonsIndex] && components[buttonsIndex].type === 'BUTTONS') {
 								components[buttonsIndex].buttons.push({ type: 'QUICK_REPLY', text: '' });
 							}
-						}}><PlusIcon class="size-4" /> {t`Add button`}</button
+						}}><PlusIcon class="size-4" /> {t`Add button`}</Button
 					>
 				</div>
 			{:else}
