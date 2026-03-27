@@ -7,6 +7,7 @@ import { generateUsers } from '$lib/server/db/seed/user';
 import { generateOrganization } from '$lib/server/db/seed/organization';
 import { generatePeople } from '$lib/server/db/seed/person';
 import { generateActivities } from '$lib/server/db/seed/activity';
+import { generateEventSignups, generatePetitionSignatures } from '$lib/server/db/seed/signup';
 import * as schema from '$lib/schema/drizzle';
 
 import { v7 as uuidv7 } from 'uuid';
@@ -158,6 +159,32 @@ async function seedOrganization(
 	for (let i = 0; i < personTagValues.length; i += personTagBatchSize) {
 		const batch = personTagValues.slice(i, i + personTagBatchSize);
 		await db.insert(schema.personTag).values(batch).execute();
+	}
+
+	// generate event signups and petition signatures
+	const signupBatchSize = 100;
+	const eventSignups = generateEventSignups(
+		people.map((p) => p.id),
+		events.map((e) => e.id),
+		orgId
+	);
+	for (let i = 0; i < eventSignups.length; i += signupBatchSize) {
+		await db
+			.insert(schema.eventSignup)
+			.values(eventSignups.slice(i, i + signupBatchSize))
+			.execute();
+	}
+
+	const petitionSignatures = generatePetitionSignatures(
+		people.map((p) => p.id),
+		petitions.map((p) => p.id),
+		orgId
+	);
+	for (let i = 0; i < petitionSignatures.length; i += signupBatchSize) {
+		await db
+			.insert(schema.petitionSignature)
+			.values(petitionSignatures.slice(i, i + signupBatchSize))
+			.execute();
 	}
 
 	// generate activities in batches to avoid stack overflow
