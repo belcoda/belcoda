@@ -1,9 +1,6 @@
-import { drizzle } from '$lib/server/db';
-import { activity, person } from '$lib/schema/drizzle';
+import { db } from '$lib/server/db';
 import { type ActivityType } from '$lib/schema/activity/types';
-import { and, eq } from 'drizzle-orm';
-import { v7 as uuidv7 } from 'uuid';
-import { generatePreview } from '$lib/server/api/utils/activity/generate_preview';
+import { insertActivity as insertActivityData } from '$lib/server/api/data/activity/activity';
 export async function insertActivity({
 	organizationId,
 	personId,
@@ -19,31 +16,15 @@ export async function insertActivity({
 	referenceId: string;
 	unread: boolean;
 }) {
-	//check that personId belongs to the organization
-	const personResult = await drizzle.query.person.findFirst({
-		where: (row, { and, eq }) => and(eq(row.id, personId), eq(row.organizationId, organizationId))
+	await db.transaction(async (tx) => {
+		await insertActivityData({
+			organizationId,
+			personId,
+			userId,
+			type,
+			referenceId,
+			unread,
+			tx
+		});
 	});
-	if (!personResult) {
-		throw new Error('Person not found in the organization. Cannot insert activity.');
-	}
-	const activityInsert: typeof activity.$inferInsert = {
-		id: uuidv7(),
-		organizationId,
-		personId,
-		type,
-		referenceId,
-		unread,
-		userId: userId || null,
-		createdAt: new Date()
-	};
-	await drizzle.insert(activity).values(activityInsert);
-
-	const preview = await generatePreview({ type, referenceId });
-	await drizzle
-		.update(person)
-		.set({
-			mostRecentActivityPreview: preview,
-			mostRecentActivityAt: new Date()
-		})
-		.where(and(eq(person.id, personId), eq(person.organizationId, organizationId)));
 }
