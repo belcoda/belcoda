@@ -943,6 +943,12 @@ export const twoFactor = pgTable('two_factor', {
 	backupCodes: text('backup_codes')
 });
 
+export const whatsappLog = pgTable('whatsapp_log', {
+	id: uuid('id').primaryKey(),
+	payload: jsonb('payload').notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
+});
+
 // relations for all tables at the end of the file
 
 export const organizationRelations = relations(organization, ({ one, many }) => ({

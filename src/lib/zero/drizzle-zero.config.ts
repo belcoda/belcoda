@@ -444,7 +444,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			type: true,
 			createdAt: true,
 			deletedAt: true
-		}
+		},
+		whatsappLog: false
 	},
 	manyToMany: {
 		tag: {
