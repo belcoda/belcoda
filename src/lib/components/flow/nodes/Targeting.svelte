@@ -14,7 +14,7 @@
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	/*svelte-ignore state_referenced_locally */
-	let filter = $state((() => structuredClone(data.filter))() || defaultFilterGroup);
+	let filter = $state(structuredClone((() => data.filter)() || defaultFilterGroup));
 	$effect(() => {
 		updateNodeData(id, { filter });
 		updateNodeInternals(id);
