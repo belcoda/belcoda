@@ -51,4 +51,4 @@ jobs:
           ZERO_UPSTREAM_DB: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
           ZERO_REPLICA_FILE: /tmp/sync-replica.db
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-          E2E_BASE_URL: 'staging.belcoda.com'
+          E2E_BASE_URL: 'https://staging.belcoda.com'
