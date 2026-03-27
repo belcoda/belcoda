@@ -4108,3 +4108,11 @@ msgstr ""
 #: src/routes/(app)/settings/tags/EditTag.svelte
 msgid "Delete tag"
 msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/sent/+page.svelte
+msgid "No sent message selected"
+msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/sent/+page.svelte
+msgid "Select a sent message from the list to view its details"
+msgstr ""

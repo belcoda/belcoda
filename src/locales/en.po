@@ -4069,3 +4069,11 @@ msgstr "Edit WhatsApp template"
 #: src/routes/(app)/settings/tags/EditTag.svelte
 msgid "Delete tag"
 msgstr "Delete tag"
+
+#: src/routes/(app)/communications/whatsapp/sent/+page.svelte
+msgid "No sent message selected"
+msgstr "No sent message selected"
+
+#: src/routes/(app)/communications/whatsapp/sent/+page.svelte
+msgid "Select a sent message from the list to view its details"
+msgstr "Select a sent message from the list to view its details"
