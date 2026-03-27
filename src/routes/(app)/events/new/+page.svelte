@@ -26,6 +26,14 @@
 		appState.activeOrganization.data as ReadOrganizationZero | undefined
 	);
 
+	const eventTeamId = $derived.by(() => {
+		if (appState.isAdminOrOwner) {
+			return null; // admin or owner can create an event for any/no team
+		} else {
+			return appState.activeTeamId || appState.myTeams.data?.[0]?.id || null; // member can create an event for their active team or the first team they are a member of
+		}
+	});
+
 	async function onSubmit(data: CreateEventZero | UpdateEventZero) {
 		const id = uuidv7();
 		const parsed = parse(createEventZero, data); //to also type check the data
@@ -33,10 +41,9 @@
 			mutators.event.create({
 				metadata: {
 					eventId: id,
-					organizationId: appState.organizationId,
-					teamId: appState.activeTeamId
+					organizationId: appState.organizationId
 				},
-				input: parsed
+				input: { ...parsed, teamId: eventTeamId || undefined }
 			})
 		);
 		await event.client;

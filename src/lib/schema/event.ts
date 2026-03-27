@@ -134,8 +134,7 @@ export type UpdateEventZero = v.InferOutput<typeof updateEventZero>;
 
 export const mutatorMetadata = v.object({
 	organizationId: eventSchema.entries.organizationId,
-	eventId: eventSchema.entries.id,
-	teamId: v.optional(eventSchema.entries.teamId, null)
+	eventId: eventSchema.entries.id
 });
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
@@ -180,11 +179,11 @@ export const eventThemeSchema = v.picklist(eventThemes);
 export type EventTheme = v.InferOutput<typeof eventThemeSchema>;
 
 export const deleteEventMutatorSchemaZero = v.object({
-	metadata: v.omit(mutatorMetadata, ['teamId'])
+	metadata: mutatorMetadata
 });
 export type DeleteEventMutatorSchemaZero = v.InferOutput<typeof deleteEventMutatorSchemaZero>;
 
 export const archiveEventMutatorSchemaZero = v.object({
-	metadata: v.omit(mutatorMetadata, ['teamId'])
+	metadata: mutatorMetadata
 });
 export type ArchiveEventMutatorSchemaZero = v.InferOutput<typeof archiveEventMutatorSchemaZero>;

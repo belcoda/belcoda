@@ -94,17 +94,19 @@
 			{/if}
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Group>
-			<DropdownMenu.Item>
-				{#snippet child({ props })}
-					<a href="/settings" class="flex items-center gap-2" {...props}>
-						<SettingsIcon />
-						{t`Settings`}
-					</a>
-				{/snippet}
-			</DropdownMenu.Item>
-		</DropdownMenu.Group>
-		<DropdownMenu.Separator />
+		{#if appState.isAdminOrOwner}
+			<DropdownMenu.Group>
+				<DropdownMenu.Item>
+					{#snippet child({ props })}
+						<a href="/settings" class="flex items-center gap-2" {...props}>
+							<SettingsIcon />
+							{t`Settings`}
+						</a>
+					{/snippet}
+				</DropdownMenu.Item>
+			</DropdownMenu.Group>
+			<DropdownMenu.Separator />
+		{/if}
 		{#if organizations.data}
 			<DropdownMenu.Group>
 				<DropdownMenu.Label>{t`Organizations`}</DropdownMenu.Label>

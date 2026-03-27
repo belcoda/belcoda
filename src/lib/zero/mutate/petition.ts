@@ -12,7 +12,7 @@ export const createPetition = defineMutator(
 		tx.mutate.petition.insert({
 			id: args.metadata.petitionId,
 			organizationId: args.metadata.organizationId,
-			teamId: args.metadata.teamId,
+			teamId: args.input.teamId || undefined,
 			pointPersonId: args.input.pointPersonId,
 			slug: args.input.slug,
 			title: args.input.title,

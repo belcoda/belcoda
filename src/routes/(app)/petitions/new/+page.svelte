@@ -20,7 +20,13 @@
 
 	let createdPetition = $state<ReadPetitionZero | null>(null);
 	let modalOpen = $state(false);
-
+	const petitionTeamId = $derived.by(() => {
+		if (appState.isAdminOrOwner) {
+			return null; // admin or owner can create a petition for any/no team
+		} else {
+			return appState.activeTeamId || appState.myTeams.data?.[0]?.id || null; // member can create a petition for their active team or the first team they are a member of
+		}
+	});
 	async function onSubmit(data: CreatePetitionZero | UpdatePetitionZero) {
 		const id = uuidv7();
 		const parsed = parse(createPetitionZero, data);
@@ -28,10 +34,12 @@
 			mutators.petition.create({
 				metadata: {
 					petitionId: id,
-					organizationId: appState.organizationId,
-					teamId: appState.activeTeamId
+					organizationId: appState.organizationId
 				},
-				input: parsed
+				input: {
+					...parsed,
+					teamId: petitionTeamId || undefined
+				}
 			})
 		);
 		await petition.client;

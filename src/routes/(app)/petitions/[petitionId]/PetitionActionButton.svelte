@@ -30,7 +30,6 @@
 			mutators.petition.update({
 				metadata: {
 					petitionId: petition.id,
-					teamId: appState.activeTeamId,
 					organizationId: appState.organizationId
 				},
 				input: {
@@ -48,7 +47,6 @@
 				mutators.petition.archive({
 					metadata: {
 						petitionId: petition.id,
-						teamId: appState.activeTeamId,
 						organizationId: appState.organizationId
 					}
 				})
@@ -61,7 +59,6 @@
 				mutators.petition.delete({
 					metadata: {
 						petitionId: petition.id,
-						teamId: appState.activeTeamId,
 						organizationId: appState.organizationId
 					}
 				})
@@ -130,8 +127,11 @@
 			<DropdownMenu.Group>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href="/petitions/{petition.id}/preview" target="_blank" rel="noopener noreferrer"
-							>{t`Preview petition page`}</a
+						<a
+							{...props}
+							href="/petitions/{petition.id}/preview"
+							target="_blank"
+							rel="noopener noreferrer">{t`Preview petition page`}</a
 						>
 					{/snippet}
 				</DropdownMenu.Item>
@@ -142,7 +142,7 @@
 					class="w-full text-destructive"
 					onclick={() => (openDeleteDialog = true)}
 				>
-					<TrashIcon class="size-4 mr-2" />
+					<TrashIcon class="mr-2 size-4" />
 					{petition.published ? t`Archive petition` : t`Delete petition`}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>

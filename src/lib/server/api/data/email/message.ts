@@ -197,7 +197,7 @@ export async function sendEmailMessage({
 
 	// Queue the email for processing
 	const queue = await getQueue();
-	await queue.processEmailMessage({
+	await queue.buildEmailMessageSendQueue({
 		emailMessageId: parsed.metadata.emailMessageId,
 		organizationId: parsed.metadata.organizationId
 	});

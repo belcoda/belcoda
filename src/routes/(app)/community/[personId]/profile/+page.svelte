@@ -14,11 +14,9 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
-	import type { ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
 	const person = $derived.by(() => {
 		return z.createQuery(queries.person.read({ personId: params.personId }));
 	});
-	import { Button } from '$lib/components/ui/button/index.js';
 
 	import ProfilePicture from './ProfilePicture.svelte';
 	import NameRow from './rows/Name.svelte';

@@ -28,10 +28,9 @@
 			mutators.petition.update({
 				metadata: {
 					petitionId: petition.data.id,
-					organizationId: appState.organizationId,
-					teamId: appState.activeTeamId
+					organizationId: appState.organizationId
 				},
-				input: parsed
+				input: { ...parsed, teamId: petition.data.teamId || undefined }
 			})
 		);
 		await updatedPetitionMutator.client;

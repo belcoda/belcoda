@@ -16,7 +16,7 @@ export const createEvent = defineMutator(
 		tx.mutate.event.insert({
 			id: args.metadata.eventId,
 			organizationId: args.metadata.organizationId,
-			teamId: args.metadata.teamId,
+			teamId: args.input.teamId || undefined,
 			slug: args.input.slug,
 			title: args.input.title,
 			shortDescription: args.input.shortDescription,
