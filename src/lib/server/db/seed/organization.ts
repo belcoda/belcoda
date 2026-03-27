@@ -7,6 +7,79 @@ import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 
 const { OWNER_EMAIL_ADDRESS, OWNER_ORGANIZATION_NAME, OWNER_ORGANIZATION_SLUG } = process.env;
 
+const orgTypes = [
+	'Alliance',
+	'Coalition',
+	'Collective',
+	'Network',
+	'Foundation',
+	'Institute',
+	'Initiative',
+	'Project',
+	'Fund',
+	'Center',
+	'Action',
+	'Movement',
+	'Partnership',
+	'Assembly',
+	'Council'
+];
+
+const orgTopics = [
+	'Justice',
+	'Equity',
+	'Community',
+	'Climate',
+	'Housing',
+	'Education',
+	'Health',
+	'Workers',
+	'Youth',
+	'Families',
+	'Environment',
+	'Democracy',
+	'Human Rights',
+	'Labor',
+	'Disability',
+	'Immigrant',
+	'Food',
+	'Water',
+	'Land',
+	'Peace'
+];
+
+const orgAdjectives = [
+	'United',
+	"People's",
+	'Grassroots',
+	'Community',
+	'Progressive',
+	'Solidarity',
+	'Mutual Aid',
+	'Civic',
+	'Neighborhood',
+	'Regional',
+	'National',
+	'Common',
+	'Open',
+	'Free',
+	'New'
+];
+
+function generateOrganizationName(): string {
+	const adjective = faker.helpers.arrayElement(orgAdjectives);
+	const topic = faker.helpers.arrayElement(orgTopics);
+	const type = faker.helpers.arrayElement(orgTypes);
+
+	return faker.helpers.arrayElement([
+		`${adjective} ${topic} ${type}`,
+		`${topic} ${type}`,
+		`${adjective} ${type} for ${topic}`,
+		`${type} for ${topic} ${faker.helpers.arrayElement(['Action', 'Change', 'Justice', 'Now'])}`,
+		`${faker.location.city()} ${topic} ${type}`
+	]);
+}
+
 const firstOwnerEmail = OWNER_EMAIL_ADDRESS!.split(',')[0];
 
 export function generateOrganization({
@@ -22,8 +95,8 @@ export function generateOrganization({
 	let slug: string;
 
 	if (isStressTest) {
-		name = `Stress Org ${index + 1}`;
-		slug = `stress-org-${index + 1}`;
+		name = generateOrganizationName();
+		slug = `${slugifyUnderscore(name)}-${id.slice(0, 8)}`.replace(/_/g, '-');
 	} else {
 		name = OWNER_ORGANIZATION_NAME!;
 		slug = OWNER_ORGANIZATION_SLUG!;
