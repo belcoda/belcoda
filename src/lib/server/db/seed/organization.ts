@@ -5,7 +5,14 @@ import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { faker } from '@faker-js/faker';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 
-const { OWNER_EMAIL_ADDRESS, OWNER_ORGANIZATION_NAME, OWNER_ORGANIZATION_SLUG } = process.env;
+const {
+	OWNER_EMAIL_ADDRESS,
+	OWNER_ORGANIZATION_NAME,
+	OWNER_ORGANIZATION_SLUG,
+	SYSTEM_WABA_ID,
+	DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID,
+	PUBLIC_DEFAULT_WHATSAPP_NUMBER
+} = process.env;
 
 const orgTypes = [
 	'Alliance',
@@ -83,10 +90,12 @@ function generateOrganizationName(): string {
 const firstOwnerEmail = OWNER_EMAIL_ADDRESS!.split(',')[0];
 
 export function generateOrganization({
+	defaultWhatsappTemplateId,
 	id,
 	index = 0,
 	isStressTest = false
 }: {
+	defaultWhatsappTemplateId: string;
 	id: string;
 	index?: number;
 	isStressTest?: boolean;
@@ -114,7 +123,15 @@ export function generateOrganization({
 		createdAt: faker.date.recent({ days: 30 }),
 		updatedAt: faker.date.recent({ days: 20 }),
 		balance: 10000,
-		settings: defaultOrganizationSettings()
+		settings: {
+			...defaultOrganizationSettings(),
+			whatsApp: {
+				...defaultOrganizationSettings().whatsApp,
+				wabaId: DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID || SYSTEM_WABA_ID || null,
+				number: PUBLIC_DEFAULT_WHATSAPP_NUMBER || null,
+				defaultTemplateId: defaultWhatsappTemplateId
+			}
+		}
 	};
 	return organization;
 }

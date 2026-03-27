@@ -119,16 +119,6 @@
 		margin: 0 auto !important;
 	}
 
-	:global(dialog) {
-		position: fixed;
-		inset: 0;
-		margin: auto;
-		max-width: 90vw;
-		max-height: 90vh;
-		border: none;
-		padding: 0;
-	}
-
 	.editor-container {
 		position: relative;
 	}

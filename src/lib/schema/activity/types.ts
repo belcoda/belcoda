@@ -36,67 +36,22 @@ export const activityPreviewTypesList = [...activityTypesList] as const;
 export const activityPreviewType = v.picklist(activityPreviewTypesList);
 export type ActivityPreviewType = v.InferOutput<typeof activityPreviewType>;
 
-export const activityPreviewWhatsAppMessage = v.variant('type', [
-	v.object({
-		type: v.literal('text'),
-		text: v.pipe(
-			v.string(),
-			v.trim(),
-			v.transform((input) => input.substring(0, 100))
-		)
-	}),
-	v.object({
-		type: v.literal('image')
-	}),
-	v.object({
-		type: v.literal('video')
-	}),
-	v.object({
-		type: v.literal('audio')
-	}),
-	v.object({
-		type: v.literal('document')
-	}),
-	v.object({
-		type: v.literal('sticker')
-	}),
-	v.object({
-		type: v.literal('location')
-	}),
-	v.object({
-		type: v.literal('contact')
-	}),
-	v.object({
-		type: v.literal('flow')
-	}),
-	v.object({
-		type: v.literal('button'),
-		text: v.pipe(
-			v.string(),
-			v.trim(),
-			v.transform((input) => input.substring(0, 100))
-		)
-	}),
-	v.object({
-		type: v.literal('reaction'),
-		emoji: emoji
-	})
-]);
+import { whatsappMessage } from '$lib/schema/whatsapp/message';
 
 export const activityPreviewPayloads = v.variant('type', [
 	v.object({
 		type: v.literal('whatsapp_message_incoming'),
-		message: activityPreviewWhatsAppMessage,
+		message: whatsappMessage,
 		whatsappMessageId: uuid
 	}),
 	v.object({
 		type: v.literal('whatsapp_message_outgoing'),
-		message: activityPreviewWhatsAppMessage,
+		message: whatsappMessage,
 		whatsappMessageId: uuid
 	}),
 	v.object({
 		type: v.literal('whatsapp_group_message_incoming'),
-		message: activityPreviewWhatsAppMessage,
+		message: whatsappMessage,
 		whatsappGroupId: uuid
 	}),
 	v.object({

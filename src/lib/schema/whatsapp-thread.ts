@@ -1,24 +1,18 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-
-import { whatsappMessage as whatsappMessageSchema } from '$lib/schema/whatsapp/message';
-import { filterGroup } from '$lib/schema/person/filter';
-import { whatsappTemplateMessage as whatsappTemplateMessageSchema } from '$lib/schema/whatsapp/message';
-import { whatsappMessageActionsSchema } from '$lib/schema/whatsapp/actions';
+import { flowSchema } from '$lib/schema/flow/index';
 
 export const whatsappThreadSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
 	teamId: v.nullable(helpers.uuid),
-	recipients: filterGroup,
-	templateId: helpers.uuid,
-	templateMessage: whatsappTemplateMessageSchema,
-	messages: v.array(whatsappMessageSchema),
-	actions: v.record(v.string(), v.array(whatsappMessageActionsSchema)),
+	flow: flowSchema,
 	sentBy: v.nullable(helpers.uuid),
 	startedAt: v.nullable(helpers.date),
 	completedAt: v.nullable(helpers.date),
 	estimatedRecipientCount: helpers.count,
+	title: v.nullable(helpers.mediumString),
+	description: v.nullable(helpers.mediumString),
 	successfulRecipientCount: helpers.count,
 	failedRecipientCount: helpers.count,
 	estimatedCost: v.nullable(helpers.integer),
@@ -50,11 +44,7 @@ export const readWhatsappThreadZero = v.object({
 export type ReadWhatsappThreadZero = v.InferOutput<typeof readWhatsappThreadZero>;
 
 export const createWhatsappThread = v.object({
-	recipients: whatsappThreadSchema.entries.recipients,
-	templateId: whatsappThreadSchema.entries.templateId,
-	templateMessage: whatsappThreadSchema.entries.templateMessage,
-	messages: whatsappThreadSchema.entries.messages,
-	actions: whatsappThreadSchema.entries.actions
+	flow: flowSchema
 });
 export type CreateWhatsappThread = v.InferInput<typeof createWhatsappThread>;
 
@@ -83,3 +73,8 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export const deleteMutatorSchema = v.object({
+	id: whatsappThreadSchema.entries.id,
+	organizationId: whatsappThreadSchema.entries.organizationId
+});

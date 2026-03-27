@@ -6,8 +6,7 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
 	import { formatShortTimestamp } from '$lib/utils/date';
-	import type { EditorState } from 'lexical';
-	import { jsonToHtml } from '$lib/components/ui/wysiwyg/renderRichText';
+	import { jsonToText } from '$lib/components/ui/wysiwyg/renderRichText';
 	const { folder }: { folder?: string } = $props();
 
 	const activeItem = $derived.by(() => {
@@ -37,7 +36,8 @@
 	const emailFilter = $derived.by(() => ({
 		...getListFilter(appState.organizationId),
 		searchString: search,
-		isDraft: activeItem.isDraft
+		isDraft: activeItem.isDraft,
+		reverseCron: true
 	}));
 
 	const emailsQuery = $derived.by(() => z.createQuery(queries.emailMessage.list(emailFilter)));
@@ -45,7 +45,6 @@
 	const emails = $derived(emailsQuery.data ?? []);
 
 	import { Input } from '$lib/components/ui/input/index.js';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 </script>
 
 <div class="flex w-full flex-col bg-background md:w-[300px] md:shrink-0">
@@ -75,14 +74,9 @@
 							{email.previewTextOverride}
 						</span>
 					{:else if email.body}
-						{#await jsonToHtml(JSON.stringify(email.body))}
-							<Skeleton class="h-3 w-full" />
-							<Skeleton class="h-3 w-full" />
-						{:then html}
-							<span class="prose line-clamp-2 text-xs text-muted-foreground">{@html html}</span>
-						{:catch}
-							<span class="line-clamp-2 text-xs text-red-400">{t`[Error loading email body]`}</span>
-						{/await}
+						<span class="line-clamp-2 text-xs text-muted-foreground">
+							{jsonToText(JSON.stringify(email.body))}
+						</span>
 					{/if}
 				</a>
 			{:else}

@@ -7,7 +7,9 @@ import {
 	type UpdateMutatorSchema,
 	updateMutatorSchema,
 	type CreateMutatorSchema,
-	createMutatorSchema
+	createMutatorSchema,
+	type DeleteMutatorSchema,
+	deleteMutatorSchema
 } from '$lib/schema/tag';
 
 export async function createTag({
@@ -75,4 +77,25 @@ export async function updateTag({
 		throw new Error('Unable to update tag');
 	}
 	return result;
+}
+
+export async function deleteTag({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: DeleteMutatorSchema;
+}) {
+	const parsed = parse(deleteMutatorSchema, args);
+	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(parsed.metadata.organizationId)) {
+		throw new Error('You are not authorized to delete a tag in this organization');
+	}
+	await tx.dbTransaction.wrappedTransaction
+		.update(tag)
+		.set({ deletedAt: new Date() })
+		.where(
+			and(eq(tag.id, parsed.metadata.tagId), eq(tag.organizationId, parsed.metadata.organizationId))
+		);
 }

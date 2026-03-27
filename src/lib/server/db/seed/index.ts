@@ -14,25 +14,22 @@ import { v7 as uuidv7 } from 'uuid';
 import { selectOneOfArray } from './utils';
 import { generateTags } from './tag';
 
-// Helper function to generate random number within range
+import { generateWhatsappTemplates } from '$lib/server/db/seed/whatsapp/template';
+
 function randomBetween(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Type for database instance
 type DbInstance = ReturnType<typeof drizzle>;
 
-/**
- * Seed a single organization with data
- */
 async function seedOrganization(
 	db: DbInstance,
 	organizationIndex: number,
 	stressMode: boolean = false
 ) {
 	const orgId = uuidv7();
+	const defaultWhatsappTemplateId = uuidv7();
 
-	// Determine counts based on stress mode
 	const counts = stressMode
 		? {
 				people: randomBetween(1000, 5000),
@@ -53,13 +50,15 @@ async function seedOrganization(
 		`[Org ${organizationIndex + 1}] Creating org with ${counts.people} people, ${counts.events} events, ${counts.petitions} petitions, ${counts.teams} teams, ${counts.activities} activities`
 	);
 
-	// create organization
 	const organization = await generateOrganization({
 		id: orgId,
+		defaultWhatsappTemplateId,
 		index: organizationIndex,
 		isStressTest: stressMode
 	});
 	await db.insert(schema.organization).values(organization).execute();
+	const whatsappTemplates = generateWhatsappTemplates(orgId, defaultWhatsappTemplateId);
+	await db.insert(schema.whatsappTemplate).values(whatsappTemplates).execute();
 
 	// create users (always use env user as admin, plus test accounts)
 	const users = await generateUsers({ organizationId: orgId, index: organizationIndex });

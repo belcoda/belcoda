@@ -56,7 +56,7 @@ export async function sendWhatsappMessage(
 		method: 'POST'
 	});
 	log.debug({ response }, 'Sent message to YCloud');
-	return response.id;
+	return response.id as string;
 }
 
 export async function sendFlowMessage({

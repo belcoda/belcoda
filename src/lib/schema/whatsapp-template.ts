@@ -67,3 +67,33 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export function createDefaultTemplate({
+	organizationId,
+	id
+}: {
+	organizationId: string;
+	id: string;
+}): ReadWhatsappTemplateZero {
+	return {
+		id,
+		name: 'default_template',
+		teamId: null,
+		organizationId,
+		components: [
+			{
+				type: 'BODY',
+				text: 'Hi {{1}}, do you have a second to talk?',
+				example: {
+					body_text: [['Maria']]
+				}
+			}
+		],
+		locale: 'en',
+		status: 'NOT_SUBMITTED',
+		submittedForReviewAt: null,
+		deletedAt: null,
+		createdAt: new Date().getTime(),
+		updatedAt: new Date().getTime()
+	};
+}
