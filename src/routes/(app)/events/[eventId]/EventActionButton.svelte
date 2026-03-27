@@ -24,7 +24,6 @@
 			mutators.event.update({
 				metadata: {
 					eventId: event.id,
-					teamId: appState.activeTeamId,
 					organizationId: appState.organizationId
 				},
 				input: {

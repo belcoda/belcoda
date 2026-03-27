@@ -37,6 +37,13 @@
 	import { generateEventTitleAsyncSchema } from '$lib/schema/event/helpers';
 	/* svelte-ignore state_referenced_locally */
 	const { title, slug } = generateEventTitleAsyncSchema(appState.organizationId, event?.id);
+	const eventTeamId = $derived.by(() => {
+		if (appState.isAdminOrOwner) {
+			return null; // admin or owner can create an event for any/no team
+		} else {
+			return appState.activeTeamId || appState.myTeams.data?.[0]?.id || null; // member can create an event for their active team or the first team they are a member of
+		}
+	});
 	import { objectAsync } from 'valibot';
 	let { form, data, errors, Errors, Debug, helpers } = $state(
 		/* svelte-ignore state_referenced_locally */

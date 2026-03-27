@@ -40,7 +40,6 @@
 					mutators.event.create({
 						metadata: {
 							organizationId: appState.organizationId,
-							teamId: appState.activeTeamId,
 							eventId: eventId
 						},
 						input: {

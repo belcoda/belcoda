@@ -39,11 +39,11 @@ export async function createEvent({
 		throw new Error('Organization not found');
 	}
 
-	if (parsedInput.metadata.teamId) {
+	if (parsedInput.input.teamId) {
 		const [teamRecord] = await tx.dbTransaction.wrappedTransaction
 			.select()
 			.from(team)
-			.where(eq(team.id, parsedInput.metadata.teamId))
+			.where(eq(team.id, parsedInput.input.teamId))
 			.limit(1);
 		if (!teamRecord) {
 			throw new Error('Team not found');
