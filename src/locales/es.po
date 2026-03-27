@@ -4112,6 +4112,14 @@ msgstr ""
 msgid "Delete tag"
 msgstr ""
 
+#: src/routes/(app)/communications/whatsapp/sent/+page.svelte
+msgid "No sent message selected"
+msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/sent/+page.svelte
+msgid "Select a sent message from the list to view its details"
+msgstr ""
+
 #: src/routes/(app)/communications/+layout.svelte
 #: src/routes/(app)/settings/+layout.svelte
 msgid "You are not authorized to access this page."
