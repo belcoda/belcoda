@@ -40,16 +40,16 @@ export async function createPetition({
 	}
 	if (
 		![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(organizationRecord.id) &&
-		!parsed.metadata.teamId
+		!parsed.input.teamId
 	) {
 		throw new Error('You are not authorized to create a petition in this organization');
 	}
 
-	if (parsed.metadata.teamId) {
+	if (parsed.input.teamId) {
 		const [teamRecord] = await tx.dbTransaction.wrappedTransaction
 			.select()
 			.from(team)
-			.where(eq(team.id, parsed.metadata.teamId))
+			.where(eq(team.id, parsed.input.teamId))
 			.limit(1);
 		if (!teamRecord) {
 			throw new Error('Team not found');

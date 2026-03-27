@@ -35,6 +35,15 @@
 	}: { person?: ReadPersonZero; onCreated?: (personId: string) => void | Promise<void> } = $props();
 	import { appState } from '$lib/state.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
+
+	const personTeamId = $derived.by(() => {
+		if (appState.isAdminOrOwner) {
+			return null; // admin or owner can create a person for any/no team
+		} else {
+			return appState.activeTeamId || appState.myTeams.data?.[0]?.id || null; // member can create a person for their active team or the first team they are a member of
+		}
+	});
+
 	/* svelte-ignore state_referenced_locally */
 	const { form, data, errors, Errors, helpers } = person
 		? createForm({
@@ -80,6 +89,7 @@
 						metadata: {
 							organizationId: appState.organizationId,
 							personId: personId,
+							teamId: personTeamId || undefined,
 							addedFrom: {
 								type: 'added_manually',
 								userId: appState.userId
