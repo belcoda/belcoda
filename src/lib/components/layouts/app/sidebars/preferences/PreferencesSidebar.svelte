@@ -24,7 +24,7 @@
 				} else if (appState.isAdmin) {
 					return item.permissions === 'admin' || item.permissions === 'member';
 				} else {
-					return false;
+					return item.permissions === 'member';
 				}
 			});
 		} else {
@@ -37,7 +37,7 @@
 				} else if (appState.isAdmin) {
 					return item.permissions === 'admin' || item.permissions === 'member';
 				} else {
-					return false;
+					return item.permissions === 'member';
 				}
 			});
 		}

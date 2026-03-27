@@ -39,7 +39,6 @@
 					mutators.petition.create({
 						metadata: {
 							organizationId: appState.organizationId,
-							teamId: appState.activeTeamId,
 							petitionId: petitionId
 						},
 						input: {

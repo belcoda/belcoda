@@ -96,8 +96,7 @@ export type UpdatePetitionZero = v.InferOutput<typeof updatePetitionZero>;
 
 export const mutatorMetadata = v.object({
 	organizationId: petitionSchema.entries.organizationId,
-	petitionId: petitionSchema.entries.id,
-	teamId: v.optional(petitionSchema.entries.teamId, null)
+	petitionId: petitionSchema.entries.id
 });
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 

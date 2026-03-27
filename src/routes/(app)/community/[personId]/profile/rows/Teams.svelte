@@ -49,7 +49,9 @@
 		<div class="text-sm text-muted-foreground">{t`No teams found.`}</div>
 	{/if}
 
-	{#snippet action()}
-		<AddTeam personId={person.id} />
-	{/snippet}
+	{#if appState.isAdminOrOwner}
+		{#snippet action()}
+			<AddTeam personId={person.id} />
+		{/snippet}
+	{/if}
 </ProfileRow>

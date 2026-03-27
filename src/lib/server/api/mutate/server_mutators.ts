@@ -31,6 +31,10 @@ export const mutators = defineMutators({
 		update: personNote.updatePersonNote,
 		delete: personNote.deletePersonNote
 	},
+	personImport: {
+		insert: personImport.insertPersonImport,
+		triggerQueue: personImport.triggerImportQueue
+	},
 	event: {
 		create: event.createEvent,
 		update: event.updateEvent,

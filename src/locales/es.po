@@ -378,6 +378,7 @@ msgstr "Esta dirección de correo electrónico no puede ser cambiada."
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
@@ -432,6 +433,7 @@ msgstr "Desconocido"
 
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/PreferencesSidebar.svelte
+#: src/routes/(app)/preferences/+page.svelte
 msgid "Preferences"
 msgstr "Preferencias"
 
@@ -463,12 +465,14 @@ msgstr "Suscripción"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
 #: src/routes/(app)/communications/+page.svelte
 msgid "Communications"
 msgstr "Comunicaciones"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
 #: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
 #: src/routes/(app)/events/+page.svelte
 msgid "Events"
@@ -476,6 +480,7 @@ msgstr "Eventos"
 
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
 #: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/routes/(app)/petitions/+page.svelte
 msgid "Petitions"
@@ -664,13 +669,11 @@ msgstr "Paleta de comandos"
 msgid "Search for a command to run"
 msgstr "Busca un comando para ejecutar"
 
-#: src/routes/(app)/preferences/+page.svelte
-msgid "Test"
-msgstr "Prueba"
+#~ msgid "Test"
+#~ msgstr "Prueba"
 
-#: src/routes/(app)/preferences/+page.svelte
-msgid "Footer"
-msgstr "Pie de página"
+#~ msgid "Footer"
+#~ msgstr "Pie de página"
 
 #~ msgid "Organization ID not found"
 #~ msgstr "ID de organización no encontrado"
@@ -4109,20 +4112,28 @@ msgstr ""
 msgid "Delete tag"
 msgstr ""
 
-#~ msgid "You are not authorized to access this page."
-#~ msgstr ""
+#: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
+msgid "You are not authorized to access this page."
+msgstr ""
 
-#~ msgid "You need to be an organization admin or owner to access this page."
-#~ msgstr ""
+#: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
+msgid "You need to be an organization admin or owner to access this page."
+msgstr ""
 
 #~ msgid "Go to home"
 #~ msgstr ""
 
-#~ msgid "Go to dashboard"
-#~ msgstr ""
+#: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
+msgid "Go to dashboard"
+msgstr ""
 
-#~ msgid "User preferences"
-#~ msgstr ""
+#: src/routes/(app)/preferences/+page.svelte
+msgid "User preferences"
+msgstr ""
 
-#~ msgid "Manage your user preferences, including language"
-#~ msgstr ""
+#: src/routes/(app)/preferences/+page.svelte
+msgid "Manage your user preferences, including language"
+msgstr ""

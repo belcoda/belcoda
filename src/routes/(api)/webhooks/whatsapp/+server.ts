@@ -1,9 +1,10 @@
 import { getQueue } from '$lib/server/queue';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
-
+import { drizzle } from '$lib/server/db';
+import { whatsappLog } from '$lib/schema/drizzle';
 import { env } from '$env/dynamic/private';
-
+import { v7 as uuidv7 } from 'uuid';
 const webhookSecret = env.YCLOUD_WEBHOOK_VERIFY_TOKEN;
 
 export async function POST({ request, url }) {
@@ -31,6 +32,11 @@ export async function POST({ request, url }) {
 	} catch (error) {
 		log.error(error, 'Error processing whatsapp webhook');
 	} finally {
+		await drizzle.insert(whatsappLog).values({
+			id: uuidv7(),
+			payload: body,
+			createdAt: new Date()
+		});
 		return new Response('OK', { status: 200 }); //we don't want to block the webhook from being processed
 	}
 }
