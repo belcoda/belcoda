@@ -398,6 +398,7 @@ msgstr "Selected"
 
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/PreferencesSidebar.svelte
+#: src/routes/(app)/preferences/+page.svelte
 msgid "Preferences"
 msgstr "Preferences"
 
@@ -663,13 +664,11 @@ msgstr "Command Palette"
 msgid "Search for a command to run"
 msgstr "Search for a command to run"
 
-#: src/routes/(app)/preferences/+page.svelte
-msgid "Test"
-msgstr "Test"
+#~ msgid "Test"
+#~ msgstr "Test"
 
-#: src/routes/(app)/preferences/+page.svelte
-msgid "Footer"
-msgstr "Footer"
+#~ msgid "Footer"
+#~ msgstr "Footer"
 
 #~ msgid "Organization ID not found"
 #~ msgstr "Organization ID not found"
@@ -4069,3 +4068,29 @@ msgstr "Edit WhatsApp template"
 #: src/routes/(app)/settings/tags/EditTag.svelte
 msgid "Delete tag"
 msgstr "Delete tag"
+
+#: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
+msgid "You are not authorized to access this page."
+msgstr "You are not authorized to access this page."
+
+#: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
+msgid "You need to be an organization admin or owner to access this page."
+msgstr "You need to be an organization admin or owner to access this page."
+
+#~ msgid "Go to home"
+#~ msgstr "Go to home"
+
+#: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
+msgid "Go to dashboard"
+msgstr "Go to dashboard"
+
+#: src/routes/(app)/preferences/+page.svelte
+msgid "User preferences"
+msgstr "User preferences"
+
+#: src/routes/(app)/preferences/+page.svelte
+msgid "Manage your user preferences, including language"
+msgstr "Manage your user preferences, including language"
