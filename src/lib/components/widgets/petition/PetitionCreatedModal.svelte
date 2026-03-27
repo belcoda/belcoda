@@ -37,7 +37,6 @@
 				mutators.petition.update({
 					metadata: {
 						petitionId: petition.id,
-						teamId: appState.activeTeamId,
 						organizationId: appState.organizationId
 					},
 					input: {
