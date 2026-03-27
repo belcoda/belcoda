@@ -9,11 +9,11 @@ LABEL fly_launch_runtime="SvelteKit"
 # SvelteKit app lives here
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV="production"
-
 # Throw-away build stage to reduce size of final image
 FROM base AS build
+
+# Set production environment
+ENV NODE_ENV="production"
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
@@ -48,6 +48,10 @@ RUN npm prune --omit=dev
 
 # Final stage for app image
 FROM base
+
+# Default to production; override with --build-arg NODE_ENV=staging at deploy time
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
 # Copy built application
 COPY --from=build /app/build /app/build
