@@ -104,10 +104,10 @@ export async function sendEmailMessage({
 				return await tx.dbTransaction.wrappedTransaction
 					.update(emailMessage)
 					.set({
-						successfulRecipientCount: sql`${output.emailMessage.successfulRecipientCount} + 1`,
+						successfulRecipientCount: sql`${emailMessage.successfulRecipientCount} + 1`,
 						updatedAt: new Date()
 					})
-					.where(eq(emailMessage.id, output.emailMessage.id))
+					.where(eq(emailMessage.id, emailMessageId))
 					.returning();
 			});
 			if (!updatedEmailMessage) {
@@ -136,17 +136,17 @@ export async function sendEmailMessage({
 				return await tx.dbTransaction.wrappedTransaction
 					.update(emailMessage)
 					.set({
-						failedRecipientCount: sql`${output.emailMessage.failedRecipientCount} + 1`,
+						failedRecipientCount: sql`${emailMessage.failedRecipientCount} + 1`,
 						updatedAt: new Date()
 					})
-					.where(eq(emailMessage.id, output.emailMessage.id))
+					.where(eq(emailMessage.id, emailMessageId))
 					.returning();
 			});
 			if (!updatedEmailMessage) {
 				throw new Error('Failed to update email message');
 			}
 			await checkAndUpdateEmailMessageSendingComplete(updatedEmailMessage);
-			log.error({ err, personId: output.recipient.id, emailMessageId }, 'Failed to send email');
+			log.error({ err, personId, emailMessageId }, 'Failed to send email');
 		}
 	} catch (err) {
 		log.error({ err, personId, emailMessageId }, 'Failed to send email message handler');
