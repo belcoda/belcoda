@@ -28,6 +28,7 @@
 		"db:reset": "npm run db:deleteall && npm run db:push && npm run db:seed && npm run generate",
 		"db:studio": "drizzle-kit studio",
 		"db:seed": "npx vite-node --options.transformMode.ssr='/.*/' src/lib/server/db/seed/index.ts",
+		"db:seed:stress": "npx vite-node --options.transformMode.ssr='/.*/' src/lib/server/db/seed/index.ts -- --stress",
 		"wuchale:extract": "wuchale --config wuchale.config.ts",
 		"wuchale:clean": "wuchale --config wuchale.config.ts --clean",
 		"zero:dev": "npx zero-cache-dev"

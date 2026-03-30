@@ -24,7 +24,9 @@ export class CommunityPage {
 	}
 
 	async expectLoaded() {
-		await this.page.locator('a[href="/community"][data-sidebar="menu-button"]').waitFor({ state: 'visible' });
+		await this.page
+			.locator('a[href="/community"][data-sidebar="menu-button"]')
+			.waitFor({ state: 'visible' });
 	}
 
 	async openUserMenu() {

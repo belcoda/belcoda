@@ -2,9 +2,11 @@ import { team as teamTable } from '$lib/schema/drizzle';
 
 import { faker } from '@faker-js/faker';
 import { randomOrNull, selectOneOfArray } from '$lib/server/db/seed/utils';
-export function generateTeam(organizationId: string): (typeof teamTable.$inferInsert)[] {
+export function generateTeam(
+	organizationId: string,
+	count: number = 5
+): (typeof teamTable.$inferInsert)[] {
 	const teamArr: (typeof teamTable.$inferInsert)[] = [];
-	const count = 5;
 	const usedNames = new Set<string>();
 
 	for (let i = 0; i < count; i++) {

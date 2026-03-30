@@ -37,13 +37,9 @@ export const POST: RequestHandler = async () => {
 				.delete(schema.invitation)
 				.where(eq(schema.invitation.organizationId, testOrg.id));
 
-			await drizzle
-				.delete(schema.member)
-				.where(eq(schema.member.organizationId, testOrg.id));
+			await drizzle.delete(schema.member).where(eq(schema.member.organizationId, testOrg.id));
 
-			await drizzle
-				.delete(schema.organization)
-				.where(eq(schema.organization.id, testOrg.id));
+			await drizzle.delete(schema.organization).where(eq(schema.organization.id, testOrg.id));
 		}
 
 		if (testUserIds.length > 0) {

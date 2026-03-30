@@ -9,7 +9,13 @@ const GIVEN_NAME = OWNER_GIVEN_NAME!.split(',');
 const FAMILY_NAME = OWNER_FAMILY_NAME!.split(',');
 const PROFILE_PICTURE = OWNER_PROFILE_PIC_URL!.split(',');
 
-export function generateUsers(): (typeof userTable.$inferInsert)[] {
+export function generateUsers({
+	organizationId,
+	index = 0
+}: {
+	organizationId: string;
+	index?: number;
+}): (typeof userTable.$inferInsert)[] {
 	if (
 		EMAIL.length === 0 ||
 		GIVEN_NAME.length === 0 ||
@@ -30,6 +36,8 @@ export function generateUsers(): (typeof userTable.$inferInsert)[] {
 		);
 	}
 	const users: (typeof userTable.$inferInsert)[] = [];
+
+	// Add the main owner account(s) from .env
 	for (let i = 0; i < EMAIL.length; i++) {
 		const user: typeof userTable.$inferInsert = {
 			id: faker.string.uuid(),
@@ -45,5 +53,24 @@ export function generateUsers(): (typeof userTable.$inferInsert)[] {
 		};
 		users.push(user);
 	}
+
+	// Add test accounts with different roles for this organization
+	const roles = ['member', 'admin', 'moderator'];
+	for (const role of roles) {
+		const user: typeof userTable.$inferInsert = {
+			id: faker.string.uuid(),
+			name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)} Org${index + 1}`,
+			email: `test-${role}-org${index + 1}@example.com`,
+			emailVerified: true,
+			image: null,
+			stripeCustomerId: null,
+			twoFactorEnabled: false,
+			preferredLanguage: 'en',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		};
+		users.push(user);
+	}
+
 	return users;
 }

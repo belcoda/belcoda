@@ -96,9 +96,6 @@ export async function deleteTag({
 		.update(tag)
 		.set({ deletedAt: new Date() })
 		.where(
-			and(
-				eq(tag.id, parsed.metadata.tagId),
-				eq(tag.organizationId, parsed.metadata.organizationId)
-			)
+			and(eq(tag.id, parsed.metadata.tagId), eq(tag.organizationId, parsed.metadata.organizationId))
 		);
 }
