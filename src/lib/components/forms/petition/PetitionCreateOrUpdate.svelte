@@ -76,6 +76,12 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { defaultPetitionSettings } from '$lib/schema/petition/settings';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
+	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 
 	let editSlugOpen = $state(false);
 </script>
@@ -110,6 +116,68 @@
 			/>
 		</Card.Content>
 	</Card.Root>
+
+	{#if petition}
+		<Alert.Root variant="destructive" class="mt-4">
+			<AlertCircleIcon />
+			<Alert.Title>{t`Danger zone!`}</Alert.Title>
+			<Alert.Description>
+				{#if petition.published}
+					{t`This petition will be archived. You can still view it in the archived petitions list.`}
+					<div class="mt-2">
+						<Button
+							type="button"
+							variant="destructive"
+							onclick={async () => {
+								if (
+									window.confirm(
+										t`This petition will be archived. You can still view it in the archived petitions list.`
+									)
+								) {
+									z.mutate(
+										mutators.petition.archive({
+											metadata: {
+												petitionId: petition.id,
+												organizationId: appState.organizationId
+											}
+										})
+									);
+									toast.success(t`Petition archived`);
+									goto('/petitions');
+								}
+							}}>{t`Archive petition`}</Button
+						>
+					</div>
+				{:else}
+					{t`This draft petition will be permanently deleted. This action cannot be undone.`}
+					<div class="mt-2">
+						<Button
+							type="button"
+							variant="destructive"
+							onclick={async () => {
+								if (
+									window.confirm(
+										t`This draft petition will be permanently deleted. This action cannot be undone.`
+									)
+								) {
+									z.mutate(
+										mutators.petition.delete({
+											metadata: {
+												petitionId: petition.id,
+												organizationId: appState.organizationId
+											}
+										})
+									);
+									toast.success(t`Petition deleted`);
+									goto('/petitions');
+								}
+							}}>{t`Delete petition`}</Button
+						>
+					</div>
+				{/if}
+			</Alert.Description>
+		</Alert.Root>
+	{/if}
 
 	<Debug {data} hide={true} />
 </form>
