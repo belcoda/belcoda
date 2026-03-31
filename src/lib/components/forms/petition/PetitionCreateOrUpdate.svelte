@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
+	import { beforeNavigate } from '$app/navigation';
 	import { useDebounce } from 'runed';
 	import { slugify } from '$lib/utils/slug';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -34,7 +35,7 @@
 	const { title, slug } = generatePetitionTitleAsyncSchema(appState.organizationId, petition?.id);
 	import { objectAsync } from 'valibot';
 
-	let { form, data, errors, Errors, Debug } = $state(
+	let { form, data, errors, Errors, Debug, helpers } = $state(
 		/* svelte-ignore state_referenced_locally */
 		petition
 			? createForm({
@@ -76,6 +77,23 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { defaultPetitionSettings } from '$lib/schema/petition/settings';
+
+	$effect(() => {
+		const handler = (e: BeforeUnloadEvent) => {
+			if (!helpers.isTainted()) return;
+			e.preventDefault();
+		};
+		window.addEventListener('beforeunload', handler);
+		return () => window.removeEventListener('beforeunload', handler);
+	});
+
+	beforeNavigate((nav) => {
+		if (!helpers.isTainted()) return;
+		if (!nav.to) return;
+		if (!confirm(t`Your changes might not be saved. Leave this page?`)) {
+			nav.cancel();
+		}
+	});
 
 	let editSlugOpen = $state(false);
 </script>
