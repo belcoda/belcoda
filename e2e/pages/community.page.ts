@@ -12,11 +12,11 @@ export class CommunityPage {
 	constructor(page: Page) {
 		this.page = page;
 		this.heading = page.locator('h1');
-		this.sidebar = page.locator('[data-slot="sidebar-content"]');
-		this.userMenu = page.locator('[data-slot="sidebar-footer"] button[aria-haspopup="menu"]');
-		this.orgMenu = page.locator('[data-slot="sidebar-header"] button[aria-haspopup="menu"]');
-		this.settingsLink = page.locator('a[href="/settings"]');
-		this.logoutButton = page.locator('a[href="/logout"]');
+		this.sidebar = page.getByTestId('sidebar-content');
+		this.userMenu = page.getByTestId('user-menu-trigger');
+		this.orgMenu = page.getByTestId('org-menu-trigger');
+		this.settingsLink = page.getByTestId('org-menu-settings');
+		this.logoutButton = page.getByTestId('user-menu-logout');
 	}
 
 	async goto() {
@@ -24,9 +24,7 @@ export class CommunityPage {
 	}
 
 	async expectLoaded() {
-		await this.page
-			.locator('a[href="/community"][data-sidebar="menu-button"]')
-			.waitFor({ state: 'visible' });
+		await this.page.getByTestId('nav-community').waitFor({ state: 'visible' });
 	}
 
 	async openUserMenu() {
