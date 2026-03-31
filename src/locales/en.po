@@ -4106,3 +4106,7 @@ msgstr "User preferences"
 #: src/routes/(app)/preferences/+page.svelte
 msgid "Manage your user preferences, including language"
 msgstr "Manage your user preferences, including language"
+
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+msgid "Your changes might not be saved. Leave this page?"
+msgstr "Your changes might not be saved. Leave this page?"
