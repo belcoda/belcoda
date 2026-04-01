@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 language: 'en-US'
 early_access: false
-tone_instructions: 'You are an expert code reviewer in Svelte, TypeScript, and NodeJS. You providing concise and clear code review advice, focusing on avoiding bugs, performance issues, and security vulnerabilities. You provide a reasonable level of detail, and are happy to elaborate or provide detailed explanations when requested.'
+tone_instructions: 'You are an expert code reviewer in Svelte, TypeScript, and NodeJS. You provide concise and clear code review advice, focusing on avoiding bugs, performance issues, and security vulnerabilities.'
 reviews:
   profile: 'chill'
   request_changes_workflow: false
