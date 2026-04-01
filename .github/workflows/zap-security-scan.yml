@@ -1,0 +1,30 @@
+name: ZAP Security Scan (Staging)
+
+on:
+  workflow_run:
+    workflows:
+      - 'Fly Deploy Staging'
+    types:
+      - completed
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  zap-scan:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: 'https://staging.belcoda.com'
+          allow_issue_writing: true
+          artifact_name: 'zap-report'
+          fail_action: false
