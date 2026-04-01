@@ -4167,3 +4167,15 @@ msgstr "Aceitar todos"
 #: src/lib/components/widgets/CookieBanner.svelte
 msgid "Only necessary"
 msgstr "Apenas necessários"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Not submitted"
+msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Limit exceeded"
+msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Pending"
+msgstr ""

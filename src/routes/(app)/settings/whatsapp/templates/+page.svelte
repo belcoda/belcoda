@@ -17,6 +17,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
 </script>
 
 <ContentLayout rootLink="/settings">
@@ -63,6 +64,14 @@
 											<Badge variant="secondary">{t`Disabled`}</Badge>
 										{:else if template.status === 'PAUSED'}
 											<Badge variant="secondary">{t`Paused`}</Badge>
+										{:else if template.status === 'NOT_SUBMITTED'}
+											<Badge variant="secondary">{t`Not submitted`}</Badge>
+										{/if}
+										{#if template.status === 'LIMIT_EXCEEDED'}
+											<Badge variant="secondary">{t`Limit exceeded`}</Badge>
+										{/if}
+										{#if template.status === 'PENDING'}
+											<Badge variant="secondary"><Spinner /> {t`Pending`}</Badge>
 										{/if}
 									</Table.Cell>
 									<Table.Cell class="w-[80px] text-right">
