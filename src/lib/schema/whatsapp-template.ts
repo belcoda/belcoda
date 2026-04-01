@@ -55,6 +55,7 @@ export const mutatorMetadata = v.object({
 	organizationId: whatsappTemplateSchema.entries.organizationId,
 	whatsappTemplateId: whatsappTemplateSchema.entries.id
 });
+export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
 export const createMutatorSchema = v.object({
 	input: createWhatsappTemplate,
