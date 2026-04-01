@@ -1497,7 +1497,6 @@ msgid "Online link"
 msgstr "Online link"
 
 #: src/lib/components/forms/event/DateTimeSelect.svelte
-#: src/lib/components/forms/event/DateTimeSelect.svelte
 msgid "Start date must be before end date"
 msgstr "Start date must be before end date"
 
@@ -4106,3 +4105,10 @@ msgstr "User preferences"
 #: src/routes/(app)/preferences/+page.svelte
 msgid "Manage your user preferences, including language"
 msgstr "Manage your user preferences, including language"
+
+#~ msgid "{0} from {1} to {2}"
+#~ msgstr "{0} from {1} to {2}"
+
+#: src/lib/components/ui/custom-select/time/event-start-end.svelte
+msgid "Pick a date"
+msgstr "Pick a date"
