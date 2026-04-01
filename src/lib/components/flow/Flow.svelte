@@ -59,9 +59,9 @@
 	const { nodes: startingNodesList, edges: startingEdgesList } = startingNodes({
 		defaultTemplateId: appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
 	});
-	/* svelte_ignore state_referenced_locally */
+	/* svelte-ignore state_referenced_locally */
 	let nodes: Node[] = $state.raw(inputNodes ?? startingNodesList);
-	/* svelte_ignore state_referenced_locally */
+	/* svelte-ignore state_referenced_locally */
 	let edges = $state.raw(inputEdges ?? startingEdgesList);
 
 	//components
