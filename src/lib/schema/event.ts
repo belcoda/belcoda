@@ -101,11 +101,19 @@ export const createEvent = v.object({
 });
 export type CreateEvent = v.InferInput<typeof createEvent>;
 
-export const createEventZero = v.object({
-	...createEvent.entries,
-	startsAt: helpers.unixTimestamp,
-	endsAt: helpers.unixTimestamp
-});
+export const createEventZero = v.pipe(
+	v.object({
+		...createEvent.entries,
+		startsAt: helpers.unixTimestamp,
+		endsAt: helpers.unixTimestamp
+	}),
+	v.check((input) => {
+		if (input.startsAt && input.endsAt && input.startsAt > input.endsAt) {
+			return false;
+		}
+		return true;
+	}, 'Event cannot end before it starts')
+);
 export type CreateEventZero = v.InferOutput<typeof createEventZero>;
 
 export function generateCreateEventZeroAsyncSchema(organizationId: string) {
@@ -125,11 +133,21 @@ export const updateEvent = v.partial(
 );
 export type UpdateEvent = v.InferInput<typeof updateEvent>;
 
-export const updateEventZero = v.object({
-	...updateEvent.entries,
-	startsAt: helpers.unixTimestamp,
-	endsAt: helpers.unixTimestamp
-});
+export const updateEventZero = v.pipe(
+	v.object({
+		...updateEvent.entries,
+		startsAt: helpers.unixTimestamp,
+		endsAt: helpers.unixTimestamp
+	}),
+	v.forward(
+		v.partialCheck(
+			[['startsAt'], ['endsAt']],
+			(input) => input.startsAt > input.endsAt,
+			'Event cannot end before it starts'
+		),
+		['endsAt']
+	)
+);
 export type UpdateEventZero = v.InferOutput<typeof updateEventZero>;
 
 export const mutatorMetadata = v.object({
