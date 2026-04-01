@@ -75,6 +75,8 @@
 
 		if (mode === 'edit') {
 			const parsed = safeParse(updateWhatsappTemplate, {
+				name,
+				locale,
 				components: $state.snapshot(components)
 			});
 			if (!parsed.success) {
@@ -98,6 +100,8 @@
 			await goto('/settings/whatsapp/templates');
 		} else {
 			const parsed = safeParse(createWhatsappTemplate, {
+				name,
+				locale,
 				components: $state.snapshot(components)
 			});
 			if (!parsed.success) {
@@ -123,6 +127,7 @@
 	}
 </script>
 
+{JSON.stringify({ components, name, locale })}
 <div class="flex flex-col">
 	<div class="flex flex-col gap-2">
 		<div class="grid grid-cols-1 gap-2">

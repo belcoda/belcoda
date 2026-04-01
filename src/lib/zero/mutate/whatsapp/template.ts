@@ -21,6 +21,8 @@ export const updateWhatsappTemplate = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.whatsappTemplate.update({
 			id: args.metadata.whatsappTemplateId,
+			name: args.input.name,
+			locale: args.input.locale,
 			components: args.input.components,
 			updatedAt: new Date().getTime()
 		});

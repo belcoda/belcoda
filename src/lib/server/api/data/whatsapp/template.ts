@@ -63,6 +63,8 @@ export async function updateWhatsappTemplate({
 		.update(whatsappTemplateTable)
 		.set({
 			components: parsed.components,
+			name: parsed.name,
+			locale: parsed.locale,
 			updatedAt: new Date()
 		})
 		.where(

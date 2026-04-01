@@ -45,6 +45,8 @@ export const createWhatsappTemplate = v.object({
 export type CreateWhatsappTemplate = v.InferInput<typeof createWhatsappTemplate>;
 
 export const updateWhatsappTemplate = v.object({
+	name: whatsappTemplateSchema.entries.name,
+	locale: whatsappTemplateSchema.entries.locale,
 	components: whatsappTemplateSchema.entries.components
 });
 export type UpdateWhatsappTemplate = v.InferInput<typeof updateWhatsappTemplate>;
