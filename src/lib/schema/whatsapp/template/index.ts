@@ -2,6 +2,7 @@ import {
 	type InferOutput,
 	object,
 	literal,
+	picklist,
 	array,
 	variant,
 	string,
@@ -84,3 +85,16 @@ export const templateMessage = object({
 	parameter_format: literal('NAMED'),
 	components: templateMessageComponents
 });
+
+export const whatsappTemplateStatus = picklist([
+	'NOT_SUBMITTED',
+	'PENDING',
+	'APPROVED',
+	'REJECTED',
+	'IN_APPEAL',
+	'PENDING_DELETION',
+	'DELETED',
+	'DISABLED',
+	'PAUSED',
+	'LIMIT_EXCEEDED'
+]);
