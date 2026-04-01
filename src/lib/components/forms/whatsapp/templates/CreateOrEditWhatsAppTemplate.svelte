@@ -3,7 +3,7 @@
 	import type { LanguageCode } from '$lib/utils/language';
 	const { template, mode }: { template: ReadWhatsappTemplateZero; mode: 'edit' | 'create' } =
 		$props();
-	let components = $state((() => template.components)());
+	let components = $state((() => JSON.parse(JSON.stringify(template.components)))());
 	import EditComponents from './EditComponent.svelte';
 	import TemplateRender from './TemplateRender.svelte';
 </script>
