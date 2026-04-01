@@ -19,7 +19,7 @@ export function convertNodeToFullMessage({
 	return {
 		id: messageId,
 		text: messageNode.text,
-		image_url: messageNode.imageUrl,
+		image_url: messageNode.imageUrl || undefined,
 		buttons: messageNode.buttons.map((button) => ({
 			text: button.label,
 			action: button.id
