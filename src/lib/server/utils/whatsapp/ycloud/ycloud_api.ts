@@ -11,8 +11,20 @@ import { convertInternalToYCloudRequest } from '$lib/utils/whatsapp/flow_convert
 import * as v from 'valibot';
 
 import { convertWhatsappMessageToApiFormat } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
-
+import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+import { whatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { renderValiError } from '$lib/schema/helpers';
+
+export const whatsAppTemplateResponseSchema = v.object({
+	wabaId: v.string(),
+	name: v.string(),
+	language: v.string(),
+	category: v.string(),
+	status: whatsappTemplateStatus,
+	qualityRating: v.optional(v.picklist(['GREEN', 'YELLOW', 'RED', 'UNKNOWN'])),
+	reason: v.optional(v.string())
+});
+
 async function sendToYCloud({
 	endpoint,
 	body,
@@ -318,4 +330,111 @@ export async function deprecateFlow({
 		flowId: ycloudFlowId,
 		success: parsed.success
 	};
+}
+
+// templates
+
+export async function createWhatsappTemplate({
+	wabaId,
+	components,
+	name,
+	language,
+	category = 'MARKETING'
+}: {
+	wabaId: string;
+	components: TemplateMessageComponents;
+	name: string;
+	language: string;
+	category?: 'MARKETING' | 'UTILITY' | 'AUTHENTICATION';
+}) {
+	const response = await sendToYCloud({
+		endpoint: '/whatsapp/templates',
+		body: {
+			wabaId,
+			name,
+			language,
+			category,
+			components
+		},
+		method: 'POST'
+	});
+
+	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing response from YCloud');
+		throw Error('Invalid response from YCloud');
+	});
+
+	return {
+		...parsed
+	};
+}
+
+export async function updateWhatsappTemplate({
+	wabaId,
+	templateName,
+	language,
+	components
+}: {
+	wabaId: string;
+	templateName: string;
+	language: string;
+	components: TemplateMessageComponents;
+}) {
+	const response = await sendToYCloud({
+		endpoint: `/whatsapp/templates/${wabaId}/${templateName}/${language}`,
+		body: components,
+		method: 'PATCH'
+	});
+	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing response from YCloud');
+		throw Error('Invalid response from YCloud');
+	});
+
+	return {
+		...parsed
+	};
+}
+
+export async function getWhatsappTemplateStatus({
+	wabaId,
+	templateName,
+	locale
+}: {
+	wabaId: string;
+	templateName: string;
+	locale: string;
+}) {
+	const response = await sendToYCloud({
+		endpoint: `/whatsapp/templates/${wabaId}/${templateName}/${locale}`,
+		method: 'GET'
+	});
+	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing response from YCloud');
+		throw Error('Invalid response from YCloud');
+	});
+	return parsed;
+}
+
+export async function checkWhatsappTemplateExists({
+	wabaId,
+	templateName,
+	locale
+}: {
+	wabaId: string;
+	templateName: string;
+	locale: string;
+}) {
+	try {
+		await sendToYCloud({
+			endpoint: `/whatsapp/templates/${wabaId}/${templateName}/${locale}`,
+			method: 'GET'
+		});
+		return true;
+	} catch (error) {
+		log.debug(
+			{ error },
+			'Error checking if WhatsApp template exists. If this is a 404, this is expected.'
+		);
+		return false;
+	}
 }
