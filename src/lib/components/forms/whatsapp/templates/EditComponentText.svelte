@@ -7,11 +7,16 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template/index';
+
 	let {
-		components,
-		type,
-		index
-	}: { components: TemplateMessageComponents; type: 'header' | 'body'; index: number } = $props();
+		value = $bindable(),
+		items = $bindable([]),
+		type = 'body'
+	}: {
+		type?: 'header' | 'body';
+		value: string;
+		items: string[];
+	} = $props();
 
 	function syncVariablesWithValueString(value: string, variables: string[]): string[] {
 		// Extract all unique {{param_name}} patterns from the string
