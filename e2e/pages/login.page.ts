@@ -12,15 +12,13 @@ export class LoginPage {
 
 	constructor(page: Page) {
 		this.page = page;
-		this.emailInput = page.locator('input[type="email"], input[name="email"]');
-		this.passwordInput = page.locator('input[type="password"], input[name="password"]');
-		this.submitButton = page.locator('button[type="submit"]');
-		this.errorMessage = page.locator(
-			'[data-slot="alert-description"]:has-text("Invalid email or password")'
-		);
-		this.googleButton = page.locator('button:has-text("Google"), [data-provider="google"]');
-		this.signupLink = page.locator('a[href="/signup"], a:has-text("Sign up")');
-		this.forgotPasswordLink = page.locator('a[href*="forgot"], a:has-text("Forgot")');
+		this.emailInput = page.getByTestId('login-email');
+		this.passwordInput = page.getByTestId('login-password');
+		this.submitButton = page.getByTestId('login-submit');
+		this.errorMessage = page.getByTestId('auth-error');
+		this.googleButton = page.getByTestId('login-google');
+		this.signupLink = page.getByTestId('login-signup-link');
+		this.forgotPasswordLink = page.getByTestId('login-forgot-password');
 	}
 
 	async goto() {

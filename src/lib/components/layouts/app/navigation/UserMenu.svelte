@@ -32,6 +32,7 @@
 				<Sidebar.MenuButton
 					{...props}
 					size="lg"
+					data-testid="user-menu-trigger"
 					class="mx-auto transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110 data-[state=open]:bg-gray-700 data-[state=open]:text-sidebar-accent-foreground md:h-12 md:p-0"
 				>
 					<div
@@ -101,7 +102,12 @@
 			<DropdownMenu.Separator />
 		{/if} -->
 		<DropdownMenu.Item>
-			<a href="/logout" class="flex w-full items-center gap-2" data-sveltekit-preload-data="tap">
+			<a
+				href="/logout"
+				class="flex w-full items-center gap-2"
+				data-sveltekit-preload-data="tap"
+				data-testid="user-menu-logout"
+			>
 				<LogOutIcon />
 				{t`Log out`}
 			</a>

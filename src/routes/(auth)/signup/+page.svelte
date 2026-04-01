@@ -161,7 +161,9 @@
 				<Debug {data} />
 				<div class="text-center text-sm">
 					{t`Already have an account?`}
-					<a href="/login" class="underline underline-offset-4"> {t`Sign in`} </a>
+					<a href="/login" class="underline underline-offset-4" data-testid="signup-login-link">
+						{t`Sign in`}
+					</a>
 				</div>
 			{/if}
 		</form>

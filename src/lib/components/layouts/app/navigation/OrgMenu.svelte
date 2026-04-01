@@ -36,6 +36,7 @@
 			<Sidebar.MenuButton
 				{...props}
 				size="lg"
+				data-testid="org-menu-trigger"
 				class="transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110 data-[state=open]:bg-gray-700 data-[state=open]:text-sidebar-accent-foreground md:h-12 md:p-0"
 			>
 				{#if activeOrganization.details.type === 'complete' && activeOrganization.data}
@@ -98,7 +99,12 @@
 			<DropdownMenu.Group>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a href="/settings" class="flex items-center gap-2" {...props}>
+						<a
+							href="/settings"
+							class="flex items-center gap-2"
+							{...props}
+							data-testid="org-menu-settings"
+						>
 							<SettingsIcon />
 							{t`Settings`}
 						</a>

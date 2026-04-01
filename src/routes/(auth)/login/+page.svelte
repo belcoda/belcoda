@@ -62,7 +62,7 @@
 
 			<Errors {errors} />
 			{#if error}
-				<ErrorAlert>{error}</ErrorAlert>
+				<ErrorAlert data-testid="auth-error">{error}</ErrorAlert>
 			{/if}
 			<Form.Field {form} name="email">
 				<Form.Control>
@@ -70,6 +70,7 @@
 						<Form.Label>{t`Email`}</Form.Label>
 						<Input
 							{...props}
+							data-testid="login-email"
 							type="email"
 							placeholder={t`email@example.com`}
 							autocomplete="email"
@@ -86,6 +87,7 @@
 							<Form.Label>{t`Password`}</Form.Label>
 							<a
 								href="/login/forgot_password"
+								data-testid="login-forgot-password"
 								class="ml-auto text-sm underline-offset-4 hover:underline"
 							>
 								{t`Forgot your password?`}
@@ -93,6 +95,7 @@
 						</div>
 						<Input
 							{...props}
+							data-testid="login-password"
 							type="password"
 							placeholder="••••••••••••"
 							autocomplete="current-password"
@@ -102,13 +105,15 @@
 					{/snippet}
 				</Form.Control>
 			</Form.Field>
-			<Button type="submit" class="w-full" disabled={loading}>
+			<Button type="submit" class="w-full" disabled={loading} data-testid="login-submit">
 				{loading ? t`Logging in...` : t`Login`}
 			</Button>
 			<Debug {data} />
 			<div class="text-center text-sm">
 				{t`Don't have an account?`}
-				<a href="/signup" class="underline underline-offset-4"> {t`Sign up`} </a>
+				<a href="/signup" class="underline underline-offset-4" data-testid="login-signup-link">
+					{t`Sign up`}
+				</a>
 			</div>
 		{/if}
 	</form>
@@ -122,6 +127,7 @@
 			class="w-full"
 			onclick={handleGoogleLogin}
 			disabled={loading}
+			data-testid="login-google"
 		>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="mr-2 size-4">
 				<path

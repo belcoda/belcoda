@@ -36,7 +36,7 @@
 								<span class="text-base">{t`Community`}</span>
 							{/snippet}
 							{#snippet child({ props })}
-								<a href="/community" {...props}
+								<a href="/community" {...props} data-testid="nav-community"
 									><span class="icon-[lucide--users] size-6 text-sidebar-primary-foreground"></span>
 									<span class="sr-only">{t`Community`}</span></a
 								>
