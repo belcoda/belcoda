@@ -1,4 +1,5 @@
-export function stripHtmlAndTrim(html: string): string {
+export function stripHtmlAndTrim(html: string | null | undefined): string {
+	if (!html) return '';
 	const withSpaces = html
 		.replace(/<\s*(p|br)[^>]*>/gi, ' ') // Replace <p>, <br> with space
 		.replace(/<\/p>/gi, ' '); // Replace </p> with space
@@ -8,7 +9,8 @@ export function stripHtmlAndTrim(html: string): string {
 
 	return normalized.slice(0, 90);
 }
-export function stripHtmlTags(html: string): string {
+export function stripHtmlTags(html: string | null | undefined): string {
+	if (!html) return '';
 	//replace <p> and <br> with line breaks
 	const withLineBreaks = html.replace(/<\s*(p|br)[^>]*>/gi, '\n');
 	const noTags = withLineBreaks.replace(/<[^>]*>/g, ''); // Remove other tags
@@ -17,7 +19,8 @@ export function stripHtmlTags(html: string): string {
 	return normalized;
 }
 
-export function decodeHTMLEntities(text: string): string {
+export function decodeHTMLEntities(text: string | null | undefined): string {
+	if (!text) return '';
 	const entities: Record<string, string> = {
 		'&amp;': '&',
 		'&lt;': '<',
@@ -30,7 +33,7 @@ export function decodeHTMLEntities(text: string): string {
 	return text.replace(/&[a-zA-Z0-9#]+;/g, (entity) => entities[entity] || entity);
 }
 
-export function htmlToPlaintext(html: string): string {
+export function htmlToPlaintext(html: string | null | undefined): string {
 	if (!html) return '';
 
 	let text = html;

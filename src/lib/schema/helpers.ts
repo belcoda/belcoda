@@ -82,7 +82,8 @@ export const workspaceSubdomain = v.pipe(
 	}, 'This name is not allowed')
 );
 
-export function transformToWhatsappTemplateParamName(input: string) {
+export function transformToWhatsappTemplateParamName(input: string | null | undefined) {
+	if (!input) return '';
 	return input
 		.toLowerCase()
 		.replace(/[^a-z_]/g, '_') // Replace unwanted chars with _

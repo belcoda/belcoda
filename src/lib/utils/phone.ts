@@ -1263,7 +1263,8 @@ export function getPhoneNumberExample(
 	}
 }
 
-export function normalizePhoneNumber(phoneNumber: string): string {
+export function normalizePhoneNumber(phoneNumber: string | null | undefined): string {
+	if (!phoneNumber) return '';
 	return phoneNumber.replace(/[^0-9]/g, '');
 }
 

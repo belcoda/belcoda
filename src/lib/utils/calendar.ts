@@ -23,7 +23,8 @@ function formatDateForICal(date: Date): string {
 /**
  * Escapes text for iCal format
  */
-function escapeICalText(text: string): string {
+function escapeICalText(text: string | null | undefined): string {
+	if (!text) return '';
 	return text
 		.replace(/\\/g, '\\\\')
 		.replace(/;/g, '\\;')

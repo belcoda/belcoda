@@ -1,7 +1,10 @@
 import { parse } from 'valibot';
 import { slug } from '$lib/schema/helpers';
 //taken from https://dev.to/bybydev/how-to-slugify-a-string-in-javascript-4o9n
-export function slugify(str: string) {
+export function slugify(str: string | null | undefined) {
+	if (!str) {
+		return '';
+	}
 	str = str.replace(/^\s+|\s+$/g, ''); // trim leading/trailing white space
 	if (str.length === 0) {
 		return '';
@@ -14,7 +17,10 @@ export function slugify(str: string) {
 	return parse(slug, str);
 }
 
-export function slugifyUnderscore(str: string) {
+export function slugifyUnderscore(str: string | null | undefined) {
+	if (!str) {
+		return '';
+	}
 	str = str.replace(/^\s+|\s+$/g, ''); // trim leading/trailing white space
 	if (str.length === 0) {
 		return '';

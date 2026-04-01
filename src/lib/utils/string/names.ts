@@ -323,7 +323,10 @@ const DIVIDERS = ['-', '_', '.', ' '];
 
 export const DISALLOWED_NAMES_SET = new Set(DISALLOWED_NAMES);
 
-export function checkDisallowedNames(name: string): void {
+export function checkDisallowedNames(name: string | null | undefined): void {
+	if (!name) {
+		throw new Error(`The name is required.`);
+	}
 	const lower = name.toLowerCase();
 	if (DISALLOWED_NAMES_SET.has(lower)) {
 		throw new Error(`The name "${name}" is disallowed.`);
