@@ -4179,3 +4179,7 @@ msgstr ""
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Pending"
 msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Submit"
+msgstr ""

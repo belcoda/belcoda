@@ -4140,3 +4140,7 @@ msgstr "Limit exceeded"
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Pending"
 msgstr "Pending"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Submit"
+msgstr "Submit"
