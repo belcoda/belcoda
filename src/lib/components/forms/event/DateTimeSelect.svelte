@@ -3,6 +3,8 @@
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type Readable } from 'svelte/store';
 	import { type CreateEventZero, type UpdateEventZero } from '$lib/schema/event';
+	import { Time } from '@internationalized/date';
+	import { cn } from '$lib/utils.js';
 
 	type Errors = Readable<
 		{
@@ -22,9 +24,12 @@
 		errors = $bindable()
 	}: Props<CreateEventZero | UpdateEventZero> = $props();
 
+	const { allErrors } = form;
+
 	//* FOO IMPORTS (//) *//
 	import Calendar from '$lib/components/ui/calendar/calendar.svelte';
 	import TimezoneSelect from '$lib/components/ui/custom-select/timezone/timezone.svelte';
+	import TimePicker12h from '$lib/components/ui/custom-select/time/time-picker-12h.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { toast } from 'svelte-sonner';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
@@ -67,39 +72,55 @@
 		)
 	);
 	function getStartTime() {
-		return $data.startsAt
-			? generateTimeString($data.startsAt, $data.timezone || getLocalTimeZone())
-			: '18:00:00';
+		const zdt = parseAbsolute(
+			new Date($data.startsAt).toISOString(),
+			$data.timezone || getLocalTimeZone()
+		);
+		return new Time(zdt.hour, zdt.minute, 0);
 	}
-	function setStartTime(time: string) {
+	function setStartTime(time: Time) {
 		if (time) {
-			const newStartsAt = updateTimestampTime(
-				time,
-				$data.timezone || getLocalTimeZone(),
-				$data.startsAt ?? new Date().getTime()
+			const zonedDateTime = parseAbsolute(
+				new Date($data.startsAt).toISOString(),
+				$data.timezone || getLocalTimeZone()
 			);
+			const newStartsAt = zonedDateTime
+				.set({
+					hour: time.hour,
+					minute: time.minute,
+					second: time.second
+				})
+				.toDate()
+				.getTime();
 			if ($data.endsAt && newStartsAt > $data.endsAt) {
-				toast.error(t`Start date must be before end date`);
-				return;
 			}
 			$data.startsAt = newStartsAt;
 		}
 	}
+
 	function getEndTime() {
-		return $data.endsAt
-			? generateTimeString($data.endsAt, $data.timezone || getLocalTimeZone())
-			: '20:00:00';
+		const zdt = parseAbsolute(
+			new Date($data.endsAt).toISOString(),
+			$data.timezone || getLocalTimeZone()
+		);
+		return new Time(zdt.hour, zdt.minute, 0);
 	}
-	function setEndTime(time: string) {
+	function setEndTime(time: Time) {
 		if (time) {
-			const newEndsAt = updateTimestampTime(
-				time,
-				$data.timezone || getLocalTimeZone(),
-				$data.endsAt ?? new Date().getTime()
+			const zonedDateTime = parseAbsolute(
+				new Date($data.endsAt).toISOString(),
+				$data.timezone || getLocalTimeZone()
 			);
+			const newEndsAt = zonedDateTime
+				.set({
+					hour: time.hour,
+					minute: time.minute,
+					second: time.second
+				})
+				.toDate()
+				.getTime();
 			if ($data.startsAt && newEndsAt < $data.startsAt) {
 				toast.error(t`Start date must be before end date`);
-				return;
 			}
 			$data.endsAt = newEndsAt;
 		}
@@ -116,7 +137,6 @@
 </script>
 
 {@render dateTimeSelect()}
-
 {#snippet dateTimeSelect()}
 	<div>
 		<Collapsible.Root class="w-full space-y-2">
@@ -266,13 +286,7 @@
 			{#snippet children({ props })}
 				<Form.Label>{t`From`}</Form.Label>
 
-				<Input
-					type="time"
-					{...props}
-					step="1"
-					bind:value={getStartTime, setStartTime}
-					class="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-				/>
+				<TimePicker12h view="dotted" {...props} bind:time={getStartTime, setStartTime} />
 			{/snippet}
 		</Form.Control>
 	</Form.Field>
@@ -284,13 +298,7 @@
 			{#snippet children({ props })}
 				<Form.Label>{t`To`}</Form.Label>
 
-				<Input
-					type="time"
-					{...props}
-					step="1"
-					bind:value={getEndTime, setEndTime}
-					class="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-				/>
+				<TimePicker12h view="dotted" {...props} bind:time={getEndTime, setEndTime} />
 			{/snippet}
 		</Form.Control>
 	</Form.Field>
@@ -301,8 +309,8 @@
 		bind:value={eventType}
 		onValueChange={(v) => {
 			if (v === 'allDayEvent') {
-				setStartTime('00:00:00');
-				setEndTime('23:59:59');
+				setStartTime(new Time(0, 0, 0));
+				//setEndTime(new Time(23, 59, 59));
 			} else if (v === 'multiDayEvent') {
 				//end date  = start date + 1 day
 				const newEndsAt = endZonedDateTime.add({ days: 1 }).toDate().getTime();
@@ -394,7 +402,7 @@
 
 {#snippet trigger()}
 	<Collapsible.Trigger
-		class={buttonVariants({ variant: 'ghost', size: 'default', class: 'w-9 p-0' })}
+		class={cn(buttonVariants({ variant: 'ghost', size: 'default', class: 'w-9' }), 'mb-1.5')}
 	>
 		<ChevronsUpDownIcon />
 		<span class="sr-only">{t`Toggle`}</span>
