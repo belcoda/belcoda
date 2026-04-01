@@ -4145,3 +4145,19 @@ msgstr ""
 #: src/routes/(app)/preferences/+page.svelte
 msgid "Manage your user preferences, including language"
 msgstr ""
+
+#: src/lib/components/widgets/CookieBanner.svelte
+msgid "Cookie Preferences"
+msgstr "Preferencias de cookies"
+
+#: src/lib/components/widgets/CookieBanner.svelte
+msgid "We use cookies to improve your experience. Necessary cookies are always on. You can accept all cookies or only necessary ones."
+msgstr "Usamos cookies para mejorar tu experiencia. Las cookies necesarias siempre están activas. Puedes aceptar todas las cookies o solo las necesarias."
+
+#: src/lib/components/widgets/CookieBanner.svelte
+msgid "Accept all"
+msgstr "Aceptar todas"
+
+#: src/lib/components/widgets/CookieBanner.svelte
+msgid "Only necessary"
+msgstr "Solo necesarias"
