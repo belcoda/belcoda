@@ -18,6 +18,7 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 </script>
 
 <ContentLayout rootLink="/settings">
@@ -74,7 +75,23 @@
 											<Badge variant="secondary"><Spinner /> {t`Pending`}</Badge>
 										{/if}
 									</Table.Cell>
-									<Table.Cell class="w-[80px] text-right">
+									<Table.Cell class="flex items-center justify-end gap-2 text-right">
+										{#if template.status === 'NOT_SUBMITTED'}
+											<Button
+												variant="outline"
+												size="sm"
+												onclick={() => {
+													z.mutate(
+														mutators.whatsappTemplate.submit({
+															whatsappTemplateId: template.id,
+															organizationId: appState.organizationId
+														})
+													);
+												}}
+											>
+												{t`Submit`}
+											</Button>
+										{/if}
 										<Button
 											variant="outline"
 											size="sm"
