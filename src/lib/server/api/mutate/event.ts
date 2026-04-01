@@ -3,7 +3,8 @@ import {
 	createEventZeroMutatorSchema,
 	updateEventZeroMutatorSchema,
 	deleteEventMutatorSchemaZero,
-	archiveEventMutatorSchemaZero
+	archiveEventMutatorSchemaZero,
+	postEventMutatorSchemaZero
 } from '$lib/schema/event';
 import * as dataFunctions from '$lib/server/api/data/event/event';
 
@@ -46,3 +47,10 @@ export const archiveEvent = defineMutator(
 		await dataFunctions.archiveEvent({ tx, ctx, args });
 	}
 );
+
+export const postEvent = defineMutator(postEventMutatorSchemaZero, async ({ tx, args, ctx }) => {
+	if (tx.location !== 'server') {
+		throw new Error('postEvent can only be called from the server');
+	}
+	await dataFunctions.postEvent({ tx, ctx, args });
+});

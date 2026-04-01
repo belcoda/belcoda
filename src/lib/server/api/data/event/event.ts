@@ -12,7 +12,9 @@ import {
 	deleteEventMutatorSchemaZero,
 	type DeleteEventMutatorSchemaZero,
 	archiveEventMutatorSchemaZero,
-	type ArchiveEventMutatorSchemaZero
+	type ArchiveEventMutatorSchemaZero,
+	postEventMutatorSchemaZero,
+	type PostEventMutatorSchemaZero
 } from '$lib/schema/event';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { parse } from 'valibot';
@@ -249,6 +251,44 @@ export async function archiveEvent({
 				eq(event.organizationId, parsed.metadata.organizationId)
 			)
 		);
+}
+
+export async function postEvent({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: PostEventMutatorSchemaZero;
+}) {
+	const parsed = parse(postEventMutatorSchemaZero, args);
+	const eventRecord = await tx.run(
+		builder.event
+			.where('id', '=', parsed.metadata.eventId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => eventReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!eventRecord) {
+		throw new Error('Event not found');
+	}
+
+	const [updatedEvent] = await tx.dbTransaction.wrappedTransaction
+		.update(event)
+		.set({ published: true, updatedAt: new Date() })
+		.where(
+			and(
+				eq(event.id, parsed.metadata.eventId),
+				eq(event.organizationId, parsed.metadata.organizationId)
+			)
+		)
+		.returning();
+
+	if (updatedEvent) {
+		const queue = await getQueue();
+		queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
+	}
 }
 
 export async function _getEventBySlugUnsafe({

@@ -187,3 +187,8 @@ export const archiveEventMutatorSchemaZero = v.object({
 	metadata: mutatorMetadata
 });
 export type ArchiveEventMutatorSchemaZero = v.InferOutput<typeof archiveEventMutatorSchemaZero>;
+
+export const postEventMutatorSchemaZero = v.object({
+	metadata: mutatorMetadata
+});
+export type PostEventMutatorSchemaZero = v.InferOutput<typeof postEventMutatorSchemaZero>;

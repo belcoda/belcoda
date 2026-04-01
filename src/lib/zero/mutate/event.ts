@@ -6,7 +6,8 @@ import {
 	createEventZeroMutatorSchema,
 	updateEventZeroMutatorSchema,
 	deleteEventMutatorSchemaZero,
-	archiveEventMutatorSchemaZero
+	archiveEventMutatorSchemaZero,
+	postEventMutatorSchemaZero
 } from '$lib/schema/event';
 import { parse } from 'valibot';
 
@@ -78,3 +79,11 @@ export const archiveEvent = defineMutator(
 		});
 	}
 );
+
+export const postEvent = defineMutator(postEventMutatorSchemaZero, async ({ tx, args, ctx }) => {
+	tx.mutate.event.update({
+		id: args.metadata.eventId,
+		published: true,
+		updatedAt: new Date().getTime()
+	});
+});

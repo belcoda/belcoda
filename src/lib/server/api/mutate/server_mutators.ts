@@ -39,7 +39,8 @@ export const mutators = defineMutators({
 		create: event.createEvent,
 		update: event.updateEvent,
 		delete: event.deleteEvent,
-		archive: event.archiveEvent
+		archive: event.archiveEvent,
+		post: event.postEvent
 	},
 	eventSignup: {
 		create: eventSignup.createEventSignup,
