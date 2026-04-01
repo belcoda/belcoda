@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
+	import { beforeNavigate } from '$app/navigation';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -106,6 +107,23 @@
 	const country = $state(
 		$data.country || appState.activeOrganization?.data?.country || defaultCountryCode
 	);
+
+	$effect(() => {
+		const handler = (e: BeforeUnloadEvent) => {
+			if (!helpers.isTainted()) return;
+			e.preventDefault();
+		};
+		window.addEventListener('beforeunload', handler);
+		return () => window.removeEventListener('beforeunload', handler);
+	});
+
+	beforeNavigate((nav) => {
+		if (!helpers.isTainted()) return;
+		if (!nav.to) return;
+		if (!confirm(t`Your changes might not be saved. Leave this page?`)) {
+			nav.cancel();
+		}
+	});
 </script>
 
 <form use:form.enhance id="person-form">

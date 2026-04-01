@@ -4146,6 +4146,12 @@ msgstr ""
 msgid "Manage your user preferences, including language"
 msgstr ""
 
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Your changes might not be saved. Leave this page?"
+msgstr ""
+
 #: src/lib/components/widgets/CookieBanner.svelte
 msgid "Cookie Preferences"
 msgstr "Preferencias de cookies"

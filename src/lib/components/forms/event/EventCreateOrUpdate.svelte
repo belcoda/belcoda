@@ -84,13 +84,30 @@
 	import EventSignupSurvey from '$lib/components/forms/event/EventSignupSurvey.svelte';
 	import { defaultEventSettings } from '$lib/schema/event/settings';
 	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
+	import { goto, beforeNavigate } from '$app/navigation';
 	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
+
+	$effect(() => {
+		const handler = (e: BeforeUnloadEvent) => {
+			if (!helpers.isTainted()) return;
+			e.preventDefault();
+		};
+		window.addEventListener('beforeunload', handler);
+		return () => window.removeEventListener('beforeunload', handler);
+	});
+
+	beforeNavigate((nav) => {
+		if (!helpers.isTainted()) return;
+		if (!nav.to) return;
+		if (!confirm(t`Your changes might not be saved. Leave this page?`)) {
+			nav.cancel();
+		}
+	});
 
 	function setSlug(slug: string) {
 		$data.slug = slugify(slug);
