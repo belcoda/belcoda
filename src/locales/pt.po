@@ -769,7 +769,6 @@ msgstr "Editar"
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 msgid "Delete"
 msgstr "Excluir"
@@ -783,6 +782,7 @@ msgid "Update note"
 msgstr "Atualizar nota"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
 msgid "Danger zone!"
 msgstr "Zona de perigo!"
@@ -1923,8 +1923,9 @@ msgstr "Editar petição"
 msgid "Detailed signatures table"
 msgstr "Tabela de assinaturas detalhada"
 
-#~ msgid "View petition page"
-#~ msgstr "Ver página da petição"
+#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+msgid "View petition page"
+msgstr "Ver página da petição"
 
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 msgid "Preview petition page"
@@ -3284,41 +3285,40 @@ msgstr ""
 msgid "Default layout"
 msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Petition archived"
 msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Petition deleted"
 msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Archive petition"
 msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Delete petition"
 msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
-msgid "Archive this petition?"
-msgstr ""
+#~ msgid "Archive this petition?"
+#~ msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
-msgid "Delete this petition?"
-msgstr ""
+#~ msgid "Delete this petition?"
+#~ msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "This petition will be archived. You can still view it in the archived petitions list."
 msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "This draft petition will be permanently deleted. This action cannot be undone."
 msgstr ""
 
-#: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
-msgid "Archive"
-msgstr ""
+#~ msgid "Archive"
+#~ msgstr ""
 
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "Share this petition with your audience"
