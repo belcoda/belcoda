@@ -5,16 +5,13 @@
 
 	import { watch } from 'runed';
 	import { Button } from '$lib/components/ui/button/index.js';
-
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template/index';
 	let {
-		value = $bindable(),
-		items = $bindable([]),
-		type = 'body'
-	}: {
-		type?: 'header' | 'body';
-		value: string;
-		items: string[];
-	} = $props();
+		components,
+		type,
+		index
+	}: { components: TemplateMessageComponents; type: 'header' | 'body'; index: number } = $props();
 
 	function syncVariablesWithValueString(value: string, variables: string[]): string[] {
 		// Extract all unique {{param_name}} patterns from the string
@@ -73,11 +70,11 @@
 
 <div class="w-full">
 	<div>
-		<textarea
+		<Textarea
 			bind:value={getValue, setValue}
 			maxlength={type === 'header' ? 60 : 1024}
-			class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 invalid:outline-red-600 focus:border-gray-400 focus:ring-0 focus:outline-0 sm:text-sm/6"
-		></textarea>
+			class="block w-full"
+		></Textarea>
 		<div class="ms-1 text-sm text-gray-500">
 			{type === 'header'
 				? t`The header text must be 60 characters or less`
@@ -119,7 +116,7 @@
 				>
 			</Alert.Root>
 		{/if}
-		<table class="w-full text-left text-sm text-gray-500 rtl:text-right">
+		<table class="w-full text-left text-sm rtl:text-right">
 			<tbody>
 				{#each items as _, i}
 					<tr class="border-b border-gray-200">
