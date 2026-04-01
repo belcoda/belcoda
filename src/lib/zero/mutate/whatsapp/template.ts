@@ -1,5 +1,9 @@
 import { defineMutator } from '@rocicorp/zero';
-import { createMutatorSchema, updateMutatorSchema } from '$lib/schema/whatsapp-template';
+import {
+	createMutatorSchema,
+	updateMutatorSchema,
+	mutatorMetadata
+} from '$lib/schema/whatsapp-template';
 
 export const createWhatsappTemplate = defineMutator(
 	createMutatorSchema,
@@ -28,3 +32,11 @@ export const updateWhatsappTemplate = defineMutator(
 		});
 	}
 );
+
+export const submitWhatsappTemplate = defineMutator(mutatorMetadata, async ({ tx, args, ctx }) => {
+	tx.mutate.whatsappTemplate.update({
+		id: args.whatsappTemplateId,
+		status: 'PENDING',
+		submittedForReviewAt: new Date().getTime()
+	});
+});

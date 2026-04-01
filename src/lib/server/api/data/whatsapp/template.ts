@@ -4,13 +4,19 @@ import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
-
+import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import {
 	updateWhatsappTemplate as updateWhatsappTemplateSchema,
 	createWhatsappTemplate as createWhatsappTemplateSchema,
 	type CreateWhatsappTemplate as CreateWhatsappTemplateSchema,
-	type UpdateWhatsappTemplate as UpdateWhatsappTemplateSchema
+	type UpdateWhatsappTemplate as UpdateWhatsappTemplateSchema,
+	type MutatorMetadata as MutatorMetadataSchema,
+	mutatorMetadata
 } from '$lib/schema/whatsapp-template';
+import {
+	checkWhatsappTemplateExists,
+	createWhatsappTemplate as createWhatsappTemplateYCloud
+} from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
@@ -78,4 +84,64 @@ export async function updateWhatsappTemplate({
 		throw new Error('Failed to update WhatsApp template');
 	}
 	return updated[0];
+}
+
+export async function submitWhatsappTemplate({
+	args,
+	ctx,
+	tx
+}: {
+	args: { whatsappTemplateId: string; organizationId: string };
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const parsed = await parse(mutatorMetadata, args);
+
+	const template = await tx.dbTransaction.wrappedTransaction.query.whatsappTemplate.findFirst({
+		where: and(
+			eq(whatsappTemplateTable.id, parsed.whatsappTemplateId),
+			eq(whatsappTemplateTable.organizationId, parsed.organizationId)
+		)
+	});
+	if (!template) {
+		throw new Error('WhatsApp template not found');
+	}
+	const organization = await getOrganizationByIdUnsafe({
+		organizationId: parsed.organizationId,
+		tx
+	});
+	if (!organization.settings.whatsApp.wabaId) {
+		throw new Error('WhatsApp business account not found');
+	}
+
+	const doesTemplateExist = await checkWhatsappTemplateExists({
+		wabaId: organization.settings.whatsApp.wabaId,
+		templateName: template.name,
+		locale: template.locale
+	});
+	if (!doesTemplateExist) {
+		await createWhatsappTemplateYCloud({
+			wabaId: organization.settings.whatsApp.wabaId,
+			name: template.name,
+			language: template.locale,
+			components: template.components
+		});
+	}
+
+	const updated = await tx.dbTransaction.wrappedTransaction
+		.update(whatsappTemplateTable)
+		.set({
+			status: 'PENDING',
+			submittedForReviewAt: new Date()
+		})
+		.where(
+			and(
+				eq(whatsappTemplateTable.id, args.whatsappTemplateId),
+				eq(whatsappTemplateTable.organizationId, args.organizationId)
+			)
+		)
+		.returning();
+	if (updated.length === 0) {
+		throw new Error('Failed to submit WhatsApp template');
+	}
 }
