@@ -9,8 +9,9 @@
 	import type { ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
 	import queries from '$lib/zero/query/index';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
-	let filter: ListEventSignupsInput = $state({
+	let filter = $state<ListEventSignupsInput>({
 		...getListFilter(appState.organizationId),
+		includeIncomplete: false,
 		/* svelte-ignore state_referenced_locally */
 		eventId: event.id
 	});
@@ -55,6 +56,9 @@
 							{#if filter.status === 'signup'}
 								{t`Signed up`}
 							{/if}
+							{#if filter.status === 'incomplete'}
+								{t`Incomplete`}
+							{/if}
 							<ChevronDownIcon /></Button
 						>
 					</DropdownMenu.Trigger>
@@ -73,6 +77,9 @@
 						>
 						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'signup')}
 							>{t`Signed up`}</DropdownMenu.CheckboxItem
+						>
+						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'incomplete')}
+							>{t`Incomplete`}</DropdownMenu.CheckboxItem
 						>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>

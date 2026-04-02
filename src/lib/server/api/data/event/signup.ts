@@ -24,17 +24,14 @@ import { parse } from 'valibot';
 
 import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and, not, inArray, sql } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
 
-import {
-	_getPersonByPhoneNumberUnsafe,
-	_getPersonByIdUnsafe
-} from '$lib/server/api/data/person/person';
+import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 export async function getEventByIdUnsafe({
 	eventId,
 	organizationId,
@@ -70,6 +67,39 @@ export async function getEventSignupsByEventIdUnsafe({
 	return eventSignups;
 }
 
+function resolveCompletedEventSignupStatus(
+	eventRecord: typeof event.$inferSelect
+): EventSignupStatus {
+	return eventRecord.startsAt > new Date() ? 'signup' : 'attended';
+}
+
+function isCompleteEventSignupStatus(status: EventSignupStatus | null | undefined) {
+	return status === 'signup' || status === 'attended';
+}
+
+function getEventHasEnded(eventRecord: typeof event.$inferSelect) {
+	return eventRecord.endsAt <= new Date();
+}
+
+function assertEventSignupWindowOpen(eventRecord: typeof event.$inferSelect) {
+	if (getEventHasEnded(eventRecord)) {
+		throw new Error('Event signup period has ended');
+	}
+}
+
+function mergeSignupDetails(
+	existing: EventSignupDetails,
+	incoming: EventSignupDetails
+): EventSignupDetails {
+	return {
+		channel: existing.channel ?? incoming.channel,
+		customFields: {
+			...(existing.customFields || {}),
+			...(incoming.customFields || {})
+		}
+	};
+}
+
 export async function signUpForEventWithId({
 	eventId,
 	teamId,
@@ -100,6 +130,7 @@ export async function signUpForEventWithId({
 	if (!eventResult.published) {
 		throw new Error('Event is not published');
 	}
+	assertEventSignupWindowOpen(eventResult);
 	// We could check if the event has started, but tbh we don't want to block the signup if the event has started
 
 	const eventSignups = await getEventSignupsByEventIdUnsafe({ eventId, organizationId, tx });
@@ -179,6 +210,254 @@ export async function signUpForEventHelper({
 	});
 }
 
+export async function createIncompleteEventSignupHelper({
+	eventId,
+	teamId,
+	tx,
+	personAction,
+	signupDetails,
+	organizationId,
+	defaultEventSignupId
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personAction: PersonActionHelper;
+	signupDetails: EventSignupDetails;
+	organizationId: string;
+	teamId?: string;
+	defaultEventSignupId?: string;
+}) {
+	const parsedActionHelper = parse(personActionHelper, personAction);
+	const eventSignupId = defaultEventSignupId || uuidv7();
+	const personRecord = await findOrCreatePerson({
+		tx,
+		personAction: parsedActionHelper,
+		addedFrom: {
+			type: 'added_from_event',
+			eventSignupId
+		},
+		organizationId,
+		teamId,
+		updateExistingPerson: true
+	});
+
+	return await createIncompleteEventSignupByPersonId({
+		eventId,
+		tx,
+		personId: personRecord.id,
+		organizationId,
+		signupDetails,
+		defaultEventSignupId: eventSignupId
+	});
+}
+
+export async function createIncompleteEventSignupByPersonId({
+	eventId,
+	tx,
+	personId,
+	organizationId,
+	signupDetails,
+	defaultEventSignupId
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personId: string;
+	organizationId: string;
+	signupDetails: EventSignupDetails;
+	defaultEventSignupId?: string;
+}) {
+	const parsedSignupDetails = parse(eventSignupDetails, signupDetails);
+	const eventRecord = await getEventByIdUnsafe({ eventId, organizationId, tx });
+	if (!eventRecord.published) {
+		throw new Error('Event is not published');
+	}
+	assertEventSignupWindowOpen(eventRecord);
+
+	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(eventSignup)
+		.where(
+			and(
+				eq(eventSignup.eventId, eventId),
+				eq(eventSignup.personId, personId),
+				eq(eventSignup.organizationId, organizationId)
+			)
+		)
+		.limit(1);
+
+	const eventSignupId = existingEventSignup?.id || defaultEventSignupId || uuidv7();
+	const detailsToPersist = existingEventSignup
+		? mergeSignupDetails(existingEventSignup.details, parsedSignupDetails)
+		: parsedSignupDetails;
+
+	if (existingEventSignup) {
+		const [updated] = await tx.dbTransaction.wrappedTransaction
+			.update(eventSignup)
+			.set({
+				details: detailsToPersist,
+				updatedAt: new Date()
+			})
+			.where(eq(eventSignup.id, existingEventSignup.id))
+			.returning();
+		if (!updated) {
+			throw new Error('Unable to update existing event signup');
+		}
+		return updated;
+	}
+
+	const [inserted] = await tx.dbTransaction.wrappedTransaction
+		.insert(eventSignup)
+		.values({
+			id: eventSignupId,
+			organizationId,
+			eventId,
+			personId,
+			details: detailsToPersist,
+			status: 'incomplete',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		})
+		.returning();
+	if (!inserted) {
+		throw new Error('Unable to create incomplete event signup');
+	}
+	return inserted;
+}
+
+export async function completeEventSignupHelper({
+	eventId,
+	teamId,
+	tx,
+	personAction,
+	signupDetails,
+	organizationId,
+	defaultEventSignupId
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personAction: PersonActionHelper;
+	signupDetails: EventSignupDetails;
+	organizationId: string;
+	teamId?: string;
+	defaultEventSignupId?: string;
+}) {
+	const parsedActionHelper = parse(personActionHelper, personAction);
+	const eventSignupId = defaultEventSignupId || uuidv7();
+	const personRecord = await findOrCreatePerson({
+		tx,
+		personAction: parsedActionHelper,
+		addedFrom: {
+			type: 'added_from_event',
+			eventSignupId
+		},
+		organizationId,
+		teamId,
+		updateExistingPerson: true
+	});
+
+	return await completeEventSignupByPersonId({
+		eventId,
+		tx,
+		personId: personRecord.id,
+		organizationId,
+		signupDetails,
+		defaultEventSignupId: eventSignupId
+	});
+}
+
+export async function completeEventSignupByPersonId({
+	eventId,
+	tx,
+	personId,
+	organizationId,
+	signupDetails,
+	defaultEventSignupId
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personId: string;
+	organizationId: string;
+	signupDetails: EventSignupDetails;
+	defaultEventSignupId?: string;
+}) {
+	const parsedSignupDetails = parse(eventSignupDetails, signupDetails);
+	const eventRecord = await getEventByIdUnsafe({ eventId, organizationId, tx });
+	if (!eventRecord.published) {
+		throw new Error('Event is not published');
+	}
+	assertEventSignupWindowOpen(eventRecord);
+	const completedStatus = resolveCompletedEventSignupStatus(eventRecord);
+
+	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(eventSignup)
+		.where(
+			and(
+				eq(eventSignup.eventId, eventId),
+				eq(eventSignup.personId, personId),
+				eq(eventSignup.organizationId, organizationId)
+			)
+		)
+		.limit(1);
+
+	const eventSignupId = existingEventSignup?.id || defaultEventSignupId || uuidv7();
+	const detailsToPersist = existingEventSignup
+		? mergeSignupDetails(existingEventSignup.details, parsedSignupDetails)
+		: parsedSignupDetails;
+	const previousStatus = existingEventSignup?.status;
+	const nextStatus =
+		previousStatus === 'attended' || previousStatus === 'noshow' ? previousStatus : completedStatus;
+
+	let result: typeof eventSignup.$inferSelect | undefined;
+	if (existingEventSignup) {
+		const [updated] = await tx.dbTransaction.wrappedTransaction
+			.update(eventSignup)
+			.set({
+				status: nextStatus,
+				details: detailsToPersist,
+				updatedAt: new Date()
+			})
+			.where(eq(eventSignup.id, existingEventSignup.id))
+			.returning();
+		result = updated;
+	} else {
+		const [inserted] = await tx.dbTransaction.wrappedTransaction
+			.insert(eventSignup)
+			.values({
+				id: eventSignupId,
+				organizationId,
+				eventId,
+				personId,
+				details: detailsToPersist,
+				status: nextStatus,
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.returning();
+		result = inserted;
+	}
+
+	if (!result) {
+		throw new Error('Unable to complete event signup');
+	}
+
+	const transitionedToComplete =
+		!isCompleteEventSignupStatus(previousStatus) && isCompleteEventSignupStatus(result.status);
+	if (transitionedToComplete) {
+		const queue = await getQueue();
+		await queue.insertActivity({
+			organizationId,
+			personId,
+			userId: undefined,
+			type: result.status === 'attended' ? 'event_attended' : 'event_signup',
+			referenceId: result.id,
+			unread: false
+		});
+	}
+
+	return result;
+}
+
 // the actual process of signing up for an event, broken off into its own function
 export async function signUpForEventUnsafe({
 	eventSignupId,
@@ -198,7 +477,20 @@ export async function signUpForEventUnsafe({
 	skipNotifications?: boolean;
 }) {
 	const id = eventSignupId || uuidv7();
-	const status = eventRecord.startsAt > new Date() ? 'signup' : 'attended';
+	assertEventSignupWindowOpen(eventRecord);
+	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(eventSignup)
+		.where(
+			and(
+				eq(eventSignup.eventId, eventRecord.id),
+				eq(eventSignup.personId, personRecord.id),
+				eq(eventSignup.organizationId, organizationRecord.id)
+			)
+		)
+		.limit(1);
+	const previousStatus = existingEventSignup?.status;
+	const status = resolveCompletedEventSignupStatus(eventRecord);
 	const eventSignupRecord: typeof eventSignup.$inferInsert = {
 		id,
 		organizationId: organizationRecord.id,
@@ -224,6 +516,20 @@ export async function signUpForEventUnsafe({
 		.returning();
 	if (!insertedEventSignup) {
 		throw new Error('Unable to create event signup');
+	}
+	const transitionedToComplete =
+		!isCompleteEventSignupStatus(previousStatus) &&
+		isCompleteEventSignupStatus(insertedEventSignup.status);
+	if (transitionedToComplete) {
+		const queue = await getQueue();
+		await queue.insertActivity({
+			organizationId: organizationRecord.id,
+			personId: personRecord.id,
+			userId: undefined,
+			type: insertedEventSignup.status === 'attended' ? 'event_attended' : 'event_signup',
+			referenceId: insertedEventSignup.id,
+			unread: false
+		});
 	}
 
 	if (!skipNotifications && details.channel.type === 'eventPage') {
@@ -261,6 +567,7 @@ export async function attendedEventHelper({
 	if (!eventRecord.published) {
 		throw new Error('Event is not published');
 	}
+	assertEventSignupWindowOpen(eventRecord);
 
 	//find or create the person
 	const eventSignupIdIfNeeded = uuidv7();
@@ -334,6 +641,7 @@ export async function declineEventHelper({
 	if (!eventRecord.published) {
 		throw new Error('Event is not published');
 	}
+	assertEventSignupWindowOpen(eventRecord);
 
 	const eventSignupId = uuidv7();
 
@@ -480,6 +788,20 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
+	if (event.endsAt <= Date.now()) {
+		throw new Error('Event signup period has ended');
+	}
+	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(eventSignup)
+		.where(
+			and(
+				eq(eventSignup.eventId, parsed.metadata.eventId),
+				eq(eventSignup.personId, parsed.metadata.personId),
+				eq(eventSignup.organizationId, parsed.metadata.organizationId)
+			)
+		)
+		.limit(1);
 
 	const eventSignupRecord: typeof eventSignup.$inferInsert = {
 		id: parsed.metadata.eventSignupId,
@@ -507,17 +829,25 @@ export async function createEventSignup({
 	if (!insertedEventSignup) {
 		throw new Error('Unable to create event signup');
 	}
-	const queue = await getQueue();
-	await queue.insertActivity({
-		organizationId: parsed.metadata.organizationId,
-		personId: parsed.metadata.personId,
-		userId: ctx.userId || undefined,
-		type: 'event_signup',
-		referenceId: parsed.metadata.eventSignupId,
-		unread: false
-	});
+
+	const shouldLogCompleteActivity =
+		!isCompleteEventSignupStatus(existingEventSignup?.status) &&
+		isCompleteEventSignupStatus(parsed.input.status);
+	let queue: Awaited<ReturnType<typeof getQueue>> | undefined;
+	if (shouldLogCompleteActivity) {
+		queue = await getQueue();
+		await queue.insertActivity({
+			organizationId: parsed.metadata.organizationId,
+			personId: parsed.metadata.personId,
+			userId: ctx.userId || undefined,
+			type: parsed.input.status === 'attended' ? 'event_attended' : 'event_signup',
+			referenceId: parsed.metadata.eventSignupId,
+			unread: false
+		});
+	}
 
 	if (parsed.input.details.channel.type === 'eventPage') {
+		queue = queue || (await getQueue());
 		await queue.sendEventRegistration({
 			eventSignupId: parsed.metadata.eventSignupId,
 			locale: clampLocale(person.preferredLanguage || organization.defaultLanguage)
@@ -562,5 +892,19 @@ export async function updateEventSignup({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update event signup');
+	}
+	const transitionedToComplete =
+		!isCompleteEventSignupStatus(eventSignupRecord.status as EventSignupStatus) &&
+		isCompleteEventSignupStatus(args.input.status);
+	if (transitionedToComplete) {
+		const queue = await getQueue();
+		await queue.insertActivity({
+			organizationId: args.metadata.organizationId,
+			personId: args.metadata.personId,
+			userId: ctx.userId || undefined,
+			type: args.input.status === 'attended' ? 'event_attended' : 'event_signup',
+			referenceId: args.metadata.eventSignupId,
+			unread: false
+		});
 	}
 }

@@ -4167,3 +4167,30 @@ msgstr "Aceitar todos"
 #: src/lib/components/widgets/CookieBanner.svelte
 msgid "Only necessary"
 msgstr "Apenas necessários"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
+msgid "Incomplete"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Mark complete"
+msgstr ""
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Mark as signed up"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "Incomplete signups require follow-up"
+msgstr ""
+
+#. placeholder {0}: incompleteSignups.data.length.toString()
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "There are {0} incomplete signup(s)."
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "View the detailed signups table"
+msgstr ""

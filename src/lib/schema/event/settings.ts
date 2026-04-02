@@ -50,6 +50,7 @@ export type EventSignupDetails = InferOutput<typeof eventSignupDetails>;
 //cancelled == someone who signed up but cancelled
 //deleted == someone who signed up but was deleted by a user or admin
 export const eventSignupStatusList = [
+	'incomplete',
 	'signup',
 	'attended',
 	'noshow',
