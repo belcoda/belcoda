@@ -120,7 +120,7 @@
 		"svelte-lexical": "^0.6.3",
 		"svelte-multiselect": "^11.6.0",
 		"valibot": "^1.1.0",
-		"wuchale": "^0.18.5",
+		"wuchale": "^0.22.7",
 		"zero-svelte": "^1.2.2"
 	}
 }
