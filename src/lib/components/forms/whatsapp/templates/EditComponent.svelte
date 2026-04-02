@@ -127,7 +127,6 @@
 	}
 </script>
 
-{JSON.stringify({ components, name, locale })}
 <div class="flex flex-col">
 	<div class="flex flex-col gap-2">
 		<div class="grid grid-cols-1 gap-2">
