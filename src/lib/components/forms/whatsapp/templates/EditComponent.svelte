@@ -282,7 +282,7 @@
 					variant="outline"
 					size="icon-sm"
 					onclick={() => {
-						components.splice(headerIndex, 1);
+						components.splice(buttonsIndex, 1);
 					}}><XIcon class="size-4" /></Button
 				>
 			</div>
