@@ -39,13 +39,6 @@ export async function parseImportCsv(
 	log.debug({ numRows: parsed.data.length }, 'Parsed CSV');
 	if (parsed.errors.length > 0) {
 		log.error({ errors: parsed.errors }, 'CSV parsing errors');
-		parsed.errors.forEach((error, index) => {
-			failedRows.push({
-				row: error.row || error.index || index,
-				error: `${error.code}: ${error.message}`
-			});
-			failedCount++;
-		});
 	}
 	for (const [index, row] of parsed.data.entries()) {
 		const isEntirelyEmptyRow = Object.values(row as Record<string, string>).every(
