@@ -9,6 +9,9 @@ on:
 jobs:
   update-translations:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
@@ -33,22 +36,6 @@ jobs:
       - name: Extract locale keys (with translation)
         run: npm run wuchale:extract
 
-      - name: Commit and push changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git checkout -B i18n-weekly-update
-
-          if git diff --quiet; then
-            echo "No translation updates to commit."
-            exit 0
-          fi
-
-          git add .
-          git commit -m "chore(i18n): weekly translation update"
-          git push -u origin i18n-weekly-update --force
-
       - name: Create Pull Request
         id: pr
         uses: peter-evans/create-pull-request@v6
@@ -64,7 +51,7 @@ jobs:
       - name: Auto-merge PR if CI passes
         if: steps.pr.outputs.pull-request-number
         uses: pascalgn/automerge-action@v0.16.4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          merge-method: squash
-          pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MERGE_METHOD: squash
+          pull-request: ${{ steps.pr.outputs.pull-request-number }}
