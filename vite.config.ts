@@ -6,8 +6,8 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { wuchale } from 'wuchale/vite';
 import { playwright } from '@vitest/browser-playwright';
 
-import dotenv from 'dotenv';
 import path from 'path';
+import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
