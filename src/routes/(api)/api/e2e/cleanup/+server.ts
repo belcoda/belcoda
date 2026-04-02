@@ -106,17 +106,27 @@ async function deleteTestOrganizationScopedRows(orgId: string) {
 	}
 
 	for (;;) {
-		await drizzle.execute(sql`
-			DELETE FROM team AS t1
-			WHERE t1.organization_id = ${orgId}::uuid
-			AND NOT EXISTS (SELECT 1 FROM team AS t2 WHERE t2.parent_team_id = t1.id)
-		`);
 		const stillHasTeams = await drizzle
 			.select({ id: schema.team.id })
 			.from(schema.team)
 			.where(eq(schema.team.organizationId, orgId))
 			.limit(1);
 		if (stillHasTeams.length === 0) break;
+
+		const deleteResult = await drizzle.execute(sql`
+			DELETE FROM team AS t1
+			WHERE t1.organization_id = ${orgId}::uuid
+			AND NOT EXISTS (SELECT 1 FROM team AS t2 WHERE t2.parent_team_id = t1.id)
+			RETURNING t1.id
+		`);
+
+		const deletedCount = (deleteResult as unknown[]).length;
+
+		if (deletedCount === 0) {
+			throw new Error(
+				`E2E cleanup: drizzle.execute leaf DELETE deleted 0 rows but teams remain for organization ${orgId} (possible circular team.parent_team_id)`
+			);
+		}
 	}
 
 	await drizzle.delete(schema.tag).where(eq(schema.tag.organizationId, orgId));
