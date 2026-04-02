@@ -123,8 +123,8 @@ export function createDefaultEmailMessage({
 		estimatedRecipientCount: 0,
 		successfulRecipientCount: 0,
 		failedRecipientCount: 0,
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime(),
+		createdAt: Date.now(),
+		updatedAt: Date.now(),
 		deletedAt: null
 	};
 }

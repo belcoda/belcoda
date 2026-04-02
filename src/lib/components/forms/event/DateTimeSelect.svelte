@@ -56,13 +56,13 @@
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	const startZonedDateTime = $derived(
 		parseAbsolute(
-			new Date($data.startsAt || new Date().getTime()).toISOString(),
+			new Date($data.startsAt || Date.now()).toISOString(),
 			$data.timezone || getLocalTimeZone()
 		)
 	);
 	const endZonedDateTime = $derived(
 		parseAbsolute(
-			new Date($data.endsAt || new Date().getTime()).toISOString(),
+			new Date($data.endsAt || Date.now()).toISOString(),
 			$data.timezone || getLocalTimeZone()
 		)
 	);
@@ -76,7 +76,7 @@
 			const newStartsAt = updateTimestampTime(
 				time,
 				$data.timezone || getLocalTimeZone(),
-				$data.startsAt ?? new Date().getTime()
+				$data.startsAt ?? Date.now()
 			);
 			if ($data.endsAt && newStartsAt > $data.endsAt) {
 				toast.error(t`Start date must be before end date`);
@@ -95,7 +95,7 @@
 			const newEndsAt = updateTimestampTime(
 				time,
 				$data.timezone || getLocalTimeZone(),
-				$data.endsAt ?? new Date().getTime()
+				$data.endsAt ?? Date.now()
 			);
 			if ($data.startsAt && newEndsAt < $data.startsAt) {
 				toast.error(t`Start date must be before end date`);

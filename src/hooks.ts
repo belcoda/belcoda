@@ -17,7 +17,7 @@ export const reroute = async ({ url }) => {
 			log.debug(
 				{
 					url: url.toString(),
-					time: new Date().getTime(),
+					time: Date.now(),
 					newRoute: `/page/${subdomain}${url.pathname}`
 				},
 				'[DEBUG] Rerouting to page on subdomain'

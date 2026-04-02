@@ -5,7 +5,7 @@ import {
 	deleteMutatorSchema
 } from '$lib/schema/whatsapp-thread';
 
-const now = () => new Date().getTime();
+const now = () => Date.now();
 
 export const createWhatsappThread = defineMutator(createMutatorSchema, async ({ tx, args }) => {
 	tx.mutate.whatsappThread.insert({

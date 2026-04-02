@@ -15,7 +15,7 @@ export async function load({ locals, params, url }) {
 		{
 			locals,
 			requestId: locals.requestId,
-			time: new Date().getTime(),
+			time: Date.now(),
 			sessionId: locals.session?.session.id,
 			url: url.toString()
 		},

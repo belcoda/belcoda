@@ -14,8 +14,8 @@ export const createWhatsappTemplate = defineMutator(
 			name: args.input.name,
 			locale: args.input.locale,
 			components: args.input.components,
-			createdAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			createdAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -28,7 +28,7 @@ export const updateWhatsappTemplate = defineMutator(
 			name: args.input.name,
 			locale: args.input.locale,
 			components: args.input.components,
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -37,6 +37,6 @@ export const submitWhatsappTemplate = defineMutator(mutatorMetadata, async ({ tx
 	tx.mutate.whatsappTemplate.update({
 		id: args.whatsappTemplateId,
 		status: 'PENDING',
-		submittedForReviewAt: new Date().getTime()
+		submittedForReviewAt: Date.now()
 	});
 });

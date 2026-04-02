@@ -96,7 +96,7 @@ export function createDefaultTemplate({
 		status: 'NOT_SUBMITTED',
 		submittedForReviewAt: null,
 		deletedAt: null,
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime()
+		createdAt: Date.now(),
+		updatedAt: Date.now()
 	};
 }
