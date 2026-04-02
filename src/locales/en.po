@@ -42,15 +42,6 @@ msgstr "This will update your language for all the pages in the application."
 msgid "Settings"
 msgstr "Settings"
 
-#~ msgid ""
-#~ "Email from signatures are the names and email addresses that are used to send emails on behalf\n"
-#~ "of the organization. You can add as many as you want, but they must be attached to a\n"
-#~ "non-public email address that you control."
-#~ msgstr ""
-#~ "Email from signatures are the names and email addresses that are used to send emails on behalf\n"
-#~ "of the organization. You can add as many as you want, but they must be attached to a\n"
-#~ "non-public email address that you control."
-
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -265,6 +256,7 @@ msgstr "System"
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/+layout.svelte
 msgid "Loading..."
 msgstr "Loading..."
 
@@ -466,9 +458,6 @@ msgstr "Events"
 msgid "Petitions"
 msgstr "Petitions"
 
-#~ msgid "New person"
-#~ msgstr "New person"
-
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Billing"
@@ -664,15 +653,6 @@ msgstr "Command Palette"
 #: src/lib/components/ui/command/command-dialog.svelte
 msgid "Search for a command to run"
 msgstr "Search for a command to run"
-
-#~ msgid "Test"
-#~ msgstr "Test"
-
-#~ msgid "Footer"
-#~ msgstr "Footer"
-
-#~ msgid "Organization ID not found"
-#~ msgstr "Organization ID not found"
 
 #: src/lib/components/ui/color-picker/ColorPicker.svelte
 msgid "Color preview"
@@ -1224,9 +1204,6 @@ msgstr "Invited by {0}"
 msgid "Error loading invitation: {0}"
 msgstr "Error loading invitation: {0}"
 
-#~ msgid "Accept / Reject"
-#~ msgstr "Accept / Reject"
-
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Welcome to Belcoda"
 msgstr "Welcome to Belcoda"
@@ -1317,9 +1294,6 @@ msgstr "Your email has been successfully verified"
 msgid "Your email address has been verified. You can now sign in to your account."
 msgstr "Your email address has been verified. You can now sign in to your account."
 
-#~ msgid "{0} recipients selected"
-#~ msgstr "{0} recipients selected"
-
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/lib/components/forms/event/DateTimeSelect.svelte
 msgid "From"
@@ -1330,15 +1304,6 @@ msgstr "From"
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Recipients"
 msgstr "Recipients"
-
-#~ msgid "Select recipients..."
-#~ msgstr "Select recipients..."
-
-#~ msgid "No recipients selected"
-#~ msgstr "No recipients selected"
-
-#~ msgid "Select"
-#~ msgstr "Select"
 
 #: src/lib/components/forms/email/EmailForm.svelte
 msgid "Subject"
@@ -1380,15 +1345,6 @@ msgstr "Edit petition link"
 msgid "Slug"
 msgstr "Slug"
 
-#~ msgid ""
-#~ "This is a URL-friendly identifier for the petition and is part of the petition\n"
-#~ "link. It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
-#~ msgstr ""
-#~ "This is a URL-friendly identifier for the petition and is part of the petition\n"
-#~ "link. It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
-
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
@@ -1428,15 +1384,6 @@ msgstr "Survey"
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Edit event link"
 msgstr "Edit event link"
-
-#~ msgid ""
-#~ "This is a URL-friendly identifier for the event and is part of the event link.\n"
-#~ "It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
-#~ msgstr ""
-#~ "This is a URL-friendly identifier for the event and is part of the event link.\n"
-#~ "It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "In person"
@@ -1563,12 +1510,6 @@ msgstr "Timezone"
 msgid "Toggle"
 msgstr "Toggle"
 
-#~ msgid "{0} recipients"
-#~ msgstr "{0} recipients"
-
-#~ msgid "1 recipient"
-#~ msgstr "1 recipient"
-
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Type to search..."
@@ -1686,9 +1627,6 @@ msgstr "Are you sure you want to remove this question?"
 msgid "Remove question"
 msgstr "Remove question"
 
-#~ msgid "Edit Person"
-#~ msgstr "Edit Person"
-
 #: src/routes/(app)/community/person/new/+page.svelte
 msgid "Create Person"
 msgstr "Create Person"
@@ -1696,13 +1634,6 @@ msgstr "Create Person"
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid "Contact details"
 msgstr "Contact details"
-
-#~ msgid ""
-#~ "If the person is subscribed, they will be able to receive notifications\n"
-#~ "and messages."
-#~ msgstr ""
-#~ "If the person is subscribed, they will be able to receive notifications\n"
-#~ "and messages."
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid "Preferred language"
@@ -1847,21 +1778,6 @@ msgstr "Upload an image"
 msgid "(Max size: {0})"
 msgstr "(Max size: {0})"
 
-#~ msgid "No Projects Yet"
-#~ msgstr "No Projects Yet"
-
-#~ msgid "You haven't created any projects yet. Get started by creating your first project."
-#~ msgstr "You haven't created any projects yet. Get started by creating your first project."
-
-#~ msgid "Create Project"
-#~ msgstr "Create Project"
-
-#~ msgid "Import Project"
-#~ msgstr "Import Project"
-
-#~ msgid "Learn More"
-#~ msgstr "Learn More"
-
 #: src/routes/(app)/petitions/new/+page.svelte
 msgid "New petition"
 msgstr "New petition"
@@ -1934,9 +1850,6 @@ msgstr "Make a copy"
 msgid "Share Petition"
 msgstr "Share Petition"
 
-#~ msgid "Share functionality coming soon..."
-#~ msgstr "Share functionality coming soon..."
-
 #: src/routes/(app)/events/new/+page.svelte
 msgid "New event"
 msgstr "New event"
@@ -1950,9 +1863,6 @@ msgstr "Copy of"
 #: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
 msgid "Event title"
 msgstr "Event title"
-
-#~ msgid "Add Tag"
-#~ msgstr "Add Tag"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 msgid "Name is required"
@@ -2126,9 +2036,6 @@ msgstr "https://example.com/webhook"
 msgid "Create a new organization to get started"
 msgstr "Create a new organization to get started"
 
-#~ msgid "The name of your organization. You cannot change it later."
-#~ msgstr "The name of your organization. You cannot change it later."
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Create Organization"
 msgstr "Create Organization"
@@ -2290,9 +2197,6 @@ msgstr "Petition title"
 msgid "Copy to embed in your website"
 msgstr "Copy to embed in your website"
 
-#~ msgid "Default theme"
-#~ msgstr "Default theme"
-
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/event/share/EmbedCode.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -2401,13 +2305,6 @@ msgstr "Signups"
 msgid "Additional details"
 msgstr "Additional details"
 
-#~ msgid ""
-#~ "Personal details may differ the responses provided by the attendee if their recorded personal\n"
-#~ "information in Belcoda has been modified or updated since they signed up for the event."
-#~ msgstr ""
-#~ "Personal details may differ the responses provided by the attendee if their recorded personal\n"
-#~ "information in Belcoda has been modified or updated since they signed up for the event."
-
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
 msgid "Custom fields"
 msgstr "Custom fields"
@@ -2495,9 +2392,6 @@ msgstr "Create New Email"
 #: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 msgid "Belcoda icon"
 msgstr "Belcoda icon"
-
-#~ msgid "Compose Email"
-#~ msgstr "Compose Email"
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
@@ -2656,15 +2550,9 @@ msgstr "{0} more signatures needed to reach {1}"
 msgid "To:"
 msgstr "To:"
 
-#~ msgid "Petition Details"
-#~ msgstr "Petition Details"
-
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Recent Signatures"
 msgstr "Recent Signatures"
-
-#~ msgid "Be the first to sign this petition!"
-#~ msgstr "Be the first to sign this petition!"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "signatures"
@@ -2673,13 +2561,6 @@ msgstr "signatures"
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "of goal"
 msgstr "of goal"
-
-#~ msgid ""
-#~ "Goal reached! Keep the momentum going to make an even bigger\n"
-#~ "impact."
-#~ msgstr ""
-#~ "Goal reached! Keep the momentum going to make an even bigger\n"
-#~ "impact."
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Thank you for signing!"
@@ -2782,18 +2663,9 @@ msgstr "WhatsApp accounts"
 msgid "Configuration"
 msgstr "Configuration"
 
-#~ msgid "People Exports"
-#~ msgstr "People Exports"
-
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports are not currently supported, but will be added in a future update. "
 msgstr "Exports are not currently supported, but will be added in a future update. "
-
-#~ msgid "WhatsApp templates are not currently supported, but will be added in a future update."
-#~ msgstr "WhatsApp templates are not currently supported, but will be added in a future update."
-
-#~ msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
-#~ msgstr "WhatsApp accounts are not currently supported, but will be added in a future update."
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Free"
@@ -2891,9 +2763,6 @@ msgstr "Select a preset amount to continue in Stripe checkout."
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Redirecting..."
 msgstr "Redirecting..."
-
-#~ msgid "[Error loading email body]"
-#~ msgstr "[Error loading email body]"
 
 #: src/routes/(app)/community/+page.svelte
 msgid "All your people and teams in one place."
@@ -3281,12 +3150,6 @@ msgstr "Archive petition"
 msgid "Delete petition"
 msgstr "Delete petition"
 
-#~ msgid "Archive this petition?"
-#~ msgstr "Archive this petition?"
-
-#~ msgid "Delete this petition?"
-#~ msgstr "Delete this petition?"
-
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "This petition will be archived. You can still view it in the archived petitions list."
@@ -3296,9 +3159,6 @@ msgstr "This petition will be archived. You can still view it in the archived pe
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "This draft petition will be permanently deleted. This action cannot be undone."
 msgstr "This draft petition will be permanently deleted. This action cannot be undone."
-
-#~ msgid "Archive"
-#~ msgstr "Archive"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Edit Petition"
@@ -3398,15 +3258,6 @@ msgstr "Organization name"
 msgid "Edit organization slug"
 msgstr "Edit organization slug"
 
-#~ msgid ""
-#~ "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
-#~ "It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
-#~ msgstr ""
-#~ "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
-#~ "It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Organization logo (optional)"
 msgstr "Organization logo (optional)"
@@ -3493,9 +3344,6 @@ msgstr "Resources"
 msgid "How did you discover Belcoda?"
 msgstr "How did you discover Belcoda?"
 
-#~ msgid "What features are you interested in?"
-#~ msgstr "What features are you interested in?"
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select all that apply"
 msgstr "Select all that apply"
@@ -3503,9 +3351,6 @@ msgstr "Select all that apply"
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Storing member or supporter data"
 msgstr "Storing member or supporter data"
-
-#~ msgid "Growing our list of supporters or members"
-#~ msgstr "Growing our list of supporters or members"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Sending WhatsApp messages to members or supporters"
@@ -3535,9 +3380,6 @@ msgstr "Other"
 msgid "Other (detail)"
 msgstr "Other (detail)"
 
-#~ msgid "What wil you use Belcoda for?"
-#~ msgstr "What wil you use Belcoda for?"
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "What will you use Belcoda for?"
 msgstr "What will you use Belcoda for?"
@@ -3558,25 +3400,13 @@ msgstr "Book a time to talk with our team, we'll give recommendations on how to 
 msgid "Continue to your organization"
 msgstr "Continue to your organization"
 
-#~ msgid "You can always book a time to talk with our team later."
-#~ msgstr "You can always book a time to talk with our team later."
-
-#~ msgid "You can continue to your organization without first booking a time."
-#~ msgstr "You can continue to your organization without first booking a time."
-
 #: src/routes/(auth)/organization/new/onboarding/+page.svelte
 msgid "If you prefer, you can continue to your organization without first booking a time."
 msgstr "If you prefer, you can continue to your organization without first booking a time."
 
-#~ msgid "Onboarding Video"
-#~ msgstr "Onboarding Video"
-
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 msgid "Getting started with Belcoda"
 msgstr "Getting started with Belcoda"
-
-#~ msgid "Accept"
-#~ msgstr "Accept"
 
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Decline invitation"
@@ -3585,15 +3415,6 @@ msgstr "Decline invitation"
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Accept invitation"
 msgstr "Accept invitation"
-
-#~ msgid "You are invited to join an organization"
-#~ msgstr "You are invited to join an organization"
-
-#~ msgid "Create an account using the email address {0} to accept the invitation."
-#~ msgstr "Create an account using the email address {0} to accept the invitation."
-
-#~ msgid "You are invited to join {0} on Belcoda"
-#~ msgstr "You are invited to join {0} on Belcoda"
 
 #. 0: invitationOrganizationName || t`an organization`
 #: src/routes/(auth)/signup/+page.svelte
@@ -3723,9 +3544,6 @@ msgstr "Added from an unknown source [{0}]"
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 msgid "Add to event"
 msgstr "Add to event"
-
-#~ msgid "Add a new person to the community"
-#~ msgstr "Add a new person to the community"
 
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 msgid "No people found"
@@ -3989,13 +3807,6 @@ msgstr "The WhatsApp signup was cancelled. If you want to try again, click the b
 msgid "WhatsApp Business Account Activated"
 msgstr "WhatsApp Business Account Activated"
 
-#~ msgid ""
-#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-#~ "messaging features."
-#~ msgstr ""
-#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-#~ "messaging features."
-
 #. 0: appState.activeOrganization?.data?.settings.whatsApp.number
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Your WhatsApp Business Account number is {0}"
@@ -4009,20 +3820,6 @@ msgstr "Your WhatsApp Business Account ID is {0}"
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Activate WhatsApp Business Account"
 msgstr "Activate WhatsApp Business Account"
-
-#~ msgid ""
-#~ "A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
-#~ "one by clicking the button below."
-#~ msgstr ""
-#~ "A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
-#~ "one by clicking the button below."
-
-#~ msgid ""
-#~ "When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
-#~ "and create a WhatsApp Business Account."
-#~ msgstr ""
-#~ "When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
-#~ "and create a WhatsApp Business Account."
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "In doing so, you will authorize Belcoda to send and receive messages on your behalf."
@@ -4086,9 +3883,6 @@ msgstr "You are not authorized to access this page."
 msgid "You need to be an organization admin or owner to access this page."
 msgstr "You need to be an organization admin or owner to access this page."
 
-#~ msgid "Go to home"
-#~ msgstr "Go to home"
-
 #: src/routes/(app)/communications/+layout.svelte
 #: src/routes/(app)/settings/+layout.svelte
 msgid "Go to dashboard"
@@ -4123,42 +3917,6 @@ msgstr "Accept all"
 #: src/lib/components/widgets/CookieBanner.svelte
 msgid "Only necessary"
 msgstr "Only necessary"
-
-#~ msgid "Organization Configuration"
-#~ msgstr "Organization Configuration"
-
-#~ msgid "URL to the organization logo. Recommended size: 16:9 ratio. Max size: 2MB."
-#~ msgstr "URL to the organization logo. Recommended size: 16:9 ratio. Max size: 2MB."
-
-#~ msgid "URL to the organization icon. Recommended size: 1:1 ratio. Max size: 2MB."
-#~ msgstr "URL to the organization icon. Recommended size: 1:1 ratio. Max size: 2MB."
-
-#~ msgid "Email Folders"
-#~ msgstr "Email Folders"
-
-#~ msgid "New WhatsApp"
-#~ msgstr "New WhatsApp"
-
-#~ msgid "New email"
-#~ msgstr "New email"
-
-#~ msgid "New thread"
-#~ msgstr "New thread"
-
-#~ msgid "No WhatsApp templates found"
-#~ msgstr "No WhatsApp templates found"
-
-#~ msgid "Locale"
-#~ msgstr "Locale"
-
-#~ msgid "Add Node"
-#~ msgstr "Add Node"
-
-#~ msgid "Tag Add"
-#~ msgstr "Tag Add"
-
-#~ msgid "Select a draft from the list to edit your flow"
-#~ msgstr "Select a draft from the list to edit your flow"
 
 #: src/routes/(auth)/signup/+page.svelte
 msgid ""

@@ -42,15 +42,6 @@ msgstr "Isso atualizará seu idioma para todas as páginas do aplicativo."
 msgid "Settings"
 msgstr "Configurações"
 
-#~ msgid ""
-#~ "Email from signatures are the names and email addresses that are used to send emails on behalf\n"
-#~ "of the organization. You can add as many as you want, but they must be attached to a\n"
-#~ "non-public email address that you control."
-#~ msgstr ""
-#~ "As assinaturas de e-mail são os nomes e endereços de e-mail usados para enviar e-mails em nome\n"
-#~ "da organização. Você pode adicionar quantas quiser, mas elas devem estar associadas a um\n"
-#~ "endereço de e-mail não público que você controla."
-
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -265,6 +256,7 @@ msgstr "Sistema"
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+#: src/routes/+layout.svelte
 msgid "Loading..."
 msgstr "Carregando..."
 
@@ -466,9 +458,6 @@ msgstr "Eventos"
 msgid "Petitions"
 msgstr "Petições"
 
-#~ msgid "New person"
-#~ msgstr "Nova pessoa"
-
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Billing"
@@ -664,15 +653,6 @@ msgstr "Paleta de comandos"
 #: src/lib/components/ui/command/command-dialog.svelte
 msgid "Search for a command to run"
 msgstr "Busque um comando para executar"
-
-#~ msgid "Test"
-#~ msgstr "Teste"
-
-#~ msgid "Footer"
-#~ msgstr "Rodapé"
-
-#~ msgid "Organization ID not found"
-#~ msgstr "ID da organização não encontrado"
 
 #: src/lib/components/ui/color-picker/ColorPicker.svelte
 msgid "Color preview"
@@ -1224,9 +1204,6 @@ msgstr "Convidado por {0}"
 msgid "Error loading invitation: {0}"
 msgstr "Erro ao carregar convite: {0}"
 
-#~ msgid "Accept / Reject"
-#~ msgstr "Aceitar / Rejeitar"
-
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Welcome to Belcoda"
 msgstr "Bem-vindo ao Belcoda"
@@ -1317,9 +1294,6 @@ msgstr "Seu e-mail foi verificado com sucesso"
 msgid "Your email address has been verified. You can now sign in to your account."
 msgstr "Seu endereço de e-mail foi verificado. Agora você pode entrar na sua conta."
 
-#~ msgid "{0} recipients selected"
-#~ msgstr "{0} destinatários selecionados"
-
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/lib/components/forms/event/DateTimeSelect.svelte
 msgid "From"
@@ -1330,15 +1304,6 @@ msgstr "De"
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Recipients"
 msgstr "Destinatários"
-
-#~ msgid "Select recipients..."
-#~ msgstr "Selecionar destinatários..."
-
-#~ msgid "No recipients selected"
-#~ msgstr "Nenhum destinatário selecionado"
-
-#~ msgid "Select"
-#~ msgstr "Selecionar"
 
 #: src/lib/components/forms/email/EmailForm.svelte
 msgid "Subject"
@@ -1380,15 +1345,6 @@ msgstr "Editar link da petição"
 msgid "Slug"
 msgstr "Slug"
 
-#~ msgid ""
-#~ "This is a URL-friendly identifier for the petition and is part of the petition\n"
-#~ "link. It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
-#~ msgstr ""
-#~ "Este é um identificador amigável para URL da petição e faz parte do link da petição.\n"
-#~ "Deve ser único e pode conter apenas letras minúsculas, números e\n"
-#~ "hífens."
-
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
@@ -1428,15 +1384,6 @@ msgstr "Pesquisa"
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Edit event link"
 msgstr "Editar link do evento"
-
-#~ msgid ""
-#~ "This is a URL-friendly identifier for the event and is part of the event link.\n"
-#~ "It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
-#~ msgstr ""
-#~ "Este é um identificador amigável para URL do evento e faz parte do link do evento.\n"
-#~ "Deve ser único e pode conter apenas letras minúsculas, números e\n"
-#~ "hífens."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "In person"
@@ -1563,12 +1510,6 @@ msgstr "Fuso horário"
 msgid "Toggle"
 msgstr "Alternar"
 
-#~ msgid "{0} recipients"
-#~ msgstr "{0} destinatários"
-
-#~ msgid "1 recipient"
-#~ msgstr "1 destinatário"
-
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Type to search..."
@@ -1686,9 +1627,6 @@ msgstr "Tem certeza de que deseja remover esta pergunta?"
 msgid "Remove question"
 msgstr "Remover pergunta"
 
-#~ msgid "Edit Person"
-#~ msgstr "Editar pessoa"
-
 #: src/routes/(app)/community/person/new/+page.svelte
 msgid "Create Person"
 msgstr "Criar pessoa"
@@ -1696,13 +1634,6 @@ msgstr "Criar pessoa"
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid "Contact details"
 msgstr "Dados de contato"
-
-#~ msgid ""
-#~ "If the person is subscribed, they will be able to receive notifications\n"
-#~ "and messages."
-#~ msgstr ""
-#~ "Se a pessoa estiver inscrita, ela poderá receber notificações\n"
-#~ "e mensagens."
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid "Preferred language"
@@ -1847,21 +1778,6 @@ msgstr "Enviar uma imagem"
 msgid "(Max size: {0})"
 msgstr "(Tamanho máx: {0})"
 
-#~ msgid "No Projects Yet"
-#~ msgstr "Nenhum projeto ainda"
-
-#~ msgid "You haven't created any projects yet. Get started by creating your first project."
-#~ msgstr "Você ainda não criou nenhum projeto. Comece criando seu primeiro projeto."
-
-#~ msgid "Create Project"
-#~ msgstr "Criar projeto"
-
-#~ msgid "Import Project"
-#~ msgstr "Importar projeto"
-
-#~ msgid "Learn More"
-#~ msgstr "Saiba mais"
-
 #: src/routes/(app)/petitions/new/+page.svelte
 msgid "New petition"
 msgstr "Nova petição"
@@ -1934,9 +1850,6 @@ msgstr "Fazer uma cópia"
 msgid "Share Petition"
 msgstr "Compartilhar petição"
 
-#~ msgid "Share functionality coming soon..."
-#~ msgstr "Funcionalidade de compartilhamento em breve..."
-
 #: src/routes/(app)/events/new/+page.svelte
 msgid "New event"
 msgstr "Novo evento"
@@ -1950,9 +1863,6 @@ msgstr "Cópia de"
 #: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
 msgid "Event title"
 msgstr "Título do evento"
-
-#~ msgid "Add Tag"
-#~ msgstr "Adicionar tag"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 msgid "Name is required"
@@ -2126,9 +2036,6 @@ msgstr "https://exemplo.com/webhook"
 msgid "Create a new organization to get started"
 msgstr "Crie uma nova organização para começar"
 
-#~ msgid "The name of your organization. You cannot change it later."
-#~ msgstr "O nome da sua organização. Você não poderá alterá-lo depois."
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Create Organization"
 msgstr "Criar organização"
@@ -2290,9 +2197,6 @@ msgstr "Título da petição"
 msgid "Copy to embed in your website"
 msgstr "Copiar para incorporar no seu site"
 
-#~ msgid "Default theme"
-#~ msgstr "Tema padrão"
-
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/event/share/EmbedCode.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -2401,13 +2305,6 @@ msgstr "Inscrições"
 msgid "Additional details"
 msgstr "Detalhes adicionais"
 
-#~ msgid ""
-#~ "Personal details may differ the responses provided by the attendee if their recorded personal\n"
-#~ "information in Belcoda has been modified or updated since they signed up for the event."
-#~ msgstr ""
-#~ "Os dados pessoais podem diferir das respostas fornecidas pelo participante se suas informações pessoais\n"
-#~ "registradas no Belcoda foram modificadas ou atualizadas desde que se inscreveu no evento."
-
 #: src/lib/components/widgets/event/signups/ViewDetailedSignup.svelte
 msgid "Custom fields"
 msgstr "Campos personalizados"
@@ -2495,9 +2392,6 @@ msgstr "Criar novo e-mail"
 #: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 msgid "Belcoda icon"
 msgstr "Ícone do Belcoda"
-
-#~ msgid "Compose Email"
-#~ msgstr "Compor e-mail"
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
@@ -2656,15 +2550,9 @@ msgstr "{0} assinaturas mais necessárias para alcançar {1}"
 msgid "To:"
 msgstr "Para:"
 
-#~ msgid "Petition Details"
-#~ msgstr "Detalhes da petição"
-
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Recent Signatures"
 msgstr "Assinaturas recentes"
-
-#~ msgid "Be the first to sign this petition!"
-#~ msgstr "Seja o primeiro a assinar esta petição!"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "signatures"
@@ -2673,13 +2561,6 @@ msgstr "assinaturas"
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "of goal"
 msgstr "da meta"
-
-#~ msgid ""
-#~ "Goal reached! Keep the momentum going to make an even bigger\n"
-#~ "impact."
-#~ msgstr ""
-#~ "Meta atingida! Mantenha o ritmo para causar um impacto\n"
-#~ "ainda maior."
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Thank you for signing!"
@@ -2782,18 +2663,9 @@ msgstr "Contas de WhatsApp"
 msgid "Configuration"
 msgstr "Configuração"
 
-#~ msgid "People Exports"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports are not currently supported, but will be added in a future update. "
 msgstr ""
-
-#~ msgid "WhatsApp templates are not currently supported, but will be added in a future update."
-#~ msgstr ""
-
-#~ msgid "WhatsApp accounts are not currently supported, but will be added in a future update."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Free"
@@ -2891,9 +2763,6 @@ msgstr "Selecione um valor predefinido para continuar no checkout do Stripe."
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Redirecting..."
 msgstr "Redirecionando..."
-
-#~ msgid "[Error loading email body]"
-#~ msgstr ""
 
 #: src/routes/(app)/community/+page.svelte
 msgid "All your people and teams in one place."
@@ -3281,12 +3150,6 @@ msgstr "Arquivar petição"
 msgid "Delete petition"
 msgstr "Eliminar petição"
 
-#~ msgid "Archive this petition?"
-#~ msgstr ""
-
-#~ msgid "Delete this petition?"
-#~ msgstr ""
-
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "This petition will be archived. You can still view it in the archived petitions list."
@@ -3296,9 +3159,6 @@ msgstr "Esta petição será arquivada. Ainda poderá vê-la na lista de petiç�
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "This draft petition will be permanently deleted. This action cannot be undone."
 msgstr "Este rascunho de petição será eliminado permanentemente. Esta ação não pode ser desfeita."
-
-#~ msgid "Archive"
-#~ msgstr ""
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Edit Petition"
@@ -3398,12 +3258,6 @@ msgstr "Nome da organização"
 msgid "Edit organization slug"
 msgstr "Editar slug da organização"
 
-#~ msgid ""
-#~ "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
-#~ "It must be unique and can only contain lowercase letters, numbers, and\n"
-#~ "hyphens."
-#~ msgstr ""
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Organization logo (optional)"
 msgstr "Logotipo da organização (opcional)"
@@ -3490,9 +3344,6 @@ msgstr "Recursos"
 msgid "How did you discover Belcoda?"
 msgstr "Como você descobriu a Belcoda?"
 
-#~ msgid "What features are you interested in?"
-#~ msgstr ""
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select all that apply"
 msgstr "Selecione todas as opções que se aplicam"
@@ -3500,9 +3351,6 @@ msgstr "Selecione todas as opções que se aplicam"
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Storing member or supporter data"
 msgstr "Armazenar dados de membros ou apoiadores"
-
-#~ msgid "Growing our list of supporters or members"
-#~ msgstr ""
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Sending WhatsApp messages to members or supporters"
@@ -3532,9 +3380,6 @@ msgstr "Outro"
 msgid "Other (detail)"
 msgstr "Outro (detalhe)"
 
-#~ msgid "What wil you use Belcoda for?"
-#~ msgstr ""
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "What will you use Belcoda for?"
 msgstr "Para que você usará a Belcoda?"
@@ -3555,25 +3400,13 @@ msgstr ""
 msgid "Continue to your organization"
 msgstr ""
 
-#~ msgid "You can always book a time to talk with our team later."
-#~ msgstr ""
-
-#~ msgid "You can continue to your organization without first booking a time."
-#~ msgstr ""
-
 #: src/routes/(auth)/organization/new/onboarding/+page.svelte
 msgid "If you prefer, you can continue to your organization without first booking a time."
 msgstr ""
 
-#~ msgid "Onboarding Video"
-#~ msgstr ""
-
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 msgid "Getting started with Belcoda"
 msgstr "Começando com a Belcoda"
-
-#~ msgid "Accept"
-#~ msgstr ""
 
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Decline invitation"
@@ -3582,15 +3415,6 @@ msgstr "Recusar convite"
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Accept invitation"
 msgstr "Aceitar convite"
-
-#~ msgid "You are invited to join an organization"
-#~ msgstr ""
-
-#~ msgid "Create an account using the email address {0} to accept the invitation."
-#~ msgstr ""
-
-#~ msgid "You are invited to join {0} on Belcoda"
-#~ msgstr ""
 
 #. 0: invitationOrganizationName || t`an organization`
 #: src/routes/(auth)/signup/+page.svelte
@@ -3720,9 +3544,6 @@ msgstr "Adicionado de uma fonte desconhecida [{0}]"
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 msgid "Add to event"
 msgstr "Adicionar ao evento"
-
-#~ msgid "Add a new person to the community"
-#~ msgstr ""
 
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 msgid "No people found"
@@ -3986,11 +3807,6 @@ msgstr "O cadastro no WhatsApp foi cancelado. Se quiser tentar novamente, clique
 msgid "WhatsApp Business Account Activated"
 msgstr "Conta do WhatsApp Business ativada"
 
-#~ msgid ""
-#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-#~ "messaging features."
-#~ msgstr ""
-
 #. 0: appState.activeOrganization?.data?.settings.whatsApp.number
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Your WhatsApp Business Account number is {0}"
@@ -4004,16 +3820,6 @@ msgstr "O ID da sua Conta do WhatsApp Business é {0}"
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Activate WhatsApp Business Account"
 msgstr "Ativar Conta do WhatsApp Business"
-
-#~ msgid ""
-#~ "A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
-#~ "one by clicking the button below."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
-#~ "and create a WhatsApp Business Account."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "In doing so, you will authorize Belcoda to send and receive messages on your behalf."
@@ -4077,9 +3883,6 @@ msgstr "Você não tem autorização para acessar esta página."
 msgid "You need to be an organization admin or owner to access this page."
 msgstr "Você precisa ser um administrador ou proprietário da organização para acessar esta página."
 
-#~ msgid "Go to home"
-#~ msgstr ""
-
 #: src/routes/(app)/communications/+layout.svelte
 #: src/routes/(app)/settings/+layout.svelte
 msgid "Go to dashboard"
@@ -4114,42 +3917,6 @@ msgstr "Aceitar todos"
 #: src/lib/components/widgets/CookieBanner.svelte
 msgid "Only necessary"
 msgstr "Apenas necessários"
-
-#~ msgid "Organization Configuration"
-#~ msgstr ""
-
-#~ msgid "URL to the organization logo. Recommended size: 16:9 ratio. Max size: 2MB."
-#~ msgstr ""
-
-#~ msgid "URL to the organization icon. Recommended size: 1:1 ratio. Max size: 2MB."
-#~ msgstr ""
-
-#~ msgid "Email Folders"
-#~ msgstr ""
-
-#~ msgid "New WhatsApp"
-#~ msgstr ""
-
-#~ msgid "New email"
-#~ msgstr ""
-
-#~ msgid "New thread"
-#~ msgstr ""
-
-#~ msgid "No WhatsApp templates found"
-#~ msgstr ""
-
-#~ msgid "Locale"
-#~ msgstr ""
-
-#~ msgid "Add Node"
-#~ msgstr ""
-
-#~ msgid "Tag Add"
-#~ msgstr ""
-
-#~ msgid "Select a draft from the list to edit your flow"
-#~ msgstr "======="
 
 #: src/routes/(auth)/signup/+page.svelte
 msgid ""
