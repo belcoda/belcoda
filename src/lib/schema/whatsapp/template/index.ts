@@ -2,7 +2,6 @@ import {
 	type InferOutput,
 	object,
 	literal,
-	picklist,
 	array,
 	variant,
 	string,
@@ -13,7 +12,6 @@ import {
 import {
 	languageCode,
 	url,
-	mediumString,
 	whatsappTemplateHeaderText,
 	whatsappTemplateParamName,
 	whatsappTemplateButtonText,
