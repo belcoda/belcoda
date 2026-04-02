@@ -1,0 +1,70 @@
+name: Weekly i18n update
+
+on:
+  schedule:
+    # JST Monday 4:00 = Sunday 19:00 UTC
+    - cron: '0 19 * * 0'
+  workflow_dispatch: # manual trigger
+
+jobs:
+  update-translations:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: develop
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Clean unused locale keys
+        run: npm run wuchale:clean
+
+      - name: Extract locale keys (with translation)
+        run: npm run wuchale:extract
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B i18n-weekly-update
+
+          if git diff --quiet; then
+            echo "No translation updates to commit."
+            exit 0
+          fi
+
+          git add .
+          git commit -m "chore(i18n): weekly translation update"
+          git push -u origin i18n-weekly-update --force
+
+      - name: Create Pull Request
+        id: pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(i18n): weekly translation update'
+          branch: i18n-weekly-update
+          title: 'Weekly i18n update'
+          body: 'This PR updates missing translations automatically.'
+          base: develop
+          labels: automation,i18n
+
+      - name: Auto-merge PR if CI passes
+        if: steps.pr.outputs.pull-request-number
+        uses: pascalgn/automerge-action@v0.16.4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          merge-method: squash
+          pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
