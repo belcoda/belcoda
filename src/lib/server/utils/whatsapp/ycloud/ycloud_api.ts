@@ -431,10 +431,11 @@ export async function checkWhatsappTemplateExists({
 		});
 		return true;
 	} catch (error) {
-		log.debug(
-			{ error },
-			'Error checking if WhatsApp template exists. If this is a 404, this is expected.'
-		);
-		return false;
+		// Only treat 404 as "doesn't exist"; re-throw other errors
+		if (error instanceof Error && error.message.includes('(404)')) {
+			return false;
+		}
+		log.warn({ error }, 'Unexpected error checking template existence');
+		throw error;
 	}
 }
