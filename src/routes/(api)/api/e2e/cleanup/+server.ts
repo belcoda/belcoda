@@ -120,7 +120,7 @@ async function deleteTestOrganizationScopedRows(orgId: string) {
 			RETURNING t1.id
 		`);
 
-		const deletedCount = (deleteResult as unknown[]).length;
+		const deletedCount = deleteResult.count ?? deleteResult.length;
 
 		if (deletedCount === 0) {
 			throw new Error(
