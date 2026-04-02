@@ -2,9 +2,15 @@
 import { adapter as svelte } from '@wuchale/svelte';
 import { adapter as js } from 'wuchale/adapter-vanilla';
 import { defineConfig } from 'wuchale';
+import { gemini } from 'wuchale';
 
 export default defineConfig({
 	// sourceLocale is en by default
+	ai: gemini({
+		batchSize: 40,
+		parallel: 5,
+		think: true // default: false
+	}),
 	otherLocales: ['es', 'pt'],
 	adapters: {
 		main: svelte({
