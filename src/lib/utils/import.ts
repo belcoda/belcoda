@@ -32,11 +32,20 @@ export async function parseImportCsv(
 	importId: string
 ): Promise<ImportResult> {
 	const records: Array<{ csvRow: CsvRow; line: number }> = [];
+	let successCount = 0;
+	let failedCount = 0;
+	const failedRows: { row: number; error: string; data?: CsvRow }[] = [];
 	const parsed = Papa.parse(csvString, { header: true });
 	log.debug({ numRows: parsed.data.length }, 'Parsed CSV');
 	if (parsed.errors.length > 0) {
 		log.error({ errors: parsed.errors }, 'CSV parsing errors');
-		throw new Error('CSV parsing errors');
+		parsed.errors.forEach((error, index) => {
+			failedRows.push({
+				row: error.row || error.index || index,
+				error: `${error.code}: ${error.message}`
+			});
+			failedCount++;
+		});
 	}
 	for (const [index, row] of parsed.data.entries()) {
 		const isEntirelyEmptyRow = Object.values(row as Record<string, string>).every(
@@ -50,10 +59,6 @@ export async function parseImportCsv(
 	}
 
 	log.debug({ rowCount: records.length }, 'CSV parsing completed');
-
-	let successCount = 0;
-	let failedCount = 0;
-	const failedRows: { row: number; error: string; data?: any }[] = [];
 
 	for (let i = 0; i < records.length; i++) {
 		const { csvRow, line } = records[i];
