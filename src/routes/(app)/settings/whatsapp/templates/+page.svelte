@@ -67,11 +67,9 @@
 											<Badge variant="secondary">{t`Paused`}</Badge>
 										{:else if template.status === 'NOT_SUBMITTED'}
 											<Badge variant="secondary">{t`Not submitted`}</Badge>
-										{/if}
-										{#if template.status === 'LIMIT_EXCEEDED'}
+										{:else if template.status === 'LIMIT_EXCEEDED'}
 											<Badge variant="secondary">{t`Limit exceeded`}</Badge>
-										{/if}
-										{#if template.status === 'PENDING'}
+										{:else if template.status === 'PENDING'}
 											<Badge variant="secondary"><Spinner /> {t`Pending`}</Badge>
 										{/if}
 									</Table.Cell>
