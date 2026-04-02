@@ -1,4 +1,3 @@
-import { parse } from 'fast-csv';
 import { person } from '$lib/schema/drizzle';
 import pino from '$lib/pino';
 import { drizzle } from '$lib/server/db';
