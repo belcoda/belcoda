@@ -8,11 +8,13 @@ export class CommunityPage {
 	readonly orgMenu: Locator;
 	readonly settingsLink: Locator;
 	readonly logoutButton: Locator;
+	readonly communitySearchInput: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
 		this.heading = page.locator('h1');
 		this.sidebar = page.getByTestId('sidebar-content');
+		this.communitySearchInput = page.getByTestId('community-person-search');
 		this.userMenu = page.getByTestId('user-menu-trigger');
 		this.orgMenu = page.getByTestId('org-menu-trigger');
 		this.settingsLink = page.getByTestId('org-menu-settings');
@@ -25,6 +27,16 @@ export class CommunityPage {
 
 	async expectLoaded() {
 		await this.page.getByTestId('nav-community').waitFor({ state: 'visible' });
+	}
+
+	async searchCommunityList(query: string) {
+		await this.communitySearchInput.fill(query);
+	}
+
+	personListLink(personId: string): Locator {
+		return this.page.locator(
+			`[data-testid="community-person-list-link"][data-person-id="${personId}"]`
+		);
 	}
 
 	async openUserMenu() {
