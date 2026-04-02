@@ -10,7 +10,6 @@ import {
 	createWhatsappTemplate as createWhatsappTemplateSchema,
 	type CreateWhatsappTemplate as CreateWhatsappTemplateSchema,
 	type UpdateWhatsappTemplate as UpdateWhatsappTemplateSchema,
-	type MutatorMetadata as MutatorMetadataSchema,
 	mutatorMetadata
 } from '$lib/schema/whatsapp-template';
 import {
