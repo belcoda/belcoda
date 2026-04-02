@@ -45,7 +45,11 @@
 				<PersonalInfoRow person={person.data} />
 				<WorkplaceRow person={person.data} />
 				{#if appState.isAdminOrOwner}
-					<Alert.Root variant="destructive" class="mt-8 mb-8">
+					<Alert.Root
+						variant="destructive"
+						class="mt-8 mb-8"
+						data-testid="person-profile-danger-zone"
+					>
 						<AlertCircleIcon />
 						<Alert.Title>{t`Danger zone!`}</Alert.Title>
 						<Alert.Description>
@@ -53,6 +57,7 @@
 
 							<div class="mt-2">
 								<LongPressButton
+									testId="person-profile-delete"
 									duration={1500}
 									onComplete={async () => {
 										if (window.confirm(t`Are you sure you want to delete this person?`)) {
