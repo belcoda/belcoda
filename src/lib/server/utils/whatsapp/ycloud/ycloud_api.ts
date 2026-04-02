@@ -200,12 +200,12 @@ export async function deployFlow({
 
 	const parsed = await v.parseAsync(ycloudFlowResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing flow response from YCloud');
-		throw Error('Invalid flow response from YCloud');
+		throw new Error('Invalid flow response from YCloud');
 	});
 
 	if (!parsed.id) {
 		log.error({ response: parsed }, 'Flow creation response missing id');
-		throw Error('Flow creation response missing id');
+		throw new Error('Flow creation response missing id');
 	}
 
 	log.info({ flowId: parsed.id, internalId: flow.metadata.id }, 'Flow deployed to YCloud');
@@ -271,7 +271,7 @@ export async function updateFlow({
 
 	const parsed = await v.parseAsync(ycloudFlowResponseSchema, responseData).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing flow update response from YCloud');
-		throw Error('Invalid flow update response from YCloud');
+		throw new Error('Invalid flow update response from YCloud');
 	});
 
 	log.info({ flowId: ycloudFlowId, internalId: flow.metadata.id }, 'Flow updated on YCloud');
@@ -296,7 +296,7 @@ export async function publishFlow({
 
 	const parsed = await v.parseAsync(ycloudFlowResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing flow publish response from YCloud');
-		throw Error('Invalid flow publish response from YCloud');
+		throw new Error('Invalid flow publish response from YCloud');
 	});
 
 	log.info({ flowId: ycloudFlowId }, 'Flow published on YCloud');
@@ -321,7 +321,7 @@ export async function deprecateFlow({
 
 	const parsed = await v.parseAsync(ycloudFlowResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing flow deprecate response from YCloud');
-		throw Error('Invalid flow deprecate response from YCloud');
+		throw new Error('Invalid flow deprecate response from YCloud');
 	});
 
 	log.info({ flowId: ycloudFlowId }, 'Flow deprecated on YCloud');
@@ -361,7 +361,7 @@ export async function createWhatsappTemplate({
 
 	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing response from YCloud');
-		throw Error('Invalid response from YCloud');
+		throw new Error('Invalid response from YCloud');
 	});
 
 	return {
@@ -387,7 +387,7 @@ export async function updateWhatsappTemplate({
 	});
 	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing response from YCloud');
-		throw Error('Invalid response from YCloud');
+		throw new Error('Invalid response from YCloud');
 	});
 
 	return {
@@ -410,7 +410,7 @@ export async function getWhatsappTemplateStatus({
 	});
 	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing response from YCloud');
-		throw Error('Invalid response from YCloud');
+		throw new Error('Invalid response from YCloud');
 	});
 	return parsed;
 }
