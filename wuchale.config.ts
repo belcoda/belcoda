@@ -1,9 +1,8 @@
 // @ts-check
-import { adapter as svelte, svelteDefaultHeuristicDerivedReq } from '@wuchale/svelte';
+import { adapter as svelte } from '@wuchale/svelte';
 import { adapter as js } from 'wuchale/adapter-vanilla';
-import { defineConfig, type AdapterArgs } from 'wuchale';
+import { defineConfig } from 'wuchale';
 import { gemini } from 'wuchale';
-type SvelteAdapterArgs = AdapterArgs<'svelte' | 'sveltekit'>;
 
 export default defineConfig({
 	// sourceLocale is en by default
