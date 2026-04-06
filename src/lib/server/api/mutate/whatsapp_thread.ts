@@ -1,7 +1,8 @@
 import {
 	createMutatorSchema,
 	updateMutatorSchema,
-	deleteMutatorSchema
+	deleteMutatorSchema,
+	sendMutatorSchema
 } from '$lib/schema/whatsapp-thread';
 
 import { defineMutator } from '@rocicorp/zero';
@@ -56,3 +57,18 @@ export const deleteWhatsappThread = defineMutator(
 		});
 	}
 );
+
+export const sendWhatsappThread = defineMutator(sendMutatorSchema, async ({ tx, args, ctx }) => {
+	if (tx.location !== 'server') {
+		throw new Error('sendWhatsappThread can only be called from the server');
+	}
+	await dataFunctions.sendWhatsappThread({
+		tx,
+		ctx,
+		args: {
+			id: args.whatsappThreadId,
+			organizationId: args.organizationId,
+			userId: args.userId || ctx.userId
+		}
+	});
+});
