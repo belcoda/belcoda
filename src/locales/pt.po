@@ -256,7 +256,6 @@ msgstr "Sistema"
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-#: src/routes/+layout.svelte
 msgid "Loading..."
 msgstr "Carregando..."
 
@@ -2664,7 +2663,7 @@ msgid "Configuration"
 msgstr "Configuração"
 
 #: src/routes/(app)/settings/people/exports/+page.svelte
-msgid "Exports are not currently supported, but will be added in a future update. "
+msgid "Exports are not currently supported, but will be added in a future update."
 msgstr ""
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
