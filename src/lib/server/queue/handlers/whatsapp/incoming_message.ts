@@ -387,5 +387,9 @@ function extractNextNodeFromButtonAction(
 	if (edge.length === 0) {
 		throw new Error('Edge not found');
 	}
-	return edge[0].target; // once we have nodes that have more than one input, we will need to update this to handle targetHandle
+	const target = edge[0].target;
+	if (typeof target !== 'string' || target.length === 0) {
+		throw new Error(`Edge target not found for buttonId ${buttonId}`);
+	}
+	return target; // once we have nodes that have more than one input, we will need to update this to handle targetHandle
 }
