@@ -6,11 +6,13 @@
 		duration = 1500,
 		disabled = false,
 		onComplete = () => {},
+		testId = undefined,
 		children
 	}: {
 		duration?: number;
 		disabled?: boolean;
 		onComplete: () => void | Promise<void>;
+		testId?: string;
 		children: Snippet;
 	} = $props();
 
@@ -51,6 +53,7 @@
 
 <button
 	type="button"
+	data-testid={testId}
 	{disabled}
 	onpointerdown={(e) => {
 		e.preventDefault();

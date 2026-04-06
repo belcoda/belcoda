@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community.page';
+import { CommunityPage } from '../pages/community/community.page';
 import { TEST_USERS } from '../helpers/auth';
 
 test.describe('Unauthenticated Access', () => {

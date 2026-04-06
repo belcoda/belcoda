@@ -24,7 +24,11 @@
 {/snippet}
 
 <InputGroup.Root class="bg-background">
-	<InputGroup.Input placeholder={t`Search...`} bind:value={filter.searchString} />
+	<InputGroup.Input
+		data-testid="community-person-search"
+		placeholder={t`Search...`}
+		bind:value={filter.searchString}
+	/>
 	<InputGroup.Addon>
 		<SearchIcon />
 	</InputGroup.Addon>
