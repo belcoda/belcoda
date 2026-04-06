@@ -11,6 +11,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
+	server: {
+		allowedHosts: [
+			'belcoda.com',
+			'staging.belcoda.com',
+			'app.belcoda.com',
+			'zero.staging.belcoda.com',
+			'zero.app.belcoda.com',
+			'localhost:5173',
+			'.belcoda.com',
+			process.env.PUBLIC_NGROK_DOMAIN || 'example.com'
+		]
+	},
 	resolve: {
 		alias: {
 			'@noble/ciphers': path.resolve(
