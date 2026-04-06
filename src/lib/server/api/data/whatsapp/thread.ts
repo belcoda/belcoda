@@ -178,3 +178,68 @@ export async function buildThreadMetadata({
 	const description = combinedTemplateMessage.headerText ? combinedTemplateMessage.text : null;
 	return { title, description };
 }
+
+export async function sendWhatsappThread({
+	args,
+	ctx,
+	tx
+}: {
+	args: { id: string; organizationId: string; userId: string };
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	// does user have permission to send this thread?
+	const record = await tx.run(
+		builder.whatsappThread
+			.where('id', '=', args.id)
+			.where('organizationId', '=', args.organizationId)
+			.where((expr) => whatsappThreadReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!record) {
+		throw new Error('WhatsApp thread not found');
+	}
+	if (record.sentBy) {
+		throw new Error('WhatsApp thread has already been sent');
+	}
+	if (record.startedAt) {
+		throw new Error('WhatsApp thread has already been started');
+	}
+	if (record.completedAt) {
+		throw new Error('WhatsApp thread has already been completed');
+	}
+	if (record.deletedAt) {
+		throw new Error('WhatsApp thread has already been deleted');
+	}
+	if (record.flow.nodes.length === 0) {
+		throw new Error('WhatsApp thread has no nodes');
+	}
+	if (record.flow.nodes.length === 1) {
+		throw new Error('WhatsApp thread has only one node');
+	}
+
+	const queue = await getQueue();
+	await queue.buildWhatsappThreadSendQueue({
+		whatsappThreadId: args.id,
+		sentByUserId: args.userId
+	});
+
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(whatsappThreadTable)
+		.set({
+			startedAt: new Date(),
+			sentBy: args.userId,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(whatsappThreadTable.id, args.id),
+				eq(whatsappThreadTable.organizationId, args.organizationId)
+			)
+		)
+		.returning();
+	if (!updated) {
+		throw new Error('Failed to update WhatsApp thread');
+	}
+	return updated;
+}
