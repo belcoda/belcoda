@@ -4,6 +4,7 @@ import { generateRandomDatePairs, selectOneOfArray } from '$lib/server/db/seed/u
 import { countryCodes } from '$lib/utils/country';
 import { event as eventTable, actionCode as actionCodeTable } from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
+import { nanoid } from '$lib/schema/helpers';
 export function generateEvents(
 	count: number = 50,
 	options: { organizationId: string; teamId?: string; pointPersonId?: string }
@@ -84,14 +85,14 @@ export function generateEvents(
 	for (let i = 0; i < events.length; i++) {
 		const event = events[i];
 		actionCodes.push({
-			id: uuidv7(),
+			id: nanoid(),
 			organizationId: options.organizationId,
 			referenceId: event.id,
 			type: 'event_signup',
 			createdAt: event.createdAt
 		});
 		actionCodes.push({
-			id: uuidv7(),
+			id: nanoid(),
 			organizationId: options.organizationId,
 			referenceId: event.id,
 			type: 'event_attended',
