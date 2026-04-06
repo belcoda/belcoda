@@ -203,6 +203,39 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 					break;
 				case 'button': {
 					// TODO: handle button messages
+					if (parsed.whatsappInboundMessage.type === 'button') {
+						const buttonActionString = parsed.whatsappInboundMessage.button.payload;
+						const { threadId, nodeId, buttonId } = extractButtonActionString(buttonActionString);
+						const threadObject =
+							await tx.dbTransaction.wrappedTransaction.query.whatsappThread.findFirst({
+								where: eq(whatsappThread.id, threadId)
+							});
+						if (!threadObject) {
+							throw new Error('Thread not found');
+						}
+						const nextNode = extractNextNodeFromButtonAction(threadObject, buttonId);
+						const organization = await getOrganizationByIdUnsafe({
+							organizationId: threadObject.organizationId,
+							tx
+						});
+						const personId = await getPersonIdFromButtonAction({
+							personPhoneNumber: parsed.whatsappInboundMessage.from,
+							personName:
+								parsed.whatsappInboundMessage.customerProfile?.name ??
+								parsed.whatsappInboundMessage.from,
+							organizationId: threadObject.organizationId,
+							organizationCountry: organization.country,
+							messageId: insertedWhatsAppMessageId,
+							tx
+						});
+						const queue = await getQueue();
+						queue.processFlowNodeAction({
+							nodeId: nextNode,
+							personId,
+							organizationId: threadObject.organizationId,
+							threadId: threadObject.id
+						});
+					}
 					break;
 				}
 				case 'interactive': {
@@ -349,6 +382,7 @@ function extractNextNodeFromButtonAction(
 ) {
 	// there should be a handle at either source or source handle...
 	const edges = thread.flow.edges;
+	log.debug({ edges, buttonId }, 'Edges');
 	const edge = edges.filter((edge) => edge.source === buttonId || edge.sourceHandle === buttonId);
 	if (edge.length === 0) {
 		throw new Error('Edge not found');

@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { whatsappThread } from '$lib/schema/drizzle';
 import { getPersonRecordsFromFilter } from '$lib/server/api/data/person/filter';
 import { getQueue } from '$lib/server/queue/index';
-export async function buildSendQueue({
+export async function buildWhatsappThreadSendQueue({
 	whatsappThreadId,
 	sentByUserId
 }: {
