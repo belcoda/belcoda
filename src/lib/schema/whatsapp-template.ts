@@ -45,6 +45,8 @@ export const createWhatsappTemplate = v.object({
 export type CreateWhatsappTemplate = v.InferInput<typeof createWhatsappTemplate>;
 
 export const updateWhatsappTemplate = v.object({
+	name: whatsappTemplateSchema.entries.name,
+	locale: whatsappTemplateSchema.entries.locale,
 	components: whatsappTemplateSchema.entries.components
 });
 export type UpdateWhatsappTemplate = v.InferInput<typeof updateWhatsappTemplate>;
@@ -53,6 +55,7 @@ export const mutatorMetadata = v.object({
 	organizationId: whatsappTemplateSchema.entries.organizationId,
 	whatsappTemplateId: whatsappTemplateSchema.entries.id
 });
+export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
 export const createMutatorSchema = v.object({
 	input: createWhatsappTemplate,
@@ -93,7 +96,7 @@ export function createDefaultTemplate({
 		status: 'NOT_SUBMITTED',
 		submittedForReviewAt: null,
 		deletedAt: null,
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime()
+		createdAt: Date.now(),
+		updatedAt: Date.now()
 	};
 }

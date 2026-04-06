@@ -79,7 +79,7 @@ export async function handleIncomingReaction({
 			if (existingReactor) {
 				if (emoji) {
 					existingReactor.emoji = emoji;
-					existingReactor.reactedAt = new Date().getTime();
+					existingReactor.reactedAt = Date.now();
 					reactions[existingReactorIndex] = existingReactor;
 				} else {
 					reactions.splice(existingReactorIndex, 1);
@@ -90,7 +90,7 @@ export async function handleIncomingReaction({
 					personId,
 					phoneNumber,
 					viaBelcoda: false,
-					reactedAt: new Date().getTime()
+					reactedAt: Date.now()
 				});
 			}
 

@@ -1,4 +1,8 @@
-import { createMutatorSchema, updateMutatorSchema } from '$lib/schema/whatsapp-template';
+import {
+	createMutatorSchema,
+	updateMutatorSchema,
+	mutatorMetadata
+} from '$lib/schema/whatsapp-template';
 
 import { defineMutator } from '@rocicorp/zero';
 import * as dataFunctions from '$lib/server/api/data/whatsapp/template';
@@ -38,3 +42,17 @@ export const updateWhatsappTemplate = defineMutator(
 		});
 	}
 );
+
+export const submitWhatsappTemplate = defineMutator(mutatorMetadata, async ({ tx, args, ctx }) => {
+	if (tx.location !== 'server') {
+		throw new Error('submitWhatsappTemplate can only be called from the server');
+	}
+	await dataFunctions.submitWhatsappTemplate({
+		tx,
+		ctx,
+		args: {
+			whatsappTemplateId: args.whatsappTemplateId,
+			organizationId: args.organizationId
+		}
+	});
+});

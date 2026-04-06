@@ -116,7 +116,7 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 		headers: event.request.headers
 	});
 	log.debug(
-		{ session: event.locals.session?.session.id, time: new Date().getTime() },
+		{ session: event.locals.session?.session.id, time: Date.now() },
 		'[DEBUG] Session fetched from Better Auth'
 	);
 	if (event.url.searchParams.get('authToken')) {
@@ -131,10 +131,7 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 				});
 				/* event.url.searchParams.delete('authToken'); //kill the token so it can't be used again
 																log.debug({ url: event.url.toString() }, '[DEBUG] Token deleted from search params'); */
-				log.debug(
-					{ session, time: new Date().getTime() },
-					'[DEBUG] Session verified from one time token'
-				);
+				log.debug({ session, time: Date.now() }, '[DEBUG] Session verified from one time token');
 				event.locals.session = session;
 			} catch (error) {
 				log.error(error, 'Error verifying one time token');

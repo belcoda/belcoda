@@ -3917,6 +3917,23 @@ msgstr "Accept all"
 msgid "Only necessary"
 msgstr "Only necessary"
 
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Not submitted"
+msgstr "Not submitted"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Limit exceeded"
+msgstr "Limit exceeded"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+#: src/routes/(app)/settings/people/imports/+page.svelte
+msgid "Pending"
+msgstr "Pending"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Submit"
+msgstr "Submit"
+
 #: src/routes/(auth)/signup/+page.svelte
 msgid ""
 "By clicking continue, you agree to our <a href=\"https://www.belcoda.com/terms-of-service\">Terms of Service</a>\n"
@@ -4071,10 +4088,6 @@ msgstr "Completed"
 msgid "Processing"
 msgstr "Processing"
 
-#: src/routes/(app)/settings/people/imports/+page.svelte
-msgid "Pending"
-msgstr "Pending"
-
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Organization settings not found"
 msgstr "Organization settings not found"
@@ -4209,3 +4222,4 @@ msgstr "Could not update personal information. Please try again."
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "WhatsApp draft sent successfully"
 msgstr "WhatsApp draft sent successfully"
+

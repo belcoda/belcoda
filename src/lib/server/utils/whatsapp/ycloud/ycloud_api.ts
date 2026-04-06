@@ -11,8 +11,20 @@ import { convertInternalToYCloudRequest } from '$lib/utils/whatsapp/flow_convert
 import * as v from 'valibot';
 
 import { convertWhatsappMessageToApiFormat } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
-
+import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+import { whatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { renderValiError } from '$lib/schema/helpers';
+
+export const whatsAppTemplateResponseSchema = v.object({
+	wabaId: v.string(),
+	name: v.string(),
+	language: v.string(),
+	category: v.string(),
+	status: whatsappTemplateStatus,
+	qualityRating: v.optional(v.picklist(['GREEN', 'YELLOW', 'RED', 'UNKNOWN'])),
+	reason: v.optional(v.string())
+});
+
 async function sendToYCloud({
 	endpoint,
 	body,
@@ -188,12 +200,12 @@ export async function deployFlow({
 
 	const parsed = await v.parseAsync(ycloudFlowResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing flow response from YCloud');
-		throw Error('Invalid flow response from YCloud');
+		throw new Error('Invalid flow response from YCloud');
 	});
 
 	if (!parsed.id) {
 		log.error({ response: parsed }, 'Flow creation response missing id');
-		throw Error('Flow creation response missing id');
+		throw new Error('Flow creation response missing id');
 	}
 
 	log.info({ flowId: parsed.id, internalId: flow.metadata.id }, 'Flow deployed to YCloud');
@@ -259,7 +271,7 @@ export async function updateFlow({
 
 	const parsed = await v.parseAsync(ycloudFlowResponseSchema, responseData).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing flow update response from YCloud');
-		throw Error('Invalid flow update response from YCloud');
+		throw new Error('Invalid flow update response from YCloud');
 	});
 
 	log.info({ flowId: ycloudFlowId, internalId: flow.metadata.id }, 'Flow updated on YCloud');
@@ -284,7 +296,7 @@ export async function publishFlow({
 
 	const parsed = await v.parseAsync(ycloudFlowResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing flow publish response from YCloud');
-		throw Error('Invalid flow publish response from YCloud');
+		throw new Error('Invalid flow publish response from YCloud');
 	});
 
 	log.info({ flowId: ycloudFlowId }, 'Flow published on YCloud');
@@ -309,7 +321,7 @@ export async function deprecateFlow({
 
 	const parsed = await v.parseAsync(ycloudFlowResponseSchema, response).catch((e) => {
 		log.error(renderValiError(e), 'Error parsing flow deprecate response from YCloud');
-		throw Error('Invalid flow deprecate response from YCloud');
+		throw new Error('Invalid flow deprecate response from YCloud');
 	});
 
 	log.info({ flowId: ycloudFlowId }, 'Flow deprecated on YCloud');
@@ -318,4 +330,112 @@ export async function deprecateFlow({
 		flowId: ycloudFlowId,
 		success: parsed.success
 	};
+}
+
+// templates
+
+export async function createWhatsappTemplate({
+	wabaId,
+	components,
+	name,
+	language,
+	category = 'MARKETING'
+}: {
+	wabaId: string;
+	components: TemplateMessageComponents;
+	name: string;
+	language: string;
+	category?: 'MARKETING' | 'UTILITY' | 'AUTHENTICATION';
+}) {
+	const response = await sendToYCloud({
+		endpoint: '/whatsapp/templates',
+		body: {
+			wabaId,
+			name,
+			language,
+			category,
+			components
+		},
+		method: 'POST'
+	});
+
+	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing response from YCloud');
+		throw new Error('Invalid response from YCloud');
+	});
+
+	return {
+		...parsed
+	};
+}
+
+export async function updateWhatsappTemplate({
+	wabaId,
+	templateName,
+	language,
+	components
+}: {
+	wabaId: string;
+	templateName: string;
+	language: string;
+	components: TemplateMessageComponents;
+}) {
+	const response = await sendToYCloud({
+		endpoint: `/whatsapp/templates/${wabaId}/${templateName}/${language}`,
+		body: components,
+		method: 'PATCH'
+	});
+	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing response from YCloud');
+		throw new Error('Invalid response from YCloud');
+	});
+
+	return {
+		...parsed
+	};
+}
+
+export async function getWhatsappTemplateStatus({
+	wabaId,
+	templateName,
+	locale
+}: {
+	wabaId: string;
+	templateName: string;
+	locale: string;
+}) {
+	const response = await sendToYCloud({
+		endpoint: `/whatsapp/templates/${wabaId}/${templateName}/${locale}`,
+		method: 'GET'
+	});
+	const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing response from YCloud');
+		throw new Error('Invalid response from YCloud');
+	});
+	return parsed;
+}
+
+export async function checkWhatsappTemplateExists({
+	wabaId,
+	templateName,
+	locale
+}: {
+	wabaId: string;
+	templateName: string;
+	locale: string;
+}) {
+	try {
+		await sendToYCloud({
+			endpoint: `/whatsapp/templates/${wabaId}/${templateName}/${locale}`,
+			method: 'GET'
+		});
+		return true;
+	} catch (error) {
+		// Only treat 404 as "doesn't exist"; re-throw other errors
+		if (error instanceof Error && error.message.includes('(404)')) {
+			return false;
+		}
+		log.warn({ error }, 'Unexpected error checking template existence');
+		throw error;
+	}
 }

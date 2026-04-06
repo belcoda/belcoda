@@ -92,7 +92,8 @@ export const mutators = defineMutators({
 	},
 	whatsappTemplate: {
 		create: whatsappTemplate.createWhatsappTemplate,
-		update: whatsappTemplate.updateWhatsappTemplate
+		update: whatsappTemplate.updateWhatsappTemplate,
+		submit: whatsappTemplate.submitWhatsappTemplate
 	},
 	whatsappThread: {
 		create: whatsappThread.createWhatsappThread,

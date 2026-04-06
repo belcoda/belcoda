@@ -18,7 +18,7 @@ export const updateOrganization = defineMutator(
 		tx.mutate.organization.update({
 			id: args.metadata.organizationId,
 			...args.input,
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -35,7 +35,7 @@ export const updateTheme = defineMutator(
 					...args.input
 				}
 			},
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -52,7 +52,7 @@ export const updateOrganizationWhatsappSettings = defineMutator(
 					...args.input
 				}
 			},
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );

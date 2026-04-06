@@ -23,8 +23,8 @@ export const createPetition = defineMutator(
 			petitionText: args.input.petitionText,
 			featureImage: args.input.featureImage,
 			settings: args.input.settings,
-			createdAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			createdAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -35,7 +35,7 @@ export const updatePetition = defineMutator(
 		tx.mutate.petition.update({
 			id: args.metadata.petitionId,
 			...args.input,
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -45,8 +45,8 @@ export const archivePetition = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.petition.update({
 			id: args.metadata.petitionId,
-			archivedAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			archivedAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -56,8 +56,8 @@ export const deletePetition = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.petition.update({
 			id: args.metadata.petitionId,
-			deletedAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			deletedAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
