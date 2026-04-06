@@ -67,8 +67,7 @@ export const sendWhatsappThread = defineMutator(sendMutatorSchema, async ({ tx, 
 		ctx,
 		args: {
 			id: args.whatsappThreadId,
-			organizationId: args.organizationId,
-			userId: args.userId || ctx.userId
+			organizationId: args.organizationId
 		}
 	});
 });
