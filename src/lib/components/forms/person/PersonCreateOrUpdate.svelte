@@ -69,6 +69,8 @@
 					};
 					const parsed = parse(updateMutatorSchemaZero, toUpdate);
 					const input = z.mutate(mutators.person.update(parsed));
+					await input.client;
+					form.tainted.set(undefined);
 					onCreated?.(person.id);
 				}
 			})
@@ -101,6 +103,7 @@
 					const input = z.mutate(mutators.person.create(parsed));
 					await input.client;
 					toast.success(t`Person created successfully`);
+					form.tainted.set(undefined);
 					await onCreated?.(personId);
 				}
 			});

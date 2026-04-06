@@ -56,7 +56,8 @@
 					}),
 					initialData: event,
 					onSubmit: async (data) => {
-						onSubmit(data);
+						await onSubmit(data);
+						form.tainted.set(undefined);
 					}
 				})
 			: createForm({
@@ -67,7 +68,8 @@
 					}),
 					validateOnLoad: false,
 					onSubmit: async (data) => {
-						onSubmit(data);
+						await onSubmit(data);
+						form.tainted.set(undefined);
 					}
 				})
 	);
