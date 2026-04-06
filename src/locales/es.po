@@ -4188,3 +4188,7 @@ msgstr ""
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 msgid "Could not update personal information. Please try again."
 msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "WhatsApp draft sent successfully"
+msgstr ""
