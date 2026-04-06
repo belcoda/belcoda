@@ -20,7 +20,7 @@ export default defineConfig({
 			'zero.app.belcoda.com',
 			'localhost:5173',
 			'.belcoda.com',
-			process.env.PUBLIC_NGROK_DOMAIN || 'example.com'
+			...(process.env.PUBLIC_NGROK_DOMAIN ? [process.env.PUBLIC_NGROK_DOMAIN] : [])
 		]
 	},
 	resolve: {
