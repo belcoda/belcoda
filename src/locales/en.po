@@ -256,7 +256,6 @@ msgstr "System"
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
-#: src/routes/+layout.svelte
 msgid "Loading..."
 msgstr "Loading..."
 
