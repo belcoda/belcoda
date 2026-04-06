@@ -2,7 +2,7 @@ import {
 	whatsappTemplate as whatsappTemplateTable,
 	whatsappThread as whatsappThreadTable
 } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull, or, inArray, sql, type SQL } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import { builder } from '$lib/zero/schema';
@@ -19,7 +19,6 @@ import {
 import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
-import { db } from '$lib/server/db';
 
 export async function createWhatsappThread({
 	args,
@@ -177,4 +176,67 @@ export async function buildThreadMetadata({
 	const title = combinedTemplateMessage.headerText || combinedTemplateMessage.text;
 	const description = combinedTemplateMessage.headerText ? combinedTemplateMessage.text : null;
 	return { title, description };
+}
+
+export async function sendWhatsappThread({
+	args,
+	ctx,
+	tx
+}: {
+	args: { id: string; organizationId: string };
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const now = new Date();
+
+	const permissionCheck = await tx.run(
+		builder.whatsappThread
+			.where('id', '=', args.id)
+			.where('organizationId', '=', args.organizationId)
+			.where((expr) => whatsappThreadReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!permissionCheck) {
+		throw new Error('No access to send WhatsApp thread');
+	}
+	const [claimed] = await tx.dbTransaction.wrappedTransaction
+		.update(whatsappThreadTable)
+		.set({
+			startedAt: now,
+			sentBy: ctx.userId,
+			updatedAt: now
+		})
+		.where(
+			and(
+				eq(whatsappThreadTable.id, args.id),
+				eq(whatsappThreadTable.organizationId, args.organizationId),
+				isNull(whatsappThreadTable.sentBy),
+				isNull(whatsappThreadTable.startedAt),
+				isNull(whatsappThreadTable.completedAt),
+				isNull(whatsappThreadTable.deletedAt)
+			)
+		)
+		.returning();
+
+	if (!claimed) {
+		throw new Error(
+			'Unable to send WhatsApp thread (not found, already started or completed, or no access)'
+		);
+	}
+
+	if (claimed.flow.nodes.length === 0) {
+		throw new Error('WhatsApp thread has no nodes');
+	}
+	if (claimed.flow.nodes.length === 1) {
+		throw new Error('WhatsApp thread has only one node');
+	}
+
+	const queue = await getQueue();
+	await queue.buildWhatsappThreadSendQueue({
+		thread: claimed,
+		sentByUserId: ctx.userId,
+		tx
+	});
+
+	return claimed;
 }

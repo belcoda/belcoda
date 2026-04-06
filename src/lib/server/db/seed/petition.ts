@@ -3,6 +3,7 @@ import { slugify } from '$lib/utils/slug';
 import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { petition as petitionTable, actionCode as actionCodeTable } from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
+import { nanoid } from '$lib/schema/helpers';
 
 export function generatePetitions(
 	count: number = 30,
@@ -64,7 +65,7 @@ export function generatePetitions(
 	for (let i = 0; i < petitions.length; i++) {
 		const petition = petitions[i];
 		actionCodes.push({
-			id: uuidv7(),
+			id: nanoid(),
 			organizationId: options.organizationId,
 			referenceId: petition.id,
 			type: 'petition_signed',

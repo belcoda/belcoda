@@ -59,6 +59,14 @@ export const mutatorMetadata = v.object({
 	organizationId: whatsappThreadSchema.entries.organizationId,
 	whatsappThreadId: whatsappThreadSchema.entries.id
 });
+export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
+
+export const sendMutatorSchema = v.object({
+	organizationId: whatsappThreadSchema.entries.organizationId,
+	whatsappThreadId: whatsappThreadSchema.entries.id,
+	userId: helpers.uuid //not nullable
+});
+export type SendMutatorSchema = v.InferInput<typeof sendMutatorSchema>;
 
 export const createMutatorSchema = v.object({
 	input: createWhatsappThread,
