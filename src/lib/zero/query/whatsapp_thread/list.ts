@@ -54,7 +54,7 @@ function whereClause(
 	if (filter.searchString && filter.searchString.length > 0) {
 		filterArr.push(cmp('title', 'ILIKE', `%${filter.searchString}%`));
 	}
-	if (filter.isDraft) {
+	if (filter.isDraft !== false) {
 		filterArr.push(cmp('startedAt', 'IS', null));
 	} else {
 		filterArr.push(cmp('startedAt', 'IS NOT', null));
