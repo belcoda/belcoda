@@ -2,7 +2,8 @@ import { defineMutator } from '@rocicorp/zero';
 import {
 	createMutatorSchema,
 	updateMutatorSchema,
-	deleteMutatorSchema
+	deleteMutatorSchema,
+	sendMutatorSchema
 } from '$lib/schema/whatsapp-thread';
 
 const now = () => Date.now();
@@ -45,6 +46,16 @@ export const deleteWhatsappThread = defineMutator(deleteMutatorSchema, async ({ 
 		id: args.id,
 		organizationId: args.organizationId,
 		deletedAt: now(),
+		updatedAt: now()
+	});
+});
+
+export const sendWhatsappThread = defineMutator(sendMutatorSchema, async ({ tx, args }) => {
+	tx.mutate.whatsappThread.update({
+		id: args.whatsappThreadId,
+		organizationId: args.organizationId,
+		sentBy: args.userId,
+		startedAt: now(),
 		updatedAt: now()
 	});
 });

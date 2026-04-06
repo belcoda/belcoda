@@ -31,31 +31,30 @@ export async function parseImportCsv(
 	organizationId: string,
 	importId: string
 ): Promise<ImportResult> {
-	const records: CsvRow[] = [];
+	const records: Array<{ csvRow: CsvRow; line: number }> = [];
+	let successCount = 0;
+	let failedCount = 0;
+	const failedRows: { row: number; error: string; data?: CsvRow }[] = [];
 	const parsed = Papa.parse(csvString, { header: true });
 	log.debug({ numRows: parsed.data.length }, 'Parsed CSV');
 	if (parsed.errors.length > 0) {
 		log.error({ errors: parsed.errors }, 'CSV parsing errors');
-		throw new Error('CSV parsing errors');
 	}
-	for (const row of parsed.data) {
+	for (const [index, row] of parsed.data.entries()) {
 		const isEntirelyEmptyRow = Object.values(row as Record<string, string>).every(
 			(value) => value === null || value === undefined || String(value).trim() === ''
 		);
 
 		if (!isEntirelyEmptyRow) {
-			records.push(row as CsvRow);
+			// Line 1 is the header; first data row is line 2.
+			records.push({ csvRow: row as CsvRow, line: index + 2 });
 		}
 	}
 
 	log.debug({ rowCount: records.length }, 'CSV parsing completed');
 
-	let successCount = 0;
-	let failedCount = 0;
-	const failedRows: { row: number; error: string; data?: any }[] = [];
-
 	for (let i = 0; i < records.length; i++) {
-		const csvRow = records[i];
+		const { csvRow, line } = records[i];
 
 		try {
 			const personData = mapCsvRowToPerson(csvRow, organizationId, importId);
@@ -73,7 +72,7 @@ export async function parseImportCsv(
 				try {
 					await drizzle.insert(person).values(validatedPerson);
 					successCount++;
-					log.debug({ row: i + 1 }, 'Person imported successfully');
+					log.debug({ row: line }, 'Person imported successfully');
 				} catch (error) {
 					log.error({ error }, 'Database insert error');
 					//if it's a postgres unique error, handle that
@@ -90,7 +89,7 @@ export async function parseImportCsv(
 						? 'A person with this email address or phone number already exists'
 						: 'Database insert error: Unknown error';
 					failedRows.push({
-						row: i + 1,
+						row: line,
 						error: errorMessage,
 						data: csvRow
 					});
@@ -99,7 +98,7 @@ export async function parseImportCsv(
 				failedCount++;
 				const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 				failedRows.push({
-					row: i + 1,
+					row: line,
 					error: errorMessage,
 					data: csvRow
 				});
@@ -109,11 +108,11 @@ export async function parseImportCsv(
 			const errorMessage =
 				error instanceof Error ? error.message : 'Unknown error importing person';
 			failedRows.push({
-				row: i + 1,
+				row: line,
 				error: errorMessage,
 				data: csvRow
 			});
-			log.error({ row: i + 1, error: errorMessage }, 'Failed to import person');
+			log.error({ row: line, error: errorMessage }, 'Failed to import person');
 		}
 	}
 

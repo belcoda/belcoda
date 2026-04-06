@@ -98,6 +98,7 @@ export const mutators = defineMutators({
 	whatsappThread: {
 		create: whatsappThread.createWhatsappThread,
 		update: whatsappThread.updateWhatsappThread,
-		delete: whatsappThread.deleteWhatsappThread
+		delete: whatsappThread.deleteWhatsappThread,
+		send: whatsappThread.sendWhatsappThread
 	}
 });

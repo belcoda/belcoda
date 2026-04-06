@@ -8,7 +8,10 @@ export function getAvatarFallback(
 			.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{Symbol}]/gu, '')
 			.trim();
 
-	const isValid = (s: any): s is string => typeof s === 'string' && clean(s).length > 0;
+	const isValid = (s: any): s is string => {
+		if (typeof s !== 'string') return false;
+		return clean(s).length > 0;
+	};
 
 	if (isValid(name1) && isValid(name2)) {
 		const first = clean(name1)[0];
