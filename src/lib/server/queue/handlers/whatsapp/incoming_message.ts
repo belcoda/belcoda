@@ -229,7 +229,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							tx
 						});
 						const queue = await getQueue();
-						queue.processFlowNodeAction({
+						await queue.processFlowNodeAction({
 							nodeId: nextNode,
 							personId,
 							organizationId: threadObject.organizationId,
@@ -267,7 +267,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							tx
 						});
 						const queue = await getQueue();
-						queue.processFlowNodeAction({
+						await queue.processFlowNodeAction({
 							nodeId: nextNode,
 							personId,
 							organizationId: threadObject.organizationId,
