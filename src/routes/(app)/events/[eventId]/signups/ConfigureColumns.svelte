@@ -13,7 +13,8 @@
 	}: { person: Columns['person']; custom: Columns['custom']; event: ReadEventZero } = $props();
 	import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
 	/* svelte-ignore state_referenced_locally */
-	const customQuestions = getSurveyQuestions(event.settings.survey.collections[0].questions).custom;
+	const surveyQuestions = event.settings.survey?.collections?.[0]?.questions ?? [];
+	const customQuestions = getSurveyQuestions(surveyQuestions).custom;
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { renderColumnName } from './actions';
