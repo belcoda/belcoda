@@ -69,36 +69,6 @@
 				</Command.Root>
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>
-		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>{t`Tags`}</DropdownMenu.SubTrigger>
-			<DropdownMenu.SubContent>
-				<Command.Root value={filter.tagId ?? ''}>
-					<Command.Input autofocus placeholder={t`Filter tags...`} />
-					<Command.List>
-						<Command.Empty class="text-sm text-muted-foreground">{t`No tags found.`}</Command.Empty>
-						<Command.Group>
-							{#each tagList.data as tag (tag.id)}
-								<Command.Item
-									keywords={[tag.name]}
-									value={tag.id}
-									onSelect={() => {
-										filter.tagId = tag.id;
-										closeAndFocusTrigger();
-									}}
-								>
-									<Avatar
-										src={null}
-										name1={'#'}
-										class="size-4 rounded-full from-yellow-500 to-yellow-800 text-xs"
-									/>
-									{tag.name}
-								</Command.Item>
-							{/each}
-						</Command.Group>
-					</Command.List>
-				</Command.Root>
-			</DropdownMenu.SubContent>
-		</DropdownMenu.Sub>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
 			<DropdownMenu.Label>{t`Status`}</DropdownMenu.Label>
