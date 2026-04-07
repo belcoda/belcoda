@@ -57,10 +57,10 @@
 	import { convertQuestionsToValibotSchema } from '$lib/schema/survey/questions';
 	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
 	import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
-	const { person: personSurveyQuestionsRaw, custom: customSurveyQuestions } = getSurveyQuestions(
-		/* svelte-ignore state_referenced_locally */
-		event.settings.survey.collections[0].questions
-	);
+	/* svelte-ignore state_referenced_locally */
+	const surveyQuestions = event.settings.survey?.collections?.[0]?.questions ?? [];
+	const { person: personSurveyQuestionsRaw, custom: customSurveyQuestions } =
+		getSurveyQuestions(surveyQuestions);
 	const personSurveyQuestions = personSurveyQuestionsRaw.map((item) => item.type);
 	const customQuestionSurveySchema = object(convertQuestionsToValibotSchema(customSurveyQuestions));
 	const personActionHelperSchema = setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
