@@ -5,8 +5,7 @@ import { htmlToPlaintext } from '$lib/utils/html';
 import { dev } from '$app/environment';
 import { runWithLocale } from 'wuchale/load-utils/server';
 import { t } from '$lib/index.svelte';
-
-const { PUBLIC_ROOT_DOMAIN } = env;
+const { PUBLIC_ROOT_DOMAIN, PUBLIC_DEFAULT_WORKSPACE_LOGO } = env;
 
 type Input = {
 	organization: typeof organization.$inferSelect;
@@ -42,9 +41,7 @@ export async function petitionSignatureConfirmation(options: Input) {
 			buttonUrl: petitionUrl,
 			instanceName,
 			logoUrl:
-				options.organization.icon ||
-				options.organization.logo ||
-				`http://app.belcoda.com/logos/logomark_black.svg`,
+				options.organization.icon || options.organization.logo || PUBLIC_DEFAULT_WORKSPACE_LOGO,
 			logoAlt: t`Belcoda logo`,
 			buttonAltHtml,
 			buttonAltText,
