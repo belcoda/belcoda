@@ -4,7 +4,8 @@
 	import { appState } from '$lib/state.svelte';
 	import { authClient } from '$lib/auth-client';
 	// svelte-ignore state_referenced_locally
-	const { userId, defaultActiveOrganizationId, inferredOrganizationId, queryContext } = data;
+	const { userId, defaultActiveOrganizationId, inferredOrganizationId, memberships, queryContext } =
+		data;
 	function setOrganizationIdState(organizationId: string) {
 		appState.organizationId = organizationId;
 		sessionStorage.setItem('state:organizationId', organizationId);
@@ -12,18 +13,26 @@
 
 	function determineAndPersistActiveOrganizationId({
 		inferredOrganizationId,
-		defaultActiveOrganizationId
+		defaultActiveOrganizationId,
+		memberships
 	}: {
 		inferredOrganizationId: string | null | undefined;
 		defaultActiveOrganizationId: string;
+		memberships: { organizationId: string }[];
 	}) {
 		const existingSessionStorageOrganizationId = sessionStorage.getItem('state:organizationId');
 		if (inferredOrganizationId) {
 			setOrganizationIdState(inferredOrganizationId);
 			return inferredOrganizationId;
 		} else if (existingSessionStorageOrganizationId) {
-			setOrganizationIdState(existingSessionStorageOrganizationId);
-			return existingSessionStorageOrganizationId;
+			const sessionOrgIsMember = memberships.some(
+				(m) => m.organizationId === existingSessionStorageOrganizationId
+			);
+			const validatedOrganizationId = sessionOrgIsMember
+				? existingSessionStorageOrganizationId
+				: defaultActiveOrganizationId;
+			setOrganizationIdState(validatedOrganizationId);
+			return validatedOrganizationId;
 		} else {
 			setOrganizationIdState(defaultActiveOrganizationId);
 			return defaultActiveOrganizationId;
@@ -37,7 +46,8 @@
 		userId,
 		organizationId: determineAndPersistActiveOrganizationId({
 			inferredOrganizationId,
-			defaultActiveOrganizationId
+			defaultActiveOrganizationId,
+			memberships
 		}),
 		queryContext
 	});

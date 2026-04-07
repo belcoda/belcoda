@@ -37,6 +37,7 @@ export async function load({ locals, url }) {
 		userId: session.user.id,
 		defaultActiveOrganizationId: defaultActiveOrganizationId,
 		inferredOrganizationId: inferredOrganizationId,
+		memberships: memberships.map((m) => ({ organizationId: m.organizationId })),
 		queryContext: queryContext
 	};
 }
