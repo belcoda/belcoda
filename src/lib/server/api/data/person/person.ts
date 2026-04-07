@@ -221,3 +221,19 @@ export async function _getPersonByIdUnsafe({
 	}
 	return personRecord;
 }
+
+export async function _getPersonByIdUnsafeNoTenantCheck({
+	personId,
+	tx
+}: {
+	personId: string;
+	tx: ServerTransaction;
+}) {
+	const personRecord = await tx.dbTransaction.wrappedTransaction.query.person.findFirst({
+		where: and(eq(person.id, personId), isNull(person.deletedAt))
+	});
+	if (!personRecord) {
+		return null;
+	}
+	return personRecord;
+}

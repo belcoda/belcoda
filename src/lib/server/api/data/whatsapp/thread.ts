@@ -240,3 +240,23 @@ export async function sendWhatsappThread({
 
 	return claimed;
 }
+
+export async function _getWhatsappThreadByIdUnsafeNoTenantCheck({
+	whatsappThreadId,
+	tx
+}: {
+	whatsappThreadId: string;
+	tx: ServerTransaction;
+}) {
+	const whatsappThreadRecord =
+		await tx.dbTransaction.wrappedTransaction.query.whatsappThread.findFirst({
+			where: and(
+				eq(whatsappThreadTable.id, whatsappThreadId),
+				isNull(whatsappThreadTable.deletedAt)
+			)
+		});
+	if (!whatsappThreadRecord) {
+		return null;
+	}
+	return whatsappThreadRecord;
+}

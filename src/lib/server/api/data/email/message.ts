@@ -2,7 +2,7 @@ import type { ServerTransaction } from '@rocicorp/zero';
 import { emailMessage } from '$lib/schema/drizzle';
 import { type QueryContext, builder } from '$lib/zero/schema';
 import { parse } from 'valibot';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -206,4 +206,22 @@ export async function sendEmailMessage({
 		{ emailMessageId: parsed.metadata.emailMessageId },
 		'Email message queued for processing'
 	);
+}
+
+export async function _getEmailMessageByIdUnsafeNoTenantCheck({
+	emailMessageId,
+	tx
+}: {
+	emailMessageId: string;
+	tx: ServerTransaction;
+}) {
+	const emailMessageRecord = await tx.dbTransaction.wrappedTransaction.query.emailMessage.findFirst(
+		{
+			where: and(eq(emailMessage.id, emailMessageId), isNull(emailMessage.deletedAt))
+		}
+	);
+	if (!emailMessageRecord) {
+		return null;
+	}
+	return emailMessageRecord;
 }
