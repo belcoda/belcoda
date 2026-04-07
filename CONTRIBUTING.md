@@ -55,8 +55,7 @@ Belcoda is open source software for people who are trying to make the world a be
 
 ### Does it follow the contributor covenant
 
-This repository has a [code of conduct](https://github.com/belcoda/belcoda/blob/main/CODE_OF_CONDUCT.md), I will
-remove things that do not respect it.
+This repository has a [code of conduct](https://github.com/belcoda/belcoda/blob/main/CODE_OF_CONDUCT.md). Maintainers may remove content that does not comply with the Code of Conduct.
 
 ## Contributor License Agreement
 
