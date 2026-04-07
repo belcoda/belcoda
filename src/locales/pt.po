@@ -3176,7 +3176,7 @@ msgstr "Meta alcançada! Mantenha o impulso para gerar um impacto ainda maior."
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "or"
-msgstr "<<<<<<< HEAD"
+msgstr "ou"
 
 #: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
 #: src/lib/components/layouts/public/petition/WhatsAppPetitionSignup.svelte
@@ -3234,7 +3234,7 @@ msgstr "Publicar evento"
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "View full page"
-msgstr "<<<<<<< HEAD"
+msgstr "Ver página completa"
 
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 msgid "View all"
@@ -3553,7 +3553,7 @@ msgstr "Nenhuma pessoa encontrada"
 
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 msgid "Create new person?"
-msgstr ">>>>>>> develop"
+msgstr "Criar nova pessoa?"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "WhatsApp not activated"
@@ -3632,7 +3632,7 @@ msgstr ""
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
 #: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Search tag..."
-msgstr "=======>>>>>>> develop"
+msgstr "Pesquisar tag..."
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "Search templates..."
@@ -4217,34 +4217,34 @@ msgstr "Rascunho do WhatsApp enviado com sucesso"
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Automatic tags"
-msgstr ""
+msgstr "Tags automáticas"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Optional tags applied to people when they sign up for this event or when attendance is recorded."
-msgstr ""
+msgstr "Tags opcionais aplicadas às pessoas quando se inscrevem neste evento ou quando a presença é registada."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Tag on signup"
-msgstr ""
+msgstr "Tag na inscrição"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Tag when attended"
-msgstr ""
+msgstr "Tag quando compareceu"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
 msgid "Clear selection"
-msgstr ""
+msgstr "Limpar seleção"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Remove tag"
-msgstr ""
+msgstr "Remover tag"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Select tags..."
-msgstr ""
+msgstr "Selecionar tags..."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Optional tags applied to people when they sign this petition."
-msgstr ""
+msgstr "Tags opcionais aplicadas às pessoas quando assinam esta petição."
