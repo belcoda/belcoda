@@ -1,3 +1,5 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/belcoda/belcoda)
+
 ## Queue System (pg-boss)
 
 Background jobs are processed using [pg-boss](https://github.com/timgit/pg-boss).
