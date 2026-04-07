@@ -38,7 +38,7 @@
 					{t`There are ${incompleteSignups.data.length.toString()} incomplete signup(s).`}
 					<a class="ml-1 underline" href={`/events/${event.data.id}/signups`}
 						>{t`View the detailed signups table`}</a
-					>.
+					>
 				</Alert.Description>
 			</Alert.Root>
 		{/if}
