@@ -55,6 +55,37 @@ export async function getEventByIdUnsafe({
 	return eventResult;
 }
 
+/** Applies the event attendance tag when status becomes attended (idempotent for repeat attended). */
+export async function applyAttendanceTagIfNeeded({
+	tx,
+	eventId,
+	personId,
+	organizationId,
+	newStatus,
+	previousStatus
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personId: string;
+	organizationId: string;
+	newStatus: EventSignupStatus;
+	previousStatus: EventSignupStatus | undefined;
+}) {
+	if (newStatus !== 'attended' || previousStatus === 'attended') {
+		return;
+	}
+	const eventRecord = await getEventByIdUnsafe({ eventId, organizationId, tx });
+	if (!eventRecord.attendanceTag) {
+		return;
+	}
+	await applyTagToPersonUnsafe({
+		tx,
+		personId,
+		tagId: eventRecord.attendanceTag,
+		organizationId
+	});
+}
+
 export async function getEventSignupsByEventIdUnsafe({
 	eventId,
 	organizationId,
@@ -463,21 +494,14 @@ export async function updateEventSignupStatus({
 	if (!result) {
 		throw new Error('Unable to update event signup');
 	}
-	if (parsed === 'attended' && previousStatus !== 'attended') {
-		const eventRecord = await getEventByIdUnsafe({
-			eventId: existing.eventId,
-			organizationId,
-			tx
-		});
-		if (eventRecord.attendanceTag) {
-			await applyTagToPersonUnsafe({
-				tx,
-				personId: existing.personId,
-				tagId: eventRecord.attendanceTag,
-				organizationId
-			});
-		}
-	}
+	await applyAttendanceTagIfNeeded({
+		tx,
+		eventId: existing.eventId,
+		personId: existing.personId,
+		organizationId,
+		newStatus: parsed,
+		previousStatus
+	});
 	return result;
 }
 
@@ -572,14 +596,14 @@ export async function createEventSignup({
 			organizationId: parsed.metadata.organizationId
 		});
 	}
-	if (parsed.input.status === 'attended' && event.attendanceTag) {
-		await applyTagToPersonUnsafe({
-			tx,
-			personId: parsed.metadata.personId,
-			tagId: event.attendanceTag,
-			organizationId: parsed.metadata.organizationId
-		});
-	}
+	await applyAttendanceTagIfNeeded({
+		tx,
+		eventId: parsed.metadata.eventId,
+		personId: parsed.metadata.personId,
+		organizationId: parsed.metadata.organizationId,
+		newStatus: parsed.input.status,
+		previousStatus: undefined
+	});
 
 	return insertedEventSignup;
 }
@@ -621,19 +645,12 @@ export async function updateEventSignup({
 	if (!result) {
 		throw new Error('Unable to update event signup');
 	}
-	if (args.input.status === 'attended' && previousStatus !== 'attended') {
-		const eventRecord = await getEventByIdUnsafe({
-			eventId: eventSignupRecord.eventId,
-			organizationId: args.metadata.organizationId,
-			tx
-		});
-		if (eventRecord.attendanceTag) {
-			await applyTagToPersonUnsafe({
-				tx,
-				personId: eventSignupRecord.personId,
-				tagId: eventRecord.attendanceTag,
-				organizationId: args.metadata.organizationId
-			});
-		}
-	}
+	await applyAttendanceTagIfNeeded({
+		tx,
+		eventId: eventSignupRecord.eventId,
+		personId: eventSignupRecord.personId,
+		organizationId: args.metadata.organizationId,
+		newStatus: args.input.status,
+		previousStatus
+	});
 }
