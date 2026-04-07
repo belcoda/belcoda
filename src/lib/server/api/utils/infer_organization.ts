@@ -8,132 +8,112 @@ export async function inferOrganizationIdFromUrl({ url }: { url: URL }): Promise
 	const path = url.pathname;
 
 	//COMMUNICATIONS
-	if (checkIfPathStartsWithPattern(path, '/communications/email/drafts/[uuid]')) {
-		const uuid = checkIfPathStartsWithPattern(path, '/communications/email/drafts/[uuid]');
-		if (!uuid) {
-			return null;
-		}
-		const result = await db.transaction(async (tx) => {
+	const emailDraftId = checkIfPathStartsWithPattern(path, '/communications/email/drafts/[uuid]');
+	if (emailDraftId) {
+		return await db.transaction(async (tx) => {
 			const emailMessage = await _getEmailMessageByIdUnsafeNoTenantCheck({
-				emailMessageId: uuid,
+				emailMessageId: emailDraftId,
 				tx
 			});
 			if (!emailMessage) {
-				throw new Error('Email message not found');
+				return null;
 			}
 			return emailMessage.organizationId;
 		});
-		return result;
 	}
-	if (checkIfPathStartsWithPattern(path, '/communications/email/sent/[uuid]')) {
-		const uuid = checkIfPathStartsWithPattern(path, '/communications/email/sent/[uuid]');
-		if (!uuid) {
-			return null;
-		}
-		const result = await db.transaction(async (tx) => {
+	const emailSentId = checkIfPathStartsWithPattern(path, '/communications/email/sent/[uuid]');
+	if (emailSentId) {
+		return await db.transaction(async (tx) => {
 			const emailMessage = await _getEmailMessageByIdUnsafeNoTenantCheck({
-				emailMessageId: uuid,
+				emailMessageId: emailSentId,
 				tx
 			});
 			if (!emailMessage) {
-				throw new Error('Email message not found');
+				return null;
 			}
 			return emailMessage.organizationId;
 		});
-		return result;
 	}
 
-	if (checkIfPathStartsWithPattern(path, '/communications/whatsapp/draft/[uuid]')) {
-		const uuid = checkIfPathStartsWithPattern(path, '/communications/whatsapp/draft/[uuid]');
-		if (!uuid) {
-			return null;
-		}
-		const result = await db.transaction(async (tx) => {
+	const whatsappDraftId = checkIfPathStartsWithPattern(
+		path,
+		'/communications/whatsapp/drafts/[uuid]'
+	);
+	if (whatsappDraftId) {
+		return await db.transaction(async (tx) => {
 			const whatsappThread = await _getWhatsappThreadByIdUnsafeNoTenantCheck({
-				whatsappThreadId: uuid,
+				whatsappThreadId: whatsappDraftId,
 				tx
 			});
 			if (!whatsappThread) {
-				throw new Error('Whatsapp thread not found');
+				return null;
 			}
 			return whatsappThread.organizationId;
 		});
-		return result;
 	}
-	if (checkIfPathStartsWithPattern(path, '/communications/whatsapp/sent/[uuid]')) {
-		const uuid = checkIfPathStartsWithPattern(path, '/communications/whatsapp/sent/[uuid]');
-		if (!uuid) {
-			return null;
-		}
-		const result = await db.transaction(async (tx) => {
+	const whatsappSentId = checkIfPathStartsWithPattern(path, '/communications/whatsapp/sent/[uuid]');
+	if (whatsappSentId) {
+		return await db.transaction(async (tx) => {
 			const whatsappThread = await _getWhatsappThreadByIdUnsafeNoTenantCheck({
-				whatsappThreadId: uuid,
+				whatsappThreadId: whatsappSentId,
 				tx
 			});
 			if (!whatsappThread) {
-				throw new Error('Whatsapp thread not found');
+				return null;
 			}
 			return whatsappThread.organizationId;
 		});
-		return result;
 	}
 	//COMMUNITY
-	if (checkIfPathStartsWithPattern(path, '/community/[uuid]')) {
-		const uuid = checkIfPathStartsWithPattern(path, '/community/[uuid]');
-		if (!uuid) {
-			return null;
-		}
-		const result = await db.transaction(async (tx) => {
-			const person = await _getPersonByIdUnsafeNoTenantCheck({ personId: uuid, tx });
+	const personId = checkIfPathStartsWithPattern(path, '/community/[uuid]');
+	if (personId) {
+		return await db.transaction(async (tx) => {
+			const person = await _getPersonByIdUnsafeNoTenantCheck({ personId, tx });
 			if (!person) {
-				throw new Error('Person not found');
+				return null;
 			}
 			return person.organizationId;
 		});
-		return result;
 	}
 	//EVENTS
-	if (checkIfPathStartsWithPattern(path, '/events/[uuid]')) {
-		const uuid = checkIfPathStartsWithPattern(path, '/events/[uuid]');
-		if (!uuid) {
-			return null;
-		}
-		const result = await db.transaction(async (tx) => {
-			const event = await _getEventByIdUnsafe({ eventId: uuid, tx });
-			if (!event) {
-				throw new Error('Event not found');
+	const eventId = checkIfPathStartsWithPattern(path, '/events/[uuid]');
+	if (eventId) {
+		return await db.transaction(async (tx) => {
+			try {
+				const event = await _getEventByIdUnsafe({ eventId, tx });
+				return event.organizationId;
+			} catch (e) {
+				if (e instanceof Error && e.message === 'Event not found') {
+					return null;
+				}
+				throw e;
 			}
-			return event.organizationId;
 		});
-		return result;
 	}
 	//PETITIONS
-	if (checkIfPathStartsWithPattern(path, '/petitions/[uuid]')) {
-		const uuid = checkIfPathStartsWithPattern(path, '/petitions/[uuid]');
-		if (!uuid) {
-			return null;
-		}
-		const result = await db.transaction(async (tx) => {
-			const petition = await _getPetitionByIdUnsafeNoTenantCheck({ petitionId: uuid, tx });
+	const petitionId = checkIfPathStartsWithPattern(path, '/petitions/[uuid]');
+	if (petitionId) {
+		return await db.transaction(async (tx) => {
+			const petition = await _getPetitionByIdUnsafeNoTenantCheck({ petitionId, tx });
 			if (!petition) {
-				throw new Error('Petition not found');
+				return null;
 			}
 			return petition.organizationId;
 		});
-		return result;
 	}
 	return null;
 }
 
 /**
- * Checks if a given path starts with a pattern containing a [uuid] placeholder.
- * If it matches, returns the extracted UUID; otherwise, returns null.
- * Anything after the UUID in the path is allowed.
+ * Checks if a given path matches a pattern containing a [uuid] placeholder at the
+ * first dynamic segment. If it matches, returns the extracted UUID; otherwise,
+ * returns null. The UUID must be followed by end-of-string or a path segment
+ * boundary (next `/`), so suffix garbage like `uuidfoo` does not match.
  *
  * Example usage:
  * ```ts
  * const path1 = '/communications/drafts/123e4567-e89b-12d3-a456-426614174000';
- * const path2 = '/communications/drafts/123e4567-e89b-12d3-a456-426614174000/foobar';
+ * const path2 = '/communications/drafts/123e4567-e89b-12d3-a456-426614174000/edit';
  * const pattern = '/communications/drafts/[uuid]';
  *
  * console.log(checkIfPathStartsWithPattern(path1, pattern));
@@ -144,6 +124,10 @@ export async function inferOrganizationIdFromUrl({ url }: { url: URL }): Promise
  *
  * const invalidPath = '/communications/messages/123e4567-e89b-12d3-a456-426614174000';
  * console.log(checkIfPathStartsWithPattern(invalidPath, pattern));
+ * // Output: null
+ *
+ * const suffixGarbage = '/communications/drafts/123e4567-e89b-12d3-a456-426614174000foo';
+ * console.log(checkIfPathStartsWithPattern(suffixGarbage, pattern));
  * // Output: null
  * ```
  *
@@ -157,8 +141,8 @@ function checkIfPathStartsWithPattern(path: string, pattern: string): string | n
 		.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 		.replace('\\[uuid\\]', '([0-9a-fA-F-]{36})');
 
-	// Match the pattern at the start, allow anything after
-	const regex = new RegExp(`^${regexPattern}.*`);
+	// UUID must be followed by end of path or a slash (segment boundary)
+	const regex = new RegExp(`^${regexPattern}(?:$|/)`);
 	const match = path.match(regex);
 	return match ? match[1] : null;
 }
