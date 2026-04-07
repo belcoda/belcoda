@@ -48,9 +48,14 @@
 	import { onMount } from 'svelte';
 
 	onMount(async () => {
-		await authClient.organization.setActive({
-			organizationId: appState.organizationId
-		});
+		try {
+			await authClient.organization.setActive({
+				organizationId: appState.organizationId
+			});
+		} catch (error) {
+			console.error('Failed to set active organization:', error);
+			// Consider fallback behavior or user notification
+		}
 	});
 </script>
 
