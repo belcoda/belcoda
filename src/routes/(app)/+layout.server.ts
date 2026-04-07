@@ -36,6 +36,7 @@ export async function load({ locals, url }) {
 	return {
 		userId: session.user.id,
 		defaultActiveOrganizationId: defaultActiveOrganizationId,
+		inferredOrganizationId: inferredOrganizationId,
 		queryContext: queryContext
 	};
 }
