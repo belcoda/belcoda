@@ -318,6 +318,7 @@ export async function createIncompleteEventSignupByPersonId({
 			createdAt: new Date(),
 			updatedAt: new Date()
 		})
+		.onConflictDoNothing()
 		.returning();
 	if (!inserted) {
 		throw new Error('Unable to create incomplete event signup');
@@ -434,6 +435,7 @@ export async function completeEventSignupByPersonId({
 				createdAt: new Date(),
 				updatedAt: new Date()
 			})
+			.onConflictDoNothing()
 			.returning();
 		result = inserted;
 	}
