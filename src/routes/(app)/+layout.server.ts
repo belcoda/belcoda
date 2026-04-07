@@ -18,7 +18,10 @@ export async function load({ locals, url }) {
 	const otherOrgs = memberships.filter((m) => m.role !== 'owner' && m.role !== 'admin');
 
 	// see if we can derive an organization id from the URL path
-	const inferredOrganizationId = await inferOrganizationIdFromUrl({ url });
+	const rawInferredOrganizationId = await inferOrganizationIdFromUrl({ url });
+	const inferredOrganizationId = rawInferredOrganizationId
+		? memberships.find((m) => m.organizationId === rawInferredOrganizationId)?.organizationId
+		: null; //make sure the user is a member of the inferred organization
 	// prioritize the active organization id, then the owner organizations, then the admin organizations, then the other organizations
 	const defaultActiveOrganizationId =
 		inferredOrganizationId ||
