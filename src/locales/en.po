@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-07T02:32:52.157Z\n"
-"PO-Revision-Date: 2026-04-07T02:32:52.157Z\n"
-"Last-Translator: \n"
-"Language: en\n"
-"Language-Team: \n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
 "Source-Language: en\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
@@ -3930,7 +3924,7 @@ msgstr "Incomplete"
 msgid "Incomplete signups require follow-up"
 msgstr "Incomplete signups require follow-up"
 
-#. placeholder {0}: incompleteSignups.data.length.toString()
+#. 0: incompleteSignups.data.length.toString()
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "There are {0} incomplete signup(s)."
 msgstr "There are {0} incomplete signup(s)."

@@ -1075,7 +1075,6 @@ msgstr "Correo sin título"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1140,8 +1139,6 @@ msgstr "Crear una nueva organización"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Borradores"
 
@@ -3927,7 +3924,7 @@ msgstr "Incompleto"
 msgid "Incomplete signups require follow-up"
 msgstr "Las inscripciones incompletas requieren seguimiento"
 
-#. placeholder {0}: incompleteSignups.data.length.toString()
+#. 0: incompleteSignups.data.length.toString()
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "There are {0} incomplete signup(s)."
 msgstr "Hay {0} inscripción(es) incompleta(s)."
