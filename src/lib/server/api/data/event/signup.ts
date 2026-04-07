@@ -570,7 +570,8 @@ export async function attendedEventHelper({
 	if (!eventRecord.published) {
 		throw new Error('Event is not published');
 	}
-	assertEventSignupWindowOpen(eventRecord);
+	// Do not assert signup window here: attendance can be recorded after the event ends.
+	// New signups still go through signUpForEventUnsafe, which enforces the window.
 
 	//find or create the person
 	const eventSignupIdIfNeeded = uuidv7();
@@ -879,6 +880,16 @@ export async function updateEventSignup({
 	);
 	if (!eventSignupRecord) {
 		throw new Error('Event signup not found');
+	}
+	// Declining / "not attending" is only valid while the signup window is open; noshow, cancelled,
+	// attendance, etc. remain editable after the event ends.
+	if (parsed.input.status === 'notattending') {
+		const eventForWindow = await getEventByIdUnsafe({
+			eventId: eventSignupRecord.eventId,
+			organizationId: parsed.metadata.organizationId,
+			tx
+		});
+		assertEventSignupWindowOpen(eventForWindow);
 	}
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(eventSignup)
