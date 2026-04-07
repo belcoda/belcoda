@@ -6,7 +6,8 @@
 	import { t } from '$lib/index.svelte';
 	import { goto } from '$app/navigation';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
-
+	import { toast } from 'svelte-sonner';
+	import { tick } from 'svelte';
 	const whatsappThreadQuery = $derived.by(() =>
 		z.createQuery(
 			queries.whatsappThread.read({
@@ -59,7 +60,18 @@
 							}
 						})
 					);
-					console.log('Todo: Send');
+					const result = z.mutate(
+						mutators.whatsappThread.send({
+							whatsappThreadId: params.id,
+							organizationId: appState.organizationId,
+							userId: appState.userId
+						})
+					);
+
+					await result.client;
+					await tick();
+					await goto(`/communications/whatsapp/sent/${params.id}`);
+					toast.success(t`WhatsApp draft sent successfully`);
 				}
 			}}
 			onDiscard={async () => {

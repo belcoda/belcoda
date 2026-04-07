@@ -16,12 +16,6 @@
 
 	const isWhatsApp = $derived(page.url.pathname.startsWith('/communications/whatsapp'));
 	const isEmail = $derived(page.url.pathname.startsWith('/communications/email'));
-	const isEmailDrafts = $derived(page.url.pathname.startsWith('/communications/email/drafts'));
-	const isEmailSent = $derived(page.url.pathname.startsWith('/communications/email/sent'));
-	const isWhatsAppDrafts = $derived(
-		page.url.pathname.startsWith('/communications/whatsapp/drafts')
-	);
-	const isWhatsAppSent = $derived(page.url.pathname.startsWith('/communications/whatsapp/sent'));
 </script>
 
 <Sidebar.Root

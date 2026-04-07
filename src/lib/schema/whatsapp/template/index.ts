@@ -12,7 +12,6 @@ import {
 import {
 	languageCode,
 	url,
-	mediumString,
 	whatsappTemplateHeaderText,
 	whatsappTemplateParamName,
 	whatsappTemplateButtonText,

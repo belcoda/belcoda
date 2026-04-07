@@ -129,7 +129,7 @@
 	});
 </script>
 
-<form use:form.enhance id="person-form">
+<form use:form.enhance id="person-form" data-testid="person-form">
 	<div class="mx-auto flex w-full max-w-4xl flex-col gap-4">
 		<Errors {errors} />
 		<Card.Root>
@@ -147,7 +147,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Given name`}</Form.Label>
-							<Input {...props} bind:value={$data.givenName} />
+							<Input {...props} data-testid="person-given-name" bind:value={$data.givenName} />
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -156,7 +156,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Family name`}</Form.Label>
-							<Input {...props} bind:value={$data.familyName} />
+							<Input {...props} data-testid="person-family-name" bind:value={$data.familyName} />
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -174,7 +174,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Email address`}</Form.Label>
-								<Input {...props} bind:value={$data.emailAddress} />
+								<Input {...props} data-testid="person-email" bind:value={$data.emailAddress} />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />

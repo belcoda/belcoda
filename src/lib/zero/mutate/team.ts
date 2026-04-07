@@ -7,7 +7,7 @@ import {
 } from '$lib/schema/team';
 
 export const createTeam = defineMutator(createMutatorSchema, async ({ tx, args, ctx }) => {
-	const now = new Date().getTime();
+	const now = Date.now();
 	tx.mutate.team.insert({
 		id: args.metadata.teamId,
 		organizationId: args.metadata.organizationId,
@@ -20,7 +20,7 @@ export const createTeam = defineMutator(createMutatorSchema, async ({ tx, args, 
 });
 
 export const updateTeam = defineMutator(updateMutatorSchema, async ({ tx, args, ctx }) => {
-	const now = new Date().getTime();
+	const now = Date.now();
 	tx.mutate.team.update({
 		id: args.metadata.teamId,
 		...(args.input.name !== undefined && { name: args.input.name }),
