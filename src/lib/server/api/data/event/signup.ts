@@ -67,6 +67,7 @@ export async function getEventSignupsByEventIdUnsafe({
 	return eventSignups;
 }
 
+// comples a signup when a flow is compelte (ie: goes from incomplete to either signed up or attended, depending on the event start time)
 function resolveCompletedEventSignupStatus(
 	eventRecord: typeof event.$inferSelect
 ): EventSignupStatus {
@@ -74,7 +75,9 @@ function resolveCompletedEventSignupStatus(
 }
 
 function isCompleteEventSignupStatus(status: EventSignupStatus | null | undefined) {
-	return status === 'signup' || status === 'attended';
+	return (
+		status === 'signup' || status === 'attended' || status === 'noshow' || status === 'cancelled'
+	);
 }
 
 function getEventHasEnded(eventRecord: typeof event.$inferSelect) {
