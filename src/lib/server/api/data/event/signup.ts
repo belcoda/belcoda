@@ -31,7 +31,12 @@ import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
 
-import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
+import {
+	_getPersonByPhoneNumberUnsafe,
+	_getPersonByIdUnsafe
+} from '$lib/server/api/data/person/person';
+import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
+
 export async function getEventByIdUnsafe({
 	eventId,
 	organizationId,
@@ -49,6 +54,37 @@ export async function getEventByIdUnsafe({
 		throw new Error('Event not found');
 	}
 	return eventResult;
+}
+
+/** Applies the event attendance tag when status becomes attended (idempotent for repeat attended). */
+export async function applyAttendanceTagIfNeeded({
+	tx,
+	eventId,
+	personId,
+	organizationId,
+	newStatus,
+	previousStatus
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personId: string;
+	organizationId: string;
+	newStatus: EventSignupStatus;
+	previousStatus: EventSignupStatus | undefined;
+}) {
+	if (newStatus !== 'attended' || previousStatus === 'attended') {
+		return;
+	}
+	const eventRecord = await getEventByIdUnsafe({ eventId, organizationId, tx });
+	if (!eventRecord.attendanceTag) {
+		return;
+	}
+	await applyTagToPersonUnsafe({
+		tx,
+		personId,
+		tagId: eventRecord.attendanceTag,
+		organizationId
+	});
 }
 
 export async function getEventSignupsByEventIdUnsafe({
@@ -543,6 +579,22 @@ export async function signUpForEventUnsafe({
 			locale: clampLocale(personRecord.preferredLanguage || organizationRecord.defaultLanguage)
 		});
 	}
+	if (eventRecord.signupTag) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: personRecord.id,
+			tagId: eventRecord.signupTag,
+			organizationId: organizationRecord.id
+		});
+	}
+	if (eventSignupRecord.status === 'attended' && eventRecord.attendanceTag) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: personRecord.id,
+			tagId: eventRecord.attendanceTag,
+			organizationId: organizationRecord.id
+		});
+	}
 	//TODO: Implement whatsapp notification
 
 	return insertedEventSignup;
@@ -742,6 +794,14 @@ export async function updateEventSignupStatus({
 	tx: ServerTransaction;
 }) {
 	const parsed = parse(eventSignupStatus, status);
+	const [existing] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(eventSignup)
+		.where(and(eq(eventSignup.id, eventSignupId), eq(eventSignup.organizationId, organizationId)));
+	if (!existing) {
+		throw new Error('Unable to update event signup');
+	}
+	const previousStatus = existing.status;
 	const result = await tx.dbTransaction.wrappedTransaction
 		.update(eventSignup)
 		.set({ status: parsed })
@@ -750,6 +810,14 @@ export async function updateEventSignupStatus({
 	if (!result) {
 		throw new Error('Unable to update event signup');
 	}
+	await applyAttendanceTagIfNeeded({
+		tx,
+		eventId: existing.eventId,
+		personId: existing.personId,
+		organizationId,
+		newStatus: parsed,
+		previousStatus
+	});
 	return result;
 }
 
@@ -858,6 +926,23 @@ export async function createEventSignup({
 		});
 	}
 
+	if (event.signupTag) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: parsed.metadata.personId,
+			tagId: event.signupTag,
+			organizationId: parsed.metadata.organizationId
+		});
+	}
+	await applyAttendanceTagIfNeeded({
+		tx,
+		eventId: parsed.metadata.eventId,
+		personId: parsed.metadata.personId,
+		organizationId: parsed.metadata.organizationId,
+		newStatus: parsed.input.status,
+		previousStatus: undefined
+	});
+
 	return insertedEventSignup;
 }
 
@@ -881,6 +966,7 @@ export async function updateEventSignup({
 	if (!eventSignupRecord) {
 		throw new Error('Event signup not found');
 	}
+	const previousStatus = eventSignupRecord.status;
 	// Declining / "not attending" is only valid while the signup window is open; noshow, cancelled,
 	// attendance, etc. remain editable after the event ends.
 	if (parsed.input.status === 'notattending') {
@@ -921,4 +1007,12 @@ export async function updateEventSignup({
 			unread: false
 		});
 	}
+	await applyAttendanceTagIfNeeded({
+		tx,
+		eventId: eventSignupRecord.eventId,
+		personId: eventSignupRecord.personId,
+		organizationId: args.metadata.organizationId,
+		newStatus: args.input.status,
+		previousStatus
+	});
 }

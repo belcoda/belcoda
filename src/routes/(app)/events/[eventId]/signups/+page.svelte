@@ -31,7 +31,7 @@
 	watch(
 		() => event,
 		() => {
-			if (event.data && event.data.settings.survey.collections[0].questions) {
+			if (event.data) {
 				displayColumns = [
 					...new Set([...defaultColumns, ...generateStartingColumns(event.data).person])
 				];

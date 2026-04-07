@@ -393,6 +393,8 @@ export function convertEventSignupFieldsToFlow({
 	existingFlowYCloudId?: string;
 	existingFlowCreatedAt?: number;
 }): WhatsappFlowInternal {
+	const { survey } = settings;
+
 	const components: WhatsAppFlowComponent[] = [];
 
 	// Required: Full Name
@@ -436,8 +438,9 @@ export function convertEventSignupFieldsToFlow({
 
 	//"unwrap" the collections into questions (in the future, we will add the possibility of multiple screens)
 
-	settings.survey.collections.forEach((collection) => {
-		collection.questions.forEach((question) => {
+	const collections = survey?.collections ?? [];
+	collections.forEach((collection) => {
+		(collection.questions ?? []).forEach((question) => {
 			const base = {
 				name: question.id,
 				label: question.label,
@@ -541,10 +544,9 @@ export function convertEventSignupFieldsToFlow({
 				emailAddress: '${form.emailAddress}',
 				phoneNumber: '${form.phoneNumber}',
 				...Object.fromEntries(
-					settings.survey.collections[0].questions.map((question) => [
-						question.id,
-						`\${form.${question.id}}`
-					])
+					collections.flatMap((collection) =>
+						(collection.questions ?? []).map((question) => [question.id, `\${form.${question.id}}`])
+					)
 				),
 				// Reserved fields come last to prevent being overridden by custom fields
 				resource_type: 'event',
