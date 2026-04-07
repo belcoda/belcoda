@@ -49,7 +49,7 @@ export async function sendPetitionSignatureConfirmation({
 		return;
 	}
 
-	const context = petitionSignatureConfirmation({
+	const context = await petitionSignatureConfirmation({
 		organization: orgResult,
 		locale,
 		petition: petitionResult,

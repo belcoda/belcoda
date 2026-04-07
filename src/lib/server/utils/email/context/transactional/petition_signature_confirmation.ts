@@ -3,6 +3,8 @@ import { env } from '$env/dynamic/public';
 import { type Locale } from '$lib/utils/language';
 import { htmlToPlaintext } from '$lib/utils/html';
 import { dev } from '$app/environment';
+import { runWithLocale } from 'wuchale/load-utils/server';
+import { t } from '$lib/index.svelte';
 
 const { PUBLIC_ROOT_DOMAIN } = env;
 
@@ -13,28 +15,40 @@ type Input = {
 	person: typeof person.$inferSelect;
 };
 
-export function petitionSignatureConfirmation(options: Input) {
-	const petitionUrl = `${dev ? 'http://' : 'https://'}${options.organization.slug}.${PUBLIC_ROOT_DOMAIN}/petitions/${options.petition.slug}`;
+export async function petitionSignatureConfirmation(options: Input) {
+	return await runWithLocale(options.locale, () => {
+		const petitionUrl = `${dev ? 'http://' : 'https://'}${options.organization.slug}.${PUBLIC_ROOT_DOMAIN}/petitions/${options.petition.slug}`;
+		const petitionTitle = options.petition.title;
+		const year = new Date().getFullYear();
 
-	const body = `Thank you for signing “${options.petition.title}”. Your signature has been recorded. Click the button below to view the petition or share it with others.`;
+		const subject = t`Signature recorded: ${petitionTitle}`;
+		const title = t`Your signature was recorded`;
+		const body = t`Thank you for signing "${petitionTitle}". Your signature has been recorded. Click the button below to view the petition or share it with others.`;
+		const previewText = t`Your signature on "${petitionTitle}" was recorded`;
+		const buttonText = t`View petition`;
+		const buttonAltHtml = t`Copy and paste the following link into your browser ${petitionUrl}`;
+		const buttonAltText = buttonAltHtml;
+		const instanceName = t`Belcoda`;
+		const copyright = t`Copyright ${String(year)} Belcoda`;
 
-	return {
-		language: options.locale,
-		subject: `Signature recorded: ${options.petition.title}`,
-		title: 'Your signature was recorded',
-		body,
-		bodyPlainText: htmlToPlaintext(body),
-		previewText: `Your signature on “${options.petition.title}” was recorded`,
-		buttonText: 'View petition',
-		buttonUrl: petitionUrl,
-		instanceName: 'Belcoda',
-		logoUrl:
-			options.organization.icon ||
-			options.organization.logo ||
-			`http://app.belcoda.com/logos/logomark_black.svg`,
-		logoAlt: `Belcoda logo`,
-		buttonAltHtml: `Copy and paste the following link into your browser ${petitionUrl}`,
-		buttonAltText: `Copy and paste the following link into your browser ${petitionUrl}`,
-		copyright: `Copyright ${new Date().getFullYear()} Belcoda`
-	};
+		return {
+			language: options.locale,
+			subject,
+			title,
+			body,
+			bodyPlainText: htmlToPlaintext(body),
+			previewText,
+			buttonText,
+			buttonUrl: petitionUrl,
+			instanceName,
+			logoUrl:
+				options.organization.icon ||
+				options.organization.logo ||
+				`http://app.belcoda.com/logos/logomark_black.svg`,
+			logoAlt: t`Belcoda logo`,
+			buttonAltHtml,
+			buttonAltText,
+			copyright
+		};
+	});
 }
