@@ -1788,6 +1788,14 @@ msgstr "(Tamanho máx: {0})"
 msgid "New petition"
 msgstr "Nova petição"
 
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "This petition has been archived."
+msgstr "Esta petição foi arquivada."
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "You can view the petition, but you can't sign it or add signatures."
+msgstr "Você pode ver a petição, mas não pode assiná-la nem adicionar assinaturas."
+
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
