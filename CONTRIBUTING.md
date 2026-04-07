@@ -41,16 +41,17 @@ the action you have taken to solve it.
 - It's easy to follow
 - It is written in simple English
 
-### Does it move this repository closer to my vision for the repository
+### Does it advance Belcoda's goals
 
-The aim of this repository is:
+Belcoda is open source software for people who are trying to make the world a better place.
 
-- To provide a README.md and assorted documents anyone can copy and
-  paste, into their project
-- The content is usable by someone who hasn't written something like
-  this before
-- Foster a culture of respect and gratitude in the open source
-  community.
+- **Who we build for:** community leaders, volunteers, organizers, and anyone who wants to improve their community and the world.
+- **Contributions we seek:** features and bugfixes, documentation
+  (including developer-facing guides), automated tests, and issues with
+  enough detail to reproduce problems.
+- **What we optimize for:** respectful collaboration, maintainable quality
+  in code and user experience, and security- and privacy-conscious
+  changes that protect organizations and their contacts.
 
 ### Does it follow the contributor covenant
 
