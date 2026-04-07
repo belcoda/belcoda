@@ -3946,7 +3946,7 @@ msgstr "Marcar como completado"
 
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 msgid "Mark as signed up"
-msgstr "Marcar como inscrito"
+msgstr "Marcar como registrado"
 
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Not submitted"
