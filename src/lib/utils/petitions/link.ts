@@ -20,5 +20,5 @@ export function generateWhatsAppPetitionLink({
 	whatsAppNumber?: string | null;
 	actionCode: string;
 }) {
-	return `https://wa.me/${whatsAppNumber || env.PUBLIC_DEFAULT_WHATSAPP_NUMBER}/?text=${encodeURIComponent(`Sign petition for ${petitionTitle} #[${actionCode}] (do not edit this message)`)}`;
+	return `https://wa.me/${whatsAppNumber || env.PUBLIC_DEFAULT_WHATSAPP_NUMBER}/?text=${encodeURIComponent(`Sign petition for ${petitionTitle} [#${actionCode}] (do not edit this message)`)}`;
 }
