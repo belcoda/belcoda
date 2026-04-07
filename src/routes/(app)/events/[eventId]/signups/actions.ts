@@ -94,7 +94,8 @@ export const defaultColumns = [
 
 import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
 export function generateStartingColumns(event: ReadEventZero) {
-	const { person, custom } = getSurveyQuestions(event.settings.survey.collections[0].questions);
+	const questions = event.settings.survey?.collections?.[0]?.questions ?? [];
+	const { person, custom } = getSurveyQuestions(questions);
 	return {
 		person: [...defaultColumns, ...person.map((question) => question.type)],
 		custom: custom
