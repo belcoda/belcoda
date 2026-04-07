@@ -845,7 +845,7 @@ export async function createEventSignup({
 			personId: parsed.metadata.personId,
 			userId: ctx.userId || undefined,
 			type: parsed.input.status === 'attended' ? 'event_attended' : 'event_signup',
-			referenceId: parsed.metadata.eventSignupId,
+			referenceId: insertedEventSignup.id,
 			unread: false
 		});
 	}
@@ -853,7 +853,7 @@ export async function createEventSignup({
 	if (parsed.input.details.channel.type === 'eventPage') {
 		queue = queue || (await getQueue());
 		await queue.sendEventRegistration({
-			eventSignupId: parsed.metadata.eventSignupId,
+			eventSignupId: insertedEventSignup.id,
 			locale: clampLocale(person.preferredLanguage || organization.defaultLanguage)
 		});
 	}
