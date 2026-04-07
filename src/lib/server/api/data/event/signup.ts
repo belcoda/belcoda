@@ -35,6 +35,7 @@ import {
 	_getPersonByPhoneNumberUnsafe,
 	_getPersonByIdUnsafe
 } from '$lib/server/api/data/person/person';
+import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 export async function getEventByIdUnsafe({
 	eventId,
 	organizationId,
@@ -234,6 +235,22 @@ export async function signUpForEventUnsafe({
 			locale: clampLocale(personRecord.preferredLanguage || organizationRecord.defaultLanguage)
 		});
 	}
+	if (eventRecord.signupTag) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: personRecord.id,
+			tagId: eventRecord.signupTag,
+			organizationId: organizationRecord.id
+		});
+	}
+	if (eventSignupRecord.status === 'attended' && eventRecord.attendanceTag) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: personRecord.id,
+			tagId: eventRecord.attendanceTag,
+			organizationId: organizationRecord.id
+		});
+	}
 	//TODO: Implement whatsapp notification
 
 	return insertedEventSignup;
@@ -430,6 +447,14 @@ export async function updateEventSignupStatus({
 	tx: ServerTransaction;
 }) {
 	const parsed = parse(eventSignupStatus, status);
+	const [existing] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(eventSignup)
+		.where(and(eq(eventSignup.id, eventSignupId), eq(eventSignup.organizationId, organizationId)));
+	if (!existing) {
+		throw new Error('Unable to update event signup');
+	}
+	const previousStatus = existing.status;
 	const result = await tx.dbTransaction.wrappedTransaction
 		.update(eventSignup)
 		.set({ status: parsed })
@@ -437,6 +462,21 @@ export async function updateEventSignupStatus({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update event signup');
+	}
+	if (parsed === 'attended' && previousStatus !== 'attended') {
+		const eventRecord = await getEventByIdUnsafe({
+			eventId: existing.eventId,
+			organizationId,
+			tx
+		});
+		if (eventRecord.attendanceTag) {
+			await applyTagToPersonUnsafe({
+				tx,
+				personId: existing.personId,
+				tagId: eventRecord.attendanceTag,
+				organizationId
+			});
+		}
 	}
 	return result;
 }
@@ -524,6 +564,23 @@ export async function createEventSignup({
 		});
 	}
 
+	if (event.signupTag) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: parsed.metadata.personId,
+			tagId: event.signupTag,
+			organizationId: parsed.metadata.organizationId
+		});
+	}
+	if (parsed.input.status === 'attended' && event.attendanceTag) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: parsed.metadata.personId,
+			tagId: event.attendanceTag,
+			organizationId: parsed.metadata.organizationId
+		});
+	}
+
 	return insertedEventSignup;
 }
 
@@ -547,6 +604,7 @@ export async function updateEventSignup({
 	if (!eventSignupRecord) {
 		throw new Error('Event signup not found');
 	}
+	const previousStatus = eventSignupRecord.status;
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(eventSignup)
 		.set({
@@ -562,5 +620,20 @@ export async function updateEventSignup({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update event signup');
+	}
+	if (args.input.status === 'attended' && previousStatus !== 'attended') {
+		const eventRecord = await getEventByIdUnsafe({
+			eventId: eventSignupRecord.eventId,
+			organizationId: args.metadata.organizationId,
+			tx
+		});
+		if (eventRecord.attendanceTag) {
+			await applyTagToPersonUnsafe({
+				tx,
+				personId: eventSignupRecord.personId,
+				tagId: eventRecord.attendanceTag,
+				organizationId: args.metadata.organizationId
+			});
+		}
 	}
 }

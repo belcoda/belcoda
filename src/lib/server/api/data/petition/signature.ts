@@ -28,6 +28,8 @@ import { petition, petitionSignature, person, organization } from '$lib/schema/d
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and } from 'drizzle-orm';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
+import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 
@@ -85,6 +87,9 @@ export async function createPetitionSignature({
 		.insert(petitionSignature)
 		.values(petitionSignatureRecord)
 		.returning();
+	if (!result) {
+		throw new Error('Unable to create petition signature');
+	}
 
 	const queue = await getQueue();
 	await queue.insertActivity({
@@ -95,6 +100,16 @@ export async function createPetitionSignature({
 		referenceId: parsed.metadata.petitionSignatureId,
 		unread: false
 	});
+
+	const settings = parse(petitionSettingsSchema, petition.settings);
+	for (const tagId of settings.tags) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: parsed.metadata.personId,
+			tagId,
+			organizationId: parsed.metadata.organizationId
+		});
+	}
 	return result;
 }
 
@@ -268,6 +283,15 @@ export async function signPetitionUnsafe({
 		// 	petitionSignatureId: id,
 		// 	locale: clampLocale(personRecord.preferredLanguage || organizationRecord.defaultLanguage)
 		// });
+	}
+	const settings = parse(petitionSettingsSchema, petitionRecord.settings);
+	for (const tagId of settings.tags) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId: personRecord.id,
+			tagId,
+			organizationId: organizationRecord.id
+		});
 	}
 	//TODO: Implement whatsapp notification
 
