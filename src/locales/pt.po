@@ -4332,66 +4332,66 @@ msgstr "Logótipo Belcoda"
 
 #: src/lib/utils/calendar.ts
 msgid "Online Event"
-msgstr ""
+msgstr "Evento online"
 
 #: src/lib/utils/calendar.ts
 #: src/lib/utils/calendar.ts
 #: src/lib/utils/calendar.ts
 msgid "Join online:"
-msgstr ""
+msgstr "Participe online:"
 
 #: src/lib/utils/date.ts
 msgid "Never expires"
-msgstr ""
+msgstr "Nunca expira"
 
 #. 0: petitionTitle; 1: actionCode
 #: src/lib/utils/petitions/link.ts
 msgid "Sign petition for {0} [#{1}] (do not edit this message)"
-msgstr ""
+msgstr "Assine a petição para {0} [#{1}] (não edite esta mensagem)"
 
 #: src/lib/components/forms/event/render_survey_question.ts
 msgid "Date of Birth"
-msgstr ""
+msgstr "Data de nascimento"
 
 #: src/lib/components/forms/event/survey_actions.ts
 msgid "Event information"
-msgstr ""
+msgstr "Informações do evento"
 
 #: src/lib/components/forms/event/survey_actions.ts
 #: src/lib/components/forms/event/survey_actions.ts
 #: src/lib/components/forms/event/survey_actions.ts
 msgid "Option 1"
-msgstr ""
+msgstr "Opção 1"
 
 #: src/lib/components/forms/event/survey_actions.ts
 #: src/lib/components/forms/event/survey_actions.ts
 #: src/lib/components/forms/event/survey_actions.ts
 msgid "Option 2"
-msgstr ""
+msgstr "Opção 2"
 
 #: src/lib/utils/person/gender/render.ts
 msgid "Male"
-msgstr ""
+msgstr "Masculino"
 
 #: src/lib/utils/person/gender/render.ts
 msgid "Female"
-msgstr ""
+msgstr "Feminino"
 
 #: src/lib/utils/person/gender/render.ts
 msgid "Not Specified"
-msgstr ""
+msgstr "Não especificado"
 
 #. 0: formattedDate
 #: src/lib/components/widgets/event/signups/actions.ts
 msgid "Signed up via event page [{0}]"
-msgstr ""
+msgstr "Inscrito pela página do evento [{0}]"
 
 #. 0: formattedDate
 #: src/lib/components/widgets/event/signups/actions.ts
 msgid "Added manually [{0}]"
-msgstr ""
+msgstr "Adicionado manualmente [{0}]"
 
 #. 0: formattedDate
 #: src/lib/components/widgets/event/signups/actions.ts
 msgid "Signed up via WhatsApp [{0}]"
-msgstr ""
+msgstr "Inscrito via WhatsApp [{0}]"
