@@ -59,4 +59,4 @@ remove things that do not respect it.
 
 ## Contributor License Agreement
 
-“By contributing, you agree to the [Contributor License Agreement](https://github.com/belcoda/belcoda/blob/main/CLA.md), which grants the project the right to relicense contributions under both AGPLv3 and commercial licenses.”
+By contributing, you agree to the [Contributor License Agreement](https://github.com/belcoda/belcoda/blob/main/CLA.md); see CLA.md for the project's licensing terms.
