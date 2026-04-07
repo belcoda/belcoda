@@ -4394,3 +4394,8 @@ msgstr ""
 #: src/lib/components/widgets/event/signups/actions.ts
 msgid "Signed up via WhatsApp [{0}]"
 msgstr ""
+
+#. 0: formatNumber(currentTarget)
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+msgid "Goal: {0}"
+msgstr ""

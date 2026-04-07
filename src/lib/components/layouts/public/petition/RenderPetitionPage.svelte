@@ -230,7 +230,7 @@
 					</div>
 					<Progress value={progress} class="h-2.5" />
 					<div class="text-right text-xs text-muted-foreground">
-						Goal: {formatNumber(currentTarget)}
+						{t`Goal: ${formatNumber(currentTarget)}`}
 					</div>
 
 					{#if data.signatureCount > 0}
