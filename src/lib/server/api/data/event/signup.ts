@@ -75,9 +75,7 @@ function resolveCompletedEventSignupStatus(
 }
 
 function isCompleteEventSignupStatus(status: EventSignupStatus | null | undefined) {
-	return (
-		status === 'signup' || status === 'attended' || status === 'noshow' || status === 'cancelled'
-	);
+	return status === 'signup' || status === 'attended' || status === 'noshow';
 }
 
 function getEventHasEnded(eventRecord: typeof event.$inferSelect) {
