@@ -38,6 +38,7 @@
 	const currentSignups = $derived(signupCount);
 	import EventSignupForm from './EventSignupForm.svelte';
 	import EventDetails from './EventDetails.svelte';
+	import DOMPurify from 'dompurify';
 </script>
 
 <svelte:head>
@@ -79,7 +80,7 @@
 							<div class="border-t border-gray-200 pt-8">
 								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`What to Expect:`}</h2>
 								<div class="prose decorate-links space-y-4 text-gray-700">
-									{@html event.description}
+									{@html DOMPurify.sanitize(event.description)}
 								</div>
 							</div>
 						{/if}

@@ -13,6 +13,7 @@
 	import WhatsAppPetitionSignup from './WhatsAppPetitionSignup.svelte';
 	import PetitionSignSuccess from '$lib/components/layouts/public/petition/PetitionSignSuccess.svelte';
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
+	import DOMPurify from 'dompurify';
 
 	type PublicPetition = {
 		title: string;
@@ -140,7 +141,7 @@
 							<div class="border-t border-gray-200 pt-8">
 								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`About this petition`}</h2>
 								<div class="prose decorate-links space-y-4 text-gray-700">
-									{@html data.petition.description}
+									{@html DOMPurify.sanitize(data.petition.description)}
 								</div>
 							</div>
 						{/if}
