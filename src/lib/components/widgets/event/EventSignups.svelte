@@ -15,6 +15,12 @@
 		/* svelte-ignore state_referenced_locally */
 		eventId: event.id
 	});
+
+	/** Keeps `includeIncomplete` aligned with `list.ts` whereClause: incomplete rows are excluded unless this flag is true. */
+	function setSignupStatusFilter(status: ListEventSignupsInput['status']) {
+		filter.status = status;
+		filter.includeIncomplete = status === 'incomplete';
+	}
 	const eventSignups = $derived.by(() => {
 		return z.createQuery(queries.eventSignup.list(filter));
 	});
@@ -63,22 +69,22 @@
 						>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = undefined)}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter(undefined)}
 							>{t`All signups`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'attended')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('attended')}
 							>{t`Attended`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'noshow')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('noshow')}
 							>{t`No show`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'notattending')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('notattending')}
 							>{t`Not attending`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'signup')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('signup')}
 							>{t`Signed up`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'incomplete')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('incomplete')}
 							>{t`Incomplete`}</DropdownMenu.CheckboxItem
 						>
 					</DropdownMenu.Content>
