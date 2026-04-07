@@ -2,17 +2,56 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	const { children, data } = $props();
 	import { appState } from '$lib/state.svelte';
+	import { authClient } from '$lib/auth-client';
 	// svelte-ignore state_referenced_locally
-	const { userId, defaultActiveOrganizationId, queryContext } = data;
+	const { userId, defaultActiveOrganizationId, inferredOrganizationId, queryContext } = data;
+	function setOrganizationIdState(organizationId: string) {
+		appState.organizationId = organizationId;
+		sessionStorage.setItem('state:organizationId', organizationId);
+	}
 
+	function determineAndPersistActiveOrganizationId({
+		inferredOrganizationId,
+		defaultActiveOrganizationId
+	}: {
+		inferredOrganizationId: string | null | undefined;
+		defaultActiveOrganizationId: string;
+	}) {
+		const existingSessionStorageOrganizationId = sessionStorage.getItem('state:organizationId');
+		if (inferredOrganizationId) {
+			setOrganizationIdState(inferredOrganizationId);
+			return inferredOrganizationId;
+		} else if (existingSessionStorageOrganizationId) {
+			setOrganizationIdState(existingSessionStorageOrganizationId);
+			return existingSessionStorageOrganizationId;
+		} else {
+			setOrganizationIdState(defaultActiveOrganizationId);
+			return defaultActiveOrganizationId;
+		}
+	}
 	//initialize the zero instance with the user id and query context
 	// IMPORTANT: this must be done before the appState is created, because the appState relies on the zero instance
 	import { zero } from '$lib/zero.svelte';
 	zero.init(userId, queryContext);
-	appState.init({ userId, organizationId: defaultActiveOrganizationId, queryContext });
+	appState.init({
+		userId,
+		organizationId: determineAndPersistActiveOrganizationId({
+			inferredOrganizationId,
+			defaultActiveOrganizationId
+		}),
+		queryContext
+	});
 
 	//conditional onboarding components based on the user's onboarding status
 	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
+
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		await authClient.organization.setActive({
+			organizationId: appState.organizationId
+		});
+	});
 </script>
 
 <!-- This is an important check to ensure that we always have a valid userId and active organization Id. These will be used with confidence throughout the rest of the application interface -->
