@@ -1078,7 +1078,6 @@ msgstr "Correo sin título"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1143,8 +1142,6 @@ msgstr "Crear una nueva organización"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Borradores"
 
@@ -3923,6 +3920,33 @@ msgstr "Aceptar todas"
 #: src/lib/components/widgets/CookieBanner.svelte
 msgid "Only necessary"
 msgstr "Solo necesarias"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
+msgid "Incomplete"
+msgstr "Incompleto"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "Incomplete signups require follow-up"
+msgstr "Las inscripciones incompletas requieren seguimiento"
+
+#. 0: incompleteSignups.data.length.toString()
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "There are {0} incomplete signup(s)."
+msgstr "Hay {0} inscripción(es) incompleta(s)."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "View the detailed signups table"
+msgstr "Ver la tabla detallada de inscripciones"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Mark complete"
+msgstr "Marcar como completado"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Mark as signed up"
+msgstr "Marcar como registrado"
 
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Not submitted"

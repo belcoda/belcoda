@@ -9,7 +9,7 @@ import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 
 import { env as publicEnv } from '$env/dynamic/public';
 import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
-import { signUpForEventHelper } from '$lib/server/api/data/event/signup';
+import { completeEventSignupHelper } from '$lib/server/api/data/event/signup';
 import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
 import { parse, safeParse, intersect } from 'valibot';
 import type { ServerTransaction } from '@rocicorp/zero';
@@ -44,6 +44,9 @@ async function sendConfirmationMessage({
 
 		const waPhoneNumber =
 			organization.settings.whatsApp?.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER;
+		if (!waPhoneNumber) {
+			throw new Error('WhatsApp sender number is not configured');
+		}
 
 		// Format event date in the event's timezone if available
 		let dateString = 'Date TBA';
@@ -137,9 +140,7 @@ async function determineFlowTarget(responsePayload: Record<string, unknown>) {
 
 		default:
 			log.error({ resourceType }, 'Unsupported resource_type in flow response');
-			throw new Error(
-				`Unsupported resource_type: ${resourceType}. Expected: event, petition, or survey`
-			);
+			throw new Error(`Unsupported resource_type: ${resourceType}. Expected: event or survey`);
 	}
 }
 
@@ -200,7 +201,7 @@ export async function handleFlowResponse({
 					{ parsedPersonAction },
 					'Signing up person for event with personAction from WhatsApp flow'
 				);
-				const eventSignup = await signUpForEventHelper({
+				const eventSignup = await completeEventSignupHelper({
 					eventId: event.id,
 					personAction: parsedPersonAction,
 					signupDetails: {
@@ -412,7 +413,7 @@ export async function handleEventSignupFlowResponse({
 		tx
 	});
 	const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
-	const eventSignup = await signUpForEventHelper({
+	const eventSignup = await completeEventSignupHelper({
 		eventId: event.id,
 		personAction: {
 			subscribed: true,

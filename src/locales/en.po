@@ -1078,7 +1078,6 @@ msgstr "Untitled Email"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1143,8 +1142,6 @@ msgstr "Create a new organization"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
-#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Drafts"
 
@@ -3923,6 +3920,33 @@ msgstr "Accept all"
 #: src/lib/components/widgets/CookieBanner.svelte
 msgid "Only necessary"
 msgstr "Only necessary"
+
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
+#: src/lib/components/widgets/event/signups/SignupTableRow.svelte
+msgid "Incomplete"
+msgstr "Incomplete"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "Incomplete signups require follow-up"
+msgstr "Incomplete signups require follow-up"
+
+#. 0: incompleteSignups.data.length.toString()
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "There are {0} incomplete signup(s)."
+msgstr "There are {0} incomplete signup(s)."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "View the detailed signups table"
+msgstr "View the detailed signups table"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Mark complete"
+msgstr "Mark complete"
+
+#: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+msgid "Mark as signed up"
+msgstr "Mark as signed up"
 
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Not submitted"
