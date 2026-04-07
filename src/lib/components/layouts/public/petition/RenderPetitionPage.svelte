@@ -66,7 +66,7 @@
 		];
 
 		for (const milestone of milestones) {
-			if (currentSignatures < milestone) {
+			if (currentSignatures <= milestone) {
 				return milestone;
 			}
 		}
