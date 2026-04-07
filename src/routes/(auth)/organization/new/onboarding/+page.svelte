@@ -5,6 +5,16 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 </script>
 
+<head>
+	<!-- Event snippet for Submit lead form conversion page -->
+	<script>
+		gtag('event', 'conversion', {
+			send_to: 'AW-17963790839/zEgdCIevp_sbEPfj5vVC',
+			value: 1.0,
+			currency: 'JPY'
+		});
+	</script>
+</head>
 <AuthLayout
 	title={t`Hit the ground running`}
 	description={t`Book a time to talk with our team, we'll give recommendations on how to make the most out of Belcoda.`}

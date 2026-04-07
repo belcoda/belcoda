@@ -2,11 +2,14 @@
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import PetitionCreateOrUpdate from '$lib/components/forms/petition/PetitionCreateOrUpdate.svelte';
+	import PetitionCreatedModal from '$lib/components/widgets/petition/PetitionCreatedModal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import {
 		type CreatePetitionZero,
 		type UpdatePetitionZero,
-		createPetitionZero
+		type ReadPetitionZero,
+		createPetitionZero,
+		readPetitionZero
 	} from '$lib/schema/petition/petition';
 	import { parse } from 'valibot';
 	import { z } from '$lib/zero.svelte';
@@ -15,6 +18,15 @@
 	import { goto } from '$app/navigation';
 	import { v7 as uuidv7 } from 'uuid';
 
+	let createdPetition = $state<ReadPetitionZero | null>(null);
+	let modalOpen = $state(false);
+	const petitionTeamId = $derived.by(() => {
+		if (appState.isAdminOrOwner) {
+			return null; // admin or owner can create a petition for any/no team
+		} else {
+			return appState.activeTeamId || appState.myTeams.data?.[0]?.id || null; // member can create a petition for their active team or the first team they are a member of
+		}
+	});
 	async function onSubmit(data: CreatePetitionZero | UpdatePetitionZero) {
 		const id = uuidv7();
 		const parsed = parse(createPetitionZero, data);
@@ -22,20 +34,50 @@
 			mutators.petition.create({
 				metadata: {
 					petitionId: id,
-					organizationId: appState.organizationId,
-					teamId: appState.activeTeamId
+					organizationId: appState.organizationId
 				},
-				input: parsed
+				input: {
+					...parsed,
+					teamId: petitionTeamId || undefined
+				}
 			})
 		);
 		await petition.client;
-		await goto(`/petitions/${id}`);
+		createdPetition = parse(readPetitionZero, {
+			id,
+			...parsed,
+			published: false,
+			createdAt: Date.now(),
+			updatedAt: Date.now(),
+			organizationId: appState.organizationId,
+			teamId: appState.activeTeamId,
+			deletedAt: null,
+			archivedAt: null
+		});
+		modalOpen = true;
+	}
+
+	function handleModalClose() {
+		if (createdPetition) {
+			goto(`/petitions/${createdPetition.id}`);
+		}
 	}
 </script>
 
 <ContentLayout rootLink="/petitions" {header} {footer}>
 	<PetitionCreateOrUpdate {onSubmit} />
 </ContentLayout>
+
+{#if createdPetition}
+	<PetitionCreatedModal
+		petition={createdPetition}
+		mode="create"
+		bind:open={modalOpen}
+		onOpenChange={(open) => {
+			if (!open) handleModalClose();
+		}}
+	/>
+{/if}
 
 {#snippet header()}
 	<div class="flex items-center justify-between">

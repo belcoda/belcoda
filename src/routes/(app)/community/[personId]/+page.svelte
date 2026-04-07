@@ -33,6 +33,7 @@
 				person={person.data}
 				personId={params.personId}
 				textClass="text-lg font-medium"
+				testId="person-timeline-display-name"
 			/></a
 		>
 		{#if person.data}
@@ -45,26 +46,12 @@
 
 {#snippet footer()}
 	<InputGroup.Root>
-		<InputGroup.Textarea placeholder="Ask, Search or Chat..." />
+		<InputGroup.Textarea placeholder="Write your message..." />
 		<InputGroup.Addon align="block-end">
 			<InputGroup.Button variant="outline" class="rounded-full" size="icon-xs">
 				<PlusIcon />
 			</InputGroup.Button>
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger>
-					{#snippet child({ props })}
-						<InputGroup.Button {...props} variant="ghost">Auto</InputGroup.Button>
-					{/snippet}
-				</DropdownMenu.Trigger>
-				<DropdownMenu.Content side="top" align="start" class="[--radius:0.95rem]">
-					<DropdownMenu.Item>Auto</DropdownMenu.Item>
-					<DropdownMenu.Item>Agent</DropdownMenu.Item>
-					<DropdownMenu.Item>Manual</DropdownMenu.Item>
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
-			<InputGroup.Text class="ms-auto">52% used</InputGroup.Text>
-			<Separator orientation="vertical" class="!h-4" />
-			<InputGroup.Button variant="default" class="rounded-full" size="icon-xs" disabled>
+			<InputGroup.Button variant="default" class="ml-auto rounded-full" size="icon-xs" disabled>
 				<ArrowUpIcon />
 				<span class="sr-only">Send</span>
 			</InputGroup.Button>

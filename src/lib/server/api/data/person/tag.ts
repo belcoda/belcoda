@@ -8,8 +8,10 @@ import {
 } from '$lib/schema/person';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
-import { personTag } from '$lib/schema/drizzle';
-import { eq, and } from 'drizzle-orm';
+import { personTag, activity, tag } from '$lib/schema/drizzle';
+import { eq, and, isNull } from 'drizzle-orm';
+import { v7 as uuidv7 } from 'uuid';
+import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
 
 export async function addPersonTag({
 	tx,
@@ -44,19 +46,111 @@ export async function addPersonTag({
 		throw new Error('Tag not found');
 	}
 
+	const result = await _addPersonTagData({
+		tx,
+		args: {
+			personId: args.metadata.personId,
+			tagId: args.metadata.tagId,
+			organizationId: args.metadata.organizationId
+		}
+	});
+	return result;
+}
+
+export async function _addPersonTagData({
+	tx,
+	args
+}: {
+	tx: ServerTransaction;
+	args: {
+		personId: string;
+		tagId: string;
+		organizationId: string;
+	};
+}) {
+	const tagRecord = await tx.dbTransaction.wrappedTransaction.query.tag.findFirst({
+		where: and(eq(tag.id, args.tagId), eq(tag.organizationId, args.organizationId))
+	});
+	if (!tagRecord) {
+		throw new Error('Tag not found');
+	}
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.insert(personTag)
 		.values({
-			personId: args.metadata.personId,
-			tagId: args.metadata.tagId,
-			organizationId: args.metadata.organizationId,
+			personId: args.personId,
+			tagId: args.tagId,
+			organizationId: args.organizationId,
 			createdAt: new Date()
 		})
 		.returning();
 	if (!result) {
 		throw new Error('Unable to add person tag');
 	}
+
+	await tx.dbTransaction.wrappedTransaction.insert(activity).values({
+		id: uuidv7(),
+		type: 'tag_added',
+		referenceId: args.tagId,
+		unread: false,
+		userId: null,
+		organizationId: args.organizationId,
+		createdAt: new Date(),
+		personId: args.personId
+	});
+
+	await updateLatestActivity({
+		tx,
+		args: {
+			personId: args.personId,
+			organizationId: args.organizationId,
+			activityPreview: {
+				type: 'tag_added',
+				tagName: tagRecord.name,
+				tagId: args.tagId
+			}
+		}
+	});
 	return result;
+}
+
+/**
+ * Idempotent person–tag link for automated flows (e.g. event/petition signup).
+ * Skips silently if the tag is missing, inactive, or soft-deleted.
+ * Does not insert an `activity` row or call {@link updateLatestActivity} (unlike
+ * {@link _addPersonTagData}) so bulk/automated tagging does not flood timelines.
+ */
+export async function applyTagToPersonUnsafe({
+	tx,
+	personId,
+	tagId,
+	organizationId
+}: {
+	tx: ServerTransaction;
+	personId: string;
+	tagId: string;
+	organizationId: string;
+}) {
+	const db = tx.dbTransaction.wrappedTransaction;
+	const tagRow = await db.query.tag.findFirst({
+		where: and(
+			eq(tag.id, tagId),
+			eq(tag.organizationId, organizationId),
+			eq(tag.active, true),
+			isNull(tag.deletedAt)
+		)
+	});
+	if (!tagRow) {
+		return;
+	}
+	await db
+		.insert(personTag)
+		.values({
+			personId,
+			tagId,
+			organizationId,
+			createdAt: new Date()
+		})
+		.onConflictDoNothing();
 }
 
 export async function removePersonTag({

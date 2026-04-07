@@ -13,6 +13,7 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import { toast } from 'svelte-sonner';
 	import UploadIcon from '@lucide/svelte/icons/upload';
+	import LoaderIcon from '@lucide/svelte/icons/loader';
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import { formatDate } from '$lib/utils/date';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -275,7 +276,7 @@
 						</Button>
 						<Button onclick={handleUpload} disabled={uploading}>
 							{#if uploading}
-								<UploadIcon class="mr-2 size-4 animate-spin" />
+								<LoaderIcon class="mr-2 size-4 animate-spin" />
 								{t`Uploading...`}
 							{:else}
 								<UploadIcon class="mr-2 size-4" />

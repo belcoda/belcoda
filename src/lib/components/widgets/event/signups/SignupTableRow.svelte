@@ -32,6 +32,8 @@
 			<Badge variant="destructive">{t`No show`}</Badge>
 		{:else if signup.status === 'notattending'}
 			<Badge variant="secondary" class="opacity-70">{t`Not attending`}</Badge>
+		{:else if signup.status === 'incomplete'}
+			<Badge variant="secondary">{t`Incomplete`}</Badge>
 		{:else}
 			<Badge variant="outline">{t`Signed up`}</Badge>
 		{/if}

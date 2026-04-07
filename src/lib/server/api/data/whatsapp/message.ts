@@ -79,7 +79,7 @@ export async function handleIncomingReaction({
 			if (existingReactor) {
 				if (emoji) {
 					existingReactor.emoji = emoji;
-					existingReactor.reactedAt = new Date().getTime();
+					existingReactor.reactedAt = Date.now();
 					reactions[existingReactorIndex] = existingReactor;
 				} else {
 					reactions.splice(existingReactorIndex, 1);
@@ -90,7 +90,7 @@ export async function handleIncomingReaction({
 					personId,
 					phoneNumber,
 					viaBelcoda: false,
-					reactedAt: new Date().getTime()
+					reactedAt: Date.now()
 				});
 			}
 
@@ -112,12 +112,14 @@ export async function createWhatsAppMessage({
 	message,
 	type,
 	organizationId,
+	personId,
 	tx
 }: {
 	id: string;
 	message: WhatsappMessage;
 	organizationId: string;
 	type: WhatsappMessageActivityType;
+	personId: string;
 	tx: ServerTransaction;
 }) {
 	const parsed = await parse(whatsappMessageObjectSchema, message);
@@ -126,6 +128,8 @@ export async function createWhatsAppMessage({
 		id: insertedId,
 		message: parsed,
 		type,
+		personId,
+		status: 'pending',
 		organizationId,
 		createdAt: new Date(),
 		updatedAt: new Date()

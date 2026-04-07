@@ -45,6 +45,8 @@ export const createWhatsappTemplate = v.object({
 export type CreateWhatsappTemplate = v.InferInput<typeof createWhatsappTemplate>;
 
 export const updateWhatsappTemplate = v.object({
+	name: whatsappTemplateSchema.entries.name,
+	locale: whatsappTemplateSchema.entries.locale,
 	components: whatsappTemplateSchema.entries.components
 });
 export type UpdateWhatsappTemplate = v.InferInput<typeof updateWhatsappTemplate>;
@@ -53,6 +55,7 @@ export const mutatorMetadata = v.object({
 	organizationId: whatsappTemplateSchema.entries.organizationId,
 	whatsappTemplateId: whatsappTemplateSchema.entries.id
 });
+export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
 export const createMutatorSchema = v.object({
 	input: createWhatsappTemplate,
@@ -67,3 +70,33 @@ export const updateMutatorSchema = v.object({
 });
 export type UpdateMutatorSchema = v.InferInput<typeof updateMutatorSchema>;
 export type UpdateMutatorSchemaOutput = v.InferOutput<typeof updateMutatorSchema>;
+
+export function createDefaultTemplate({
+	organizationId,
+	id
+}: {
+	organizationId: string;
+	id: string;
+}): ReadWhatsappTemplateZero {
+	return {
+		id,
+		name: 'default_template',
+		teamId: null,
+		organizationId,
+		components: [
+			{
+				type: 'BODY',
+				text: 'Hi {{1}}, do you have a second to talk?',
+				example: {
+					body_text: [['Maria']]
+				}
+			}
+		],
+		locale: 'en',
+		status: 'NOT_SUBMITTED',
+		submittedForReviewAt: null,
+		deletedAt: null,
+		createdAt: Date.now(),
+		updatedAt: Date.now()
+	};
+}

@@ -8,7 +8,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { getLocalTimeZone, parseAbsolute } from '@internationalized/date';
+	import { getLocalTimeZone } from '@internationalized/date';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { env } from '$env/dynamic/public';
 	const { PUBLIC_ROOT_DOMAIN } = env;
@@ -37,6 +37,13 @@
 	import { generateEventTitleAsyncSchema } from '$lib/schema/event/helpers';
 	/* svelte-ignore state_referenced_locally */
 	const { title, slug } = generateEventTitleAsyncSchema(appState.organizationId, event?.id);
+	const eventTeamId = $derived.by(() => {
+		if (appState.isAdminOrOwner) {
+			return null; // admin or owner can create an event for any/no team
+		} else {
+			return appState.activeTeamId || appState.myTeams.data?.[0]?.id || null; // member can create an event for their active team or the first team they are a member of
+		}
+	});
 	import { objectAsync } from 'valibot';
 	let { form, data, errors, Errors, Debug, helpers } = $state(
 		/* svelte-ignore state_referenced_locally */
@@ -49,7 +56,8 @@
 					}),
 					initialData: event,
 					onSubmit: async (data) => {
-						onSubmit(data);
+						await onSubmit(data);
+						form.tainted.set(undefined);
 					}
 				})
 			: createForm({
@@ -60,7 +68,8 @@
 					}),
 					validateOnLoad: false,
 					onSubmit: async (data) => {
-						onSubmit(data);
+						await onSubmit(data);
+						form.tainted.set(undefined);
 					}
 				})
 	);
@@ -77,13 +86,31 @@
 	import EventSignupSurvey from '$lib/components/forms/event/EventSignupSurvey.svelte';
 	import { defaultEventSettings } from '$lib/schema/event/settings';
 	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
+	import { goto, beforeNavigate } from '$app/navigation';
 	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
+	import { TagSelectSingle } from '$lib/components/ui/custom-select/tag/index.js';
+
+	$effect(() => {
+		const handler = (e: BeforeUnloadEvent) => {
+			if (!helpers.isTainted()) return;
+			e.preventDefault();
+		};
+		window.addEventListener('beforeunload', handler);
+		return () => window.removeEventListener('beforeunload', handler);
+	});
+
+	beforeNavigate((nav) => {
+		if (!helpers.isTainted()) return;
+		if (!nav.to) return;
+		if (!confirm(t`Your changes might not be saved. Leave this page?`)) {
+			nav.cancel();
+		}
+	});
 
 	function setSlug(slug: string) {
 		$data.slug = slugify(slug);
@@ -156,6 +183,24 @@
 			</Card.Content>
 		</Card.Root>
 	{/if}
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>{t`Automatic tags`}</Card.Title>
+			<Card.Description>
+				{t`Optional tags applied to people when they sign up for this event or when attendance is recorded.`}
+			</Card.Description>
+		</Card.Header>
+		<Card.Content class="space-y-6">
+			<div class="space-y-2">
+				<span class="text-sm leading-none font-medium">{t`Tag on signup`}</span>
+				<TagSelectSingle bind:value={$data.signupTag} />
+			</div>
+			<div class="space-y-2">
+				<span class="text-sm leading-none font-medium">{t`Tag when attended`}</span>
+				<TagSelectSingle bind:value={$data.attendanceTag} />
+			</div>
+		</Card.Content>
+	</Card.Root>
 	{#if event}
 		<Alert.Root variant="destructive" class="mt-4">
 			<AlertCircleIcon />

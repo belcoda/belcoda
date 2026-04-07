@@ -24,8 +24,8 @@
 		slug: `copy-of-${event.slug}`,
 		published: false,
 		publishedAt: null,
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime(),
+		createdAt: Date.now(),
+		updatedAt: Date.now(),
 		deletedAt: null,
 		archivedAt: null,
 		cancelledAt: null
@@ -40,7 +40,6 @@
 					mutators.event.create({
 						metadata: {
 							organizationId: appState.organizationId,
-							teamId: appState.activeTeamId,
 							eventId: eventId
 						},
 						input: {

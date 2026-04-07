@@ -24,8 +24,8 @@
 		slug: `copy-of-${petition.slug}`,
 		published: false,
 		publishedAt: null,
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime(),
+		createdAt: Date.now(),
+		updatedAt: Date.now(),
 		deletedAt: null,
 		archivedAt: null
 	};
@@ -39,7 +39,6 @@
 					mutators.petition.create({
 						metadata: {
 							organizationId: appState.organizationId,
-							teamId: appState.activeTeamId,
 							petitionId: petitionId
 						},
 						input: {

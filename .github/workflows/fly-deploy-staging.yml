@@ -42,9 +42,11 @@ jobs:
           DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID: ${{ vars.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID }}
           POSTMARK_SENDING_DOMAIN: ${{ vars.POSTMARK_SENDING_DOMAIN }}
           PUBLIC_DEFAULT_WORKSPACE_LOGO: ${{ vars.PUBLIC_DEFAULT_WORKSPACE_LOGO }}
+          OWNER_ORGANIZATION_NAME: ${{ vars.OWNER_ORGANIZATION_NAME }}
+          OWNER_ORGANIZATION_SLUG: ${{ vars.OWNER_ORGANIZATION_SLUG }}
 
       # App deploy
-      - run: flyctl deploy -c deploy/fly.staging.toml --remote-only --build-arg PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN_STAGING }} --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN_STAGING }} --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
+      - run: flyctl deploy -c deploy/fly.staging.toml --remote-only --build-arg NODE_ENV=staging --build-arg PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN_STAGING }} --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN_STAGING }} --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 

@@ -9,8 +9,6 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 
-	import { email } from '$lib/schema/helpers';
-
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
 	import { t } from '$lib/index.svelte';
 

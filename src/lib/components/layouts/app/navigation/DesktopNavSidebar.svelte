@@ -5,6 +5,7 @@
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 	import OrgMenu from '$lib/components/layouts/app/navigation/OrgMenu.svelte';
 	import { t } from '$lib/index.svelte';
+	import { appState } from '$lib/state.svelte';
 </script>
 
 <Sidebar.Root
@@ -35,35 +36,37 @@
 								<span class="text-base">{t`Community`}</span>
 							{/snippet}
 							{#snippet child({ props })}
-								<a href="/community" {...props}
+								<a href="/community" {...props} data-testid="nav-community"
 									><span class="icon-[lucide--users] size-6 text-sidebar-primary-foreground"></span>
 									<span class="sr-only">{t`Community`}</span></a
 								>
 							{/snippet}
 						</Sidebar.MenuButton>
 					</Sidebar.MenuItem>
-					<Sidebar.MenuItem>
-						<Sidebar.MenuButton
-							tooltipContentProps={{
-								hidden: false,
-								class: 'bg-background text-foreground shadow-md border border',
-								arrowClasses: 'bg-background text-foreground shadow-md border-r border-b'
-							}}
-							class="flex size-12 items-center justify-center transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110"
-						>
-							{#snippet tooltipContent()}
-								<span class="text-base">{t`Communications`}</span>
-							{/snippet}
-							{#snippet child({ props })}
-								<a href="/communications" {...props}
-									><span
-										class="mt-0.5 icon-[flowbite--messages-outline] size-7 text-sidebar-primary-foreground"
-									></span>
-									<span class="sr-only">{t`Communications`}</span></a
-								>
-							{/snippet}
-						</Sidebar.MenuButton>
-					</Sidebar.MenuItem>
+					{#if appState.isAdminOrOwner}
+						<Sidebar.MenuItem>
+							<Sidebar.MenuButton
+								tooltipContentProps={{
+									hidden: false,
+									class: 'bg-background text-foreground shadow-md border border',
+									arrowClasses: 'bg-background text-foreground shadow-md border-r border-b'
+								}}
+								class="flex size-12 items-center justify-center transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110"
+							>
+								{#snippet tooltipContent()}
+									<span class="text-base">{t`Communications`}</span>
+								{/snippet}
+								{#snippet child({ props })}
+									<a href="/communications" {...props}
+										><span
+											class="mt-0.5 icon-[flowbite--messages-outline] size-7 text-sidebar-primary-foreground"
+										></span>
+										<span class="sr-only">{t`Communications`}</span></a
+									>
+								{/snippet}
+							</Sidebar.MenuButton>
+						</Sidebar.MenuItem>
+					{/if}
 					<Sidebar.MenuItem>
 						<Sidebar.MenuButton
 							tooltipContentProps={{

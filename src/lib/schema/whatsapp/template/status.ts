@@ -10,6 +10,8 @@ export const whatsappTemplateStatus = picklist([
 	'DELETED',
 	'DISABLED',
 	'PAUSED',
+	'FLAGGED',
+	'REINSTATED',
 	'LIMIT_EXCEEDED'
 ]);
 export type WhatsappTemplateStatus = InferOutput<typeof whatsappTemplateStatus>;

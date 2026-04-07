@@ -39,11 +39,11 @@ export async function createEvent({
 		throw new Error('Organization not found');
 	}
 
-	if (parsedInput.metadata.teamId) {
+	if (parsedInput.input.teamId) {
 		const [teamRecord] = await tx.dbTransaction.wrappedTransaction
 			.select()
 			.from(team)
-			.where(eq(team.id, parsedInput.metadata.teamId))
+			.where(eq(team.id, parsedInput.input.teamId))
 			.limit(1);
 		if (!teamRecord) {
 			throw new Error('Team not found');
@@ -283,6 +283,26 @@ export async function _getEventByIdUnsafe({
 		throw new Error('Event not found');
 	}
 	return eventObject;
+}
+
+/**
+ * Loads an event by id without tenant or auth filters, returning null if missing.
+ * For trusted server callsites only (e.g. path-based org inference). Selects
+ * only organizationId to avoid loading full row when that is all that is needed.
+ */
+export async function _getEventByIdUnsafeNoTenantCheck({
+	eventId,
+	tx
+}: {
+	eventId: string;
+	tx: ServerTransaction;
+}): Promise<{ organizationId: string } | null> {
+	const [row] = await tx.dbTransaction.wrappedTransaction
+		.select({ organizationId: event.organizationId })
+		.from(event)
+		.where(and(eq(event.id, eventId), isNull(event.deletedAt)))
+		.limit(1);
+	return row ?? null;
 }
 
 export async function getEventById({

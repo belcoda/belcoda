@@ -32,7 +32,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			name: true,
 			active: true,
 			createdAt: true,
-			updatedAt: true
+			updatedAt: true,
+			deletedAt: true
 		},
 		team: {
 			id: true,
@@ -244,11 +245,10 @@ export default drizzleZeroConfig(drizzleSchema, {
 			id: true,
 			organizationId: true,
 			teamId: true,
-			recipients: true,
-			templateId: true,
-			messages: true,
-			actions: true,
+			flow: true,
 			sentBy: true,
+			title: true,
+			description: true,
 			startedAt: true,
 			completedAt: true,
 			estimatedRecipientCount: true,
@@ -444,7 +444,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			type: true,
 			createdAt: true,
 			deletedAt: true
-		}
+		},
+		whatsappLog: false
 	},
 	manyToMany: {
 		tag: {

@@ -3,14 +3,26 @@ import devtoolsJson from 'vite-plugin-devtools-json';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { wuchale } from '@wuchale/vite-plugin';
+import { wuchale } from 'wuchale/vite';
 import { playwright } from '@vitest/browser-playwright';
 
-import dotenv from 'dotenv';
 import path from 'path';
+import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
+	server: {
+		allowedHosts: [
+			'belcoda.com',
+			'staging.belcoda.com',
+			'app.belcoda.com',
+			'zero.staging.belcoda.com',
+			'zero.app.belcoda.com',
+			'localhost:5173',
+			'.belcoda.com',
+			...(process.env.PUBLIC_NGROK_DOMAIN ? [process.env.PUBLIC_NGROK_DOMAIN] : [])
+		]
+	},
 	resolve: {
 		alias: {
 			'@noble/ciphers': path.resolve(

@@ -16,7 +16,7 @@ export const createEvent = defineMutator(
 		tx.mutate.event.insert({
 			id: args.metadata.eventId,
 			organizationId: args.metadata.organizationId,
-			teamId: args.metadata.teamId,
+			teamId: args.input.teamId || undefined,
 			slug: args.input.slug,
 			title: args.input.title,
 			shortDescription: args.input.shortDescription,
@@ -39,8 +39,8 @@ export const createEvent = defineMutator(
 			sendReminderHoursBefore: args.input.sendReminderHoursBefore,
 			settings: args.input.settings,
 			reminderSentAt: null,
-			createdAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			createdAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -52,7 +52,7 @@ export const updateEvent = defineMutator(
 		tx.mutate.event.update({
 			id: args.metadata.eventId,
 			...args.input,
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -62,8 +62,8 @@ export const deleteEvent = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.event.update({
 			id: args.metadata.eventId,
-			deletedAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			deletedAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -73,8 +73,8 @@ export const archiveEvent = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.event.update({
 			id: args.metadata.eventId,
-			archivedAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			archivedAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );

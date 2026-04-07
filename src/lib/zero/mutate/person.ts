@@ -22,9 +22,9 @@ export const createPerson = defineMutator(createMutatorSchemaZero, async ({ tx, 
 		subscribed: args.input.subscribed,
 		doNotContact: args.input.doNotContact,
 		socialMedia: args.input.socialMedia,
-		mostRecentActivityAt: new Date().getTime(),
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime()
+		mostRecentActivityAt: Date.now(),
+		createdAt: Date.now(),
+		updatedAt: Date.now()
 	});
 });
 
@@ -33,13 +33,13 @@ export const updatePerson = defineMutator(updateMutatorSchemaZero, async ({ tx, 
 		id: args.metadata.personId,
 		...args.input,
 		dateOfBirth: args.input.dateOfBirth ? args.input.dateOfBirth : undefined,
-		updatedAt: new Date().getTime()
+		updatedAt: Date.now()
 	});
 });
 export const deletePerson = defineMutator(deleteMutatorSchemaZero, async ({ tx, args, ctx }) => {
 	tx.mutate.person.update({
 		id: args.metadata.personId,
-		deletedAt: new Date().getTime()
+		deletedAt: Date.now()
 	});
 });
 
@@ -50,7 +50,7 @@ export const addPersonToTeam = defineMutator(
 			organizationId: args.metadata.organizationId,
 			personId: args.metadata.personId,
 			teamId: args.metadata.teamId,
-			createdAt: new Date().getTime()
+			createdAt: Date.now()
 		});
 	}
 );
@@ -72,7 +72,7 @@ export const addPersonTag = defineMutator(
 			organizationId: args.metadata.organizationId,
 			personId: args.metadata.personId,
 			tagId: args.metadata.tagId,
-			createdAt: new Date().getTime()
+			createdAt: Date.now()
 		});
 	}
 );

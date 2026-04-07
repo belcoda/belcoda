@@ -7,6 +7,7 @@
 		textClass?: string;
 		avatarClass?: string;
 		avatarImageClass?: string;
+		testId?: string;
 	};
 	import { z } from '$lib/zero.svelte';
 	import { cn } from '$lib/utils.js';
@@ -15,7 +16,8 @@
 		personId,
 		textClass,
 		avatarClass,
-		avatarImageClass
+		avatarImageClass,
+		testId
 	}: Props = $props();
 	import queries from '$lib/zero/query/index';
 	const person = $derived.by(() => {
@@ -56,7 +58,7 @@
 			/>
 		</div>
 		<div>
-			<div class={cn('text-sm font-medium', textClass)}>
+			<div class={cn('text-sm font-medium', textClass)} data-testid={testId}>
 				{person.data.givenName}
 				{person.data.familyName}
 			</div>

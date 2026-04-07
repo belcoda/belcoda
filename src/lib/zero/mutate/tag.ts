@@ -1,5 +1,5 @@
 import { defineMutator } from '@rocicorp/zero';
-import { createMutatorSchema, updateMutatorSchema } from '$lib/schema/tag';
+import { createMutatorSchema, updateMutatorSchema, deleteMutatorSchema } from '$lib/schema/tag';
 
 export const createTag = defineMutator(createMutatorSchema, async ({ tx, args, ctx }) => {
 	tx.mutate.tag.insert({
@@ -7,8 +7,8 @@ export const createTag = defineMutator(createMutatorSchema, async ({ tx, args, c
 		organizationId: args.metadata.organizationId,
 		name: args.input.name,
 		active: true,
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime()
+		createdAt: Date.now(),
+		updatedAt: Date.now()
 	});
 });
 
@@ -17,6 +17,13 @@ export const updateTag = defineMutator(updateMutatorSchema, async ({ tx, args, c
 		id: args.metadata.tagId,
 		name: args.input.name,
 		active: args.input.active,
-		updatedAt: new Date().getTime()
+		updatedAt: Date.now()
+	});
+});
+
+export const deleteTag = defineMutator(deleteMutatorSchema, async ({ tx, args, ctx }) => {
+	tx.mutate.tag.update({
+		id: args.metadata.tagId,
+		deletedAt: Date.now()
 	});
 });

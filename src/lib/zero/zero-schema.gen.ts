@@ -891,6 +891,7 @@ const eventSignupTable = {
 				| 'signup'
 				| 'attended'
 				| 'noshow'
+				| 'incomplete'
 				| 'notattending'
 				| 'cancelled'
 				| 'deleted'
@@ -1312,7 +1313,11 @@ const organizationTable = {
 			type: 'json',
 			optional: false,
 			customType: null as unknown as {
-				whatsApp: { wabaId: string | null; number: string | null };
+				whatsApp: {
+					wabaId: string | null;
+					number: string | null;
+					defaultTemplateId: string | null;
+				};
 				email: {
 					systemFromIdentity: { name: string | null; replyTo: string | null };
 					defaultFromSignatureId: string | null;
@@ -1740,50 +1745,68 @@ const personTable = {
 			customType: null as unknown as
 				| {
 						type: 'whatsapp_message_incoming';
-						message:
-							| { type: 'text'; text: string }
-							| { type: 'image' }
-							| { type: 'video' }
-							| { type: 'audio' }
-							| { type: 'document' }
-							| { type: 'sticker' }
-							| { type: 'location' }
-							| { type: 'contact' }
-							| { type: 'flow' }
-							| { type: 'button'; text: string }
-							| { type: 'reaction'; emoji: string };
+						message: {
+							id: string;
+							headerText?: string | undefined;
+							text?: string | undefined;
+							image_url?: string | undefined;
+							sticker_url?: string | undefined;
+							video_url?: string | undefined;
+							audio_url?: string | undefined;
+							buttons?: { text: string; action: string }[] | undefined;
+							emojiReactions: {
+								emoji: string | null;
+								personId: string | null;
+								phoneNumber: string | null;
+								viaBelcoda: boolean;
+								reactedAt: number;
+							}[];
+							replyToMessageId?: string | undefined;
+						};
 						whatsappMessageId: string;
 				  }
 				| {
 						type: 'whatsapp_message_outgoing';
-						message:
-							| { type: 'text'; text: string }
-							| { type: 'image' }
-							| { type: 'video' }
-							| { type: 'audio' }
-							| { type: 'document' }
-							| { type: 'sticker' }
-							| { type: 'location' }
-							| { type: 'contact' }
-							| { type: 'flow' }
-							| { type: 'button'; text: string }
-							| { type: 'reaction'; emoji: string };
+						message: {
+							id: string;
+							headerText?: string | undefined;
+							text?: string | undefined;
+							image_url?: string | undefined;
+							sticker_url?: string | undefined;
+							video_url?: string | undefined;
+							audio_url?: string | undefined;
+							buttons?: { text: string; action: string }[] | undefined;
+							emojiReactions: {
+								emoji: string | null;
+								personId: string | null;
+								phoneNumber: string | null;
+								viaBelcoda: boolean;
+								reactedAt: number;
+							}[];
+							replyToMessageId?: string | undefined;
+						};
 						whatsappMessageId: string;
 				  }
 				| {
 						type: 'whatsapp_group_message_incoming';
-						message:
-							| { type: 'text'; text: string }
-							| { type: 'image' }
-							| { type: 'video' }
-							| { type: 'audio' }
-							| { type: 'document' }
-							| { type: 'sticker' }
-							| { type: 'location' }
-							| { type: 'contact' }
-							| { type: 'flow' }
-							| { type: 'button'; text: string }
-							| { type: 'reaction'; emoji: string };
+						message: {
+							id: string;
+							headerText?: string | undefined;
+							text?: string | undefined;
+							image_url?: string | undefined;
+							sticker_url?: string | undefined;
+							video_url?: string | undefined;
+							audio_url?: string | undefined;
+							buttons?: { text: string; action: string }[] | undefined;
+							emojiReactions: {
+								emoji: string | null;
+								personId: string | null;
+								phoneNumber: string | null;
+								viaBelcoda: boolean;
+								reactedAt: number;
+							}[];
+							replyToMessageId?: string | undefined;
+						};
 						whatsappGroupId: string;
 				  }
 				| { type: 'email_outgoing'; subject: string; bodyStart: string; emailMessageId: string }
@@ -2308,6 +2331,12 @@ const tagTable = {
 			optional: false,
 			customType: null as unknown as number,
 			serverName: 'updated_at'
+		},
+		deletedAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'deleted_at'
 		}
 	},
 	primaryKey: ['id']
@@ -2750,7 +2779,7 @@ const whatsappMessageTable = {
 		},
 		personId: {
 			type: 'string',
-			optional: true,
+			optional: false,
 			customType: null as unknown as string,
 			serverName: 'person_id'
 		},
@@ -2873,52 +2902,26 @@ const whatsappThreadTable = {
 			customType: null as unknown as string,
 			serverName: 'team_id'
 		},
-		recipients: {
+		flow: {
 			type: 'json',
 			optional: false,
-			customType: null as unknown as ZeroCustomType<
-				typeof zeroSchema,
-				'whatsappThread',
-				'recipients'
-			>
-		},
-		templateId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string
-		},
-		messages: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as {
-				id: string;
-				headerText?: string | undefined;
-				text?: string | undefined;
-				image_url?: string | undefined;
-				sticker_url?: string | undefined;
-				video_url?: string | undefined;
-				audio_url?: string | undefined;
-				buttons?: { text: string; action: string }[] | undefined;
-				emojiReactions: {
-					emoji: string | null;
-					personId: string | null;
-					phoneNumber: string | null;
-					viaBelcoda: boolean;
-					reactedAt: number;
-				}[];
-				replyToMessageId?: string | undefined;
-			}[]
-		},
-		actions: {
-			type: 'json',
-			optional: false,
-			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'whatsappThread', 'actions'>
+			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'whatsappThread', 'flow'>
 		},
 		sentBy: {
 			type: 'string',
 			optional: true,
 			customType: null as unknown as string,
 			serverName: 'sent_by'
+		},
+		title: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string
+		},
+		description: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string
 		},
 		startedAt: {
 			type: 'number',
@@ -3409,14 +3412,6 @@ const whatsappThreadRelationships = {
 			sourceField: ['organizationId'],
 			destField: ['id'],
 			destSchema: 'organization',
-			cardinality: 'one'
-		}
-	],
-	template: [
-		{
-			sourceField: ['templateId'],
-			destField: ['id'],
-			destSchema: 'whatsappTemplate',
 			cardinality: 'one'
 		}
 	],

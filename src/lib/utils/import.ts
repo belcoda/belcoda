@@ -1,4 +1,3 @@
-import { parse } from 'fast-csv';
 import { person } from '$lib/schema/drizzle';
 import pino from '$lib/pino';
 import { drizzle } from '$lib/server/db';
@@ -6,11 +5,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { personSchema, type PersonSchema } from '$lib/schema/person';
 import { parse as valibotParse } from 'valibot';
 import { type CountryCode, isValidCountryCode } from '$lib/utils/country';
-import type { LanguageCode } from '$lib/utils/language';
+import { isSupportedLanguage, type LanguageCode } from '$lib/utils/language';
 import { getCode } from 'country-list';
 import type { SocialMedia, PersonAddedFrom } from '$lib/schema/person/meta';
 import type { GenderOption } from '$lib/utils/person';
 import { t } from '$lib/index.svelte';
+import Papa from 'papaparse';
+import ISO6391 from 'iso-639-1';
 
 const log = pino(import.meta.url);
 
@@ -30,72 +31,97 @@ export async function parseImportCsv(
 	organizationId: string,
 	importId: string
 ): Promise<ImportResult> {
-	const records: CsvRow[] = [];
+	const records: Array<{ csvRow: CsvRow; line: number }> = [];
+	let successCount = 0;
+	let failedCount = 0;
+	const failedRows: { row: number; error: string; data?: CsvRow }[] = [];
+	const parsed = Papa.parse(csvString, { header: true });
+	log.debug({ numRows: parsed.data.length }, 'Parsed CSV');
+	if (parsed.errors.length > 0) {
+		log.error({ errors: parsed.errors }, 'CSV parsing errors');
+	}
+	for (const [index, row] of parsed.data.entries()) {
+		const isEntirelyEmptyRow = Object.values(row as Record<string, string>).every(
+			(value) => value === null || value === undefined || String(value).trim() === ''
+		);
 
-	return new Promise((resolve, reject) => {
-		const stream = parse({ headers: true })
-			.on('error', (error) => {
-				log.error({ error }, 'CSV parsing error');
-				reject(error);
-			})
-			.on('data', (row: CsvRow) => {
-				const isEntirelyEmptyRow = Object.values(row).every(
-					(value) => value === null || value === undefined || String(value).trim() === ''
-				);
+		if (!isEntirelyEmptyRow) {
+			// Line 1 is the header; first data row is line 2.
+			records.push({ csvRow: row as CsvRow, line: index + 2 });
+		}
+	}
 
-				if (!isEntirelyEmptyRow) {
-					records.push(row);
+	log.debug({ rowCount: records.length }, 'CSV parsing completed');
+
+	for (let i = 0; i < records.length; i++) {
+		const { csvRow, line } = records[i];
+
+		try {
+			const personData = mapCsvRowToPerson(csvRow, organizationId, importId);
+
+			const personDataWithId = {
+				...personData,
+				id: uuidv4(),
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				deletedAt: null
+			};
+
+			try {
+				const validatedPerson = valibotParse(personSchema, personDataWithId);
+				try {
+					await drizzle.insert(person).values(validatedPerson);
+					successCount++;
+					log.debug({ row: line }, 'Person imported successfully');
+				} catch (error) {
+					log.error({ error }, 'Database insert error');
+					//if it's a postgres unique error, handle that
+					failedCount++;
+					const isPostgresUniqueError =
+						error instanceof Error &&
+						'cause' in error &&
+						typeof error.cause === 'object' &&
+						error.cause !== null &&
+						'code' in error.cause &&
+						typeof error.cause.code === 'string' &&
+						error.cause.code === '23505';
+					const errorMessage = isPostgresUniqueError
+						? 'A person with this email address or phone number already exists'
+						: 'Database insert error: Unknown error';
+					failedRows.push({
+						row: line,
+						error: errorMessage,
+						data: csvRow
+					});
 				}
-			})
-			.on('end', async () => {
-				log.debug({ rowCount: records.length }, 'CSV parsing completed');
-
-				let successCount = 0;
-				let failedCount = 0;
-				const failedRows: { row: number; error: string; data?: any }[] = [];
-
-				for (let i = 0; i < records.length; i++) {
-					const csvRow = records[i];
-
-					try {
-						const personData = mapCsvRowToPerson(csvRow, organizationId, importId);
-
-						const personDataWithId = {
-							...personData,
-							id: uuidv4(),
-							createdAt: new Date(),
-							updatedAt: new Date(),
-							deletedAt: null
-						};
-
-						const validatedPerson = valibotParse(personSchema, personDataWithId);
-						await drizzle.insert(person).values(validatedPerson);
-
-						successCount++;
-						log.debug({ row: i + 1 }, 'Person imported successfully');
-					} catch (error) {
-						failedCount++;
-						const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-						failedRows.push({
-							row: i + 1,
-							error: errorMessage,
-							data: csvRow
-						});
-						log.error({ row: i + 1, error: errorMessage }, 'Failed to import person');
-					}
-				}
-
-				resolve({
-					totalRows: records.length,
-					successCount,
-					failedCount,
-					failedRows
+			} catch (error) {
+				failedCount++;
+				const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+				failedRows.push({
+					row: line,
+					error: errorMessage,
+					data: csvRow
 				});
+			}
+		} catch (error) {
+			failedCount++;
+			const errorMessage =
+				error instanceof Error ? error.message : 'Unknown error importing person';
+			failedRows.push({
+				row: line,
+				error: errorMessage,
+				data: csvRow
 			});
+			log.error({ row: line, error: errorMessage }, 'Failed to import person');
+		}
+	}
 
-		stream.write(csvString);
-		stream.end();
-	});
+	return {
+		totalRows: records.length,
+		successCount,
+		failedCount,
+		failedRows
+	};
 }
 
 function parseBoolean(value: string | null | undefined): boolean {
@@ -179,11 +205,24 @@ function mapCsvRowToPerson(
 		throw new Error(t`Country is required`);
 	}
 
-	const preferredLanguage = (
+	let preferredLanguage = (
 		csvRow['preferred_language'] ||
 		csvRow['language'] ||
 		'en'
-	).toLowerCase() as LanguageCode;
+	).toLocaleLowerCase() as LanguageCode;
+
+	if (!isSupportedLanguage(preferredLanguage)) {
+		const normalized = ISO6391.getCode(csvRow['preferred_language'] || csvRow['language']);
+		if (normalized && isSupportedLanguage(normalized)) {
+			preferredLanguage = normalized as LanguageCode;
+		} else {
+			log.debug(
+				{ language: csvRow['preferred_language'] || csvRow['language'] },
+				'Invalid language, using default'
+			);
+			preferredLanguage = 'en';
+		}
+	}
 
 	const socialMedia: SocialMedia = {
 		facebook: csvRow['facebook'] || null,

@@ -33,8 +33,8 @@ export const createEmailMessage = defineMutator(createMutatorSchema, async ({ tx
 		estimatedRecipientCount: 0,
 		successfulRecipientCount: 0,
 		failedRecipientCount: 0,
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime(),
+		createdAt: Date.now(),
+		updatedAt: Date.now(),
 		deletedAt: null
 	});
 });
@@ -43,7 +43,7 @@ export const updateEmailMessage = defineMutator(updateMutatorSchema, async ({ tx
 	tx.mutate.emailMessage.update({
 		id: args.metadata.emailMessageId,
 		...args.input,
-		updatedAt: new Date().getTime()
+		updatedAt: Date.now()
 	});
 });
 
@@ -51,7 +51,7 @@ export const deleteEmailMessage = defineMutator(deleteMutatorSchema, async ({ tx
 	tx.mutate.emailMessage.update({
 		id: args.id,
 		organizationId: args.organizationId,
-		deletedAt: new Date().getTime()
+		deletedAt: Date.now()
 	});
 });
 
@@ -60,7 +60,7 @@ export const sendEmailMessage = defineMutator(sendMutatorSchema, async ({ tx, ar
 		id: args.metadata.emailMessageId,
 		subject: args.input.subject ?? undefined,
 		body: args.input.body ?? undefined,
-		startedAt: new Date().getTime(),
-		updatedAt: new Date().getTime()
+		startedAt: Date.now(),
+		updatedAt: Date.now()
 	});
 });

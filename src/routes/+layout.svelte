@@ -6,15 +6,30 @@
 	import '../locales/js.loader.js';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { locale } from '$lib/index.svelte';
+	import { Tooltip as TooltipPrimitive } from 'bits-ui';
+	import { cookieConsent } from '$lib/state/cookieConsent.svelte.js';
+	import CookieBanner from '$lib/components/widgets/CookieBanner.svelte';
+
 	const { data, children } = $props();
 	/* svelte-ignore state_referenced_locally */
 	locale.setLocale(data.locale);
-	import { Tooltip as TooltipPrimitive } from 'bits-ui';
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<title>Belcoda</title>
+	{#if cookieConsent.accepted}
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17963790839"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag('js', new Date());
+			gtag('config', 'AW-17963790839');
+		</script>
+	{/if}
 </svelte:head>
 
 <main
@@ -29,6 +44,7 @@
 		<TooltipPrimitive.Provider>
 			<Toaster position="top-center" />
 			{@render children?.()}
+			<CookieBanner />
 		</TooltipPrimitive.Provider>
 	{/await}
 </main>

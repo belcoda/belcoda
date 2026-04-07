@@ -6,8 +6,6 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
 	import { formatShortTimestamp } from '$lib/utils/date';
-	import type { EditorState } from 'lexical';
-	import { jsonToHtml } from '$lib/components/ui/wysiwyg/renderRichText';
 	const { folder }: { folder?: string } = $props();
 
 	const activeItem = $derived.by(() => {
@@ -34,18 +32,20 @@
 	});
 
 	let search = $state('');
-	const emailFilter = $derived.by(() => ({
+	const whatsappThreadFilter = $derived.by(() => ({
 		...getListFilter(appState.organizationId),
 		searchString: search,
-		isDraft: activeItem.isDraft
+		isDraft: activeItem.isDraft,
+		reverseCron: true
 	}));
 
-	const emailsQuery = $derived.by(() => z.createQuery(queries.emailMessage.list(emailFilter)));
+	const whatsappThreadsQuery = $derived.by(() =>
+		z.createQuery(queries.whatsappThread.list(whatsappThreadFilter))
+	);
 
-	const emails = $derived(emailsQuery.data ?? []);
+	const whatsappThreads = $derived(whatsappThreadsQuery.data ?? []);
 
 	import { Input } from '$lib/components/ui/input/index.js';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 </script>
 
 <div class="flex w-full flex-col bg-background md:w-[300px] md:shrink-0">
@@ -59,35 +59,26 @@
 	</div>
 	<div class="flex-1 overflow-auto">
 		<div class="flex flex-col">
-			{#each emails as email (email.id)}
+			{#each whatsappThreads as whatsappThread (whatsappThread.id)}
 				<a
-					href="/communications/email/{folder}/{email.id}"
+					href="/communications/whatsapp/{folder}/{whatsappThread.id}"
 					class="flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-muted"
 				>
 					<div class="flex w-full items-center justify-between gap-2">
-						<div class="line-clamp-1 font-medium">{email.subject || t`(No subject)`}</div>
+						<div class="line-clamp-1 font-medium">{whatsappThread.title || t`(No title)`}</div>
 						<div class="text-xs text-nowrap text-muted-foreground">
-							{formatShortTimestamp(email.updatedAt)}
+							{formatShortTimestamp(whatsappThread.updatedAt)}
 						</div>
 					</div>
-					{#if email.previewTextOverride}
+					{#if whatsappThread.description}
 						<span class="line-clamp-2 text-xs text-muted-foreground">
-							{email.previewTextOverride}
+							{whatsappThread.description}
 						</span>
-					{:else if email.body}
-						{#await jsonToHtml(JSON.stringify(email.body))}
-							<Skeleton class="h-3 w-full" />
-							<Skeleton class="h-3 w-full" />
-						{:then html}
-							<span class="prose line-clamp-2 text-xs text-muted-foreground">{@html html}</span>
-						{:catch}
-							<span class="line-clamp-2 text-xs text-red-400">{t`[Error loading email body]`}</span>
-						{/await}
 					{/if}
 				</a>
 			{:else}
 				<div class="flex flex-col items-center justify-center p-8 text-center">
-					<p class="text-sm text-muted-foreground">{t`No emails found`}</p>
+					<p class="text-sm text-muted-foreground">{t`No WhatsApp threads found`}</p>
 				</div>
 			{/each}
 		</div>

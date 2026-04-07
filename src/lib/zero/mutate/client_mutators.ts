@@ -11,6 +11,8 @@ import * as organization from '$lib/zero/mutate/organization';
 import * as webhook from '$lib/zero/mutate/webhook';
 import * as tag from '$lib/zero/mutate/tag';
 import * as team from '$lib/zero/mutate/team';
+import * as whatsappTemplate from '$lib/zero/mutate/whatsapp/template';
+import * as whatsappThread from '$lib/zero/mutate/whatsapp/thread';
 
 import { defineMutators } from '@rocicorp/zero';
 
@@ -79,12 +81,24 @@ export const mutators = defineMutators({
 	},
 	tag: {
 		update: tag.updateTag,
-		create: tag.createTag
+		create: tag.createTag,
+		delete: tag.deleteTag
 	},
 	team: {
 		create: team.createTeam,
 		update: team.updateTeam,
 		addUserToTeam: team.addUserToTeam,
 		removeUserFromTeam: team.removeUserFromTeam
+	},
+	whatsappTemplate: {
+		create: whatsappTemplate.createWhatsappTemplate,
+		update: whatsappTemplate.updateWhatsappTemplate,
+		submit: whatsappTemplate.submitWhatsappTemplate
+	},
+	whatsappThread: {
+		create: whatsappThread.createWhatsappThread,
+		update: whatsappThread.updateWhatsappThread,
+		delete: whatsappThread.deleteWhatsappThread,
+		send: whatsappThread.sendWhatsappThread
 	}
 });

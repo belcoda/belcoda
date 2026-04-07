@@ -40,16 +40,16 @@ export async function createPetition({
 	}
 	if (
 		![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(organizationRecord.id) &&
-		!parsed.metadata.teamId
+		!parsed.input.teamId
 	) {
 		throw new Error('You are not authorized to create a petition in this organization');
 	}
 
-	if (parsed.metadata.teamId) {
+	if (parsed.input.teamId) {
 		const [teamRecord] = await tx.dbTransaction.wrappedTransaction
 			.select()
 			.from(team)
-			.where(eq(team.id, parsed.metadata.teamId))
+			.where(eq(team.id, parsed.input.teamId))
 			.limit(1);
 		if (!teamRecord) {
 			throw new Error('Team not found');
@@ -246,6 +246,26 @@ export async function getPetitionById({
 	);
 	if (!petitionRecord) {
 		throw new Error('Petition not found');
+	}
+	return petitionRecord;
+}
+
+/**
+ * Loads a petition by id without tenant or auth filters. For trusted server
+ * callsites only; do not call from public or untrusted request handlers.
+ */
+export async function _getPetitionByIdUnsafeNoTenantCheck({
+	petitionId,
+	tx
+}: {
+	petitionId: string;
+	tx: ServerTransaction;
+}) {
+	const petitionRecord = await tx.dbTransaction.wrappedTransaction.query.petition.findFirst({
+		where: and(eq(petition.id, petitionId), isNull(petition.deletedAt))
+	});
+	if (!petitionRecord) {
+		return null;
 	}
 	return petitionRecord;
 }

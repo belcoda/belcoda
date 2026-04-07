@@ -10,6 +10,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
+	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	let { tag }: { tag: ReadTagZero } = $props();
@@ -32,6 +33,17 @@
 		}
 	});
 	let isOpen = $state(false);
+
+	function handleDelete() {
+		z.mutate(
+			mutators.tag.delete({
+				metadata: {
+					organizationId: tag.organizationId,
+					tagId: tag.id
+				}
+			})
+		);
+	}
 </script>
 
 <ResponsiveModal
@@ -40,14 +52,31 @@
 	bind:open={isOpen}
 >
 	{#snippet trigger()}
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<Button variant="ghost" size="icon-sm">
-					<PencilIcon class="size-4" />
-				</Button>
-			</Tooltip.Trigger>
-			<Tooltip.Content>{t`Edit tag`}</Tooltip.Content>
-		</Tooltip.Root>
+		<div class="flex items-center gap-1">
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<Button variant="ghost" size="icon-sm">
+						<PencilIcon class="size-4" />
+					</Button>
+				</Tooltip.Trigger>
+				<Tooltip.Content>{t`Edit tag`}</Tooltip.Content>
+			</Tooltip.Root>
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						onclick={(e) => {
+							e.stopPropagation();
+							handleDelete();
+						}}
+					>
+						<TrashIcon class="size-4 text-destructive" />
+					</Button>
+				</Tooltip.Trigger>
+				<Tooltip.Content>{t`Delete tag`}</Tooltip.Content>
+			</Tooltip.Root>
+		</div>
 	{/snippet}
 	{#snippet children()}
 		<form use:form.enhance class="space-y-4">

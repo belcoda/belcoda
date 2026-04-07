@@ -57,15 +57,19 @@
 	import { convertQuestionsToValibotSchema } from '$lib/schema/survey/questions';
 	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
 	import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
-	const { person: personSurveyQuestionsRaw, custom: customSurveyQuestions } = getSurveyQuestions(
-		/* svelte-ignore state_referenced_locally */
-		event.settings.survey.collections[0].questions
+	const surveyQuestions = $derived(event.settings.survey?.collections?.[0]?.questions ?? []);
+	const surveyQuestionsSplit = $derived(getSurveyQuestions(surveyQuestions));
+	const personSurveyQuestionsRaw = $derived(surveyQuestionsSplit.person);
+	const customSurveyQuestions = $derived(surveyQuestionsSplit.custom);
+	const personSurveyQuestions = $derived(personSurveyQuestionsRaw.map((item) => item.type));
+	const customQuestionSurveySchema = $derived(
+		object(convertQuestionsToValibotSchema(customSurveyQuestions))
 	);
-	const personSurveyQuestions = personSurveyQuestionsRaw.map((item) => item.type);
-	const customQuestionSurveySchema = object(convertQuestionsToValibotSchema(customSurveyQuestions));
-	const personActionHelperSchema = setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
-		personActionHelper,
-		customSurveyQuestions
+	const personActionHelperSchema = $derived(
+		setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
+			personActionHelper,
+			customSurveyQuestions
+		)
 	);
 	let submissionError: string | null = $state(null);
 	let submissionSuccess: boolean = $state(false);
@@ -80,9 +84,9 @@
 	import type { CountryCode } from '$lib/utils/country';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
-import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
-import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-import * as Select from '$lib/components/ui/select/index.js';
+	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import AddToCalendarDropdown from './AddToCalendarDropdown.svelte';
 	import PhoneNumberInput from '$lib/components/ui/custom-select/phone-number/phone-number.svelte';
 	import DateOfBirth from '$lib/components/ui/custom-select/date-of-birth/date-of-birth.svelte';
@@ -366,7 +370,10 @@ import * as Select from '$lib/components/ui/select/index.js';
 										{#each field.options || [] as option}
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value={option} id={`${field.id}-${option}`} />
-												<label for={`${field.id}-${option}`} class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+												<label
+													for={`${field.id}-${option}`}
+													class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+												>
 													{option}
 												</label>
 											</div>
@@ -392,11 +399,16 @@ import * as Select from '$lib/components/ui/select/index.js';
 														if (checked) {
 															$data.customFields[field.id] = [...current, option];
 														} else {
-															$data.customFields[field.id] = current.filter((v: string) => v !== option);
+															$data.customFields[field.id] = current.filter(
+																(v: string) => v !== option
+															);
 														}
 													}}
 												/>
-												<label for={`${field.id}-${option}`} class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+												<label
+													for={`${field.id}-${option}`}
+													class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+												>
 													{option}
 												</label>
 											</div>

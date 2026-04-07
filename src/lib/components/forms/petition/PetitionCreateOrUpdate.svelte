@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
+	import { beforeNavigate } from '$app/navigation';
 	import { useDebounce } from 'runed';
 	import { slugify } from '$lib/utils/slug';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -34,7 +35,7 @@
 	const { title, slug } = generatePetitionTitleAsyncSchema(appState.organizationId, petition?.id);
 	import { objectAsync } from 'valibot';
 
-	let { form, data, errors, Errors, Debug } = $state(
+	let { form, data, errors, Errors, Debug, helpers } = $state(
 		/* svelte-ignore state_referenced_locally */
 		petition
 			? createForm({
@@ -46,7 +47,8 @@
 					/* svelte-ignore state_referenced_locally */
 					initialData: petition,
 					onSubmit: async (data) => {
-						onSubmit(data);
+						await onSubmit(data);
+						form.tainted.set(undefined);
 					}
 				})
 			: createForm({
@@ -57,7 +59,8 @@
 					}),
 					validateOnLoad: false,
 					onSubmit: async (data) => {
-						onSubmit(data);
+						await onSubmit(data);
+						form.tainted.set(undefined);
 					}
 				})
 	);
@@ -69,6 +72,9 @@
 	if ($data.settings.survey === undefined) {
 		$data.settings.survey = defaultPetitionSettings().survey;
 	}
+	if ($data.settings.tags === undefined) {
+		$data.settings.tags = [];
+	}
 	if ($data.published === undefined) {
 		$data.published = false;
 	}
@@ -76,6 +82,30 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { defaultPetitionSettings } from '$lib/schema/petition/settings';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
+	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { TagSelectMulti } from '$lib/components/ui/custom-select/tag/index.js';
+
+	$effect(() => {
+		const handler = (e: BeforeUnloadEvent) => {
+			if (!helpers.isTainted()) return;
+			e.preventDefault();
+		};
+		window.addEventListener('beforeunload', handler);
+		return () => window.removeEventListener('beforeunload', handler);
+	});
+
+	beforeNavigate((nav) => {
+		if (!helpers.isTainted()) return;
+		if (!nav.to) return;
+		if (!confirm(t`Your changes might not be saved. Leave this page?`)) {
+			nav.cancel();
+		}
+	});
 
 	let editSlugOpen = $state(false);
 </script>
@@ -110,6 +140,82 @@
 			/>
 		</Card.Content>
 	</Card.Root>
+
+	{#if $data.settings}
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Automatic tags`}</Card.Title>
+				<Card.Description>
+					{t`Optional tags applied to people when they sign this petition.`}
+				</Card.Description>
+			</Card.Header>
+			<Card.Content class="space-y-6">
+				<TagSelectMulti bind:selectedIds={$data.settings.tags} />
+			</Card.Content>
+		</Card.Root>
+	{/if}
+
+	{#if petition}
+		<Alert.Root variant="destructive" class="mt-4">
+			<AlertCircleIcon />
+			<Alert.Title>{t`Danger zone!`}</Alert.Title>
+			<Alert.Description>
+				{#if petition.published}
+					{t`This petition will be archived. You can still view it in the archived petitions list.`}
+					<div class="mt-2">
+						<Button
+							type="button"
+							variant="destructive"
+							onclick={async () => {
+								if (
+									window.confirm(
+										t`This petition will be archived. You can still view it in the archived petitions list.`
+									)
+								) {
+									z.mutate(
+										mutators.petition.archive({
+											metadata: {
+												petitionId: petition.id,
+												organizationId: appState.organizationId
+											}
+										})
+									);
+									toast.success(t`Petition archived`);
+									goto('/petitions');
+								}
+							}}>{t`Archive petition`}</Button
+						>
+					</div>
+				{:else}
+					{t`This draft petition will be permanently deleted. This action cannot be undone.`}
+					<div class="mt-2">
+						<Button
+							type="button"
+							variant="destructive"
+							onclick={async () => {
+								if (
+									window.confirm(
+										t`This draft petition will be permanently deleted. This action cannot be undone.`
+									)
+								) {
+									z.mutate(
+										mutators.petition.delete({
+											metadata: {
+												petitionId: petition.id,
+												organizationId: appState.organizationId
+											}
+										})
+									);
+									toast.success(t`Petition deleted`);
+									goto('/petitions');
+								}
+							}}>{t`Delete petition`}</Button
+						>
+					</div>
+				{/if}
+			</Alert.Description>
+		</Alert.Root>
+	{/if}
 
 	<Debug {data} hide={true} />
 </form>

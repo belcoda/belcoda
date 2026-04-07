@@ -2,7 +2,7 @@ import type { ServerTransaction } from '@rocicorp/zero';
 import { emailMessage } from '$lib/schema/drizzle';
 import { type QueryContext, builder } from '$lib/zero/schema';
 import { parse } from 'valibot';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -197,7 +197,7 @@ export async function sendEmailMessage({
 
 	// Queue the email for processing
 	const queue = await getQueue();
-	await queue.processEmailMessage({
+	await queue.buildEmailMessageSendQueue({
 		emailMessageId: parsed.metadata.emailMessageId,
 		organizationId: parsed.metadata.organizationId
 	});
@@ -206,4 +206,24 @@ export async function sendEmailMessage({
 		{ emailMessageId: parsed.metadata.emailMessageId },
 		'Email message queued for processing'
 	);
+}
+
+/**
+ * Resolves organization id for an email message by id without tenant or auth
+ * filters. For trusted server callsites only (e.g. path-based org inference);
+ * does not load body, recipients, or other message fields.
+ */
+export async function _getEmailMessageByIdUnsafeNoTenantCheck({
+	emailMessageId,
+	tx
+}: {
+	emailMessageId: string;
+	tx: ServerTransaction;
+}): Promise<string | null> {
+	const [row] = await tx.dbTransaction.wrappedTransaction
+		.select({ organizationId: emailMessage.organizationId })
+		.from(emailMessage)
+		.where(and(eq(emailMessage.id, emailMessageId), isNull(emailMessage.deletedAt)))
+		.limit(1);
+	return row?.organizationId ?? null;
 }

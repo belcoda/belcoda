@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
-import { generateUniqueNanoids } from '$lib/server/db/seed/utils';
 import { slugify } from '$lib/utils/slug';
 import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { petition as petitionTable, actionCode as actionCodeTable } from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
+import { nanoid } from '$lib/schema/helpers';
 
 export function generatePetitions(
 	count: number = 30,
@@ -13,32 +13,11 @@ export function generatePetitions(
 	actionCodes: (typeof actionCodeTable.$inferInsert)[];
 } {
 	const ids = new Array(count).fill(0).map(() => uuidv7());
-	const petitionSignedActionCodeIds = generateUniqueNanoids(count);
 	const petitions: (typeof petitionTable.$inferInsert)[] = [];
-	const usedTitles = new Set<string>();
-	const usedSlugs = new Set<string>();
 
 	for (let i = 0; i < count; i++) {
-		let petitionTitle: string;
-		let slug: string;
-
-		// Generate unique title and slug
-		let attempts = 0;
-		do {
-			petitionTitle = selectOneOfArray(petitionTitles);
-			slug = slugify(petitionTitle);
-			attempts++;
-
-			// If we've tried too many times with the same title, add a suffix
-			if (attempts > 5) {
-				petitionTitle = `${petitionTitle} ${faker.number.int({ min: 1, max: 999 })}`;
-				slug = slugify(petitionTitle);
-			}
-		} while (usedTitles.has(petitionTitle) || usedSlugs.has(slug));
-
-		// Add to used sets
-		usedTitles.add(petitionTitle);
-		usedSlugs.add(slug);
+		const petitionTitle = generatePetitionTitle();
+		const slug = ids[i];
 
 		// Random petition target
 		const target = selectOneOfArray(petitionTargets);
@@ -86,7 +65,7 @@ export function generatePetitions(
 	for (let i = 0; i < petitions.length; i++) {
 		const petition = petitions[i];
 		actionCodes.push({
-			id: petitionSignedActionCodeIds[i],
+			id: nanoid(),
 			organizationId: options.organizationId,
 			referenceId: petition.id,
 			type: 'petition_signed',
@@ -97,108 +76,88 @@ export function generatePetitions(
 	return { petitions, actionCodes };
 }
 
-export const petitionTitles = [
-	'Save Our Community Parks',
-	'Stop the Pipeline Project',
-	'Protect Voting Rights Now',
-	'End Homelessness in Our City',
-	'Ban Plastic Bags Citywide',
-	'Fund Public Education',
-	'Close Private Detention Centers',
-	'Defend Net Neutrality',
-	'Raise the Minimum Wage',
-	'Cancel Student Debt',
-	'Universal Healthcare Now',
-	'Stop Police Brutality',
-	'Climate Action Now',
-	'Protect Indigenous Land Rights',
-	'End Cash Bail',
-	'Justice for All Workers',
-	'Ban Fracking in Our State',
-	'Affordable Housing for Everyone',
-	'Protect LGBTQ+ Rights',
-	'End Mass Incarceration',
-	'Support Renewable Energy',
-	'Stop Corporate Tax Evasion',
-	'Defend Immigrant Rights',
-	'End Food Deserts',
-	'Clean Water is a Right',
-	'Stop Gentrification',
-	'Support Mental Health Services',
-	'End the School-to-Prison Pipeline',
-	'Protect Reproductive Rights',
-	'Ban Single-Use Plastics',
-	'Justice for Farmworkers',
-	'Stop Police Militarization',
-	'Fund Community Mental Health',
-	'End Child Poverty',
-	'Protect Public Lands',
-	'Support Green Jobs',
-	'End Housing Discrimination',
-	'Defend Press Freedom',
-	'Stop Oil Drilling',
-	'Support Universal Childcare',
-	'End Workplace Discrimination',
-	'Protect Wetlands',
-	'Stop Corporate Pollution',
-	'Support Living Wages',
-	'End Food Waste',
-	'Protect Community Gardens',
-	'Stop Predatory Lending',
-	'Support Public Transit',
-	'End Environmental Racism',
-	'Protect Whistleblowers',
-	'Stop Deforestation',
-	'Support Disability Rights',
-	'End Prison Privatization',
-	'Protect Clean Air',
-	'Stop Animal Cruelty',
-	'Support Refugee Rights',
-	'End Wage Theft',
-	'Protect Ocean Life',
-	'Stop Factory Farming',
-	'Support Arts Education',
-	'End Voter Suppression',
-	'Protect Native Languages',
-	'Stop Toxic Dumping',
-	'Support Community Health Centers',
-	'End Solitary Confinement',
-	'Protect Old Growth Forests',
-	'Stop Corporate Monopolies',
-	'Support Fair Trade',
-	'End Redlining',
-	'Protect Biodiversity',
-	'Stop Evictions',
-	'Support Co-operative Businesses',
-	'End Factory Pollution',
-	'Protect Coral Reefs',
-	'Stop Urban Sprawl',
-	'Support Community Land Trusts',
-	'End Food Insecurity',
-	'Protect Wildlife Habitats',
-	'Stop Wage Discrimination',
-	'Support Public Libraries',
-	'End Utility Shutoffs',
-	'Protect River Systems',
-	'Stop Workplace Harassment',
-	'Support Community Ownership',
-	'End Medical Debt',
-	'Protect Endangered Species',
-	'Stop Bank Redlining',
-	'Support Worker Cooperatives',
-	'End Lead Contamination',
-	'Protect Mountain Ecosystems',
-	'Stop Pension Theft',
-	'Support Community Radio',
-	'End Educational Inequality',
-	'Protect Pollinators',
-	'Stop Surveillance Capitalism',
-	'Support Reparations',
-	'End Healthcare Discrimination',
-	'Protect Soil Health',
-	'Stop Digital Divide',
-	'Support Community Gardens'
+const petitionVerbs = [
+	'Save',
+	'Protect',
+	'Defend',
+	'Fund',
+	'Support',
+	'Expand',
+	'Restore',
+	'Strengthen'
 ];
+const petitionStopVerbs = ['Stop', 'End', 'Ban', 'Halt', 'Cancel', 'Reject', 'Defund', 'Abolish'];
+const petitionSubjects = [
+	'Our Community Parks',
+	'Public Education',
+	'Clean Water',
+	'Affordable Housing',
+	'Workers Rights',
+	'Voting Rights',
+	'Indigenous Land Rights',
+	'LGBTQ+ Rights',
+	'Reproductive Rights',
+	'Disability Rights',
+	'Immigrant Rights',
+	'Refugee Rights',
+	'Press Freedom',
+	'Net Neutrality',
+	'Public Transit',
+	'Community Health Centers',
+	'Public Libraries',
+	'Renewable Energy',
+	'Green Jobs',
+	'Old Growth Forests',
+	'Ocean Life',
+	'Endangered Species',
+	'Pollinators',
+	'Wetlands',
+	'Coral Reefs',
+	'River Systems',
+	'Clean Air',
+	'Soil Health',
+	'Wildlife Habitats',
+	'Biodiversity'
+];
+const petitionStopSubjects = [
+	'the Pipeline Project',
+	'Police Brutality',
+	'Corporate Tax Evasion',
+	'Corporate Pollution',
+	'Gentrification',
+	'Predatory Lending',
+	'Deforestation',
+	'Factory Farming',
+	'Voter Suppression',
+	'Toxic Dumping',
+	'Corporate Monopolies',
+	'Urban Sprawl',
+	'Wage Discrimination',
+	'Workplace Harassment',
+	'Surveillance Capitalism',
+	'the Digital Divide',
+	'Evictions',
+	'Mass Incarceration',
+	'Cash Bail',
+	'Fracking',
+	'Oil Drilling',
+	'Child Poverty',
+	'Medical Debt',
+	'Lead Contamination',
+	'Redlining',
+	'Food Deserts',
+	'Wage Theft',
+	'Prison Privatization',
+	'Solitary Confinement'
+];
+
+export function generatePetitionTitle(): string {
+	const isStop = faker.datatype.boolean();
+	if (isStop) {
+		return `${faker.helpers.arrayElement(petitionStopVerbs)} ${faker.helpers.arrayElement(petitionStopSubjects)}`;
+	}
+	return `${faker.helpers.arrayElement(petitionVerbs)} ${faker.helpers.arrayElement(petitionSubjects)}`;
+}
 
 export const petitionTargets = [
 	'City Council',

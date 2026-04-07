@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
+	import { beforeNavigate } from '$app/navigation';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -8,6 +9,7 @@
 	import GenderSelect from '$lib/components/ui/custom-select/gender/gender.svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
+	import PhoneNumberInput from '$lib/components/ui/custom-select/phone-number/phone-number.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import createForm from '$lib/form.svelte';
@@ -34,6 +36,15 @@
 	}: { person?: ReadPersonZero; onCreated?: (personId: string) => void | Promise<void> } = $props();
 	import { appState } from '$lib/state.svelte';
 	import { defaultCountryCode } from '$lib/utils/country';
+
+	const personTeamId = $derived.by(() => {
+		if (appState.isAdminOrOwner) {
+			return null; // admin or owner can create a person for any/no team
+		} else {
+			return appState.activeTeamId || appState.myTeams.data?.[0]?.id || null; // member can create a person for their active team or the first team they are a member of
+		}
+	});
+
 	/* svelte-ignore state_referenced_locally */
 	const { form, data, errors, Errors, helpers } = person
 		? createForm({
@@ -58,6 +69,8 @@
 					};
 					const parsed = parse(updateMutatorSchemaZero, toUpdate);
 					const input = z.mutate(mutators.person.update(parsed));
+					await input.client;
+					form.tainted.set(undefined);
 					onCreated?.(person.id);
 				}
 			})
@@ -79,6 +92,7 @@
 						metadata: {
 							organizationId: appState.organizationId,
 							personId: personId,
+							teamId: personTeamId || undefined,
 							addedFrom: {
 								type: 'added_manually',
 								userId: appState.userId
@@ -89,12 +103,33 @@
 					const input = z.mutate(mutators.person.create(parsed));
 					await input.client;
 					toast.success(t`Person created successfully`);
+					form.tainted.set(undefined);
 					await onCreated?.(personId);
 				}
 			});
+	const country = $state(
+		$data.country || appState.activeOrganization?.data?.country || defaultCountryCode
+	);
+
+	$effect(() => {
+		const handler = (e: BeforeUnloadEvent) => {
+			if (!helpers.isTainted()) return;
+			e.preventDefault();
+		};
+		window.addEventListener('beforeunload', handler);
+		return () => window.removeEventListener('beforeunload', handler);
+	});
+
+	beforeNavigate((nav) => {
+		if (!helpers.isTainted()) return;
+		if (!nav.to) return;
+		if (!confirm(t`Your changes might not be saved. Leave this page?`)) {
+			nav.cancel();
+		}
+	});
 </script>
 
-<form use:form.enhance id="person-form">
+<form use:form.enhance id="person-form" data-testid="person-form">
 	<div class="mx-auto flex w-full max-w-4xl flex-col gap-4">
 		<Errors {errors} />
 		<Card.Root>
@@ -112,7 +147,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Given name`}</Form.Label>
-							<Input {...props} bind:value={$data.givenName} />
+							<Input {...props} data-testid="person-given-name" bind:value={$data.givenName} />
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -121,7 +156,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Family name`}</Form.Label>
-							<Input {...props} bind:value={$data.familyName} />
+							<Input {...props} data-testid="person-family-name" bind:value={$data.familyName} />
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -139,7 +174,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Email address`}</Form.Label>
-								<Input {...props} bind:value={$data.emailAddress} />
+								<Input {...props} data-testid="person-email" bind:value={$data.emailAddress} />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
@@ -148,7 +183,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Phone number`}</Form.Label>
-								<Input {...props} bind:value={$data.phoneNumber} />
+								<PhoneNumberInput {country} {...props} bind:value={$data.phoneNumber} />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />

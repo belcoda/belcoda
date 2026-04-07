@@ -49,7 +49,10 @@
 	{:else}
 		<div class="text-sm text-muted-foreground">{t`No tags found.`}</div>
 	{/if}
-	{#snippet action()}
-		<AddTag personId={person.id} />
-	{/snippet}
+
+	{#if appState.isAdminOrOwner}
+		{#snippet action()}
+			<AddTag personId={person.id} />
+		{/snippet}
+	{/if}
 </ProfileRow>

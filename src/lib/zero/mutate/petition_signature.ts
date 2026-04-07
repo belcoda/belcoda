@@ -17,8 +17,8 @@ export const createPetitionSignature = defineMutator(
 			personId: args.metadata.personId,
 			details: args.input.details,
 			responses: args.input.responses,
-			createdAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			createdAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -29,7 +29,7 @@ export const updatePetitionSignature = defineMutator(
 		tx.mutate.petitionSignature.update({
 			id: args.metadata.petitionSignatureId,
 			responses: args.input.responses,
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -39,8 +39,8 @@ export const deletePetitionSignature = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.petitionSignature.update({
 			id: args.metadata.petitionSignatureId,
-			deletedAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			deletedAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
