@@ -15,8 +15,8 @@ Thank you for creating them.
 
 Pull requests are a great way to get your ideas into this repository.
 
-When deciding if I merge in a pull request I look at the following
-things:
+When deciding whether to merge a pull request, maintainers look at the
+following things:
 
 ### Does it state intent
 
