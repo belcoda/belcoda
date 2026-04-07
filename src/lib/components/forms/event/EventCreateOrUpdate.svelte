@@ -8,7 +8,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { getLocalTimeZone, parseAbsolute } from '@internationalized/date';
+	import { getLocalTimeZone } from '@internationalized/date';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { env } from '$env/dynamic/public';
 	const { PUBLIC_ROOT_DOMAIN } = env;
@@ -91,7 +91,7 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
-	import { TagSelectSingle } from '$lib/components/ui/tag-select/index.js';
+	import { TagSelectSingle } from '$lib/components/ui/custom-select/tag/index.js';
 
 	$effect(() => {
 		const handler = (e: BeforeUnloadEvent) => {

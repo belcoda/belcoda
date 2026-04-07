@@ -86,7 +86,7 @@
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
-	import { TagSelectMulti } from '$lib/components/ui/tag-select/index.js';
+	import { TagSelectMulti } from '$lib/components/ui/custom-select/tag/index.js';
 
 	$effect(() => {
 		const handler = (e: BeforeUnloadEvent) => {
