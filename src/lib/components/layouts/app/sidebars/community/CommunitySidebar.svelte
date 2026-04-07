@@ -57,6 +57,8 @@
 
 {#snippet personItem(person: ReadPersonZero)}
 	<a
+		data-testid="community-person-list-link"
+		data-person-id={person.id}
 		href={`/community/${person.id}`}
 		class:bg-sidebar-accent={page.url.pathname.startsWith(`/community/${person.id}`)}
 		class:text-sidebar-accent-foreground={page.url.pathname.startsWith(`/community/${person.id}`)}

@@ -11,8 +11,8 @@ export const createEventSignup = defineMutator(createMutatorSchema, async ({ tx,
 		personId: args.metadata.personId,
 		details: args.input.details,
 		status: args.input.status,
-		createdAt: new Date().getTime(),
-		updatedAt: new Date().getTime()
+		createdAt: Date.now(),
+		updatedAt: Date.now()
 	});
 });
 
@@ -20,6 +20,6 @@ export const updateEventSignup = defineMutator(updateMutatorSchema, async ({ tx,
 	tx.mutate.eventSignup.update({
 		id: args.metadata.eventSignupId,
 		status: args.input.status,
-		updatedAt: new Date().getTime()
+		updatedAt: Date.now()
 	});
 });

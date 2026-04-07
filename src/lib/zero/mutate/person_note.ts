@@ -16,8 +16,8 @@ export const createPersonNote = defineMutator(
 			personId: args.metadata.personId,
 			note: args.input.note,
 			userId: args.metadata.userId,
-			createdAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			createdAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -28,7 +28,7 @@ export const updatePersonNote = defineMutator(
 		tx.mutate.personNote.update({
 			id: args.metadata.personNoteId,
 			note: args.input.note,
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -38,7 +38,7 @@ export const deletePersonNote = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.personNote.update({
 			id: args.metadata.personNoteId,
-			deletedAt: new Date().getTime()
+			deletedAt: Date.now()
 		});
 	}
 );

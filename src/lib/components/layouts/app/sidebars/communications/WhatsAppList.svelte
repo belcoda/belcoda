@@ -32,7 +32,7 @@
 	});
 
 	let search = $state('');
-	const emailFilter = $derived.by(() => ({
+	const whatsappThreadFilter = $derived.by(() => ({
 		...getListFilter(appState.organizationId),
 		searchString: search,
 		isDraft: activeItem.isDraft,
@@ -40,13 +40,12 @@
 	}));
 
 	const whatsappThreadsQuery = $derived.by(() =>
-		z.createQuery(queries.whatsappThread.list(emailFilter))
+		z.createQuery(queries.whatsappThread.list(whatsappThreadFilter))
 	);
 
 	const whatsappThreads = $derived(whatsappThreadsQuery.data ?? []);
 
 	import { Input } from '$lib/components/ui/input/index.js';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 </script>
 
 <div class="flex w-full flex-col bg-background md:w-[300px] md:shrink-0">

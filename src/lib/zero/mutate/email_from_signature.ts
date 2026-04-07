@@ -34,8 +34,8 @@ export const createEmailFromSignature = defineMutator(
 			verified: false, // Will be updated by server mutator after Postmark sync
 			returnPathDomain: args.input.returnPathDomain,
 			returnPathDomainVerified: false, // Will be updated by server mutator after Postmark sync
-			createdAt: new Date().getTime(),
-			updatedAt: new Date().getTime(),
+			createdAt: Date.now(),
+			updatedAt: Date.now(),
 			deletedAt: null
 		});
 	}
@@ -47,7 +47,7 @@ export const updateEmailFromSignature = defineMutator(
 		tx.mutate.emailFromSignature.update({
 			id: args.metadata.emailFromSignatureId,
 			...args.input,
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -57,8 +57,8 @@ export const deleteEmailFromSignature = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.emailFromSignature.update({
 			id: args.metadata.emailFromSignatureId,
-			deletedAt: new Date().getTime(),
-			updatedAt: new Date().getTime()
+			deletedAt: Date.now(),
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -68,7 +68,7 @@ export const verifyEmailFromSignature = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.emailFromSignature.update({
 			id: args.metadata.emailFromSignatureId,
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -93,7 +93,7 @@ export const setDefaultSignature = defineMutator(
 					defaultFromSignatureId: args.input.defaultFromSignatureId
 				}
 			},
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );
@@ -122,7 +122,7 @@ export const updateSystemFromIdentity = defineMutator(
 					}
 				}
 			},
-			updatedAt: new Date().getTime()
+			updatedAt: Date.now()
 		});
 	}
 );

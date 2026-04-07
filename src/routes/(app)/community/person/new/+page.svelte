@@ -12,7 +12,7 @@
 <ContentLayout rootLink="/community">
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-bold">{t`Create Person`}</h1>
+			<h1 class="text-2xl font-bold" data-testid="person-create-heading">{t`Create Person`}</h1>
 		</div>
 	{/snippet}
 
@@ -20,8 +20,10 @@
 
 	{#snippet footer()}
 		<div class="flex w-full justify-end gap-2">
-			<Button href="/community" variant="outline">{t`Cancel`}</Button>
-			<Button type="submit" form="person-form">{t`Save`}</Button>
+			<Button href="/community" variant="outline" data-testid="person-form-cancel"
+				>{t`Cancel`}</Button
+			>
+			<Button type="submit" form="person-form" data-testid="person-form-save">{t`Save`}</Button>
 		</div>
 	{/snippet}
 </ContentLayout>

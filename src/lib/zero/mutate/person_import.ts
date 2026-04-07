@@ -13,7 +13,7 @@ export const insertPersonImport = defineMutator(createMutatorSchema, async ({ tx
 		failedRows: 0,
 		failedEntries: null,
 		importedBy: args.metadata.importedBy,
-		createdAt: new Date().getTime(),
+		createdAt: Date.now(),
 		completedAt: null
 	});
 });

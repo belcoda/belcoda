@@ -8,9 +8,11 @@ import { db } from '$lib/server/db';
 import { and, eq } from 'drizzle-orm';
 import {
 	organization as organizationTable,
+	person,
 	whatsappMessage as whatsappMessageTable,
 	whatsappTemplate as whatsappTemplateTable
 } from '$lib/schema/drizzle';
+import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { sendWhatsappMessage as sendWhatsappMessageToYCloud } from './ycloud/ycloud_api';
 import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
 
@@ -51,13 +53,25 @@ export async function sendWhatsappMessage({
 			messageNode: message,
 			messageId: whatsappMessageId
 		});
+		const personObject = await _getPersonByIdUnsafe({
+			personId: personId,
+			organizationId: organizationId,
+			tx
+		});
+		if (!personObject) {
+			throw new Error('Person not found');
+		}
+		const to = personObject.whatsAppUsername || personObject.phoneNumber;
+		if (!to) {
+			throw new Error('Person does not have a WhatsApp username or phone number');
+		}
 		const messageToSend = await convertWhatsappMessageToApiFormat({
 			whatsappMessage: whatsappMessage,
 			nodeId: nodeId,
 			whatsappThreadId: threadId,
 			whatsappMessageId: whatsappMessageId,
 			from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
-			to: personId
+			to: to
 		});
 		const ycloudResponseId = await sendWhatsappMessageToYCloud(messageToSend);
 		if (!ycloudResponseId) {
@@ -132,6 +146,18 @@ export async function sendWhatsappTemplateMessage({
 			organizationId,
 			tx
 		});
+		const personObject = await _getPersonByIdUnsafe({
+			personId: personId,
+			organizationId: organizationId,
+			tx
+		});
+		if (!personObject) {
+			throw new Error('Person not found');
+		}
+		const to = personObject.whatsAppUsername || personObject.phoneNumber;
+		if (!to) {
+			throw new Error('Person does not have a WhatsApp username or phone number');
+		}
 		const whatsappMessageId = uuidv7();
 		const messageToSend = await convertWhatsAppTemplateMessageToApiFormat({
 			templateMessage: message,
@@ -139,7 +165,7 @@ export async function sendWhatsappTemplateMessage({
 			whatsappThreadId: threadId,
 			whatsappMessageId: whatsappMessageId,
 			from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
-			to: personId,
+			to: to,
 			name: template.name,
 			language: template.locale
 		});

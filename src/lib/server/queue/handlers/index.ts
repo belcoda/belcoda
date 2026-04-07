@@ -7,3 +7,4 @@ export { handleWhatsappTemplateReviewed } from '$lib/server/queue/handlers/whats
 export { processFlowNodeAction } from '$lib/server/queue/handlers/whatsapp/process_flow_node';
 export { sendEmailMessage } from '$lib/server/queue/handlers/email/send_email_message';
 export { buildEmailMessageSendQueue } from '$lib/server/queue/handlers/email/build_send_queue';
+export { buildWhatsappThreadSendQueue } from '$lib/server/queue/handlers/whatsapp/build_send_queue';

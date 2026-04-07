@@ -33,6 +33,7 @@
 				person={person.data}
 				personId={params.personId}
 				textClass="text-lg font-medium"
+				testId="person-timeline-display-name"
 			/></a
 		>
 		{#if person.data}
