@@ -72,6 +72,9 @@
 	if ($data.settings.survey === undefined) {
 		$data.settings.survey = defaultPetitionSettings().survey;
 	}
+	if ($data.settings.tags === undefined) {
+		$data.settings.tags = [];
+	}
 	if ($data.published === undefined) {
 		$data.published = false;
 	}
@@ -85,6 +88,7 @@
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { TagSelectMulti } from '$lib/components/ui/custom-select/tag/index.js';
 
 	$effect(() => {
 		const handler = (e: BeforeUnloadEvent) => {
@@ -136,6 +140,20 @@
 			/>
 		</Card.Content>
 	</Card.Root>
+
+	{#if $data.settings}
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Automatic tags`}</Card.Title>
+				<Card.Description>
+					{t`Optional tags applied to people when they sign this petition.`}
+				</Card.Description>
+			</Card.Header>
+			<Card.Content class="space-y-6">
+				<TagSelectMulti bind:selectedIds={$data.settings.tags} />
+			</Card.Content>
+		</Card.Root>
+	{/if}
 
 	{#if petition}
 		<Alert.Root variant="destructive" class="mt-4">

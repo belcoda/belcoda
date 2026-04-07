@@ -9,7 +9,7 @@ import {
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
 import { personTag, activity, tag } from '$lib/schema/drizzle';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
 
@@ -111,6 +111,46 @@ export async function _addPersonTagData({
 		}
 	});
 	return result;
+}
+
+/**
+ * Idempotent person–tag link for automated flows (e.g. event/petition signup).
+ * Skips silently if the tag is missing, inactive, or soft-deleted.
+ * Does not insert an `activity` row or call {@link updateLatestActivity} (unlike
+ * {@link _addPersonTagData}) so bulk/automated tagging does not flood timelines.
+ */
+export async function applyTagToPersonUnsafe({
+	tx,
+	personId,
+	tagId,
+	organizationId
+}: {
+	tx: ServerTransaction;
+	personId: string;
+	tagId: string;
+	organizationId: string;
+}) {
+	const db = tx.dbTransaction.wrappedTransaction;
+	const tagRow = await db.query.tag.findFirst({
+		where: and(
+			eq(tag.id, tagId),
+			eq(tag.organizationId, organizationId),
+			eq(tag.active, true),
+			isNull(tag.deletedAt)
+		)
+	});
+	if (!tagRow) {
+		return;
+	}
+	await db
+		.insert(personTag)
+		.values({
+			personId,
+			tagId,
+			organizationId,
+			createdAt: new Date()
+		})
+		.onConflictDoNothing();
 }
 
 export async function removePersonTag({
