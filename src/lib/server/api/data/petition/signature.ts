@@ -278,9 +278,13 @@ export async function signPetitionUnsafe({
 
 	if (!skipNotifications && details.channel.type === 'petitionPage') {
 		const queue = await getQueue();
-		queue.sendPetitionSignatureConfirmation({
+		const locale = clampLocale(
+			personRecord.preferredLanguage || organizationRecord.defaultLanguage
+		);
+		// Use pg-boss directly so enqueue works even if cached queue object predates a new handler export
+		await queue.raw.send('sendPetitionSignatureConfirmation', {
 			petitionSignatureId: id,
-			locale: clampLocale(personRecord.preferredLanguage || organizationRecord.defaultLanguage)
+			locale
 		});
 	}
 
