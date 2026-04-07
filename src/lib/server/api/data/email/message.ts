@@ -209,9 +209,9 @@ export async function sendEmailMessage({
 }
 
 /**
- * Loads an email message by id without tenant or auth filters. For trusted server
- * callsites only (e.g. path-based org inference); do not call from public or
- * untrusted request handlers.
+ * Resolves organization id for an email message by id without tenant or auth
+ * filters. For trusted server callsites only (e.g. path-based org inference);
+ * does not load body, recipients, or other message fields.
  */
 export async function _getEmailMessageByIdUnsafeNoTenantCheck({
 	emailMessageId,
@@ -219,14 +219,11 @@ export async function _getEmailMessageByIdUnsafeNoTenantCheck({
 }: {
 	emailMessageId: string;
 	tx: ServerTransaction;
-}) {
-	const emailMessageRecord = await tx.dbTransaction.wrappedTransaction.query.emailMessage.findFirst(
-		{
-			where: and(eq(emailMessage.id, emailMessageId), isNull(emailMessage.deletedAt))
-		}
-	);
-	if (!emailMessageRecord) {
-		return null;
-	}
-	return emailMessageRecord;
+}): Promise<string | null> {
+	const [row] = await tx.dbTransaction.wrappedTransaction
+		.select({ organizationId: emailMessage.organizationId })
+		.from(emailMessage)
+		.where(and(eq(emailMessage.id, emailMessageId), isNull(emailMessage.deletedAt)))
+		.limit(1);
+	return row?.organizationId ?? null;
 }

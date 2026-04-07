@@ -223,8 +223,8 @@ export async function _getPersonByIdUnsafe({
 }
 
 /**
- * Loads a person by id without tenant or auth filters. For trusted server
- * callsites only; do not call from public or untrusted request handlers.
+ * Resolves organization id for a person by id without tenant or auth filters.
+ * For trusted server callsites only; does not load name, email, or other PII.
  */
 export async function _getPersonByIdUnsafeNoTenantCheck({
 	personId,
@@ -232,12 +232,11 @@ export async function _getPersonByIdUnsafeNoTenantCheck({
 }: {
 	personId: string;
 	tx: ServerTransaction;
-}) {
-	const personRecord = await tx.dbTransaction.wrappedTransaction.query.person.findFirst({
-		where: and(eq(person.id, personId), isNull(person.deletedAt))
-	});
-	if (!personRecord) {
-		return null;
-	}
-	return personRecord;
+}): Promise<string | null> {
+	const [row] = await tx.dbTransaction.wrappedTransaction
+		.select({ organizationId: person.organizationId })
+		.from(person)
+		.where(and(eq(person.id, personId), isNull(person.deletedAt)))
+		.limit(1);
+	return row?.organizationId ?? null;
 }

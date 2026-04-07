@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
+import { _getEventByIdUnsafeNoTenantCheck } from '$lib/server/api/data/event/event';
 import { _getPersonByIdUnsafeNoTenantCheck } from '$lib/server/api/data/person/person';
 import { _getEmailMessageByIdUnsafeNoTenantCheck } from '$lib/server/api/data/email/message';
 import { _getWhatsappThreadByIdUnsafeNoTenantCheck } from '$lib/server/api/data/whatsapp/thread';
@@ -11,27 +11,19 @@ export async function inferOrganizationIdFromUrl({ url }: { url: URL }): Promise
 	const emailDraftId = checkIfPathStartsWithPattern(path, '/communications/email/drafts/[uuid]');
 	if (emailDraftId) {
 		return await db.transaction(async (tx) => {
-			const emailMessage = await _getEmailMessageByIdUnsafeNoTenantCheck({
+			return await _getEmailMessageByIdUnsafeNoTenantCheck({
 				emailMessageId: emailDraftId,
 				tx
 			});
-			if (!emailMessage) {
-				return null;
-			}
-			return emailMessage.organizationId;
 		});
 	}
 	const emailSentId = checkIfPathStartsWithPattern(path, '/communications/email/sent/[uuid]');
 	if (emailSentId) {
 		return await db.transaction(async (tx) => {
-			const emailMessage = await _getEmailMessageByIdUnsafeNoTenantCheck({
+			return await _getEmailMessageByIdUnsafeNoTenantCheck({
 				emailMessageId: emailSentId,
 				tx
 			});
-			if (!emailMessage) {
-				return null;
-			}
-			return emailMessage.organizationId;
 		});
 	}
 
@@ -68,26 +60,15 @@ export async function inferOrganizationIdFromUrl({ url }: { url: URL }): Promise
 	const personId = checkIfPathStartsWithPattern(path, '/community/[uuid]');
 	if (personId) {
 		return await db.transaction(async (tx) => {
-			const person = await _getPersonByIdUnsafeNoTenantCheck({ personId, tx });
-			if (!person) {
-				return null;
-			}
-			return person.organizationId;
+			return await _getPersonByIdUnsafeNoTenantCheck({ personId, tx });
 		});
 	}
 	//EVENTS
 	const eventId = checkIfPathStartsWithPattern(path, '/events/[uuid]');
 	if (eventId) {
 		return await db.transaction(async (tx) => {
-			try {
-				const event = await _getEventByIdUnsafe({ eventId, tx });
-				return event.organizationId;
-			} catch (e) {
-				if (e instanceof Error && e.message === 'Event not found') {
-					return null;
-				}
-				throw e;
-			}
+			const event = await _getEventByIdUnsafeNoTenantCheck({ eventId, tx });
+			return event?.organizationId ?? null;
 		});
 	}
 	//PETITIONS
