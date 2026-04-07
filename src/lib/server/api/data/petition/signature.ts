@@ -33,6 +33,28 @@ import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 
+async function applyPetitionTagsToPersonUnsafe({
+	tx,
+	petitionSettings,
+	personId,
+	organizationId
+}: {
+	tx: ServerTransaction;
+	petitionSettings: unknown;
+	personId: string;
+	organizationId: string;
+}) {
+	const settings = parse(petitionSettingsSchema, petitionSettings ?? {});
+	for (const tagId of settings.tags) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId,
+			tagId,
+			organizationId
+		});
+	}
+}
+
 export async function createPetitionSignature({
 	tx,
 	ctx,
@@ -101,15 +123,12 @@ export async function createPetitionSignature({
 		unread: false
 	});
 
-	const settings = parse(petitionSettingsSchema, petition.settings);
-	for (const tagId of settings.tags) {
-		await applyTagToPersonUnsafe({
-			tx,
-			personId: parsed.metadata.personId,
-			tagId,
-			organizationId: parsed.metadata.organizationId
-		});
-	}
+	await applyPetitionTagsToPersonUnsafe({
+		tx,
+		petitionSettings: petition.settings,
+		personId: parsed.metadata.personId,
+		organizationId: parsed.metadata.organizationId
+	});
 	return result;
 }
 
@@ -284,15 +303,12 @@ export async function signPetitionUnsafe({
 		// 	locale: clampLocale(personRecord.preferredLanguage || organizationRecord.defaultLanguage)
 		// });
 	}
-	const settings = parse(petitionSettingsSchema, petitionRecord.settings);
-	for (const tagId of settings.tags) {
-		await applyTagToPersonUnsafe({
-			tx,
-			personId: personRecord.id,
-			tagId,
-			organizationId: organizationRecord.id
-		});
-	}
+	await applyPetitionTagsToPersonUnsafe({
+		tx,
+		petitionSettings: petitionRecord.settings,
+		personId: personRecord.id,
+		organizationId: organizationRecord.id
+	});
 	//TODO: Implement whatsapp notification
 
 	return insertedPetitionSignature;
