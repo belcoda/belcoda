@@ -208,6 +208,11 @@ export async function sendEmailMessage({
 	);
 }
 
+/**
+ * Loads an email message by id without tenant or auth filters. For trusted server
+ * callsites only (e.g. path-based org inference); do not call from public or
+ * untrusted request handlers.
+ */
 export async function _getEmailMessageByIdUnsafeNoTenantCheck({
 	emailMessageId,
 	tx

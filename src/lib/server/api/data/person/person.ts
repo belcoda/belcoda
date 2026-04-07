@@ -222,6 +222,10 @@ export async function _getPersonByIdUnsafe({
 	return personRecord;
 }
 
+/**
+ * Loads a person by id without tenant or auth filters. For trusted server
+ * callsites only; do not call from public or untrusted request handlers.
+ */
 export async function _getPersonByIdUnsafeNoTenantCheck({
 	personId,
 	tx

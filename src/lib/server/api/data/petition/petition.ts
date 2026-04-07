@@ -250,6 +250,10 @@ export async function getPetitionById({
 	return petitionRecord;
 }
 
+/**
+ * Loads a petition by id without tenant or auth filters. For trusted server
+ * callsites only; do not call from public or untrusted request handlers.
+ */
 export async function _getPetitionByIdUnsafeNoTenantCheck({
 	petitionId,
 	tx
@@ -261,7 +265,7 @@ export async function _getPetitionByIdUnsafeNoTenantCheck({
 		where: and(eq(petition.id, petitionId), isNull(petition.deletedAt))
 	});
 	if (!petitionRecord) {
-		throw new Error('Petition not found');
+		return null;
 	}
 	return petitionRecord;
 }

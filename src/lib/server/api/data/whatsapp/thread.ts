@@ -241,6 +241,10 @@ export async function sendWhatsappThread({
 	return claimed;
 }
 
+/**
+ * Loads a WhatsApp thread by id without tenant or auth filters. For trusted
+ * server callsites only; do not call from public or untrusted request handlers.
+ */
 export async function _getWhatsappThreadByIdUnsafeNoTenantCheck({
 	whatsappThreadId,
 	tx
