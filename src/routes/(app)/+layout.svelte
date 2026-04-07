@@ -52,6 +52,17 @@
 		queryContext
 	});
 
+	//keep the active organization id in sync with the inferred organization id and the default active organization id
+	$effect(() => {
+		const organizationId = determineAndPersistActiveOrganizationId({
+			inferredOrganizationId,
+			defaultActiveOrganizationId,
+			memberships
+		});
+		appState.organizationId = organizationId;
+		authClient.organization.setActive({ organizationId });
+	});
+
 	//conditional onboarding components based on the user's onboarding status
 	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
 
