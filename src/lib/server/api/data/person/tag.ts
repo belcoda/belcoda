@@ -116,6 +116,8 @@ export async function _addPersonTagData({
 /**
  * Idempotent person–tag link for automated flows (e.g. event/petition signup).
  * Skips silently if the tag is missing, inactive, or soft-deleted.
+ * Does not insert an `activity` row or call {@link updateLatestActivity} (unlike
+ * {@link _addPersonTagData}) so bulk/automated tagging does not flood timelines.
  */
 export async function applyTagToPersonUnsafe({
 	tx,
