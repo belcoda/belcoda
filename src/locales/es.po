@@ -2680,7 +2680,7 @@ msgstr "Configuración"
 
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports are not currently supported, but will be added in a future update. "
-msgstr ""
+msgstr "Las exportaciones no están disponibles actualmente, pero se añadirán en una actualización futura. "
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Free"
