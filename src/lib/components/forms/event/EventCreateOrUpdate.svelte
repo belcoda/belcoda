@@ -91,6 +91,7 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
+	import { TagSelectSingle } from '$lib/components/ui/tag-select/index.js';
 
 	$effect(() => {
 		const handler = (e: BeforeUnloadEvent) => {
@@ -180,6 +181,24 @@
 			</Card.Content>
 		</Card.Root>
 	{/if}
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>{t`Automatic tags`}</Card.Title>
+			<Card.Description>
+				{t`Optional tags applied to people when they sign up for this event or when attendance is recorded.`}
+			</Card.Description>
+		</Card.Header>
+		<Card.Content class="space-y-6">
+			<div class="space-y-2">
+				<span class="text-sm leading-none font-medium">{t`Tag on signup`}</span>
+				<TagSelectSingle bind:value={$data.signupTag} />
+			</div>
+			<div class="space-y-2">
+				<span class="text-sm leading-none font-medium">{t`Tag when attended`}</span>
+				<TagSelectSingle bind:value={$data.attendanceTag} />
+			</div>
+		</Card.Content>
+	</Card.Root>
 	{#if event}
 		<Alert.Root variant="destructive" class="mt-4">
 			<AlertCircleIcon />
