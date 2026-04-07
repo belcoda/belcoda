@@ -4331,69 +4331,69 @@ msgstr "Logotipo de Belcoda"
 
 #: src/lib/utils/calendar.ts
 msgid "Online Event"
-msgstr ""
+msgstr "Evento en línea"
 
 #: src/lib/utils/calendar.ts
 #: src/lib/utils/calendar.ts
 #: src/lib/utils/calendar.ts
 msgid "Join online:"
-msgstr ""
+msgstr "Únete en línea:"
 
 #: src/lib/utils/date.ts
 msgid "Never expires"
-msgstr ""
+msgstr "Sin caducidad"
 
 #. 0: petitionTitle; 1: actionCode
 #: src/lib/utils/petitions/link.ts
 msgid "Sign petition for {0} [#{1}] (do not edit this message)"
-msgstr ""
+msgstr "Firma la petición para {0} [#{1}] (no edites este mensaje)"
 
 #: src/lib/components/forms/event/render_survey_question.ts
 msgid "Date of Birth"
-msgstr ""
+msgstr "Fecha de nacimiento"
 
 #: src/lib/components/forms/event/survey_actions.ts
 msgid "Event information"
-msgstr ""
+msgstr "Información del evento"
 
 #: src/lib/components/forms/event/survey_actions.ts
 #: src/lib/components/forms/event/survey_actions.ts
 #: src/lib/components/forms/event/survey_actions.ts
 msgid "Option 1"
-msgstr ""
+msgstr "Opción 1"
 
 #: src/lib/components/forms/event/survey_actions.ts
 #: src/lib/components/forms/event/survey_actions.ts
 #: src/lib/components/forms/event/survey_actions.ts
 msgid "Option 2"
-msgstr ""
+msgstr "Opción 2"
 
 #: src/lib/utils/person/gender/render.ts
 msgid "Male"
-msgstr ""
+msgstr "Masculino"
 
 #: src/lib/utils/person/gender/render.ts
 msgid "Female"
-msgstr ""
+msgstr "Femenino"
 
 #: src/lib/utils/person/gender/render.ts
 msgid "Not Specified"
-msgstr ""
+msgstr "No especificado"
 
 #. 0: formattedDate
 #: src/lib/components/widgets/event/signups/actions.ts
 msgid "Signed up via event page [{0}]"
-msgstr ""
+msgstr "Registrado desde la página del evento [{0}]"
 
 #. 0: formattedDate
 #: src/lib/components/widgets/event/signups/actions.ts
 msgid "Added manually [{0}]"
-msgstr ""
+msgstr "Agregado manualmente [{0}]"
 
 #. 0: formattedDate
 #: src/lib/components/widgets/event/signups/actions.ts
 msgid "Signed up via WhatsApp [{0}]"
-msgstr ""
+msgstr "Registrado por WhatsApp [{0}]"
 
 #. 0: formatNumber(currentTarget)
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
