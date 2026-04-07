@@ -78,14 +78,12 @@ async function stopQueues(queueInstance: Queue) {
 }
 
 function createHandlers(queue: PgBoss): QueueHandlers {
-	log.info('Creating queue handlers...');
 	const handlers = {} as QueueHandlers;
 	for (const queueName of handlersNames) {
 		handlers[queueName] = async (input: unknown) => {
 			await queue.send(queueName, input as object); // pgboss' send function expects type object rather than 'unknown' because we don't have solid inference here
 		};
 	}
-	log.info('Queue handlers created successfully');
 	return handlers;
 }
 
