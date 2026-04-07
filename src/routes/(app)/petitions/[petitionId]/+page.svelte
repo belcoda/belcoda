@@ -4,6 +4,7 @@
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	import ArchiveIcon from '@lucide/svelte/icons/archive';
+	import { t } from '$lib/index.svelte';
 	const petition = $derived.by(() => {
 		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
@@ -20,9 +21,9 @@
 			{#if petition.data.archivedAt}
 				<Alert.Root variant="destructive">
 					<ArchiveIcon class="size-4" />
-					<Alert.Title>This petition has been archived.</Alert.Title>
+					<Alert.Title>{t`This petition has been archived.`}</Alert.Title>
 					<Alert.Description>
-						You can view the petition, but you can't sign it or add signatures.
+						{t`You can view the petition, but you can't sign it or add signatures.`}
 					</Alert.Description>
 				</Alert.Root>
 			{/if}

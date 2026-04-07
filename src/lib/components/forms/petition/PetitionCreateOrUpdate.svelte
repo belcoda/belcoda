@@ -176,17 +176,21 @@
 						description={t`This petition will be archived. You can still view it in the archived petitions list.`}
 						confirmText={t`Archive`}
 						confirmVariant="destructive"
-						onConfirm={() => {
-							z.mutate(
-								mutators.petition.archive({
-									metadata: {
-										petitionId: petition.id,
-										organizationId: appState.organizationId
-									}
-								})
-							);
-							toast.success(t`Petition archived`);
-							goto('/petitions');
+						onConfirm={async () => {
+							try {
+								await z.mutate(
+									mutators.petition.archive({
+										metadata: {
+											petitionId: petition.id,
+											organizationId: appState.organizationId
+										}
+									})
+								);
+								toast.success(t`Petition archived`);
+								goto('/petitions');
+							} catch (error) {
+								toast.error(t`Failed to archive petition`);
+							}
 						}}
 					/>
 				{:else}
@@ -202,17 +206,21 @@
 						description={t`This draft petition will be permanently deleted. This action cannot be undone.`}
 						confirmText={t`Delete`}
 						confirmVariant="destructive"
-						onConfirm={() => {
-							z.mutate(
-								mutators.petition.delete({
-									metadata: {
-										petitionId: petition.id,
-										organizationId: appState.organizationId
-									}
-								})
-							);
-							toast.success(t`Petition deleted`);
-							goto('/petitions');
+						onConfirm={async () => {
+							try {
+								await z.mutate(
+									mutators.petition.delete({
+										metadata: {
+											petitionId: petition.id,
+											organizationId: appState.organizationId
+										}
+									})
+								);
+								toast.success(t`Petition deleted`);
+								goto('/petitions');
+							} catch (error) {
+								toast.error(t`Failed to delete petition`);
+							}
 						}}
 					/>
 				{/if}

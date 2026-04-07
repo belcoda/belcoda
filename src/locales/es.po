@@ -4216,64 +4216,80 @@ msgstr "Borrador de WhatsApp enviado correctamente"
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Archived"
-msgstr ""
+msgstr "Archivado"
 
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Unknown petition status filter"
-msgstr ""
+msgstr "Filtro de estado de petición desconocido"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "About this petition"
-msgstr ""
+msgstr "Acerca de esta petición"
 
 #: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
 msgid "Your signature is recorded"
-msgstr ""
+msgstr "Tu firma ha sido registrada"
 
 #: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
 msgid "Thank you for signing"
-msgstr ""
+msgstr "Gracias por firmar"
 
 #: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
 msgid "We will send you a confirmation email if you provided an address."
-msgstr ""
+msgstr "Te enviaremos un correo de confirmación si proporcionaste una dirección."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Petition page"
-msgstr ""
+msgstr "Página de petición"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Danger zone"
-msgstr ""
+msgstr "Zona de peligro"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Archive this petition. You can still view it in the archived petitions list."
-msgstr ""
+msgstr "Archivar esta petición. Aún puedes verla en la lista de peticiones archivadas."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Archive this petition?"
-msgstr ""
+msgstr "¿Archivar esta petición?"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Archive"
-msgstr ""
+msgstr "Archivar"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Permanently delete this draft petition. This action cannot be undone."
-msgstr ""
+msgstr "Eliminar permanentemente este borrador de petición. Esta acción no se puede deshacer."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Delete this petition?"
-msgstr ""
+msgstr "¿Eliminar esta petición?"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Short description"
-msgstr ""
+msgstr "Descripción breve"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Full text of the petition"
-msgstr ""
+msgstr "Texto completo de la petición"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "The full statement shown on the petition page (optional)."
-msgstr ""
+msgstr "La declaración completa que se muestra en la página de la petición (opcional)."
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "This petition has been archived."
+msgstr "Esta petición ha sido archivada."
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "You can view the petition, but you can't sign it or add signatures."
+msgstr "Puedes ver la petición, pero no puedes firmarla ni agregar firmas."
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Failed to archive petition"
+msgstr "Error al archivar la petición"
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Failed to delete petition"
+msgstr "Error al eliminar la petición"

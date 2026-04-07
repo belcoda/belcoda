@@ -13,7 +13,7 @@
 	import WhatsAppPetitionSignup from './WhatsAppPetitionSignup.svelte';
 	import PetitionSignSuccess from '$lib/components/layouts/public/petition/PetitionSignSuccess.svelte';
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
-	import DOMPurify from 'dompurify';
+	import DOMPurify from 'isomorphic-dompurify';
 
 	type PublicPetition = {
 		title: string;
@@ -97,6 +97,10 @@
 	const targetToGoal = (current: string, target: string) => {
 		return t`${current} more signatures needed to reach ${target}`;
 	};
+
+	const sanitizedDescription = $derived(
+		data.petition.description ? DOMPurify.sanitize(data.petition.description) : null
+	);
 </script>
 
 <svelte:head>
@@ -137,11 +141,11 @@
 							{/if}
 						</div>
 
-						{#if data.petition.description}
+						{#if sanitizedDescription}
 							<div class="border-t border-gray-200 pt-8">
 								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`About this petition`}</h2>
 								<div class="prose decorate-links space-y-4 text-gray-700">
-									{@html DOMPurify.sanitize(data.petition.description)}
+									{@html sanitizedDescription}
 								</div>
 							</div>
 						{/if}

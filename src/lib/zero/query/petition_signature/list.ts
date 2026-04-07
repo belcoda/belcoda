@@ -46,12 +46,15 @@ export function listPetitionSignaturesByPetitionQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof byPetitionInputSchema>;
 }) {
+	// Apply a safe default limit to prevent unbounded result sets
+	const pageSize = 10_000;
 	return builder.petitionSignature
 		.where('petitionId', '=', input.petitionId)
 		.where((expr) => petitionSignatureReadPermissions(expr, ctx))
 		.where('deletedAt', 'IS', null)
 		.related('person')
-		.orderBy('createdAt', 'desc');
+		.orderBy('createdAt', 'desc')
+		.limit(pageSize);
 }
 
 export const listPetitionSignatures = defineQuery(inputSchema, ({ ctx, args }) => {

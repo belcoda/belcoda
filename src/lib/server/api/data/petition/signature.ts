@@ -198,11 +198,14 @@ export async function signPetitionHelper({
 	if (!petitionResult) {
 		throw new Error('Petition not found');
 	}
-	if (petitionResult.deletedAt != null || petitionResult.archivedAt != null) {
-		throw new Error('Petition is archived or deleted');
-	}
 	if (!petitionResult.published) {
 		throw new Error('Petition is not published');
+	}
+	if (petitionResult.archivedAt) {
+		throw new Error('Petition is archived');
+	}
+	if (petitionResult.deletedAt) {
+		throw new Error('Petition is deleted');
 	}
 
 	const petitionSignatureId = uuidv7();
