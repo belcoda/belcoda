@@ -15,10 +15,10 @@
 		getSurveyQuestions,
 		renderPersonQuestionResponse
 	} from '$lib/components/forms/event/survey_actions';
-	/* svelte-ignore state_referenced_locally */
-	const surveyQuestions = event.settings.survey?.collections?.[0]?.questions ?? [];
-	const { person: personSurveyQuestions, custom: customSurveyQuestions } =
-		getSurveyQuestions(surveyQuestions);
+	const surveyQuestions = $derived(event.settings.survey?.collections?.[0]?.questions ?? []);
+	const surveyQuestionsSplit = $derived(getSurveyQuestions(surveyQuestions));
+	const personSurveyQuestions = $derived(surveyQuestionsSplit.person);
+	const customSurveyQuestions = $derived(surveyQuestionsSplit.custom);
 	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
 
 	import * as Table from '$lib/components/ui/table/index.js';

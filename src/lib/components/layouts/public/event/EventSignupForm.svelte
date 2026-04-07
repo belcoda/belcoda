@@ -57,15 +57,19 @@
 	import { convertQuestionsToValibotSchema } from '$lib/schema/survey/questions';
 	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
 	import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
-	/* svelte-ignore state_referenced_locally */
-	const surveyQuestions = event.settings.survey?.collections?.[0]?.questions ?? [];
-	const { person: personSurveyQuestionsRaw, custom: customSurveyQuestions } =
-		getSurveyQuestions(surveyQuestions);
-	const personSurveyQuestions = personSurveyQuestionsRaw.map((item) => item.type);
-	const customQuestionSurveySchema = object(convertQuestionsToValibotSchema(customSurveyQuestions));
-	const personActionHelperSchema = setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
-		personActionHelper,
-		customSurveyQuestions
+	const surveyQuestions = $derived(event.settings.survey?.collections?.[0]?.questions ?? []);
+	const surveyQuestionsSplit = $derived(getSurveyQuestions(surveyQuestions));
+	const personSurveyQuestionsRaw = $derived(surveyQuestionsSplit.person);
+	const customSurveyQuestions = $derived(surveyQuestionsSplit.custom);
+	const personSurveyQuestions = $derived(personSurveyQuestionsRaw.map((item) => item.type));
+	const customQuestionSurveySchema = $derived(
+		object(convertQuestionsToValibotSchema(customSurveyQuestions))
+	);
+	const personActionHelperSchema = $derived(
+		setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
+			personActionHelper,
+			customSurveyQuestions
+		)
 	);
 	let submissionError: string | null = $state(null);
 	let submissionSuccess: boolean = $state(false);
