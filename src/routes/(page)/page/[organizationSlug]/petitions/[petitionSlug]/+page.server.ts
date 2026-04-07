@@ -11,7 +11,7 @@ import { _getPetitionActionCodeUnsafe } from '$lib/server/api/data/petition/chec
 import { generateWhatsAppPetitionLink } from '$lib/utils/petitions/link';
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
-
+import { sanitize, clearWindow } from 'isomorphic-dompurify';
 const log = pino(import.meta.url);
 const lexicalRenderer = new LexicalHtmlRenderer();
 
@@ -89,6 +89,8 @@ export async function load({ params, locals }) {
 	if (petitionDescription?.root?.children?.length) {
 		try {
 			renderedDescription = await lexicalRenderer.render(petitionDescription);
+			renderedDescription = sanitize(renderedDescription);
+			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		} catch (err) {
 			log.warn({ err, petitionId: petitionData.id }, 'Failed to render petition description');
 			renderedDescription = null;
