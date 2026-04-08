@@ -53,11 +53,6 @@
 					updateNodeInternals(id);
 				}}
 			/>
-			{#if selectedPetitionTitle}
-				<p class="mt-2 line-clamp-3 text-center text-xs leading-snug font-medium text-[#075e54]">
-					{selectedPetitionTitle}
-				</p>
-			{/if}
 		</div>
 	</div>
 	<Handle type="source" position={Position.Bottom} class="h-3! w-3!" />
