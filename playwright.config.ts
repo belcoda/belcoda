@@ -10,7 +10,10 @@ export default defineConfig({
 	retries: process.env.CI ? 2 : 0,
 	workers: 1,
 	reporter: process.env.CI
-		? [['html'], ['json', { outputFile: 'test-results/results.json' }]]
+		? [
+				['html'],
+				['playwright-ctrf-json-reporter', { outputFile: 'ctrf-report.json', outputDir: 'ctrf' }]
+			]
 		: 'html',
 	use: {
 		baseURL: BASE_URL,
