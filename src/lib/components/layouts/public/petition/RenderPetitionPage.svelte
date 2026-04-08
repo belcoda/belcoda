@@ -23,7 +23,7 @@
 	const layouts = ['default', 'embed'];
 	const layout = layouts.includes(paramLayout) ? (paramLayout as 'default' | 'embed') : 'default';
 
-	const editPetitionUrl = $derived(`${env.PUBLIC_HOST}/petitions/${data.petition.id}/edit`);
+	const editPetitionUrl = $derived(`${env.PUBLIC_HOST}/petitions/${data.petition.id}`);
 
 	function calculateTarget(currentSignatures: number): number {
 		const milestones = [
