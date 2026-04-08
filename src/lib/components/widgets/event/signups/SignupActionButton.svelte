@@ -60,6 +60,19 @@
 					status: 'signup'
 				})}><XIcon class="text-red-500" /> {t`Not attending`}</Button
 		>
+	{:else if signup.status === 'incomplete'}
+		<Button
+			variant="outline"
+			size="sm"
+			onclick={() =>
+				handleUpdateStatus({
+					eventSignupId: signup.id,
+					organizationId: appState.organizationId,
+					personId: signup.personId,
+					eventId: signup.eventId,
+					status: 'signup'
+				})}>{t`Mark complete`}</Button
+		>
 	{:else if signup.status === 'signup'}
 		<Button
 			variant="outline"
@@ -121,6 +134,18 @@
 						status: 'notattending'
 					})}>{t`Cancel signup`}</DropdownMenu.Item
 			>
+			{#if signup.status === 'incomplete'}
+				<DropdownMenu.Item
+					onclick={() =>
+						handleUpdateStatus({
+							eventSignupId: signup.id,
+							organizationId: appState.organizationId,
+							personId: signup.personId,
+							eventId: signup.eventId,
+							status: 'signup'
+						})}>{t`Mark as signed up`}</DropdownMenu.Item
+				>
+			{/if}
 			{#if signup.status !== 'deleted'}
 				<DropdownMenu.Group>
 					<DropdownMenu.Item

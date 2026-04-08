@@ -28,9 +28,33 @@ import { petition, petitionSignature, person, organization } from '$lib/schema/d
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and, isNull } from 'drizzle-orm';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
+import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
+
+async function applyPetitionTagsToPersonUnsafe({
+	tx,
+	petitionSettings,
+	personId,
+	organizationId
+}: {
+	tx: ServerTransaction;
+	petitionSettings: unknown;
+	personId: string;
+	organizationId: string;
+}) {
+	const settings = parse(petitionSettingsSchema, petitionSettings ?? {});
+	for (const tagId of settings.tags) {
+		await applyTagToPersonUnsafe({
+			tx,
+			personId,
+			tagId,
+			organizationId
+		});
+	}
+}
 
 export async function createPetitionSignature({
 	tx,
@@ -86,6 +110,9 @@ export async function createPetitionSignature({
 		.insert(petitionSignature)
 		.values(petitionSignatureRecord)
 		.returning();
+	if (!result) {
+		throw new Error('Unable to create petition signature');
+	}
 
 	const queue = await getQueue();
 	await queue.insertActivity({
@@ -95,6 +122,13 @@ export async function createPetitionSignature({
 		type: 'petition_signed',
 		referenceId: parsed.metadata.petitionSignatureId,
 		unread: false
+	});
+
+	await applyPetitionTagsToPersonUnsafe({
+		tx,
+		petitionSettings: petition.settings,
+		personId: parsed.metadata.personId,
+		organizationId: parsed.metadata.organizationId
 	});
 	return result;
 }
@@ -290,6 +324,13 @@ export async function signPetitionUnsafe({
 			locale
 		});
 	}
+	await applyPetitionTagsToPersonUnsafe({
+		tx,
+		petitionSettings: petitionRecord.settings,
+		personId: personRecord.id,
+		organizationId: organizationRecord.id
+	});
+	//TODO: Implement whatsapp notification
 
 	return insertedPetitionSignature;
 }

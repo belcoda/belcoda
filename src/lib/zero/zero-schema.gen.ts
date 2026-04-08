@@ -891,6 +891,7 @@ const eventSignupTable = {
 				| 'signup'
 				| 'attended'
 				| 'noshow'
+				| 'incomplete'
 				| 'notattending'
 				| 'cancelled'
 				| 'deleted'

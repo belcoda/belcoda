@@ -240,3 +240,27 @@ export async function sendWhatsappThread({
 
 	return claimed;
 }
+
+/**
+ * Loads a WhatsApp thread by id without tenant or auth filters. For trusted
+ * server callsites only; do not call from public or untrusted request handlers.
+ */
+export async function _getWhatsappThreadByIdUnsafeNoTenantCheck({
+	whatsappThreadId,
+	tx
+}: {
+	whatsappThreadId: string;
+	tx: ServerTransaction;
+}) {
+	const whatsappThreadRecord =
+		await tx.dbTransaction.wrappedTransaction.query.whatsappThread.findFirst({
+			where: and(
+				eq(whatsappThreadTable.id, whatsappThreadId),
+				isNull(whatsappThreadTable.deletedAt)
+			)
+		});
+	if (!whatsappThreadRecord) {
+		return null;
+	}
+	return whatsappThreadRecord;
+}
