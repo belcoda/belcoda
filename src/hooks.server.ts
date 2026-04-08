@@ -7,7 +7,7 @@ import { env as privateEnv } from '$env/dynamic/private';
 const { EASYCRON_SECRET } = privateEnv;
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
-import { error, redirect } from '@sveltejs/kit';
+import { error, json, redirect } from '@sveltejs/kit';
 import { v4 as uuidv4 } from 'uuid';
 
 import { detectSubdomain } from '$lib/utils/routing';
@@ -26,6 +26,34 @@ import { locales } from './locales/data.js';
 // load at server startup
 loadLocales(main.key, main.loadIDs, main.loadCatalog, locales);
 loadLocales(js.key, js.loadIDs, js.loadCatalog, locales);
+
+function detectLocale(event: RequestEvent): Locale {
+	log.debug({ url: event.url.toString() }, 'New incoming request');
+	if (event.cookies.get('BELCODA_LOCALE')) {
+		if (LOCALES.includes(event.cookies.get('BELCODA_LOCALE')! as Locale)) {
+			//check if url param overrides cookie
+			if (event.url.searchParams.get('locale')) {
+				if (LOCALES.includes(event.url.searchParams.get('locale')! as Locale)) {
+					return event.url.searchParams.get('locale')! as Locale;
+				}
+			} else {
+				return event.cookies.get('BELCODA_LOCALE')! as Locale;
+			}
+		}
+	}
+
+	return 'en';
+}
+
+/** True for compiled assets and static files that must not run auth, locale, or session middleware. */
+function isInternalOrStaticAssetPath(pathname: string): boolean {
+	return (
+		pathname.startsWith('/_app/') ||
+		pathname.startsWith('/static/') ||
+		pathname === '/favicon.ico' ||
+		pathname === '/robots.txt'
+	);
+}
 
 const handleRequest: Handle = async ({ event, resolve }) => {
 	event.locals.requestId = uuidv4();
@@ -91,16 +119,20 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 	// check API key if it's an API route
 	if (event.url.pathname.startsWith('/api/v1/')) {
 		if (!event.locals.authorizedApiOrganization) {
-			return error(401, 'Unauthorized: API key not valid for organization');
+			return json({ error: 'Unauthorized: API key not valid for organization' }, { status: 401 });
 		}
 		if (!event.locals.authorizedApiUser) {
-			return error(401, 'Unauthorized: API key not valid for user');
+			return json({ error: 'Unauthorized: API key not valid for user' }, { status: 401 });
 		}
 		return resolve(event);
 	}
 
 	// if no session, redirect to signup
 	if (!event.locals.session) {
+		const isData = event.isDataRequest || event.url.pathname.endsWith('/__data.json');
+		if (isData) {
+			return json({ error: 'Unauthorized' }, { status: 401 });
+		}
 		return redirect(302, '/signup');
 	}
 	// from here on, we have a session
@@ -139,6 +171,7 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 		}
 	}
 
+	event.locals.authorizedApiOrganization = null;
 	event.locals.authorizedApiUser = null;
 	if (event.request.headers.get('x-api-key')) {
 		const key = await auth.api.verifyApiKey({
@@ -154,24 +187,6 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 
 	return svelteKitHandler({ event, resolve, auth, building });
 };
-
-function detectLocale(event: RequestEvent): Locale {
-	log.debug({ url: event.url.toString() }, 'New incoming request');
-	if (event.cookies.get('BELCODA_LOCALE')) {
-		if (LOCALES.includes(event.cookies.get('BELCODA_LOCALE')! as Locale)) {
-			//check if url param overrides cookie
-			if (event.url.searchParams.get('locale')) {
-				if (LOCALES.includes(event.url.searchParams.get('locale')! as Locale)) {
-					return event.url.searchParams.get('locale')! as Locale;
-				}
-			} else {
-				return event.cookies.get('BELCODA_LOCALE')! as Locale;
-			}
-		}
-	}
-
-	return 'en';
-}
 
 const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
@@ -210,11 +225,36 @@ const handleLocale: Handle = async ({ event, resolve }) => {
 	return await runWithLocale(locale, () => resolve(event));
 };
 
-export const handle = sequence(
-	Sentry.sentryHandle(),
+/**
+ * Auth, locale, and security run inside this chain. Static/internal assets skip it entirely
+ * (see `handleSkipToAppResolution`) so `resolve()` reaches SvelteKit without session redirects.
+ * `__data.json` / `isDataRequest` stay in this chain so `handlebetterAuth` can set `locals.session`;
+ * unauthenticated data requests are handled in `handleRequest` (401 JSON, not redirect).
+ */
+const handleAppChain = sequence(
 	handleLocale,
 	handleSecurityHeaders,
 	handlebetterAuth,
 	handleRequest
 );
+
+/**
+ * After Sentry: compiled assets and `/static/*` bypass the app hook chain. Using `sequence()` alone
+ * would still run later hooks because inner `resolve` advances the sequence — wrapping avoids that.
+ */
+const handleSkipToAppResolution: Handle = async ({ event, resolve }) => {
+	if (!isInternalOrStaticAssetPath(event.url.pathname)) {
+		return handleAppChain({ event, resolve });
+	}
+	event.locals.requestId = uuidv4();
+	event.locals.locale = detectLocale(event);
+	event.locals.session = null;
+	event.locals.authorizedApiOrganization = null;
+	event.locals.authorizedApiUser = null;
+	return resolve(event);
+};
+
+// No handleFetch export: same-origin / internal fetch is not rewritten to another host (Task 2 audit).
+
+export const handle = sequence(Sentry.sentryHandle(), handleSkipToAppResolution);
 export const handleError = Sentry.handleErrorWithSentry();
