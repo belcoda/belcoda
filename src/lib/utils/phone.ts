@@ -1236,7 +1236,7 @@ export const dialingCodesArray: {
 	}
 ];
 export function getDialingCode(countryCode: CountryCode): string {
-	const country = dialingCodesArray.find((c) => c.code === countryCode);
+	const country = dialingCodesArray.find((c) => c.code === countryCode.toUpperCase());
 	if (!country) {
 		throw new Error(`Dialing code not found for country code: ${countryCode}`);
 	}
