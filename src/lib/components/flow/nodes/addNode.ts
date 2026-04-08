@@ -75,6 +75,13 @@ export function addNode(nodeType: NodeType, parentNode: Node, nodes: Node[]) {
 				position: position,
 				data: { eventId: '' }
 			};
+		case 'petitionSignup':
+			return {
+				id: uuidv4(),
+				type: 'petitionSignup' as const,
+				position: position,
+				data: { petitionId: '' }
+			};
 		case 'tagAdd':
 			return {
 				id: uuidv4(),
