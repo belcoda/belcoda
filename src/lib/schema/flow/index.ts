@@ -8,6 +8,7 @@ export const nodeType = v.picklist([
 	'message',
 	'eventSignup',
 	'tagAdd',
+	'teamAdd',
 	'targeting',
 	'templateMessage'
 ]);
@@ -45,6 +46,17 @@ const tagAddNode = v.object({
 	data: tagAddData
 });
 export type TagAddNodeData = v.InferOutput<typeof tagAddNode>;
+
+const teamAddData = v.object({
+	teamId: helpers.uuid
+});
+export type TeamAddData = v.InferOutput<typeof teamAddData>;
+const teamAddNode = v.object({
+	...nodeBase.entries,
+	type: v.literal('teamAdd'),
+	data: teamAddData
+});
+export type TeamAddNodeData = v.InferOutput<typeof teamAddNode>;
 
 const targetingData = v.object({
 	filter: filterGroup
@@ -97,6 +109,7 @@ export type TemplateMessageNode = v.InferOutput<typeof templateMessageNode>;
 const nodeSchema = v.variant('type', [
 	eventSignupNode,
 	tagAddNode,
+	teamAddNode,
 	targetingNode,
 	messageNode,
 	templateMessageNode
