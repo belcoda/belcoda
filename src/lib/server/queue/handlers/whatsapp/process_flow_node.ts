@@ -3,6 +3,7 @@ import { whatsappThread } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
 import { getQueue } from '$lib/server/queue';
 import { _addPersonTagData } from '$lib/server/api/data/person/tag';
+import { _addPersonTeamData } from '$lib/server/api/data/person/team';
 import { signUpForEventWithId } from '$lib/server/api/data/event/signup';
 import {
 	sendWhatsappMessage,
@@ -78,6 +79,17 @@ export async function processFlowNodeAction({
 					args: {
 						personId,
 						tagId: node.data.tagId,
+						organizationId
+					}
+				});
+				break;
+			}
+			case 'teamAdd': {
+				await _addPersonTeamData({
+					tx,
+					args: {
+						personId,
+						teamId: node.data.teamId,
 						organizationId
 					}
 				});
