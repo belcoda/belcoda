@@ -58,17 +58,22 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        id: upload-report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
 
-      - name: Post test summary as PR comment
+      - name: Post test report to PR
         if: always()
-        uses: daun/playwright-report-summary@v3
+        uses: ctrf-io/github-test-reporter@v1
         with:
-          report-file: test-results/results.json
-          report-url: ${{ steps.upload-report.outputs.artifact-url }}
-          test-command: 'npm run test:e2e'
+          report-path: './ctrf/ctrf-report.json'
+          pull-request-report: true
+          failed-report: true
+          flaky-report: true
+          pull-request: true
+          overwrite-comment: true
+          comment-tag: 'e2e-results'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
