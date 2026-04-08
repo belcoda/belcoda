@@ -52,8 +52,8 @@
 				return false;
 			}
 		}
-		// Check if it has root with children
-		return val?.root?.children && val.root.children.length > 0;
+		// Check if it has root with children array that has at least one element
+		return !!(val?.root?.children && Array.isArray(val.root.children) && val.root.children.length > 0);
 	}
 
 	const initialConfig = {
