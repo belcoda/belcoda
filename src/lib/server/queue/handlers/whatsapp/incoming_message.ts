@@ -30,6 +30,7 @@ import {
 	completeEventSignupHelper,
 	createIncompleteEventSignupHelper
 } from '$lib/server/api/data/event/signup';
+import { getPetitionByIdUnsafe, signPetitionHelper } from '$lib/server/api/data/petition/signature';
 import { getDetailsFromMessageByWabaId } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/get_details_from_message';
 import { handleFlowResponse } from '$lib/server/queue/handlers/whatsapp/handlers/flow';
 
@@ -196,6 +197,42 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 								});
 								personId = eventSignup.personId;
 								organizationId = event.organizationId;
+								break;
+							}
+							case 'petition_signed': {
+								const petitionRecord = await getPetitionByIdUnsafe({
+									petitionId: actionCodeDetails.referenceId,
+									organizationId: actionCodeDetails.organizationId,
+									tx
+								});
+								const organization = await getOrganizationByIdUnsafe({
+									organizationId: petitionRecord.organizationId,
+									tx
+								});
+								const countryCode =
+									safeGetCountryCodeFromPhoneNumber(parsed.whatsappInboundMessage.from) ||
+									organization.country;
+								const petitionSig = await signPetitionHelper({
+									petitionId: petitionRecord.id,
+									teamId: petitionRecord.teamId ?? undefined,
+									personAction: {
+										subscribed: true,
+										country: countryCode,
+										phoneNumber: parsed.whatsappInboundMessage.from,
+										givenName:
+											parsed.whatsappInboundMessage.customerProfile?.name ??
+											parsed.whatsappInboundMessage.from
+									},
+									signatureDetails: {
+										channel: { type: 'whatsapp' }
+									},
+									organizationId: petitionRecord.organizationId,
+									tx,
+									skipNotifications: true
+								});
+								personId = petitionSig.personId;
+								organizationId = petitionRecord.organizationId;
+								logActivity = false;
 								break;
 							}
 							default:

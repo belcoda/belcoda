@@ -67,7 +67,7 @@ export async function sendEventRegistration({
 		from: `${emailSignature.name} <${emailSignature.emailAddress}>`,
 		context,
 		stream: 'outbound',
-		template: 'event-reminder-registrationregistration'
+		template: 'event-reminder-registration'
 	});
 
 	log.debug({ sendEmailResult, personId: personResult.id }, 'Event registration email sent');

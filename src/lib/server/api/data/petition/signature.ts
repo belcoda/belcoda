@@ -26,12 +26,13 @@ import { parse } from 'valibot';
 
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
+import { clampLocale } from '$lib/utils/language';
 
 async function applyPetitionTagsToPersonUnsafe({
 	tx,
@@ -213,7 +214,8 @@ export async function signPetitionHelper({
 	tx,
 	personAction,
 	signatureDetails,
-	organizationId
+	organizationId,
+	skipNotifications = false
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
@@ -221,6 +223,7 @@ export async function signPetitionHelper({
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
+	skipNotifications?: boolean;
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
 	const parsedActionHelper = parse(personActionHelper, personAction);
@@ -228,6 +231,9 @@ export async function signPetitionHelper({
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult) {
 		throw new Error('Petition not found');
+	}
+	if (petitionResult.deletedAt != null || petitionResult.archivedAt != null) {
+		throw new Error('Petition is archived or deleted');
 	}
 	if (!petitionResult.published) {
 		throw new Error('Petition is not published');
@@ -254,7 +260,8 @@ export async function signPetitionHelper({
 		petitionRecord: petitionResult,
 		personRecord: personRecord,
 		organizationRecord: organizationRecord,
-		details: parsedSignatureDetails
+		details: parsedSignatureDetails,
+		skipNotifications
 	});
 	return petitionSignatureResult;
 }
@@ -265,7 +272,8 @@ export async function signPetitionUnsafe({
 	personRecord,
 	organizationRecord,
 	tx,
-	details
+	details,
+	skipNotifications = false
 }: {
 	petitionSignatureId?: string;
 	tx: ServerTransaction;
@@ -273,6 +281,7 @@ export async function signPetitionUnsafe({
 	personRecord: typeof person.$inferSelect;
 	organizationRecord: typeof organization.$inferSelect;
 	details: PetitionSignatureDetails;
+	skipNotifications?: boolean;
 }) {
 	const id = petitionSignatureId || uuidv7();
 	const petitionSignatureRecord: typeof petitionSignature.$inferInsert = {
@@ -290,18 +299,30 @@ export async function signPetitionUnsafe({
 	const [insertedPetitionSignature] = await tx.dbTransaction.wrappedTransaction
 		.insert(petitionSignature)
 		.values(petitionSignatureRecord)
+		.onConflictDoUpdate({
+			target: [petitionSignature.petitionId, petitionSignature.personId],
+			set: {
+				details: petitionSignatureRecord.details,
+				teamId: petitionRecord.teamId,
+				updatedAt: new Date()
+			},
+			setWhere: and(isNull(petitionSignature.deletedAt), isNull(petitionSignature.responses))
+		})
 		.returning();
 	if (!insertedPetitionSignature) {
 		throw new Error('Unable to create petition signature');
 	}
 
-	if (details.channel.type === 'petitionPage') {
-		// TODO: Send the signature confirmation notification
-		// const queue = await getQueue();
-		// queue.sendPetitionSignatureConfirmation({
-		// 	petitionSignatureId: id,
-		// 	locale: clampLocale(personRecord.preferredLanguage || organizationRecord.defaultLanguage)
-		// });
+	if (!skipNotifications && details.channel.type === 'petitionPage') {
+		const queue = await getQueue();
+		const locale = clampLocale(
+			personRecord.preferredLanguage || organizationRecord.defaultLanguage
+		);
+		// Use pg-boss directly so enqueue works even if cached queue object predates a new handler export
+		await queue.raw.send('sendPetitionSignatureConfirmation', {
+			petitionSignatureId: id,
+			locale
+		});
 	}
 	await applyPetitionTagsToPersonUnsafe({
 		tx,
