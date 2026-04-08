@@ -37,6 +37,7 @@
 	//nodes
 	import Message from '$lib/components/flow/nodes/Message.svelte';
 	import EventSignup from '$lib/components/flow/nodes/EventSignup.svelte';
+	import PetitionSignup from '$lib/components/flow/nodes/PetitionSignup.svelte';
 	import TagAdd from '$lib/components/flow/nodes/TagAdd.svelte';
 	import Targeting from '$lib/components/flow/nodes/Targeting.svelte';
 	import TemplateMessage from '$lib/components/flow/nodes/TemplateMessage.svelte';
@@ -50,6 +51,7 @@
 	const nodeTypes: NodeTypes = {
 		message: Message,
 		eventSignup: EventSignup,
+		petitionSignup: PetitionSignup,
 		targeting: Targeting,
 		tagAdd: TagAdd,
 		templateMessage: TemplateMessage
@@ -184,6 +186,21 @@
 									}}
 								>
 									Event Signup
+								</DropdownMenu.Item>
+								<DropdownMenu.Item
+									onclick={() => {
+										const nodesSnapshot = $state.snapshot(nodes);
+										const newNode = addNode(
+											'petitionSignup',
+											nodesSnapshot[nodesSnapshot.length - 1] as Node,
+											nodesSnapshot as Node[]
+										);
+										if (newNode) {
+											nodes = [...nodes, newNode];
+										}
+									}}
+								>
+									Petition Signup
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
