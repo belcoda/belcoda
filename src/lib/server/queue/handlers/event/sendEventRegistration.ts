@@ -58,7 +58,7 @@ export async function sendEventRegistration({
 	});
 
 	const emailSignature = await getEmailSignature({
-		emailFromSignatureId: orgResult.settings.email.defaultFromSignatureId,
+		emailFromSignatureId: orgResult.settings?.email?.defaultFromSignatureId,
 		organization: orgResult
 	});
 
