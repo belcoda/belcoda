@@ -13,12 +13,13 @@
 	separator={true}
 	showCopyButton={true}
 	copyText={person.emailAddress}
+	editTestId="person-profile-email-edit-btn"
 	bind:edit
 >
 	{#if edit}
 		<EmailForm bind:edit {person} />
 	{:else if person.emailAddress}
-		{person.emailAddress}
+		<span data-testid="person-profile-email-display">{person.emailAddress}</span>
 		<div class="mt-2 flex items-center gap-2">
 			{#if person.subscribed}
 				<ColorBadge color="green">{t`Subscribed`}</ColorBadge>
