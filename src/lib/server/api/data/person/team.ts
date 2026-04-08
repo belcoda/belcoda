@@ -10,8 +10,10 @@ import {
 	removePersonFromTeamMutatorSchemaZero,
 	type RemovePersonFromTeamMutatorSchemaZero
 } from '$lib/schema/person';
-import { personTeam } from '$lib/schema/drizzle';
+import { activity, personTeam, team } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
+import { v7 as uuidv7 } from 'uuid';
+import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 
@@ -56,6 +58,63 @@ export async function addPersonToTeam({
 		organizationId: parsed.metadata.organizationId,
 		createdAt: new Date()
 	});
+}
+
+export async function _addPersonTeamData({
+	tx,
+	args
+}: {
+	tx: ServerTransaction;
+	args: {
+		personId: string;
+		teamId: string;
+		organizationId: string;
+	};
+}) {
+	const teamRecord = await tx.dbTransaction.wrappedTransaction.query.team.findFirst({
+		where: and(eq(team.id, args.teamId), eq(team.organizationId, args.organizationId))
+	});
+	if (!teamRecord) {
+		throw new Error('Team not found');
+	}
+	const [inserted] = await tx.dbTransaction.wrappedTransaction
+		.insert(personTeam)
+		.values({
+			personId: args.personId,
+			teamId: args.teamId,
+			organizationId: args.organizationId,
+			createdAt: new Date()
+		})
+		.onConflictDoNothing()
+		.returning();
+	if (!inserted) {
+		return null;
+	}
+
+	await tx.dbTransaction.wrappedTransaction.insert(activity).values({
+		id: uuidv7(),
+		type: 'team_added',
+		referenceId: args.teamId,
+		unread: false,
+		userId: null,
+		organizationId: args.organizationId,
+		createdAt: new Date(),
+		personId: args.personId
+	});
+
+	await updateLatestActivity({
+		tx,
+		args: {
+			personId: args.personId,
+			organizationId: args.organizationId,
+			activityPreview: {
+				type: 'team_added',
+				teamName: teamRecord.name,
+				teamId: args.teamId
+			}
+		}
+	});
+	return inserted;
 }
 
 export async function removePersonFromTeam({
