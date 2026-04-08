@@ -14,7 +14,6 @@
 	import { formatDate } from '$lib/utils/date';
 	import UserNavBar from '$lib/components/layouts/public/UserNavBar.svelte';
 	import { env } from '$env/dynamic/public';
-	import { dev } from '$app/environment';
 	import { page } from '$app/state';
 	import WhatsAppPetitionSignup from './WhatsAppPetitionSignup.svelte';
 
@@ -24,10 +23,7 @@
 	const layouts = ['default', 'embed'];
 	const layout = layouts.includes(paramLayout) ? (paramLayout as 'default' | 'embed') : 'default';
 
-	const editPetitionUrl = $derived.by(() => {
-		const protocol = dev ? 'http' : 'https';
-		return `${protocol}://${env.PUBLIC_ROOT_DOMAIN}/petitions/${data.petition.id}/edit`;
-	});
+	const editPetitionUrl = $derived(`${env.PUBLIC_HOST}/petitions/${data.petition.id}/edit`);
 
 	function calculateTarget(currentSignatures: number): number {
 		const milestones = [
