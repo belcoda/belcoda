@@ -66,7 +66,8 @@ import { readWhatsappTemplate } from '$lib/zero/query/whatsapp_template/read';
 import { listWhatsappTemplates } from '$lib/zero/query/whatsapp_template/list';
 import { readWhatsappThread } from '$lib/zero/query/whatsapp_thread/read';
 import { listWhatsappThreads } from '$lib/zero/query/whatsapp_thread/list';
-
+import { readWhatsappMessage } from '$lib/zero/query/whatsapp_message/read';
+import { listWhatsappMessages } from '$lib/zero/query/whatsapp_message/list';
 // Re-export all queries
 export {
 	// activity
@@ -119,10 +120,17 @@ export {
 	listWhatsappTemplates,
 	// whatsapp thread
 	readWhatsappThread,
-	listWhatsappThreads
+	listWhatsappThreads,
+	// whatsapp message
+	readWhatsappMessage,
+	listWhatsappMessages
 };
 
 export default defineQueries({
+	whatsappMessage: {
+		read: readWhatsappMessage,
+		list: listWhatsappMessages
+	},
 	whatsappTemplate: {
 		read: readWhatsappTemplate,
 		list: listWhatsappTemplates
