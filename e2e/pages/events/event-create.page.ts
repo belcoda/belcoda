@@ -24,6 +24,7 @@ export class EventCreatePage {
 
 	async fillTitle(title: string) {
 		await this.titleInput.fill(title);
+		await this.page.waitForTimeout(400);
 	}
 
 	async fillDescription(description: string) {

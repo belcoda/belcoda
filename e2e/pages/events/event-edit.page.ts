@@ -25,6 +25,7 @@ export class EventEditPage {
 
 	async clearAndFillTitle(title: string) {
 		await this.titleInput.fill(title);
+		await this.page.waitForTimeout(400);
 	}
 
 	async submit() {
