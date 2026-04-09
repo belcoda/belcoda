@@ -4471,3 +4471,11 @@ msgstr "Etiquetas opcionales aplicadas a las personas cuando firman esta petici√
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
 msgstr ""
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "This event has been archived."
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "You can view this event, but new signups are closed."
+msgstr ""
