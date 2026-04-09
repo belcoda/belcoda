@@ -9,11 +9,18 @@
 	import type { ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
 	import queries from '$lib/zero/query/index';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
-	let filter: ListEventSignupsInput = $state({
+	let filter = $state<ListEventSignupsInput>({
 		...getListFilter(appState.organizationId),
+		includeIncomplete: false,
 		/* svelte-ignore state_referenced_locally */
 		eventId: event.id
 	});
+
+	/** Keeps `includeIncomplete` aligned with `list.ts` whereClause: incomplete rows are excluded unless this flag is true. */
+	function setSignupStatusFilter(status: ListEventSignupsInput['status']) {
+		filter.status = status;
+		filter.includeIncomplete = status === 'incomplete';
+	}
 	const eventSignups = $derived.by(() => {
 		return z.createQuery(queries.eventSignup.list(filter));
 	});
@@ -55,24 +62,30 @@
 							{#if filter.status === 'signup'}
 								{t`Signed up`}
 							{/if}
+							{#if filter.status === 'incomplete'}
+								{t`Incomplete`}
+							{/if}
 							<ChevronDownIcon /></Button
 						>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = undefined)}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter(undefined)}
 							>{t`All signups`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'attended')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('attended')}
 							>{t`Attended`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'noshow')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('noshow')}
 							>{t`No show`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'notattending')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('notattending')}
 							>{t`Not attending`}</DropdownMenu.CheckboxItem
 						>
-						<DropdownMenu.CheckboxItem onclick={() => (filter.status = 'signup')}
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('signup')}
 							>{t`Signed up`}</DropdownMenu.CheckboxItem
+						>
+						<DropdownMenu.CheckboxItem onclick={() => setSignupStatusFilter('incomplete')}
+							>{t`Incomplete`}</DropdownMenu.CheckboxItem
 						>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>

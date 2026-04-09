@@ -106,6 +106,25 @@ export async function generatePreview({
 				eventId: eventResult.id
 			};
 		}
+		case 'event_attended': {
+			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
+				where: (row, { eq }) => eq(row.id, referenceId)
+			});
+			if (!eventSignupResult) {
+				throw new Error('Event signup not found');
+			}
+			const eventResult = await drizzle.query.event.findFirst({
+				where: (row, { eq }) => eq(row.id, eventSignupResult.eventId)
+			});
+			if (!eventResult) {
+				throw new Error('Event not found. Cannot generate preview.');
+			}
+			return {
+				type: 'event_attended',
+				eventName: eventResult.title,
+				eventId: eventResult.id
+			};
+		}
 		case 'event_signup_email_sent': {
 			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
 				where: (row, { eq }) => eq(row.id, referenceId)

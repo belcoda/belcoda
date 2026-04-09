@@ -12,7 +12,8 @@ export const inputSchema = object({
 	eventId: optional(uuid),
 	tagId: optional(uuid),
 	status: optional(eventSignupStatus),
-	includeDeleted: optional(boolean())
+	includeDeleted: optional(boolean()),
+	includeIncomplete: optional(boolean())
 });
 export type ListEventSignupsInput = InferOutput<typeof inputSchema>;
 
@@ -50,6 +51,9 @@ function whereClause(
 	}
 	if (filter.includeDeleted !== true) {
 		filterArr.push(cmp('status', 'IS NOT', 'deleted'));
+	}
+	if (filter.includeIncomplete !== true) {
+		filterArr.push(cmp('status', 'IS NOT', 'incomplete'));
 	}
 	if (filter.status) {
 		filterArr.push(cmp('status', '=', filter.status!));
