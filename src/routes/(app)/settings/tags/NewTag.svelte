@@ -36,7 +36,7 @@
 	bind:open={isOpen}
 >
 	{#snippet trigger()}
-		<Button variant="outline"><PlusIcon /> {t`New`}</Button>
+		<Button variant="outline" data-testid="new-tag-trigger"><PlusIcon /> {t`New`}</Button>
 	{/snippet}
 	{#snippet children()}
 		<form use:form.enhance class="space-y-4">
@@ -48,6 +48,7 @@
 							type="text"
 							bind:value={$data.name}
 							placeholder={t`e.g., Newsletter subscribers`}
+							data-testid="new-tag-name"
 						/>
 					{/snippet}
 				</Form.Control>
@@ -59,6 +60,7 @@
 		<div class="flex items-center justify-end gap-2">
 			<Button variant="outline" onclick={() => (isOpen = false)}>{t`Cancel`}</Button>
 			<Button
+				data-testid="new-tag-submit"
 				onclick={() => {
 					form.submit();
 				}}

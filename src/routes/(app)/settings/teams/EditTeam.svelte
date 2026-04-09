@@ -50,7 +50,12 @@
 	{#snippet trigger()}
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<Button variant="ghost" size="icon-sm">
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					data-testid="edit-team-trigger"
+					data-team-id={team.id}
+				>
 					<PencilIcon class="size-4" />
 				</Button>
 			</Tooltip.Trigger>
@@ -63,7 +68,12 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Name`}</Form.Label>
-						<Input type="text" bind:value={$data.name} placeholder={t`e.g., Sales team`} />
+						<Input
+							type="text"
+							bind:value={$data.name}
+							placeholder={t`e.g., Sales team`}
+							data-testid="edit-team-name"
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -74,6 +84,7 @@
 		<div class="flex items-center justify-end gap-2">
 			<Button variant="outline" onclick={() => (isOpen = false)}>{t`Cancel`}</Button>
 			<Button
+				data-testid="edit-team-submit"
 				onclick={() => {
 					form.submit();
 				}}

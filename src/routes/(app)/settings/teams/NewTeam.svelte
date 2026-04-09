@@ -32,7 +32,7 @@
 
 <ResponsiveModal title={t`New Team`} description={t`Create a new team.`} bind:open={isOpen}>
 	{#snippet trigger()}
-		<Button variant="outline"><PlusIcon /> {t`New`}</Button>
+		<Button variant="outline" data-testid="new-team-trigger"><PlusIcon /> {t`New`}</Button>
 	{/snippet}
 	{#snippet children()}
 		<form use:form.enhance class="space-y-4">
@@ -40,7 +40,12 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Name`}</Form.Label>
-						<Input type="text" bind:value={$data.name} placeholder={t`e.g., Sales team`} />
+						<Input
+							type="text"
+							bind:value={$data.name}
+							placeholder={t`e.g., Sales team`}
+							data-testid="new-team-name"
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -51,6 +56,7 @@
 		<div class="flex items-center justify-end gap-2">
 			<Button variant="outline" onclick={() => (isOpen = false)}>{t`Cancel`}</Button>
 			<Button
+				data-testid="new-team-submit"
 				onclick={() => {
 					form.submit();
 				}}

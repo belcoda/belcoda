@@ -184,6 +184,7 @@ msgid "The return path domain is used for bounce handling."
 msgstr "El dominio de ruta de retorno se usa para el manejo de rebotes."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -491,6 +492,7 @@ msgid "Create person"
 msgstr "Crear persona"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
@@ -501,6 +503,7 @@ msgstr "Equipos"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTeam.svelte
 msgid "Filter teams..."
@@ -508,6 +511,7 @@ msgstr "Filtrar equipos..."
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTeam.svelte
@@ -741,6 +745,7 @@ msgstr "Nota eliminada"
 msgid "Edit"
 msgstr "Editar"
 
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
@@ -758,7 +763,6 @@ msgid "Update note"
 msgstr "Actualizar nota"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
 msgid "Danger zone!"
 msgstr "¡Zona de peligro!"
@@ -812,11 +816,13 @@ msgstr "No contactar"
 msgid "Not specified"
 msgstr "No especificado"
 
+#: src/lib/components/forms/event/render_survey_question.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Address.svelte
 msgid "Address"
 msgstr "Dirección"
 
+#: src/lib/components/forms/event/render_survey_question.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Workplace.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
@@ -897,6 +903,7 @@ msgstr "Apellido"
 msgid "Save"
 msgstr "Guardar"
 
+#: src/lib/components/forms/event/render_survey_question.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
 msgid "Position"
@@ -1349,7 +1356,6 @@ msgstr "Slug"
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Description"
 msgstr "Descripción"
 
@@ -1649,6 +1655,7 @@ msgstr "Datos personales"
 msgid "Date of birth"
 msgstr "Fecha de nacimiento"
 
+#: src/lib/components/forms/event/render_survey_question.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 msgid "Gender"
@@ -1783,10 +1790,20 @@ msgstr "(Tamaño máx: {0})"
 msgid "New petition"
 msgstr "Nueva petición"
 
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "This petition has been archived."
+msgstr "Esta petición ha sido archivada."
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "You can view the petition, but you can't sign it or add signatures."
+msgstr "Puedes ver la petición, pero no puedes firmarla ni añadir firmas."
+
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/event/EventCreatedModal.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
@@ -1795,7 +1812,9 @@ msgstr "Publicado"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Draft"
 msgstr "Borrador"
@@ -2563,17 +2582,14 @@ msgstr "firmas"
 msgid "of goal"
 msgstr "del objetivo"
 
-#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
-msgid "Thank you for signing!"
-msgstr "¡Gracias por firmar!"
+#~ msgid "Thank you for signing!"
+#~ msgstr "¡Gracias por firmar!"
 
-#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
-msgid "Your signature has been recorded and you'll receive updates about this petition."
-msgstr "Tu firma ha sido registrada y recibirás actualizaciones sobre esta petición."
+#~ msgid "Your signature has been recorded and you'll receive updates about this petition."
+#~ msgstr "Tu firma ha sido registrada y recibirás actualizaciones sobre esta petición."
 
-#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
-msgid "Return to petition"
-msgstr "Volver a la petición"
+#~ msgid "Return to petition"
+#~ msgstr "Volver a la petición"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
@@ -2666,7 +2682,7 @@ msgstr "Configuración"
 
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports are not currently supported, but will be added in a future update. "
-msgstr ""
+msgstr "Las exportaciones no están disponibles actualmente, pero se añadirán en una actualización futura. "
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Free"
@@ -3152,16 +3168,14 @@ msgid "Delete petition"
 msgstr "Eliminar petición"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "This petition will be archived. You can still view it in the archived petitions list."
 msgstr "Esta petición será archivada. Todavía podrás verla en la lista de peticiones archivadas."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "This draft petition will be permanently deleted. This action cannot be undone."
 msgstr "Este borrador de petición se eliminará permanentemente. Esta acción no se puede deshacer."
 
-#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+#: src/routes/(page)/page/[organizationSlug]/petitions/[petitionSlug]/+page.svelte
 msgid "Edit Petition"
 msgstr "Editar petición"
 
@@ -3373,6 +3387,7 @@ msgstr "Realizar campañas políticas con peticiones en línea"
 msgid "Making sure all data is synced and up to date"
 msgstr "Asegurarse de que todos los datos estén sincronizados y actualizados"
 
+#: src/lib/utils/person/gender/render.ts
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
 msgstr "Otro"
@@ -3589,6 +3604,7 @@ msgstr "Petición no publicada"
 msgid "This petition is not published yet. Toggle the switch below to make it visible to your audience."
 msgstr "Esta petición aún no está publicada. Activa el interruptor de abajo para que sea visible para tu audiencia."
 
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Petition text"
 msgstr "Texto de la petición"
@@ -4237,6 +4253,184 @@ msgstr ""
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "WhatsApp draft sent successfully"
 msgstr "Borrador de WhatsApp enviado correctamente"
+
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
+msgid "Archived"
+msgstr ""
+
+#: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
+msgid "Unknown petition status filter"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+msgid "About this petition"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
+msgid "Your signature is recorded"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
+msgid "Thank you for signing"
+msgstr ""
+
+#: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
+msgid "We will send you a confirmation email if you provided an address."
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Petition page"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Danger zone"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Archive this petition. You can still view it in the archived petitions list."
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Archive this petition?"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Archive"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Permanently delete this draft petition. This action cannot be undone."
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Delete this petition?"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Short description"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Full text of the petition"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "The full statement shown on the petition page (optional)."
+msgstr ""
+
+#. 0: petitionTitle
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "Signature recorded: {0}"
+msgstr "Firma registrada: {0}"
+
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "Your signature was recorded"
+msgstr "Tu firma se ha registrado"
+
+#. 0: petitionTitle
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "Thank you for signing \"{0}\". Your signature has been recorded. Click the button below to view the petition or share it with others."
+msgstr "Gracias por firmar «{0}». Tu firma ha quedado registrada. Haz clic en el botón de abajo para ver la petición o compartirla con otras personas."
+
+#. 0: petitionTitle
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "Your signature on \"{0}\" was recorded"
+msgstr "Se registró tu firma en «{0}»"
+
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "View petition"
+msgstr "Ver petición"
+
+#. 0: petitionUrl
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "Copy and paste the following link into your browser {0}"
+msgstr "Copia y pega el siguiente enlace en tu navegador {0}"
+
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "Belcoda"
+msgstr "Belcoda"
+
+#. 0: String(year)
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "Copyright {0} Belcoda"
+msgstr "Copyright {0} Belcoda"
+
+#: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+msgid "Belcoda logo"
+msgstr "Logotipo de Belcoda"
+
+#: src/lib/utils/calendar.ts
+msgid "Online Event"
+msgstr "Evento en línea"
+
+#: src/lib/utils/calendar.ts
+#: src/lib/utils/calendar.ts
+#: src/lib/utils/calendar.ts
+msgid "Join online:"
+msgstr "Únete en línea:"
+
+#: src/lib/utils/date.ts
+msgid "Never expires"
+msgstr "Sin caducidad"
+
+#. 0: petitionTitle; 1: actionCode
+#: src/lib/utils/petitions/link.ts
+msgid "Sign petition for {0} [#{1}] (do not edit this message)"
+msgstr "Firma la petición para {0} [#{1}] (no edites este mensaje)"
+
+#: src/lib/components/forms/event/render_survey_question.ts
+msgid "Date of Birth"
+msgstr "Fecha de nacimiento"
+
+#: src/lib/components/forms/event/survey_actions.ts
+msgid "Event information"
+msgstr "Información del evento"
+
+#: src/lib/components/forms/event/survey_actions.ts
+#: src/lib/components/forms/event/survey_actions.ts
+#: src/lib/components/forms/event/survey_actions.ts
+msgid "Option 1"
+msgstr "Opción 1"
+
+#: src/lib/components/forms/event/survey_actions.ts
+#: src/lib/components/forms/event/survey_actions.ts
+#: src/lib/components/forms/event/survey_actions.ts
+msgid "Option 2"
+msgstr "Opción 2"
+
+#: src/lib/utils/person/gender/render.ts
+msgid "Male"
+msgstr "Masculino"
+
+#: src/lib/utils/person/gender/render.ts
+msgid "Female"
+msgstr "Femenino"
+
+#: src/lib/utils/person/gender/render.ts
+msgid "Not Specified"
+msgstr "No especificado"
+
+#. 0: formattedDate
+#: src/lib/components/widgets/event/signups/actions.ts
+msgid "Signed up via event page [{0}]"
+msgstr "Registrado desde la página del evento [{0}]"
+
+#. 0: formattedDate
+#: src/lib/components/widgets/event/signups/actions.ts
+msgid "Added manually [{0}]"
+msgstr "Agregado manualmente [{0}]"
+
+#. 0: formattedDate
+#: src/lib/components/widgets/event/signups/actions.ts
+msgid "Signed up via WhatsApp [{0}]"
+msgstr "Registrado por WhatsApp [{0}]"
+
+#. 0: formatNumber(currentTarget)
+#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
+msgid "Goal: {0}"
+msgstr ""
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte

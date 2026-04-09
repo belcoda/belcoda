@@ -19,6 +19,7 @@ export function readPetitionQuery({
 }) {
 	const q = builder.petition
 		.where('id', '=', input.petitionId)
+		.where('deletedAt', 'IS', null)
 		.where((expr) => petitionReadPermissions(expr, ctx))
 		.one();
 	return q;
