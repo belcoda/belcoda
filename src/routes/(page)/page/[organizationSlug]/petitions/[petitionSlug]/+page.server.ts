@@ -191,7 +191,7 @@ export const actions = {
 						gender: form.data.person.gender || null,
 						workplace: form.data.person.workplace || null,
 						position: form.data.person.position || null,
-						country: org.country,
+						country: form.data.person.country || org.country || null,
 						subscribed: true
 					},
 					signatureDetails: {
