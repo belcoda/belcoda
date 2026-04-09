@@ -11,9 +11,10 @@ import { env as publicEnv } from '$env/dynamic/public';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 
-import { openAPI, apiKey, organization } from 'better-auth/plugins';
+import { openAPI, organization } from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
+import { apiKey } from '@better-auth/api-key';
 import { stripe } from '@better-auth/stripe';
 import type Stripe from 'stripe';
 import { stripeClient } from '$lib/server/stripe';
@@ -33,6 +34,7 @@ const cache = new LRUCache<string, string>({
 });
 
 import { type LanguageCode, clampLocale } from '$lib/utils/language';
+import { organizationSettingsSchema } from '$lib/schema/organization/settings';
 
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
@@ -110,7 +112,7 @@ export function buildBetterAuth(localeInput: string) {
 			}
 		},
 		database: drizzleAdapter(drizzle, {
-			provider: 'pg', // or "mysql", "sqlite"
+			provider: 'pg',
 			schema: {
 				...schema,
 				apikey: schema.apiKey // Map apiKey table to the name better-auth expects
@@ -194,6 +196,10 @@ export function buildBetterAuth(localeInput: string) {
 							},
 							settings: {
 								type: 'json',
+								validator: {
+									input: organizationSettingsSchema,
+									output: organizationSettingsSchema
+								},
 								input: true,
 								required: true
 							},
