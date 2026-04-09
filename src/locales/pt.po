@@ -4284,23 +4284,23 @@ msgstr "Tags opcionais aplicadas às pessoas quando assinam esta petição."
 
 #: src/routes/+error.svelte
 msgid "Something went wrong."
-msgstr ""
+msgstr "Algo deu errado."
 
 #: src/routes/+error.svelte
 msgid "Reference"
-msgstr ""
+msgstr "Referência"
 
 #: src/routes/+error.svelte
 msgid "Debug details"
-msgstr ""
+msgstr "Detalhes de depuração"
 
 #: src/routes/+error.svelte
 msgid "Try again"
-msgstr ""
+msgstr "Tente novamente"
 
 #: src/routes/+error.svelte
 msgid "Home"
-msgstr ""
+msgstr "Início"
 
 #: src/routes/(app)/petitions/[petitionId]/+page.svelte
 msgid "This petition has been archived."
@@ -4490,20 +4490,36 @@ msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Selecione uma petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Pesquisar petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
+msgstr "Nenhuma petição encontrada."
+
+#~ msgid "Snapshot"
+#~ msgstr ""
+
+#~ msgid "Add Node"
+#~ msgstr ""
+
+#~ msgid "Petition Signup"
+#~ msgstr ""
+
+#~ msgid "Tag Add"
+#~ msgstr ""
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
-msgstr ""
+msgstr "Selecione uma equipe..."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
+msgstr "Pesquisar equipe..."
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Team Add"
 msgstr ""

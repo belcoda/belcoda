@@ -4516,6 +4516,18 @@ msgstr "Search petition..."
 msgid "No petitions found."
 msgstr "No petitions found."
 
+#~ msgid "Snapshot"
+#~ msgstr "Snapshot"
+
+#~ msgid "Add Node"
+#~ msgstr "Add Node"
+
+#~ msgid "Petition Signup"
+#~ msgstr "Petition Signup"
+
+#~ msgid "Tag Add"
+#~ msgstr "Tag Add"
+
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
 msgstr "Select a team..."
@@ -4523,3 +4535,7 @@ msgstr "Select a team..."
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
 msgstr "Search team..."
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Team Add"
+msgstr "Team Add"
