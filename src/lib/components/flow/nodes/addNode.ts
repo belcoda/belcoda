@@ -87,7 +87,7 @@ export function addNode(nodeType: NodeType, parentNode: Node, nodes: Node[]) {
 				id: uuidv4(),
 				type: 'teamAdd' as const,
 				position: position,
-				data: { teamId: '' }
+				data: { teamId: null }
 			};
 		default:
 			return null;
