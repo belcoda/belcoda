@@ -33,17 +33,18 @@ function resolveFlowResponsePhoneNumber({
 	from: string;
 	organizationCountry: Parameters<typeof isValidInternationalPhoneNumber>[1];
 }): string {
-	if (!userProvidedPhone?.trim()) {
+	const normalizedPhone = userProvidedPhone?.trim();
+	if (!normalizedPhone) {
 		return from;
 	}
 
 	const senderCountry = safeGetCountryCodeFromPhoneNumber(from);
-	if (senderCountry && isValidInternationalPhoneNumber(userProvidedPhone, senderCountry)) {
-		return getInternationalPhoneNumber(userProvidedPhone, senderCountry);
+	if (senderCountry && isValidInternationalPhoneNumber(normalizedPhone, senderCountry)) {
+		return getInternationalPhoneNumber(normalizedPhone, senderCountry);
 	}
 
-	if (isValidInternationalPhoneNumber(userProvidedPhone, organizationCountry)) {
-		return getInternationalPhoneNumber(userProvidedPhone, organizationCountry);
+	if (isValidInternationalPhoneNumber(normalizedPhone, organizationCountry)) {
+		return getInternationalPhoneNumber(normalizedPhone, organizationCountry);
 	}
 
 	return from;
