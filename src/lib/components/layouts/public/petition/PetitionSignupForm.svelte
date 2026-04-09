@@ -30,33 +30,14 @@
 	import RenderError from '$lib/components/ui/form/custom/error.svelte';
 	import { page } from '$app/state';
 	import { Spinner } from '$lib/components/ui/spinner/index';
+	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
+	import type { OrganizationSchema } from '$lib/schema/organization';
 
-	type PublicPetition = {
-		title: string;
-		shortDescription: string;
-		petitionTarget?: string | null;
-		settings?: {
-			survey?: {
-				collections?: {
-					questions: {
-						id: string;
-						type: string;
-						label: string;
-						required?: boolean;
-						options?: string[];
-					}[];
-				}[];
-			} | null;
-		} | null;
-	};
-	type PublicOrg = {
-		name: string;
-		settings?: {
-			theme?: {
-				secondaryColor?: string | null;
-			} | null;
-		} | null;
-	};
+	type PetitionSignupFormPetition = Pick<
+		ReadPetitionZero,
+		'title' | 'shortDescription' | 'petitionTarget' | 'settings'
+	>;
+	type PetitionSignupFormOrganization = Pick<OrganizationSchema, 'name' | 'settings'>;
 
 	const {
 		petition,
@@ -67,8 +48,8 @@
 		layout = 'default',
 		success = false
 	}: {
-		petition: PublicPetition;
-		organization: PublicOrg;
+		petition: PetitionSignupFormPetition;
+		organization: PetitionSignupFormOrganization;
 		signatureCount: number;
 		whatsAppSignupLink?: string | null;
 		form?: SuperValidated<SurveySchema>;
