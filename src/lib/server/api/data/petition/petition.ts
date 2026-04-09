@@ -19,6 +19,7 @@ import { team } from '$lib/schema/drizzle';
 import { and, eq, isNull } from 'drizzle-orm';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
+import { getQueue } from '$lib/server/queue';
 export async function createPetition({
 	tx,
 	ctx,
@@ -145,7 +146,7 @@ export async function updatePetition({
 		throw new Error('Petition not found');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const [updatedPetition] = await tx.dbTransaction.wrappedTransaction
 		.update(petition)
 		.set({
 			...parsed.input,
@@ -156,7 +157,18 @@ export async function updatePetition({
 				eq(petition.id, parsed.metadata.petitionId),
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+
+	const structureChanged = !!(parsed.input.settings || parsed.input.title);
+	const publishedStatusChanged =
+		petitionRecord?.published !== undefined &&
+		petitionRecord?.published !== updatedPetition?.published;
+
+	if (updatedPetition && (structureChanged || publishedStatusChanged)) {
+		const queue = await getQueue();
+		queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
+	}
 }
 
 export async function archivePetition({
