@@ -312,7 +312,7 @@ export async function signPetitionUnsafe({
 				teamId: petitionRecord.teamId,
 				updatedAt: new Date()
 			},
-			setWhere: and(isNull(petitionSignature.deletedAt), isNull(petitionSignature.responses))
+			setWhere: and(isNull(petitionSignature.deletedAt))
 		})
 		.returning();
 	if (!insertedPetitionSignature) {
