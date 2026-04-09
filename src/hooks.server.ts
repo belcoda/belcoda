@@ -215,7 +215,11 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	response.headers.set('X-Content-Type-Options', 'nosniff');
 
 	// Cross-Origin Resource Policy
-	response.headers.set('Cross-Origin-Resource-Policy', 'same-origin');
+	// Don't set CORP for static assets (/_app/immutable/*) to avoid preload issues in strict browsers
+	// See: https://github.com/belcoda/belcoda/issues/BELCODA-2G
+	if (!event.url.pathname.startsWith('/_app/immutable/')) {
+		response.headers.set('Cross-Origin-Resource-Policy', 'same-origin');
+	}
 
 	// Permissions Policy - Restrict browser features
 	const permissionsPolicies = [
