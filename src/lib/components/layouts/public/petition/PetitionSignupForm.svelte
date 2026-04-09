@@ -498,7 +498,7 @@
 										bind:value={$dataForm.customFields[field.id]}
 									>
 										<Select.Trigger class="w-full">
-											{$dataForm.customFields[field.id] || `Select ${field.label}`}
+											{$dataForm.customFields[field.id] || t`Select an option`}
 										</Select.Trigger>
 										<Select.Content>
 											{#each field.options || [] as option}
