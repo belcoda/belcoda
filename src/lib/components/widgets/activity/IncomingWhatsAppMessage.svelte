@@ -15,7 +15,7 @@
 
 	const { activity }: Props = $props();
 	console.assert(
-		activity.type === 'whatsapp_message_incoming',
+		(() => activity.type)() === 'whatsapp_message_incoming',
 		'Activity type must be whatsapp_message_incoming'
 	);
 
