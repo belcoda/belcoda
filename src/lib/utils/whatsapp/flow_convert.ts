@@ -10,6 +10,8 @@ import type {
 	WhatsappFlowInternal
 } from '$lib/schema/whatsapp/flows/schema';
 import type { EventSettings } from '$lib/schema/event/settings';
+import type { PetitionSettingsSchema } from '$lib/schema/petition/settings';
+import type { SurveyCollection } from '$lib/schema/survey/collection';
 import type {
 	WhatsAppFlowScreen,
 	WhatsAppFlowComponent,
@@ -373,72 +375,51 @@ export function validateInternalForYCloud(internal: WhatsappFlowInternal): {
 	};
 }
 
+function pushBaseSignupPersonFields(components: WhatsAppFlowComponent[]): void {
+	components.push(
+		{
+			type: 'TextInput',
+			name: 'givenName',
+			label: 'Given name',
+			required: true,
+			'input-type': 'text',
+			visible: true
+		},
+		{
+			type: 'TextInput',
+			name: 'familyName',
+			label: 'Family name',
+			required: true,
+			'input-type': 'text',
+			visible: true
+		},
+		{
+			type: 'TextInput',
+			name: 'emailAddress',
+			label: 'Email',
+			required: false,
+			'input-type': 'email',
+			visible: true
+		},
+		{
+			type: 'TextInput',
+			name: 'phoneNumber',
+			label: 'Phone Number',
+			required: true,
+			'input-type': 'phone',
+			visible: true
+		}
+	);
+}
+
 /**
- * Convert event signup fields to WhatsApp Flow format
+ * Maps survey collections to WhatsApp flow components (shared by event + petition flows).
+ * Note: `custom.dropdown` intentionally falls through to `custom.emailInput` (legacy behavior).
  */
-export function convertEventSignupFieldsToFlow({
-	eventId,
-	eventTitle,
-	organizationId,
-	settings,
-	existingFlowId,
-	existingFlowYCloudId,
-	existingFlowCreatedAt
-}: {
-	eventId: string;
-	eventTitle: string;
-	organizationId: string;
-	settings: EventSettings;
-	existingFlowId?: string;
-	existingFlowYCloudId?: string;
-	existingFlowCreatedAt?: number;
-}): WhatsappFlowInternal {
-	const { survey } = settings;
-
-	const components: WhatsAppFlowComponent[] = [];
-
-	// Required: Full Name
-	components.push({
-		type: 'TextInput',
-		name: 'givenName',
-		label: 'Given name',
-		required: true,
-		'input-type': 'text',
-		visible: true
-	});
-
-	components.push({
-		type: 'TextInput',
-		name: 'familyName',
-		label: 'Family name',
-		required: true,
-		'input-type': 'text',
-		visible: true
-	});
-
-	// Required: Email
-	components.push({
-		type: 'TextInput',
-		name: 'emailAddress',
-		label: 'Email',
-		required: false,
-		'input-type': 'email',
-		visible: true
-	});
-
-	// Required: Phone (WhatsApp uses phone for identification)
-	components.push({
-		type: 'TextInput',
-		name: 'phoneNumber',
-		label: 'Phone Number',
-		required: true,
-		'input-type': 'phone',
-		visible: true
-	});
-
-	//"unwrap" the collections into questions (in the future, we will add the possibility of multiple screens)
-
-	const collections = survey?.collections ?? [];
+function pushSurveyQuestionComponentsFromCollections(
+	components: WhatsAppFlowComponent[],
+	collections: readonly SurveyCollection[]
+): void {
 	collections.forEach((collection) => {
 		(collection.questions ?? []).forEach((question) => {
 			const base = {
@@ -523,14 +504,41 @@ export function convertEventSignupFieldsToFlow({
 					break;
 				}
 				default:
-					//don't do anything...
 					break;
 			}
 		});
 	});
+}
 
-	// Add submit footer
-	// Only include standard fields that actually have form components
+type SignupFlowKind = 'event' | 'petition';
+
+function buildSignupFlowFromSurveyCollections(params: {
+	kind: SignupFlowKind;
+	resourceId: string;
+	title: string;
+	organizationId: string;
+	collections: readonly SurveyCollection[];
+	existingFlowId?: string;
+	existingFlowYCloudId?: string;
+	existingFlowCreatedAt?: number;
+}): WhatsappFlowInternal {
+	const {
+		kind,
+		resourceId,
+		title,
+		organizationId,
+		collections,
+		existingFlowId,
+		existingFlowYCloudId,
+		existingFlowCreatedAt
+	} = params;
+
+	const components: WhatsAppFlowComponent[] = [];
+	pushBaseSignupPersonFields(components);
+	pushSurveyQuestionComponentsFromCollections(components, collections);
+
+	const resourceSuffix = kind === 'event' ? 'Registration' : 'Signature';
+	const descriptionPrefix = kind === 'event' ? 'Registration form' : 'Signature form';
 
 	const footer: WhatsAppFooter = {
 		type: 'Footer',
@@ -538,7 +546,6 @@ export function convertEventSignupFieldsToFlow({
 		'on-click-action': {
 			name: 'complete',
 			payload: {
-				// Form field references
 				givenName: '${form.givenName}',
 				familyName: '${form.familyName}',
 				emailAddress: '${form.emailAddress}',
@@ -548,18 +555,16 @@ export function convertEventSignupFieldsToFlow({
 						(collection.questions ?? []).map((question) => [question.id, `\${form.${question.id}}`])
 					)
 				),
-				// Reserved fields come last to prevent being overridden by custom fields
-				resource_type: 'event',
-				resource_id: eventId
+				resource_type: kind,
+				resource_id: resourceId
 			}
 		}
 	};
 	components.push(footer);
 
-	// Create single screen
 	const screen: WhatsAppFlowScreen = {
 		id: 'registration', // TODO: make this unique. Only letters and underscore allowed
-		title: `${eventTitle} - Registration`,
+		title: `${title} - ${resourceSuffix}`,
 		terminal: true,
 		success: true,
 		data: {},
@@ -575,12 +580,78 @@ export function convertEventSignupFieldsToFlow({
 		metadata: {
 			id: existingFlowId || uuidv7(),
 			ycloudFlowId: existingFlowYCloudId,
-			title: eventTitle,
-			description: `Registration form for ${eventTitle}`,
+			title,
+			description: `${descriptionPrefix} for ${title}`,
 			createdAt: existingFlowCreatedAt || Date.now(),
 			updatedAt: Date.now(),
-			sourceEventId: eventId,
-			organizationId: organizationId
+			organizationId,
+			...(kind === 'event' ? { sourceEventId: resourceId } : { sourcePetitionId: resourceId })
 		}
 	};
+}
+
+/**
+ * Convert event signup fields to WhatsApp Flow format
+ */
+export function convertEventSignupFieldsToFlow({
+	eventId,
+	eventTitle,
+	organizationId,
+	settings,
+	existingFlowId,
+	existingFlowYCloudId,
+	existingFlowCreatedAt
+}: {
+	eventId: string;
+	eventTitle: string;
+	organizationId: string;
+	settings: EventSettings;
+	existingFlowId?: string;
+	existingFlowYCloudId?: string;
+	existingFlowCreatedAt?: number;
+}): WhatsappFlowInternal {
+	const collections = settings.survey?.collections ?? [];
+	return buildSignupFlowFromSurveyCollections({
+		kind: 'event',
+		resourceId: eventId,
+		title: eventTitle,
+		organizationId,
+		collections,
+		existingFlowId,
+		existingFlowYCloudId,
+		existingFlowCreatedAt
+	});
+}
+
+/**
+ * Convert petition signup fields to WhatsApp Flow format
+ */
+export function convertPetitionSignupFieldsToFlow({
+	petitionId,
+	petitionTitle,
+	organizationId,
+	settings,
+	existingFlowId,
+	existingFlowYCloudId,
+	existingFlowCreatedAt
+}: {
+	petitionId: string;
+	petitionTitle: string;
+	organizationId: string;
+	settings: PetitionSettingsSchema;
+	existingFlowId?: string;
+	existingFlowYCloudId?: string;
+	existingFlowCreatedAt?: number;
+}): WhatsappFlowInternal {
+	const collections = settings.survey?.collections ?? [];
+	return buildSignupFlowFromSurveyCollections({
+		kind: 'petition',
+		resourceId: petitionId,
+		title: petitionTitle,
+		organizationId,
+		collections,
+		existingFlowId,
+		existingFlowYCloudId,
+		existingFlowCreatedAt
+	});
 }
