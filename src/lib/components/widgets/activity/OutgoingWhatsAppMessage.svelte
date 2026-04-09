@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { type ReadActivityZero } from '$lib/schema/activity';
 	import Reply from '@lucide/svelte/icons/reply';
 	type Props = {
@@ -7,8 +8,8 @@
 
 	const { activity }: Props = $props();
 	console.assert(
-		activity.type === 'whatsapp_message_outgoing',
-		'Activity type must be outgoing_whatsapp_message'
+		(() => activity.type)() === 'whatsapp_message_outgoing',
+		'Activity type must be outgoing_whatsapp_message' //Error message doesn't need to be localized
 	);
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import WhatsAppMessageStatus from '$lib/components/widgets/whatsapp/WhatsAppMessageStatus.svelte';
@@ -35,7 +36,7 @@
 					class:rounded-b-none={whatsappMessage.data.message.text ||
 						(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
 					src={whatsappMessage.data.message.image_url}
-					alt="Whatsapp message"
+					alt={t`Whatsapp message`}
 				/>
 			{/if}
 			{#if whatsappMessage.data.message.text}
