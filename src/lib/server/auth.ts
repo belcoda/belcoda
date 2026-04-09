@@ -216,7 +216,8 @@ export function buildBetterAuth(localeInput: string) {
 			openAPI(),
 			apiKey({
 				storage: 'secondary-storage',
-				fallbackToDatabase: true
+				fallbackToDatabase: true,
+				references: 'organization'
 			}),
 			stripe({
 				stripeClient,

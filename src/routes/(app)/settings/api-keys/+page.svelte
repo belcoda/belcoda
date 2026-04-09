@@ -88,6 +88,7 @@
 
 			const result = await authClient.apiKey.create({
 				name: newKeyName.trim(),
+				organizationId: appState.organizationId,
 				expiresIn: expiresIn || null
 			});
 
