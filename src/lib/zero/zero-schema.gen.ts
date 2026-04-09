@@ -146,6 +146,12 @@ const apiKeyTable = {
 			customType: null as unknown as string,
 			serverName: 'user_id'
 		},
+		configId: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string,
+			serverName: 'config_id'
+		},
 		referenceId: {
 			type: 'string',
 			optional: false,
