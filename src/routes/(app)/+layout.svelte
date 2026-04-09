@@ -3,6 +3,7 @@
 	const { children, data } = $props();
 	import { appState } from '$lib/state.svelte';
 	import { authClient } from '$lib/auth-client';
+	import { determineAndPersistActiveOrganizationId } from '$lib/utils/organization';
 	// svelte-ignore state_referenced_locally
 	const {
 		userId,
@@ -17,39 +18,6 @@
 		sessionStorage.setItem('state:organizationId', organizationId);
 	}
 
-	function determineAndPersistActiveOrganizationId({
-		queryParamOrganizationId,
-		inferredOrganizationId,
-		defaultActiveOrganizationId,
-		memberships
-	}: {
-		queryParamOrganizationId: string | null | undefined;
-		inferredOrganizationId: string | null | undefined;
-		defaultActiveOrganizationId: string;
-		memberships: { organizationId: string }[];
-	}) {
-		if (queryParamOrganizationId) {
-			setOrganizationIdState(queryParamOrganizationId);
-			return queryParamOrganizationId;
-		}
-		const existingSessionStorageOrganizationId = sessionStorage.getItem('state:organizationId');
-		if (inferredOrganizationId) {
-			setOrganizationIdState(inferredOrganizationId);
-			return inferredOrganizationId;
-		} else if (existingSessionStorageOrganizationId) {
-			const sessionOrgIsMember = memberships.some(
-				(m) => m.organizationId === existingSessionStorageOrganizationId
-			);
-			const validatedOrganizationId = sessionOrgIsMember
-				? existingSessionStorageOrganizationId
-				: defaultActiveOrganizationId;
-			setOrganizationIdState(validatedOrganizationId);
-			return validatedOrganizationId;
-		} else {
-			setOrganizationIdState(defaultActiveOrganizationId);
-			return defaultActiveOrganizationId;
-		}
-	}
 	//initialize the zero instance with the user id and query context
 	// IMPORTANT: this must be done before the appState is created, because the appState relies on the zero instance
 	import { zero } from '$lib/zero.svelte';
@@ -60,7 +28,8 @@
 			queryParamOrganizationId,
 			inferredOrganizationId,
 			defaultActiveOrganizationId,
-			memberships
+			memberships,
+			setOrganizationIdState
 		}),
 		queryContext
 	});
@@ -71,7 +40,8 @@
 			queryParamOrganizationId,
 			inferredOrganizationId,
 			defaultActiveOrganizationId,
-			memberships
+			memberships,
+			setOrganizationIdState
 		});
 		appState.organizationId = organizationId;
 		authClient.organization.setActive({ organizationId });
