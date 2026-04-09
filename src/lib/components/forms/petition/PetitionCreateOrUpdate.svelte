@@ -252,7 +252,7 @@
 		</Collapsible.Root>
 	{/if}
 
-	<Debug {data} hide={false} />
+	<Debug {data} />
 </form>
 
 {#snippet titleInput()}
