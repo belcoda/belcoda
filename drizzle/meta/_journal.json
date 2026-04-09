@@ -64,6 +64,13 @@
       "when": 1775698644748,
       "tag": "0008_striped_power_man",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1775748161078,
+      "tag": "0009_sour_young_avengers",
+      "breakpoints": true
     }
   ]
 }
