@@ -1236,7 +1236,17 @@ export const dialingCodesArray: {
 	}
 ];
 export function getDialingCode(countryCode: CountryCode): string {
-	const country = dialingCodesArray.find((c) => c.code === countryCode.toUpperCase());
+export function getDialingCode(countryCode: CountryCode): string {
+	if (typeof countryCode !== 'string' || countryCode.length === 0) {
+		throw new Error(`Dialing code not found for country code: ${countryCode}`);
+	}
+	const normalizedCountryCode = countryCode.toUpperCase();
+	const country = dialingCodesArray.find((c) => c.code === normalizedCountryCode);
+	if (!country) {
+		throw new Error(`Dialing code not found for country code: ${countryCode}`);
+	}
+	return country.dial_code;
+}
 	if (!country) {
 		throw new Error(`Dialing code not found for country code: ${countryCode}`);
 	}
