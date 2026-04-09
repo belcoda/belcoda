@@ -60,7 +60,7 @@ export async function addPersonToTeam({
 	});
 }
 
-export async function _addPersonTeamData({
+export async function _addPersonTeamDataUnsafe({
 	tx,
 	args
 }: {

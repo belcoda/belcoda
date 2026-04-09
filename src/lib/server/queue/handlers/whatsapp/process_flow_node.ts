@@ -3,7 +3,7 @@ import { whatsappThread } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
 import { getQueue } from '$lib/server/queue';
 import { _addPersonTagData } from '$lib/server/api/data/person/tag';
-import { _addPersonTeamData } from '$lib/server/api/data/person/team';
+import { _addPersonTeamDataUnsafe } from '$lib/server/api/data/person/team';
 import { signUpForEventWithId } from '$lib/server/api/data/event/signup';
 import {
 	sendWhatsappMessage,
@@ -85,7 +85,7 @@ export async function processFlowNodeAction({
 				break;
 			}
 			case 'teamAdd': {
-				await _addPersonTeamData({
+				await _addPersonTeamDataUnsafe({
 					tx,
 					args: {
 						personId,
