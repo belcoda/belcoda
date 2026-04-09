@@ -10,7 +10,11 @@ import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { env as publicEnv } from '$env/dynamic/public';
 import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
 import { completeEventSignupHelper } from '$lib/server/api/data/event/signup';
-import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
+import {
+	getInternationalPhoneNumber,
+	isValidInternationalPhoneNumber,
+	safeGetCountryCodeFromPhoneNumber
+} from '$lib/utils/phone';
 import { parse, safeParse, intersect } from 'valibot';
 import type { ServerTransaction } from '@rocicorp/zero';
 import {
@@ -19,6 +23,31 @@ import {
 } from '$lib/schema/person';
 
 const log = pino(import.meta.url);
+
+function resolveFlowResponsePhoneNumber({
+	userProvidedPhone,
+	from,
+	organizationCountry
+}: {
+	userProvidedPhone: string | null | undefined;
+	from: string;
+	organizationCountry: Parameters<typeof isValidInternationalPhoneNumber>[1];
+}): string {
+	if (!userProvidedPhone?.trim()) {
+		return from;
+	}
+
+	const senderCountry = safeGetCountryCodeFromPhoneNumber(from);
+	if (senderCountry && isValidInternationalPhoneNumber(userProvidedPhone, senderCountry)) {
+		return getInternationalPhoneNumber(userProvidedPhone, senderCountry);
+	}
+
+	if (isValidInternationalPhoneNumber(userProvidedPhone, organizationCountry)) {
+		return getInternationalPhoneNumber(userProvidedPhone, organizationCountry);
+	}
+
+	return from;
+}
 
 async function sendConfirmationMessage({
 	from,
@@ -186,13 +215,19 @@ export async function handleFlowResponse({
 					tx
 				});
 				const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
+				const { phoneNumber: userProvidedPhone, ...responseJsonWithoutPhoneNumber } = responseJson;
+				const resolvedPhoneNumber = resolveFlowResponsePhoneNumber({
+					userProvidedPhone: typeof userProvidedPhone === 'string' ? userProvidedPhone : undefined,
+					from,
+					organizationCountry: organization.country
+				});
 				const parsedPersonAction = parse(
 					intersect([personActionHelperWhatsAppFlow, personActionHelperCustomFieldsOnly]),
 					{
 						subscribed: true,
 						country: countryCode,
-						phoneNumber: from,
-						...responseJson
+						...responseJsonWithoutPhoneNumber,
+						phoneNumber: resolvedPhoneNumber
 					}
 				);
 				const parsedCustomFields = safeParse(personActionHelperCustomFieldsOnly, responseJson);
