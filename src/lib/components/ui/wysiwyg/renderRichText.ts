@@ -53,9 +53,6 @@ const hasValidContent = (json: string) => {
 		return false;
 	}
 };
-		return false;
-	}
-};
 
 export const jsonToText = (json: string): string => {
 	try {
