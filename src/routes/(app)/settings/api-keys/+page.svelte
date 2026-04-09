@@ -50,7 +50,11 @@
 		try {
 			loading = true;
 			error = null;
-			const result = await authClient.apiKey.list();
+			const result = await authClient.apiKey.list({
+				query: {
+					organizationId: appState.organizationId
+				}
+			});
 			if (result.error) {
 				throw new Error(result.error.message || t`Failed to load API keys`);
 			}
