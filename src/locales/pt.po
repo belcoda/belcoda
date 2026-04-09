@@ -1085,6 +1085,7 @@ msgstr "E-mail sem título"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1149,6 +1150,8 @@ msgstr "Criar uma nova organização"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Rascunhos"
 
@@ -4260,7 +4263,7 @@ msgstr "Rascunho do WhatsApp enviado com sucesso"
 #: src/lib/components/widgets/person/filter/display/DisplayEventArchivedFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Archived"
-msgstr ""
+msgstr "Arquivado"
 
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Unknown petition status filter"
@@ -4299,8 +4302,9 @@ msgid "Archive this petition?"
 msgstr ""
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Archive"
-msgstr ""
+msgstr "Arquivar"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Permanently delete this draft petition. This action cannot be undone."
@@ -4471,12 +4475,12 @@ msgstr "Tags opcionais aplicadas às pessoas quando assinam esta petição."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr ""
+msgstr "Mostrar arquivados"
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr ""
+msgstr "Este evento foi arquivado."
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
-msgstr ""
+msgstr "Pode ver este evento, mas as novas inscrições estão encerradas."
