@@ -95,6 +95,7 @@
 	import { defaultPetitionSettings } from '$lib/schema/petition/settings';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import PetitionSignupSurvey from '$lib/components/forms/petition/PetitionSignupSurvey.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { TagSelectMulti } from '$lib/components/ui/custom-select/tag/index.js';
@@ -159,6 +160,17 @@
 			<SvelteLexical bind:value={$data.description} />
 		</Card.Content>
 	</Card.Root>
+
+	{#if $data.settings && $data.settings.survey}
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Survey`}</Card.Title>
+			</Card.Header>
+			<Card.Content class="space-y-6">
+				<PetitionSignupSurvey bind:form bind:data bind:errors />
+			</Card.Content>
+		</Card.Root>
+	{/if}
 
 	{#if $data.settings}
 		<Card.Root>
@@ -240,7 +252,7 @@
 		</Collapsible.Root>
 	{/if}
 
-	<Debug {data} hide={true} />
+	<Debug {data} hide={false} />
 </form>
 
 {#snippet titleInput()}
