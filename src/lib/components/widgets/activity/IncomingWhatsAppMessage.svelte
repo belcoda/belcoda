@@ -1,22 +1,23 @@
 <script lang="ts">
 	import { type ReadActivityZero } from '$lib/schema/activity';
 	import Reply from '@lucide/svelte/icons/reply';
+	import { formatShortTimestamp } from '$lib/utils/date';
+	import { locale, t } from '$lib/index.svelte';
+	import EmojiSelector from '$lib/components/widgets/whatsapp/EmojiSelector.svelte';
+	import EmojiReactions from '$lib/components/widgets/whatsapp/EmojiReactions.svelte';
+	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
+	import type { EmojiReaction } from '$lib/schema/whatsapp/message';
+
 	type Props = {
 		activity: ReadActivityZero;
 	};
 
 	const { activity }: Props = $props();
 	console.assert(
-		activity.type === 'whatsapp_message_outgoing',
-		'Activity type must be incoming_whatsapp_message'
+		activity.type === 'whatsapp_message_incoming',
+		'Activity type must be whatsapp_message_incoming'
 	);
-	import { formatShortTimestamp } from '$lib/utils/date';
-	import { locale } from '$lib/index.svelte';
-	import EmojiSelector from '$lib/components/widgets/whatsapp/EmojiSelector.svelte';
-	import EmojiReactions from '$lib/components/widgets/whatsapp/EmojiReactions.svelte';
-	import { z } from '$lib/zero.svelte';
-	import queries from '$lib/zero/query/index';
-	import type { EmojiReaction } from '$lib/schema/whatsapp/message';
 
 	const whatsappMessage = $derived.by(() => {
 		return z.createQuery(queries.whatsappMessage.read({ whatsappMessageId: activity.referenceId }));
@@ -40,7 +41,7 @@
 					controls
 					preload="metadata"
 				>
-					Your browser does not support the audio tag.
+					{t`Your browser does not support the audio tag.`}
 				</audio>
 				<div class="me-4 mt-1 flex w-full justify-end text-[11px] text-[#667781]">
 					{formatShortTimestamp(activity.createdAt, locale.current)}
@@ -53,7 +54,7 @@
 			<div class="max-w-xs rounded-lg">
 				<img
 					src={whatsappMessage.data.message.sticker_url}
-					alt="Whatsapp sticker"
+					alt={t`WhatsApp sticker`}
 					class="rounded-xl"
 				/>
 				<div class="me-4 mt-1 flex w-full justify-end text-[11px] text-[#667781]">
@@ -71,7 +72,7 @@
 						class:rounded-b-none={whatsappMessage.data.message.text ||
 							(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
 						src={whatsappMessage.data.message.image_url}
-						alt="Whatsapp message"
+						alt={t`WhatsApp message`}
 					/>
 				{/if}
 				{#if whatsappMessage.data.message.video_url}
@@ -87,10 +88,10 @@
 							kind="captions"
 							src="/utils/empty-captions.vtt"
 							srcLang="en"
-							label="No captions available"
+							label={t`No captions available`}
 							default
 						/>
-						Your browser does not support the video tag.
+						{t`Your browser does not support the video tag.`}
 					</video>
 				{/if}
 				{#if whatsappMessage.data.message.text}
