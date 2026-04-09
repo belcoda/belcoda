@@ -50,6 +50,13 @@
       "when": 1775697776530,
       "tag": "0006_whole_micromax",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1775697931066,
+      "tag": "0007_chubby_carnage",
+      "breakpoints": true
     }
   ]
 }

@@ -142,7 +142,7 @@ const apiKeyTable = {
 		},
 		userId: {
 			type: 'string',
-			optional: false,
+			optional: true,
 			customType: null as unknown as string,
 			serverName: 'user_id'
 		},
