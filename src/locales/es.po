@@ -1094,6 +1094,7 @@ msgstr "Correo sin título"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1158,6 +1159,8 @@ msgstr "Crear una nueva organización"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Borradores"
 
@@ -4298,67 +4301,67 @@ msgstr "Borrador de WhatsApp enviado correctamente"
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Archived"
-msgstr ""
+msgstr "Archivado"
 
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Unknown petition status filter"
-msgstr ""
+msgstr "Filtro de estado de petición desconocido"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "About this petition"
-msgstr ""
+msgstr "Sobre esta petición"
 
 #: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
 msgid "Your signature is recorded"
-msgstr ""
+msgstr "Tu firma ha quedado registrada"
 
 #: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
 msgid "Thank you for signing"
-msgstr ""
+msgstr "Gracias por firmar"
 
 #: src/lib/components/layouts/public/petition/PetitionSignSuccess.svelte
 msgid "We will send you a confirmation email if you provided an address."
-msgstr ""
+msgstr "Te enviaremos un correo de confirmación si nos has indicado una dirección."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Petition page"
-msgstr ""
+msgstr "Página de la petición"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Danger zone"
-msgstr ""
+msgstr "Zona de peligro"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Archive this petition. You can still view it in the archived petitions list."
-msgstr ""
+msgstr "Archiva esta petición. Podrás seguir viéndola en la lista de peticiones archivadas."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Archive this petition?"
-msgstr ""
+msgstr "¿Archivar esta petición?"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Archive"
-msgstr ""
+msgstr "Archivar"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Permanently delete this draft petition. This action cannot be undone."
-msgstr ""
+msgstr "Elimina permanentemente este borrador de petición. Esta acción no se puede deshacer."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Delete this petition?"
-msgstr ""
+msgstr "¿Eliminar esta petición?"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Short description"
-msgstr ""
+msgstr "Descripción breve"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Full text of the petition"
-msgstr ""
+msgstr "Texto completo de la petición"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "The full statement shown on the petition page (optional)."
-msgstr ""
+msgstr "El texto completo que se muestra en la página de la petición (opcional)."
 
 #. 0: petitionTitle
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
@@ -4470,7 +4473,7 @@ msgstr "Registrado por WhatsApp [{0}]"
 #. 0: formatNumber(currentTarget)
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 msgid "Goal: {0}"
-msgstr ""
+msgstr "Objetivo: {0}"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
@@ -4509,8 +4512,8 @@ msgstr "Etiquetas opcionales aplicadas a las personas cuando firman esta petici�
 
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
 msgid "Select which standard information fields to collect from signers."
-msgstr ""
+msgstr "Selecciona qué campos de información estándar recopilar de los firmantes."
 
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
 msgid "Add custom questions to collect additional information from signers."
-msgstr ""
+msgstr "Agrega preguntas personalizadas para recopilar información adicional de los firmantes."
