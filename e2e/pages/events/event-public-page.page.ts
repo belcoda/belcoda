@@ -9,6 +9,11 @@ export class EventPublicPage {
 	readonly submitButton: Locator;
 	readonly whatsappSignupBtn: Locator;
 
+	readonly addressLine1Input: Locator;
+	readonly addressLocalityInput: Locator;
+	readonly addressRegionInput: Locator;
+	readonly addressPostcodeInput: Locator;
+
 	constructor(page: Page) {
 		this.page = page;
 		this.eventTitle = page.locator('h1').first();
@@ -17,10 +22,19 @@ export class EventPublicPage {
 		this.emailInput = page.getByTestId('event-signup-email');
 		this.submitButton = page.getByTestId('event-signup-submit');
 		this.whatsappSignupBtn = page.getByTestId('whatsapp-signup-btn');
+
+		this.addressLine1Input = page.getByTestId('signup-address-line1');
+		this.addressLocalityInput = page.getByTestId('signup-address-locality');
+		this.addressRegionInput = page.getByTestId('signup-address-region');
+		this.addressPostcodeInput = page.getByTestId('signup-address-postcode');
 	}
 
 	async goto(orgSlug: string, eventSlug: string) {
 		await this.page.goto(`/page/${orgSlug}/events/${eventSlug}`);
+	}
+
+	customFieldInput(fieldId: string): Locator {
+		return this.page.getByTestId(`signup-custom-field-${fieldId}`);
 	}
 
 	async fillSignupForm({

@@ -31,6 +31,23 @@ export class EventCreatePage {
 		await this.descriptionInput.fill(description);
 	}
 
+	async fillAddress({
+		line1,
+		locality,
+		region,
+		postcode
+	}: {
+		line1: string;
+		locality: string;
+		region: string;
+		postcode: string;
+	}) {
+		await this.page.getByTestId('event-address-line1').fill(line1);
+		await this.page.getByTestId('event-address-locality').fill(locality);
+		await this.page.getByTestId('event-address-region').fill(region);
+		await this.page.getByTestId('event-address-postcode').fill(postcode);
+	}
+
 	async submit() {
 		await this.saveButton.click();
 	}

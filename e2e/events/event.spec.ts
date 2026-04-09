@@ -6,6 +6,7 @@ import { EventDetailPage } from '../pages/events/event-detail.page';
 import { EventEditPage } from '../pages/events/event-edit.page';
 import { EventSignupsPage } from '../pages/events/event-signups.page';
 import { EventPublicPage } from '../pages/events/event-public-page.page';
+import { EventSurveyPage } from '../pages/events/event-survey.page';
 import { TEST_USERS } from '../helpers/auth';
 
 const ORG_SLUG = 'e2e-test-organization';
@@ -295,5 +296,101 @@ test.describe.serial('Events', () => {
 		await editPage.deleteEvent(page);
 
 		await expect(page).toHaveURL('/events', { timeout: 10_000 });
+	});
+});
+
+test.describe.serial('Event signup fields', () => {
+	const CUSTOM_QUESTION_LABEL = 'What is your dietary requirement?';
+	let eventSlug = '';
+
+	test('owner creates event with address, standard fields, and a custom field', async ({
+		page
+	}) => {
+		const suffix = Date.now();
+		const title = `E2E Fields Event ${suffix}`;
+
+		await loginAsOwner(page);
+
+		const createPage = new EventCreatePage(page);
+		await createPage.goto();
+
+		await createPage.fillTitle(title);
+		await createPage.fillDescription('Testing extra signup fields');
+		await createPage.fillAddress({
+			line1: '123 Test Street',
+			locality: 'Testville',
+			region: 'Test Region',
+			postcode: '12345'
+		});
+
+		const surveyPage = new EventSurveyPage(page);
+		await surveyPage.checkStandardField('address');
+		await surveyPage.addShortTextQuestion(CUSTOM_QUESTION_LABEL);
+
+		await createPage.submit();
+		await createPage.waitForModal();
+
+		const publishToggle = page.locator('[id="publish-toggle"]');
+		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
+		const isChecked = await publishToggle.isChecked().catch(() => false);
+		if (!isChecked) {
+			await publishToggle.click();
+			await page.waitForTimeout(800);
+		}
+
+		await createPage.closeModal();
+
+		await expect(page).toHaveURL(
+			/\/events\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
+			{ timeout: 10_000 }
+		);
+
+		eventSlug = slugifyTitle(title);
+		expect(eventSlug).not.toBe('');
+	});
+
+	test('public signup page shows standard address fields', async ({ page }) => {
+		const publicPage = new EventPublicPage(page);
+		await publicPage.goto(ORG_SLUG, eventSlug);
+
+		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
+		await expect(publicPage.addressLine1Input).toBeVisible();
+		await expect(publicPage.addressLocalityInput).toBeVisible();
+		await expect(publicPage.addressRegionInput).toBeVisible();
+		await expect(publicPage.addressPostcodeInput).toBeVisible();
+	});
+
+	test('public signup page shows the custom question field', async ({ page }) => {
+		const publicPage = new EventPublicPage(page);
+		await publicPage.goto(ORG_SLUG, eventSlug);
+
+		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByLabel(CUSTOM_QUESTION_LABEL)).toBeVisible();
+	});
+
+	test('visitor can submit signup with all extra fields filled', async ({ page }) => {
+		const suffix = Date.now();
+
+		const publicPage = new EventPublicPage(page);
+		await publicPage.goto(ORG_SLUG, eventSlug);
+
+		await publicPage.fillSignupForm({
+			givenName: 'Fields',
+			familyName: `Tester ${suffix}`,
+			email: `fields-${suffix}@belcoda.test`
+		});
+
+		await publicPage.addressLine1Input.fill('456 Signup Ave');
+		await publicPage.addressLocalityInput.fill('Signuptown');
+		await publicPage.addressRegionInput.fill('Signup State');
+		await publicPage.addressPostcodeInput.fill('99999');
+
+		await page.getByLabel(CUSTOM_QUESTION_LABEL).fill('Vegan');
+
+		await publicPage.submitSignup();
+
+		await expect(page).toHaveURL(new RegExp(`/page/${ORG_SLUG}/events/${eventSlug}/signed-up`), {
+			timeout: 15_000
+		});
 	});
 });
