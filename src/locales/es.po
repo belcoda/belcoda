@@ -4291,23 +4291,23 @@ msgstr "Etiquetas opcionales aplicadas a las personas cuando firman esta petici�
 
 #: src/routes/+error.svelte
 msgid "Something went wrong."
-msgstr ""
+msgstr "Algo salió mal."
 
 #: src/routes/+error.svelte
 msgid "Reference"
-msgstr ""
+msgstr "Referencia"
 
 #: src/routes/+error.svelte
 msgid "Debug details"
-msgstr ""
+msgstr "Detalles de depuración"
 
 #: src/routes/+error.svelte
 msgid "Try again"
-msgstr ""
+msgstr "Reintentar"
 
 #: src/routes/+error.svelte
 msgid "Home"
-msgstr ""
+msgstr "Inicio"
 
 #: src/routes/(app)/petitions/[petitionId]/+page.svelte
 msgid "This petition has been archived."
@@ -4497,15 +4497,15 @@ msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Selecciona una petición..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Buscar petición..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
+msgstr "No se encontraron peticiones."
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Snapshot"
