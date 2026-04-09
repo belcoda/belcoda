@@ -653,7 +653,7 @@ export async function handlePetitionSignatureFlowResponse({
 	const family =
 		typeof flowDataForPerson.familyName === 'string' && flowDataForPerson.familyName.trim()
 			? flowDataForPerson.familyName.trim()
-			: '—';
+			: undefined;
 
 	const petitionSignature = await completePetitionSignatureHelper({
 		petitionId: petition.id,
