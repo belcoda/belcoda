@@ -242,7 +242,8 @@ export const apiKey = pgTable('api_key', {
 	key: text('key').notNull(),
 	userId: uuid('user_id')
 		.notNull()
-		.references(() => user.id),
+		.references(() => user.id), // deprecated, replaced by referenceId (to allow organization level API keys)
+	referenceId: uuid('reference_id').notNull(),
 	refillInterval: integer('refill_interval'),
 	refillAmount: integer('refill_amount'),
 	lastRefillAt: timestamp('last_refill_at', { withTimezone: true, mode: 'date' }),
