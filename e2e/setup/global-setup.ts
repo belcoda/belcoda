@@ -1,6 +1,10 @@
 import type { FullConfig } from '@playwright/test';
+import { chromium } from '@playwright/test';
 import { TEST_USERS, signUpUser, verifyUserEmail } from '../helpers/auth';
 import { BASE_URL } from '../helpers/config';
+import path from 'path';
+
+export const STORAGE_STATE_PATH = path.join(import.meta.dirname, '../.auth/cookie-consent.json');
 
 async function cleanup() {
 	console.log('  Cleaning up existing test data...');
@@ -32,6 +36,23 @@ async function createOrganization(
 	return response.json();
 }
 
+async function saveCookieConsentState() {
+	const browser = await chromium.launch();
+	const context = await browser.newContext();
+	const url = new URL(BASE_URL);
+	await context.addCookies([
+		{
+			name: 'belcoda_cookie_consent',
+			value: 'accepted',
+			domain: url.hostname,
+			path: '/',
+			sameSite: 'Lax'
+		}
+	]);
+	await context.storageState({ path: STORAGE_STATE_PATH });
+	await browser.close();
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default async function globalSetup(_config: FullConfig) {
 	console.log('\n🔧 E2E Setup: Preparing test data...\n');
@@ -51,6 +72,8 @@ export default async function globalSetup(_config: FullConfig) {
 		{ email: TEST_USERS.member.email, role: 'member' }
 	]);
 	console.log(`  ✓ Organization created: ${org.id}`);
+
+	await saveCookieConsentState();
 
 	console.log('\n✅ Setup complete!\n');
 }
