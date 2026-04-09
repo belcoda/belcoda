@@ -114,6 +114,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			key: false,
 			userId: true,
 			referenceId: true,
+			configId: true,
 			refillInterval: true,
 			refillAmount: true,
 			lastRefillAt: true,

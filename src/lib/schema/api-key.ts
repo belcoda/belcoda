@@ -8,6 +8,7 @@ export const apiKeySchema = v.object({
 	prefix: v.nullable(helpers.mediumStringEmpty),
 	key: helpers.mediumStringEmpty,
 	userId: v.nullable(helpers.uuid),
+	configId: v.nullable(helpers.mediumString),
 	referenceId: helpers.uuid,
 	refillInterval: v.nullable(helpers.count),
 	refillAmount: v.nullable(helpers.count),
