@@ -215,6 +215,7 @@ export async function signPetitionHelper({
 	personAction,
 	signatureDetails,
 	organizationId,
+	responses,
 	skipNotifications = false
 }: {
 	tx: ServerTransaction;
@@ -223,6 +224,7 @@ export async function signPetitionHelper({
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
+	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
@@ -261,6 +263,7 @@ export async function signPetitionHelper({
 		personRecord: personRecord,
 		organizationRecord: organizationRecord,
 		details: parsedSignatureDetails,
+		responses,
 		skipNotifications
 	});
 	return petitionSignatureResult;
@@ -273,6 +276,7 @@ export async function signPetitionUnsafe({
 	organizationRecord,
 	tx,
 	details,
+	responses,
 	skipNotifications = false
 }: {
 	petitionSignatureId?: string;
@@ -281,6 +285,7 @@ export async function signPetitionUnsafe({
 	personRecord: typeof person.$inferSelect;
 	organizationRecord: typeof organization.$inferSelect;
 	details: PetitionSignatureDetails;
+	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
 }) {
 	const id = petitionSignatureId || uuidv7();
@@ -291,7 +296,7 @@ export async function signPetitionUnsafe({
 		petitionId: petitionRecord.id,
 		personId: personRecord.id,
 		details,
-		responses: null,
+		responses: responses ?? null,
 		createdAt: new Date(),
 		updatedAt: new Date()
 	};
@@ -303,6 +308,7 @@ export async function signPetitionUnsafe({
 			target: [petitionSignature.petitionId, petitionSignature.personId],
 			set: {
 				details: petitionSignatureRecord.details,
+				responses: petitionSignatureRecord.responses,
 				teamId: petitionRecord.teamId,
 				updatedAt: new Date()
 			},
