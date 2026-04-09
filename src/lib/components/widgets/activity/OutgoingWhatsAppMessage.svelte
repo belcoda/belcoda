@@ -36,7 +36,7 @@
 					class:rounded-b-none={whatsappMessage.data.message.text ||
 						(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
 					src={whatsappMessage.data.message.image_url}
-					alt={t`Whatsapp message`}
+					alt={t`WhatsApp message`}
 				/>
 			{/if}
 			{#if whatsappMessage.data.message.text}
