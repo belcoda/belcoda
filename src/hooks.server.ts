@@ -148,7 +148,7 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 		});
 		if (key.valid) {
 			event.locals.authorizedApiOrganization = key.key?.metadata?.organizationId || null;
-			event.locals.authorizedApiUser = key.key?.userId || null;
+			event.locals.authorizedApiUser = key.key?.referenceId || null; //userId by default
 		}
 	}
 
