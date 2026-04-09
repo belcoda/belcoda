@@ -53,7 +53,11 @@
 			}
 		}
 		// Check if it has root with children array that has at least one element
-		return !!(val?.root?.children && Array.isArray(val.root.children) && val.root.children.length > 0);
+		return !!(
+			val?.root?.children &&
+			Array.isArray(val.root.children) &&
+			val.root.children.length > 0
+		);
 	}
 
 	const initialConfig = {
@@ -61,7 +65,11 @@
 		namespace: 'belcoda_wysiwyg',
 		nodes: [LinkNode, HeadingNode, ImageNode],
 		editable: (() => !disabled)(),
-		editorState: hasValidEditorState(value) ? JSON.stringify(value) : undefined,
+		editorState: hasValidEditorState(value)
+			? typeof value === 'string'
+				? value
+				: JSON.stringify(value)
+			: undefined,
 		onError: (error: Error) => {
 			throw error;
 		}
