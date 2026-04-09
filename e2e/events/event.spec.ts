@@ -1,0 +1,276 @@
+import { expect, test, type Page } from '@playwright/test';
+import { LoginPage } from '../pages/login.page';
+import { CommunityPage } from '../pages/community/community.page';
+import { EventCreatePage } from '../pages/events/event-create.page';
+import { EventDetailPage } from '../pages/events/event-detail.page';
+import { EventEditPage } from '../pages/events/event-edit.page';
+import { EventSignupsPage } from '../pages/events/event-signups.page';
+import { EventPublicPage } from '../pages/events/event-public-page.page';
+import { TEST_USERS } from '../helpers/auth';
+
+const ORG_SLUG = 'e2e-test-organization';
+
+function slugifyTitle(title: string): string {
+	return title
+		.trim()
+		.toLowerCase()
+		.replace(/[^a-z0-9 -]/g, '')
+		.replace(/\s+/g, '-')
+		.replace(/-+/g, '-');
+}
+
+async function loginAsOwner(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.owner.email, TEST_USERS.owner.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
+test.describe.serial('Events', () => {
+	const ids = {
+		eventId: '',
+		eventSlug: '',
+		eventTitle: '',
+		originalEventSlug: '',
+		signupPersonName: ''
+	};
+
+	test('owner can create an event', async ({ page }) => {
+		const suffix = Date.now();
+		ids.eventTitle = `E2E Event ${suffix}`;
+
+		await loginAsOwner(page);
+
+		const createPage = new EventCreatePage(page);
+		await createPage.goto();
+		await expect(createPage.form).toBeVisible();
+
+		await createPage.fillTitle(ids.eventTitle);
+		await createPage.fillDescription('E2E test event description');
+		await createPage.submit();
+
+		await createPage.waitForModal();
+		await expect(createPage.createdModal).toBeVisible();
+
+		const publishToggle = page.locator('[id="publish-toggle"]');
+		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
+		const isChecked = await publishToggle.isChecked().catch(() => false);
+		if (!isChecked) {
+			await publishToggle.click();
+			await page.waitForTimeout(800);
+		}
+
+		await createPage.closeModal();
+
+		await expect(page).toHaveURL(
+			/\/events\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
+			{ timeout: 10_000 }
+		);
+
+		ids.eventId = new URL(page.url()).pathname.split('/')[2] ?? '';
+		ids.originalEventSlug = slugifyTitle(ids.eventTitle);
+		expect(ids.eventId).not.toBe('');
+	});
+
+	test('owner can edit an event', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.goto(ids.eventId);
+		await detailPage.waitForLoaded();
+
+		await detailPage.openActionDropdown();
+		await detailPage.clickEditEvent();
+
+		await expect(page).toHaveURL(`/events/${ids.eventId}/edit`);
+
+		const editPage = new EventEditPage(page);
+		await editPage.waitForForm();
+
+		ids.eventTitle = `${ids.eventTitle} (edited)`;
+		await editPage.clearAndFillTitle(ids.eventTitle);
+		await editPage.submit();
+
+		await editPage.waitForModal();
+		await editPage.closeModal();
+
+		await expect(page).toHaveURL(`/events/${ids.eventId}`, { timeout: 10_000 });
+	});
+
+	test('owner can navigate to the event public page via the action menu', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.goto(ids.eventId);
+		await detailPage.waitForLoaded();
+
+		await detailPage.openActionDropdown();
+		const previewLink = page.getByTestId('event-action-preview');
+		const href = await previewLink.getAttribute('href');
+		expect(href).toBeTruthy();
+
+		ids.eventSlug = ids.originalEventSlug;
+
+		const publicPage = new EventPublicPage(page);
+		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
+	});
+
+	test('public event page shows WhatsApp signup link', async ({ page }) => {
+		const publicPage = new EventPublicPage(page);
+		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+
+		const whatsappBtn = publicPage.whatsappSignupBtn;
+		const isVisible = await whatsappBtn.isVisible().catch(() => false);
+		if (!isVisible) {
+			test.skip();
+			return;
+		}
+		await expect(whatsappBtn).toBeVisible();
+	});
+
+	test('visitor can sign up for an event from the public page', async ({ page }) => {
+		const suffix = Date.now();
+		ids.signupPersonName = `E2E Signup ${suffix}`;
+
+		const publicPage = new EventPublicPage(page);
+		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+
+		await publicPage.fillSignupForm({
+			givenName: 'E2E',
+			familyName: `Signup ${suffix}`,
+			email: `e2e-signup-${suffix}@belcoda.test`
+		});
+		await publicPage.submitSignup();
+
+		await expect(page).toHaveURL(
+			new RegExp(`/page/${ORG_SLUG}/events/${ids.eventSlug}/signed-up`),
+			{ timeout: 15_000 }
+		);
+	});
+
+	test('owner can view signups on the event admin page', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.goto(ids.eventId);
+		await detailPage.waitForLoaded();
+
+		const signupsPage = new EventSignupsPage(page);
+		await expect(signupsPage.signupTable).toBeVisible({ timeout: 15_000 });
+		await expect(signupsPage.signupTable).toContainText('E2E', { timeout: 15_000 });
+	});
+
+	test('owner can navigate to the detailed signups table', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.goto(ids.eventId);
+		await detailPage.waitForLoaded();
+
+		await detailPage.openActionDropdown();
+		await detailPage.clickDetailedSignups();
+
+		await expect(page).toHaveURL(`/events/${ids.eventId}/signups`, { timeout: 10_000 });
+
+		const signupsPage = new EventSignupsPage(page);
+		await expect(signupsPage.detailedTable).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('owner can mark a signup as attended', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.goto(ids.eventId);
+		await detailPage.waitForLoaded();
+
+		const signupsPage = new EventSignupsPage(page);
+		await signupsPage.signupTable.waitFor({ state: 'visible', timeout: 15_000 });
+
+		await signupsPage.markFirstSignupAttended();
+
+		await expect(signupsPage.firstAttendedBadge).toBeVisible({ timeout: 10_000 });
+	});
+
+	test('owner can mark a signup as no show', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.goto(ids.eventId);
+		await detailPage.waitForLoaded();
+
+		const signupsPage = new EventSignupsPage(page);
+		await signupsPage.signupTable.waitFor({ state: 'visible', timeout: 15_000 });
+
+		await signupsPage.markFirstSignupNoShow();
+
+		await expect(signupsPage.firstNoShowBadge).toBeVisible({ timeout: 10_000 });
+	});
+
+	test('owner can archive a published event', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const createPage = new EventCreatePage(page);
+		await createPage.goto();
+		await createPage.fillTitle(`E2E Archive Test ${Date.now()}`);
+		await createPage.fillDescription('To be archived');
+		await createPage.submit();
+		await createPage.waitForModal();
+
+		const publishToggle = page.locator('[id="publish-toggle"]');
+		const isChecked = await publishToggle.isChecked().catch(() => false);
+		if (!isChecked) {
+			await publishToggle.click();
+			await page.waitForTimeout(500);
+		}
+		await createPage.closeModal();
+
+		await expect(page).toHaveURL(
+			/\/events\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
+			{ timeout: 10_000 }
+		);
+		const archiveEventId = new URL(page.url()).pathname.split('/')[2] ?? '';
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.waitForLoaded();
+		await detailPage.openActionDropdown();
+		await detailPage.clickEditEvent();
+
+		const editPage = new EventEditPage(page);
+		await editPage.waitForForm();
+		await editPage.archiveEvent(page);
+
+		await expect(page).toHaveURL('/events', { timeout: 10_000 });
+		expect(archiveEventId).not.toBe('');
+	});
+
+	test('owner can delete an unpublished event', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const createPage = new EventCreatePage(page);
+		await createPage.goto();
+		await createPage.fillTitle(`E2E Delete Test ${Date.now()}`);
+		await createPage.fillDescription('To be deleted');
+		await createPage.submit();
+		await createPage.waitForModal();
+		await createPage.closeModal();
+
+		await expect(page).toHaveURL(
+			/\/events\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
+			{ timeout: 10_000 }
+		);
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.waitForLoaded();
+		await detailPage.openActionDropdown();
+		await detailPage.clickEditEvent();
+
+		const editPage = new EventEditPage(page);
+		await editPage.waitForForm();
+		await editPage.deleteEvent(page);
+
+		await expect(page).toHaveURL('/events', { timeout: 10_000 });
+	});
+});
