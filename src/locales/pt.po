@@ -4254,8 +4254,10 @@ msgstr ""
 msgid "WhatsApp draft sent successfully"
 msgstr "Rascunho do WhatsApp enviado com sucesso"
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventArchivedFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Archived"
 msgstr ""
@@ -4466,3 +4468,7 @@ msgstr "Selecionar tags..."
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Optional tags applied to people when they sign this petition."
 msgstr "Tags opcionais aplicadas às pessoas quando assinam esta petição."
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr ""

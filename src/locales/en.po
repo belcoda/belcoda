@@ -4270,8 +4270,10 @@ msgstr "Could not update personal information. Please try again."
 msgid "WhatsApp draft sent successfully"
 msgstr "WhatsApp draft sent successfully"
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventArchivedFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Archived"
 msgstr "Archived"
@@ -4482,3 +4484,7 @@ msgstr "Select tags..."
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Optional tags applied to people when they sign this petition."
 msgstr "Optional tags applied to people when they sign this petition."
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr "Show archived"
