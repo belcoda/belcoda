@@ -30,7 +30,7 @@
 
 	<div class="rounded-lg border border-[#b7e4ac] bg-[#d9fdd3]">
 		<div
-			class="hover:bg-white/50m -mb-1 w-full border-b border-[#b7e4ac] bg-[#f8f9fa]/50 p-2 px-2 pt-2 text-[11px] font-medium text-[#008069] uppercase transition-colors"
+			class="-mb-1 w-full border-b border-[#b7e4ac] bg-[#f8f9fa]/50 p-2 px-2 pt-2 text-[11px] font-medium text-[#008069] uppercase transition-colors hover:bg-white/50"
 		>
 			Add to team:
 		</div>
