@@ -105,7 +105,7 @@
 						<div class="flex flex-col gap-2">
 							<Button variant="outline" size="sm" href={backButtonUrl}>
 								<ChevronLeftIcon />
-								Back
+								{t`Back`}
 							</Button>
 						</div>
 					</Panel>
@@ -119,10 +119,10 @@
 									size="sm"
 									onclick={() => alert(JSON.stringify($state.snapshot({ nodes, edges })))}
 								>
-									Snapshot
+									{t`Snapshot`}
 								</Button>
 							{/if}
-							<Button variant="destructive" size="sm" onclick={onDiscard}>Discard</Button>
+							<Button variant="destructive" size="sm" onclick={onDiscard}>{t`Discard`}</Button>
 							<Button
 								variant="outline"
 								size="sm"
@@ -130,7 +130,7 @@
 									onSave({
 										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
 										edges: $state.snapshot(edges) as Flow['edges']
-									})}>Save</Button
+									})}>{t`Save`}</Button
 							>
 							<Button
 								variant="default"
@@ -139,7 +139,7 @@
 									onSend({
 										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
 										edges: $state.snapshot(edges) as Flow['edges']
-									})}>Send</Button
+									})}>{t`Send`}</Button
 							>
 						</div>
 					</Panel>
@@ -150,7 +150,7 @@
 							<DropdownMenu.Trigger>
 								<Button variant="default" size="sm">
 									<ChevronDownIcon />
-									Add Node
+									{t`Add Node`}
 								</Button>
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content>
@@ -170,7 +170,7 @@
 										}
 									}}
 								>
-									Message
+									{t`Message`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
@@ -185,7 +185,7 @@
 										}
 									}}
 								>
-									Event Signup
+									{t`Event Signup`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
@@ -200,7 +200,7 @@
 										}
 									}}
 								>
-									Petition Signup
+									{t`Petition Signup`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
@@ -215,7 +215,7 @@
 										}
 									}}
 								>
-									Tag Add
+									{t`Tag Add`}
 								</DropdownMenu.Item>
 							</DropdownMenu.Content>
 						</DropdownMenu.Root>
