@@ -17,13 +17,20 @@ export async function load({ locals, url }) {
 	const adminOrgs = memberships.filter((m) => m.role === 'admin');
 	const otherOrgs = memberships.filter((m) => m.role !== 'owner' && m.role !== 'admin');
 
+	// explicit ?org= query param (validated against memberships)
+	const rawOrgParam = url.searchParams.get('org');
+	const queryParamOrganizationId = rawOrgParam
+		? (memberships.find((m) => m.organizationId === rawOrgParam)?.organizationId ?? null)
+		: null;
+
 	// see if we can derive an organization id from the URL path
 	const rawInferredOrganizationId = await inferOrganizationIdFromUrl({ url });
 	const inferredOrganizationId = rawInferredOrganizationId
 		? memberships.find((m) => m.organizationId === rawInferredOrganizationId)?.organizationId
 		: null; //make sure the user is a member of the inferred organization
-	// prioritize the active organization id, then the owner organizations, then the admin organizations, then the other organizations
+	// prioritize explicit org param, then path-inferred org, then session active org, then owner/admin/other
 	const defaultActiveOrganizationId =
+		queryParamOrganizationId ||
 		inferredOrganizationId ||
 		session.session.activeOrganizationId ||
 		ownerOrgs[0]?.organizationId ||
@@ -37,6 +44,7 @@ export async function load({ locals, url }) {
 		userId: session.user.id,
 		defaultActiveOrganizationId: defaultActiveOrganizationId,
 		inferredOrganizationId: inferredOrganizationId,
+		queryParamOrganizationId,
 		memberships: memberships.map((m) => ({ organizationId: m.organizationId })),
 		queryContext: queryContext
 	};
