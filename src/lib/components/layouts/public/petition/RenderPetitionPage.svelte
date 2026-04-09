@@ -7,23 +7,59 @@
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import PenLineIcon from '@lucide/svelte/icons/pen-line';
-	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
 	import ShareIcon from '@lucide/svelte/icons/share-2';
 	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
 	import { formatDate } from '$lib/utils/date';
-	import UserNavBar from '$lib/components/layouts/public/UserNavBar.svelte';
 	import { env } from '$env/dynamic/public';
-	import { page } from '$app/state';
 	import WhatsAppPetitionSignup from './WhatsAppPetitionSignup.svelte';
+	import PetitionSignSuccess from '$lib/components/layouts/public/petition/PetitionSignSuccess.svelte';
+	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
 
-	const { data, form }: { data: any; form: any } = $props();
+	type PublicPetition = {
+		title: string;
+		shortDescription: string;
+		description?: string | null;
+		petitionTarget?: string | null;
+		petitionText?: string | null;
+		featureImage?: string | null;
+	};
+	type PublicOrg = {
+		name: string;
+		icon?: string | null;
+		settings?: {
+			theme?: {
+				primaryColor?: string | null;
+				secondaryColor?: string | null;
+			} | null;
+		} | null;
+	};
 
-	const paramLayout = page.url.searchParams.get('layout') || 'default';
-	const layouts = ['default', 'embed'];
-	const layout = layouts.includes(paramLayout) ? (paramLayout as 'default' | 'embed') : 'default';
+	const {
+		data,
+		form,
+		layout = 'default',
+		success = false
+	}: {
+		data: {
+			petition: PublicPetition;
+			organization: PublicOrg;
+			signatureCount: number;
+			recentSignatures?: {
+				givenName?: string | null;
+				familyName?: string | null;
+				createdAt?: number | null;
+			}[];
+			whatsAppSignupLink?: string | null;
+		};
+		form?: { error?: string; success?: boolean } | null;
+		layout?: 'default' | 'embed';
+		success?: boolean;
+	} = $props();
 
 	const editPetitionUrl = $derived(`${env.PUBLIC_HOST}/petitions/${data.petition.id}`);
+	const primaryColor = $derived(
+		data.organization.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
+	);
 
 	function calculateTarget(currentSignatures: number): number {
 		const milestones = [
@@ -32,7 +68,7 @@
 		];
 
 		for (const milestone of milestones) {
-			if (currentSignatures < milestone) {
+			if (currentSignatures <= milestone) {
 				return milestone;
 			}
 		}
@@ -55,8 +91,6 @@
 		phoneNumber: ''
 	});
 
-	const signatureSuccess = $derived(form?.success === true);
-
 	const petitionSignatureCount = (count: string) => {
 		return t`${count} people have signed this petition`;
 	};
@@ -71,11 +105,13 @@
 	<meta name="description" content={data.petition.shortDescription} />
 	<meta name="robots" content="index, follow" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="theme-color" content={primaryColor} />
+	{#if data.organization.icon}
+		<link rel="icon" href={data.organization.icon} />
+	{/if}
 </svelte:head>
 
 {#if layout === 'default'}
-	<UserNavBar session={data.session} linkUrl={editPetitionUrl} linkText={t`Edit Petition`} />
-
 	<main class="min-h-screen bg-gray-50">
 		<div
 			class="relative h-96 w-full bg-cover bg-center bg-no-repeat"
@@ -101,6 +137,16 @@
 								</div>
 							{/if}
 						</div>
+
+						{#if data.petition.description}
+							<div class="border-t border-gray-200 pt-8">
+								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`About this petition`}</h2>
+								<div class="prose decorate-links space-y-4 text-gray-700">
+									<!-- Sanitized using dompurify on the server -->
+									{@html data.petition.description}
+								</div>
+							</div>
+						{/if}
 
 						{#if data.petition.petitionText}
 							<div class="border-t border-gray-200 pt-8">
@@ -170,62 +216,47 @@
 				</div>
 			{/if}
 
-			<div class="mb-6 space-y-4">
-				<div class="flex items-baseline justify-between">
-					<div>
-						<div class="text-3xl font-bold">{formatNumber(data.signatureCount)}</div>
-						<div class="text-xs tracking-wide text-muted-foreground uppercase">{t`signatures`}</div>
-					</div>
-					<div class="text-right">
-						<div class="text-lg font-semibold">{Math.round(progress)}%</div>
-						<div class="text-xs text-muted-foreground">{t`of goal`}</div>
-					</div>
-				</div>
-				<Progress value={progress} class="h-2.5" />
-				<div class="text-right text-xs text-muted-foreground">
-					Goal: {formatNumber(currentTarget)}
-				</div>
-
-				{#if data.signatureCount > 0}
-					<div class="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary">
-						{#if data.signatureCount >= currentTarget}
-							<div class="flex items-start gap-2">
-								<span class="text-lg">🎉</span>
-								<div>
-									{t`Goal reached! Keep the momentum going to make an even bigger impact.`}
-								</div>
+			{#if !success}
+				<div class="mb-6 space-y-4">
+					<div class="flex items-baseline justify-between">
+						<div>
+							<div class="text-3xl font-bold">{formatNumber(data.signatureCount)}</div>
+							<div class="text-xs tracking-wide text-muted-foreground uppercase">
+								{t`signatures`}
 							</div>
-						{:else}
-							{targetToGoal(
-								formatNumber(currentTarget - data.signatureCount),
-								formatNumber(currentTarget)
-							)}
-						{/if}
+						</div>
+						<div class="text-right">
+							<div class="text-lg font-semibold">{Math.round(progress)}%</div>
+							<div class="text-xs text-muted-foreground">{t`of goal`}</div>
+						</div>
 					</div>
-				{/if}
-			</div>
+					<Progress value={progress} class="h-2.5" />
+					<div class="text-right text-xs text-muted-foreground">
+						{t`Goal: ${formatNumber(currentTarget)}`}
+					</div>
 
-			{#if signatureSuccess}
-				<div class="space-y-4 text-center">
-					<CheckCircleIcon class="mx-auto size-16 text-green-600" />
-					<div>
-						<h3 class="text-lg font-semibold">{t`Thank you for signing!`}</h3>
-						<p class="text-sm text-muted-foreground">
-							{t`Your signature has been recorded and you'll receive updates about this petition.`}
-						</p>
-					</div>
-					{#if layout === 'default'}
-						<Button
-							variant="outline"
-							class="w-full"
-							onclick={() => {
-								window.location.reload();
-							}}
-						>
-							{t`Return to petition`}
-						</Button>
+					{#if data.signatureCount > 0}
+						<div class="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary">
+							{#if data.signatureCount >= currentTarget}
+								<div class="flex items-start gap-2">
+									<span class="text-lg">🎉</span>
+									<div>
+										{t`Goal reached! Keep the momentum going to make an even bigger impact.`}
+									</div>
+								</div>
+							{:else}
+								{targetToGoal(
+									formatNumber(currentTarget - data.signatureCount),
+									formatNumber(currentTarget)
+								)}
+							{/if}
+						</div>
 					{/if}
 				</div>
+			{/if}
+
+			{#if success}
+				<PetitionSignSuccess petition={data.petition} organization={data.organization} />
 			{:else}
 				<form
 					method="POST"
@@ -233,22 +264,14 @@
 					class="space-y-4"
 					use:enhance={() => {
 						signingInProgress = true;
-						return async ({ result, update }) => {
+						return async ({ update }) => {
 							await update();
 							signingInProgress = false;
-
-							if (result.type === 'success' && result.data?.success) {
-								formValues = {
-									givenName: '',
-									familyName: '',
-									emailAddress: '',
-									phoneNumber: ''
-								};
-								await invalidateAll();
-							}
 						};
 					}}
 				>
+					<input type="hidden" name="layout" value={layout} />
+
 					{#if form?.error}
 						<div
 							class="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
@@ -327,7 +350,7 @@
 			{/if}
 		</div>
 
-		{#if layout === 'default'}
+		{#if layout === 'default' && !success}
 			<Card.Root class="mt-4">
 				<Card.Content class="pt-6">
 					<Button variant="outline" class="w-full">

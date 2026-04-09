@@ -39,10 +39,12 @@ import { listPersonNotes } from '$lib/zero/query/person_note/list';
 // petition
 import { listPetitions } from '$lib/zero/query/petition/list';
 import { readPetition } from '$lib/zero/query/petition/read';
-import { listPetitionSignatures as listPetitionSignaturesForPetition } from '$lib/zero/query/petition/signatures';
 
 // petition_signature
-import { listPetitionSignatures } from '$lib/zero/query/petition_signature/list';
+import {
+	listPetitionSignatures,
+	listPetitionSignaturesByPetition
+} from '$lib/zero/query/petition_signature/list';
 import { readPetitionSignature } from '$lib/zero/query/petition_signature/read';
 
 // tag
@@ -171,7 +173,7 @@ export default defineQueries({
 	petition: {
 		list: listPetitions,
 		read: readPetition,
-		signatures: listPetitionSignaturesForPetition
+		signatures: listPetitionSignaturesByPetition
 	},
 	petitionSignature: {
 		list: listPetitionSignatures,

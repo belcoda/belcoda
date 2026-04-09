@@ -30,7 +30,8 @@ export default defineConfig({
 			files: [
 				'src/**/+{page,layout}.{js,ts}',
 				'src/**/+{page,layout}.server.{js,ts}',
-				'src/**/items.ts'
+				'src/**/items.ts',
+				'src/lib/**/*.ts'
 			],
 			heuristic: (msg) => {
 				const { details } = msg;

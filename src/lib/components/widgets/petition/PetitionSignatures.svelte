@@ -39,14 +39,16 @@
 				<Button variant="ghost" size="sm" href="/petitions/{petition.id}/signatures">
 					{t`View all`}
 				</Button>
-				<AddPersonModal
-					trigger={addPersonTrigger}
-					personIdsToExclude={petitionSignatures.data.map((sig) => sig.personId)}
-					actionText={t`Add signature`}
-					onSelected={(personIds) => {
-						handleAddPerson({ petitionId: petition.id, personIds });
-					}}
-				/>
+				{#if !petition.archivedAt}
+					<AddPersonModal
+						trigger={addPersonTrigger}
+						personIdsToExclude={petitionSignatures.data.map((sig) => sig.personId)}
+						actionText={t`Add signature`}
+						onSelected={(personIds) => {
+							handleAddPerson({ petitionId: petition.id, personIds });
+						}}
+					/>
+				{/if}
 			</div>
 		</Card.Title>
 	</Card.Header>
