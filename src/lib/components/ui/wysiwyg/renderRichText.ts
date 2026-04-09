@@ -47,12 +47,12 @@ const hasRoot = (json: string) => {
 const hasValidContent = (json: string) => {
 	try {
 		const parsed = JSON.parse(json);
-		if (!parsed || !parsed.root || !parsed.root.children) {
-			return false;
-		}
-		// Check if root has at least one child with content
-		return parsed.root.children.length > 0;
+		const children = parsed?.root?.children;
+		return Array.isArray(children) && children.length > 0;
 	} catch {
+		return false;
+	}
+};
 		return false;
 	}
 };
