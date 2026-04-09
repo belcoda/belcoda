@@ -36,7 +36,7 @@
 
 <ButtonGroup.Root>
 	<Button variant="outline" onclick={() => (openShareModal = true)}
-		><ShareIcon class="size-3.5" /> Share</Button
+		><ShareIcon class="size-3.5" /> {t`Share`}</Button
 	>
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
@@ -63,19 +63,19 @@
 									}
 								}}
 							/>
-							<Label for={`${id}-switch`}>Published</Label>
+							<Label for={`${id}-switch`}>{t`Published`}</Label>
 						</div>
 					{/snippet}
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={`/events/${event.id}/edit`}>Edit event</a>
+						<a {...props} href={`/events/${event.id}/edit`}>{t`Edit event`}</a>
 					{/snippet}
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
 						<a data-sveltekit-preload-data="off" {...props} href={`/events/${event.id}/preview`}
-							>{#if event.published}View event page{:else}Preview event page{/if}</a
+							>{#if event.published}{t`View event page`}{:else}{t`Preview event page`}{/if}</a
 						>
 					{/snippet}
 				</DropdownMenu.Item>
@@ -84,7 +84,7 @@
 			<DropdownMenu.Group>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={`/events/${event.id}/signups`}>Detailed signups table</a>
+						<a {...props} href={`/events/${event.id}/signups`}>{t`Detailed signups table`}</a>
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
@@ -110,7 +110,7 @@
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>
 				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
-					Make a copy
+					{t`Make a copy`}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 		</DropdownMenu.Content>
