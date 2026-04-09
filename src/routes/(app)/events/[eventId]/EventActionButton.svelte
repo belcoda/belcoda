@@ -88,6 +88,25 @@
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
+			{#if event.published}
+				<DropdownMenu.Separator />
+				<DropdownMenu.Group>
+					<DropdownMenu.Item
+						class="w-full"
+						onclick={() =>
+							z.mutate(
+								mutators.event.archive({
+									metadata: {
+										organizationId: appState.organizationId,
+										eventId: event.id
+									}
+								})
+							)}
+					>
+						Archive
+					</DropdownMenu.Item>
+				</DropdownMenu.Group>
+			{/if}
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>
 				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
