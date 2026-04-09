@@ -13,7 +13,7 @@
 	const layout = layouts.includes(paramLayout) ? (paramLayout as 'default' | 'embed') : 'default';
 
 	const editPetitionUrl = $derived.by(
-		() => `${dev ? 'http' : 'https'}://${env.PUBLIC_ROOT_DOMAIN}/petitions/${data.petition.id}/edit`
+		() => `${env.PUBLIC_HOST.replace(/\/$/, '')}/petitions/${data.petition.id}`
 	);
 </script>
 
