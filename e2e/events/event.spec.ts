@@ -118,6 +118,29 @@ test.describe.serial('Events', () => {
 		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
 	});
 
+	test('logged-in owner sees the edit navbar on the public event page', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const publicPage = new EventPublicPage(page);
+		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+
+		await expect(page.getByTestId('public-page-navbar')).toBeVisible({ timeout: 10_000 });
+		const editLink = page.getByTestId('public-page-edit-link');
+		await expect(editLink).toBeVisible();
+		await expect(editLink).toContainText('Edit Event');
+	});
+
+	test('anonymous visitor does not see the edit navbar on the public event page', async ({
+		page
+	}) => {
+		const publicPage = new EventPublicPage(page);
+		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+
+		await expect(page.getByTestId('public-page-navbar')).toHaveCount(0);
+		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
+		await expect(publicPage.submitButton).toBeVisible();
+	});
+
 	test('public event page shows WhatsApp signup link', async ({ page }) => {
 		const publicPage = new EventPublicPage(page);
 		await publicPage.goto(ORG_SLUG, ids.eventSlug);
