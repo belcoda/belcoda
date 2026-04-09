@@ -1,15 +1,19 @@
 /**
  * Safe storage utilities that handle SecurityErrors gracefully.
- * 
+ *
  * In certain contexts (iframes with cross-origin restrictions, private browsing modes,
  * or certain browser security settings), accessing localStorage/sessionStorage will
  * throw a SecurityError. These utilities provide a fallback to in-memory storage.
+ *
+ * IMPORTANT: Fallback storage only works in the browser. On the server (SSR), this
+ * is a no-op to prevent state leakage between requests.
  */
+
+import { browser } from '$app/environment';
 
 type StorageType = 'localStorage' | 'sessionStorage';
 
 class SafeStorage {
-	private fallbackStorage = new Map<string, string>();
 	private storageType: StorageType;
 	private isAvailable: boolean;
 
@@ -19,6 +23,9 @@ class SafeStorage {
 	}
 
 	private checkAvailability(): boolean {
+		if (!browser) {
+			return false;
+		}
 		try {
 			const storage = this.storageType === 'localStorage' ? localStorage : sessionStorage;
 			const testKey = '__storage_test__';
@@ -28,6 +35,20 @@ class SafeStorage {
 		} catch {
 			return false;
 		}
+	}
+
+	private getFallbackStorage(): Map<string, string> {
+		if (!browser) {
+			return new Map();
+		}
+
+		const globalKey = `__safe_${this.storageType}_fallback__`;
+
+		if (!(globalThis as any)[globalKey]) {
+			(globalThis as any)[globalKey] = new Map<string, string>();
+		}
+
+		return (globalThis as any)[globalKey];
 	}
 
 	getItem(key: string): string | null {
@@ -40,7 +61,12 @@ class SafeStorage {
 				this.isAvailable = false;
 			}
 		}
-		return this.fallbackStorage.get(key) ?? null;
+
+		if (!browser) {
+			return null;
+		}
+
+		return this.getFallbackStorage().get(key) ?? null;
 	}
 
 	setItem(key: string, value: string): void {
@@ -54,7 +80,12 @@ class SafeStorage {
 				this.isAvailable = false;
 			}
 		}
-		this.fallbackStorage.set(key, value);
+
+		if (!browser) {
+			return;
+		}
+
+		this.getFallbackStorage().set(key, value);
 	}
 
 	removeItem(key: string): void {
@@ -68,7 +99,12 @@ class SafeStorage {
 				this.isAvailable = false;
 			}
 		}
-		this.fallbackStorage.delete(key);
+
+		if (!browser) {
+			return;
+		}
+
+		this.getFallbackStorage().delete(key);
 	}
 
 	clear(): void {
@@ -82,7 +118,12 @@ class SafeStorage {
 				this.isAvailable = false;
 			}
 		}
-		this.fallbackStorage.clear();
+
+		if (!browser) {
+			return;
+		}
+
+		this.getFallbackStorage().clear();
 	}
 }
 
