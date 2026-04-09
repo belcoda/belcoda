@@ -174,7 +174,7 @@
 
 {#snippet inviteBadge()}
 	<a
-		href="/settings/user/invite"
+		href="/settings/users"
 		class=" text-heading flex items-center gap-1 rounded border bg-background px-1.5 py-0.5 text-xs font-medium hover:bg-accent"
 	>
 		<PlusIcon class="size-3" />
