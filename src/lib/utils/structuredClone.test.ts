@@ -51,4 +51,8 @@ describe('structuredClone', () => {
 		expect(structuredClone(true)).toBe(true);
 		expect(structuredClone(null)).toBe(null);
 	});
+
+	it('should handle undefined without crashing', () => {
+		expect(structuredClone(undefined)).toBe(undefined);
+	});
 });

@@ -5,6 +5,11 @@
  */
 
 export function structuredClone<T>(value: T): T {
+	// Guard against undefined to prevent JSON.parse(undefined) crash
+	if (value === undefined) {
+		return value;
+	}
+
 	if (typeof globalThis.structuredClone === 'function') {
 		return globalThis.structuredClone(value);
 	}
