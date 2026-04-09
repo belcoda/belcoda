@@ -42,6 +42,7 @@ describe('structuredClone', () => {
 
 		expect(cloned).toEqual(obj);
 		expect(cloned.a).toBeNull();
+		expect(structuredClone(undefined)).toBeUndefined();
 	});
 
 	it('should clone primitive values', () => {
