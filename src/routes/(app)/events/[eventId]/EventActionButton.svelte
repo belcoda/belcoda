@@ -103,7 +103,7 @@
 								})
 							)}
 					>
-						Archive
+						{t`Archive`}
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			{/if}
