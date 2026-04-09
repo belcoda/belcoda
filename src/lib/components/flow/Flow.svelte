@@ -215,7 +215,7 @@
 										}
 									}}
 								>
-									Team Add
+									{t`Team Add`}
 								</DropdownMenu.Item>
 							</DropdownMenu.Content>
 						</DropdownMenu.Root>
