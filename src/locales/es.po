@@ -535,7 +535,6 @@ msgstr "Filtrar etiquetas..."
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
@@ -1078,6 +1077,7 @@ msgstr "Correo sin título"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1142,6 +1142,8 @@ msgstr "Crear una nueva organización"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Borradores"
 
@@ -2663,7 +2665,7 @@ msgid "Configuration"
 msgstr "Configuración"
 
 #: src/routes/(app)/settings/people/exports/+page.svelte
-msgid "Exports are not currently supported, but will be added in a future update."
+msgid "Exports are not currently supported, but will be added in a future update. "
 msgstr ""
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
@@ -3627,7 +3629,6 @@ msgstr ""
 #: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Search tag..."
 msgstr "Buscar etiqueta..."
 
@@ -4259,15 +4260,34 @@ msgid "Clear selection"
 msgstr "Borrar selección"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Remove tag"
 msgstr "Quitar etiqueta"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Select tags..."
 msgstr "Seleccionar etiquetas..."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Optional tags applied to people when they sign this petition."
 msgstr "Etiquetas opcionales aplicadas a las personas cuando firman esta petición."
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the audio tag."
+msgstr "Tu navegador no admite la etiqueta de audio."
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "WhatsApp sticker"
+msgstr "Sticker de WhatsApp"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+#: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
+msgid "WhatsApp message"
+msgstr "Mensaje de WhatsApp"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "No captions available"
+msgstr "No hay subtítulos disponibles"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the video tag."
+msgstr "Tu navegador no admite la etiqueta de video."
