@@ -167,7 +167,7 @@ export async function updatePetition({
 
 	if (updatedPetition && (structureChanged || publishedStatusChanged)) {
 		const queue = await getQueue();
-		queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
+		await queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
 	}
 }
 
