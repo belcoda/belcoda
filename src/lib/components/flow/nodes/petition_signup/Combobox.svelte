@@ -47,6 +47,7 @@
 
 	function closeAndFocusTrigger() {
 		open = false;
+		searchString = '';
 		tick().then(() => {
 			triggerRef?.focus();
 		});
