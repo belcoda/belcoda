@@ -5,6 +5,9 @@ import { eq, and, isNull, count, desc } from 'drizzle-orm';
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
 import pino from '$lib/pino';
+import { superValidate } from 'sveltekit-superforms';
+import { valibot } from 'sveltekit-superforms/adapters';
+import { getSurveySchema } from '$lib/schema/survey/questions';
 
 const log = pino(import.meta.url);
 const lexicalRenderer = new LexicalHtmlRenderer();
@@ -82,6 +85,9 @@ export async function load({ params }) {
 		...sig,
 		createdAt: sig.createdAt ? new Date(sig.createdAt).getTime() : null
 	}));
+	const surveySchema = getSurveySchema(petitionData);
+	const form = await superValidate(valibot(surveySchema));
+	form.data.customFields ||= {};
 
 	return {
 		petition: serializedPetition,
@@ -90,6 +96,7 @@ export async function load({ params }) {
 		recentSignatures: serializedSignatures,
 		session: null,
 		isAdmin: false,
-		whatsAppSignupLink: null
+		whatsAppSignupLink: null,
+		form
 	};
 }
