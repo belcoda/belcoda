@@ -15,8 +15,8 @@
 		onSubmit: async (formData) => {
 			try {
 				loading = true;
-				await createOrganization(formData);
-				await goto(`/organization/new/onboarding`);
+				const created = await createOrganization(formData);
+				await goto(`/organization/new/onboarding?org=${encodeURIComponent(created.id)}`);
 			} catch (err) {
 				console.error(`Error creating organization: ${err}`);
 				error = err instanceof Error ? err.message : t`An unknown error occurred`;

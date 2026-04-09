@@ -3,6 +3,14 @@
 	import { t } from '$lib/index.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { page } from '$app/state';
+
+	const orgIdFromQuery = $derived(page.url.searchParams.get('org'));
+	const continueToOrgHref = $derived(
+		orgIdFromQuery
+			? `/?display_onboarding_video=true&org=${encodeURIComponent(orgIdFromQuery)}`
+			: '/?display_onboarding_video=true'
+	);
 </script>
 
 <head>
@@ -23,9 +31,7 @@
 	<div class="min-h-40">{@render calInline()}</div>
 	<Separator class="mt-4" />
 	<div class="mt-4 w-full">
-		<Button class="w-full" href="/?display_onboarding_video=true"
-			>{t`Continue to your organization`}</Button
-		>
+		<Button class="w-full" href={continueToOrgHref}>{t`Continue to your organization`}</Button>
 
 		<div class="mt-2 text-center text-xs text-muted-foreground">
 			{t`If you prefer, you can continue to your organization without first booking a time.`}
