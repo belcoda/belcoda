@@ -204,6 +204,7 @@
 														{...props}
 														bind:value={$data.settings.survey.collections[0].questions[index].label}
 														placeholder={t`Enter question label`}
+														data-testid="survey-custom-question-label-{index}"
 													/>
 												{/if}
 											{/snippet}
@@ -314,13 +315,19 @@
 
 {#snippet addQuestionDropdown()}
 	<Dropdown.Root>
-		<Dropdown.Trigger class={buttonVariants({ variant: 'outline', size: 'sm' })}>
+		<Dropdown.Trigger
+			class={buttonVariants({ variant: 'outline', size: 'sm' })}
+			data-testid="survey-add-question-trigger"
+		>
 			<PlusIcon class="mr-2 size-4" />
 			{t`Add question`}
 			<ChevronDownIcon class="ml-2 size-4" />
 		</Dropdown.Trigger>
 		<Dropdown.Content>
-			<Dropdown.Item onclick={() => addQuestion('custom.textInput')}>{t`Short text`}</Dropdown.Item>
+			<Dropdown.Item
+				onclick={() => addQuestion('custom.textInput')}
+				data-testid="survey-add-short-text">{t`Short text`}</Dropdown.Item
+			>
 			<Dropdown.Item onclick={() => addQuestion('custom.textarea')}>{t`Long text`}</Dropdown.Item>
 			<Dropdown.Item onclick={() => addQuestion('custom.dateInput')}>{t`Date`}</Dropdown.Item>
 			<Dropdown.Item onclick={() => addQuestion('custom.checkboxGroup')}
