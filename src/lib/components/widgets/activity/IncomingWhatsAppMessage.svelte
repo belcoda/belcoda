@@ -31,7 +31,7 @@
 	<div class="mb-4 flex items-center gap-1.5">
 		{#if whatsappMessage.data.message.audio_url}
 			<div
-				class="w-md rounded-lg bg-gray-50 p-2"
+				class="relative w-md rounded-lg bg-gray-50 p-2"
 				class:rounded-b-none={whatsappMessage.data.message.text ||
 					(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
 			>
@@ -51,7 +51,7 @@
 				/>
 			</div>
 		{:else if whatsappMessage.data.message.sticker_url}
-			<div class="max-w-xs rounded-lg">
+			<div class="relative max-w-xs rounded-lg">
 				<img
 					src={whatsappMessage.data.message.sticker_url}
 					alt={t`WhatsApp sticker`}
