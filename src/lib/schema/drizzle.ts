@@ -242,7 +242,9 @@ export const apiKey = pgTable('api_key', {
 	key: text('key').notNull(),
 	userId: uuid('user_id'), // deprecated, replaced by referenceId (to allow organization level API keys)
 	configId: text('config_id'),
-	referenceId: uuid('reference_id').notNull(),
+	referenceId: uuid('reference_id')
+		.references(() => organization.id)
+		.notNull(), //although better-auth allowed referenceId to map to user, we will always use it for organizations
 	refillInterval: integer('refill_interval'),
 	refillAmount: integer('refill_amount'),
 	lastRefillAt: timestamp('last_refill_at', { withTimezone: true, mode: 'date' }),
