@@ -9,7 +9,7 @@ import { EventPublicPage } from '../pages/events/event-public-page.page';
 import { EventSurveyPage } from '../pages/events/event-survey.page';
 import { TEST_USERS } from '../helpers/auth';
 
-const ORG_SLUG = 'e2e-test-organization';
+const ORG_SLUG = 'e2e-event-org';
 
 function slugifyTitle(title: string): string {
 	return title
@@ -170,7 +170,7 @@ test.describe.serial('Events', () => {
 		await publicPage.submitSignup();
 
 		await expect(page).toHaveURL(
-			new RegExp(`/page/${ORG_SLUG}/events/${ids.eventSlug}/signed-up`),
+			new RegExp(`${ORG_SLUG}.*\\/events\\/${ids.eventSlug}\\/signed-up`),
 			{ timeout: 15_000 }
 		);
 	});
@@ -389,7 +389,7 @@ test.describe.serial('Event signup fields', () => {
 
 		await publicPage.submitSignup();
 
-		await expect(page).toHaveURL(new RegExp(`/page/${ORG_SLUG}/events/${eventSlug}/signed-up`), {
+		await expect(page).toHaveURL(new RegExp(`${ORG_SLUG}.*\\/events\\/${eventSlug}\\/signed-up`), {
 			timeout: 15_000
 		});
 	});

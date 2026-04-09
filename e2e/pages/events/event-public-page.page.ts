@@ -1,4 +1,5 @@
 import type { Page, Locator } from '@playwright/test';
+import { getPublicEventUrl } from '../../helpers/config';
 
 export class EventPublicPage {
 	readonly page: Page;
@@ -30,7 +31,7 @@ export class EventPublicPage {
 	}
 
 	async goto(orgSlug: string, eventSlug: string) {
-		await this.page.goto(`/page/${orgSlug}/events/${eventSlug}`);
+		await this.page.goto(getPublicEventUrl(orgSlug, eventSlug));
 	}
 
 	customFieldInput(fieldId: string): Locator {

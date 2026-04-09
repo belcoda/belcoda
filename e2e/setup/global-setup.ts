@@ -40,11 +40,19 @@ async function saveCookieConsentState() {
 	const browser = await chromium.launch();
 	const context = await browser.newContext();
 	const url = new URL(BASE_URL);
+	const hostname = url.hostname;
 	await context.addCookies([
 		{
 			name: 'belcoda_cookie_consent',
 			value: 'accepted',
-			domain: url.hostname,
+			domain: hostname,
+			path: '/',
+			sameSite: 'Lax'
+		},
+		{
+			name: 'belcoda_cookie_consent',
+			value: 'accepted',
+			domain: `.${hostname}`,
 			path: '/',
 			sameSite: 'Lax'
 		}
@@ -67,7 +75,7 @@ export default async function globalSetup(_config: FullConfig) {
 	}
 
 	console.log('\nCreating organization...');
-	const org = await createOrganization(TEST_USERS.owner.email, 'E2E Test Organization', [
+	const org = await createOrganization(TEST_USERS.owner.email, 'E2E Event Org', [
 		{ email: TEST_USERS.admin.email, role: 'admin' },
 		{ email: TEST_USERS.member.email, role: 'member' }
 	]);
