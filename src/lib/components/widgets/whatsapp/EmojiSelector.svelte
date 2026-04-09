@@ -65,23 +65,31 @@
 		}}
 	>
 		<Popover.Trigger class={cn('flex h-5 w-6 items-center justify-center', className)}>
-			<button
-				type="button"
-				onclick={() => {
-					if (onTapSelectedEmojiBehaviour === 'remove') {
-						selectedEmoji = null;
-						onEmojiSelect(null);
-					}
-				}}
-			>
-				{#if selectedEmoji}
-					<div class="size-6">
-						{selectedEmoji}
-					</div>
-				{:else}
-					<SmileIcon class="size-4" />
-				{/if}
-			</button>
+			{#snippet child({ props })}
+				<button
+					type="button"
+					{...props}
+					onclick={(e) => {
+						if (onTapSelectedEmojiBehaviour === 'remove') {
+							selectedEmoji = null;
+							onEmojiSelect(null);
+							return;
+						}
+						const toggle = props['onclick'];
+						if (typeof toggle === 'function') {
+							toggle.call(e.currentTarget, e);
+						}
+					}}
+				>
+					{#if selectedEmoji}
+						<div class="size-6">
+							{selectedEmoji}
+						</div>
+					{:else}
+						<SmileIcon class="size-4" />
+					{/if}
+				</button>
+			{/snippet}
 		</Popover.Trigger>
 		<Popover.Portal>
 			<Popover.Content>
