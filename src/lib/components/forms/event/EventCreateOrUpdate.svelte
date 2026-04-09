@@ -121,7 +121,12 @@
 	let editSlugOpen = $state(false);
 </script>
 
-<form use:form.enhance class="mx-auto flex w-full max-w-4xl flex-col gap-4" id="event-form">
+<form
+	use:form.enhance
+	class="mx-auto flex w-full max-w-4xl flex-col gap-4"
+	id="event-form"
+	data-testid="event-form"
+>
 	<Errors {errors} />
 	<Card.Root>
 		<Card.Header>
@@ -212,6 +217,7 @@
 						<Button
 							type="button"
 							variant="destructive"
+							data-testid="event-archive-button"
 							onclick={async () => {
 								if (
 									window.confirm(
@@ -238,6 +244,7 @@
 						<Button
 							type="button"
 							variant="destructive"
+							data-testid="event-delete-button"
 							onclick={async () => {
 								if (
 									window.confirm(
@@ -274,6 +281,7 @@
 					<InputGroup.Input
 						bind:value={$data.title}
 						{...props}
+						data-testid="event-title-input"
 						placeholder={t`Title`}
 						oninput={useDebounce(
 							() => {
@@ -353,6 +361,7 @@
 					<InputGroup.Textarea
 						bind:value={$data.shortDescription}
 						{...props}
+						data-testid="event-description-input"
 						placeholder={t`Description`}
 						class="min-h-[80px]"
 					/>
