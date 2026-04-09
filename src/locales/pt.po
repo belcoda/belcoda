@@ -1085,6 +1085,7 @@ msgstr "E-mail sem título"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1149,6 +1150,8 @@ msgstr "Criar uma nova organização"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Rascunhos"
 
