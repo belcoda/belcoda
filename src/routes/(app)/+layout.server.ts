@@ -30,8 +30,8 @@ export async function load({ locals, url }) {
 		: null; //make sure the user is a member of the inferred organization
 	// prioritize explicit org param, then path-inferred org, then session active org, then owner/admin/other
 	const defaultActiveOrganizationId =
-		queryParamOrganizationId ||
 		inferredOrganizationId ||
+		queryParamOrganizationId ||
 		session.session.activeOrganizationId ||
 		ownerOrgs[0]?.organizationId ||
 		adminOrgs[0]?.organizationId ||
