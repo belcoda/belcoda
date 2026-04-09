@@ -624,7 +624,7 @@ export async function handlePetitionSignatureFlowResponse({
 
 			log.debug({ customFields }, 'Extracted custom fields from petition flow response');
 		} catch (error) {
-			log.error({ error, responses }, 'Failed to parse petition flow response for custom fields');
+			log.error({ error }, 'Failed to parse petition flow response for custom fields');
 		}
 	}
 
