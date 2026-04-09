@@ -93,9 +93,6 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 		if (!event.locals.authorizedApiOrganization) {
 			return error(401, 'Unauthorized: API key not valid for organization');
 		}
-		if (!event.locals.authorizedApiUser) {
-			return error(401, 'Unauthorized: API key not valid for user');
-		}
 		return resolve(event);
 	}
 
@@ -139,7 +136,6 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	event.locals.authorizedApiUser = null;
 	if (event.request.headers.get('x-api-key')) {
 		const key = await auth.api.verifyApiKey({
 			body: {
@@ -147,8 +143,7 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 			}
 		});
 		if (key.valid) {
-			event.locals.authorizedApiOrganization = key.key?.metadata?.organizationId || null;
-			event.locals.authorizedApiUser = key.key?.referenceId || null; //userId by default
+			event.locals.authorizedApiOrganization = key.key?.referenceId || null; //organizationId by default
 		}
 	}
 
