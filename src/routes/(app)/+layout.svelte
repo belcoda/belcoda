@@ -3,12 +3,13 @@
 	const { children, data } = $props();
 	import { appState } from '$lib/state.svelte';
 	import { authClient } from '$lib/auth-client';
+	import { safeSessionStorage } from '$lib/utils/storage';
 	// svelte-ignore state_referenced_locally
 	const { userId, defaultActiveOrganizationId, inferredOrganizationId, memberships, queryContext } =
 		data;
 	function setOrganizationIdState(organizationId: string) {
 		appState.organizationId = organizationId;
-		sessionStorage.setItem('state:organizationId', organizationId);
+		safeSessionStorage.setItem('state:organizationId', organizationId);
 	}
 
 	function determineAndPersistActiveOrganizationId({
@@ -20,7 +21,7 @@
 		defaultActiveOrganizationId: string;
 		memberships: { organizationId: string }[];
 	}) {
-		const existingSessionStorageOrganizationId = sessionStorage.getItem('state:organizationId');
+		const existingSessionStorageOrganizationId = safeSessionStorage.getItem('state:organizationId');
 		if (inferredOrganizationId) {
 			setOrganizationIdState(inferredOrganizationId);
 			return inferredOrganizationId;
