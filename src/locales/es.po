@@ -481,6 +481,7 @@ msgstr "Filtrar"
 msgid "Search..."
 msgstr "Buscar..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
@@ -884,6 +885,7 @@ msgstr "Nombre"
 msgid "Family name"
 msgstr "Apellido"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
@@ -1322,6 +1324,7 @@ msgstr "Asunto"
 msgid "Enter email subject..."
 msgstr "Ingresa el asunto del correo..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
@@ -2188,6 +2191,7 @@ msgstr "Le informaremos al organizador que no puedes asistir."
 msgid "Age Group"
 msgstr "Grupo de edad"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 msgid "Event Signup"
 msgstr "Registro de evento"
@@ -2540,11 +2544,13 @@ msgstr "¿Estás seguro de que quieres descartar este borrador de correo?"
 msgid "Email Draft"
 msgstr "Borrador de correo"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Descartar"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Enviar"
@@ -4499,4 +4505,20 @@ msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
 msgstr ""

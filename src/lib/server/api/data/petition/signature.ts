@@ -272,15 +272,13 @@ export async function signPetitionWithId({
 	petitionId,
 	personId,
 	organizationId,
-	signupDetails,
-	teamId: _teamId
+	signupDetails
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
 	personId: string;
 	organizationId: string;
 	signupDetails: PetitionSignatureDetails;
-	teamId?: string;
 }) {
 	const parsedSignupDetails = parse(petitionSignatureDetails, signupDetails);
 
