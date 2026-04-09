@@ -34,6 +34,10 @@ export class EventPublicPage {
 		await this.page.goto(getPublicEventUrl(orgSlug, eventSlug));
 	}
 
+	async gotoViaPath(orgSlug: string, eventSlug: string) {
+		await this.page.goto(`/page/${orgSlug}/events/${eventSlug}`);
+	}
+
 	customFieldInput(fieldId: string): Locator {
 		return this.page.getByTestId(`signup-custom-field-${fieldId}`);
 	}

@@ -91,6 +91,7 @@ test.describe.serial('Events', () => {
 		await editPage.waitForForm();
 
 		ids.eventTitle = `${ids.eventTitle} (edited)`;
+		ids.originalEventSlug = slugifyTitle(ids.eventTitle);
 		await editPage.clearAndFillTitle(ids.eventTitle);
 		await editPage.submit();
 
@@ -123,7 +124,7 @@ test.describe.serial('Events', () => {
 		await loginAsOwner(page);
 
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+		await publicPage.gotoViaPath(ORG_SLUG, ids.eventSlug);
 
 		await expect(page.getByTestId('public-page-navbar')).toBeVisible({ timeout: 10_000 });
 		const editLink = page.getByTestId('public-page-edit-link');
