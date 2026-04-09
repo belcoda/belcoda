@@ -154,7 +154,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Given name`}</Form.Label>
-							<Input {...props} bind:value={$data.person.givenName} />
+							<Input
+								{...props}
+								bind:value={$data.person.givenName}
+								data-testid="event-signup-given-name"
+							/>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -164,7 +168,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Family name`}</Form.Label>
-							<Input {...props} bind:value={$data.person.familyName} />
+							<Input
+								{...props}
+								bind:value={$data.person.familyName}
+								data-testid="event-signup-family-name"
+							/>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -174,7 +182,11 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Email address`}</Form.Label>
-						<Input {...props} bind:value={$data.person.emailAddress} />
+						<Input
+							{...props}
+							bind:value={$data.person.emailAddress}
+							data-testid="event-signup-email"
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -442,7 +454,13 @@
 			{/if}
 
 			<div class="mt-4 flex flex-col gap-3">
-				<Button type="submit" class="w-full" disabled={$submitting} formaction="?/signup">
+				<Button
+					type="submit"
+					class="w-full"
+					disabled={$submitting}
+					formaction="?/signup"
+					data-testid="event-signup-submit"
+				>
 					{#if $delayed}<Spinner class="size-4" />{/if}
 					{t`Sign up now`}</Button
 				>
