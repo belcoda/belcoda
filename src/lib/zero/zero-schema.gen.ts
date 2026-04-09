@@ -146,6 +146,12 @@ const apiKeyTable = {
 			customType: null as unknown as string,
 			serverName: 'user_id'
 		},
+		referenceId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'reference_id'
+		},
 		refillInterval: {
 			type: 'number',
 			optional: true,
@@ -2852,6 +2858,8 @@ const whatsappTemplateTable = {
 				| 'DELETED'
 				| 'DISABLED'
 				| 'PAUSED'
+				| 'FLAGGED'
+				| 'REINSTATED'
 				| 'LIMIT_EXCEEDED'
 		},
 		createdAt: {
