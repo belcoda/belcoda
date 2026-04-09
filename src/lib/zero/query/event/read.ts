@@ -19,7 +19,6 @@ export function readEventQuery({
 }) {
 	const q = builder.event
 		.where('id', '=', input.eventId)
-		.where('archivedAt', 'IS', null)
 		.where('deletedAt', 'IS', null)
 		.where((expr) => eventReadPermissions(expr, ctx))
 		.one();
