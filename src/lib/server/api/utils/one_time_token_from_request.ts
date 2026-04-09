@@ -3,12 +3,12 @@ import { error } from '@sveltejs/kit';
 import { buildBetterAuth } from '$lib/server/auth';
 
 /**
- * Generates a one-time token for the current session via `auth.api.generateOneTimeToken` (see
- * better-auth one-time-token plugin). Pass the load `request.headers` so session cookies are
- * present — same as `auth.api.getSession({ headers })` in hooks.
+ * Create a one-time preview token for the current session.
  *
- * Preview runs under `(app)` with a normal session; the `authToken` query on public pages is only
- * for verifying after redirect, not for generating here.
+ * @param request - The incoming request whose headers (including session cookies) are forwarded to the auth API
+ * @param locale - Locale identifier used to construct the auth instance
+ * @returns The generated one-time token string for preview authentication
+ * @throws An HTTP 500 error when a token cannot be prepared; preserves and rethrows errors that already include an HTTP `status`
  */
 export async function generateOneTimeTokenFromRequest(
 	request: Request,

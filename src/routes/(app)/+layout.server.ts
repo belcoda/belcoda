@@ -6,6 +6,22 @@ import { _listOrganizationMembershipsByUserIdUnsafe } from '$lib/server/api/data
 import { inferOrganizationIdFromUrl } from '$lib/server/api/utils/infer_organization';
 import { queryContextSchema, type QueryContext } from '$lib/zero/schema';
 
+/**
+ * Builds page data from the current session, the user's organization memberships, and a validated query context.
+ *
+ * @returns An object containing:
+ * - `userId` — the authenticated user's id
+ * - `defaultActiveOrganizationId` — the chosen active organization id or `null` (never returned here because missing causes a redirect)
+ * - `inferredOrganizationId` — an organization id inferred from the URL or `null`
+ * - `organizations` — array of `{ organizationId }` derived from the user's memberships
+ * - `memberships` — same value as `organizations`
+ * - `queryContext` — the parsed and validated query context
+ *
+ * @throws Redirects to `/signup` (302) when there is no session or the session user id is missing/blank.
+ * @throws Redirects to `/organization` (302) when no active organization id can be determined.
+ * @throws Error (500) with message `Invalid query context: ...` when `rawQueryContext` fails schema validation.
+ * @throws Error (500) with message `Query context userId does not match session` when the parsed query context's `userId` differs from the session `userId`.
+ */
 export async function load({ locals, url }) {
 	const session = locals.session;
 

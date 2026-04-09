@@ -13,6 +13,14 @@ Sentry.init({
 	sendDefaultPii: true
 });
 
+/**
+ * Produce a user-facing error message appropriate for display in the UI.
+ *
+ * @param error - The original error value (may be an Error, string, or other value)
+ * @param kitMessage - Framework-provided message; used when it is present and not a generic placeholder
+ * @param status - HTTP status code used to choose a generic server-side vs client-side message
+ * @returns A readable message for end users: prefers a non-generic `kitMessage`, maps fetch/load failures to a connectivity prompt, uses `Error.message` or string errors when available, and falls back to a status-appropriate generic message
+ */
 function userFacingMessage(error: unknown, kitMessage: string, status: number): string {
 	if (kitMessage && kitMessage !== 'Internal Error' && kitMessage !== 'Error') {
 		return kitMessage;

@@ -27,6 +27,16 @@ import { locales } from './locales/data.js';
 loadLocales(main.key, main.loadIDs, main.loadCatalog, locales);
 loadLocales(js.key, js.loadIDs, js.loadCatalog, locales);
 
+/**
+ * Determine the locale for an incoming request by consulting a locale cookie and optional URL override.
+ *
+ * Checks the `BELCODA_LOCALE` cookie and, if its value is a supported locale, returns the `locale` URL
+ * search parameter when present and supported; otherwise returns the cookie value. If neither provides
+ * a supported locale, falls back to `'en'`.
+ *
+ * @param event - The incoming RequestEvent containing `url` and `cookies`
+ * @returns The selected `Locale` for the request; `'en'` if no supported locale is found
+ */
 function detectLocale(event: RequestEvent): Locale {
 	log.debug({ url: event.url.toString() }, 'New incoming request');
 	if (event.cookies.get('BELCODA_LOCALE')) {
@@ -45,7 +55,11 @@ function detectLocale(event: RequestEvent): Locale {
 	return 'en';
 }
 
-/** True for compiled assets and static files that must not run auth, locale, or session middleware. */
+/**
+ * Determines whether a request pathname targets compiled app internals or static/root files that should bypass auth, locale, and session middleware.
+ *
+ * @returns `true` if `pathname` refers to an internal or static asset (e.g. `/_app/...`, `/static/...`, `/favicon.ico`, `/robots.txt`), `false` otherwise.
+ */
 function isInternalOrStaticAssetPath(pathname: string): boolean {
 	return (
 		pathname.startsWith('/_app/') ||
