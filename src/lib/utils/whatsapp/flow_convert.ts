@@ -486,6 +486,7 @@ function pushSurveyQuestionComponentsFromCollections(
 						type: 'Dropdown',
 						'data-source': question.options.map((option) => ({ id: option, title: option }))
 					});
+					break;
 				}
 				case 'custom.emailInput': {
 					components.push({ ...base, type: 'TextInput', 'input-type': 'email' });
