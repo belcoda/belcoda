@@ -39,7 +39,7 @@ export default defineConfig({
 		}),
 		sveltekit(),
 		tailwindcss(),
-		wuchale('wuchale.config.ts'),
+		wuchale('wuchale.config.js'),
 		devtoolsJson()
 	],
 	test: {

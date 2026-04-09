@@ -214,7 +214,7 @@ export function buildBetterAuth(localeInput: string) {
 			}),
 			stripe({
 				stripeClient,
-				stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+				stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET as string,
 				createCustomerOnSignUp: true,
 				subscription: {
 					enabled: true,

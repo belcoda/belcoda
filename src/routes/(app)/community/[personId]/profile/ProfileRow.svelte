@@ -10,6 +10,7 @@
 		showCopyButton?: boolean;
 		copyText?: string | null;
 		edit: boolean;
+		editTestId?: string;
 	};
 	let {
 		children,
@@ -18,7 +19,8 @@
 		separator = true,
 		showCopyButton = true,
 		copyText = null,
-		edit = $bindable(false)
+		edit = $bindable(false),
+		editTestId = undefined
 	}: Props = $props();
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { t } from '$lib/index.svelte';
@@ -35,7 +37,9 @@
 				{#if showCopyButton}
 					<CopyButton text={copyText} />
 				{/if}
-				<Button variant="outline" size="sm" onclick={() => (edit = true)}>Edit</Button>
+				<Button variant="outline" size="sm" onclick={() => (edit = true)} data-testid={editTestId}
+					>Edit</Button
+				>
 			{/if}
 		</div>
 	</div>
