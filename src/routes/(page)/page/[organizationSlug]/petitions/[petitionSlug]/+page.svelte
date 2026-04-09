@@ -21,4 +21,4 @@
 	<UserNavBar session={data.session} linkUrl={editPetitionUrl} linkText={t`Edit Petition`} />
 {/if}
 
-<RenderPetitionPage {data} {form} {layout} />
+<RenderPetitionPage {data} {form} {layout} petitionId={data.petition.id} />

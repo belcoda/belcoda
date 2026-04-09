@@ -37,6 +37,7 @@
 	const {
 		data,
 		form,
+		petitionId,
 		layout = 'default',
 		success = false
 	}: {
@@ -51,12 +52,13 @@
 			}[];
 			whatsAppSignupLink?: string | null;
 		};
+		petitionId: string;
 		form?: { error?: string; success?: boolean } | null;
 		layout?: 'default' | 'embed';
 		success?: boolean;
 	} = $props();
 
-	const editPetitionUrl = $derived(`${env.PUBLIC_HOST}/petitions/${data.petition.id}`);
+	const editPetitionUrl = $derived(`${env.PUBLIC_HOST}/petitions/${petitionId}`);
 	const primaryColor = $derived(
 		data.organization.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
 	);
