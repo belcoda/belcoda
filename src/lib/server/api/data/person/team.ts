@@ -10,7 +10,7 @@ import {
 	removePersonFromTeamMutatorSchemaZero,
 	type RemovePersonFromTeamMutatorSchemaZero
 } from '$lib/schema/person';
-import { activity, personTeam, team } from '$lib/schema/drizzle';
+import { activity, person, personTeam, team } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
@@ -76,6 +76,12 @@ export async function _addPersonTeamDataUnsafe({
 	});
 	if (!teamRecord) {
 		throw new Error('Team not found');
+	}
+	const personRecord = await tx.dbTransaction.wrappedTransaction.query.person.findFirst({
+		where: and(eq(person.id, args.personId), eq(person.organizationId, args.organizationId))
+	});
+	if (!personRecord) {
+		throw new Error('Person not found');
 	}
 	const [inserted] = await tx.dbTransaction.wrappedTransaction
 		.insert(personTeam)
