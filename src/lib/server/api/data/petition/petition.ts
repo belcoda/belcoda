@@ -159,6 +159,9 @@ export async function updatePetition({
 			)
 		)
 		.returning();
+	if (!updatedPetition) {
+		throw new Error('Unable to update petition: Petition not found');
+	}
 
 	const structureChanged =
 		petitionRecord.title !== updatedPetition.title ||
