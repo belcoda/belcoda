@@ -13,13 +13,15 @@ import {
 	deletePetitionMutatorSchema
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
-
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { team } from '$lib/schema/drizzle';
 import { and, eq, isNull } from 'drizzle-orm';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
+
 export async function createPetition({
 	tx,
 	ctx,
