@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	import ActivityRenderer from './ActivityRenderer.svelte';
@@ -32,9 +33,9 @@
 <div class="activity-timeline min-h-full bg-gray-50">
 	<div class="activity-timeline p-4">
 		{#if activityQuery.data === undefined}
-			<div class="text-center text-sm text-gray-400">Loading activities...</div>
+			<div class="text-center text-sm text-gray-400">{t`Loading activities...`}</div>
 		{:else if activityQuery.data.length === 0}
-			<div class="text-center text-sm text-gray-400">No activities yet</div>
+			<div class="text-center text-sm text-gray-400">{t`No activities yet`}</div>
 		{:else}
 			<div class="flex flex-col-reverse gap-y-4">
 				{#each activityQuery.data as activity (activity.id)}
