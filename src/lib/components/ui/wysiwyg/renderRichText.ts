@@ -43,6 +43,17 @@ const hasRoot = (json: string) => {
 	}
 };
 
+// Check if the editor state has valid content (not empty)
+const hasValidContent = (json: string) => {
+	try {
+		const parsed = JSON.parse(json);
+		const children = parsed?.root?.children;
+		return Array.isArray(children) && children.length > 0;
+	} catch {
+		return false;
+	}
+};
+
 export const jsonToText = (json: string): string => {
 	try {
 		const parsed = JSON.parse(json);
@@ -58,7 +69,7 @@ export const jsonToText = (json: string): string => {
 };
 
 export const jsonToHtml = (json: string) => {
-	if (hasRoot(json)) {
+	if (hasRoot(json) && hasValidContent(json)) {
 		const editor = createEditor({
 			namespace: 'RichText'
 		});
