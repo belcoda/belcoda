@@ -856,8 +856,8 @@ msgstr "Copied \"{0}\" to clipboard"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied!"
-msgstr "Copied!"
+msgid "Copied! "
+msgstr "Copied! "
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -868,8 +868,8 @@ msgstr "Copied!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy"
-msgstr "Copy"
+msgid "Copy "
+msgstr "Copy "
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
@@ -4505,3 +4505,17 @@ msgstr "Your browser does not support the video tag."
 
 #~ msgid "Whatsapp message"
 #~ msgstr "Whatsapp message"
+
+#~ msgid "loading_activities"
+#~ msgstr "loading_activities"
+
+#~ msgid "no_activities_yet"
+#~ msgstr "no_activities_yet"
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Loading activities..."
+msgstr "Loading activities..."
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "No activities yet"
+msgstr "No activities yet"

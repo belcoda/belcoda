@@ -856,7 +856,7 @@ msgstr "Copiado \"{0}\" al portapapeles"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied!"
+msgid "Copied! "
 msgstr "¡Copiado!"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -868,7 +868,7 @@ msgstr "¡Copiado!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy"
+msgid "Copy "
 msgstr "Copiar"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -4485,3 +4485,20 @@ msgstr "No hay subtítulos disponibles"
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the video tag."
 msgstr "Tu navegador no admite la etiqueta de video."
+
+#~ msgid "Whatsapp message"
+#~ msgstr ""
+
+#~ msgid "loading_activities"
+#~ msgstr ""
+
+#~ msgid "no_activities_yet"
+#~ msgstr ""
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Loading activities..."
+msgstr "Cargando actividades..."
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "No activities yet"
+msgstr "Aún no hay actividades"
