@@ -4500,3 +4500,23 @@ msgstr "This event has been archived."
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
 msgstr "You can view this event, but new signups are closed."
+
+#: src/routes/+error.svelte
+msgid "Something went wrong."
+msgstr "Something went wrong."
+
+#: src/routes/+error.svelte
+msgid "Reference"
+msgstr "Reference"
+
+#: src/routes/+error.svelte
+msgid "Debug details"
+msgstr "Debug details"
+
+#: src/routes/+error.svelte
+msgid "Try again"
+msgstr "Try again"
+
+#: src/routes/+error.svelte
+msgid "Home"
+msgstr "Home"
