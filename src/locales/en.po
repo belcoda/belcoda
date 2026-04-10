@@ -4519,3 +4519,23 @@ msgstr "Loading activities..."
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "No activities yet"
 msgstr "No activities yet"
+
+#: src/routes/+error.svelte
+msgid "Something went wrong."
+msgstr "Something went wrong."
+
+#: src/routes/+error.svelte
+msgid "Reference"
+msgstr "Reference"
+
+#: src/routes/+error.svelte
+msgid "Debug details"
+msgstr "Debug details"
+
+#: src/routes/+error.svelte
+msgid "Try again"
+msgstr "Try again"
+
+#: src/routes/+error.svelte
+msgid "Home"
+msgstr "Home"
