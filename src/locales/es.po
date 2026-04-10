@@ -540,7 +540,6 @@ msgstr "Filtrar etiquetas..."
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
@@ -2576,15 +2575,6 @@ msgstr "firmas"
 msgid "of goal"
 msgstr "del objetivo"
 
-#~ msgid "Thank you for signing!"
-#~ msgstr "¡Gracias por firmar!"
-
-#~ msgid "Your signature has been recorded and you'll receive updates about this petition."
-#~ msgstr "Tu firma ha sido registrada y recibirás actualizaciones sobre esta petición."
-
-#~ msgid "Return to petition"
-#~ msgstr "Volver a la petición"
-
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "First name"
@@ -3639,7 +3629,6 @@ msgstr ""
 #: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Search tag..."
 msgstr "Buscar etiqueta..."
 
@@ -4271,12 +4260,10 @@ msgid "Clear selection"
 msgstr "Borrar selección"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Remove tag"
 msgstr "Quitar etiqueta"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Select tags..."
 msgstr "Seleccionar etiquetas..."
 
@@ -4298,7 +4285,7 @@ msgstr "Detalles de depuración"
 
 #: src/routes/+error.svelte
 msgid "Try again"
-msgstr "Reintentar"
+msgstr "Intentar de nuevo"
 
 #: src/routes/+error.svelte
 msgid "Home"
@@ -4490,30 +4477,6 @@ msgstr "Registrado por WhatsApp [{0}]"
 msgid "Goal: {0}"
 msgstr ""
 
-#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
-msgid "Select a petition..."
-msgstr "Selecciona una petición..."
-
-#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
-msgid "Search petition..."
-msgstr "Buscar petición..."
-
-#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
-msgid "No petitions found."
-msgstr "No se encontraron peticiones."
-
-#~ msgid "Snapshot"
-#~ msgstr ""
-
-#~ msgid "Add Node"
-#~ msgstr ""
-
-#~ msgid "Petition Signup"
-#~ msgstr ""
-
-#~ msgid "Tag Add"
-#~ msgstr ""
-
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
 msgstr "Selecciona un equipo..."
@@ -4525,27 +4488,3 @@ msgstr "Buscar equipo..."
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
 msgstr "Agregar equipo"
-
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-msgid "Optional tags applied to people when they sign this petition."
-msgstr "Etiquetas opcionales aplicadas a las personas cuando firman esta petición."
-
-#: src/routes/+error.svelte
-msgid "Something went wrong."
-msgstr "Algo salió mal."
-
-#: src/routes/+error.svelte
-msgid "Reference"
-msgstr "Referencia"
-
-#: src/routes/+error.svelte
-msgid "Debug details"
-msgstr "Detalles de depuración"
-
-#: src/routes/+error.svelte
-msgid "Try again"
-msgstr "Intentar de nuevo"
-
-#: src/routes/+error.svelte
-msgid "Home"
-msgstr "Inicio"

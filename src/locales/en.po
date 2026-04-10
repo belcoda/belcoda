@@ -540,7 +540,6 @@ msgstr "Filter tags..."
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
@@ -2576,15 +2575,6 @@ msgstr "signatures"
 msgid "of goal"
 msgstr "of goal"
 
-#~ msgid "Thank you for signing!"
-#~ msgstr "Thank you for signing!"
-
-#~ msgid "Your signature has been recorded and you'll receive updates about this petition."
-#~ msgstr "Your signature has been recorded and you'll receive updates about this petition."
-
-#~ msgid "Return to petition"
-#~ msgstr "Return to petition"
-
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "First name"
@@ -3639,7 +3629,6 @@ msgstr "Select a tag..."
 #: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Search tag..."
 msgstr "Search tag..."
 
@@ -4288,12 +4277,10 @@ msgid "Clear selection"
 msgstr "Clear selection"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Remove tag"
 msgstr "Remove tag"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Select tags..."
 msgstr "Select tags..."
 
@@ -4506,30 +4493,6 @@ msgstr "Signed up via WhatsApp [{0}]"
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "Goal: {0}"
 msgstr "Goal: {0}"
-
-#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
-msgid "Select a petition..."
-msgstr "Select a petition..."
-
-#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
-msgid "Search petition..."
-msgstr "Search petition..."
-
-#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
-msgid "No petitions found."
-msgstr "No petitions found."
-
-#~ msgid "Snapshot"
-#~ msgstr "Snapshot"
-
-#~ msgid "Add Node"
-#~ msgstr "Add Node"
-
-#~ msgid "Petition Signup"
-#~ msgstr "Petition Signup"
-
-#~ msgid "Tag Add"
-#~ msgstr "Tag Add"
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
