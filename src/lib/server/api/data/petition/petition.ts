@@ -160,12 +160,12 @@ export async function updatePetition({
 		)
 		.returning();
 
-	const structureChanged = !!(parsed.input.settings || parsed.input.title);
-	const publishedStatusChanged =
-		petitionRecord?.published !== undefined &&
-		petitionRecord?.published !== updatedPetition?.published;
+	const structureChanged =
+		petitionRecord.title !== updatedPetition.title ||
+		JSON.stringify(petitionRecord.settings) !== JSON.stringify(updatedPetition.settings);
+	const publishedStatusChanged = petitionRecord.published !== updatedPetition.published;
 
-	if (updatedPetition && (structureChanged || publishedStatusChanged)) {
+	if (updatedPetition?.published && (structureChanged || publishedStatusChanged)) {
 		const queue = await getQueue();
 		await queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
 	}
