@@ -4468,3 +4468,23 @@ msgstr "Seleccionar etiquetas..."
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Optional tags applied to people when they sign this petition."
 msgstr "Etiquetas opcionales aplicadas a las personas cuando firman esta petición."
+
+#: src/routes/+error.svelte
+msgid "Something went wrong."
+msgstr ""
+
+#: src/routes/+error.svelte
+msgid "Reference"
+msgstr ""
+
+#: src/routes/+error.svelte
+msgid "Debug details"
+msgstr ""
+
+#: src/routes/+error.svelte
+msgid "Try again"
+msgstr ""
+
+#: src/routes/+error.svelte
+msgid "Home"
+msgstr ""

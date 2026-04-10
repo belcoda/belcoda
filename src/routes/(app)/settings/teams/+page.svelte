@@ -44,11 +44,12 @@
 							</Table.Row>
 						{:else if teamList.data}
 							{#each teamList.data as team (team.id)}
-								<Table.Row>
+								<Table.Row data-testid="team-row" data-team-id={team.id}>
 									<Table.Cell class="font-medium">
 										<a
 											href="/settings/teams/{team.id}"
 											class="hover:underline focus:underline focus:outline-none"
+											data-testid="team-row-name"
 										>
 											{team.name}
 										</a>

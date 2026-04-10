@@ -55,7 +55,12 @@
 		<div class="flex items-center gap-1">
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<Button variant="ghost" size="icon-sm">
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						data-testid="edit-tag-trigger"
+						data-tag-id={tag.id}
+					>
 						<PencilIcon class="size-4" />
 					</Button>
 				</Tooltip.Trigger>
@@ -66,6 +71,8 @@
 					<Button
 						variant="ghost"
 						size="icon-sm"
+						data-testid="delete-tag-trigger"
+						data-tag-id={tag.id}
 						onclick={(e) => {
 							e.stopPropagation();
 							handleDelete();
@@ -88,6 +95,7 @@
 							type="text"
 							bind:value={$data.name}
 							placeholder={t`e.g., Newsletter subscribers`}
+							data-testid="edit-tag-name"
 						/>
 					{/snippet}
 				</Form.Control>
@@ -97,7 +105,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<div class="flex items-center gap-2">
-							<Checkbox {...props} bind:checked={$data.active} />
+							<Checkbox {...props} bind:checked={$data.active} data-testid="edit-tag-active" />
 							<Form.Label class="cursor-pointer font-normal">{t`Active`}</Form.Label>
 						</div>
 					{/snippet}
@@ -110,6 +118,7 @@
 		<div class="flex items-center justify-end gap-2">
 			<Button variant="outline" onclick={() => (isOpen = false)}>{t`Cancel`}</Button>
 			<Button
+				data-testid="edit-tag-submit"
 				onclick={() => {
 					form.submit();
 				}}
