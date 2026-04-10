@@ -13,6 +13,7 @@ import { queryContextSchema, type QueryContext } from '$lib/zero/schema';
  * - `userId` — the authenticated user's id
  * - `defaultActiveOrganizationId` — the chosen active organization id or `null` (never returned here because missing causes a redirect)
  * - `inferredOrganizationId` — an organization id inferred from the URL or `null`
+ * - `queryParamOrganizationId` — `?org=` when valid for the user's memberships, else `null`
  * - `organizations` — array of `{ organizationId }` derived from the user's memberships
  * - `memberships` — same value as `organizations`
  * - `queryContext` — the parsed and validated query context
@@ -55,13 +56,21 @@ export async function load({ locals, url }) {
 	const adminOrgs = memberships.filter((m) => m.role === 'admin');
 	const otherOrgs = memberships.filter((m) => m.role !== 'owner' && m.role !== 'admin');
 
+	// explicit ?org= query param (validated against memberships)
+	const rawOrgParam = url.searchParams.get('org');
+	const queryParamOrganizationId = rawOrgParam
+		? (memberships.find((m) => m.organizationId === rawOrgParam)?.organizationId ?? null)
+		: null;
+
+	// see if we can derive an organization id from the URL path
 	const rawInferredOrganizationId = await inferOrganizationIdFromUrl({ url });
 	const inferredOrganizationId = rawInferredOrganizationId
 		? memberships.find((m) => m.organizationId === rawInferredOrganizationId)?.organizationId
-		: null;
-
+		: null; //make sure the user is a member of the inferred organization
+	// prioritize explicit org param, then path-inferred org, then session active org, then owner/admin/other
 	const defaultActiveOrganizationId =
 		inferredOrganizationId ||
+		queryParamOrganizationId ||
 		session.session.activeOrganizationId ||
 		ownerOrgs[0]?.organizationId ||
 		adminOrgs[0]?.organizationId ||
@@ -78,6 +87,7 @@ export async function load({ locals, url }) {
 		userId,
 		defaultActiveOrganizationId,
 		inferredOrganizationId,
+		queryParamOrganizationId,
 		organizations,
 		memberships: organizations,
 		queryContext

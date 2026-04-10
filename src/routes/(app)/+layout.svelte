@@ -2,6 +2,7 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { authClient } from '$lib/auth-client';
+	import { determineAndPersistActiveOrganizationId } from '$lib/utils/organization';
 	import { zero } from '$lib/zero.svelte';
 	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
 	import { onMount } from 'svelte';
@@ -11,34 +12,6 @@
 	function setOrganizationIdState(organizationId: string) {
 		appState.organizationId = organizationId;
 		sessionStorage.setItem('state:organizationId', organizationId);
-	}
-
-	function determineAndPersistActiveOrganizationId({
-		inferredOrganizationId,
-		defaultActiveOrganizationId,
-		organizations
-	}: {
-		inferredOrganizationId: string | null | undefined;
-		defaultActiveOrganizationId: string;
-		organizations: { organizationId: string }[];
-	}) {
-		const existingSessionStorageOrganizationId = sessionStorage.getItem('state:organizationId');
-		if (inferredOrganizationId) {
-			setOrganizationIdState(inferredOrganizationId);
-			return inferredOrganizationId;
-		} else if (existingSessionStorageOrganizationId) {
-			const sessionOrgIsMember = organizations.some(
-				(m) => m.organizationId === existingSessionStorageOrganizationId
-			);
-			const validatedOrganizationId = sessionOrgIsMember
-				? existingSessionStorageOrganizationId
-				: defaultActiveOrganizationId;
-			setOrganizationIdState(validatedOrganizationId);
-			return validatedOrganizationId;
-		} else {
-			setOrganizationIdState(defaultActiveOrganizationId);
-			return defaultActiveOrganizationId;
-		}
 	}
 
 	let initialized = $state(false);
@@ -54,9 +27,11 @@
 		appState.init({
 			userId,
 			organizationId: determineAndPersistActiveOrganizationId({
+				queryParamOrganizationId: data.queryParamOrganizationId,
 				inferredOrganizationId: data.inferredOrganizationId,
 				defaultActiveOrganizationId,
-				organizations: data.organizations
+				memberships: data.memberships,
+				setOrganizationIdState
 			}),
 			queryContext
 		});
@@ -66,9 +41,11 @@
 	$effect(() => {
 		if (!initialized) return;
 		const organizationId = determineAndPersistActiveOrganizationId({
+			queryParamOrganizationId: data.queryParamOrganizationId,
 			inferredOrganizationId: data.inferredOrganizationId,
 			defaultActiveOrganizationId: data.defaultActiveOrganizationId,
-			organizations: data.organizations
+			memberships: data.memberships,
+			setOrganizationIdState
 		});
 		appState.organizationId = organizationId;
 		authClient.organization.setActive({ organizationId });

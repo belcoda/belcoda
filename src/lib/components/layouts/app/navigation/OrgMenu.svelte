@@ -121,10 +121,11 @@
 						class="flex items-center gap-2"
 						checked={organization.id === appState.organizationId}
 						onclick={async () => {
+							appState.organizationId = organization.id;
+							sessionStorage.setItem('state:organizationId', organization.id);
 							await authClient.organization.setActive({
 								organizationId: organization.id
 							});
-							appState.organizationId = organization.id;
 							await goto('/');
 						}}
 					>
