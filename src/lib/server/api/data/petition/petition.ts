@@ -173,8 +173,10 @@ export async function updatePetition({
 			const queue = await getQueue();
 			await queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
 		} catch (error) {
-			// Use the project logger here; avoid failing the primary mutation path.
-			// Optionally persist an outbox record for guaranteed retry.
+			log.error(
+				{ error, petitionId: parsed.metadata.petitionId },
+				'Error deploying petition WhatsApp flow'
+			);
 		}
 	}
 }
