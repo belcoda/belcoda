@@ -121,10 +121,11 @@
 						class="flex items-center gap-2"
 						checked={organization.id === appState.organizationId}
 						onclick={async () => {
+							appState.organizationId = organization.id;
+							sessionStorage.setItem('state:organizationId', organization.id);
 							await authClient.organization.setActive({
 								organizationId: organization.id
 							});
-							appState.organizationId = organization.id;
 							await goto('/');
 						}}
 					>
@@ -174,7 +175,7 @@
 
 {#snippet inviteBadge()}
 	<a
-		href="/settings/user/invite"
+		href="/settings/users"
 		class=" text-heading flex items-center gap-1 rounded border bg-background px-1.5 py-0.5 text-xs font-medium hover:bg-accent"
 	>
 		<PlusIcon class="size-3" />

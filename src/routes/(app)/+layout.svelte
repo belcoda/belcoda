@@ -1,72 +1,55 @@
 <script lang="ts">
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	const { children, data } = $props();
 	import { appState } from '$lib/state.svelte';
 	import { authClient } from '$lib/auth-client';
-	// svelte-ignore state_referenced_locally
-	const { userId, defaultActiveOrganizationId, inferredOrganizationId, memberships, queryContext } =
-		data;
+	import { determineAndPersistActiveOrganizationId } from '$lib/utils/organization';
+	import { zero } from '$lib/zero.svelte';
+	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
+	import { onMount } from 'svelte';
+
+	const { children, data } = $props();
+
 	function setOrganizationIdState(organizationId: string) {
 		appState.organizationId = organizationId;
 		sessionStorage.setItem('state:organizationId', organizationId);
 	}
 
-	function determineAndPersistActiveOrganizationId({
-		inferredOrganizationId,
-		defaultActiveOrganizationId,
-		memberships
-	}: {
-		inferredOrganizationId: string | null | undefined;
-		defaultActiveOrganizationId: string;
-		memberships: { organizationId: string }[];
-	}) {
-		const existingSessionStorageOrganizationId = sessionStorage.getItem('state:organizationId');
-		if (inferredOrganizationId) {
-			setOrganizationIdState(inferredOrganizationId);
-			return inferredOrganizationId;
-		} else if (existingSessionStorageOrganizationId) {
-			const sessionOrgIsMember = memberships.some(
-				(m) => m.organizationId === existingSessionStorageOrganizationId
-			);
-			const validatedOrganizationId = sessionOrgIsMember
-				? existingSessionStorageOrganizationId
-				: defaultActiveOrganizationId;
-			setOrganizationIdState(validatedOrganizationId);
-			return validatedOrganizationId;
-		} else {
-			setOrganizationIdState(defaultActiveOrganizationId);
-			return defaultActiveOrganizationId;
-		}
-	}
-	//initialize the zero instance with the user id and query context
-	// IMPORTANT: this must be done before the appState is created, because the appState relies on the zero instance
-	import { zero } from '$lib/zero.svelte';
-	zero.init(userId, queryContext);
-	appState.init({
-		userId,
-		organizationId: determineAndPersistActiveOrganizationId({
-			inferredOrganizationId,
-			defaultActiveOrganizationId,
-			memberships
-		}),
-		queryContext
+	let initialized = $state(false);
+
+	$effect.pre(() => {
+		if (initialized) return;
+		const userId = data.userId;
+		const queryContext = data.queryContext;
+		const defaultActiveOrganizationId = data.defaultActiveOrganizationId;
+		if (!userId || !queryContext || !defaultActiveOrganizationId) return;
+
+		zero.init(userId, queryContext);
+		appState.init({
+			userId,
+			organizationId: determineAndPersistActiveOrganizationId({
+				queryParamOrganizationId: data.queryParamOrganizationId,
+				inferredOrganizationId: data.inferredOrganizationId,
+				defaultActiveOrganizationId,
+				memberships: data.memberships,
+				setOrganizationIdState
+			}),
+			queryContext
+		});
+		initialized = true;
 	});
 
-	//keep the active organization id in sync with the inferred organization id and the default active organization id
 	$effect(() => {
+		if (!initialized) return;
 		const organizationId = determineAndPersistActiveOrganizationId({
-			inferredOrganizationId,
-			defaultActiveOrganizationId,
-			memberships
+			queryParamOrganizationId: data.queryParamOrganizationId,
+			inferredOrganizationId: data.inferredOrganizationId,
+			defaultActiveOrganizationId: data.defaultActiveOrganizationId,
+			memberships: data.memberships,
+			setOrganizationIdState
 		});
 		appState.organizationId = organizationId;
 		authClient.organization.setActive({ organizationId });
 	});
-
-	//conditional onboarding components based on the user's onboarding status
-	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
-
-	import { onMount } from 'svelte';
 
 	onMount(async () => {
 		try {
@@ -75,13 +58,11 @@
 			});
 		} catch (error) {
 			console.error('Failed to set active organization:', error);
-			// Consider fallback behavior or user notification
 		}
 	});
 </script>
 
-<!-- This is an important check to ensure that we always have a valid userId and active organization Id. These will be used with confidence throughout the rest of the application interface -->
-{#if zero.instance && appState.user?.details.type === 'complete' && appState.activeOrganization?.details.type === 'complete' && appState.organizations?.details.type === 'complete'}
+{#if zero.hasInstance && appState.layoutBootstrapComplete}
 	<Onboarding />
 	{@render children()}
 {:else}

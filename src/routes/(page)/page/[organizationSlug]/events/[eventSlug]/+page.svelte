@@ -4,17 +4,13 @@
 	import RenderEventPage from '$lib/components/layouts/public/event/RenderEventPage.svelte';
 	import { page } from '$app/state';
 	import { env } from '$env/dynamic/public';
-	import { dev } from '$app/environment';
 
 	const paramLayout = page.url.searchParams.get('layout') || 'default';
 	const layouts = ['default', 'embed'];
 	const layout = layouts.includes(paramLayout) ? (paramLayout as 'default' | 'embed') : 'default';
 
 	// Build the edit URL: strip the subdomain and go to the main app
-	const editEventUrl = $derived.by(() => {
-		const protocol = dev ? 'http' : 'https';
-		return `${protocol}://${env.PUBLIC_ROOT_DOMAIN}/events/${data.event.id}`;
-	});
+	const editEventUrl = $derived(`${env.PUBLIC_HOST}/events/${data.event.id}`);
 
 	import UserNavBar from '$lib/components/layouts/public/UserNavBar.svelte';
 </script>
