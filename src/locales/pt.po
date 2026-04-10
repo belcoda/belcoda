@@ -1086,6 +1086,7 @@ msgstr "E-mail sem título"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1150,6 +1151,8 @@ msgstr "Criar uma nova organização"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Rascunhos"
 
@@ -4522,4 +4525,28 @@ msgstr "Pesquisar equipe..."
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
-msgstr ""
+msgstr "Adicionar equipe"
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Optional tags applied to people when they sign this petition."
+msgstr "Tags opcionais aplicadas às pessoas quando assinam esta petição."
+
+#: src/routes/+error.svelte
+msgid "Something went wrong."
+msgstr "Algo deu errado."
+
+#: src/routes/+error.svelte
+msgid "Reference"
+msgstr "Referência"
+
+#: src/routes/+error.svelte
+msgid "Debug details"
+msgstr "Detalhes de depuração"
+
+#: src/routes/+error.svelte
+msgid "Try again"
+msgstr "Tentar novamente"
+
+#: src/routes/+error.svelte
+msgid "Home"
+msgstr "Início"
