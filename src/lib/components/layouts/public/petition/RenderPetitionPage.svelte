@@ -2,7 +2,6 @@
 	import { t } from '$lib/index.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Progress } from '$lib/components/ui/progress/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import ShareIcon from '@lucide/svelte/icons/share-2';
 	import { formatDate } from '$lib/utils/date';
@@ -47,34 +46,12 @@
 		data.organization.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
 	);
 
-	function calculateTarget(currentSignatures: number): number {
-		const milestones = [
-			100, 200, 500, 1000, 1500, 2000, 2500, 5000, 7500, 10000, 15000, 20000, 25000, 50000, 75000,
-			100000, 150000, 200000, 250000, 500000, 1000000
-		];
-
-		for (const milestone of milestones) {
-			if (currentSignatures <= milestone) {
-				return milestone;
-			}
-		}
-
-		return Math.ceil(currentSignatures / 100000) * 100000;
-	}
-
-	const currentTarget = $derived(calculateTarget(data.signatureCount));
-	const progress = $derived((data.signatureCount / currentTarget) * 100);
-
 	function formatNumber(num: number): string {
 		return num.toLocaleString();
 	}
 
 	const petitionSignatureCount = (count: string) => {
 		return t`${count} people have signed this petition`;
-	};
-
-	const targetToGoal = (current: string, target: string) => {
-		return t`${current} more signatures needed to reach ${target}`;
 	};
 </script>
 

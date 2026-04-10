@@ -127,7 +127,7 @@
 								</Table.Row>
 							{:else if peopleList.data}
 								{#each peopleList.data as person (person.id)}
-									<Table.Row>
+									<Table.Row data-testid="team-person-row" data-person-id={person.id}>
 										<Table.Cell class="font-medium">
 											<div class="flex items-center gap-2">
 												<Avatar
@@ -150,6 +150,8 @@
 											<Button
 												variant="ghost"
 												size="sm"
+												data-testid="team-remove-person"
+												data-person-id={person.id}
 												onclick={() => handleRemovePerson(person.id)}
 											>
 												{t`Remove`}
@@ -173,7 +175,9 @@
 							actionText={t`Add to team`}
 						>
 							{#snippet trigger()}
-								<Button variant="outline"><UserPlusIcon class="size-4" /> {t`Add person`}</Button>
+								<Button variant="outline" data-testid="team-add-person-trigger"
+									><UserPlusIcon class="size-4" /> {t`Add person`}</Button
+								>
 							{/snippet}
 						</AddPersonModal>
 					</div>

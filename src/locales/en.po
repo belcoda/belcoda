@@ -4534,3 +4534,23 @@ msgstr "Select which standard information fields to collect from signers."
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
 msgid "Add custom questions to collect additional information from signers."
 msgstr "Add custom questions to collect additional information from signers."
+
+#: src/routes/+error.svelte
+msgid "Something went wrong."
+msgstr "Something went wrong."
+
+#: src/routes/+error.svelte
+msgid "Reference"
+msgstr "Reference"
+
+#: src/routes/+error.svelte
+msgid "Debug details"
+msgstr "Debug details"
+
+#: src/routes/+error.svelte
+msgid "Try again"
+msgstr "Try again"
+
+#: src/routes/+error.svelte
+msgid "Home"
+msgstr "Home"
