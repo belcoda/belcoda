@@ -4542,27 +4542,3 @@ msgstr "Search team..."
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
 msgstr "Team Add"
-
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-msgid "Optional tags applied to people when they sign this petition."
-msgstr "Optional tags applied to people when they sign this petition."
-
-#: src/routes/+error.svelte
-msgid "Something went wrong."
-msgstr "Something went wrong."
-
-#: src/routes/+error.svelte
-msgid "Reference"
-msgstr "Reference"
-
-#: src/routes/+error.svelte
-msgid "Debug details"
-msgstr "Debug details"
-
-#: src/routes/+error.svelte
-msgid "Try again"
-msgstr "Try again"
-
-#: src/routes/+error.svelte
-msgid "Home"
-msgstr "Home"
