@@ -301,17 +301,19 @@ export async function signPetitionUnsafe({
 		updatedAt: new Date()
 	};
 
+	const conflictSet: Partial<typeof petitionSignature.$inferInsert> = {
+		details: petitionSignatureRecord.details,
+		teamId: petitionRecord.teamId,
+		updatedAt: new Date(),
+		...(responses === undefined ? {} : { responses: petitionSignatureRecord.responses }) //strips responses if null, to avoid overwriting existing responses
+	};
+
 	const [insertedPetitionSignature] = await tx.dbTransaction.wrappedTransaction
 		.insert(petitionSignature)
 		.values(petitionSignatureRecord)
 		.onConflictDoUpdate({
 			target: [petitionSignature.petitionId, petitionSignature.personId],
-			set: {
-				details: petitionSignatureRecord.details,
-				responses: petitionSignatureRecord.responses,
-				teamId: petitionRecord.teamId,
-				updatedAt: new Date()
-			},
+			set: conflictSet,
 			setWhere: and(isNull(petitionSignature.deletedAt))
 		})
 		.returning();
