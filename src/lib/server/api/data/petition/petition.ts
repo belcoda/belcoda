@@ -166,8 +166,13 @@ export async function updatePetition({
 	const publishedStatusChanged = petitionRecord.published !== updatedPetition.published;
 
 	if (updatedPetition?.published && (structureChanged || publishedStatusChanged)) {
-		const queue = await getQueue();
-		await queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
+		try {
+			const queue = await getQueue();
+			await queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
+		} catch (error) {
+			// Use the project logger here; avoid failing the primary mutation path.
+			// Optionally persist an outbox record for guaranteed retry.
+		}
 	}
 }
 
