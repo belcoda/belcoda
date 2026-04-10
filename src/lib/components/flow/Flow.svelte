@@ -157,16 +157,18 @@
 								<DropdownMenu.Item
 									onclick={() => {
 										const nodesSnapshot = $state.snapshot(nodes);
-										const nodeLength = nodesSnapshot.length;
-										const finalNode = nodesSnapshot[nodeLength - 1];
-										const newNode = addNode(
-											'message',
-											//@ts-ignore
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
-										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
+										const lastNodeIndex = nodesSnapshot.length - 1;
+										const parentNode = nodesSnapshot[lastNodeIndex];
+										if (nodesSnapshot[lastNodeIndex]) {
+											const newNode = addNode(
+												'message',
+												//@ts-ignore
+												parentNode as Node,
+												nodesSnapshot as Node[]
+											);
+											if (newNode) {
+												nodes = [...nodes, newNode];
+											}
 										}
 									}}
 								>
