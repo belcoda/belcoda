@@ -1085,6 +1085,7 @@ msgstr "Untitled Email"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1149,6 +1150,8 @@ msgstr "Create a new organization"
 #: src/lib/components/layouts/app/sidebars/communications/EmailList.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
+#: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 msgid "Drafts"
 msgstr "Drafts"
 
@@ -4482,3 +4485,23 @@ msgstr "Select tags..."
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid "Optional tags applied to people when they sign this petition."
 msgstr "Optional tags applied to people when they sign this petition."
+
+#: src/routes/+error.svelte
+msgid "Something went wrong."
+msgstr "Something went wrong."
+
+#: src/routes/+error.svelte
+msgid "Reference"
+msgstr "Reference"
+
+#: src/routes/+error.svelte
+msgid "Debug details"
+msgstr "Debug details"
+
+#: src/routes/+error.svelte
+msgid "Try again"
+msgstr "Try again"
+
+#: src/routes/+error.svelte
+msgid "Home"
+msgstr "Home"

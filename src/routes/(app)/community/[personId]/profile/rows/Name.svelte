@@ -12,7 +12,7 @@
 	{#if edit}
 		<NameForm bind:edit {person} />
 	{:else}
-		<div class="text-center text-xl font-medium">
+		<div class="text-center text-xl font-medium" data-testid="person-profile-name-display">
 			{person.givenName}
 			{person.familyName}
 		</div>
@@ -20,7 +20,12 @@
 
 	{#if !edit}
 		<div class="mt-4 flex justify-center">
-			<Button size="sm" variant="outline" onclick={() => (edit = true)}>{t`Edit`}</Button>
+			<Button
+				size="sm"
+				variant="outline"
+				onclick={() => (edit = true)}
+				data-testid="person-profile-name-edit-btn">{t`Edit`}</Button
+			>
 		</div>
 	{/if}
 </div>

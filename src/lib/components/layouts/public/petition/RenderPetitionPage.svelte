@@ -10,6 +10,7 @@
 	import ShareIcon from '@lucide/svelte/icons/share-2';
 	import { enhance } from '$app/forms';
 	import { formatDate } from '$lib/utils/date';
+	import { env } from '$env/dynamic/public';
 	import WhatsAppPetitionSignup from './WhatsAppPetitionSignup.svelte';
 	import PetitionSignSuccess from '$lib/components/layouts/public/petition/PetitionSignSuccess.svelte';
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
@@ -36,6 +37,7 @@
 	const {
 		data,
 		form,
+		petitionId,
 		layout = 'default',
 		success = false
 	}: {
@@ -50,11 +52,13 @@
 			}[];
 			whatsAppSignupLink?: string | null;
 		};
+		petitionId: string;
 		form?: { error?: string; success?: boolean } | null;
 		layout?: 'default' | 'embed';
 		success?: boolean;
 	} = $props();
 
+	const editPetitionUrl = $derived(`${env.PUBLIC_HOST}/petitions/${petitionId}`);
 	const primaryColor = $derived(
 		data.organization.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
 	);

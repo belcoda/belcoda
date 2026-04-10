@@ -10,7 +10,7 @@
 		<iframe
 			width="100%"
 			height="auto"
-			src="https://www.youtube.com/embed/PIe6kR3CL6c"
+			src="https://www.youtube.com/embed/wK5HOfycNgA"
 			title="Belcoda orientation video"
 			allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
 			allowfullscreen
