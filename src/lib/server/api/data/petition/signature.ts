@@ -305,7 +305,7 @@ export async function signPetitionUnsafe({
 		details: petitionSignatureRecord.details,
 		teamId: petitionRecord.teamId,
 		updatedAt: new Date(),
-		...(responses === undefined ? {} : { responses: petitionSignatureRecord.responses }) //strips responses if null, to avoid overwriting existing responses
+		...(responses === null ? {} : { responses: petitionSignatureRecord.responses }) //strips responses if null, to avoid overwriting existing responses
 	};
 
 	const [insertedPetitionSignature] = await tx.dbTransaction.wrappedTransaction
