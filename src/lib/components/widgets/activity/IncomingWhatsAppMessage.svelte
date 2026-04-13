@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type ReadActivityZero } from '$lib/schema/activity';
+	import { type ReadWhatsappMessageZero } from '$lib/schema/whatsapp-message';
 	import Reply from '@lucide/svelte/icons/reply';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { locale, t } from '$lib/index.svelte';
@@ -7,8 +8,9 @@
 	import EmojiReactions from '$lib/components/widgets/whatsapp/EmojiReactions.svelte';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import type { EmojiReaction } from '$lib/schema/whatsapp/message';
-
+	import { appState } from '$lib/state.svelte';
 	type Props = {
 		activity: ReadActivityZero;
 	};
@@ -128,13 +130,17 @@
 			hideIfSelected={true}
 			onTapSelectedEmojiBehaviour="select"
 			onEmojiSelect={(emoji) => {
-				console.log(emoji);
-				/* z.current.mutate.whatsappMessage.emojiReaction({
-					reaction: emoji,
-					personId: activity.personId,
-					activity: $state.snapshot(activity),
-					workspacePhoneNumber: page.data.workspace.settings.whatsApp.number
-				}); */
+				if (!whatsappMessage.data) {
+					return;
+				}
+				z.mutate(
+					mutators.whatsappMessage.emojiReaction({
+						whatsappMessage: whatsappMessage.data as ReadWhatsappMessageZero,
+						emoji: emoji,
+						organizationId: appState.organizationId,
+						personId: activity.personId
+					})
+				);
 			}}
 			selectedEmoji={emojiReactionFromBelcoda?.emoji}
 			class="rounded-full p-1 text-gray-400 transition-colors hover:scale-110 hover:bg-gray-100 hover:text-gray-600"
