@@ -3,6 +3,7 @@ import { chromium } from '@playwright/test';
 import { TEST_USERS, signUpUser, verifyUserEmail } from '../helpers/auth';
 import { BASE_URL } from '../helpers/config';
 import path from 'path';
+import fs from 'fs';
 
 export const STORAGE_STATE_PATH = path.join(import.meta.dirname, '../.auth/cookie-consent.json');
 
@@ -57,6 +58,11 @@ async function saveCookieConsentState() {
 			sameSite: 'Lax'
 		}
 	]);
+	// Ensure the .auth directory exists before writing storage state
+	const authDir = path.dirname(STORAGE_STATE_PATH);
+	if (!fs.existsSync(authDir)) {
+		fs.mkdirSync(authDir, { recursive: true });
+	}
 	await context.storageState({ path: STORAGE_STATE_PATH });
 	await browser.close();
 }
