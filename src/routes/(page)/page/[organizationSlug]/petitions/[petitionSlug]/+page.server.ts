@@ -1,16 +1,19 @@
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, isRedirect, redirect } from '@sveltejs/kit';
 import { db, drizzle } from '$lib/server/db';
 import { petition, petitionSignature, organization, person } from '$lib/schema/drizzle';
 import { eq, and, isNull, count, desc } from 'drizzle-orm';
 import pino from '$lib/pino';
 import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
-import { parse } from 'valibot';
+import { safeParse } from 'valibot';
 import { signPetitionFormSchema } from '$lib/schema/petition/petition-signature';
 import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
 import { _getPetitionActionCodeUnsafe } from '$lib/server/api/data/petition/check';
 import { generateWhatsAppPetitionLink } from '$lib/utils/petitions/link';
-
+import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+import type { SerializedEditorState } from 'lexical';
+import { sanitize, clearWindow } from 'isomorphic-dompurify';
 const log = pino(import.meta.url);
+const lexicalRenderer = new LexicalHtmlRenderer();
 
 export async function load({ params, locals }) {
 	const { organizationSlug, petitionSlug } = params;
@@ -81,9 +84,23 @@ export async function load({ params, locals }) {
 		isAdmin = admin.includes(org.id) || owner.includes(org.id);
 	}
 
+	let renderedDescription: string | null = null;
+	const petitionDescription = petitionData.description as SerializedEditorState | null;
+	if (petitionDescription?.root?.children?.length) {
+		try {
+			renderedDescription = await lexicalRenderer.render(petitionDescription);
+			renderedDescription = sanitize(renderedDescription);
+			clearWindow(); //Release JSDom resources to avoid memory accumulation
+		} catch (err) {
+			log.warn({ err, petitionId: petitionData.id }, 'Failed to render petition description');
+			renderedDescription = null;
+		}
+	}
+
 	// Serialize dates to avoid serialization issues
 	const serializedPetition = {
 		...petitionData,
+		description: renderedDescription,
 		createdAt: petitionData.createdAt ? new Date(petitionData.createdAt).getTime() : null,
 		updatedAt: petitionData.updatedAt ? new Date(petitionData.updatedAt).getTime() : null,
 		deletedAt: petitionData.deletedAt ? new Date(petitionData.deletedAt).getTime() : null,
@@ -107,54 +124,56 @@ export async function load({ params, locals }) {
 }
 
 export const actions = {
-	sign: async ({ request, params, locals }) => {
+	sign: async ({ request, params, url }) => {
 		const { organizationSlug, petitionSlug } = params;
 
-		//! NOTE: Using drizzle database operations for now because its a server page and we don't really
-		//! need zero permission checks here. Will change if we need zero for consistency or any other
-		//! reason.
-		try {
-			await db.transaction(async (tx) => {
-				const [org] = await tx.dbTransaction.wrappedTransaction
-					.select()
-					.from(organization)
-					.where(eq(organization.slug, organizationSlug))
-					.limit(1);
+		const [org] = await drizzle
+			.select()
+			.from(organization)
+			.where(eq(organization.slug, organizationSlug))
+			.limit(1);
 
-				if (!org) {
-					return fail(404, { error: 'Organization not found', success: false });
-				}
+		if (!org) {
+			return fail(404, { error: 'Organization not found', success: false });
+		}
 
-				const petitionFilters = [
+		const [petitionData] = await drizzle
+			.select()
+			.from(petition)
+			.where(
+				and(
 					eq(petition.slug, petitionSlug),
 					eq(petition.organizationId, org.id),
 					isNull(petition.deletedAt)
-				];
+				)
+			)
+			.limit(1);
 
-				const [petitionData] = await tx.dbTransaction.wrappedTransaction
-					.select()
-					.from(petition)
-					.where(and(...petitionFilters))
-					.limit(1);
+		if (!petitionData) {
+			return fail(404, { error: 'Petition not found', success: false });
+		}
 
-				if (!petitionData) {
-					return fail(404, { error: 'Petition not found', success: false });
-				}
+		if (!petitionData.published) {
+			return fail(400, { error: 'This petition is not published', success: false });
+		}
 
-				if (!petitionData.published) {
-					return fail(400, { error: 'This petition is not published', success: false });
-				}
+		const formData = await request.formData();
+		const layoutParam = formData.get('layout')?.toString();
+		const phoneValue = formData.get('phoneNumber')?.toString().trim() || '';
+		const data = {
+			givenName: formData.get('givenName')?.toString() || '',
+			familyName: formData.get('familyName')?.toString() || '',
+			emailAddress: formData.get('emailAddress')?.toString() || '',
+			phoneNumber: phoneValue.length ? phoneValue : undefined
+		};
+		const parsedResult = safeParse(signPetitionFormSchema, data);
+		if (!parsedResult.success) {
+			return fail(400, { error: 'Invalid form data', success: false });
+		}
+		const parsed = parsedResult.output;
 
-				const formData = await request.formData();
-				const phoneValue = formData.get('phoneNumber')?.toString().trim() || '';
-				const data = {
-					givenName: formData.get('givenName')?.toString() || '',
-					familyName: formData.get('familyName')?.toString() || '',
-					emailAddress: formData.get('emailAddress')?.toString() || '',
-					phoneNumber: phoneValue.length ? phoneValue : undefined
-				};
-				const parsed = parse(signPetitionFormSchema, data);
-
+		try {
+			await db.transaction(async (tx) => {
 				await signPetitionHelper({
 					tx,
 					petitionId: petitionData.id,
@@ -176,14 +195,21 @@ export const actions = {
 				});
 			});
 
-			return {
-				success: true,
-				message: 'Thank you for signing this petition!'
-			};
+			const layoutQuery =
+				layoutParam === 'embed'
+					? '?layout=embed'
+					: layoutParam === 'default'
+						? '?layout=default'
+						: '';
+
+			redirect(303, `/page/${organizationSlug}/petitions/${petitionSlug}/signed${layoutQuery}`);
 		} catch (err) {
+			if (isRedirect(err)) {
+				throw err;
+			}
 			log.error({ err, organizationSlug, petitionSlug }, 'Error signing petition');
 			return fail(500, {
-				error: err instanceof Error ? err.message : 'An error occurred while signing the petition',
+				error: 'Unable to sign the petition right now. Please try again in a moment.',
 				success: false
 			});
 		}

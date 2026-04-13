@@ -23,8 +23,11 @@
 	const updateNodeInternals = useUpdateNodeInternals();
 
 	// --- State Management ---
+	// svelte-ignore state_referenced_locally
 	let text = $state(data.text ?? 'Hello! Choose an option:');
+	// svelte-ignore state_referenced_locally
 	let buttons = $state(data.buttons ?? [{ id: 'btn-1', label: 'Option 1' }]);
+	// svelte-ignore state_referenced_locally
 	let imageUrl = $state(data.imageUrl ?? null);
 
 	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();

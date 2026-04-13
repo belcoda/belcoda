@@ -30,6 +30,7 @@ import {
 	completeEventSignupHelper,
 	createIncompleteEventSignupHelper
 } from '$lib/server/api/data/event/signup';
+import { getPetitionByIdUnsafe, signPetitionHelper } from '$lib/server/api/data/petition/signature';
 import { getDetailsFromMessageByWabaId } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/get_details_from_message';
 import { handleFlowResponse } from '$lib/server/queue/handlers/whatsapp/handlers/flow';
 
@@ -44,7 +45,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 
 		let personId: string | undefined = undefined;
 		let organizationId: string | undefined = undefined;
-		let logActivity: boolean = true; //whether to log the activity to the timeline. Some messages (eg: emoji reactions, etc) are not meant to be logged to the timeline.
+		let logActivity: boolean = true; //whether to log the activity to the timeline. Some messages (eg: emoji reactions, action code signups, flow responses, etc) are not meant to be logged to the timeline. A message and webhook record will still be stored.
 		let insertedWhatsAppMessageId: string = uuidv7();
 		await db.transaction(async (tx) => {
 			switch (parsed.whatsappInboundMessage.type) {
@@ -55,6 +56,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 						'Extracted action code from message'
 					);
 					if (actionCode) {
+						logActivity = false;
 						const actionCodeDetails = await _getActionCodeUnsafe({ tx, code: actionCode });
 						switch (actionCodeDetails?.type) {
 							case 'event_signup': {
@@ -198,6 +200,42 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 								organizationId = event.organizationId;
 								break;
 							}
+							case 'petition_signed': {
+								const petitionRecord = await getPetitionByIdUnsafe({
+									petitionId: actionCodeDetails.referenceId,
+									organizationId: actionCodeDetails.organizationId,
+									tx
+								});
+								const organization = await getOrganizationByIdUnsafe({
+									organizationId: petitionRecord.organizationId,
+									tx
+								});
+								const countryCode =
+									safeGetCountryCodeFromPhoneNumber(parsed.whatsappInboundMessage.from) ||
+									organization.country;
+								const petitionSig = await signPetitionHelper({
+									petitionId: petitionRecord.id,
+									teamId: petitionRecord.teamId ?? undefined,
+									personAction: {
+										subscribed: true,
+										country: countryCode,
+										phoneNumber: parsed.whatsappInboundMessage.from,
+										givenName:
+											parsed.whatsappInboundMessage.customerProfile?.name ??
+											parsed.whatsappInboundMessage.from
+									},
+									signatureDetails: {
+										channel: { type: 'whatsapp' }
+									},
+									organizationId: petitionRecord.organizationId,
+									tx,
+									skipNotifications: true
+								});
+								personId = petitionSig.personId;
+								organizationId = petitionRecord.organizationId;
+								logActivity = false;
+								break;
+							}
 							default:
 								//log and move on
 								log.warn(actionCodeDetails, 'Unknown action code');
@@ -293,6 +331,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 						break;
 						// TODO: handle button reply messages
 					} else if (parsed.whatsappInboundMessage.interactive.type === 'nfm_reply') {
+						logActivity = false;
 						// Handle flow response messages
 						const flowResult = await handleFlowResponse({
 							flowName: parsed.whatsappInboundMessage.interactive.nfm_reply.name,
@@ -367,7 +406,6 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				organizationId,
 				tx
 			});
-
 			// Don't create an activity for reaction messages (we'll add it to existing activity)
 			if (logActivity) {
 				if (!insertedWhatsAppMessageId) {

@@ -100,6 +100,27 @@ class AppState {
 		this.#queryContext = queryContext;
 	}
 
+	/**
+	 * Safe gate for `(app)` layout: does not use throwing getters. True when core list/read
+	 * queries have reached a complete materialized state.
+	 */
+	get layoutBootstrapComplete(): boolean {
+		if (!this.#queryContext || !this.#userId || !this.#organizationId) {
+			return false;
+		}
+		const userQ = this.#user;
+		const orgsQ = this.#organizations;
+		const activeQ = this.#activeOrganization;
+		if (!userQ || !orgsQ || !activeQ) {
+			return false;
+		}
+		return (
+			userQ.details.type === 'complete' &&
+			orgsQ.details.type === 'complete' &&
+			activeQ.details.type === 'complete'
+		);
+	}
+
 	get organizationId() {
 		if (!this.#organizationId) {
 			throw new Error('Organization ID is not set');

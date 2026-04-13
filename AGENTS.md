@@ -246,7 +246,7 @@ z.createQuery(queries.person.list(listFilter));
    - Public routes: `/login`, `/signup`, `/logout`, `/api/auth`, `/verify-email`, `/webhooks`, `/api/docs`, `/sentry-example-page`
    - Cron: `/api/cron` – requires `x-api-key` header
    - Page routes: Subdomain-based public pages (no auth required)
-   - API v1: `/api/v1/*` – requires valid API key (`authorizedApiOrganization`, `authorizedApiUser`)
+   - API v1: `/api/v1/*` – requires valid API key (`authorizedApiOrganization`)
    - All other routes: Require session; redirect to `/signup` if missing
 
 ### Authorization Model

@@ -26,6 +26,8 @@ import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import type { ServerTransaction } from '@rocicorp/zero';
 const lexicalRenderer = new LexicalHtmlRenderer();
 
+import { sanitize, clearWindow } from 'isomorphic-dompurify';
+
 export async function load({ locals, params, url }) {
 	log.debug(
 		{
@@ -53,6 +55,8 @@ export async function load({ locals, params, url }) {
 	if (eventObj.description?.root?.children?.length) {
 		try {
 			renderedDescription = await lexicalRenderer.render(eventObj.description);
+			renderedDescription = sanitize(renderedDescription);
+			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		} catch (err) {
 			log.warn({ err, eventId: eventObj.id }, 'Failed to render event description');
 			renderedDescription = null;

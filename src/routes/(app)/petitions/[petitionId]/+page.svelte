@@ -1,8 +1,10 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
+	import { t } from '$lib/index.svelte';
 	const { params } = $props();
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
+	import ArchiveIcon from '@lucide/svelte/icons/archive';
 	const petition = $derived.by(() => {
 		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
@@ -10,11 +12,21 @@
 	import PetitionSignatures from '$lib/components/widgets/petition/PetitionSignatures.svelte';
 	import PetitionActionButton from './PetitionActionButton.svelte';
 	import PetitionListItem from './PetitionListItem.svelte';
+	import * as Alert from '$lib/components/ui/alert/index.js';
 </script>
 
 <ContentLayout rootLink="/petitions" {header}>
 	{#key params.petitionId}
 		{#if petition.details.type === 'complete' && petition.data}
+			{#if petition.data.archivedAt}
+				<Alert.Root variant="destructive">
+					<ArchiveIcon class="size-4" />
+					<Alert.Title>{t`This petition has been archived.`}</Alert.Title>
+					<Alert.Description>
+						{t`You can view the petition, but you can't sign it or add signatures.`}
+					</Alert.Description>
+				</Alert.Root>
+			{/if}
 			<PetitionSignatures petition={petition.data} />
 		{:else}
 			<Skeleton class="h-48 w-full" />
