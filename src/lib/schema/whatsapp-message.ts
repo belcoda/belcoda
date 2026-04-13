@@ -37,7 +37,17 @@ export type ReadWhatsappMessageRest = v.InferOutput<typeof readWhatsappMessageRe
 
 export const readWhatsappMessageZero = v.object({
 	...whatsappMessageSchema.entries,
-	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp
+	deliveredAt: v.nullable(helpers.unixTimestamp),
+	readAt: v.nullable(helpers.unixTimestamp),
+	createdAt: helpers.unixTimestamp,
+	updatedAt: helpers.unixTimestamp
 });
 export type ReadWhatsappMessageZero = v.InferOutput<typeof readWhatsappMessageZero>;
+
+export const emojiReactionMutatorSchema = v.object({
+	personId: helpers.uuid,
+	organizationId: helpers.uuid,
+	whatsappMessage: readWhatsappMessageZero,
+	emoji: v.nullable(helpers.emoji)
+});
+export type EmojiReactionMutatorSchema = v.InferOutput<typeof emojiReactionMutatorSchema>;
