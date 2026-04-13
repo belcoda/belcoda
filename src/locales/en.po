@@ -481,6 +481,7 @@ msgstr "Filter"
 msgid "Search..."
 msgstr "Search..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
@@ -883,6 +884,7 @@ msgstr "Given name"
 msgid "Family name"
 msgstr "Family name"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
@@ -1321,6 +1323,7 @@ msgstr "Subject"
 msgid "Enter email subject..."
 msgstr "Enter email subject..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
@@ -1790,14 +1793,6 @@ msgstr "(Max size: {0})"
 msgid "New petition"
 msgstr "New petition"
 
-#: src/routes/(app)/petitions/[petitionId]/+page.svelte
-msgid "This petition has been archived."
-msgstr "This petition has been archived."
-
-#: src/routes/(app)/petitions/[petitionId]/+page.svelte
-msgid "You can view the petition, but you can't sign it or add signatures."
-msgstr "You can view the petition, but you can't sign it or add signatures."
-
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
@@ -2195,6 +2190,7 @@ msgstr "We'll let the organiser know you can't attend."
 msgid "Age Group"
 msgstr "Age Group"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 msgid "Event Signup"
 msgstr "Event Signup"
@@ -2547,11 +2543,13 @@ msgstr "Are you sure you want to discard this email draft?"
 msgid "Email Draft"
 msgstr "Email Draft"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Discard"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Send"
@@ -4271,6 +4269,69 @@ msgstr "Could not update personal information. Please try again."
 msgid "WhatsApp draft sent successfully"
 msgstr "WhatsApp draft sent successfully"
 
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Automatic tags"
+msgstr "Automatic tags"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Optional tags applied to people when they sign up for this event or when attendance is recorded."
+msgstr "Optional tags applied to people when they sign up for this event or when attendance is recorded."
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Tag on signup"
+msgstr "Tag on signup"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Tag when attended"
+msgstr "Tag when attended"
+
+#: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
+msgid "Clear selection"
+msgstr "Clear selection"
+
+#: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
+#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
+msgid "Remove tag"
+msgstr "Remove tag"
+
+#: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
+#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
+msgid "Select tags..."
+msgstr "Select tags..."
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Optional tags applied to people when they sign this petition."
+msgstr "Optional tags applied to people when they sign this petition."
+
+#: src/routes/+error.svelte
+msgid "Something went wrong."
+msgstr "Something went wrong."
+
+#: src/routes/+error.svelte
+msgid "Reference"
+msgstr "Reference"
+
+#: src/routes/+error.svelte
+msgid "Debug details"
+msgstr "Debug details"
+
+#: src/routes/+error.svelte
+msgid "Try again"
+msgstr "Try again"
+
+#: src/routes/+error.svelte
+msgid "Home"
+msgstr "Home"
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "This petition has been archived."
+msgstr "This petition has been archived."
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "You can view the petition, but you can't sign it or add signatures."
+msgstr "You can view the petition, but you can't sign it or add signatures."
+
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
@@ -4449,26 +4510,33 @@ msgstr "Signed up via WhatsApp [{0}]"
 msgid "Goal: {0}"
 msgstr "Goal: {0}"
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-msgid "Automatic tags"
-msgstr "Automatic tags"
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Select a petition..."
+msgstr "Select a petition..."
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Optional tags applied to people when they sign up for this event or when attendance is recorded."
-msgstr "Optional tags applied to people when they sign up for this event or when attendance is recorded."
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Search petition..."
+msgstr "Search petition..."
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Tag on signup"
-msgstr "Tag on signup"
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "No petitions found."
+msgstr "No petitions found."
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Tag when attended"
-msgstr "Tag when attended"
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Snapshot"
 
-#: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-msgid "Clear selection"
-msgstr "Clear selection"
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Add Node"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Petition Signup"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Tag Add"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 msgid "Remove tag"

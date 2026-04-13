@@ -7,6 +7,7 @@ import * as helpers from '$lib/schema/helpers';
 export const nodeType = v.picklist([
 	'message',
 	'eventSignup',
+	'petitionSignup',
 	'tagAdd',
 	'targeting',
 	'templateMessage'
@@ -34,6 +35,17 @@ const eventSignupNode = v.object({
 	data: eventSignupData
 });
 export type EventSignupNodeData = v.InferOutput<typeof eventSignupNode>;
+
+const petitionSignupData = v.object({
+	petitionId: helpers.uuid
+});
+export type PetitionSignupData = v.InferOutput<typeof petitionSignupData>;
+const petitionSignupNode = v.object({
+	...nodeBase.entries,
+	type: v.literal('petitionSignup'),
+	data: petitionSignupData
+});
+export type PetitionSignupNodeData = v.InferOutput<typeof petitionSignupNode>;
 
 const tagAddData = v.object({
 	tagId: helpers.uuid
@@ -96,6 +108,7 @@ export type TemplateMessageNode = v.InferOutput<typeof templateMessageNode>;
 
 const nodeSchema = v.variant('type', [
 	eventSignupNode,
+	petitionSignupNode,
 	tagAddNode,
 	targetingNode,
 	messageNode,
