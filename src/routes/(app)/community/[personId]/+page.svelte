@@ -22,7 +22,7 @@
 	import ActivityTimeline from '$lib/components/widgets/activity/ActivityTimeline.svelte';
 </script>
 
-<ContentLayout rootLink="/community" {header} {footer}>
+<ContentLayout rootLink="/community" {header} {footer} bodyPadding="p-0">
 	<ActivityTimeline personId={params.personId} />
 </ContentLayout>
 

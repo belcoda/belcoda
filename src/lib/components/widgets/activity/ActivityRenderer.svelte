@@ -9,6 +9,10 @@
 	import TeamRemoved from './TeamRemoved.svelte';
 	import OutgoingEmail from './OutgoingEmail.svelte';
 	import PetitionSigned from './PetitionSigned.svelte';
+	import IncomingWhatsAppMessage from './IncomingWhatsAppMessage.svelte';
+	import OutgoingWhatsAppMessage from './OutgoingWhatsAppMessage.svelte';
+
+	import { dev } from '$app/environment';
 
 	type Props = {
 		activity: ReadActivityZero;
@@ -33,6 +37,10 @@
 	<OutgoingEmail {activity} />
 {:else if activity.type === 'petition_signed' || activity.type === 'petition_removed'}
 	<PetitionSigned {activity} />
-{:else}
+{:else if activity.type === 'whatsapp_message_incoming'}
+	<IncomingWhatsAppMessage {activity} />
+{:else if activity.type === 'whatsapp_message_outgoing'}
+	<OutgoingWhatsAppMessage {activity} />
+{:else if dev}
 	<div class="text-xs text-orange-500">Unhandled activity type: {activity.type}</div>
 {/if}

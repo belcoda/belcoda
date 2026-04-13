@@ -1767,9 +1767,9 @@ const personTable = {
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
-								emoji: string | null;
-								personId: string | null;
-								phoneNumber: string | null;
+								emoji: string;
+								personId?: string | undefined;
+								phoneNumber?: string | undefined;
 								viaBelcoda: boolean;
 								reactedAt: number;
 							}[];
@@ -1789,9 +1789,9 @@ const personTable = {
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
-								emoji: string | null;
-								personId: string | null;
-								phoneNumber: string | null;
+								emoji: string;
+								personId?: string | undefined;
+								phoneNumber?: string | undefined;
 								viaBelcoda: boolean;
 								reactedAt: number;
 							}[];
@@ -1811,9 +1811,9 @@ const personTable = {
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
-								emoji: string | null;
-								personId: string | null;
-								phoneNumber: string | null;
+								emoji: string;
+								personId?: string | undefined;
+								phoneNumber?: string | undefined;
 								viaBelcoda: boolean;
 								reactedAt: number;
 							}[];
@@ -2774,9 +2774,9 @@ const whatsappMessageTable = {
 				audio_url?: string | undefined;
 				buttons?: { text: string; action: string }[] | undefined;
 				emojiReactions: {
-					emoji: string | null;
-					personId: string | null;
-					phoneNumber: string | null;
+					emoji: string;
+					personId?: string | undefined;
+					phoneNumber?: string | undefined;
 					viaBelcoda: boolean;
 					reactedAt: number;
 				}[];
@@ -2794,6 +2794,11 @@ const whatsappMessageTable = {
 			optional: false,
 			customType: null as unknown as string,
 			serverName: 'person_id'
+		},
+		status: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as 'pending' | 'failed' | 'delivered' | 'read'
 		},
 		createdAt: {
 			type: 'number',

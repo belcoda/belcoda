@@ -269,6 +269,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			externalId: true,
 			wamidId: true,
 			type: true,
+			status: true,
 			message: true,
 			userId: true,
 			personId: true,

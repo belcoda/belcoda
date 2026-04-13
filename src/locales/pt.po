@@ -481,6 +481,7 @@ msgstr "Filtrar"
 msgid "Search..."
 msgstr "Buscar..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
@@ -509,6 +510,7 @@ msgstr "Equipes"
 msgid "Filter teams..."
 msgstr "Filtrar equipes..."
 
+#: src/lib/components/flow/nodes/team_add/Combobox.svelte
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
@@ -539,7 +541,6 @@ msgstr "Filtrar tags..."
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
@@ -857,7 +858,7 @@ msgstr "Copiado \"{0}\" para a área de transferência"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied!"
+msgid "Copied! "
 msgstr "Copiado!"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -869,7 +870,7 @@ msgstr "Copiado!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy"
+msgid "Copy "
 msgstr "Copiar"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -884,6 +885,7 @@ msgstr "Nome"
 msgid "Family name"
 msgstr "Sobrenome"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
@@ -1322,6 +1324,7 @@ msgstr "Assunto"
 msgid "Enter email subject..."
 msgstr "Digite o assunto do e-mail..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
@@ -1791,14 +1794,6 @@ msgstr "(Tamanho máx: {0})"
 msgid "New petition"
 msgstr "Nova petição"
 
-#: src/routes/(app)/petitions/[petitionId]/+page.svelte
-msgid "This petition has been archived."
-msgstr "Esta petição foi arquivada."
-
-#: src/routes/(app)/petitions/[petitionId]/+page.svelte
-msgid "You can view the petition, but you can't sign it or add signatures."
-msgstr "Você pode ver a petição, mas não pode assiná-la nem adicionar assinaturas."
-
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
@@ -2196,6 +2191,7 @@ msgstr "Informaremos ao organizador que você não pode comparecer."
 msgid "Age Group"
 msgstr "Faixa etária"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 msgid "Event Signup"
 msgstr "Inscrição em evento"
@@ -2548,11 +2544,13 @@ msgstr "Tem certeza de que deseja descartar este rascunho de e-mail?"
 msgid "Email Draft"
 msgstr "Rascunho de e-mail"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Descartar"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Enviar"
@@ -2582,15 +2580,6 @@ msgstr "assinaturas"
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "of goal"
 msgstr "da meta"
-
-#~ msgid "Thank you for signing!"
-#~ msgstr "Obrigado por assinar!"
-
-#~ msgid "Your signature has been recorded and you'll receive updates about this petition."
-#~ msgstr "Sua assinatura foi registrada e você receberá atualizações sobre esta petição."
-
-#~ msgid "Return to petition"
-#~ msgstr "Voltar à petição"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
@@ -3646,7 +3635,6 @@ msgstr ""
 #: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Search tag..."
 msgstr "Pesquisar tag..."
 
@@ -4257,6 +4245,67 @@ msgstr ""
 msgid "WhatsApp draft sent successfully"
 msgstr "Rascunho do WhatsApp enviado com sucesso"
 
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Automatic tags"
+msgstr "Tags automáticas"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Optional tags applied to people when they sign up for this event or when attendance is recorded."
+msgstr "Tags opcionais aplicadas às pessoas quando se inscrevem neste evento ou quando a presença é registada."
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Tag on signup"
+msgstr "Tag na inscrição"
+
+#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+msgid "Tag when attended"
+msgstr "Tag quando compareceu"
+
+#: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
+msgid "Clear selection"
+msgstr "Limpar seleção"
+
+#: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
+msgid "Remove tag"
+msgstr "Remover tag"
+
+#: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
+msgid "Select tags..."
+msgstr "Selecionar tags..."
+
+#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+msgid "Optional tags applied to people when they sign this petition."
+msgstr "Tags opcionais aplicadas às pessoas quando assinam esta petição."
+
+#: src/routes/+error.svelte
+msgid "Something went wrong."
+msgstr "Algo deu errado."
+
+#: src/routes/+error.svelte
+msgid "Reference"
+msgstr "Referência"
+
+#: src/routes/+error.svelte
+msgid "Debug details"
+msgstr "Detalhes de depuração"
+
+#: src/routes/+error.svelte
+msgid "Try again"
+msgstr "Tentar novamente"
+
+#: src/routes/+error.svelte
+msgid "Home"
+msgstr "Início"
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "This petition has been archived."
+msgstr "Esta petição foi arquivada."
+
+#: src/routes/(app)/petitions/[petitionId]/+page.svelte
+msgid "You can view the petition, but you can't sign it or add signatures."
+msgstr "Você pode ver a petição, mas não pode assiná-la nem adicionar assinaturas."
+
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
@@ -4435,57 +4484,80 @@ msgstr "Inscrito via WhatsApp [{0}]"
 msgid "Goal: {0}"
 msgstr ""
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-msgid "Automatic tags"
-msgstr "Tags automáticas"
+#: src/lib/components/flow/nodes/team_add/Combobox.svelte
+msgid "Select a team..."
+msgstr "Selecione uma equipe..."
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Optional tags applied to people when they sign up for this event or when attendance is recorded."
-msgstr "Tags opcionais aplicadas às pessoas quando se inscrevem neste evento ou quando a presença é registada."
+#: src/lib/components/flow/nodes/team_add/Combobox.svelte
+msgid "Search team..."
+msgstr "Pesquisar equipe..."
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Tag on signup"
-msgstr "Tag na inscrição"
+#: src/lib/components/flow/Flow.svelte
+msgid "Team Add"
+msgstr "Adicionar equipe"
 
-#: src/lib/components/forms/event/EventCreateOrUpdate.svelte
-msgid "Tag when attended"
-msgstr "Tag quando compareceu"
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Select a petition..."
+msgstr "Selecione uma petição..."
 
-#: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-msgid "Clear selection"
-msgstr "Limpar seleção"
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Search petition..."
+msgstr "Pesquisar petição..."
 
-#: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
-msgid "Remove tag"
-msgstr "Remover tag"
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "No petitions found."
+msgstr "Nenhuma petição encontrada."
 
-#: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
-msgid "Select tags..."
-msgstr "Selecionar tags..."
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Captura"
 
-#: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-msgid "Optional tags applied to people when they sign this petition."
-msgstr "Tags opcionais aplicadas às pessoas quando assinam esta petição."
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Adicionar nó"
 
-#: src/routes/+error.svelte
-msgid "Something went wrong."
-msgstr ""
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Inscrição em petição"
 
-#: src/routes/+error.svelte
-msgid "Reference"
-msgstr ""
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Adicionar tag"
 
-#: src/routes/+error.svelte
-msgid "Debug details"
-msgstr ""
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the audio tag."
+msgstr "Seu navegador não suporta o elemento de áudio."
 
-#: src/routes/+error.svelte
-msgid "Try again"
-msgstr ""
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "WhatsApp sticker"
+msgstr "Figurinha do WhatsApp"
 
-#: src/routes/+error.svelte
-msgid "Home"
-msgstr ""
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+#: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
+msgid "WhatsApp message"
+msgstr "Mensagem do WhatsApp"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "No captions available"
+msgstr "Nenhuma legenda disponível"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the video tag."
+msgstr "Seu navegador não suporta o elemento de vídeo."
+
+#~ msgid "Whatsapp message"
+#~ msgstr ""
+
+#~ msgid "loading_activities"
+#~ msgstr ""
+
+#~ msgid "no_activities_yet"
+#~ msgstr ""
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Loading activities..."
+msgstr "Carregando atividades..."
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "No activities yet"
+msgstr "Ainda não há atividades"
