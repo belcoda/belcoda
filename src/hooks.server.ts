@@ -262,7 +262,6 @@ const handleSkipToAppResolution: Handle = async ({ event, resolve }) => {
 	event.locals.locale = detectLocale(event);
 	event.locals.session = null;
 	event.locals.authorizedApiOrganization = null;
-	event.locals.authorizedApiUser = null;
 	return resolve(event);
 };
 

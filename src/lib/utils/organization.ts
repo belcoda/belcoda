@@ -1,3 +1,5 @@
+import { safeSessionStorage } from '$lib/utils/storage';
+
 export function determineAndPersistActiveOrganizationId({
 	queryParamOrganizationId,
 	inferredOrganizationId,
@@ -15,7 +17,7 @@ export function determineAndPersistActiveOrganizationId({
 		setOrganizationIdState(queryParamOrganizationId);
 		return queryParamOrganizationId;
 	}
-	const existingSessionStorageOrganizationId = sessionStorage.getItem('state:organizationId');
+	const existingSessionStorageOrganizationId = safeSessionStorage.getItem('state:organizationId');
 	if (inferredOrganizationId) {
 		setOrganizationIdState(inferredOrganizationId);
 		return inferredOrganizationId;

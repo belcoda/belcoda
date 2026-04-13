@@ -2,6 +2,7 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { authClient } from '$lib/auth-client';
+	import { safeSessionStorage } from '$lib/utils/storage';
 	import { determineAndPersistActiveOrganizationId } from '$lib/utils/organization';
 	import { zero } from '$lib/zero.svelte';
 	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
@@ -11,7 +12,7 @@
 
 	function setOrganizationIdState(organizationId: string) {
 		appState.organizationId = organizationId;
-		sessionStorage.setItem('state:organizationId', organizationId);
+		safeSessionStorage.setItem('state:organizationId', organizationId);
 	}
 
 	let initialized = $state(false);
