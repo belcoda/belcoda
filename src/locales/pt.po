@@ -1801,6 +1801,7 @@ msgstr "Nova petição"
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Published"
@@ -1821,6 +1822,7 @@ msgstr "Destinatário:"
 
 #: src/lib/components/widgets/event/share/EventShareModal.svelte
 #: src/lib/components/widgets/petition/share/PetitionShareModal.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 msgid "Share"
 msgstr "Compartilhar"
@@ -1856,6 +1858,7 @@ msgstr "Ver página da petição"
 msgid "Preview petition page"
 msgstr "Visualizar página da petição"
 
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionMakeACopy.svelte
@@ -2386,6 +2389,7 @@ msgstr "Nenhum rascunho selecionado"
 msgid "Select a draft from the list to view its details"
 msgstr "Selecione um rascunho da lista para ver seus detalhes"
 
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 msgid "Edit event"
 msgstr "Editar evento"
@@ -4306,6 +4310,7 @@ msgstr "Esta petição foi arquivada."
 msgid "You can view the petition, but you can't sign it or add signatures."
 msgstr "Você pode ver a petição, mas não pode assiná-la nem adicionar assinaturas."
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayEventArchivedFilter.svelte
@@ -4575,3 +4580,15 @@ msgstr "Carregando atividades..."
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "No activities yet"
 msgstr "Ainda não há atividades"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "View event page"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Preview event page"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Detailed signups table"
+msgstr ""
