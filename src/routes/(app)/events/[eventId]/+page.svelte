@@ -25,11 +25,21 @@
 	import EventActionButton from './EventActionButton.svelte';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
+	import ArchiveIcon from '@lucide/svelte/icons/archive';
 	import { t } from '$lib/index.svelte';
 </script>
 
 <ContentLayout rootLink="/events" {header}>
 	{#if event.details.type === 'complete' && event.data}
+		{#if event.data.archivedAt}
+			<Alert.Root variant="destructive" class="mb-4">
+				<ArchiveIcon class="size-4" />
+				<Alert.Title>{t`This event has been archived.`}</Alert.Title>
+				<Alert.Description>
+					{t`You can view this event, but new signups are closed.`}
+				</Alert.Description>
+			</Alert.Root>
+		{/if}
 		{#if incompleteSignups.data.length > 0}
 			<Alert.Root class="mb-4">
 				<CircleAlertIcon class="text-yellow-600" />

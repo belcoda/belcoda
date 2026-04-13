@@ -4324,6 +4324,7 @@ msgstr "You can view the petition, but you can't sign it or add signatures."
 
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventArchivedFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Archived"
 msgstr "Archived"
@@ -4365,6 +4366,7 @@ msgid "Archive this petition?"
 msgstr "Archive this petition?"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Archive"
 msgstr "Archive"
 
@@ -4531,6 +4533,18 @@ msgstr "Snapshot"
 #: src/lib/components/flow/Flow.svelte
 msgid "Add Node"
 msgstr "Add Node"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr "Show archived"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "This event has been archived."
+msgstr "This event has been archived."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "You can view this event, but new signups are closed."
+msgstr "You can view this event, but new signups are closed."
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Petition Signup"
