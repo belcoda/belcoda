@@ -66,6 +66,7 @@ test.describe.serial('Community and person pages', () => {
 
 		await loginAsOwner(page);
 		await profilePage.goto(ids.personPath);
+		await profilePage.waitForLoaded();
 		await expect(page.getByTestId('person-profile-danger-zone')).toBeVisible();
 
 		await profilePage.deletePersonWithConfirm();
