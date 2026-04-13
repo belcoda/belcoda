@@ -304,8 +304,8 @@ z.createQuery(queries.person.list(listFilter));
 Belcoda serves organizations across multiple locales (en, es, pt, etc), so features must work correctly regardless of user location:
 
 - Format dates, numbers, and currency using locale-aware utilities
-- CSV exports must respect regional conventions (e.g., European CSVs use semicolons as delimiters because commas are used as decimal separators)
-- Phone number inputs should be parsed and formatted using a library like `libphonenumber-js`
+- CSV imports etc must respect regional conventions (e.g., European CSVs use semicolons as delimiters because commas are used as decimal separators)
+- Phone number inputs should be parsed and formatted using a library like `awesome-phonenumber`
 - Timezone handling is critical for scheduled events and communications
 
 ---
