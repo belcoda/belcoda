@@ -56,6 +56,7 @@
 				<Input
 					type="email"
 					placeholder={t`email@example.com`}
+					data-testid="person-profile-email-input"
 					{...props}
 					bind:value={$data.emailAddress as string}
 				/>
@@ -67,7 +68,7 @@
 		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}
 			>{t`Cancel`}</Button
 		>
-		<Button type="submit" size="sm">{t`Save`}</Button>
+		<Button type="submit" size="sm" data-testid="person-profile-email-save">{t`Save`}</Button>
 	</div>
 	<Debug {data} />
 </form>

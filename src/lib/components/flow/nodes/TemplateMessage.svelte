@@ -22,11 +22,16 @@
 	import Combobox from './template/Combobox.svelte';
 
 	// --- State Management ---
+	// svelte-ignore state_referenced_locally
 	let headerValues = $state(data.header?.templateStrings ?? []);
+	// svelte-ignore state_referenced_locally
 	let bodyValues = $state(data.body?.templateStrings ?? []);
 	$inspect(bodyValues);
+	// svelte-ignore state_referenced_locally
 	let buttons = $state(data.buttons ?? []);
+	// svelte-ignore state_referenced_locally
 	let headerImageUrl = $state(data.header?.imageUrl ?? null);
+	// svelte-ignore state_referenced_locally
 	let templateId = $state(data.templateId);
 
 	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();

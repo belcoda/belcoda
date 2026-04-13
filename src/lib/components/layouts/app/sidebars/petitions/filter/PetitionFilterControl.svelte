@@ -1,0 +1,107 @@
+<script lang="ts">
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Command from '$lib/components/ui/command/index.js';
+	import { type Snippet } from 'svelte';
+	import { t } from '$lib/index.svelte';
+	import type { PetitionListFilter } from '$lib/zero/query/petition/list';
+	let {
+		trigger,
+		filter = $bindable()
+	}: { trigger: Snippet<[{ props: Record<string, unknown> }]>; filter: PetitionListFilter } =
+		$props();
+
+	import type { ListFilter } from '$lib/schema/helpers';
+	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
+	import { appState, getListFilter } from '$lib/state.svelte';
+	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
+
+	const teamList = $derived.by(() => z.createQuery(queries.team.list(teamsListFilter)));
+
+	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
+
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
+
+	import { tick } from 'svelte';
+	let open = $state(false);
+	let triggerRef = $state<HTMLButtonElement>(null!);
+	function closeAndFocusTrigger() {
+		open = false;
+		tick().then(() => {
+			triggerRef.focus();
+		});
+	}
+
+	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
+</script>
+
+<DropdownMenu.Root bind:open>
+	<DropdownMenu.Trigger bind:ref={triggerRef}>
+		{#snippet child({ props })}
+			{@render trigger({ props })}
+		{/snippet}
+	</DropdownMenu.Trigger>
+	<DropdownMenu.Content align="end">
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger>{t`Teams`}</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubContent>
+				<Command.Root value={filter.teamId ?? ''}>
+					<Command.Input autofocus placeholder={t`Filter teams...`} />
+					<Command.List>
+						<Command.Empty class="text-sm text-muted-foreground">{t`No teams found.`}</Command.Empty
+						>
+						<Command.Group>
+							{#each teamList.data as team (team.id)}
+								<Command.Item
+									keywords={[team.name]}
+									value={team.id}
+									onSelect={() => {
+										filter.teamId = team.id;
+										closeAndFocusTrigger();
+									}}
+								>
+									<Avatar src={null} name1={team.name} class="size-4 rounded-full text-xs" />
+									{team.name}
+								</Command.Item>
+							{/each}
+						</Command.Group>
+					</Command.List>
+				</Command.Root>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.Label>{t`Status`}</DropdownMenu.Label>
+			<DropdownMenu.CheckboxItem
+				checked={filter.status === 'draft'}
+				onCheckedChange={(checked) => {
+					if (checked) {
+						filter.status = 'draft';
+					} else {
+						filter.status = null;
+					}
+				}}>{t`Draft`}</DropdownMenu.CheckboxItem
+			>
+			<DropdownMenu.CheckboxItem
+				checked={filter.status === 'published'}
+				onCheckedChange={(checked) => {
+					if (checked) {
+						filter.status = 'published';
+					} else {
+						filter.status = null;
+					}
+				}}>{t`Published`}</DropdownMenu.CheckboxItem
+			>
+			<DropdownMenu.CheckboxItem
+				checked={filter.status === 'archived'}
+				onCheckedChange={(checked) => {
+					if (checked) {
+						filter.status = 'archived';
+					} else {
+						filter.status = null;
+					}
+				}}>{t`Archived`}</DropdownMenu.CheckboxItem
+			>
+		</DropdownMenu.Group>
+	</DropdownMenu.Content>
+</DropdownMenu.Root>

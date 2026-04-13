@@ -79,6 +79,7 @@
 							<div class="border-t border-gray-200 pt-8">
 								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`What to Expect:`}</h2>
 								<div class="prose decorate-links space-y-4 text-gray-700">
+									<!-- Sanitized using dompurify on the server -->
 									{@html event.description}
 								</div>
 							</div>

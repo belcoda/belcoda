@@ -13,8 +13,8 @@ export async function getEmailSignature({
 }) {
 	if (!emailFromSignatureId) {
 		return {
-			name: organization.settings.email.systemFromIdentity.name || organization.name,
-			replyTo: organization.settings.email.systemFromIdentity.replyTo,
+			name: organization.settings?.email?.systemFromIdentity?.name || organization.name,
+			replyTo: organization.settings?.email?.systemFromIdentity?.replyTo,
 			emailAddress: `${organization.slug}@${postmarkSendingDomain}`
 		};
 	}

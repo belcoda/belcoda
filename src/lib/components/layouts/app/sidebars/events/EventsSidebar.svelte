@@ -65,7 +65,8 @@
 		tagId: null,
 		eventType: null,
 		hasSignups: false,
-		status: null
+		status: null,
+		isArchived: false
 	});
 
 	const eventList = $derived.by(() =>

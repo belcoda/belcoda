@@ -58,6 +58,7 @@
 				<Input
 					type="text"
 					placeholder={t`Given name`}
+					data-testid="person-profile-given-name"
 					{...props}
 					bind:value={$data.givenName as string}
 				/>
@@ -71,6 +72,7 @@
 				<Input
 					type="text"
 					placeholder={t`Family name`}
+					data-testid="person-profile-family-name"
 					{...props}
 					bind:value={$data.familyName as string}
 				/>
@@ -82,7 +84,7 @@
 		<Button type="button" size="sm" variant="outline" onclick={() => (edit = false)}
 			>{t`Cancel`}</Button
 		>
-		<Button type="submit" size="sm">{t`Save`}</Button>
+		<Button type="submit" size="sm" data-testid="person-profile-name-save">{t`Save`}</Button>
 	</div>
 	<Debug {data} />
 </form>

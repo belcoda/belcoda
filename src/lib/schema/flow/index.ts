@@ -7,7 +7,9 @@ import * as helpers from '$lib/schema/helpers';
 export const nodeType = v.picklist([
 	'message',
 	'eventSignup',
+	'petitionSignup',
 	'tagAdd',
+	'teamAdd',
 	'targeting',
 	'templateMessage'
 ]);
@@ -35,6 +37,17 @@ const eventSignupNode = v.object({
 });
 export type EventSignupNodeData = v.InferOutput<typeof eventSignupNode>;
 
+const petitionSignupData = v.object({
+	petitionId: helpers.uuid
+});
+export type PetitionSignupData = v.InferOutput<typeof petitionSignupData>;
+const petitionSignupNode = v.object({
+	...nodeBase.entries,
+	type: v.literal('petitionSignup'),
+	data: petitionSignupData
+});
+export type PetitionSignupNodeData = v.InferOutput<typeof petitionSignupNode>;
+
 const tagAddData = v.object({
 	tagId: helpers.uuid
 });
@@ -45,6 +58,17 @@ const tagAddNode = v.object({
 	data: tagAddData
 });
 export type TagAddNodeData = v.InferOutput<typeof tagAddNode>;
+
+const teamAddData = v.object({
+	teamId: helpers.uuid
+});
+export type TeamAddData = v.InferOutput<typeof teamAddData>;
+const teamAddNode = v.object({
+	...nodeBase.entries,
+	type: v.literal('teamAdd'),
+	data: teamAddData
+});
+export type TeamAddNodeData = v.InferOutput<typeof teamAddNode>;
 
 const targetingData = v.object({
 	filter: filterGroup
@@ -96,7 +120,9 @@ export type TemplateMessageNode = v.InferOutput<typeof templateMessageNode>;
 
 const nodeSchema = v.variant('type', [
 	eventSignupNode,
+	petitionSignupNode,
 	tagAddNode,
+	teamAddNode,
 	targetingNode,
 	messageNode,
 	templateMessageNode

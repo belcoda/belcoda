@@ -27,11 +27,15 @@ export default defineConfig({
 		}),
 		js: js({
 			loader: 'vite',
-			files: [
-				'src/**/+{page,layout}.{js,ts}',
-				'src/**/+{page,layout}.server.{js,ts}',
-				'src/**/items.ts'
-			],
+			files: {
+				include: [
+					'src/**/+{page,layout}.{js,ts}',
+					'src/**/+{page,layout}.server.{js,ts}',
+					'src/**/items.ts',
+					'src/lib/**/*.ts'
+				],
+				ignore: ['src/**/*.svelte.ts']
+			},
 			heuristic: (msg) => {
 				const { details } = msg;
 				if (details.call === 't') {
