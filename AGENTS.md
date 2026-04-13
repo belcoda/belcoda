@@ -299,6 +299,15 @@ z.createQuery(queries.person.list(listFilter));
 - `PUBLIC_ROOT_DOMAIN` – For CORS, cookies
 - Stripe, Google OAuth, etc. per better-auth docs
 
+### Global Operations
+
+Belcoda serves organizations across multiple locales (en, es, pt, etc), so features must work correctly regardless of user location:
+
+- Format dates, numbers, and currency using locale-aware utilities
+- CSV exports must respect regional conventions (e.g., European CSVs use semicolons as delimiters because commas are used as decimal separators)
+- Phone number inputs should be parsed and formatted using a library like `libphonenumber-js`
+- Timezone handling is critical for scheduled events and communications
+
 ---
 
 ## Quick Reference
