@@ -29,7 +29,20 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=dev
 
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(npm list --json @playwright/test | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+          restore-keys: playwright-${{ runner.os }}-
+
       - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
