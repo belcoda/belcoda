@@ -481,6 +481,7 @@ msgstr "Filtrar"
 msgid "Search..."
 msgstr "Buscar..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
@@ -857,7 +858,7 @@ msgstr "Copiado \"{0}\" para a área de transferência"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied!"
+msgid "Copied! "
 msgstr "Copiado!"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -869,7 +870,7 @@ msgstr "Copiado!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy"
+msgid "Copy "
 msgstr "Copiar"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -884,6 +885,7 @@ msgstr "Nome"
 msgid "Family name"
 msgstr "Sobrenome"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
@@ -1322,6 +1324,7 @@ msgstr "Assunto"
 msgid "Enter email subject..."
 msgstr "Digite o assunto do e-mail..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
@@ -2188,6 +2191,7 @@ msgstr "Informaremos ao organizador que você não pode comparecer."
 msgid "Age Group"
 msgstr "Faixa etária"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 msgid "Event Signup"
 msgstr "Inscrição em evento"
@@ -2540,11 +2544,13 @@ msgstr "Tem certeza de que deseja descartar este rascunho de e-mail?"
 msgid "Email Draft"
 msgstr "Rascunho de e-mail"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Descartar"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Enviar"
@@ -4489,3 +4495,69 @@ msgstr "Pesquisar equipe..."
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
 msgstr "Adicionar equipe"
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Select a petition..."
+msgstr "Selecione uma petição..."
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Search petition..."
+msgstr "Pesquisar petição..."
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "No petitions found."
+msgstr "Nenhuma petição encontrada."
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Captura"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Adicionar nó"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Inscrição em petição"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Adicionar tag"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the audio tag."
+msgstr "Seu navegador não suporta o elemento de áudio."
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "WhatsApp sticker"
+msgstr "Figurinha do WhatsApp"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+#: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
+msgid "WhatsApp message"
+msgstr "Mensagem do WhatsApp"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "No captions available"
+msgstr "Nenhuma legenda disponível"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the video tag."
+msgstr "Seu navegador não suporta o elemento de vídeo."
+
+#~ msgid "Whatsapp message"
+#~ msgstr ""
+
+#~ msgid "loading_activities"
+#~ msgstr ""
+
+#~ msgid "no_activities_yet"
+#~ msgstr ""
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Loading activities..."
+msgstr "Carregando atividades..."
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "No activities yet"
+msgstr "Ainda não há atividades"

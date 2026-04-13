@@ -5,6 +5,7 @@ import { getQueue } from '$lib/server/queue';
 import { _addPersonTagData } from '$lib/server/api/data/person/tag';
 import { _addPersonTeamDataUnsafe } from '$lib/server/api/data/person/team';
 import { signUpForEventWithId } from '$lib/server/api/data/event/signup';
+import { signPetitionWithId } from '$lib/server/api/data/petition/signature';
 import {
 	sendWhatsappMessage,
 	sendWhatsappTemplateMessage
@@ -69,6 +70,18 @@ export async function processFlowNodeAction({
 					signupDetails: {
 						channel: { type: 'whatsapp' },
 						customFields: {}
+					}
+				});
+				break;
+			}
+			case 'petitionSignup': {
+				await signPetitionWithId({
+					tx,
+					petitionId: node.data.petitionId,
+					personId,
+					organizationId,
+					signupDetails: {
+						channel: { type: 'whatsapp' }
 					}
 				});
 				break;

@@ -481,6 +481,7 @@ msgstr "Filter"
 msgid "Search..."
 msgstr "Search..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
@@ -857,8 +858,8 @@ msgstr "Copied \"{0}\" to clipboard"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied!"
-msgstr "Copied!"
+msgid "Copied! "
+msgstr "Copied! "
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -869,8 +870,8 @@ msgstr "Copied!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy"
-msgstr "Copy"
+msgid "Copy "
+msgstr "Copy "
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
@@ -884,6 +885,7 @@ msgstr "Given name"
 msgid "Family name"
 msgstr "Family name"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
@@ -1322,6 +1324,7 @@ msgstr "Subject"
 msgid "Enter email subject..."
 msgstr "Enter email subject..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
@@ -2188,6 +2191,7 @@ msgstr "We'll let the organiser know you can't attend."
 msgid "Age Group"
 msgstr "Age Group"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 msgid "Event Signup"
 msgstr "Event Signup"
@@ -2540,11 +2544,13 @@ msgstr "Are you sure you want to discard this email draft?"
 msgid "Email Draft"
 msgstr "Email Draft"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Discard"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Send"
@@ -4505,3 +4511,69 @@ msgstr "Search team..."
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
 msgstr "Team Add"
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Select a petition..."
+msgstr "Select a petition..."
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Search petition..."
+msgstr "Search petition..."
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "No petitions found."
+msgstr "No petitions found."
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Snapshot"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Add Node"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Petition Signup"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Tag Add"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the audio tag."
+msgstr "Your browser does not support the audio tag."
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "WhatsApp sticker"
+msgstr "WhatsApp sticker"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+#: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
+msgid "WhatsApp message"
+msgstr "WhatsApp message"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "No captions available"
+msgstr "No captions available"
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the video tag."
+msgstr "Your browser does not support the video tag."
+
+#~ msgid "Whatsapp message"
+#~ msgstr "Whatsapp message"
+
+#~ msgid "loading_activities"
+#~ msgstr "loading_activities"
+
+#~ msgid "no_activities_yet"
+#~ msgstr "no_activities_yet"
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Loading activities..."
+msgstr "Loading activities..."
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "No activities yet"
+msgstr "No activities yet"
