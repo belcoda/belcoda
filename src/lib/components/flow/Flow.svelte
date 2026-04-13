@@ -39,6 +39,7 @@
 	import EventSignup from '$lib/components/flow/nodes/EventSignup.svelte';
 	import PetitionSignup from '$lib/components/flow/nodes/PetitionSignup.svelte';
 	import TagAdd from '$lib/components/flow/nodes/TagAdd.svelte';
+	import TeamAdd from '$lib/components/flow/nodes/TeamAdd.svelte';
 	import Targeting from '$lib/components/flow/nodes/Targeting.svelte';
 	import TemplateMessage from '$lib/components/flow/nodes/TemplateMessage.svelte';
 	//edges
@@ -54,6 +55,7 @@
 		petitionSignup: PetitionSignup,
 		targeting: Targeting,
 		tagAdd: TagAdd,
+		teamAdd: TeamAdd,
 		templateMessage: TemplateMessage
 	};
 
@@ -218,6 +220,21 @@
 									}}
 								>
 									{t`Tag Add`}
+								</DropdownMenu.Item>
+								<DropdownMenu.Item
+									onclick={() => {
+										const nodesSnapshot = $state.snapshot(nodes);
+										const newNode = addNode(
+											'teamAdd',
+											nodesSnapshot[nodesSnapshot.length - 1] as Node,
+											nodesSnapshot as Node[]
+										);
+										if (newNode) {
+											nodes = [...nodes, newNode];
+										}
+									}}
+								>
+									{t`Team Add`}
 								</DropdownMenu.Item>
 							</DropdownMenu.Content>
 						</DropdownMenu.Root>

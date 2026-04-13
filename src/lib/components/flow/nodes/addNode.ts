@@ -89,6 +89,13 @@ export function addNode(nodeType: NodeType, parentNode: Node, nodes: Node[]) {
 				position: position,
 				data: { tagId: null }
 			};
+		case 'teamAdd':
+			return {
+				id: uuidv4(),
+				type: 'teamAdd' as const,
+				position: position,
+				data: { teamId: null }
+			};
 		default:
 			return null;
 	}
