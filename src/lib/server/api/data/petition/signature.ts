@@ -28,6 +28,7 @@ import { petition, petitionSignature, person, organization } from '$lib/schema/d
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and, isNull } from 'drizzle-orm';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
@@ -264,6 +265,45 @@ export async function signPetitionHelper({
 		skipNotifications
 	});
 	return petitionSignatureResult;
+}
+
+export async function signPetitionWithId({
+	tx,
+	petitionId,
+	personId,
+	organizationId,
+	signupDetails
+}: {
+	tx: ServerTransaction;
+	petitionId: string;
+	personId: string;
+	organizationId: string;
+	signupDetails: PetitionSignatureDetails;
+}) {
+	const parsedSignupDetails = parse(petitionSignatureDetails, signupDetails);
+
+	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
+	if (!petitionResult.published) {
+		throw new Error('Petition is not published');
+	}
+	if (petitionResult.deletedAt != null || petitionResult.archivedAt != null) {
+		throw new Error('Petition is archived or deleted');
+	}
+
+	const personRecord = await _getPersonByIdUnsafe({ personId, organizationId, tx });
+	if (!personRecord) {
+		throw new Error('Person not found');
+	}
+
+	const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
+
+	return await signPetitionUnsafe({
+		tx,
+		petitionRecord: petitionResult,
+		personRecord,
+		organizationRecord,
+		details: parsedSignupDetails
+	});
 }
 
 export async function signPetitionUnsafe({
