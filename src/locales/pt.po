@@ -870,7 +870,7 @@ msgstr "Copiado!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy "
+msgid "Copy"
 msgstr "Copiar"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -2332,10 +2332,12 @@ msgid "{0} signatures"
 msgstr "{0} assinaturas"
 
 #: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "No signatures found"
 msgstr "Nenhuma assinatura encontrada"
 
 #: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "No signatures found for this petition. Signatures will appear here once people sign."
 msgstr "Nenhuma assinatura encontrada para esta petição. As assinaturas aparecerão aqui assim que as pessoas assinarem."
 
@@ -2391,6 +2393,7 @@ msgid "Edit event"
 msgstr "Editar evento"
 
 #: src/routes/(app)/events/[eventId]/signups/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Download CSV"
 msgstr "Baixar CSV"
 
@@ -4575,3 +4578,15 @@ msgstr "Carregando atividades..."
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "No activities yet"
 msgstr "Ainda não há atividades"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "View event page"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Preview event page"
+msgstr ""
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Detailed signups table"
+msgstr ""
