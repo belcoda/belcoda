@@ -147,13 +147,9 @@ test.describe.serial('Events', () => {
 		const publicPage = new EventPublicPage(page);
 		await publicPage.goto(ORG_SLUG, ids.eventSlug);
 
-		const whatsappBtn = publicPage.whatsappSignupBtn;
-		const isVisible = await whatsappBtn.isVisible().catch(() => false);
-		if (!isVisible) {
-			test.skip();
-			return;
-		}
-		await expect(whatsappBtn).toBeVisible();
+		await expect(publicPage.submitButton).toBeVisible({ timeout: 10_000 });
+		// The WhatsApp button should be visible (either mobile or desktop version)
+		await expect(publicPage.whatsappSignupBtn).toBeVisible({ timeout: 10_000 });
 	});
 
 	test('visitor can sign up for an event from the public page', async ({ page }) => {

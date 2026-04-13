@@ -22,7 +22,8 @@ export class EventPublicPage {
 		this.familyNameInput = page.getByTestId('event-signup-family-name');
 		this.emailInput = page.getByTestId('event-signup-email');
 		this.submitButton = page.getByTestId('event-signup-submit');
-		this.whatsappSignupBtn = page.getByTestId('whatsapp-signup-btn');
+		// There are two WhatsApp buttons (mobile/desktop) - filter to only the visible one
+		this.whatsappSignupBtn = page.getByTestId('whatsapp-signup-btn').filter({ visible: true });
 
 		this.addressLine1Input = page.getByTestId('signup-address-line1');
 		this.addressLocalityInput = page.getByTestId('signup-address-locality');
