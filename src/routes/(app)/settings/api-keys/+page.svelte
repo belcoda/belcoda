@@ -50,11 +50,15 @@
 		try {
 			loading = true;
 			error = null;
-			const result = await authClient.apiKey.list();
+			const result = await authClient.apiKey.list({
+				query: {
+					organizationId: appState.organizationId
+				}
+			});
 			if (result.error) {
 				throw new Error(result.error.message || t`Failed to load API keys`);
 			}
-			apiKeys = (result.data || []) as ApiKeyDisplay[];
+			apiKeys = result.data.apiKeys as ApiKeyDisplay[];
 		} catch (e: any) {
 			error = e.message || t`An error occurred while loading API keys`;
 			console.error('Error loading API keys:', e);
@@ -88,6 +92,7 @@
 
 			const result = await authClient.apiKey.create({
 				name: newKeyName.trim(),
+				organizationId: appState.organizationId,
 				expiresIn: expiresIn || null
 			});
 

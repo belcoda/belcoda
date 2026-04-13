@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
+	import SvelteLexical from '$lib/components/ui/wysiwyg/SvelteLexical.svelte';
+	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import { beforeNavigate } from '$app/navigation';
 	import { useDebounce } from 'runed';
 	import { slugify } from '$lib/utils/slug';
@@ -78,14 +82,19 @@
 	if ($data.published === undefined) {
 		$data.published = false;
 	}
+	if ($data.petitionText === undefined) {
+		$data.petitionText = null;
+	}
+
+	let dangerOpen = $state(false);
+	let confirmArchiveOpen = $state(false);
+	let confirmDeleteOpen = $state(false);
 
 	import * as Form from '$lib/components/ui/form/index.js';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { defaultPetitionSettings } from '$lib/schema/petition/settings';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
-	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
-	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { TagSelectMulti } from '$lib/components/ui/custom-select/tag/index.js';
@@ -121,6 +130,7 @@
 			{@render titleInput()}
 			{@render descriptionInput()}
 			{@render targetInput()}
+			{@render petitionTextInput()}
 		</Card.Content>
 	</Card.Root>
 
@@ -141,6 +151,15 @@
 		</Card.Content>
 	</Card.Root>
 
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>{t`Petition page`}</Card.Title>
+		</Card.Header>
+		<Card.Content class="space-y-6">
+			<SvelteLexical bind:value={$data.description} />
+		</Card.Content>
+	</Card.Root>
+
 	{#if $data.settings}
 		<Card.Root>
 			<Card.Header>
@@ -156,65 +175,69 @@
 	{/if}
 
 	{#if petition}
-		<Alert.Root variant="destructive" class="mt-4">
-			<AlertCircleIcon />
-			<Alert.Title>{t`Danger zone!`}</Alert.Title>
-			<Alert.Description>
+		<Collapsible.Root bind:open={dangerOpen} class="rounded-lg border border-destructive/40">
+			<Collapsible.Trigger
+				class="flex w-full items-center justify-between gap-2 p-4 text-left font-medium text-destructive"
+			>
+				<span>{t`Danger zone`}</span>
+				<ChevronDownIcon class="size-4 transition-transform {dangerOpen ? 'rotate-180' : ''}" />
+			</Collapsible.Trigger>
+			<Collapsible.Content class="px-4 pb-4">
 				{#if petition.published}
-					{t`This petition will be archived. You can still view it in the archived petitions list.`}
-					<div class="mt-2">
-						<Button
-							type="button"
-							variant="destructive"
-							onclick={async () => {
-								if (
-									window.confirm(
-										t`This petition will be archived. You can still view it in the archived petitions list.`
-									)
-								) {
-									z.mutate(
-										mutators.petition.archive({
-											metadata: {
-												petitionId: petition.id,
-												organizationId: appState.organizationId
-											}
-										})
-									);
-									toast.success(t`Petition archived`);
-									goto('/petitions');
-								}
-							}}>{t`Archive petition`}</Button
-						>
-					</div>
+					<p class="mb-3 text-sm text-muted-foreground">
+						{t`Archive this petition. You can still view it in the archived petitions list.`}
+					</p>
+					<Button type="button" variant="destructive" onclick={() => (confirmArchiveOpen = true)}
+						>{t`Archive petition`}</Button
+					>
+					<ConfirmDialog
+						bind:open={confirmArchiveOpen}
+						title={t`Archive this petition?`}
+						description={t`This petition will be archived. You can still view it in the archived petitions list.`}
+						confirmText={t`Archive`}
+						confirmVariant="destructive"
+						onConfirm={() => {
+							z.mutate(
+								mutators.petition.archive({
+									metadata: {
+										petitionId: petition.id,
+										organizationId: appState.organizationId
+									}
+								})
+							);
+							toast.success(t`Petition archived`);
+							goto('/petitions');
+						}}
+					/>
 				{:else}
-					{t`This draft petition will be permanently deleted. This action cannot be undone.`}
-					<div class="mt-2">
-						<Button
-							type="button"
-							variant="destructive"
-							onclick={async () => {
-								if (
-									window.confirm(
-										t`This draft petition will be permanently deleted. This action cannot be undone.`
-									)
-								) {
-									z.mutate(
-										mutators.petition.delete({
-											metadata: {
-												petitionId: petition.id,
-												organizationId: appState.organizationId
-											}
-										})
-									);
-									toast.success(t`Petition deleted`);
-									goto('/petitions');
-								}
-							}}>{t`Delete petition`}</Button
-						>
-					</div>
+					<p class="mb-3 text-sm text-muted-foreground">
+						{t`Permanently delete this draft petition. This action cannot be undone.`}
+					</p>
+					<Button type="button" variant="destructive" onclick={() => (confirmDeleteOpen = true)}
+						>{t`Delete petition`}</Button
+					>
+					<ConfirmDialog
+						bind:open={confirmDeleteOpen}
+						title={t`Delete this petition?`}
+						description={t`This draft petition will be permanently deleted. This action cannot be undone.`}
+						confirmText={t`Delete`}
+						confirmVariant="destructive"
+						onConfirm={() => {
+							z.mutate(
+								mutators.petition.delete({
+									metadata: {
+										petitionId: petition.id,
+										organizationId: appState.organizationId
+									}
+								})
+							);
+							toast.success(t`Petition deleted`);
+							goto('/petitions');
+						}}
+					/>
 				{/if}
-			</Alert.Description>
-		</Alert.Root>
+			</Collapsible.Content>
+		</Collapsible.Root>
 	{/if}
 
 	<Debug {data} hide={true} />
@@ -303,7 +326,7 @@
 	<Form.Field {form} name="shortDescription" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>{t`Description`}</Form.Label>
+				<Form.Label>{t`Short description`}</Form.Label>
 				<InputGroup.Root>
 					<InputGroup.Textarea
 						bind:value={$data.shortDescription}
@@ -337,6 +360,28 @@
 				</InputGroup.Root>
 				<Form.Description>
 					{t`Who is this petition directed to? (e.g., "The Mayor of Springfield", "Parliament")`}
+				</Form.Description>
+			{/snippet}
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+{/snippet}
+
+{#snippet petitionTextInput()}
+	<Form.Field {form} name="petitionText" class="w-full">
+		<Form.Control>
+			{#snippet children({ props })}
+				<Form.Label>{t`Petition text`}</Form.Label>
+				<InputGroup.Root>
+					<InputGroup.Textarea
+						bind:value={$data.petitionText}
+						{...props}
+						placeholder={t`Full text of the petition`}
+						class="min-h-[120px]"
+					/>
+				</InputGroup.Root>
+				<Form.Description>
+					{t`The full statement shown on the petition page (optional).`}
 				</Form.Description>
 			{/snippet}
 		</Form.Control>

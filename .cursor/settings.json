@@ -5,6 +5,9 @@
 		},
 		"sentry": {
 			"enabled": true
+		},
+		"svelte": {
+			"enabled": true
 		}
 	}
 }

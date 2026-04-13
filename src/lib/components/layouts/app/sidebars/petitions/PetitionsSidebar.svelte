@@ -17,14 +17,15 @@
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
 	import { t } from '$lib/index.svelte';
 
+	import PetitionFilter from '$lib/components/layouts/app/sidebars/petitions/filter/PetitionFilter.svelte';
+
 	let petitionListFilter: PetitionListFilter = $state({
 		...getListFilter(appState.organizationId),
-		status: null
+		status: null,
+		tagId: null
 	});
 
-	const petitionList = $derived.by(() =>
-		z.createQuery(queries.petition.list(petitionListFilter))
-	);
+	const petitionList = $derived.by(() => z.createQuery(queries.petition.list(petitionListFilter)));
 </script>
 
 <Sidebar.Root
@@ -42,7 +43,7 @@
 					<PlusIcon class="size-5" />
 				</Button>
 			</div>
-			<!-- TODO: Add petition filters -->
+			<PetitionFilter bind:filter={petitionListFilter} />
 		</Sidebar.Header>
 		<Sidebar.Content>
 			<Sidebar.Group class="p-0">
@@ -71,8 +72,14 @@
 											{petition.petitionTarget || t`No target specified`}
 										</div>
 									</div>
-									<ColorBadge color={petition.published ? 'green' : 'gray'}>
-										{petition.published ? t`Published` : t`Draft`}
+									<ColorBadge
+										color={petition.archivedAt ? 'yellow' : petition.published ? 'green' : 'gray'}
+									>
+										{petition.archivedAt
+											? t`Archived`
+											: petition.published
+												? t`Published`
+												: t`Draft`}
 									</ColorBadge>
 								</a>
 							{/each}

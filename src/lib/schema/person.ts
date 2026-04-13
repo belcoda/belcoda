@@ -230,7 +230,17 @@ export const personActionHelper = v.pipe(
 	v.object({
 		givenName: v.optional(v.nullable(personSchema.entries.givenName)),
 		familyName: v.optional(v.nullable(personSchema.entries.familyName)),
-		emailAddress: v.optional(v.nullable(personSchema.entries.emailAddress)),
+		//WhatsApp flow sends empty strings for empty fields, so we need to handle that
+		emailAddress: v.optional(
+			v.pipe(
+				v.union([v.string(), v.null()]),
+				v.transform((val) => {
+					if (val === '') return null;
+					return val;
+				}),
+				v.nullable(personSchema.entries.emailAddress)
+			)
+		),
 		phoneNumber: v.optional(v.nullable(personSchema.entries.phoneNumber)),
 		subscribed: v.optional(personSchema.entries.subscribed, true),
 		profilePicture: v.optional(v.nullable(personSchema.entries.profilePicture)),

@@ -30,6 +30,7 @@
 	import InsertImageCombinedDialog from './InsertImageCombinedDialog.svelte';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
+	import { structuredClone } from '$lib/utils/structuredClone';
 	let {
 		value = $bindable(null),
 		onChange,
@@ -42,12 +43,34 @@
 
 	let imageDialog: ReturnType<typeof InsertImageCombinedDialog> | undefined = $state(undefined);
 
+	// Helper to check if value has valid content
+	function hasValidEditorState(val: any): boolean {
+		if (!val) return false;
+		if (typeof val === 'string') {
+			try {
+				val = JSON.parse(val);
+			} catch {
+				return false;
+			}
+		}
+		// Check if it has root with children array that has at least one element
+		return !!(
+			val?.root?.children &&
+			Array.isArray(val.root.children) &&
+			val.root.children.length > 0
+		);
+	}
+
 	const initialConfig = {
 		theme,
 		namespace: 'belcoda_wysiwyg',
 		nodes: [LinkNode, HeadingNode, ImageNode],
 		editable: (() => !disabled)(),
-		editorState: value ? JSON.stringify(value) : undefined,
+		editorState: hasValidEditorState(value)
+			? typeof value === 'string'
+				? value
+				: JSON.stringify(value)
+			: undefined,
 		onError: (error: Error) => {
 			throw error;
 		}

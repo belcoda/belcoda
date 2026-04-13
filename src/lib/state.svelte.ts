@@ -3,6 +3,7 @@ import { type ListFilter } from '$lib/schema/helpers';
 
 import { z } from '$lib/zero.svelte';
 import queries from '$lib/zero/query/index';
+import { structuredClone } from '$lib/utils/structuredClone';
 
 const DEFAULT_LIST_FILTER: ListFilter = {
 	organizationId: '',
@@ -97,6 +98,27 @@ class AppState {
 		this.#userId = userId;
 		this.#organizationId = organizationId;
 		this.#queryContext = queryContext;
+	}
+
+	/**
+	 * Safe gate for `(app)` layout: does not use throwing getters. True when core list/read
+	 * queries have reached a complete materialized state.
+	 */
+	get layoutBootstrapComplete(): boolean {
+		if (!this.#queryContext || !this.#userId || !this.#organizationId) {
+			return false;
+		}
+		const userQ = this.#user;
+		const orgsQ = this.#organizations;
+		const activeQ = this.#activeOrganization;
+		if (!userQ || !orgsQ || !activeQ) {
+			return false;
+		}
+		return (
+			userQ.details.type === 'complete' &&
+			orgsQ.details.type === 'complete' &&
+			activeQ.details.type === 'complete'
+		);
 	}
 
 	get organizationId() {

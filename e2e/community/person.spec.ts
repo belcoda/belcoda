@@ -60,6 +60,57 @@ test.describe.serial('Community and person pages', () => {
 		await expect(personLink).toContainText(ids.familyName);
 	});
 
+	test('owner can navigate from the timeline to the profile page', async ({ page }) => {
+		await loginAsOwner(page);
+		await page.goto(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+
+		await page.getByTestId('person-timeline-display-name').click();
+		await expect(page).toHaveURL(`${ids.personPath}/profile`);
+		await expect(page.getByTestId('person-profile-name-display')).toBeVisible();
+	});
+
+	test('owner can edit the name of a person from the profile page', async ({ page }) => {
+		const profilePage = new PersonProfilePage(page);
+		const suffix = `${Date.now()}`;
+		const newGivenName = 'E2EEdited';
+		const newFamilyName = `Person ${suffix}`;
+
+		await loginAsOwner(page);
+		await profilePage.goto(ids.personPath);
+
+		await expect(profilePage.nameDisplay).toContainText(ids.givenName);
+		await profilePage.editName(newGivenName, newFamilyName);
+
+		await expect(profilePage.nameDisplay).toContainText(newGivenName);
+		await expect(profilePage.nameDisplay).toContainText(newFamilyName);
+
+		ids.givenName = newGivenName;
+		ids.familyName = newFamilyName;
+	});
+
+	test('updated name is reflected on the timeline', async ({ page }) => {
+		await loginAsOwner(page);
+		await page.goto(ids.personPath);
+
+		await expect(page.getByTestId('person-timeline-display-name')).toHaveText(
+			`${ids.givenName} ${ids.familyName}`
+		);
+	});
+
+	test('owner can edit the email address of a person from the profile page', async ({ page }) => {
+		const profilePage = new PersonProfilePage(page);
+		const suffix = `${Date.now()}`;
+		const newEmail = `e2e-edited-${suffix}@belcoda.test`;
+
+		await loginAsOwner(page);
+		await profilePage.goto(ids.personPath);
+
+		await profilePage.editEmail(newEmail);
+
+		await expect(page.getByTestId('person-profile-email-display')).toHaveText(newEmail);
+	});
+
 	test('owner can delete the person from the person profile page', async ({ page }) => {
 		const communityPage = new CommunityPage(page);
 		const profilePage = new PersonProfilePage(page);

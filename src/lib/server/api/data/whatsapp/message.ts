@@ -13,6 +13,7 @@ import {
 import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
+import { structuredClone } from '$lib/utils/structuredClone';
 export async function _findWhatsAppMessageByWamidIdUnsafe({
 	wamidId,
 	tx

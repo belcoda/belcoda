@@ -47,10 +47,10 @@
 							</Table.Row>
 						{:else if tagList.data}
 							{#each tagList.data as tag (tag.id)}
-								<Table.Row>
-									<Table.Cell class="font-medium">{tag.name}</Table.Cell>
+								<Table.Row data-testid="tag-row" data-tag-id={tag.id}>
+									<Table.Cell class="font-medium" data-testid="tag-row-name">{tag.name}</Table.Cell>
 									<Table.Cell>
-										<Badge color={tag.active ? 'green' : 'gray'}>
+										<Badge color={tag.active ? 'green' : 'gray'} data-testid="tag-row-status">
 											{tag.active ? t`Active` : t`Inactive`}
 										</Badge>
 									</Table.Cell>

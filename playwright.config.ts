@@ -10,7 +10,12 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
 	workers: 1,
-	reporter: 'html',
+	reporter: process.env.CI
+		? [
+				['html'],
+				['playwright-ctrf-json-reporter', { outputFile: 'ctrf-report.json', outputDir: 'ctrf' }]
+			]
+		: 'html',
 	use: {
 		baseURL: BASE_URL,
 		trace: 'on-first-retry',

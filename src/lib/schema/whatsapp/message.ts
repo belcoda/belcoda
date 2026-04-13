@@ -37,6 +37,15 @@ export const whatsappActionsSchema = v.variant('type', [
 	whatsappActions.eventSignup
 ]);
 
+export const emojiReactionSchema = v.object({
+	emoji: emoji,
+	personId: v.optional(uuid),
+	phoneNumber: v.optional(isoPhoneNumber),
+	viaBelcoda: v.boolean(),
+	reactedAt: count
+});
+export type EmojiReaction = v.InferOutput<typeof emojiReactionSchema>;
+
 export type WhatsappActions = v.InferOutput<typeof whatsappActionsSchema>;
 
 export const whatsappMessage = v.object({
@@ -59,18 +68,7 @@ export const whatsappMessage = v.object({
 			})
 		)
 	),
-	emojiReactions: v.optional(
-		v.array(
-			v.object({
-				emoji: v.nullable(emoji),
-				personId: v.nullable(uuid),
-				phoneNumber: v.nullable(isoPhoneNumber),
-				viaBelcoda: v.boolean(),
-				reactedAt: count
-			})
-		),
-		[]
-	),
+	emojiReactions: v.optional(v.array(emojiReactionSchema), []),
 	replyToMessageId: v.optional(uuid)
 });
 export type WhatsappMessage = v.InferOutput<typeof whatsappMessage>;

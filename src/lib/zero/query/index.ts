@@ -39,10 +39,12 @@ import { listPersonNotes } from '$lib/zero/query/person_note/list';
 // petition
 import { listPetitions } from '$lib/zero/query/petition/list';
 import { readPetition } from '$lib/zero/query/petition/read';
-import { listPetitionSignatures as listPetitionSignaturesForPetition } from '$lib/zero/query/petition/signatures';
 
 // petition_signature
-import { listPetitionSignatures } from '$lib/zero/query/petition_signature/list';
+import {
+	listPetitionSignatures,
+	listPetitionSignaturesByPetition
+} from '$lib/zero/query/petition_signature/list';
 import { readPetitionSignature } from '$lib/zero/query/petition_signature/read';
 
 // tag
@@ -66,7 +68,7 @@ import { readWhatsappTemplate } from '$lib/zero/query/whatsapp_template/read';
 import { listWhatsappTemplates } from '$lib/zero/query/whatsapp_template/list';
 import { readWhatsappThread } from '$lib/zero/query/whatsapp_thread/read';
 import { listWhatsappThreads } from '$lib/zero/query/whatsapp_thread/list';
-
+import { readWhatsappMessage } from '$lib/zero/query/whatsapp_message/read';
 // Re-export all queries
 export {
 	// activity
@@ -119,10 +121,15 @@ export {
 	listWhatsappTemplates,
 	// whatsapp thread
 	readWhatsappThread,
-	listWhatsappThreads
+	listWhatsappThreads,
+	// whatsapp message
+	readWhatsappMessage
 };
 
 export default defineQueries({
+	whatsappMessage: {
+		read: readWhatsappMessage
+	},
 	whatsappTemplate: {
 		read: readWhatsappTemplate,
 		list: listWhatsappTemplates
@@ -171,7 +178,7 @@ export default defineQueries({
 	petition: {
 		list: listPetitions,
 		read: readPetition,
-		signatures: listPetitionSignaturesForPetition
+		signatures: listPetitionSignaturesByPetition
 	},
 	petitionSignature: {
 		list: listPetitionSignatures,
