@@ -4581,12 +4581,12 @@ msgstr "Ainda não há atividades"
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "View event page"
-msgstr ""
+msgstr "Ver página do evento"
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Preview event page"
-msgstr ""
+msgstr "Pré-visualizar página do evento"
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Detailed signups table"
-msgstr ""
+msgstr "Tabela detalhada de inscrições"
