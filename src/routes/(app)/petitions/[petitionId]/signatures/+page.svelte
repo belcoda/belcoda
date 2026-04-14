@@ -52,7 +52,7 @@
 
 	//@svelte-ignore state_referenced_locally
 	watch(
-		() => petition,
+		() => petition.data,
 		() => {
 			if (petition.data) {
 				displayColumns = [
@@ -103,8 +103,11 @@
 			return newRow;
 		});
 	});
-
+	const downloadCsvReady = $derived(signatures.details.type === 'complete' && petition.data);
 	async function downloadTableAsCSV() {
+		if (!downloadCsvReady) {
+			return;
+		}
 		const csvString = Papa.unparse(transformedTable);
 		const blob = new Blob([csvString], { type: 'text/csv' });
 		const url = URL.createObjectURL(blob);
@@ -189,8 +192,11 @@
 					bind:custom={customColumns}
 					petition={petition.data}
 				/>
-				<Button variant="outline" size="sm" onclick={downloadTableAsCSV}
-					><DownloadIcon /> {t`Download CSV`}</Button
+				<Button
+					variant="outline"
+					size="sm"
+					disabled={!downloadCsvReady}
+					onclick={downloadTableAsCSV}><DownloadIcon /> {t`Download CSV`}</Button
 				>
 				<AddPersonModal
 					trigger={addPersonTrigger}
