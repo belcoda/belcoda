@@ -17,18 +17,19 @@
 	async function sendTestEmail() {
 		if (!canSend) return;
 		loading = true;
+		const trimmedAddress = emailAddress.trim();
 		try {
 			await beforeSend();
 			const response = await fetch(`/api/utils/email/send_test_email/${emailMessageId}`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ emailAddress: emailAddress.trim() })
+				body: JSON.stringify({ emailAddress: trimmedAddress })
 			});
 			if (!response.ok) {
 				const data = await response.json().catch(() => ({}));
 				toast.error(data?.message ?? t`Failed to send test email`);
 			} else {
-				toast.success(t`Test email sent to ${emailAddress}`);
+				toast.success(t`Test email sent to ${trimmedAddress}`);
 			}
 		} catch {
 			toast.error(t`Failed to send test email`);
