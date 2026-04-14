@@ -4,8 +4,15 @@
 		header,
 		footer,
 		children,
-		rootLink
-	}: { header?: Snippet; footer?: Snippet; children: Snippet; rootLink: `/${string}` } = $props();
+		rootLink,
+		bodyPadding = 'p-4'
+	}: {
+		header?: Snippet;
+		footer?: Snippet;
+		children: Snippet;
+		rootLink: `/${string}`;
+		bodyPadding?: string;
+	} = $props();
 
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
@@ -23,7 +30,7 @@
 		</header>
 	{/if}
 
-	<div class="flex w-full flex-1 flex-col gap-4 overflow-y-auto p-4">
+	<div class="flex w-full flex-1 flex-col gap-4 overflow-y-auto {bodyPadding}">
 		{@render children?.()}
 	</div>
 	{#if footer}

@@ -30,6 +30,7 @@
 	import InsertImageCombinedDialog from './InsertImageCombinedDialog.svelte';
 	import { theme } from 'svelte-lexical/dist/themes/default';
 	import type { EditorState } from 'lexical';
+	import { structuredClone } from '$lib/utils/structuredClone';
 	let {
 		value = $bindable(null),
 		onChange,

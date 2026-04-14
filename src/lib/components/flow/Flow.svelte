@@ -37,7 +37,9 @@
 	//nodes
 	import Message from '$lib/components/flow/nodes/Message.svelte';
 	import EventSignup from '$lib/components/flow/nodes/EventSignup.svelte';
+	import PetitionSignup from '$lib/components/flow/nodes/PetitionSignup.svelte';
 	import TagAdd from '$lib/components/flow/nodes/TagAdd.svelte';
+	import TeamAdd from '$lib/components/flow/nodes/TeamAdd.svelte';
 	import Targeting from '$lib/components/flow/nodes/Targeting.svelte';
 	import TemplateMessage from '$lib/components/flow/nodes/TemplateMessage.svelte';
 	//edges
@@ -50,8 +52,10 @@
 	const nodeTypes: NodeTypes = {
 		message: Message,
 		eventSignup: EventSignup,
+		petitionSignup: PetitionSignup,
 		targeting: Targeting,
 		tagAdd: TagAdd,
+		teamAdd: TeamAdd,
 		templateMessage: TemplateMessage
 	};
 
@@ -103,7 +107,7 @@
 						<div class="flex flex-col gap-2">
 							<Button variant="outline" size="sm" href={backButtonUrl}>
 								<ChevronLeftIcon />
-								Back
+								{t`Back`}
 							</Button>
 						</div>
 					</Panel>
@@ -117,10 +121,10 @@
 									size="sm"
 									onclick={() => alert(JSON.stringify($state.snapshot({ nodes, edges })))}
 								>
-									Snapshot
+									{t`Snapshot`}
 								</Button>
 							{/if}
-							<Button variant="destructive" size="sm" onclick={onDiscard}>Discard</Button>
+							<Button variant="destructive" size="sm" onclick={onDiscard}>{t`Discard`}</Button>
 							<Button
 								variant="outline"
 								size="sm"
@@ -128,7 +132,7 @@
 									onSave({
 										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
 										edges: $state.snapshot(edges) as Flow['edges']
-									})}>Save</Button
+									})}>{t`Save`}</Button
 							>
 							<Button
 								variant="default"
@@ -137,7 +141,7 @@
 									onSend({
 										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
 										edges: $state.snapshot(edges) as Flow['edges']
-									})}>Send</Button
+									})}>{t`Send`}</Button
 							>
 						</div>
 					</Panel>
@@ -148,27 +152,29 @@
 							<DropdownMenu.Trigger>
 								<Button variant="default" size="sm">
 									<ChevronDownIcon />
-									Add Node
+									{t`Add Node`}
 								</Button>
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content>
 								<DropdownMenu.Item
 									onclick={() => {
 										const nodesSnapshot = $state.snapshot(nodes);
-										const nodeLength = nodesSnapshot.length;
-										const finalNode = nodesSnapshot[nodeLength - 1];
-										const newNode = addNode(
-											'message',
-											//@ts-ignore
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
-										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
+										const lastNodeIndex = nodesSnapshot.length - 1;
+										const parentNode = nodesSnapshot[lastNodeIndex];
+										if (nodesSnapshot[lastNodeIndex]) {
+											const newNode = addNode(
+												'message',
+												//@ts-ignore
+												parentNode as Node,
+												nodesSnapshot as Node[]
+											);
+											if (newNode) {
+												nodes = [...nodes, newNode];
+											}
 										}
 									}}
 								>
-									Message
+									{t`Message`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
@@ -183,7 +189,22 @@
 										}
 									}}
 								>
-									Event Signup
+									{t`Event Signup`}
+								</DropdownMenu.Item>
+								<DropdownMenu.Item
+									onclick={() => {
+										const nodesSnapshot = $state.snapshot(nodes);
+										const newNode = addNode(
+											'petitionSignup',
+											nodesSnapshot[nodesSnapshot.length - 1] as Node,
+											nodesSnapshot as Node[]
+										);
+										if (newNode) {
+											nodes = [...nodes, newNode];
+										}
+									}}
+								>
+									{t`Petition Signup`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
@@ -198,7 +219,22 @@
 										}
 									}}
 								>
-									Tag Add
+									{t`Tag Add`}
+								</DropdownMenu.Item>
+								<DropdownMenu.Item
+									onclick={() => {
+										const nodesSnapshot = $state.snapshot(nodes);
+										const newNode = addNode(
+											'teamAdd',
+											nodesSnapshot[nodesSnapshot.length - 1] as Node,
+											nodesSnapshot as Node[]
+										);
+										if (newNode) {
+											nodes = [...nodes, newNode];
+										}
+									}}
+								>
+									{t`Team Add`}
 								</DropdownMenu.Item>
 							</DropdownMenu.Content>
 						</DropdownMenu.Root>

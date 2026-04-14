@@ -73,14 +73,28 @@ export function addNode(nodeType: NodeType, parentNode: Node, nodes: Node[]) {
 				id: uuidv4(),
 				type: 'eventSignup' as const,
 				position: position,
-				data: { eventId: '' }
+				data: { eventId: null }
+			};
+		case 'petitionSignup':
+			return {
+				id: uuidv4(),
+				type: 'petitionSignup' as const,
+				position: position,
+				data: { petitionId: null }
 			};
 		case 'tagAdd':
 			return {
 				id: uuidv4(),
 				type: 'tagAdd' as const,
 				position: position,
-				data: { tagId: '' }
+				data: { tagId: null }
+			};
+		case 'teamAdd':
+			return {
+				id: uuidv4(),
+				type: 'teamAdd' as const,
+				position: position,
+				data: { teamId: null }
 			};
 		default:
 			return null;

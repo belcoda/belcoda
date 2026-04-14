@@ -246,7 +246,7 @@ z.createQuery(queries.person.list(listFilter));
    - Public routes: `/login`, `/signup`, `/logout`, `/api/auth`, `/verify-email`, `/webhooks`, `/api/docs`, `/sentry-example-page`
    - Cron: `/api/cron` – requires `x-api-key` header
    - Page routes: Subdomain-based public pages (no auth required)
-   - API v1: `/api/v1/*` – requires valid API key (`authorizedApiOrganization`, `authorizedApiUser`)
+   - API v1: `/api/v1/*` – requires valid API key (`authorizedApiOrganization`)
    - All other routes: Require session; redirect to `/signup` if missing
 
 ### Authorization Model
@@ -298,6 +298,15 @@ z.createQuery(queries.person.list(listFilter));
 - `PUBLIC_ZERO_SERVER` – Zero server URL for client
 - `PUBLIC_ROOT_DOMAIN` – For CORS, cookies
 - Stripe, Google OAuth, etc. per better-auth docs
+
+### Global Operations
+
+Belcoda serves organizations across multiple locales (en, es, pt, etc), so features must work correctly regardless of user location:
+
+- Format dates, numbers, and currency using locale-aware utilities
+- CSV imports etc must respect regional conventions (e.g., European CSVs use semicolons as delimiters because commas are used as decimal separators)
+- Phone number inputs should be parsed and formatted using a library like `awesome-phonenumber`
+- Timezone handling is critical for scheduled events and communications
 
 ---
 

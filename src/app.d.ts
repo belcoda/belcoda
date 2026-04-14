@@ -17,7 +17,6 @@ declare global {
 					ReturnType<(typeof import('$lib/server/auth'))['buildBetterAuth']>['api']['getSession']
 				>
 			>;
-			authorizedApiUser: string | null;
 			authorizedApiOrganization: string | null;
 		}
 		// interface PageData {}
