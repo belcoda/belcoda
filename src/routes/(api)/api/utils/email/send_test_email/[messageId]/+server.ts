@@ -2,15 +2,16 @@ import { json, error } from '@sveltejs/kit';
 import * as v from 'valibot';
 import { email as emailSchema } from '$lib/schema/helpers';
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
-import { builder } from '$lib/zero/schema';
-import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
 import { getEmailSignature } from '$lib/server/utils/email/signature';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { env } from '$env/dynamic/private';
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
-import { drizzle } from '$lib/server/db';
+import { db, drizzle } from '$lib/server/db';
 import { organization } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
+
+import { builder } from '$lib/zero/schema';
+import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
 import pino from '$lib/pino';
 
 const log = pino(import.meta.url);
@@ -42,12 +43,13 @@ export async function POST(event) {
 	try {
 		const ctx = await getQueryContext(event.locals.session.user.id);
 
-		const emailMessageRecord = await builder.emailMessage
-			.where('id', '=', messageId)
-			.where((expr) => emailMessageReadPermissions(expr, ctx))
-			.where('deletedAt', 'IS', null)
-			.one()
-			.run();
+		const emailMessageRecord = await db.run(
+			builder.emailMessage
+				.where('id', '=', messageId)
+				.where((expr) => emailMessageReadPermissions(expr, ctx))
+				.where('deletedAt', 'IS', null)
+				.one()
+		);
 
 		if (!emailMessageRecord) {
 			return error(404, 'Email message not found');
