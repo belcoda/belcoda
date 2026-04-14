@@ -284,6 +284,7 @@ msgstr "Crea una nueva firma de correo electrónico que será verificada con Pos
 msgid "Display name"
 msgstr "Nombre para mostrar"
 
+#: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
@@ -2895,6 +2896,7 @@ msgstr "Invitar"
 msgid "user@example.com"
 msgstr "usuario@ejemplo.com"
 
+#: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr "Enviando..."
@@ -4590,4 +4592,26 @@ msgstr ""
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Detailed signups table"
+msgstr ""
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Test email"
+msgstr ""
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Failed to send test email"
+msgstr ""
+
+#. 0: emailAddress
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Test email sent to {0}"
+msgstr ""
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Send test email to"
+msgstr ""
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Send test email"
 msgstr ""
