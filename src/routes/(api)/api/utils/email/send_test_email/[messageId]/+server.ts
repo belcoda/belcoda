@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import * as v from 'valibot';
-import { uuid, email as emailSchema } from '$lib/schema/helpers';
+import { email as emailSchema } from '$lib/schema/helpers';
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { builder } from '$lib/zero/schema';
 import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
@@ -9,8 +9,8 @@ import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { env } from '$env/dynamic/private';
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import { drizzle } from '$lib/server/db';
-import { person, organization } from '$lib/schema/drizzle';
-import { eq, and, isNull } from 'drizzle-orm';
+import { organization } from '$lib/schema/drizzle';
+import { eq } from 'drizzle-orm';
 import pino from '$lib/pino';
 
 const log = pino(import.meta.url);
@@ -18,7 +18,6 @@ const { POSTMARK_MESSAGE_TEMPLATE_ALIAS } = env;
 const lexicalRenderer = new LexicalHtmlRenderer();
 
 const requestSchema = v.object({
-	personId: uuid,
 	emailAddress: emailSchema
 });
 
@@ -59,17 +58,6 @@ export async function POST(event) {
 		});
 		if (!org) {
 			return error(404, 'Organization not found');
-		}
-
-		const recipient = await drizzle.query.person.findFirst({
-			where: and(
-				eq(person.id, parsed.personId),
-				eq(person.organizationId, emailMessageRecord.organizationId),
-				isNull(person.deletedAt)
-			)
-		});
-		if (!recipient) {
-			return error(404, 'Person not found');
 		}
 
 		const signature = await getEmailSignature({
