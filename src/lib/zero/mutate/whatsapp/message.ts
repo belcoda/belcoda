@@ -1,10 +1,13 @@
 import { defineMutator } from '@rocicorp/zero';
-import { emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema } from '$lib/schema/whatsapp-message';
+import {
+	emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema,
+	isReactionSupportedMessageType
+} from '$lib/schema/whatsapp-message';
 import { env as publicEnv } from '$env/dynamic/public';
 export const emojiReaction = defineMutator(
 	emojiReactionMutatorSchema,
 	async ({ tx, args, ctx }) => {
-		if (!['incoming_api_message', 'outgoing_api_message'].includes(args.whatsappMessage.type)) {
+		if (!isReactionSupportedMessageType(args.whatsappMessage.type)) {
 			throw new Error('Activity is not an incoming or outgoing whatsapp API message');
 		}
 

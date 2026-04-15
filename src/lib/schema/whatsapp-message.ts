@@ -1,9 +1,9 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-
 import {
 	whatsappMessage as whatsappMessageObjectSchema,
-	whatsappMessageActivityTypeSchema
+	whatsappMessageActivityTypeSchema,
+	type WhatsappMessageActivityType
 } from '$lib/schema/whatsapp/message';
 
 export const whatsappMessageStatus = v.picklist(['delivered', 'read', 'failed', 'pending']);
@@ -51,3 +51,7 @@ export const emojiReactionMutatorSchemaZero = v.object({
 	emoji: v.nullable(helpers.emoji)
 });
 export type EmojiReactionMutatorSchemaZero = v.InferOutput<typeof emojiReactionMutatorSchemaZero>;
+
+export function isReactionSupportedMessageType(type: WhatsappMessageActivityType): boolean {
+	return type === 'incoming_api_message' || type === 'outgoing_api_message';
+}

@@ -17,10 +17,7 @@ import {
 import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
-
-function isReactionSupportedMessageType(type: WhatsappMessageActivityType): boolean {
-	return type === 'incoming_api_message' || type === 'outgoing_api_message';
-}
+import { isReactionSupportedMessageType } from '$lib/schema/whatsapp-message';
 import { structuredClone } from '$lib/utils/structuredClone';
 import type { QueryContext } from '$lib/zero/schema';
 import { getPerson } from '$lib/server/api/data/person/person';
