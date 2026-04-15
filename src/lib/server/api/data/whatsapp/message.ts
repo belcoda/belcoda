@@ -11,8 +11,8 @@ import {
 	type WhatsappMessageActivityType
 } from '$lib/schema/whatsapp/message';
 import {
-	emojiReactionMutatorSchema,
-	type EmojiReactionMutatorSchema
+	emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema,
+	type EmojiReactionMutatorSchemaZero as EmojiReactionMutatorSchema
 } from '$lib/schema/whatsapp-message';
 import { v7 as uuidv7 } from 'uuid';
 

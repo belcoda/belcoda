@@ -1,5 +1,5 @@
 import { defineMutator } from '@rocicorp/zero';
-import { emojiReactionMutatorSchema } from '$lib/schema/whatsapp-message';
+import { emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema } from '$lib/schema/whatsapp-message';
 import { env as publicEnv } from '$env/dynamic/public';
 export const emojiReaction = defineMutator(
 	emojiReactionMutatorSchema,

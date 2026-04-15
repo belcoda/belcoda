@@ -44,10 +44,10 @@ export const readWhatsappMessageZero = v.object({
 });
 export type ReadWhatsappMessageZero = v.InferOutput<typeof readWhatsappMessageZero>;
 
-export const emojiReactionMutatorSchema = v.object({
+export const emojiReactionMutatorSchemaZero = v.object({
 	personId: helpers.uuid,
 	organizationId: helpers.uuid,
 	whatsappMessage: readWhatsappMessageZero,
 	emoji: v.nullable(helpers.emoji)
 });
-export type EmojiReactionMutatorSchema = v.InferOutput<typeof emojiReactionMutatorSchema>;
+export type EmojiReactionMutatorSchemaZero = v.InferOutput<typeof emojiReactionMutatorSchemaZero>;

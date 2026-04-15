@@ -1,4 +1,4 @@
-import { emojiReactionMutatorSchema } from '$lib/schema/whatsapp-message';
+import { emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema } from '$lib/schema/whatsapp-message';
 import { defineMutator } from '@rocicorp/zero';
 import * as dataFunctions from '$lib/server/api/data/whatsapp/message';
 
