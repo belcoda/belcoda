@@ -34,8 +34,8 @@ export class PersonProfilePage {
 
 	async waitForLoaded() {
 		await this.loadedContainer.waitFor({ state: 'visible', timeout: 15_000 });
-  }
-  
+	}
+
 	async editName(givenName: string, familyName: string) {
 		await this.nameEditButton.click();
 		await this.givenNameInput.fill(givenName);

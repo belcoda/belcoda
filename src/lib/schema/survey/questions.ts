@@ -26,7 +26,6 @@ export const surveyQuestionTypes = [
 ] as const;
 
 export const surveyQuestionTypeSchema = v.picklist(surveyQuestionTypes);
-import type { EventSchema } from '$lib/schema/event';
 export type SurveyQuestionType = v.InferOutput<typeof surveyQuestionTypeSchema>;
 export const surveyQuestionBase = v.object({
 	id: helpers.uuid,
@@ -127,35 +126,41 @@ export function convertQuestionsToValibotSchema(questions: SurveyQuestion[]) {
 function getSchemaForQuestion(question: SurveyQuestion) {
 	switch (question.type) {
 		case 'custom.dateInput': {
-			return helpers.dateString;
+			return question.required ? helpers.dateString : v.optional(v.nullable(helpers.dateString));
 		}
 		case 'custom.emailInput': {
-			return helpers.email;
+			return question.required ? helpers.email : v.optional(v.nullable(helpers.email));
 		}
 		case 'custom.phoneInput': {
-			return helpers.phoneNumber;
+			return question.required ? helpers.phoneNumber : v.optional(v.nullable(helpers.phoneNumber));
 		}
 		case 'custom.numberInput': {
-			return v.number();
+			return question.required ? v.number() : v.optional(v.nullable(v.number()));
 		}
 		case 'person.dateOfBirth': {
-			return v.date();
+			return question.required ? v.date() : v.optional(v.nullable(v.date()));
 		}
 		case 'custom.checkboxGroup': {
 			const options = question.options ?? [];
-			return v.array(v.picklist(options));
+			return question.required
+				? v.array(v.picklist(options))
+				: v.optional(v.nullable(v.array(v.picklist(options))));
 		}
 		case 'person.gender': {
-			return helpers.gender;
+			return question.required ? helpers.gender : v.optional(v.nullable(helpers.gender));
 		}
 		case 'person.address': {
-			return helpers.address;
+			return question.required ? helpers.address : v.optional(v.nullable(helpers.address));
 		}
 		case 'custom.dropdown':
 		case 'custom.radioGroup':
-			return v.picklist(question.options);
+			return question.required
+				? v.picklist(question.options)
+				: v.optional(v.nullable(v.picklist(question.options)));
 		default:
-			return helpers.mediumString;
+			return question.required
+				? helpers.mediumString
+				: v.optional(v.nullable(helpers.mediumString));
 	}
 }
 
@@ -200,8 +205,18 @@ export const surveyQuestionResponse = v.record(
 );
 export type SurveyQuestionResponse = v.InferOutput<typeof surveyQuestionResponse>;
 
-export function getSurveySchema(eventObj: EventSchema) {
-	const survey = eventObj.settings.survey?.collections?.[0]?.questions ?? [];
+type SurveySchemaSource = {
+	settings?: {
+		survey?: {
+			collections?: {
+				questions?: SurveyQuestion[];
+			}[];
+		} | null;
+	} | null;
+};
+
+export function getSurveySchema(eventObj: SurveySchemaSource) {
+	const survey = eventObj.settings?.survey?.collections?.[0]?.questions ?? [];
 	const customSurveyQuestions = survey.filter((question) => question.type.startsWith('custom.'));
 	const personSurveyQuestions = survey
 		.filter((question) => question.type.startsWith('person.'))

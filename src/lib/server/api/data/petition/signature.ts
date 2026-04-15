@@ -14,15 +14,15 @@ import { organizationReadPermissions } from '$lib/zero/query/organizations/permi
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
+import { surveyResponsesSchema } from '$lib/schema/survey/responses';
 
 import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
-import { type PersonAddedFrom, personAddedFrom } from '$lib/schema/person/meta';
 import {
 	type PetitionSignatureDetails,
 	petitionSignatureDetails
 } from '$lib/schema/petition/settings';
 
-import { parse } from 'valibot';
+import { parse, nullable } from 'valibot';
 
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
@@ -226,12 +226,12 @@ export async function signPetitionHelper({
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
+	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
-	responses?: unknown | null;
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
 	const parsedActionHelper = parse(personActionHelper, personAction);
-
+	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult) {
 		throw new Error('Petition not found');
@@ -266,7 +266,7 @@ export async function signPetitionHelper({
 		organizationRecord: organizationRecord,
 		details: parsedSignatureDetails,
 		skipNotifications,
-		responses
+		responses: parsedResponses
 	});
 	return petitionSignatureResult;
 }
@@ -276,15 +276,18 @@ export async function signPetitionWithId({
 	petitionId,
 	personId,
 	organizationId,
-	signupDetails
+	signupDetails,
+	responses
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
 	personId: string;
 	organizationId: string;
 	signupDetails: PetitionSignatureDetails;
+	responses?: Record<string, unknown> | null;
 }) {
 	const parsedSignupDetails = parse(petitionSignatureDetails, signupDetails);
+	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult.published) {
@@ -306,7 +309,8 @@ export async function signPetitionWithId({
 		petitionRecord: petitionResult,
 		personRecord,
 		organizationRecord,
-		details: parsedSignupDetails
+		details: parsedSignupDetails,
+		responses: parsedResponses
 	});
 }
 
@@ -326,8 +330,8 @@ export async function signPetitionUnsafe({
 	personRecord: typeof person.$inferSelect;
 	organizationRecord: typeof organization.$inferSelect;
 	details: PetitionSignatureDetails;
+	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
-	responses?: unknown | null;
 }) {
 	const id = petitionSignatureId || uuidv7();
 	const petitionSignatureRecord: typeof petitionSignature.$inferInsert = {
@@ -342,20 +346,20 @@ export async function signPetitionUnsafe({
 		updatedAt: new Date()
 	};
 
+	const conflictSet: Partial<typeof petitionSignature.$inferInsert> = {
+		details: petitionSignatureRecord.details,
+		teamId: petitionRecord.teamId,
+		updatedAt: new Date(),
+		...(responses == null ? {} : { responses: petitionSignatureRecord.responses }) //strips responses if null or undefined, to avoid overwriting existing responses
+	};
+
 	const [insertedPetitionSignature] = await tx.dbTransaction.wrappedTransaction
 		.insert(petitionSignature)
 		.values(petitionSignatureRecord)
 		.onConflictDoUpdate({
 			target: [petitionSignature.petitionId, petitionSignature.personId],
-			set: {
-				details: petitionSignatureRecord.details,
-				teamId: petitionRecord.teamId,
-				...(petitionSignatureRecord.responses != null && {
-					responses: petitionSignatureRecord.responses
-				}),
-				updatedAt: new Date()
-			},
-			setWhere: and(isNull(petitionSignature.deletedAt), isNull(petitionSignature.responses))
+			set: conflictSet,
+			setWhere: and(isNull(petitionSignature.deletedAt))
 		})
 		.returning();
 	if (!insertedPetitionSignature) {
@@ -400,7 +404,7 @@ export async function completePetitionSignatureHelper({
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
-	responses?: unknown | null;
+	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
 }) {
 	const result = await signPetitionHelper({
