@@ -1547,7 +1547,6 @@ msgid "No emails found"
 msgstr "No emails found"
 
 #. 0: (index + 1).toString()
-#. 0: (index + 1).toString()
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
 msgid "Option {0}"
