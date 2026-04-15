@@ -266,7 +266,7 @@ export async function signPetitionHelper({
 		organizationRecord: organizationRecord,
 		details: parsedSignatureDetails,
 		skipNotifications,
-		responses
+		responses: parsedResponses
 	});
 	return petitionSignatureResult;
 }
