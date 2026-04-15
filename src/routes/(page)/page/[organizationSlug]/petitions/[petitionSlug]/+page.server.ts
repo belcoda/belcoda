@@ -90,10 +90,11 @@ export async function load({ params, locals }) {
 		try {
 			renderedDescription = await lexicalRenderer.render(petitionDescription);
 			renderedDescription = sanitize(renderedDescription);
-			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		} catch (err) {
 			log.warn({ err, petitionId: petitionData.id }, 'Failed to render petition description');
 			renderedDescription = null;
+		} finally {
+			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		}
 	}
 
