@@ -144,6 +144,7 @@ export const whatsappFlowSurveySchema = object({
 		createdAt: number(),
 		updatedAt: number(),
 		sourceEventId: optional(uuid), // ID of the event if this was converted from event signup fields
+		sourcePetitionId: optional(uuid), // ID of the petition if this was converted from petition signup fields
 		organizationId: uuid,
 		ycloudFlowId: optional(string()) // Flow ID returned from YCloud after deployment
 	}),
@@ -165,6 +166,7 @@ export const whatsappFlowInternalSchema = object({
 		createdAt: number(),
 		updatedAt: number(),
 		sourceEventId: optional(uuid), // ID of the event if this was converted from event signup fields
+		sourcePetitionId: optional(uuid), // ID of the petition if this was converted from petition signup fields
 		organizationId: uuid,
 		ycloudFlowId: optional(string()) // Flow ID returned from YCloud after deployment
 	})
@@ -185,6 +187,7 @@ export interface WhatsappFlowInternal {
 		createdAt: number; // timestamp
 		updatedAt: number; // timestamp
 		sourceEventId?: string; // UUID of event if this came from event signup fields
+		sourcePetitionId?: string; // UUID of petition if this came from petition signup fields
 		organizationId: string; // UUID
 		ycloudFlowId?: string; // Flow ID returned from YCloud after deployment
 	};

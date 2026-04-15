@@ -45,7 +45,10 @@ export function generatePetitions(
 						}
 					]
 				},
-				tags: []
+				tags: [],
+				whatsappFlowId: null,
+				whatsappFlowYCloudId: null,
+				whatsappFlowCreatedAt: null
 			},
 			featureImage: faker.image.urlPicsumPhotos({
 				width: 900,
