@@ -121,7 +121,12 @@
 	let editSlugOpen = $state(false);
 </script>
 
-<form use:form.enhance class="mx-auto flex w-full max-w-4xl flex-col gap-4" id="event-form">
+<form
+	use:form.enhance
+	class="mx-auto flex w-full max-w-4xl flex-col gap-4"
+	id="event-form"
+	data-testid="event-form"
+>
 	<Errors {errors} />
 	<Card.Root>
 		<Card.Header>
@@ -212,6 +217,7 @@
 						<Button
 							type="button"
 							variant="destructive"
+							data-testid="event-archive-button"
 							onclick={async () => {
 								if (
 									window.confirm(
@@ -238,6 +244,7 @@
 						<Button
 							type="button"
 							variant="destructive"
+							data-testid="event-delete-button"
 							onclick={async () => {
 								if (
 									window.confirm(
@@ -274,6 +281,7 @@
 					<InputGroup.Input
 						bind:value={$data.title}
 						{...props}
+						data-testid="event-title-input"
 						placeholder={t`Title`}
 						oninput={useDebounce(
 							() => {
@@ -353,6 +361,7 @@
 					<InputGroup.Textarea
 						bind:value={$data.shortDescription}
 						{...props}
+						data-testid="event-description-input"
 						placeholder={t`Description`}
 						class="min-h-[80px]"
 					/>
@@ -390,7 +399,12 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Address line 1`}</Form.Label>
-						<Input bind:value={$data.addressLine1} {...props} placeholder={t`Address line 1`} />
+						<Input
+							bind:value={$data.addressLine1}
+							{...props}
+							placeholder={t`Address line 1`}
+							data-testid="event-address-line1"
+						/>
 					{/snippet}
 				</Form.Control>
 			</Form.Field>
@@ -400,7 +414,12 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Address line 2 (optional)`}</Form.Label>
-						<Input bind:value={$data.addressLine2} {...props} placeholder={t`Address line 2`} />
+						<Input
+							bind:value={$data.addressLine2}
+							{...props}
+							placeholder={t`Address line 2`}
+							data-testid="event-address-line2"
+						/>
 					{/snippet}
 				</Form.Control>
 			</Form.Field>
@@ -409,7 +428,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{t`City/town`}</Form.Label>
-					<Input bind:value={$data.locality} {...props} placeholder={t`City/town`} />
+					<Input
+						bind:value={$data.locality}
+						{...props}
+						placeholder={t`City/town`}
+						data-testid="event-address-locality"
+					/>
 				{/snippet}
 			</Form.Control>
 		</Form.Field>
@@ -417,7 +441,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{t`Region/state`}</Form.Label>
-					<Input bind:value={$data.region} {...props} placeholder={t`Region/state`} />
+					<Input
+						bind:value={$data.region}
+						{...props}
+						placeholder={t`Region/state`}
+						data-testid="event-address-region"
+					/>
 				{/snippet}
 			</Form.Control>
 		</Form.Field>
@@ -425,7 +454,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{t`Postcode`}</Form.Label>
-					<Input bind:value={$data.postcode} {...props} placeholder={t`Postcode`} />
+					<Input
+						bind:value={$data.postcode}
+						{...props}
+						placeholder={t`Postcode`}
+						data-testid="event-address-postcode"
+					/>
 				{/snippet}
 			</Form.Control>
 		</Form.Field>

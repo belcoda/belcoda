@@ -25,6 +25,7 @@
 		<Button
 			variant="outline"
 			size="sm"
+			data-testid="signup-action-attended"
 			onclick={() =>
 				handleUpdateStatus({
 					eventSignupId: signup.id,
@@ -38,6 +39,7 @@
 		<Button
 			variant="outline"
 			size="sm"
+			data-testid="signup-action-noshow"
 			onclick={() =>
 				handleUpdateStatus({
 					eventSignupId: signup.id,
@@ -77,6 +79,7 @@
 		<Button
 			variant="outline"
 			size="sm"
+			data-testid="signup-action-attended"
 			onclick={() =>
 				handleUpdateStatus({
 					eventSignupId: signup.id,
@@ -89,6 +92,7 @@
 		<Button
 			variant="outline"
 			size="sm"
+			data-testid="signup-action-noshow"
 			onclick={() =>
 				handleUpdateStatus({
 					eventSignupId: signup.id,
@@ -100,7 +104,10 @@
 		>
 	{/if}
 	<DropdownMenu.Root>
-		<DropdownMenu.Trigger class={buttonVariants({ variant: 'outline', size: 'icon-sm' })}>
+		<DropdownMenu.Trigger
+			class={buttonVariants({ variant: 'outline', size: 'icon-sm' })}
+			data-testid="signup-action-dropdown"
+		>
 			<ChevronDownIcon />
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content>
@@ -169,8 +176,9 @@
 				</DropdownMenu.Group>
 			{/if}
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item onclick={() => (openDetailedSignup = true)}
-				>{t`View detailed signup`}</DropdownMenu.Item
+			<DropdownMenu.Item
+				onclick={() => (openDetailedSignup = true)}
+				data-testid="signup-action-view-detail">{t`View detailed signup`}</DropdownMenu.Item
 			>
 			<DropdownMenu.Separator />
 			{#if signup.person.phoneNumber || signup.person.emailAddress}
