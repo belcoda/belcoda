@@ -316,7 +316,10 @@ const DISALLOWED_NAMES = [
 	'gatsby',
 	'wordpress',
 
-	'belcoda'
+	'belcoda',
+
+	// E2E test patterns (to prevent test data conflicts)
+	'e2e'
 ];
 
 const DIVIDERS = ['-', '_', '.', ' '];

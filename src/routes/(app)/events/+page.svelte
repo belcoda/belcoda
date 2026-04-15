@@ -20,11 +20,12 @@
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content>
-			<Button href="/events/new">{t`Create event`}</Button>
+			<Button href="/events/new" data-testid="events-create-button">{t`Create event`}</Button>
 		</Empty.Content>
 		<Button variant="link" class="text-muted-foreground" size="sm">
 			<a href="#/">
-				{t`Learn more about events`} <ExternalLinkIcon class="inline" />
+				{t`Learn more about events`}
+				<ExternalLinkIcon class="inline" />
 			</a>
 		</Button>
 	</Empty.Root>

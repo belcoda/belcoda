@@ -5,8 +5,8 @@ import * as schema from '$lib/schema/drizzle';
 import { env } from '$env/dynamic/private';
 import { error, json } from '@sveltejs/kit';
 
-const TEST_ORG_SLUG = 'e2e-test-organization';
 const TEST_USER_EMAIL_PATTERN = 'e2e-%@belcoda.test';
+const TEST_ORG_SLUG_PATTERN = 'e2e-%';
 
 async function deleteTestOrganizationScopedRows(orgId: string) {
 	const people = await drizzle
@@ -149,8 +149,8 @@ export const POST: RequestHandler = async () => {
 		});
 		const testUserIds = testUsers.map((u) => u.id);
 
-		const testOrg = await drizzle.query.organization.findFirst({
-			where: eq(schema.organization.slug, TEST_ORG_SLUG)
+		const testOrgs = await drizzle.query.organization.findMany({
+			where: like(schema.organization.slug, TEST_ORG_SLUG_PATTERN)
 		});
 
 		if (testUserIds.length > 0) {
@@ -162,8 +162,8 @@ export const POST: RequestHandler = async () => {
 			await drizzle.delete(schema.session).where(inArray(schema.session.userId, testUserIds));
 		}
 
-		if (testOrg) {
-			await deleteTestOrganizationScopedRows(testOrg.id);
+		for (const org of testOrgs) {
+			await deleteTestOrganizationScopedRows(org.id);
 		}
 
 		if (testUserIds.length > 0) {

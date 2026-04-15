@@ -1,5 +1,6 @@
 <script lang="ts">
 	import EmailForm from '$lib/components/forms/email/EmailForm.svelte';
+	import SendTestEmail from '$lib/components/forms/email/SendTestEmail.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
@@ -23,6 +24,12 @@
 		emailFromSignatureId: string | undefined;
 		recipients: FilterGroupType;
 	};
+
+	let showTestEmail = $state(false);
+
+	export function toggleTestEmail() {
+		showTestEmail = !showTestEmail;
+	}
 
 	let subject = $state<string>(untrack(() => email.subject ?? ''));
 	let body = $state<SerializedEditorState | null>(untrack(() => email.body ?? null));
@@ -107,3 +114,9 @@
 	bind:emailFromSignatureId
 	handleUpdate={persist}
 />
+
+{#if showTestEmail}
+	<div class="mt-4 rounded-lg border p-4">
+		<SendTestEmail emailMessageId={email.id} beforeSend={persist} />
+	</div>
+{/if}

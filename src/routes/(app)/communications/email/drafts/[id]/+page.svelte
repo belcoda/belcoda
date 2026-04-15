@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
+	import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { createDefaultEmailMessage } from '$lib/schema/email-message';
@@ -72,6 +73,10 @@
 					toast.success(t`Email saved`);
 				}}>{t`Save`}</Button
 			>
+			<Button variant="outline" size="sm" onclick={() => formRef?.toggleTestEmail()}>
+				<FlaskConicalIcon class="size-4" />
+				{t`Test email`}
+			</Button>
 			<Button
 				variant="default"
 				size="sm"
