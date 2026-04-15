@@ -2788,6 +2788,24 @@ const whatsappMessageTable = {
 			optional: false,
 			customType: null as unknown as 'pending' | 'failed' | 'delivered' | 'read'
 		},
+		statusMessage: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string,
+			serverName: 'status_message'
+		},
+		deliveredAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'delivered_at'
+		},
+		readAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'read_at'
+		},
 		createdAt: {
 			type: 'number',
 			optional: false,
