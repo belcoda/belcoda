@@ -192,13 +192,20 @@ export async function emojiReaction({
 				message: { ...messageActivity.message, emojiReactions: emojiReactionArray }
 			})
 			.where(eq(whatsappMessage.id, messageActivity.id));
-
-		await sendEmojiReaction({
-			messageWamid: wamid,
-			emoji: reaction,
-			from,
-			to
-		});
+		try {
+			await sendEmojiReaction({
+				messageWamid: wamid,
+				emoji: reaction,
+				from,
+				to
+			});
+		} catch (error) {
+			log.error(
+				{ error, messageActivity, reaction, wamid, from, to },
+				'Failed to send emoji reaction'
+			);
+			throw error; //in the future, maybe we'd look at reversing the database update...
+		}
 	} else {
 		throw new Error('Message does not have a wamid ID, which is required for reactions');
 	}
