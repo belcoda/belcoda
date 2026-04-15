@@ -134,6 +134,7 @@ export async function emojiReaction({
 }) {
 	const args = parse(emojiReactionMutatorSchema, argsInput);
 
+	// get the message record from the database rather than relying on the possibly forged user-provided one
 	const messageActivity = await _findWhatsAppMessageByIdUnsafe({
 		messageId: args.whatsappMessage.id,
 		tx
@@ -166,13 +167,6 @@ export async function emojiReaction({
 		const reaction = args.emoji || '';
 		const wamid = messageActivity.wamidId;
 
-		await sendEmojiReaction({
-			messageWamid: wamid,
-			emoji: reaction,
-			from,
-			to
-		});
-
 		const emojiReactionArray = structuredClone(messageActivity.message.emojiReactions || []);
 		const existingReactionIndex = emojiReactionArray?.findIndex((reaction) => reaction.viaBelcoda);
 		if (existingReactionIndex !== -1) {
@@ -201,6 +195,15 @@ export async function emojiReaction({
 				message: { ...messageActivity.message, emojiReactions: emojiReactionArray }
 			})
 			.where(eq(whatsappMessage.id, messageActivity.id));
+
+		await sendEmojiReaction({
+			messageWamid: wamid,
+			emoji: reaction,
+			from,
+			to
+		});
+	} else {
+		throw new Error('Message does not have a wamid ID, which is required for reactions');
 	}
 }
 
