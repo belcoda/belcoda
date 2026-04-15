@@ -135,7 +135,7 @@
 				}
 				z.mutate(
 					mutators.whatsappMessage.emojiReaction({
-						whatsappMessage: whatsappMessage.data as ReadWhatsappMessageZero,
+						whatsappMessage: whatsappMessage.data,
 						emoji: emoji,
 						organizationId: appState.organizationId,
 						personId: activity.personId
