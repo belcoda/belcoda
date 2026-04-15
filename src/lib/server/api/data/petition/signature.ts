@@ -276,15 +276,18 @@ export async function signPetitionWithId({
 	petitionId,
 	personId,
 	organizationId,
-	signupDetails
+	signupDetails,
+	responses
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
 	personId: string;
 	organizationId: string;
 	signupDetails: PetitionSignatureDetails;
+	responses?: Record<string, unknown> | null;
 }) {
 	const parsedSignupDetails = parse(petitionSignatureDetails, signupDetails);
+	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult.published) {
@@ -306,7 +309,8 @@ export async function signPetitionWithId({
 		petitionRecord: petitionResult,
 		personRecord,
 		organizationRecord,
-		details: parsedSignupDetails
+		details: parsedSignupDetails,
+		responses: parsedResponses
 	});
 }
 
@@ -346,7 +350,7 @@ export async function signPetitionUnsafe({
 		details: petitionSignatureRecord.details,
 		teamId: petitionRecord.teamId,
 		updatedAt: new Date(),
-		...(responses === null ? {} : { responses: petitionSignatureRecord.responses }) //strips responses if null, to avoid overwriting existing responses
+		...(responses == null ? {} : { responses: petitionSignatureRecord.responses }) //strips responses if null or undefined, to avoid overwriting existing responses
 	};
 
 	const [insertedPetitionSignature] = await tx.dbTransaction.wrappedTransaction
