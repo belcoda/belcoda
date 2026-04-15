@@ -183,6 +183,12 @@ export async function deployFlow({
 	publish?: boolean;
 	endpointUri?: string;
 }): Promise<{ flowId: string; success: boolean }> {
+	if (env.MOCK_EXTERNAL_SERVICES === 'true') {
+		const flowId = flow.metadata.ycloudFlowId?.trim() || flow.metadata.id;
+		log.info({ flowId, wabaId, internalId: flow.metadata.id }, 'Mocking YCloud flow deployment');
+		return { flowId, success: true };
+	}
+
 	const requestBody = convertInternalToYCloudRequest(flow, {
 		wabaId,
 		publish,
