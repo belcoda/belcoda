@@ -33,7 +33,7 @@ export const TEST_USERS: Record<UserRole, TestUser> = {
 export async function verifyUserEmail(email: string): Promise<void> {
 	const response = await fetch(`${BASE_URL}/api/e2e/verify-email`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
 		body: JSON.stringify({ email })
 	});
 
@@ -47,7 +47,7 @@ export async function verifyUserEmail(email: string): Promise<void> {
 export async function signUpUser(user: TestUser): Promise<Response> {
 	const response = await fetch(`${BASE_URL}/api/auth/sign-up/email`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
 		body: JSON.stringify({
 			email: user.email,
 			password: user.password,
@@ -69,7 +69,7 @@ export async function signUpUser(user: TestUser): Promise<Response> {
 export async function signInUser(user: TestUser): Promise<Response> {
 	const response = await fetch(`${BASE_URL}/api/auth/sign-in/email`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
 		body: JSON.stringify({
 			email: user.email,
 			password: user.password

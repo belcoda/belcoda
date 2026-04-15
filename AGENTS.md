@@ -273,7 +273,7 @@ z.createQuery(queries.person.list(listFilter));
 - Use `$props()` for component props
 - Use `$state`, `$derived`, `$derived.by` for reactivity
 - Use `{@render children?.()}` and snippets for composition
-- Use `$effect` for side effects
+- Use `$effect` for side effects. Do not use `$effect` unless there's no other practical option. Especially avoid `$effect` for updating state. Where possible, use `$derived` values, or, if state needs to be updated based on user action use event callbacks or function bindings.
 
 ### Forms
 

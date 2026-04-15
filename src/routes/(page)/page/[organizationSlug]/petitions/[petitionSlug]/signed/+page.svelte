@@ -9,4 +9,4 @@
 	const layout = layouts.includes(paramLayout) ? (paramLayout as 'default' | 'embed') : 'default';
 </script>
 
-<RenderPetitionPage {data} {layout} success={true} petitionId={data.petition.id} />
+<RenderPetitionPage {data} {layout} success={true} />

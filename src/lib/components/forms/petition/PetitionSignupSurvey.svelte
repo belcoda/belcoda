@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { appState } from '$lib/state.svelte';
 	import { locale, t } from '$lib/index.svelte';
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type Readable } from 'svelte/store';
-	import { type CreateEventZero, type UpdateEventZero } from '$lib/schema/event';
+	import { type CreatePetitionZero, type UpdatePetitionZero } from '$lib/schema/petition/petition';
+
 	type Errors = Readable<
 		{
 			path: string;
@@ -11,16 +11,18 @@
 		}[]
 	>;
 
-	type Props<T extends CreateEventZero | UpdateEventZero> = {
+	type Props<T extends CreatePetitionZero | UpdatePetitionZero> = {
 		form: SuperForm<T>;
 		data: SuperForm<T>['form'];
 		errors: Errors;
 	};
+
 	let {
 		form = $bindable(),
 		data = $bindable(),
 		errors = $bindable()
-	}: Props<CreateEventZero | UpdateEventZero> = $props();
+	}: Props<CreatePetitionZero | UpdatePetitionZero> = $props();
+
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
@@ -30,9 +32,15 @@
 		addFieldTypeToSurvey,
 		removeFieldTypeFromSurvey,
 		changeQuestionType as changeQuestionTypeAction
-	} from './survey_actions';
+	} from '$lib/components/forms/event/survey_actions';
 	import PlusIcon from '@lucide/svelte/icons/plus';
-	import { renderPersonQuestion } from './render_survey_question';
+	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
+	import * as Dropdown from '$lib/components/ui/dropdown-menu/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
+	import * as Accordion from '$lib/components/ui/accordion/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 
 	function toggleStandardInformation(field: SurveyQuestionType, checked: boolean) {
 		if (!$data.settings?.survey) return;
@@ -43,16 +51,9 @@
 		}
 	}
 
-	let openAccordionItems = $state<string[]>([]);
-
 	function addQuestion(type: SurveyQuestionType) {
 		if (!$data.settings?.survey) return;
 		$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, type, locale.current);
-		const questions = $data.settings.survey.collections[0].questions;
-		const newQuestion = questions[questions.length - 1];
-		if (newQuestion) {
-			openAccordionItems = [...openAccordionItems, newQuestion.id];
-		}
 	}
 
 	function removeQuestion(id: string) {
@@ -60,12 +61,6 @@
 		$data.settings.survey.collections[0].questions =
 			$data.settings.survey.collections[0].questions.filter((question) => question.id !== id);
 	}
-	import * as Dropdown from '$lib/components/ui/dropdown-menu/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
-	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
-	import * as Accordion from '$lib/components/ui/accordion/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
 
 	function changeQuestionType(questionIndex: number, type: SurveyQuestionType) {
 		if (!$data.settings?.survey) return;
@@ -106,6 +101,14 @@
 			(question) => question.type === field
 		);
 	}
+
+	const customQuestionsWithIndex = $derived.by(() => {
+		const questions = $data.settings?.survey?.collections?.[0]?.questions;
+		if (!questions) return [];
+		return questions
+			.map((field, index) => ({ field, index }))
+			.filter(({ field }) => field.type?.startsWith('custom.'));
+	});
 </script>
 
 <div class="space-y-6">
@@ -113,7 +116,7 @@
 		<div>
 			<h3 class="text-sm leading-none font-medium">{t`Standard Information`}</h3>
 			<p class="mt-1.5 text-sm text-muted-foreground">
-				{t`Select which standard information fields to collect from attendees.`}
+				{t`Select which standard information fields to collect from signers.`}
 			</p>
 		</div>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -177,139 +180,134 @@
 			<div>
 				<h3 class="text-sm leading-none font-medium">{t`Custom Questions`}</h3>
 				<p class="mt-1.5 text-sm text-muted-foreground">
-					{t`Add custom questions to collect additional information from attendees.`}
+					{t`Add custom questions to collect additional information from signers.`}
 				</p>
 			</div>
 			{@render addQuestionDropdown()}
 		</div>
 
-		{#if $data.settings?.survey && $data.settings?.survey?.collections?.[0]?.questions?.length > 0}
-			<Accordion.Root type="multiple" class="space-y-2" bind:value={openAccordionItems}>
-				{#each $data.settings?.survey?.collections?.[0]?.questions as field, index (field.id)}
-					{#if field.type.startsWith('custom.')}
-						<Accordion.Item value={field.id} class="rounded-lg border last:border-b">
-							<Accordion.Trigger
-								class="px-4 py-3 hover:no-underline"
-								data-testid={`survey-question-trigger-${index}`}
-							>
-								<div class="flex w-full items-center justify-between pr-4">
-									<span class="font-medium">{field.label || t`Untitled Question`}</span>
-									<span class="text-xs text-muted-foreground">
-										{renderQuestionTypeName(field.type, locale.current)}
-									</span>
-								</div>
-							</Accordion.Trigger>
-							<Accordion.Content class="px-4 pt-0 pb-4">
-								<div class="space-y-4 pt-4">
+		{#if $data.settings?.survey && customQuestionsWithIndex.length > 0}
+			<Accordion.Root type="multiple" class="space-y-2">
+				{#each customQuestionsWithIndex as { field, index } (field.id)}
+					<Accordion.Item value={field.id} class="rounded-lg border last:border-b">
+						<Accordion.Trigger class="px-4 py-3 hover:no-underline">
+							<div class="flex w-full items-center justify-between pr-4">
+								<span class="font-medium">{field.label || t`Untitled Question`}</span>
+								<span class="text-xs text-muted-foreground">
+									{renderQuestionTypeName(field.type, locale.current)}
+								</span>
+							</div>
+						</Accordion.Trigger>
+						<Accordion.Content class="px-4 pt-0 pb-4">
+							<div class="space-y-4 pt-4">
+								<Form.Field
+									{form}
+									name={`settings.survey.collections[0].questions[${index}].label`}
+								>
+									<Form.Control>
+										{#snippet children({ props })}
+											{#if $data.settings?.survey}
+												<Form.Label>{t`Question Label`}</Form.Label>
+												<Input
+													type="text"
+													{...props}
+													bind:value={$data.settings.survey.collections[0].questions[index].label}
+													placeholder={t`Enter question label`}
+												/>
+											{/if}
+										{/snippet}
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field>
+
+								<div class="flex items-center justify-between gap-4">
 									<Form.Field
 										{form}
-										name={`settings.survey.collections[0].questions[${index}].label`}
+										name={`settings.survey.collections[0].questions[${index}].required`}
 									>
 										<Form.Control>
 											{#snippet children({ props })}
 												{#if $data.settings?.survey}
-													<Form.Label>{t`Question Label`}</Form.Label>
-													<Input
-														type="text"
-														{...props}
-														bind:value={$data.settings.survey.collections[0].questions[index].label}
-														placeholder={t`Enter question label`}
-														data-testid={`survey-custom-question-label-${index}`}
-													/>
+													<div class="flex items-center gap-2">
+														<Checkbox
+															{...props}
+															bind:checked={
+																$data.settings.survey.collections[0].questions[index].required
+															}
+														/>
+														<Form.Label class="cursor-pointer font-normal"
+															>{t`Required field`}</Form.Label
+														>
+													</div>
 												{/if}
 											{/snippet}
 										</Form.Control>
-										<Form.FieldErrors />
 									</Form.Field>
 
-									<div class="flex items-center justify-between gap-4">
-										<Form.Field
-											{form}
-											name={`settings.survey.collections[0].questions[${index}].required`}
-										>
-											<Form.Control>
-												{#snippet children({ props })}
-													{#if $data.settings?.survey}
-														<div class="flex items-center gap-2">
-															<Checkbox
-																{...props}
-																bind:checked={
-																	$data.settings.survey.collections[0].questions[index].required
-																}
-															/>
-															<Form.Label class="cursor-pointer font-normal"
-																>{t`Required field`}</Form.Label
-															>
-														</div>
-													{/if}
-												{/snippet}
-											</Form.Control>
-										</Form.Field>
+									<div class="flex items-center gap-2">
+										{@render changeQuestionTypeDropdown(index, field.type)}
+										{@render removeQuestionButton(field.id)}
+									</div>
+								</div>
 
-										<div class="flex items-center gap-2">
-											{@render changeQuestionTypeDropdown(index, field.type)}
-											{@render removeQuestionButton(field.id)}
+								{#if 'options' in $data.settings?.survey?.collections[0].questions[index]}
+									<div class="space-y-3 rounded-md border p-4">
+										<div class="flex items-center justify-between">
+											<Label class="text-sm font-medium">{t`Options`}</Label>
+											<Button
+												onclick={() => addOption(index)}
+												variant="outline"
+												size="sm"
+												type="button"
+											>
+												<PlusIcon class="mr-2 size-4" />
+												{t`Add option`}
+											</Button>
+										</div>
+										<div class="space-y-2">
+											{#each $data.settings?.survey?.collections[0].questions[index].options as option, optionIndex (index + '-' + optionIndex)}
+												<div class="flex items-center gap-2">
+													<Form.Field
+														{form}
+														class="flex-1"
+														name={`settings.survey.collections[0].questions[${index}].options[${optionIndex}]`}
+													>
+														<Form.Control>
+															{#snippet children({ props })}
+																{#if $data.settings?.survey && 'options' in $data.settings.survey.collections[0].questions[index]}
+																	<Input
+																		type="text"
+																		{...props}
+																		bind:value={
+																			$data.settings.survey.collections[0].questions[index].options[
+																				optionIndex
+																			]
+																		}
+																		placeholder={`Option ${optionIndex + 1}`}
+																	/>
+																{/if}
+															{/snippet}
+														</Form.Control>
+														<Form.FieldErrors />
+													</Form.Field>
+													<Button
+														onclick={() => removeOption(index, optionIndex)}
+														variant="ghost"
+														size="icon"
+														type="button"
+														class="shrink-0"
+													>
+														<XIcon class="size-4" />
+														<span class="sr-only">{t`Remove option`}</span>
+													</Button>
+												</div>
+											{/each}
 										</div>
 									</div>
-
-									{#if 'options' in $data.settings?.survey?.collections[0].questions[index]}
-										<div class="space-y-3 rounded-md border p-4">
-											<div class="flex items-center justify-between">
-												<Label class="text-sm font-medium">{t`Options`}</Label>
-												<Button
-													onclick={() => addOption(index)}
-													variant="outline"
-													size="sm"
-													type="button"
-												>
-													<PlusIcon class="mr-2 size-4" />
-													{t`Add option`}
-												</Button>
-											</div>
-											<div class="space-y-2">
-												{#each $data.settings?.survey?.collections[0].questions[index].options as option, optionIndex (index + '-' + optionIndex)}
-													<div class="flex items-center gap-2">
-														<Form.Field
-															{form}
-															class="flex-1"
-															name={`settings.survey.collections[0].questions[${index}].options[${optionIndex}]`}
-														>
-															<Form.Control>
-																{#snippet children({ props })}
-																	{#if $data.settings?.survey && 'options' in $data.settings.survey.collections[0].questions[index]}
-																		<Input
-																			type="text"
-																			{...props}
-																			bind:value={
-																				$data.settings.survey.collections[0].questions[index]
-																					.options[optionIndex]
-																			}
-																			placeholder={`Option ${optionIndex + 1}`}
-																		/>
-																	{/if}
-																{/snippet}
-															</Form.Control>
-															<Form.FieldErrors />
-														</Form.Field>
-														<Button
-															onclick={() => removeOption(index, optionIndex)}
-															variant="ghost"
-															size="icon"
-															type="button"
-															class="shrink-0"
-														>
-															<XIcon class="size-4" />
-															<span class="sr-only">{t`Remove option`}</span>
-														</Button>
-													</div>
-												{/each}
-											</div>
-										</div>
-									{/if}
-								</div>
-							</Accordion.Content>
-						</Accordion.Item>
-					{/if}
+								{/if}
+							</div>
+						</Accordion.Content>
+					</Accordion.Item>
 				{/each}
 			</Accordion.Root>
 		{:else}
@@ -325,19 +323,13 @@
 
 {#snippet addQuestionDropdown()}
 	<Dropdown.Root>
-		<Dropdown.Trigger
-			class={buttonVariants({ variant: 'outline', size: 'sm' })}
-			data-testid="survey-add-question-trigger"
-		>
+		<Dropdown.Trigger class={buttonVariants({ variant: 'outline', size: 'sm' })}>
 			<PlusIcon class="mr-2 size-4" />
 			{t`Add question`}
 			<ChevronDownIcon class="ml-2 size-4" />
 		</Dropdown.Trigger>
 		<Dropdown.Content>
-			<Dropdown.Item
-				onclick={() => addQuestion('custom.textInput')}
-				data-testid="survey-add-short-text">{t`Short text`}</Dropdown.Item
-			>
+			<Dropdown.Item onclick={() => addQuestion('custom.textInput')}>{t`Short text`}</Dropdown.Item>
 			<Dropdown.Item onclick={() => addQuestion('custom.textarea')}>{t`Long text`}</Dropdown.Item>
 			<Dropdown.Item onclick={() => addQuestion('custom.dateInput')}>{t`Date`}</Dropdown.Item>
 			<Dropdown.Item onclick={() => addQuestion('custom.checkboxGroup')}

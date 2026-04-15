@@ -62,7 +62,7 @@
 		</Empty.Content>
 	</Empty.Root>
 {:else}
-	<Table.Root>
+	<Table.Root data-testid="event-signup-table">
 		<Table.Header>
 			<Table.Row>
 				<Table.Head>
@@ -128,6 +128,7 @@
 			variant="outline"
 			size="sm"
 			disabled={selectedSignups.length === 0}
+			data-testid="event-mark-attended-btn"
 			onclick={() => {
 				selectedSignups.forEach((signup) => {
 					handleUpdateStatus({
@@ -147,6 +148,7 @@
 			variant="outline"
 			size="sm"
 			disabled={selectedSignups.length === 0}
+			data-testid="event-mark-noshow-btn"
 			onclick={() => {
 				selectedSignups.forEach((signup) => {
 					handleUpdateStatus({

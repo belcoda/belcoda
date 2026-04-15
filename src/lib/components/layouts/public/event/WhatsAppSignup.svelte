@@ -42,6 +42,7 @@
 	type="button"
 	class="w-full bg-green-600 text-white transition-colors hover:bg-green-700"
 	onclick={handleWhatsAppSignup}
+	data-testid="whatsapp-signup-btn"
 >
 	<span class="icon-[ri--whatsapp-line] size-5"></span>
 	{t`Sign up via WhatsApp`}
@@ -54,7 +55,9 @@
 		</div>
 
 		<h3 class="mb-2 text-lg font-semibold text-gray-900">{t`Sign up via WhatsApp`}</h3>
-		<p class="mb-6 text-sm text-gray-600">{t`Choose how you'd like to proceed with your signup.`}</p>
+		<p class="mb-6 text-sm text-gray-600">
+			{t`Choose how you'd like to proceed with your signup.`}
+		</p>
 
 		<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:justify-center">
 			<button

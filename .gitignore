@@ -31,3 +31,4 @@ src/locales/.wuchale/
 # Playwright
 playwright/
 playwright-report/
+e2e/.auth/

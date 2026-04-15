@@ -56,10 +56,11 @@ export async function load({ locals, params, url }) {
 		try {
 			renderedDescription = await lexicalRenderer.render(eventObj.description);
 			renderedDescription = sanitize(renderedDescription);
-			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		} catch (err) {
 			log.warn({ err, eventId: eventObj.id }, 'Failed to render event description');
 			renderedDescription = null;
+		} finally {
+			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		}
 	}
 
