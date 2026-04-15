@@ -2380,10 +2380,12 @@ msgid "{0} signatures"
 msgstr "{0} signatures"
 
 #: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "No signatures found"
 msgstr "No signatures found"
 
 #: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "No signatures found for this petition. Signatures will appear here once people sign."
 msgstr "No signatures found for this petition. Signatures will appear here once people sign."
 
@@ -2439,6 +2441,7 @@ msgid "Edit event"
 msgstr "Edit event"
 
 #: src/routes/(app)/events/[eventId]/signups/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Download CSV"
 msgstr "Download CSV"
 

@@ -2381,10 +2381,12 @@ msgid "{0} signatures"
 msgstr "{0} assinaturas"
 
 #: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "No signatures found"
 msgstr "Nenhuma assinatura encontrada"
 
 #: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "No signatures found for this petition. Signatures will appear here once people sign."
 msgstr "Nenhuma assinatura encontrada para esta petição. As assinaturas aparecerão aqui assim que as pessoas assinarem."
 
@@ -2440,6 +2442,7 @@ msgid "Edit event"
 msgstr "Editar evento"
 
 #: src/routes/(app)/events/[eventId]/signups/+page.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "Download CSV"
 msgstr "Baixar CSV"
 
@@ -4565,4 +4568,33 @@ msgstr ""
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the video tag."
-msgstr ""
+msgstr "Seu navegador não suporta o elemento de vídeo."
+
+#~ msgid "Whatsapp message"
+#~ msgstr ""
+
+#~ msgid "loading_activities"
+#~ msgstr ""
+
+#~ msgid "no_activities_yet"
+#~ msgstr ""
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Loading activities..."
+msgstr "Carregando atividades..."
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "No activities yet"
+msgstr "Ainda não há atividades"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "View event page"
+msgstr "Ver página do evento"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Preview event page"
+msgstr "Pré-visualizar página do evento"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Detailed signups table"
+msgstr "Tabela detalhada de inscrições"
