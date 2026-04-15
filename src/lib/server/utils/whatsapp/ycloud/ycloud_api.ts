@@ -184,8 +184,16 @@ export async function deployFlow({
 	endpointUri?: string;
 }): Promise<{ flowId: string; success: boolean }> {
 	if (env.MOCK_EXTERNAL_SERVICES === 'true') {
-		const flowId = flow.metadata.ycloudFlowId?.trim() || flow.metadata.id;
-		log.info({ flowId, wabaId, internalId: flow.metadata.id }, 'Mocking YCloud flow deployment');
+		const flowId = flow.metadata.ycloudFlowId?.trim() || `mock-${flow.metadata.id}`;
+		log.info(
+			{
+				ycloudFlowId: flow.metadata.ycloudFlowId,
+				internalId: flow.metadata.id,
+				returnedFlowId: flowId,
+				isMock: true
+			},
+			'Mocking YCloud flow deployment — returnedFlowId is synthetic and must not be treated as a real YCloud id'
+		);
 		return { flowId, success: true };
 	}
 
