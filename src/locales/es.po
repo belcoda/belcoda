@@ -2610,7 +2610,7 @@ msgstr "{0} personas han firmado esta petición"
 #. 0: current; 1: target
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 msgid "{0} more signatures needed to reach {1}"
-msgstr "{0} firmas más necesarias para alcanzar {1}"
+msgstr "Faltan {0} firmas para alcanzar {1}"
 
 #: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "To:"
