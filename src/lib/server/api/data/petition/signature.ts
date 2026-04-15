@@ -14,6 +14,7 @@ import { organizationReadPermissions } from '$lib/zero/query/organizations/permi
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
+import { surveyResponsesSchema } from '$lib/schema/survey/responses';
 
 import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
 import { type PersonAddedFrom, personAddedFrom } from '$lib/schema/person/meta';
@@ -22,7 +23,7 @@ import {
 	petitionSignatureDetails
 } from '$lib/schema/petition/settings';
 
-import { parse } from 'valibot';
+import { parse, nullable } from 'valibot';
 
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
@@ -229,7 +230,7 @@ export async function signPetitionHelper({
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
 	const parsedActionHelper = parse(personActionHelper, personAction);
-
+	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult) {
 		throw new Error('Petition not found');
