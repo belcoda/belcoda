@@ -2608,9 +2608,7 @@ msgid "{0} people have signed this petition"
 msgstr "{0} people have signed this petition"
 
 #. 0: current; 1: target
-#. 0: current; 1: target
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
-#: src/lib/components/layouts/public/petition/RenderPetitionPage.svelte
 msgid "{0} more signatures needed to reach {1}"
 msgstr "{0} more signatures needed to reach {1}"
 
@@ -3347,6 +3345,7 @@ msgstr "Political party & election campaign"
 msgid "What is your organization's focus?"
 msgstr "What is your organization's focus?"
 
+#: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
