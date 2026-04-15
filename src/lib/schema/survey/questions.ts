@@ -142,7 +142,9 @@ function getSchemaForQuestion(question: SurveyQuestion) {
 		}
 		case 'custom.checkboxGroup': {
 			const options = question.options ?? [];
-			return v.array(v.picklist(options));
+			return question.required
+				? v.array(v.picklist(options))
+				: v.optional(v.nullable(v.array(v.picklist(options))));
 		}
 		case 'person.gender': {
 			return question.required ? helpers.gender : v.optional(v.nullable(helpers.gender));
