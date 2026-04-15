@@ -30,26 +30,33 @@ loadLocales(js.key, js.loadIDs, js.loadCatalog, locales);
 /**
  * Determine the locale for an incoming request by consulting a locale cookie and optional URL override.
  *
- * Checks the `BELCODA_LOCALE` cookie and, if its value is a supported locale, returns the `locale` URL
- * search parameter when present and supported; otherwise returns the cookie value. If neither provides
- * a supported locale, falls back to `'en'`.
+ * Reads `BELCODA_LOCALE` and the `locale` search param. If the cookie is a supported locale, a valid
+ * `locale` param overrides it; an invalid param keeps the cookie. If the cookie is not supported, a
+ * valid `locale` param is used. Falls back to `'en'` only when neither source yields a supported locale.
  *
  * @param event - The incoming RequestEvent containing `url` and `cookies`
  * @returns The selected `Locale` for the request; `'en'` if no supported locale is found
  */
 function detectLocale(event: RequestEvent): Locale {
 	log.debug({ url: event.url.toString() }, 'New incoming request');
-	if (event.cookies.get('BELCODA_LOCALE')) {
-		if (LOCALES.includes(event.cookies.get('BELCODA_LOCALE')! as Locale)) {
-			//check if url param overrides cookie
-			if (event.url.searchParams.get('locale')) {
-				if (LOCALES.includes(event.url.searchParams.get('locale')! as Locale)) {
-					return event.url.searchParams.get('locale')! as Locale;
-				}
-			} else {
-				return event.cookies.get('BELCODA_LOCALE')! as Locale;
-			}
+	const cookieLocale = event.cookies.get('BELCODA_LOCALE');
+	const paramLocale = event.url.searchParams.get('locale');
+
+	const isSupported = (value: string | null | undefined): value is Locale =>
+		value != null && value !== '' && LOCALES.includes(value as Locale);
+
+	const cookieOk = isSupported(cookieLocale);
+	const paramOk = isSupported(paramLocale);
+
+	if (cookieOk) {
+		if (paramLocale !== null) {
+			return paramOk ? paramLocale : cookieLocale;
 		}
+		return cookieLocale;
+	}
+
+	if (paramOk) {
+		return paramLocale;
 	}
 
 	return 'en';
