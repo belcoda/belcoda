@@ -69,7 +69,7 @@
 {#snippet footer()}
 	<div class="flex w-full justify-end gap-2">
 		<Button variant="outline">{t`Cancel`}</Button>
-		<Button type="submit" form="event-form">{t`Save`}</Button>
+		<Button type="submit" form="event-form" data-testid="event-save-button">{t`Save`}</Button>
 	</div>
 {/snippet}
 

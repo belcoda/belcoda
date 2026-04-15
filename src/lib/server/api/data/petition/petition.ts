@@ -13,12 +13,15 @@ import {
 	deletePetitionMutatorSchema
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
-
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { team } from '$lib/schema/drizzle';
 import { and, eq, isNull } from 'drizzle-orm';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
+import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
+
 export async function createPetition({
 	tx,
 	ctx,
@@ -145,7 +148,7 @@ export async function updatePetition({
 		throw new Error('Petition not found');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const [updatedPetition] = await tx.dbTransaction.wrappedTransaction
 		.update(petition)
 		.set({
 			...parsed.input,
@@ -156,7 +159,28 @@ export async function updatePetition({
 				eq(petition.id, parsed.metadata.petitionId),
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+	if (!updatedPetition) {
+		throw new Error('Unable to update petition: Petition not found');
+	}
+
+	const structureChanged =
+		petitionRecord.title !== updatedPetition.title ||
+		JSON.stringify(petitionRecord.settings) !== JSON.stringify(updatedPetition.settings);
+	const publishedStatusChanged = petitionRecord.published !== updatedPetition.published;
+
+	if (updatedPetition?.published && (structureChanged || publishedStatusChanged)) {
+		try {
+			const queue = await getQueue();
+			await queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
+		} catch (error) {
+			log.error(
+				{ error, petitionId: parsed.metadata.petitionId },
+				'Error deploying petition WhatsApp flow'
+			);
+		}
+	}
 }
 
 export async function archivePetition({

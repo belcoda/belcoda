@@ -3,6 +3,7 @@ import type { Page, Locator } from '@playwright/test';
 export class PersonProfilePage {
 	readonly page: Page;
 	readonly deleteButton: Locator;
+	readonly loadedContainer: Locator;
 	readonly nameDisplay: Locator;
 	readonly nameEditButton: Locator;
 	readonly givenNameInput: Locator;
@@ -15,6 +16,7 @@ export class PersonProfilePage {
 	constructor(page: Page) {
 		this.page = page;
 		this.deleteButton = page.getByTestId('person-profile-delete');
+		this.loadedContainer = page.getByTestId('person-profile-loaded');
 		this.nameDisplay = page.getByTestId('person-profile-name-display');
 		this.nameEditButton = page.getByTestId('person-profile-name-edit-btn');
 		this.givenNameInput = page.getByTestId('person-profile-given-name');
@@ -28,6 +30,10 @@ export class PersonProfilePage {
 	async goto(personPath: string) {
 		const path = personPath.endsWith('/profile') ? personPath : `${personPath}/profile`;
 		await this.page.goto(path);
+	}
+
+	async waitForLoaded() {
+		await this.loadedContainer.waitFor({ state: 'visible', timeout: 15_000 });
 	}
 
 	async editName(givenName: string, familyName: string) {

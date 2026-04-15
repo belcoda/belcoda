@@ -43,9 +43,16 @@
 		}
 	}
 
+	let openAccordionItems = $state<string[]>([]);
+
 	function addQuestion(type: SurveyQuestionType) {
 		if (!$data.settings?.survey) return;
 		$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, type, locale.current);
+		const questions = $data.settings.survey.collections[0].questions;
+		const newQuestion = questions[questions.length - 1];
+		if (newQuestion) {
+			openAccordionItems = [...openAccordionItems, newQuestion.id];
+		}
 	}
 
 	function removeQuestion(id: string) {
@@ -177,11 +184,14 @@
 		</div>
 
 		{#if $data.settings?.survey && $data.settings?.survey?.collections?.[0]?.questions?.length > 0}
-			<Accordion.Root type="multiple" class="space-y-2">
+			<Accordion.Root type="multiple" class="space-y-2" bind:value={openAccordionItems}>
 				{#each $data.settings?.survey?.collections?.[0]?.questions as field, index (field.id)}
 					{#if field.type.startsWith('custom.')}
 						<Accordion.Item value={field.id} class="rounded-lg border last:border-b">
-							<Accordion.Trigger class="px-4 py-3 hover:no-underline">
+							<Accordion.Trigger
+								class="px-4 py-3 hover:no-underline"
+								data-testid={`survey-question-trigger-${index}`}
+							>
 								<div class="flex w-full items-center justify-between pr-4">
 									<span class="font-medium">{field.label || t`Untitled Question`}</span>
 									<span class="text-xs text-muted-foreground">
@@ -204,6 +214,7 @@
 														{...props}
 														bind:value={$data.settings.survey.collections[0].questions[index].label}
 														placeholder={t`Enter question label`}
+														data-testid={`survey-custom-question-label-${index}`}
 													/>
 												{/if}
 											{/snippet}
@@ -314,13 +325,19 @@
 
 {#snippet addQuestionDropdown()}
 	<Dropdown.Root>
-		<Dropdown.Trigger class={buttonVariants({ variant: 'outline', size: 'sm' })}>
+		<Dropdown.Trigger
+			class={buttonVariants({ variant: 'outline', size: 'sm' })}
+			data-testid="survey-add-question-trigger"
+		>
 			<PlusIcon class="mr-2 size-4" />
 			{t`Add question`}
 			<ChevronDownIcon class="ml-2 size-4" />
 		</Dropdown.Trigger>
 		<Dropdown.Content>
-			<Dropdown.Item onclick={() => addQuestion('custom.textInput')}>{t`Short text`}</Dropdown.Item>
+			<Dropdown.Item
+				onclick={() => addQuestion('custom.textInput')}
+				data-testid="survey-add-short-text">{t`Short text`}</Dropdown.Item
+			>
 			<Dropdown.Item onclick={() => addQuestion('custom.textarea')}>{t`Long text`}</Dropdown.Item>
 			<Dropdown.Item onclick={() => addQuestion('custom.dateInput')}>{t`Date`}</Dropdown.Item>
 			<Dropdown.Item onclick={() => addQuestion('custom.checkboxGroup')}
