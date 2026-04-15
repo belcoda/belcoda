@@ -10,10 +10,17 @@ import {
 	whatsappMessage as whatsappMessageObjectSchema,
 	type WhatsappMessageActivityType
 } from '$lib/schema/whatsapp/message';
-import { type EmojiReactionMutatorSchema } from '$lib/schema/whatsapp-message';
+import {
+	emojiReactionMutatorSchema,
+	type EmojiReactionMutatorSchema
+} from '$lib/schema/whatsapp-message';
 import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
+
+function isReactionSupportedMessageType(type: WhatsappMessageActivityType): boolean {
+	return type === 'incoming_api_message' || type === 'outgoing_api_message';
+}
 import { structuredClone } from '$lib/utils/structuredClone';
 import type { QueryContext } from '$lib/zero/schema';
 import { getPerson } from '$lib/server/api/data/person/person';
@@ -76,7 +83,7 @@ export async function handleIncomingReaction({
 	tx: ServerTransaction;
 }) {
 	const messageActivity = await _findWhatsAppMessageByIdUnsafe({ messageId, tx });
-	if (['incoming_whatsapp_message', 'outgoing_whatsapp_message'].includes(messageActivity.type)) {
+	if (isReactionSupportedMessageType(messageActivity.type)) {
 		if (messageActivity.wamidId) {
 			// first find if the reactor (personId / phone number) is already in the emojiReactions array
 			const reactions = structuredClone(messageActivity.message.emojiReactions || []);
@@ -118,83 +125,82 @@ export async function handleIncomingReaction({
 
 export async function emojiReaction({
 	ctx,
-	args,
+	args: argsInput,
 	tx
 }: {
 	args: EmojiReactionMutatorSchema;
 	ctx: QueryContext;
 	tx: ServerTransaction;
 }) {
+	const args = parse(emojiReactionMutatorSchema, argsInput);
+
 	const messageActivity = await _findWhatsAppMessageByIdUnsafe({
 		messageId: args.whatsappMessage.id,
 		tx
 	});
-	if (['incoming_whatsapp_message', 'outgoing_whatsapp_message'].includes(messageActivity.type)) {
-		if (messageActivity.wamidId) {
-			// first find if the reactor (personId / phone number) is already in the emojiReactions array
-			const personRecord = await getPerson({
-				tx,
-				ctx,
-				args: { organizationId: args.organizationId, personId: args.personId }
-			});
-			if (!personRecord.whatsAppUsername) {
-				throw new Error('Person WhatsApp username not found');
-			}
-			if (!personRecord.phoneNumber) {
-				throw new Error('Person phone number not found');
-			}
-
-			//get organization record
-			const organizationRecord = await getOrganizationByIdUnsafe({
-				organizationId: args.organizationId,
-				tx
-			});
-			const to = personRecord.whatsAppUsername || personRecord.phoneNumber;
-			const from =
-				organizationRecord.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER;
-			const reaction = args.emoji || '';
-			const wamid = messageActivity.wamidId;
-
-			await sendEmojiReaction({
-				messageWamid: wamid,
-				emoji: reaction,
-				from,
-				to
-			});
-
-			const emojiReactionArray = structuredClone(messageActivity.message.emojiReactions || []);
-			const existingReactionIndex = emojiReactionArray?.findIndex(
-				(reaction) => reaction.viaBelcoda
-			);
-			if (existingReactionIndex !== -1) {
-				if (reaction) {
-					emojiReactionArray[existingReactionIndex].emoji = reaction || null;
-					emojiReactionArray[existingReactionIndex].reactedAt = new Date().getTime();
-				} else {
-					emojiReactionArray.splice(existingReactionIndex, 1);
-				}
-			} else {
-				if (reaction) {
-					//only add the reaction if it is not null
-					emojiReactionArray.push({
-						emoji: reaction || null,
-						personId: args.personId,
-						phoneNumber: from,
-						viaBelcoda: true,
-						reactedAt: new Date().getTime()
-					});
-				}
-			}
-
-			await tx.dbTransaction.wrappedTransaction
-				.update(whatsappMessage)
-				.set({
-					message: { ...messageActivity.message, emojiReactions: emojiReactionArray }
-				})
-				.where(eq(whatsappMessage.id, messageActivity.id));
-		}
-	} else {
+	if (messageActivity.organizationId !== args.organizationId) {
+		throw new Error('WhatsApp message does not belong to this organization');
+	}
+	if (!isReactionSupportedMessageType(messageActivity.type)) {
 		throw new Error('Message activity type not supported');
+	}
+	if (messageActivity.wamidId) {
+		// first find if the reactor (personId / phone number) is already in the emojiReactions array
+		const personRecord = await getPerson({
+			tx,
+			ctx,
+			args: { organizationId: args.organizationId, personId: args.personId }
+		});
+		const to = personRecord.whatsAppUsername?.trim() || personRecord.phoneNumber?.trim() || '';
+		if (!to) {
+			throw new Error('Person WhatsApp username or phone number required for reaction');
+		}
+
+		//get organization record
+		const organizationRecord = await getOrganizationByIdUnsafe({
+			organizationId: args.organizationId,
+			tx
+		});
+		const from =
+			organizationRecord.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER;
+		const reaction = args.emoji || '';
+		const wamid = messageActivity.wamidId;
+
+		await sendEmojiReaction({
+			messageWamid: wamid,
+			emoji: reaction,
+			from,
+			to
+		});
+
+		const emojiReactionArray = structuredClone(messageActivity.message.emojiReactions || []);
+		const existingReactionIndex = emojiReactionArray?.findIndex((reaction) => reaction.viaBelcoda);
+		if (existingReactionIndex !== -1) {
+			if (reaction) {
+				emojiReactionArray[existingReactionIndex].emoji = reaction || null;
+				emojiReactionArray[existingReactionIndex].reactedAt = new Date().getTime();
+			} else {
+				emojiReactionArray.splice(existingReactionIndex, 1);
+			}
+		} else {
+			if (reaction) {
+				//only add the reaction if it is not null
+				emojiReactionArray.push({
+					emoji: reaction || null,
+					personId: args.personId,
+					phoneNumber: from,
+					viaBelcoda: true,
+					reactedAt: new Date().getTime()
+				});
+			}
+		}
+
+		await tx.dbTransaction.wrappedTransaction
+			.update(whatsappMessage)
+			.set({
+				message: { ...messageActivity.message, emojiReactions: emojiReactionArray }
+			})
+			.where(eq(whatsappMessage.id, messageActivity.id));
 	}
 }
 
