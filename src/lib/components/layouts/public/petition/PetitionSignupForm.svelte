@@ -17,7 +17,6 @@
 	import { getSurveyQuestions } from '$lib/components/forms/event/survey_actions';
 	import { renderPersonQuestion } from '$lib/components/forms/event/render_survey_question';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import PhoneNumber from '$lib/components/ui/custom-select/phone-number/phone-number.svelte';
 	import type { CountryCode } from '$lib/utils/country';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import GenderSelect from '$lib/components/ui/custom-select/gender/gender.svelte';
@@ -199,7 +198,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Phone number`}</Form.Label>
-							<PhoneNumber
+							<PhoneNumberInput
 								{...props}
 								country={$dataForm.person.country}
 								bind:value={$dataForm.person.phoneNumber}
