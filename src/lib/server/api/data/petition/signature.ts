@@ -17,7 +17,6 @@ import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signa
 import { surveyResponsesSchema } from '$lib/schema/survey/responses';
 
 import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
-import { type PersonAddedFrom, personAddedFrom } from '$lib/schema/person/meta';
 import {
 	type PetitionSignatureDetails,
 	petitionSignatureDetails
