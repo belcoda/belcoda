@@ -10,15 +10,48 @@ import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { env as publicEnv } from '$env/dynamic/public';
 import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
 import { completeEventSignupHelper } from '$lib/server/api/data/event/signup';
-import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
+import { _getPetitionByIdUnsafeNoTenantCheck } from '$lib/server/api/data/petition/petition';
+import { completePetitionSignatureHelper } from '$lib/server/api/data/petition/signature';
+import {
+	getInternationalPhoneNumber,
+	isValidInternationalPhoneNumber,
+	safeGetCountryCodeFromPhoneNumber
+} from '$lib/utils/phone';
 import { parse, safeParse, intersect } from 'valibot';
 import type { ServerTransaction } from '@rocicorp/zero';
 import {
 	personActionHelperWhatsAppFlow,
 	personActionHelperCustomFieldsOnly
 } from '$lib/schema/person';
+import type { FlowResponses } from '$lib/schema/whatsapp/flows/responses';
 
 const log = pino(import.meta.url);
+
+function resolveFlowResponsePhoneNumber({
+	userProvidedPhone,
+	from,
+	organizationCountry
+}: {
+	userProvidedPhone: string | null | undefined;
+	from: string;
+	organizationCountry: Parameters<typeof isValidInternationalPhoneNumber>[1];
+}): string {
+	const normalizedPhone = userProvidedPhone?.trim();
+	if (!normalizedPhone) {
+		return from;
+	}
+
+	const senderCountry = safeGetCountryCodeFromPhoneNumber(from);
+	if (senderCountry && isValidInternationalPhoneNumber(normalizedPhone, senderCountry)) {
+		return getInternationalPhoneNumber(normalizedPhone, senderCountry);
+	}
+
+	if (isValidInternationalPhoneNumber(normalizedPhone, organizationCountry)) {
+		return getInternationalPhoneNumber(normalizedPhone, organizationCountry);
+	}
+
+	return from;
+}
 
 async function sendConfirmationMessage({
 	from,
@@ -99,6 +132,47 @@ async function sendConfirmationMessage({
 	}
 }
 
+async function sendPetitionConfirmationMessage({
+	from,
+	organizationId,
+	petitionTitle,
+	tx
+}: {
+	from: string;
+	organizationId: string;
+	petitionTitle: string;
+	tx: ServerTransaction;
+}) {
+	try {
+		const organization = await getOrganizationByIdUnsafe({
+			organizationId,
+			tx
+		});
+
+		const waPhoneNumber =
+			organization.settings.whatsApp?.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER;
+		if (!waPhoneNumber) {
+			throw new Error('WhatsApp sender number is not configured');
+		}
+
+		const confirmationText = `✅ You've signed *${petitionTitle}*! Thank you for your support.`;
+
+		await sendWhatsappMessage({
+			from: waPhoneNumber,
+			to: from,
+			type: 'text',
+			externalId: uuidv7(),
+			text: {
+				body: confirmationText
+			}
+		});
+
+		log.info({ from, petitionTitle }, 'Sent confirmation message after petition signature');
+	} catch (error) {
+		log.error({ error, from, petitionTitle }, 'Failed to send petition confirmation message');
+	}
+}
+
 /**
  * Determines the target table and action based on flow response payload
  * Uses resource_type and resource_id
@@ -125,11 +199,10 @@ async function determineFlowTarget(responsePayload: Record<string, unknown>) {
 			};
 
 		case 'petition':
-			throw new Error('Petition signatures are not supported yet');
-		// return {
-		// 	type: 'petition_signature' as const,
-		// 	petitionId: resourceId
-		// };
+			return {
+				type: 'petition_signature' as const,
+				petitionId: resourceId
+			};
 
 		case 'survey':
 			throw new Error('Survey responses are not supported yet');
@@ -140,7 +213,9 @@ async function determineFlowTarget(responsePayload: Record<string, unknown>) {
 
 		default:
 			log.error({ resourceType }, 'Unsupported resource_type in flow response');
-			throw new Error(`Unsupported resource_type: ${resourceType}. Expected: event or survey`);
+			throw new Error(
+				`Unsupported resource_type: ${resourceType}. Expected: event, petition, or survey`
+			);
 	}
 }
 
@@ -176,23 +251,29 @@ export async function handleFlowResponse({
 
 		// Determine what type of flow this is and where to save the data
 		// Looks for resource_type and resource_id in the response payload
-		const { type, eventId } = await determineFlowTarget(responseJson);
+		const target = await determineFlowTarget(responseJson);
 
-		switch (type) {
+		switch (target.type) {
 			case 'event_signup': {
-				const event = await _getEventByIdUnsafe({ eventId, tx });
+				const event = await _getEventByIdUnsafe({ eventId: target.eventId, tx });
 				const organization = await getOrganizationByIdUnsafe({
 					organizationId: event.organizationId,
 					tx
 				});
 				const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
+				const { phoneNumber: userProvidedPhone, ...responseJsonWithoutPhoneNumber } = responseJson;
+				const resolvedPhoneNumber = resolveFlowResponsePhoneNumber({
+					userProvidedPhone: typeof userProvidedPhone === 'string' ? userProvidedPhone : undefined,
+					from,
+					organizationCountry: organization.country
+				});
 				const parsedPersonAction = parse(
 					intersect([personActionHelperWhatsAppFlow, personActionHelperCustomFieldsOnly]),
 					{
 						subscribed: true,
 						country: countryCode,
-						phoneNumber: from,
-						...responseJson
+						...responseJsonWithoutPhoneNumber,
+						phoneNumber: resolvedPhoneNumber
 					}
 				);
 				const parsedCustomFields = safeParse(personActionHelperCustomFieldsOnly, responseJson);
@@ -225,8 +306,57 @@ export async function handleFlowResponse({
 				return { personId: eventSignup.personId, organizationId: event.organizationId };
 			}
 
+			case 'petition_signature': {
+				const petition = await _getPetitionByIdUnsafeNoTenantCheck({
+					petitionId: target.petitionId,
+					tx
+				});
+				if (!petition) {
+					throw new Error('Petition not found');
+				}
+				const organization = await getOrganizationByIdUnsafe({
+					organizationId: petition.organizationId,
+					tx
+				});
+				const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
+				const parsedPersonAction = parse(
+					intersect([personActionHelperWhatsAppFlow, personActionHelperCustomFieldsOnly]),
+					{
+						subscribed: true,
+						country: countryCode,
+						phoneNumber: from,
+						...responseJson
+					}
+				);
+				const parsedCustomFields = safeParse(personActionHelperCustomFieldsOnly, responseJson);
+				const customFields = parsedCustomFields.success ? parsedCustomFields.output : {};
+				log.debug({ parsedPersonAction }, 'Signing petition with personAction from WhatsApp flow');
+				const petitionSignature = await completePetitionSignatureHelper({
+					petitionId: petition.id,
+					teamId: petition.teamId ?? undefined,
+					tx,
+					personAction: parsedPersonAction,
+					signatureDetails: { channel: { type: 'whatsapp' } },
+					organizationId: petition.organizationId,
+					responses: Object.keys(customFields).length > 0 ? customFields : null,
+					skipNotifications: true
+				});
+
+				await sendPetitionConfirmationMessage({
+					from,
+					organizationId: organization.id,
+					petitionTitle: petition.title,
+					tx
+				});
+
+				return {
+					personId: petitionSignature.personId,
+					organizationId: petition.organizationId
+				};
+			}
+
 			default:
-				throw new Error(`Unsupported flow type: ${type}`);
+				throw new Error(`Unsupported flow type: ${(target as { type: string }).type}`);
 		}
 	} catch (error) {
 		log.error(
@@ -269,8 +399,10 @@ export async function processFlowDataExchange({
 		throw new Error('Missing or invalid resource_id in form data');
 	}
 
-	// Extract phone number (required field)
-	const phone = formData.phone;
+	// Extract phone number (required field; flows may use `phone` or `phoneNumber`)
+	const phone =
+		(typeof formData.phone === 'string' && formData.phone) ||
+		(typeof formData.phoneNumber === 'string' && formData.phoneNumber);
 	if (!phone || typeof phone !== 'string') {
 		throw new Error('Missing or invalid phone number in form data');
 	}
@@ -311,8 +443,27 @@ export async function processFlowDataExchange({
 			break;
 		}
 
-		case 'petition':
-			throw new Error('Petition signatures are not supported yet');
+		case 'petition': {
+			const flowResponses = {
+				name: 'flow',
+				body: 'Sent',
+				response_json: formData
+			};
+
+			await handlePetitionSignatureFlowResponse({
+				petitionId: resourceId,
+				tx,
+				from: phone,
+				givenName: existingPerson.givenName || existingPerson.familyName || phone,
+				responses: flowResponses
+			});
+
+			log.info(
+				{ petitionId: resourceId, personId: existingPerson.id },
+				'Petition signature processed successfully'
+			);
+			break;
+		}
 
 		case 'survey':
 			throw new Error('Survey responses are not supported yet');
@@ -321,8 +472,6 @@ export async function processFlowDataExchange({
 			throw new Error(`Unsupported resource_type: ${resourceType}`);
 	}
 }
-
-import { type FlowResponses } from '$lib/schema/whatsapp/flows/responses';
 
 export async function handleEventSignupFlowResponse({
 	eventId,
@@ -435,4 +584,149 @@ export async function handleEventSignupFlowResponse({
 	);
 
 	return eventSignup;
+}
+
+export async function handlePetitionSignatureFlowResponse({
+	petitionId,
+	givenName,
+	from,
+	responses,
+	tx
+}: {
+	petitionId: string;
+	from: string;
+	givenName: string;
+	responses?: FlowResponses;
+	tx: ServerTransaction;
+}) {
+	const customFields: Record<string, unknown> = {};
+
+	if (responses?.response_json) {
+		try {
+			const flowData =
+				typeof responses.response_json === 'string'
+					? JSON.parse(responses.response_json)
+					: responses.response_json;
+
+			const standardFields = [
+				'givenName',
+				'familyName',
+				'emailAddress',
+				'phoneNumber',
+				'fullName',
+				'email',
+				'phone',
+				'address',
+				'gender',
+				'dateOfBirth',
+				'organization',
+				'position',
+				'resource_type',
+				'resource_id',
+				'flow_token'
+			];
+
+			Object.keys(flowData as Record<string, unknown>).forEach((key) => {
+				if (!standardFields.includes(key)) {
+					const value = (flowData as Record<string, unknown>)[key];
+					if (value === null || value === undefined) {
+						return;
+					}
+					if (Array.isArray(value)) {
+						const arrayValue = value.filter(
+							(item) => typeof item === 'string' && item.trim().length > 0
+						);
+						if (arrayValue.length > 0) {
+							customFields[key] = arrayValue as string[];
+						}
+					} else if (typeof value === 'string') {
+						const stringValue = value.trim();
+						if (stringValue.length > 0) {
+							customFields[key] = stringValue as string;
+						}
+					} else if (typeof value === 'boolean') {
+						customFields[key] = value as boolean;
+					} else if (typeof value === 'number') {
+						customFields[key] = value as number;
+					} else {
+						log.warn(
+							{ key, value, type: typeof value },
+							'Unexpected custom field type in petition flow response'
+						);
+						customFields[key] = value as string;
+					}
+				}
+			});
+
+			log.debug({ customFields }, 'Extracted custom fields from petition flow response');
+		} catch (error) {
+			log.error({ error }, 'Failed to parse petition flow response for custom fields');
+		}
+	}
+
+	const petition = await _getPetitionByIdUnsafeNoTenantCheck({ petitionId, tx });
+	if (!petition) {
+		throw new Error('Petition not found');
+	}
+	const organization = await getOrganizationByIdUnsafe({
+		organizationId: petition.organizationId,
+		tx
+	});
+	const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
+
+	let flowDataForPerson: Record<string, unknown> = {};
+	if (responses?.response_json) {
+		flowDataForPerson =
+			typeof responses.response_json === 'string'
+				? JSON.parse(responses.response_json)
+				: (responses.response_json as Record<string, unknown>);
+	}
+
+	const given =
+		typeof flowDataForPerson.givenName === 'string' && flowDataForPerson.givenName.trim()
+			? flowDataForPerson.givenName.trim()
+			: givenName;
+	const family =
+		typeof flowDataForPerson.familyName === 'string' && flowDataForPerson.familyName.trim()
+			? flowDataForPerson.familyName.trim()
+			: undefined;
+
+	const petitionSignature = await completePetitionSignatureHelper({
+		petitionId: petition.id,
+		teamId: petition.teamId ?? undefined,
+		tx,
+		personAction: {
+			subscribed: true,
+			country: countryCode,
+			phoneNumber: from,
+			givenName: given,
+			familyName: family,
+			...(typeof flowDataForPerson.emailAddress === 'string' &&
+			flowDataForPerson.emailAddress.trim()
+				? { emailAddress: flowDataForPerson.emailAddress.trim() }
+				: {})
+		},
+		signatureDetails: { channel: { type: 'whatsapp' } },
+		organizationId: petition.organizationId,
+		responses: Object.keys(customFields).length > 0 ? customFields : null,
+		skipNotifications: true
+	});
+
+	await sendPetitionConfirmationMessage({
+		from,
+		organizationId: organization.id,
+		petitionTitle: petition.title,
+		tx
+	});
+
+	log.info(
+		{
+			petitionSignatureId: petitionSignature.id,
+			personId: petitionSignature.personId,
+			petitionId: petition.id
+		},
+		'Created activity record for petition signature'
+	);
+
+	return petitionSignature;
 }

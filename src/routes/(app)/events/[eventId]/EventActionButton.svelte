@@ -35,13 +35,15 @@
 </script>
 
 <ButtonGroup.Root>
-	<Button variant="outline" onclick={() => (openShareModal = true)}
-		><ShareIcon class="size-3.5" /> Share</Button
+	<Button
+		variant="outline"
+		onclick={() => (openShareModal = true)}
+		data-testid="event-action-button"><ShareIcon class="size-3.5" /> {t`Share`}</Button
 	>
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
-				<Button {...props} variant="outline"
+				<Button {...props} variant="outline" data-testid="event-action-dropdown"
 					><ChevronDownIcon class="size-5" /><span class="sr-only">Open</span></Button
 				>
 			{/snippet}
@@ -63,19 +65,25 @@
 									}
 								}}
 							/>
-							<Label for={`${id}-switch`}>Published</Label>
+							<Label for={`${id}-switch`}>{t`Published`}</Label>
 						</div>
 					{/snippet}
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={`/events/${event.id}/edit`}>Edit event</a>
+						<a {...props} href={`/events/${event.id}/edit`} data-testid="event-action-edit"
+							>{t`Edit event`}</a
+						>
 					{/snippet}
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a data-sveltekit-preload-data="off" {...props} href={`/events/${event.id}/preview`}
-							>{#if event.published}View event page{:else}Preview event page{/if}</a
+						<a
+							data-sveltekit-preload-data="off"
+							{...props}
+							href={`/events/${event.id}/preview`}
+							data-testid="event-action-preview"
+							>{#if event.published}{t`View event page`}{:else}{t`Preview event page`}{/if}</a
 						>
 					{/snippet}
 				</DropdownMenu.Item>
@@ -84,14 +92,35 @@
 			<DropdownMenu.Group>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={`/events/${event.id}/signups`}>Detailed signups table</a>
+						<a {...props} href={`/events/${event.id}/signups`} data-testid="event-action-signups"
+							>{t`Detailed signups table`}</a
+						>
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
+			{#if event.published}
+				<DropdownMenu.Separator />
+				<DropdownMenu.Group>
+					<DropdownMenu.Item
+						class="w-full"
+						onclick={() =>
+							z.mutate(
+								mutators.event.archive({
+									metadata: {
+										organizationId: appState.organizationId,
+										eventId: event.id
+									}
+								})
+							)}
+					>
+						{t`Archive`}
+					</DropdownMenu.Item>
+				</DropdownMenu.Group>
+			{/if}
 			<DropdownMenu.Separator />
 			<DropdownMenu.Group>
 				<DropdownMenu.Item class="w-full" onclick={() => (openMakeACopyModal = true)}>
-					Make a copy
+					{t`Make a copy`}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 		</DropdownMenu.Content>

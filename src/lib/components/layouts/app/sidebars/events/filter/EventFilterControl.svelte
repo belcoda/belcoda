@@ -151,6 +151,16 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
+			<DropdownMenu.Label>{t`Archived`}</DropdownMenu.Label>
+			<DropdownMenu.CheckboxItem
+				checked={filter.isArchived ?? false}
+				onCheckedChange={(checked) => {
+					filter.isArchived = checked;
+				}}>{t`Show archived`}</DropdownMenu.CheckboxItem
+			>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
 			<DropdownMenu.CheckboxItem
 				checked={filter.hasSignups ?? false}
 				onCheckedChange={(checked) => {

@@ -4537,3 +4537,32 @@ msgstr "Tentar novamente"
 #: src/routes/+error.svelte
 msgid "Home"
 msgstr "Início"
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Loading activities..."
+msgstr ""
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "No activities yet"
+msgstr ""
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the audio tag."
+msgstr ""
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "WhatsApp sticker"
+msgstr ""
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+#: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
+msgid "WhatsApp message"
+msgstr ""
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "No captions available"
+msgstr ""
+
+#: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
+msgid "Your browser does not support the video tag."
+msgstr ""

@@ -3,6 +3,7 @@ import { type ListFilter } from '$lib/schema/helpers';
 
 import { z } from '$lib/zero.svelte';
 import queries from '$lib/zero/query/index';
+import { structuredClone } from '$lib/utils/structuredClone';
 
 const DEFAULT_LIST_FILTER: ListFilter = {
 	organizationId: '',

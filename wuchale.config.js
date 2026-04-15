@@ -34,7 +34,7 @@ export default defineConfig({
 					'src/**/items.ts',
 					'src/lib/**/*.ts'
 				],
-				ignore: ['src/lib/**/*.svelte.ts']
+				ignore: ['src/**/*.svelte.ts']
 			},
 			heuristic: (msg) => {
 				const { details } = msg;

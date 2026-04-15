@@ -29,11 +29,13 @@ import { petition, petitionSignature, person, organization } from '$lib/schema/d
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and, isNull } from 'drizzle-orm';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
+import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 
 async function applyPetitionTagsToPersonUnsafe({
 	tx,
@@ -216,8 +218,8 @@ export async function signPetitionHelper({
 	personAction,
 	signatureDetails,
 	organizationId,
-	responses,
-	skipNotifications = false
+	skipNotifications = false,
+	responses = null
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
@@ -264,10 +266,49 @@ export async function signPetitionHelper({
 		personRecord: personRecord,
 		organizationRecord: organizationRecord,
 		details: parsedSignatureDetails,
-		responses,
-		skipNotifications
+		skipNotifications,
+		responses
 	});
 	return petitionSignatureResult;
+}
+
+export async function signPetitionWithId({
+	tx,
+	petitionId,
+	personId,
+	organizationId,
+	signupDetails
+}: {
+	tx: ServerTransaction;
+	petitionId: string;
+	personId: string;
+	organizationId: string;
+	signupDetails: PetitionSignatureDetails;
+}) {
+	const parsedSignupDetails = parse(petitionSignatureDetails, signupDetails);
+
+	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
+	if (!petitionResult.published) {
+		throw new Error('Petition is not published');
+	}
+	if (petitionResult.deletedAt != null || petitionResult.archivedAt != null) {
+		throw new Error('Petition is archived or deleted');
+	}
+
+	const personRecord = await _getPersonByIdUnsafe({ personId, organizationId, tx });
+	if (!personRecord) {
+		throw new Error('Person not found');
+	}
+
+	const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
+
+	return await signPetitionUnsafe({
+		tx,
+		petitionRecord: petitionResult,
+		personRecord,
+		organizationRecord,
+		details: parsedSignupDetails
+	});
 }
 
 export async function signPetitionUnsafe({
@@ -277,8 +318,8 @@ export async function signPetitionUnsafe({
 	organizationRecord,
 	tx,
 	details,
-	responses,
-	skipNotifications = false
+	skipNotifications = false,
+	responses = null
 }: {
 	petitionSignatureId?: string;
 	tx: ServerTransaction;
@@ -342,6 +383,131 @@ export async function signPetitionUnsafe({
 	//TODO: Implement whatsapp notification
 
 	return insertedPetitionSignature;
+}
+
+export async function completePetitionSignatureHelper({
+	petitionId,
+	teamId,
+	tx,
+	personAction,
+	signatureDetails,
+	organizationId,
+	responses = null,
+	skipNotifications = true
+}: {
+	tx: ServerTransaction;
+	petitionId: string;
+	personAction: PersonActionHelper;
+	signatureDetails: PetitionSignatureDetails;
+	organizationId: string;
+	teamId?: string;
+	responses?: Record<string, unknown> | null;
+	skipNotifications?: boolean;
+}) {
+	const result = await signPetitionHelper({
+		petitionId,
+		teamId,
+		tx,
+		personAction,
+		signatureDetails,
+		organizationId,
+		skipNotifications,
+		responses
+	});
+	const queue = await getQueue();
+	await queue.insertActivity({
+		organizationId,
+		personId: result.personId,
+		userId: undefined,
+		type: 'petition_signed',
+		referenceId: result.id,
+		unread: false
+	});
+	return result;
+}
+
+export async function createIncompletePetitionSignatureHelper({
+	petitionId,
+	organizationId,
+	tx,
+	personAction,
+	signatureDetails,
+	teamId,
+	flowMessageFrom,
+	flowMessageTo
+}: {
+	tx: ServerTransaction;
+	petitionId: string;
+	organizationId: string;
+	personAction: PersonActionHelper;
+	signatureDetails: PetitionSignatureDetails;
+	teamId?: string;
+	flowMessageFrom: string;
+	flowMessageTo: string;
+}) {
+	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
+	if (!petitionResult.published) {
+		throw new Error('Petition is not published');
+	}
+	if (petitionResult.deletedAt != null || petitionResult.archivedAt != null) {
+		throw new Error('Petition is archived or deleted');
+	}
+
+	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
+	const parsedActionHelper = parse(personActionHelper, personAction);
+	const petitionSignatureId = uuidv7();
+
+	const personRecord = await findOrCreatePerson({
+		tx,
+		personAction: parsedActionHelper,
+		addedFrom: {
+			type: 'added_from_petition',
+			petitionSignatureId
+		},
+		organizationId,
+		teamId: teamId ?? petitionResult.teamId ?? undefined,
+		updateExistingPerson: true
+	});
+
+	const settings = parse(petitionSettingsSchema, petitionResult.settings ?? {});
+	const flowId = settings.whatsappFlowId;
+
+	if (flowId) {
+		try {
+			await sendFlowMessage({
+				from: flowMessageFrom,
+				to: flowMessageTo,
+				flowId: flowId,
+				flowCta: 'Sign',
+				headerText: petitionResult.title,
+				bodyText: `Complete the form to sign ${petitionResult.title}`,
+				footerText: 'Tap to sign the petition'
+			});
+			return { flowSent: true as const, personId: personRecord.id };
+		} catch (error) {
+			return await completePetitionSignatureHelper({
+				petitionId,
+				teamId,
+				tx,
+				personAction,
+				signatureDetails: parsedSignatureDetails,
+				organizationId,
+				responses: null,
+				skipNotifications: true
+			});
+		}
+	}
+
+	return await completePetitionSignatureHelper({
+		petitionId,
+		teamId,
+		tx,
+		personAction,
+		signatureDetails: parsedSignatureDetails,
+		organizationId,
+		responses: null,
+		skipNotifications: true
+	});
 }
 
 export async function deletePetitionSignature({

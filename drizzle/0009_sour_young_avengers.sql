@@ -1,0 +1,1 @@
+ALTER TABLE "api_key" ADD CONSTRAINT "api_key_reference_id_organization_id_fk" FOREIGN KEY ("reference_id") REFERENCES "public"."organization"("id") ON DELETE no action ON UPDATE no action;

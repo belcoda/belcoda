@@ -1,6 +1,6 @@
 export const activityTypesList = [
-	'whatsapp_message_incoming',
-	'whatsapp_message_outgoing',
+	'whatsapp_message_incoming', //referenceId: whatsappMessageId
+	'whatsapp_message_outgoing', //referenceId: whatsappMessageId
 	'whatsapp_group_message_incoming',
 
 	'email_outgoing', //referenceId: emailMessageId
