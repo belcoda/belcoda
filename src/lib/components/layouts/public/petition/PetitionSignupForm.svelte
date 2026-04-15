@@ -88,7 +88,7 @@
 	const personSurveyQuestions = $derived(personSurveyQuestionsRaw.map((item) => item.type));
 
 	/* svelte-ignore state_referenced_locally */
-	const surveySchema = getSurveySchema(petition as any);
+	const surveySchema = getSurveySchema({ settings: petition.settings });
 	/* svelte-ignore state_referenced_locally */
 	const petitionForm = superForm(form ?? defaults(valibot(surveySchema)), {
 		validators: valibot(surveySchema),
