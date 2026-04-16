@@ -26,7 +26,7 @@ export async function triggerWebhook({
 			where: (row, { and, eq }) =>
 				and(
 					eq(row.organizationId, organizationId),
-					sql`${row.eventTypes} ? ${eventType} OR ${row.eventTypes} ? 'all'`,
+					sql`(${row.eventTypes} ? ${eventType} OR ${row.eventTypes} ? 'all')`,
 					eq(row.enabled, true)
 				)
 		});
@@ -41,9 +41,9 @@ export async function triggerWebhook({
 			let responseText: string = 'NOT_SENT';
 			let httpStatusCode: number = 418;
 			let responseOk: boolean = false;
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 			try {
-				const controller = new AbortController();
-				const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 				const response = await fetch(webhook.targetUrl, {
 					method: 'POST',
 					signal: controller.signal,
@@ -53,7 +53,7 @@ export async function triggerWebhook({
 					},
 					body: JSON.stringify(webhookBody)
 				});
-				clearTimeout(timeoutId);
+
 				responseText = await response.text();
 				httpStatusCode = response.status;
 				responseOk = response.ok;
@@ -73,7 +73,7 @@ export async function triggerWebhook({
 				log.error(
 					{
 						status: `${httpStatusCode} ${responseText}`,
-						webhook,
+						webhookId: webhook.id,
 						error,
 						type: eventType,
 						payload: parsed.data,
@@ -88,6 +88,7 @@ export async function triggerWebhook({
 					})
 					.where(eq(webhookTable.id, webhook.id));
 			} finally {
+				clearTimeout(timeoutId);
 				try {
 					const logToInsert: typeof webhookLog.$inferInsert = {
 						id: uuidv7(),
