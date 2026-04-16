@@ -5,7 +5,7 @@ export const webhookVerificationModes = ['api_key', 'signature'] as const;
 export const webhookVerificationModesSchema = v.picklist(webhookVerificationModes);
 export type WebhookVerificationModes = v.InferOutput<typeof webhookVerificationModesSchema>;
 
-export const webhookStatus = ['success', 'failed'] as const;
+export const webhookStatus = ['not_sent', 'success', 'failed'] as const;
 export const webhookStatusSchema = v.picklist(webhookStatus);
 export type WebhookStatus = v.InferOutput<typeof webhookStatusSchema>;
 
@@ -389,6 +389,13 @@ export const organizationMemberUpdatedWebhookSchema = v.object({
 	type: v.literal('member.updated'),
 	data: organizationMemberWebhook
 });
+export const organizationMemberDeletedWebhookSchema = v.object({
+	type: v.literal('member.deleted'),
+	data: v.object({
+		organizationMemberId: helpers.uuid,
+		userId: helpers.uuid
+	})
+});
 
 export const webhookPayloadSchema = v.variant('type', [
 	eventCreatedWebhookSchema,
@@ -434,7 +441,8 @@ export const webhookPayloadSchema = v.variant('type', [
 	emailMessageDeletedWebhookSchema,
 	organizationUpdatedWebhookSchema,
 	organizationMemberCreatedWebhookSchema,
-	organizationMemberUpdatedWebhookSchema
+	organizationMemberUpdatedWebhookSchema,
+	organizationMemberDeletedWebhookSchema
 ]);
 export type WebhookPayload = v.InferOutput<typeof webhookPayloadSchema>;
 
