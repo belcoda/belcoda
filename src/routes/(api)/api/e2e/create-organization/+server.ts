@@ -43,6 +43,15 @@ export const POST: RequestHandler = async ({ request }) => {
 		const slug = name.toLowerCase().replace(/\s+/g, '-');
 		const now = new Date();
 		const orgId = crypto.randomUUID();
+		const wabaId =
+			env.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID?.trim() || env.SYSTEM_WABA_ID?.trim() || null;
+		const settings = defaultOrganizationSettings();
+		if (wabaId) {
+			settings.whatsApp = {
+				...settings.whatsApp,
+				wabaId
+			};
+		}
 
 		// Check if org already exists
 		const existing = await drizzle.query.organization.findFirst({
@@ -64,7 +73,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			country: 'US',
 			defaultLanguage: 'en',
 			defaultTimezone: 'America/New_York',
-			settings: defaultOrganizationSettings(),
+			settings,
 			balance: 0,
 			createdAt: now,
 			updatedAt: now
