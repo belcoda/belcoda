@@ -1,6 +1,5 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-import { get } from '$lib/utils/http';
 
 import { eventSettingsSchema } from '$lib/schema/event/settings';
 import { generateEventTitleAsyncSchema } from './event/helpers';
@@ -48,6 +47,18 @@ export const eventSchema = v.object({
 	cancelledAt: v.nullable(helpers.date)
 });
 export type EventSchema = v.InferOutput<typeof eventSchema>;
+
+export const eventWebhook = v.object({
+	...v.omit(eventSchema, ['organizationId']).entries,
+	startsAt: helpers.dateToString,
+	endsAt: helpers.dateToString,
+	reminderSentAt: v.nullable(helpers.dateToString),
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString),
+	archivedAt: v.nullable(helpers.dateToString),
+	cancelledAt: v.nullable(helpers.dateToString)
+});
 
 export const readEventRest = v.object({
 	...eventSchema.entries,

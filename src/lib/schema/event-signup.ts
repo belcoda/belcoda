@@ -23,6 +23,15 @@ export const eventSignupSchema = v.object({
 });
 export type EventSignupSchema = v.InferOutput<typeof eventSignupSchema>;
 
+export const eventSignupWebhook = v.object({
+	...v.omit(eventSignupSchema, ['organizationId']).entries,
+	signupNotificationSentAt: v.nullable(helpers.dateToString),
+	reminderSentAt: v.nullable(helpers.dateToString),
+	cancellationNotificationSentAt: v.nullable(helpers.dateToString),
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString
+});
+
 export const readEventSignupRest = v.object({
 	...v.omit(eventSignupSchema, ['organizationId']).entries,
 	signupNotificationSentAt: v.nullable(helpers.dateToString),

@@ -27,7 +27,8 @@ import type {
 	WebhookVerificationModes,
 	WebhookEventTypes,
 	WebhookStatus,
-	WebhookPayload,
+	WebhookLogPayload,
+	WebhookEvent,
 	WebhookEvents
 } from '$lib/schema/webhook';
 import type { WebhookLogSchema } from '$lib/schema/webhook-log';
@@ -307,9 +308,9 @@ export const webhookLog = pgTable(
 		webhookId: uuid('webhook_id')
 			.notNull()
 			.references(() => webhook.id),
-		eventType: text('event_type').$type<WebhookEvents>().notNull(),
+		eventType: text('event_type').$type<WebhookEvent>().notNull(),
 		status: text('status').$type<WebhookStatus>().notNull(),
-		payload: jsonb('payload').$type<WebhookPayload>(),
+		payload: jsonb('payload').$type<WebhookLogPayload>(),
 		httpStatusCode: integer('http_status_code'),
 		responseBody: text('response_body'),
 		attemptNumber: integer('attempt_number').notNull().default(1), //1-indexed
