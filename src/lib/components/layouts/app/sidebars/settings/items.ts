@@ -5,6 +5,7 @@ export const settingsItems: {
 	url: string;
 	keywords: string[];
 	permissions: 'admin' | 'owner' | 'member';
+	dataTestId?: string;
 }[] = [
 	{
 		title: () => t`Configuration`,
@@ -39,14 +40,16 @@ export const settingsItems: {
 		group: () => t`Community`,
 		url: '/settings/tags',
 		keywords: ['tags', 'people', 'tag', 'tagging'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-tags'
 	},
 	{
 		title: () => t`Teams`,
 		group: () => t`Community`,
 		url: '/settings/teams',
 		keywords: ['teams', 'people', 'team'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-teams'
 	},
 	{
 		title: () => t`Imports`,
