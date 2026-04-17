@@ -10,7 +10,8 @@ import { EventSurveyPage } from '../pages/events/event-survey.page';
 import { TEST_USERS } from '../helpers/auth';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
-	postWhatsAppInboundWebhook
+	postWhatsAppInboundWebhook,
+	getE2EDefaultWhatsAppNumber
 } from '../helpers/whatsapp-webhook';
 
 const ORG_SLUG = 'e2e-event-org';
@@ -315,7 +316,7 @@ test.describe.serial('Events', () => {
 
 		const webhookBody = buildWhatsAppInboundFlowReplyWebhook({
 			from: flowPhone,
-			to: '+447418633908',
+			to: getE2EDefaultWhatsAppNumber(),
 			responseJson: {
 				givenName: flowGivenName,
 				emailAddress: `wa-flow-${suffix}@belcoda.test`,

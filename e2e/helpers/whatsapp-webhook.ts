@@ -16,6 +16,16 @@ function getE2EWabaId(): string {
 	return wabaId;
 }
 
+export function getE2EDefaultWhatsAppNumber(): string {
+	const number = process.env.PUBLIC_DEFAULT_WHATSAPP_NUMBER?.trim() || '';
+	if (!number) {
+		throw new Error(
+			'Missing PUBLIC_DEFAULT_WHATSAPP_NUMBER in your env. This is the WhatsApp sender number for the E2E org.'
+		);
+	}
+	return number;
+}
+
 export function buildWhatsAppInboundFlowReplyWebhook({
 	wabaId = getE2EWabaId(),
 	from,
