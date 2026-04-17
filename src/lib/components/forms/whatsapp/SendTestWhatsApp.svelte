@@ -7,8 +7,13 @@
 
 	let {
 		whatsappThreadId,
-		beforeSend
-	}: { whatsappThreadId: string; beforeSend: () => Promise<void> } = $props();
+		beforeSend,
+		onSent
+	}: {
+		whatsappThreadId: string;
+		beforeSend: () => Promise<void>;
+		onSent?: () => void;
+	} = $props();
 
 	let phoneNumber = $state('');
 	let loading = $state(false);
@@ -31,6 +36,7 @@
 				toast.error(data?.message ?? t`Failed to send test WhatsApp`);
 			} else {
 				toast.success(t`Test WhatsApp sent to ${trimmedPhoneNumber}`);
+				onSent?.();
 			}
 		} catch {
 			toast.error(t`Failed to send test WhatsApp`);
