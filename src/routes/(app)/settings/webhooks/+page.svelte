@@ -93,12 +93,14 @@
 </script>
 
 <ContentLayout rootLink="/settings" {header}>
-	<div class="space-y-4">
+	<div class="space-y-4" data-testid="settings-webhooks">
 		{#if webhookList.details.type === 'complete' && webhookList.data && webhookList.data.length === 0}
 			<div class="flex flex-col items-center justify-center py-12 text-center">
 				<p class="mb-4 text-muted-foreground">{t`No webhooks configured`}</p>
 				{#if appState.isOwner}
-					<Button onclick={() => (createModalOpen = true)}>{t`Create Webhook`}</Button>
+					<Button data-testid="settings-webhooks-create" onclick={() => (createModalOpen = true)}>
+						{t`Create Webhook`}
+					</Button>
 				{/if}
 			</div>
 		{:else}
@@ -115,7 +117,7 @@
 				<Table.Body>
 					{#if webhookList.data}
 						{#each webhookList.data as webhook (webhook.id)}
-							<Table.Row>
+							<Table.Row data-testid="settings-webhooks-row">
 								<Table.Cell class="font-medium">{webhook.name}</Table.Cell>
 								<Table.Cell>
 									<a
@@ -123,6 +125,7 @@
 										target="_blank"
 										rel="noopener noreferrer"
 										class="text-primary hover:underline"
+										data-testid="settings-webhooks-target-link"
 									>
 										{webhook.targetUrl}
 									</a>
@@ -134,6 +137,7 @@
 										<Button
 											variant="ghost"
 											size="sm"
+											data-testid="settings-webhooks-delete"
 											onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
 										>
 											<TrashIcon class="h-4 w-4" />
@@ -165,13 +169,14 @@
 				bind:open={createModalOpen}
 			>
 				{#snippet trigger()}
-					<Button>{t`Create Webhook`}</Button>
+					<Button data-testid="settings-webhooks-create">{t`Create Webhook`}</Button>
 				{/snippet}
 				{#snippet children()}
 					<div class="space-y-2">
 						<Label for="webhook-name-header">{t`Name`}</Label>
 						<Input
 							id="webhook-name-header"
+							data-testid="settings-webhooks-name-input"
 							bind:value={name}
 							placeholder={t`My Webhook`}
 							required
@@ -181,6 +186,7 @@
 						<Label for="webhook-url-header">{t`Target URL`}</Label>
 						<Input
 							id="webhook-url-header"
+							data-testid="settings-webhooks-url-input"
 							bind:value={targetUrl}
 							type="url"
 							placeholder={t`https://example.com/webhook`}
@@ -191,7 +197,9 @@
 				{#snippet footer()}
 					<div class="flex justify-end gap-2">
 						<Button variant="outline" onclick={() => (createModalOpen = false)}>{t`Cancel`}</Button>
-						<Button onclick={handleCreateWebhook}>{t`Create`}</Button>
+						<Button data-testid="settings-webhooks-submit" onclick={handleCreateWebhook}>
+							{t`Create`}
+						</Button>
 					</div>
 				{/snippet}
 			</ResponsiveModal>

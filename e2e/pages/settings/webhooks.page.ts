@@ -11,27 +11,33 @@ export class WebhooksPage {
 		await this.page.goto('/settings/webhooks');
 	}
 
+	get root(): Locator {
+		return this.page.getByTestId('settings-webhooks');
+	}
+
 	get createWebhookTrigger(): Locator {
-		return this.page.getByRole('button', { name: 'Create Webhook' }).first();
+		return this.page.getByTestId('settings-webhooks-create').first();
 	}
 
 	get webhookNameInput(): Locator {
-		return this.page.locator('#webhook-name-header');
+		return this.page.getByTestId('settings-webhooks-name-input');
 	}
 
 	get webhookTargetUrlInput(): Locator {
-		return this.page.locator('#webhook-url-header');
+		return this.page.getByTestId('settings-webhooks-url-input');
 	}
 
 	get createSubmitButton(): Locator {
-		return this.page.getByRole('button', { name: 'Create' });
+		return this.page.getByTestId('settings-webhooks-submit');
 	}
 
 	webhookRow(name: string, targetUrl: string): Locator {
 		return this.page
-			.locator('tr')
+			.getByTestId('settings-webhooks-row')
 			.filter({ has: this.page.getByRole('cell', { name }) })
-			.filter({ has: this.page.getByRole('link', { name: targetUrl }) });
+			.filter({
+				has: this.page.getByTestId('settings-webhooks-target-link').filter({ hasText: targetUrl })
+			});
 	}
 
 	async createWebhook(name: string, targetUrl: string) {
@@ -43,6 +49,6 @@ export class WebhooksPage {
 
 	async deleteWebhook(name: string, targetUrl: string) {
 		const row = this.webhookRow(name, targetUrl);
-		await row.getByRole('button').click();
+		await row.getByTestId('settings-webhooks-delete').click();
 	}
 }

@@ -11,28 +11,38 @@ export class ApiKeysPage {
 		await this.page.goto('/settings/api-keys');
 	}
 
+	get root(): Locator {
+		return this.page.getByTestId('settings-api-keys');
+	}
+
 	get newApiKeyTrigger(): Locator {
-		return this.page.getByRole('button', { name: /new/i });
+		return this.page.getByTestId('settings-api-keys-new');
 	}
 
 	get keyNameInput(): Locator {
-		return this.page.locator('#key-name');
+		return this.page.getByTestId('settings-api-keys-name-input');
 	}
 
 	get createButton(): Locator {
-		return this.page.getByRole('button', { name: 'Create' });
+		return this.page.getByTestId('settings-api-keys-create');
 	}
 
 	get closeCreateModalButton(): Locator {
-		return this.page.getByRole('button', { name: 'Close' });
+		return this.page.getByTestId('settings-api-keys-created-close');
+	}
+
+	get keyDisplay(): Locator {
+		return this.page.getByTestId('settings-api-keys-display');
 	}
 
 	apiKeyRow(name: string): Locator {
-		return this.page.locator('tr').filter({ has: this.page.getByRole('cell', { name }) });
+		return this.page
+			.getByTestId('settings-api-keys-row')
+			.filter({ has: this.page.getByRole('cell', { name }) });
 	}
 
 	get deleteConfirmButton(): Locator {
-		return this.page.getByRole('button', { name: 'Delete' });
+		return this.page.getByTestId('settings-api-keys-delete-confirm');
 	}
 
 	async createApiKey(name: string) {
@@ -43,7 +53,7 @@ export class ApiKeysPage {
 
 	async deleteApiKey(name: string) {
 		const row = this.apiKeyRow(name);
-		await row.getByRole('button', { name: 'Delete API key' }).click();
+		await row.getByTestId('settings-api-keys-delete').click();
 		await this.deleteConfirmButton.click();
 	}
 }
