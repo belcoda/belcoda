@@ -9,6 +9,7 @@
 	import { toast } from 'svelte-sonner';
 	import { tick } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
 	import SendTestWhatsApp from '$lib/components/forms/whatsapp/SendTestWhatsApp.svelte';
 	const whatsappThreadQuery = $derived.by(() =>
@@ -51,7 +52,7 @@
 	{#if whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data}
 		{@const currentFlow = latestDraftFlow ?? whatsappThreadQuery.data.flow}
 		<div class="mb-4 flex justify-end">
-			<Button variant="outline" size="sm" onclick={() => (showTestWhatsApp = !showTestWhatsApp)}>
+			<Button variant="outline" size="sm" onclick={() => (showTestWhatsApp = true)}>
 				<FlaskConicalIcon class="size-4" />
 				{t`Test WhatsApp`}
 			</Button>
@@ -92,16 +93,22 @@
 				await goto('/communications/whatsapp/drafts');
 			}}
 		/>
-		{#if showTestWhatsApp}
-			<div class="mt-4 rounded-lg border p-4">
+		<Dialog.Root bind:open={showTestWhatsApp}>
+			<Dialog.Content class="sm:max-w-md">
+				<Dialog.Header>
+					<Dialog.Title>{t`Test WhatsApp`}</Dialog.Title>
+					<Dialog.Description>
+						{t`Send a test message before sending this draft.`}
+					</Dialog.Description>
+				</Dialog.Header>
 				<SendTestWhatsApp
 					whatsappThreadId={params.id}
 					beforeSend={async () => {
 						await persistDraftFlow(currentFlow);
 					}}
 				/>
-			</div>
-		{/if}
+			</Dialog.Content>
+		</Dialog.Root>
 	{:else}
 		<Skeleton class="h-48 w-full" />
 		<Skeleton class="h-48 w-full" />
