@@ -8,9 +8,7 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 	import { tick } from 'svelte';
-	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
 	import SendTestWhatsApp from '$lib/components/forms/whatsapp/SendTestWhatsApp.svelte';
 	const whatsappThreadQuery = $derived.by(() =>
 		z.createQuery(
@@ -51,16 +49,13 @@
 {#key params.id}
 	{#if whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data}
 		{@const currentFlow = latestDraftFlow ?? whatsappThreadQuery.data.flow}
-		<div class="mb-4 flex justify-end">
-			<Button variant="outline" size="sm" onclick={() => (showTestWhatsApp = true)}>
-				<FlaskConicalIcon class="size-4" />
-				{t`Test WhatsApp`}
-			</Button>
-		</div>
 		<Flow
 			backButtonUrl="/communications/whatsapp"
 			nodes={whatsappThreadQuery.data.flow.nodes}
 			edges={whatsappThreadQuery.data.flow.edges}
+			onTest={() => {
+				showTestWhatsApp = true;
+			}}
 			onSave={async ({ nodes, edges }) => {
 				console.log('Saving thread', nodes, edges);
 				await persistDraftFlow({ nodes, edges });
@@ -105,6 +100,9 @@
 					whatsappThreadId={params.id}
 					beforeSend={async () => {
 						await persistDraftFlow(currentFlow);
+					}}
+					onSent={() => {
+						showTestWhatsApp = false;
 					}}
 				/>
 			</Dialog.Content>
