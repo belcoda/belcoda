@@ -8,6 +8,8 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 	import { tick } from 'svelte';
+	import { Button } from '$lib/components/ui/button';
+	import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
 	const whatsappThreadQuery = $derived.by(() =>
 		z.createQuery(
 			queries.whatsappThread.read({
@@ -18,6 +20,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { onDestroy } from 'svelte';
+	let showTestWhatsApp = $state(false);
 	onDestroy(() => {
 		//if (whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data) {
 		//if whatsapp thread is EXACTLY deepEqual to the starting state, delete it.
@@ -28,6 +31,12 @@
 
 {#key params.id}
 	{#if whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data}
+		<div class="mb-4 flex justify-end">
+			<Button variant="outline" size="sm" onclick={() => (showTestWhatsApp = !showTestWhatsApp)}>
+				<FlaskConicalIcon class="size-4" />
+				{t`Test WhatsApp`}
+			</Button>
+		</div>
 		<Flow
 			backButtonUrl="/communications/whatsapp"
 			nodes={whatsappThreadQuery.data.flow.nodes}
@@ -84,6 +93,9 @@
 				await goto('/communications/whatsapp/drafts');
 			}}
 		/>
+		{#if showTestWhatsApp}
+			<div class="mt-4 rounded-lg border p-4">TODO: Test WhatsApp message panel here</div>
+		{/if}
 	{:else}
 		<Skeleton class="h-48 w-full" />
 		<Skeleton class="h-48 w-full" />
