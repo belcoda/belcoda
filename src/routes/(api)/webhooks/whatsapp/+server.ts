@@ -8,7 +8,7 @@ import { v7 as uuidv7 } from 'uuid';
 import { handleIncomingMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message';
 import { handleWhatsappTemplateReviewed } from '$lib/server/queue/handlers/whatsapp/template_reviewed';
 const webhookSecret = env.YCLOUD_WEBHOOK_VERIFY_TOKEN;
-const isMockMode = env.MOCK_EXTERNAL_SERVICES === 'true';
+const isMockMode = env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production';
 
 export async function POST({ request, url }) {
 	const verifyToken = url.searchParams.get('verify');
