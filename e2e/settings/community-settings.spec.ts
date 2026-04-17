@@ -31,7 +31,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		ids.tagName = `E2E Community Tag ${Date.now()}`;
 
 		await loginToCommunitySettings(page);
-		await page.getByTestId('settings-nav-tags').click();
+		await page.locator('a[href="/settings/tags"]').first().click();
 		await expect(page).toHaveURL('/settings/tags');
 
 		await tagsPage.createTag(ids.tagName);
@@ -46,7 +46,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		const updatedTagName = `${ids.tagName} Edited`;
 
 		await loginToCommunitySettings(page);
-		await page.getByTestId('settings-nav-tags').click();
+		await page.locator('a[href="/settings/tags"]').first().click();
 		await expect(page).toHaveURL('/settings/tags');
 
 		await tagsPage.editTag(ids.tagId, updatedTagName);
@@ -64,7 +64,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		const tagsPage = new TagsPage(page);
 
 		await loginToCommunitySettings(page);
-		await page.getByTestId('settings-nav-tags').click();
+		await page.locator('a[href="/settings/tags"]').first().click();
 		await expect(page).toHaveURL('/settings/tags');
 
 		await tagsPage.deleteTag(ids.tagId);
@@ -76,7 +76,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		ids.teamName = `E2E Community Team ${Date.now()}`;
 
 		await loginToCommunitySettings(page);
-		await page.getByTestId('settings-nav-teams').click();
+		await page.locator('a[href="/settings/teams"]').first().click();
 		await expect(page).toHaveURL('/settings/teams');
 
 		await teamsPage.createTeam(ids.teamName);
@@ -91,7 +91,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		const updatedTeamName = `${ids.teamName} Edited`;
 
 		await loginToCommunitySettings(page);
-		await page.getByTestId('settings-nav-teams').click();
+		await page.locator('a[href="/settings/teams"]').first().click();
 		await expect(page).toHaveURL('/settings/teams');
 
 		await teamsPage.editTeam(ids.teamId, updatedTeamName);

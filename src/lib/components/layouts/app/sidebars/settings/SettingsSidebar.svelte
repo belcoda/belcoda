@@ -49,14 +49,6 @@
 	});
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { t } from '$lib/index.svelte';
-
-	function settingsNavTestId(url: string) {
-		const path = url.startsWith('/settings/')
-			? url.slice('/settings/'.length)
-			: url.replace(/^\//, '');
-		const slug = path.replaceAll('/', '-') || 'root';
-		return `settings-nav-${slug}`;
-	}
 </script>
 
 <Sidebar.Root
@@ -88,9 +80,7 @@
 								<Sidebar.MenuItem>
 									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 										{#snippet child({ props })}
-											<a href={item.url} {...props} data-testid={settingsNavTestId(item.url)}>
-												{item.title()}
-											</a>
+											<a href={item.url} {...props}>{item.title()}</a>
 										{/snippet}
 									</Sidebar.MenuButton>
 								</Sidebar.MenuItem>
