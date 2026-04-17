@@ -8,6 +8,7 @@ export const MEDIUM_STRING_MAX_LENGTH = 500;
 export const LONG_STRING_MAX_LENGTH = 100000;
 export const SLUG_REGEXP = new RegExp('^[a-z0-9-]+(?:-[a-z0-9]+)*$');
 export const UNDERSCORE_SLUG_REGEXP = new RegExp('^[a-z0-9_]+$');
+export const CURRENT_API_VERSION = '2026-04-16';
 
 import { parsePhoneNumber } from 'awesome-phonenumber';
 

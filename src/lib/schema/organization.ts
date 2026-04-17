@@ -23,6 +23,18 @@ export const organizationSchema = v.object({
 });
 export type OrganizationSchema = v.InferOutput<typeof organizationSchema>;
 
+export const organizationWebhook = v.object({
+	...v.omit(organizationSchema, ['id']).entries,
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString
+});
+
+export const organizationMemberWebhook = v.object({
+	organizationId: helpers.uuid,
+	userId: helpers.uuid,
+	role: v.picklist(['admin', 'owner', 'member'])
+});
+
 export const readOrganizationRest = v.object({
 	...organizationSchema.entries,
 	createdAt: helpers.dateToString,

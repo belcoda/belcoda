@@ -23,6 +23,15 @@ export const whatsappThreadSchema = v.object({
 });
 export type WhatsappThreadSchema = v.InferOutput<typeof whatsappThreadSchema>;
 
+export const whatsappThreadWebhook = v.object({
+	...v.omit(whatsappThreadSchema, ['organizationId']).entries,
+	startedAt: v.nullable(helpers.dateToString),
+	completedAt: v.nullable(helpers.dateToString),
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString)
+});
+
 export const readWhatsappThreadRest = v.object({
 	...v.omit(whatsappThreadSchema, ['organizationId']).entries,
 	startedAt: v.nullable(helpers.dateToString),

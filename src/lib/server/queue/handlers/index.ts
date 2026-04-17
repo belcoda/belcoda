@@ -10,3 +10,4 @@ export { processFlowNodeAction } from '$lib/server/queue/handlers/whatsapp/proce
 export { sendEmailMessage } from '$lib/server/queue/handlers/email/send_email_message';
 export { buildEmailMessageSendQueue } from '$lib/server/queue/handlers/email/build_send_queue';
 export { buildWhatsappThreadSendQueue } from '$lib/server/queue/handlers/whatsapp/build_send_queue';
+export { triggerWebhook } from '$lib/server/queue/handlers/utils/trigger_webhook';
