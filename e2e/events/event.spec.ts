@@ -8,6 +8,10 @@ import { EventSignupsPage } from '../pages/events/event-signups.page';
 import { EventPublicPage } from '../pages/events/event-public-page.page';
 import { EventSurveyPage } from '../pages/events/event-survey.page';
 import { TEST_USERS } from '../helpers/auth';
+import {
+	buildWhatsAppInboundFlowReplyWebhook,
+	postWhatsAppInboundWebhook
+} from '../helpers/whatsapp-webhook';
 
 const ORG_SLUG = 'e2e-event-org';
 
@@ -293,6 +297,42 @@ test.describe.serial('Events', () => {
 		await editPage.deleteEvent(page);
 
 		await expect(page).toHaveURL('/events', { timeout: 10_000 });
+	});
+
+	test('WhatsApp flow response creates an event signup', async ({ page, request }) => {
+		await loginAsOwner(page);
+
+		const detailPage = new EventDetailPage(page);
+		await detailPage.goto(ids.eventId);
+		await detailPage.waitForLoaded();
+
+		const signupsPage = new EventSignupsPage(page);
+		await signupsPage.signupTable.waitFor({ state: 'visible', timeout: 15_000 });
+
+		const flowPhone = '+61400000001';
+		const suffix = Date.now();
+		const flowGivenName = `WA Flow ${suffix}`;
+
+		const webhookBody = buildWhatsAppInboundFlowReplyWebhook({
+			from: flowPhone,
+			to: '+447418633908',
+			responseJson: {
+				givenName: flowGivenName,
+				emailAddress: `wa-flow-${suffix}@belcoda.test`,
+				phoneNumber: flowPhone,
+				flow_token: 'unused',
+				resource_type: 'event',
+				resource_id: ids.eventId
+			}
+		});
+
+		const { status } = await postWhatsAppInboundWebhook(request, webhookBody);
+		expect(status).toBe(200);
+
+		await detailPage.goto(ids.eventId);
+		await detailPage.waitForLoaded();
+		await signupsPage.signupTable.waitFor({ state: 'visible', timeout: 15_000 });
+		await expect(signupsPage.signupTable).toContainText(flowGivenName, { timeout: 15_000 });
 	});
 });
 

@@ -3,8 +3,8 @@ import { BASE_URL } from './config';
 
 function getE2EWabaId(): string {
 	const wabaId =
-		process.env.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID?.trim() ||
 		process.env.SYSTEM_WABA_ID?.trim() ||
+		process.env.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID?.trim() ||
 		'';
 
 	if (!wabaId) {
