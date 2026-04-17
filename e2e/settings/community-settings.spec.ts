@@ -104,8 +104,4 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 
 		ids.teamName = updatedTeamName;
 	});
-
-	test.fixme('owner can delete a team from Community Settings', async () => {
-		// Team delete action is not currently exposed in settings UI.
-	});
 });
