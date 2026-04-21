@@ -12,7 +12,9 @@
 	const reactionCounts = $derived.by(() => {
 		const counts = new Map<string, number>();
 		reactions.forEach((reaction) => {
-			counts.set(reaction.emoji, (counts.get(reaction.emoji) || 0) + 1);
+			if (reaction.emoji) {
+				counts.set(reaction.emoji, (counts.get(reaction.emoji) || 0) + 1);
+			}
 		});
 		return Array.from(counts.entries()).map(([emoji, count]) => ({ emoji, count }));
 	});

@@ -4584,3 +4584,54 @@ msgstr "No captions available"
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the video tag."
 msgstr "Your browser does not support the video tag."
+
+#~ msgid "Whatsapp message"
+#~ msgstr "Whatsapp message"
+
+#~ msgid "loading_activities"
+#~ msgstr "loading_activities"
+
+#~ msgid "no_activities_yet"
+#~ msgstr "no_activities_yet"
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Loading activities..."
+msgstr "Loading activities..."
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "No activities yet"
+msgstr "No activities yet"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "View event page"
+msgstr "View event page"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Preview event page"
+msgstr "Preview event page"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Detailed signups table"
+msgstr "Detailed signups table"
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Test email"
+msgstr "Test email"
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Failed to send test email"
+msgstr "Failed to send test email"
+
+#. 0: emailAddress
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Test email sent to {0}"
+msgstr "Test email sent to {0}"
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Send test email to"
+msgstr "Send test email to"
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Send test email"
+msgstr "Send test email"

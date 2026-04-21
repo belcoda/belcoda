@@ -38,7 +38,7 @@ export const whatsappActionsSchema = v.variant('type', [
 ]);
 
 export const emojiReactionSchema = v.object({
-	emoji: emoji,
+	emoji: v.nullable(emoji),
 	personId: v.optional(uuid),
 	phoneNumber: v.optional(isoPhoneNumber),
 	viaBelcoda: v.boolean(),

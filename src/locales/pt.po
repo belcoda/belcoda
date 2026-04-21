@@ -4598,3 +4598,25 @@ msgstr "Pré-visualizar página do evento"
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Detailed signups table"
 msgstr "Tabela detalhada de inscrições"
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Test email"
+msgstr "E-mail de teste"
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Failed to send test email"
+msgstr "Falha ao enviar o e-mail de teste"
+
+#. 0: emailAddress
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Test email sent to {0}"
+msgstr "E-mail de teste enviado para {0}"
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Send test email to"
+msgstr "Enviar e-mail de teste para"
+
+#: src/lib/components/forms/email/SendTestEmail.svelte
+msgid "Send test email"
+msgstr "Enviar e-mail de teste"
