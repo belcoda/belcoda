@@ -43,7 +43,7 @@
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
-				<Button {...props} variant="outline"
+				<Button {...props} variant="outline" data-testid="petition-action-dropdown"
 					><ChevronDownIcon class="size-5" /><span class="sr-only">{t`Open`}</span></Button
 				>
 			{/snippet}
@@ -56,6 +56,7 @@
 							<Switch
 								id={`${id}-switch`}
 								checked={petition.published}
+								data-testid="petition-action-publish-switch"
 								onCheckedChange={(checked) => {
 									updatePublished(checked);
 									if (checked) {
@@ -71,7 +72,9 @@
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={`/petitions/${petition.id}/edit`}>{t`Edit petition`}</a>
+						<a {...props} href={`/petitions/${petition.id}/edit`} data-testid="petition-action-edit"
+							>{t`Edit petition`}</a
+						>
 					{/snippet}
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
@@ -80,6 +83,7 @@
 							data-sveltekit-preload-data="off"
 							{...props}
 							href={`/petitions/${petition.id}/preview`}
+							data-testid="petition-action-preview"
 							>{#if petition.published}{t`View petition page`}{:else}{t`Preview petition page`}{/if}</a
 						>
 					{/snippet}
@@ -89,7 +93,11 @@
 			<DropdownMenu.Group>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a {...props} href={`/petitions/${petition.id}/signatures`}>{t`Detailed signatures table`}</a>
+						<a
+							{...props}
+							href={`/petitions/${petition.id}/signatures`}
+							data-testid="petition-action-signatures">{t`Detailed signatures table`}</a
+						>
 					{/snippet}
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>

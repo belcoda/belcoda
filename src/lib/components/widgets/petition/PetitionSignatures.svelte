@@ -29,14 +29,19 @@
 	import { handleAddPerson } from './signatures/signatureActions';
 </script>
 
-<Card.Root>
+<Card.Root data-testid="petition-signature-table">
 	<Card.Header>
 		<Card.Title class="flex items-start justify-between gap-2 font-normal">
 			<div class="grow space-y-3">
 				<PersonFilter bind:filter hideActivityFilter={true} />
 			</div>
 			<div class="flex items-center gap-2">
-				<Button variant="ghost" size="sm" href="/petitions/{petition.id}/signatures">
+				<Button
+					variant="ghost"
+					size="sm"
+					href="/petitions/{petition.id}/signatures"
+					data-testid="petition-signatures-view-all"
+				>
 					{t`View all`}
 				</Button>
 				{#if !petition.archivedAt}

@@ -120,7 +120,12 @@
 	let editSlugOpen = $state(false);
 </script>
 
-<form use:form.enhance class="mx-auto flex w-full max-w-4xl flex-col gap-4" id="petition-form">
+<form
+	use:form.enhance
+	class="mx-auto flex w-full max-w-4xl flex-col gap-4"
+	id="petition-form"
+	data-testid="petition-form"
+>
 	<Errors {errors} />
 
 	<Card.Root>
@@ -187,7 +192,11 @@
 	{/if}
 
 	{#if petition}
-		<Collapsible.Root bind:open={dangerOpen} class="rounded-lg border border-destructive/40">
+		<Collapsible.Root
+			bind:open={dangerOpen}
+			class="rounded-lg border border-destructive/40"
+			data-testid="petition-danger-zone"
+		>
 			<Collapsible.Trigger
 				class="flex w-full items-center justify-between gap-2 p-4 text-left font-medium text-destructive"
 			>
@@ -199,7 +208,12 @@
 					<p class="mb-3 text-sm text-muted-foreground">
 						{t`Archive this petition. You can still view it in the archived petitions list.`}
 					</p>
-					<Button type="button" variant="destructive" onclick={() => (confirmArchiveOpen = true)}
+					<Button
+						type="button"
+						variant="destructive"
+						onclick={() => (confirmArchiveOpen = true)}
+						data-testid="petition-archive-button"
+					>
 						>{t`Archive petition`}</Button
 					>
 					<ConfirmDialog
@@ -225,7 +239,12 @@
 					<p class="mb-3 text-sm text-muted-foreground">
 						{t`Permanently delete this draft petition. This action cannot be undone.`}
 					</p>
-					<Button type="button" variant="destructive" onclick={() => (confirmDeleteOpen = true)}
+					<Button
+						type="button"
+						variant="destructive"
+						onclick={() => (confirmDeleteOpen = true)}
+						data-testid="petition-delete-button"
+					>
 						>{t`Delete petition`}</Button
 					>
 					<ConfirmDialog
@@ -264,6 +283,7 @@
 					<InputGroup.Input
 						bind:value={$data.title}
 						{...props}
+						data-testid="petition-title-input"
 						placeholder={t`Title`}
 						oninput={useDebounce(
 							() => {
@@ -343,6 +363,7 @@
 					<InputGroup.Textarea
 						bind:value={$data.shortDescription}
 						{...props}
+						data-testid="petition-description-input"
 						placeholder={t`Description`}
 						class="min-h-[80px]"
 					/>
@@ -367,6 +388,7 @@
 					<InputGroup.Input
 						bind:value={$data.petitionTarget}
 						{...props}
+						data-testid="petition-target-input"
 						placeholder={t`e.g., Local Government, CEO of Company X`}
 					/>
 				</InputGroup.Root>
@@ -388,6 +410,7 @@
 					<InputGroup.Textarea
 						bind:value={$data.petitionText}
 						{...props}
+						data-testid="petition-text-input"
 						placeholder={t`Full text of the petition`}
 						class="min-h-[120px]"
 					/>
