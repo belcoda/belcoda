@@ -21,6 +21,13 @@ export const petitionSignatureSchema = v.object({
 });
 export type PetitionSignatureSchema = v.InferOutput<typeof petitionSignatureSchema>;
 
+export const petitionSignatureWebhook = v.object({
+	...v.omit(petitionSignatureSchema, ['organizationId']).entries,
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString)
+});
+
 export const readPetitionSignatureRest = v.object({
 	...v.omit(petitionSignatureSchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString,

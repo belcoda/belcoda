@@ -4,14 +4,15 @@ import { petition, petitionSignature, organization, person } from '$lib/schema/d
 import { eq, and, isNull, count, desc } from 'drizzle-orm';
 import pino from '$lib/pino';
 import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
-import { safeParse } from 'valibot';
-import { signPetitionFormSchema } from '$lib/schema/petition/petition-signature';
 import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
 import { _getPetitionActionCodeUnsafe } from '$lib/server/api/data/petition/check';
 import { generateWhatsAppPetitionLink } from '$lib/utils/petitions/link';
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
 import { sanitize, clearWindow } from 'isomorphic-dompurify';
+import { superValidate } from 'sveltekit-superforms';
+import { valibot } from 'sveltekit-superforms/adapters';
+import { getSurveySchema } from '$lib/schema/survey/questions';
 const log = pino(import.meta.url);
 const lexicalRenderer = new LexicalHtmlRenderer();
 
@@ -90,10 +91,11 @@ export async function load({ params, locals }) {
 		try {
 			renderedDescription = await lexicalRenderer.render(petitionDescription);
 			renderedDescription = sanitize(renderedDescription);
-			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		} catch (err) {
 			log.warn({ err, petitionId: petitionData.id }, 'Failed to render petition description');
 			renderedDescription = null;
+		} finally {
+			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		}
 	}
 
@@ -111,6 +113,9 @@ export async function load({ params, locals }) {
 		...sig,
 		createdAt: sig.createdAt ? new Date(sig.createdAt).getTime() : null
 	}));
+	const surveySchema = getSurveySchema(petitionData);
+	const form = await superValidate(valibot(surveySchema));
+	form.data.customFields ||= {};
 
 	return {
 		petition: serializedPetition,
@@ -119,12 +124,13 @@ export async function load({ params, locals }) {
 		recentSignatures: serializedSignatures,
 		session,
 		isAdmin,
-		whatsAppSignupLink
+		whatsAppSignupLink,
+		form
 	};
 }
 
 export const actions = {
-	sign: async ({ request, params, url }) => {
+	sign: async ({ request, params }) => {
 		const { organizationSlug, petitionSlug } = params;
 
 		const [org] = await drizzle
@@ -157,20 +163,13 @@ export const actions = {
 			return fail(400, { error: 'This petition is not published', success: false });
 		}
 
-		const formData = await request.formData();
-		const layoutParam = formData.get('layout')?.toString();
-		const phoneValue = formData.get('phoneNumber')?.toString().trim() || '';
-		const data = {
-			givenName: formData.get('givenName')?.toString() || '',
-			familyName: formData.get('familyName')?.toString() || '',
-			emailAddress: formData.get('emailAddress')?.toString() || '',
-			phoneNumber: phoneValue.length ? phoneValue : undefined
-		};
-		const parsedResult = safeParse(signPetitionFormSchema, data);
-		if (!parsedResult.success) {
-			return fail(400, { error: 'Invalid form data', success: false });
+		const surveySchema = getSurveySchema(petitionData);
+		const form = await superValidate(request, valibot(surveySchema));
+		form.data.customFields ||= {};
+		if (!form.valid) {
+			return fail(400, { form });
 		}
-		const parsed = parsedResult.output;
+		const layoutParam = form.data.theme;
 
 		try {
 			await db.transaction(async (tx) => {
@@ -180,18 +179,28 @@ export const actions = {
 					organizationId: org.id,
 					teamId: petitionData.teamId || undefined,
 					personAction: {
-						givenName: parsed.givenName || null,
-						familyName: parsed.familyName || null,
-						emailAddress: parsed.emailAddress || null,
-						phoneNumber: parsed.phoneNumber || null,
-						country: org.country,
+						givenName: form.data.person.givenName || null,
+						familyName: form.data.person.familyName || null,
+						emailAddress: form.data.person.emailAddress || null,
+						phoneNumber: form.data.person.phoneNumber || null,
+						addressLine1: form.data.person.addressLine1 || null,
+						addressLine2: form.data.person.addressLine2 || null,
+						locality: form.data.person.locality || null,
+						region: form.data.person.region || null,
+						postcode: form.data.person.postcode || null,
+						dateOfBirth: form.data.person.dateOfBirth || null,
+						gender: form.data.person.gender || null,
+						workplace: form.data.person.workplace || null,
+						position: form.data.person.position || null,
+						country: form.data.person.country || org.country || null,
 						subscribed: true
 					},
 					signatureDetails: {
 						channel: {
 							type: 'petitionPage'
 						}
-					}
+					},
+					responses: form.data.customFields
 				});
 			});
 
@@ -209,6 +218,7 @@ export const actions = {
 			}
 			log.error({ err, organizationSlug, petitionSlug }, 'Error signing petition');
 			return fail(500, {
+				form,
 				error: 'Unable to sign the petition right now. Please try again in a moment.',
 				success: false
 			});

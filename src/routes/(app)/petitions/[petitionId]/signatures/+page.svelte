@@ -52,7 +52,7 @@
 
 	//@svelte-ignore state_referenced_locally
 	watch(
-		() => petition,
+		() => petition.data,
 		() => {
 			if (petition.data) {
 				displayColumns = [
@@ -92,19 +92,36 @@
 	});
 
 	const transformedTable = $derived.by(() => {
+		const headers = tableHeaders;
+		const used = new Set<string>();
+		const exportKeys: string[] = [];
+		for (const header of headers) {
+			const baseLabel = getCustomColumnLabelById(header) ?? renderColumnName(header);
+			let exportKey = baseLabel || header;
+			if (used.has(exportKey)) {
+				exportKey = `${baseLabel || header} (${header})`;
+			}
+			let n = 2;
+			while (used.has(exportKey)) {
+				exportKey = `${baseLabel || header} (${header}) (${n})`;
+				n++;
+			}
+			used.add(exportKey);
+			exportKeys.push(exportKey);
+		}
 		return table.map((row) => {
 			const newRow: Record<string, string | null | undefined> = {};
-			for (const key of tableHeaders) {
-				const newKey = getCustomColumnLabelById(key) ?? renderColumnName(key);
-				if (newKey) {
-					newRow[newKey] = row[key];
-				}
+			for (let i = 0; i < headers.length; i++) {
+				newRow[exportKeys[i]] = row[headers[i]];
 			}
 			return newRow;
 		});
 	});
-
+	const downloadCsvReady = $derived(signatures.details.type === 'complete' && petition.data);
 	async function downloadTableAsCSV() {
+		if (!downloadCsvReady) {
+			return;
+		}
 		const csvString = Papa.unparse(transformedTable);
 		const blob = new Blob([csvString], { type: 'text/csv' });
 		const url = URL.createObjectURL(blob);
@@ -189,8 +206,11 @@
 					bind:custom={customColumns}
 					petition={petition.data}
 				/>
-				<Button variant="outline" size="sm" onclick={downloadTableAsCSV}
-					><DownloadIcon /> {t`Download CSV`}</Button
+				<Button
+					variant="outline"
+					size="sm"
+					disabled={!downloadCsvReady}
+					onclick={downloadTableAsCSV}><DownloadIcon /> {t`Download CSV`}</Button
 				>
 				<AddPersonModal
 					trigger={addPersonTrigger}

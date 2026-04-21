@@ -27,12 +27,15 @@ function userFacingMessage(error: unknown, kitMessage: string, status: number): 
 	}
 	if (error instanceof Error) {
 		const m = error.message;
-		if (/load failed|failed to fetch/i.test(m)) {
+		if (/load failed|failed to fetch/i.test(error.message)) {
 			return 'Could not load this page. Check your connection and try again.';
 		}
-		return m;
+		if (dev) {
+			return m;
+		}
 	}
-	if (typeof error === 'string' && error) {
+	if (typeof error === 'string' && error && dev) {
+		//only return error in dev (ie: not to the user)
 		return error;
 	}
 	return status >= 500

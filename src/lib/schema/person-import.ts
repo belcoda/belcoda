@@ -19,6 +19,11 @@ export const personImportSchema = v.object({
 });
 export type PersonImportSchema = v.InferOutput<typeof personImportSchema>;
 
+export const personImportWebhook = v.object({
+	...v.omit(personImportSchema, ['organizationId']).entries,
+	createdAt: helpers.dateToString,
+	completedAt: v.nullable(helpers.dateToString)
+});
 export const readPersonImportRest = v.object({
 	...v.omit(personImportSchema, ['organizationId']).entries
 });

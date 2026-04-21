@@ -87,8 +87,11 @@ export const defaultColumns: (typeof potentialColumns)[number][] = [
 export function generateStartingColumns(petition: ReadPetitionZero) {
 	const questions = petition.settings.survey?.collections?.[0]?.questions ?? [];
 	const { person, custom } = getSurveyQuestions(questions);
+	const personColumns = [
+		...new Set([...defaultColumns, ...person.map((question) => question.type)])
+	];
 	return {
-		person: [...defaultColumns, ...person.map((question) => question.type)],
+		person: personColumns,
 		custom
 	};
 }

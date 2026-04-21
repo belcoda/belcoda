@@ -14,6 +14,13 @@ export const personNoteSchema = v.object({
 });
 export type PersonNoteSchema = v.InferOutput<typeof personNoteSchema>;
 
+export const personNoteWebhook = v.object({
+	...v.omit(personNoteSchema, ['organizationId']).entries,
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString)
+});
+
 export const readPersonNoteZero = v.object({
 	id: personNoteSchema.entries.id,
 	personId: personNoteSchema.entries.personId,

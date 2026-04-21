@@ -5,7 +5,7 @@ export const webhookVerificationModes = ['api_key', 'signature'] as const;
 export const webhookVerificationModesSchema = v.picklist(webhookVerificationModes);
 export type WebhookVerificationModes = v.InferOutput<typeof webhookVerificationModesSchema>;
 
-export const webhookStatus = ['pending', 'success', 'failed'] as const;
+export const webhookStatus = ['not_sent', 'success', 'failed'] as const;
 export const webhookStatusSchema = v.picklist(webhookStatus);
 export type WebhookStatus = v.InferOutput<typeof webhookStatusSchema>;
 
@@ -14,9 +14,9 @@ export const webhookEvents = [
 	'event.created',
 	'event.updated',
 	'event.deleted',
-	'eventsignup.created',
-	'eventsignup.updated',
-	'eventsignup.deleted',
+	'event.signup.created',
+	'event.signup.updated',
+	'event.signup.deleted',
 	//person
 	'person.created',
 	'person.updated',
@@ -31,47 +31,52 @@ export const webhookEvents = [
 	'petition.created',
 	'petition.updated',
 	'petition.deleted',
-	'petition_signature.created',
-	'petition_signature.updated',
-	'petition_signature.deleted',
+	'petition.signature.created',
+	'petition.signature.updated',
+	'petition.signature.deleted',
 	//tag
 	'tag.created',
 	'tag.updated',
 	'tag.deleted',
-	'tag.person_added',
-	'tag.person_removed',
+	'tag.person.added',
+	'tag.person.removed',
 	//team
 	'team.created',
 	'team.updated',
 	'team.deleted',
-	'team.person_added',
-	'team.person_removed',
+	'team.person.added',
+	'team.person.removed',
+	'team.user.added',
+	'team.user.removed',
 	// whatsapp
-	'whatsapp.message.incoming',
-	'whatsapp.message.outgoing',
-	'whatsapp.group.message.incoming',
-	'whatsapp.group.joined',
-	'whatsapp.group.left',
-	'whatsapp.group.removed',
-	'whatsapp.group.updated',
+	'whatsapp.message.created',
+	'whatsapp.message.updated',
+	'whatsapp.message.deleted',
 	'whatsapp.thread.created',
 	'whatsapp.thread.updated',
 	'whatsapp.thread.deleted',
 	//email
 	'email.message.created',
 	'email.message.updated',
-	'email.message.deleted'
+	'email.message.deleted',
+
+	//organization
+	'organization.updated',
+
+	//member
+	'member.created',
+	'member.updated',
+	'member.deleted'
 ] as const;
-export const webhookEventsSchema = v.array(v.picklist(webhookEvents));
+export const webhookEventSchema = v.picklist(webhookEvents);
+export const webhookEventsSchema = v.array(webhookEventSchema);
+export type WebhookEvent = v.InferOutput<typeof webhookEventSchema>;
 export type WebhookEvents = v.InferOutput<typeof webhookEventsSchema>;
 
 // this is the type that is used in the database, it includes the 'all' event type so we're defining it
 export const webhookEventTypes = ['all', ...webhookEvents] as const;
 export const webhookEventTypesSchema = v.array(v.picklist(webhookEventTypes));
 export type WebhookEventTypes = v.InferOutput<typeof webhookEventTypesSchema>;
-
-export const webhookPayloadSchema = helpers.jsonSchema;
-export type WebhookPayload = v.InferOutput<typeof webhookPayloadSchema>;
 
 export const webhookSchema = v.object({
 	id: helpers.uuid,
@@ -160,3 +165,296 @@ export const deleteMutatorSchemaZero = v.object({
 	metadata: mutatorMetadata
 });
 export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;
+
+import { eventWebhook } from '$lib/schema/event';
+export const eventCreatedWebhookSchema = v.object({
+	type: v.literal('event.created'),
+	data: eventWebhook
+});
+export const eventUpdatedWebhookSchema = v.object({
+	type: v.literal('event.updated'),
+	data: eventWebhook
+});
+export const eventDeletedWebhookSchema = v.object({
+	type: v.literal('event.deleted'),
+	data: v.object({
+		eventId: helpers.uuid
+	})
+});
+
+import { eventSignupWebhook } from '$lib/schema/event-signup';
+export const eventSignupCreatedWebhookSchema = v.object({
+	type: v.literal('event.signup.created'),
+	data: eventSignupWebhook
+});
+export const eventSignupUpdatedWebhookSchema = v.object({
+	type: v.literal('event.signup.updated'),
+	data: eventSignupWebhook
+});
+export const eventSignupDeletedWebhookSchema = v.object({
+	type: v.literal('event.signup.deleted'),
+	data: v.object({
+		eventSignupId: helpers.uuid
+	})
+});
+
+import { personWebhook } from '$lib/schema/person';
+export const personCreatedWebhookSchema = v.object({
+	type: v.literal('person.created'),
+	data: personWebhook
+});
+export const personUpdatedWebhookSchema = v.object({
+	type: v.literal('person.updated'),
+	data: personWebhook
+});
+export const personDeletedWebhookSchema = v.object({
+	type: v.literal('person.deleted'),
+	data: v.object({
+		personId: helpers.uuid
+	})
+});
+import { personNoteWebhook } from '$lib/schema/person-note';
+export const personNoteCreatedWebhookSchema = v.object({
+	type: v.literal('person.note.created'),
+	data: personNoteWebhook
+});
+export const personNoteUpdatedWebhookSchema = v.object({
+	type: v.literal('person.note.updated'),
+	data: personNoteWebhook
+});
+export const personNoteDeletedWebhookSchema = v.object({
+	type: v.literal('person.note.deleted'),
+	data: v.object({
+		personNoteId: helpers.uuid
+	})
+});
+import { personImportWebhook } from '$lib/schema/person-import';
+export const personImportCreatedWebhookSchema = v.object({
+	type: v.literal('person.import.created'),
+	data: personImportWebhook
+});
+
+import { activityWebhook } from '$lib/schema/activity';
+export const activityCreatedWebhookSchema = v.object({
+	type: v.literal('activity.created'),
+	data: activityWebhook
+});
+
+import { petitionWebhook } from '$lib/schema/petition/petition';
+export const petitionCreatedWebhookSchema = v.object({
+	type: v.literal('petition.created'),
+	data: petitionWebhook
+});
+export const petitionUpdatedWebhookSchema = v.object({
+	type: v.literal('petition.updated'),
+	data: petitionWebhook
+});
+export const petitionDeletedWebhookSchema = v.object({
+	type: v.literal('petition.deleted'),
+	data: v.object({
+		petitionId: helpers.uuid
+	})
+});
+
+import { petitionSignatureWebhook } from '$lib/schema/petition/petition-signature';
+export const petitionSignatureCreatedWebhookSchema = v.object({
+	type: v.literal('petition.signature.created'),
+	data: petitionSignatureWebhook
+});
+export const petitionSignatureUpdatedWebhookSchema = v.object({
+	type: v.literal('petition.signature.updated'),
+	data: petitionSignatureWebhook
+});
+export const petitionSignatureDeletedWebhookSchema = v.object({
+	type: v.literal('petition.signature.deleted'),
+	data: v.object({
+		petitionSignatureId: helpers.uuid
+	})
+});
+
+import { tagWebhook, personTagWebhook } from '$lib/schema/tag';
+export const tagCreatedWebhookSchema = v.object({
+	type: v.literal('tag.created'),
+	data: tagWebhook
+});
+export const tagUpdatedWebhookSchema = v.object({
+	type: v.literal('tag.updated'),
+	data: tagWebhook
+});
+export const tagDeletedWebhookSchema = v.object({
+	type: v.literal('tag.deleted'),
+	data: v.object({
+		tagId: helpers.uuid
+	})
+});
+export const personTagAddedWebhookSchema = v.object({
+	type: v.literal('tag.person.added'),
+	data: personTagWebhook
+});
+export const personTagRemovedWebhookSchema = v.object({
+	type: v.literal('tag.person.removed'),
+	data: personTagWebhook
+});
+
+import { teamWebhook, teamPersonWebhook, teamUserWebhook } from '$lib/schema/team';
+export const teamCreatedWebhookSchema = v.object({
+	type: v.literal('team.created'),
+	data: teamWebhook
+});
+export const teamUpdatedWebhookSchema = v.object({
+	type: v.literal('team.updated'),
+	data: teamWebhook
+});
+export const teamDeletedWebhookSchema = v.object({
+	type: v.literal('team.deleted'),
+	data: v.object({
+		teamId: helpers.uuid
+	})
+});
+export const teamPersonAddedWebhookSchema = v.object({
+	type: v.literal('team.person.added'),
+	data: teamPersonWebhook
+});
+export const teamPersonRemovedWebhookSchema = v.object({
+	type: v.literal('team.person.removed'),
+	data: teamPersonWebhook
+});
+export const teamUserAddedWebhookSchema = v.object({
+	type: v.literal('team.user.added'),
+	data: teamUserWebhook
+});
+export const teamUserRemovedWebhookSchema = v.object({
+	type: v.literal('team.user.removed'),
+	data: teamUserWebhook
+});
+
+import { whatsappMessageWebhook } from '$lib/schema/whatsapp-message';
+export const whatsappMessageCreatedWebhookSchema = v.object({
+	type: v.literal('whatsapp.message.created'),
+	data: whatsappMessageWebhook
+});
+export const whatsappMessageUpdatedWebhookSchema = v.object({
+	type: v.literal('whatsapp.message.updated'),
+	data: whatsappMessageWebhook
+});
+export const whatsappMessageDeletedWebhookSchema = v.object({
+	type: v.literal('whatsapp.message.deleted'),
+	data: v.object({
+		whatsappMessageId: helpers.uuid
+	})
+});
+
+import { whatsappThreadWebhook } from '$lib/schema/whatsapp-thread';
+export const whatsappThreadCreatedWebhookSchema = v.object({
+	type: v.literal('whatsapp.thread.created'),
+	data: whatsappThreadWebhook
+});
+export const whatsappThreadUpdatedWebhookSchema = v.object({
+	type: v.literal('whatsapp.thread.updated'),
+	data: whatsappThreadWebhook
+});
+export const whatsappThreadDeletedWebhookSchema = v.object({
+	type: v.literal('whatsapp.thread.deleted'),
+	data: v.object({
+		whatsappThreadId: helpers.uuid
+	})
+});
+
+import { emailMessageWebhook } from '$lib/schema/email-message';
+export const emailMessageCreatedWebhookSchema = v.object({
+	type: v.literal('email.message.created'),
+	data: emailMessageWebhook
+});
+export const emailMessageUpdatedWebhookSchema = v.object({
+	type: v.literal('email.message.updated'),
+	data: emailMessageWebhook
+});
+export const emailMessageDeletedWebhookSchema = v.object({
+	type: v.literal('email.message.deleted'),
+	data: v.object({
+		emailMessageId: helpers.uuid
+	})
+});
+
+import { organizationWebhook, organizationMemberWebhook } from '$lib/schema/organization';
+export const organizationUpdatedWebhookSchema = v.object({
+	type: v.literal('organization.updated'),
+	data: organizationWebhook
+});
+export const organizationMemberCreatedWebhookSchema = v.object({
+	type: v.literal('member.created'),
+	data: organizationMemberWebhook
+});
+export const organizationMemberUpdatedWebhookSchema = v.object({
+	type: v.literal('member.updated'),
+	data: organizationMemberWebhook
+});
+export const organizationMemberDeletedWebhookSchema = v.object({
+	type: v.literal('member.deleted'),
+	data: v.object({
+		organizationMemberId: helpers.uuid,
+		userId: helpers.uuid
+	})
+});
+
+export const webhookPayloadSchema = v.variant('type', [
+	eventCreatedWebhookSchema,
+	eventUpdatedWebhookSchema,
+	eventDeletedWebhookSchema,
+	eventSignupCreatedWebhookSchema,
+	eventSignupUpdatedWebhookSchema,
+	eventSignupDeletedWebhookSchema,
+	personCreatedWebhookSchema,
+	personUpdatedWebhookSchema,
+	personDeletedWebhookSchema,
+	personNoteCreatedWebhookSchema,
+	personNoteUpdatedWebhookSchema,
+	personNoteDeletedWebhookSchema,
+	personImportCreatedWebhookSchema,
+	activityCreatedWebhookSchema,
+	petitionCreatedWebhookSchema,
+	petitionUpdatedWebhookSchema,
+	petitionDeletedWebhookSchema,
+	petitionSignatureCreatedWebhookSchema,
+	petitionSignatureUpdatedWebhookSchema,
+	petitionSignatureDeletedWebhookSchema,
+	tagCreatedWebhookSchema,
+	tagUpdatedWebhookSchema,
+	tagDeletedWebhookSchema,
+	personTagAddedWebhookSchema,
+	personTagRemovedWebhookSchema,
+	teamCreatedWebhookSchema,
+	teamUpdatedWebhookSchema,
+	teamDeletedWebhookSchema,
+	teamPersonAddedWebhookSchema,
+	teamPersonRemovedWebhookSchema,
+	teamUserAddedWebhookSchema,
+	teamUserRemovedWebhookSchema,
+	whatsappMessageCreatedWebhookSchema,
+	whatsappMessageUpdatedWebhookSchema,
+	whatsappMessageDeletedWebhookSchema,
+	whatsappThreadCreatedWebhookSchema,
+	whatsappThreadUpdatedWebhookSchema,
+	whatsappThreadDeletedWebhookSchema,
+	emailMessageCreatedWebhookSchema,
+	emailMessageUpdatedWebhookSchema,
+	emailMessageDeletedWebhookSchema,
+	organizationUpdatedWebhookSchema,
+	organizationMemberCreatedWebhookSchema,
+	organizationMemberUpdatedWebhookSchema,
+	organizationMemberDeletedWebhookSchema
+]);
+export type WebhookPayload = v.InferOutput<typeof webhookPayloadSchema>;
+
+export const webhookPayloadDataSchema = v.union(
+	webhookPayloadSchema.options.map((option) => option.entries.data)
+);
+export type WebhookPayloadData = v.InferOutput<typeof webhookPayloadDataSchema>;
+export const webhookLogPayloadSchema = v.object({
+	id: helpers.uuid,
+	type: webhookEventSchema,
+	createdAt: helpers.isoTimestamp,
+	apiVersion: helpers.mediumString,
+	data: webhookPayloadDataSchema
+});
+export type WebhookLogPayload = v.InferOutput<typeof webhookLogPayloadSchema>;

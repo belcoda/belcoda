@@ -28,6 +28,14 @@ export const whatsappMessageSchema = v.object({
 });
 export type WhatsappMessageSchema = v.InferOutput<typeof whatsappMessageSchema>;
 
+export const whatsappMessageWebhook = v.object({
+	...v.omit(whatsappMessageSchema, ['organizationId', 'externalId']).entries,
+	deliveredAt: v.nullable(helpers.dateToString),
+	readAt: v.nullable(helpers.dateToString),
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString
+});
+
 export const readWhatsappMessageRest = v.object({
 	...v.omit(whatsappMessageSchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString,
