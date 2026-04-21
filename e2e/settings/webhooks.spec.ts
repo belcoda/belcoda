@@ -29,7 +29,9 @@ test.describe.serial('Settings: Webhooks', () => {
 		await webhooksPage.goto();
 		await webhooksPage.createWebhook(state.name, state.targetUrl);
 
-		await expect(webhooksPage.webhookRow(state.name, state.targetUrl)).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.webhookRow(state.name, state.targetUrl)).toBeVisible({
+			timeout: 15_000
+		});
 	});
 
 	test('owner can delete a webhook', async ({ page }) => {

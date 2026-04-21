@@ -81,7 +81,14 @@ class AppState {
 		return z.createQuery(queries.user.read({ userId: this.#userId }));
 	});
 
-	#role = $derived(this.#activeOrganization?.data?.memberships[0].role ?? null);
+	#role = $derived.by(() => {
+		const memberships = this.#activeOrganization?.data?.memberships;
+		const userId = this.#userId;
+		if (!memberships?.length || !userId) {
+			return null;
+		}
+		return memberships.find((m) => m.userId === userId)?.role ?? null;
+	});
 	#isAdmin = $derived(this.#role === 'admin');
 	#isOwner = $derived(this.#role === 'owner');
 	#isAdminOrOwner = $derived(this.#isAdmin || this.#isOwner);
