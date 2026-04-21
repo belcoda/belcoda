@@ -98,7 +98,7 @@
 			<div class="flex flex-col items-center justify-center py-12 text-center">
 				<p class="mb-4 text-muted-foreground">{t`No webhooks configured`}</p>
 				{#if appState.isOwner}
-					<Button data-testid="settings-webhooks-create" onclick={() => (createModalOpen = true)}>
+					<Button onclick={() => (createModalOpen = true)}>
 						{t`Create Webhook`}
 					</Button>
 				{/if}
