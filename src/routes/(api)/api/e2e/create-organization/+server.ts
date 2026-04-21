@@ -3,8 +3,9 @@ import { drizzle } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import * as schema from '$lib/schema/drizzle';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
-import { env } from '$env/dynamic/private';
 import { error, json } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
+import { E2E_MOCK_WABA_ID } from '../../../../../../e2e/helpers/config';
 
 /**
  * This endpoint is ONLY available in development mode for E2E testing.
@@ -24,10 +25,14 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	const body = await request.json();
-	const { name, ownerEmail, members = [] } = body;
+	const { name, ownerEmail, members = [], wabaId } = body;
 
 	if (!name || typeof name !== 'string' || !ownerEmail || typeof ownerEmail !== 'string') {
 		throw error(400, 'name and ownerEmail are required');
+	}
+
+	if (wabaId != null && typeof wabaId !== 'string') {
+		throw error(400, 'wabaId must be a string');
 	}
 
 	try {
@@ -43,15 +48,12 @@ export const POST: RequestHandler = async ({ request }) => {
 		const slug = name.toLowerCase().replace(/\s+/g, '-');
 		const now = new Date();
 		const orgId = crypto.randomUUID();
-		const wabaId =
-			env.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID?.trim() || env.SYSTEM_WABA_ID?.trim() || null;
+		const effectiveWabaId = wabaId?.trim() || E2E_MOCK_WABA_ID;
 		const settings = defaultOrganizationSettings();
-		if (wabaId) {
-			settings.whatsApp = {
-				...settings.whatsApp,
-				wabaId
-			};
-		}
+		settings.whatsApp = {
+			...settings.whatsApp,
+			wabaId: effectiveWabaId
+		};
 
 		// Check if org already exists
 		const existing = await drizzle.query.organization.findFirst({

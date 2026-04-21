@@ -1,20 +1,5 @@
 import type { APIRequestContext } from '@playwright/test';
-import { BASE_URL } from './config';
-
-function getE2EWabaId(): string {
-	const wabaId =
-		process.env.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID?.trim() ||
-		process.env.SYSTEM_WABA_ID?.trim() ||
-		'';
-
-	if (!wabaId) {
-		throw new Error(
-			'Missing WhatsApp WABA id for E2E webhooks. Set SYSTEM_WABA_ID (or DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID) in your env so it matches organization.settings.whatsApp.wabaId.'
-		);
-	}
-
-	return wabaId;
-}
+import { BASE_URL, E2E_MOCK_WABA_ID } from './config';
 
 export function getE2EDefaultWhatsAppNumber(): string {
 	const number = process.env.PUBLIC_DEFAULT_WHATSAPP_NUMBER?.trim() || '';
@@ -27,7 +12,7 @@ export function getE2EDefaultWhatsAppNumber(): string {
 }
 
 export function buildWhatsAppInboundFlowReplyWebhook({
-	wabaId = getE2EWabaId(),
+	wabaId = E2E_MOCK_WABA_ID,
 	from,
 	to,
 	responseJson
