@@ -51,9 +51,10 @@
 		{@const currentFlow = latestDraftFlow ?? whatsappThreadQuery.data.flow}
 		<Flow
 			backButtonUrl="/communications/whatsapp"
-			nodes={whatsappThreadQuery.data.flow.nodes}
-			edges={whatsappThreadQuery.data.flow.edges}
-			onTest={() => {
+			nodes={currentFlow.nodes}
+			edges={currentFlow.edges}
+			onTest={({ nodes, edges }) => {
+				latestDraftFlow = { nodes, edges };
 				showTestWhatsApp = true;
 			}}
 			onSave={async ({ nodes, edges }) => {
