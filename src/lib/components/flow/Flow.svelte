@@ -34,7 +34,7 @@
 		onSave?: ({ nodes, edges }: Flow) => Promise<void> | void;
 		onSend?: ({ nodes, edges }: Flow) => Promise<void> | void;
 		onDiscard?: () => Promise<void> | void;
-		onTest?: () => Promise<void> | void;
+		onTest?: ({ nodes, edges }: Flow) => Promise<void> | void;
 	} = $props();
 	//nodes
 	import Message from '$lib/components/flow/nodes/Message.svelte';
@@ -128,7 +128,15 @@
 								</Button>
 							{/if}
 							{#if onTest}
-								<Button variant="outline" size="sm" onclick={onTest}>
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={() =>
+										onTest({
+											nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
+											edges: $state.snapshot(edges) as Flow['edges']
+										})}
+								>
 									<FlaskConicalIcon class="size-4" />
 									{t`Send test message`}
 								</Button>
