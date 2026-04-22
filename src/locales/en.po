@@ -1547,6 +1547,7 @@ msgid "No emails found"
 msgstr "No emails found"
 
 #. 0: (index + 1).toString()
+#. 0: (index + 1).toString()
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
 msgid "Option {0}"
@@ -1848,6 +1849,7 @@ msgstr "You can view the petition, but you can't sign it or add signatures."
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Published"
@@ -1868,6 +1870,7 @@ msgstr "Target:"
 
 #: src/lib/components/widgets/event/share/EventShareModal.svelte
 #: src/lib/components/widgets/petition/share/PetitionShareModal.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 msgid "Share"
 msgstr "Share"
@@ -1903,6 +1906,7 @@ msgstr "View petition page"
 msgid "Preview petition page"
 msgstr "Preview petition page"
 
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionMakeACopy.svelte
@@ -2436,6 +2440,7 @@ msgstr "No draft selected"
 msgid "Select a draft from the list to view its details"
 msgstr "Select a draft from the list to view its details"
 
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 msgid "Edit event"
 msgstr "Edit event"
@@ -4315,8 +4320,10 @@ msgstr "Could not update personal information. Please try again."
 msgid "WhatsApp draft sent successfully"
 msgstr "WhatsApp draft sent successfully"
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventArchivedFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Archived"
 msgstr "Archived"
@@ -4358,6 +4365,7 @@ msgid "Archive this petition?"
 msgstr "Archive this petition?"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Archive"
 msgstr "Archive"
 
@@ -4584,3 +4592,36 @@ msgstr "No captions available"
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the video tag."
 msgstr "Your browser does not support the video tag."
+
+#~ msgid "Whatsapp message"
+#~ msgstr "Whatsapp message"
+
+#~ msgid "loading_activities"
+#~ msgstr "loading_activities"
+
+#~ msgid "no_activities_yet"
+#~ msgstr "no_activities_yet"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "View event page"
+msgstr "View event page"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Preview event page"
+msgstr "Preview event page"
+
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
+msgid "Detailed signups table"
+msgstr "Detailed signups table"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr "Show archived"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "This event has been archived."
+msgstr "This event has been archived."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "You can view this event, but new signups are closed."
+msgstr "You can view this event, but new signups are closed."
