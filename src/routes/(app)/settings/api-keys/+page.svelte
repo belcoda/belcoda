@@ -214,7 +214,7 @@
 			</Alert.Root>
 		{/if}
 
-		<Card.Root>
+		<Card.Root data-testid="settings-api-keys">
 			<Card.Content>
 				{#if loading}
 					<div class="flex items-center justify-center py-8">
@@ -252,7 +252,7 @@
 						</Table.Header>
 						<Table.Body>
 							{#each apiKeys as key}
-								<Table.Row>
+								<Table.Row data-testid="settings-api-keys-row">
 									<Table.Cell class="font-medium">{key.name}</Table.Cell>
 									<Table.Cell class="font-mono text-sm">{maskApiKey(key)}</Table.Cell>
 									<Table.Cell>{formatApiKeyDate(key.createdAt)}</Table.Cell>
@@ -264,6 +264,7 @@
 												size="icon"
 												onclick={() => openDeleteDialog(key.id)}
 												title={t`Delete API key`}
+												data-testid="settings-api-keys-delete"
 												class="text-destructive hover:text-destructive"
 											>
 												<TrashIcon class="h-4 w-4" />
@@ -284,7 +285,10 @@
 				{#if appState.isAdminOrOwner}
 					<ResponsiveModal bind:open={modalOpen} title={t`Create API Key`}>
 						{#snippet trigger()}
-							<Button variant="outline"><PlusIcon /> {t`New`}</Button>
+							<Button variant="outline" data-testid="settings-api-keys-new">
+								<PlusIcon />
+								{t`New`}
+							</Button>
 						{/snippet}
 
 						{#if createdKey}
@@ -305,6 +309,7 @@
 											readonly
 											class="font-mono text-sm"
 											id="api-key-display"
+											data-testid="settings-api-keys-display"
 										/>
 										<Button
 											type="button"
@@ -319,7 +324,12 @@
 								</div>
 
 								<div class="flex justify-end gap-2 pt-2">
-									<Button type="button" variant="outline" onclick={handleModalClose}>
+									<Button
+										type="button"
+										variant="outline"
+										onclick={handleModalClose}
+										data-testid="settings-api-keys-created-close"
+									>
 										{t`Close`}
 									</Button>
 								</div>
@@ -338,6 +348,7 @@
 									<Label.Root for="key-name">{t`Name`}</Label.Root>
 									<Input
 										id="key-name"
+										data-testid="settings-api-keys-name-input"
 										bind:value={newKeyName}
 										placeholder={t`e.g., Production API Key`}
 										required
@@ -369,6 +380,7 @@
 									</Button>
 									<Button
 										type="button"
+										data-testid="settings-api-keys-create"
 										onclick={handleCreateApiKey}
 										disabled={creating || !newKeyName.trim()}
 									>
@@ -412,7 +424,12 @@
 					<Button variant="outline" onclick={closeDeleteDialog} disabled={deleting}>
 						{t`Cancel`}
 					</Button>
-					<Button variant="destructive" onclick={handleDeleteApiKey} disabled={deleting}>
+					<Button
+						variant="destructive"
+						data-testid="settings-api-keys-delete-confirm"
+						onclick={handleDeleteApiKey}
+						disabled={deleting}
+					>
 						{#if deleting}
 							<Spinner class="mr-2 h-4 w-4" />
 							{t`Deleting...`}

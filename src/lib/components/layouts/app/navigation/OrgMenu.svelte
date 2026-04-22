@@ -136,7 +136,9 @@
 								class="size-6 rounded-xs bg-linear-to-br from-primary to-primary/50"
 							/>
 							{organization.name}
-							{@render memberRoleBadge(organization.memberships[0].role)}
+							{@render memberRoleBadge(
+								organization.memberships.find((m) => m.userId === appState.userId)?.role
+							)}
 						</div>
 					</DropdownMenu.CheckboxItem>
 				{/each}
