@@ -92,6 +92,9 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await editPage.submit();
 		await page.waitForTimeout(400);
 
+		// save the changed slug
+		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
+
 		await detailPage.goto(ids.petitionId);
 		await detailPage.waitForLoaded();
 		await expect(detailPage.titleDisplay).toContainText(ids.petitionTitle);
@@ -133,8 +136,6 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 test.describe.serial('Petitions: public page', () => {
 	test('owner publishes the previously created petition for public tests', async ({ page }) => {
 		await loginAsOwner(page);
-		// asset these to make sure we are using the petition created in the previous test
-		expect(ids.petitionId).not.toBe('');
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);

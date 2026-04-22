@@ -24,6 +24,8 @@ export class PetitionEditPage {
 	}
 
 	async clearAndFillTitle(title: string) {
+		await this.titleInput.clear();
+		await this.page.waitForTimeout(400);
 		await this.titleInput.click();
 		await this.page.keyboard.press('Meta+A');
 		await this.page.keyboard.press('Backspace');
