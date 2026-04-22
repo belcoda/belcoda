@@ -1,7 +1,7 @@
 import type { FullConfig } from '@playwright/test';
 import { chromium } from '@playwright/test';
 import { TEST_USERS, signUpUser, verifyUserEmail } from '../helpers/auth';
-import { BASE_URL } from '../helpers/config';
+import { BASE_URL, E2E_MOCK_WABA_ID } from '../helpers/config';
 import path from 'path';
 import fs from 'fs';
 
@@ -20,13 +20,14 @@ async function cleanup() {
 async function createOrganization(
 	ownerEmail: string,
 	orgName: string,
-	members: Array<{ email: string; role: string }>
+	members: Array<{ email: string; role: string }>,
+	wabaId: string
 ) {
 	console.log(`  Creating organization "${orgName}"...`);
 	const response = await fetch(`${BASE_URL}/api/e2e/create-organization`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
-		body: JSON.stringify({ name: orgName, ownerEmail, members })
+		body: JSON.stringify({ name: orgName, ownerEmail, members, wabaId })
 	});
 
 	if (!response.ok) {
@@ -81,10 +82,15 @@ export default async function globalSetup(_config: FullConfig) {
 	}
 
 	console.log('\nCreating organization...');
-	const org = await createOrganization(TEST_USERS.owner.email, 'E2E Event Org', [
-		{ email: TEST_USERS.admin.email, role: 'admin' },
-		{ email: TEST_USERS.member.email, role: 'member' }
-	]);
+	const org = await createOrganization(
+		TEST_USERS.owner.email,
+		'E2E Event Org',
+		[
+			{ email: TEST_USERS.admin.email, role: 'admin' },
+			{ email: TEST_USERS.member.email, role: 'member' }
+		],
+		E2E_MOCK_WABA_ID
+	);
 	console.log(`  ✓ Organization created: ${org.id}`);
 
 	await saveCookieConsentState();
