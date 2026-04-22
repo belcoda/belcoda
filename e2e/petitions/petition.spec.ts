@@ -8,6 +8,11 @@ import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
 import { TEST_USERS } from '../helpers/auth';
+import {
+	buildWhatsAppInboundFlowReplyWebhook,
+	getE2EDefaultWhatsAppNumber,
+	postWhatsAppInboundWebhook
+} from '../helpers/whatsapp-webhook';
 
 const ORG_SLUG = 'e2e-event-org';
 
@@ -242,6 +247,42 @@ test.describe.serial('Petitions: public page', () => {
 
 		const signaturesPage = new PetitionSignaturesPage(page);
 		await expect(signaturesPage.detailedTable).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('WhatsApp flow response creates a petition signature', async ({ page, request }) => {
+		await loginAsOwner(page);
+
+		const detailPage = new PetitionDetailPage(page);
+		await detailPage.goto(ids.petitionId);
+		await detailPage.waitForLoaded();
+
+		const signaturesPage = new PetitionSignaturesPage(page);
+		await signaturesPage.summaryTable.waitFor({ state: 'visible', timeout: 15_000 });
+
+		const flowPhone = '+61400000002';
+		const suffix = Date.now();
+		const flowGivenName = `WA Petition ${suffix}`;
+
+		const webhookBody = buildWhatsAppInboundFlowReplyWebhook({
+			from: flowPhone,
+			to: getE2EDefaultWhatsAppNumber(),
+			responseJson: {
+				givenName: flowGivenName,
+				emailAddress: `wa-petition-${suffix}@belcoda.test`,
+				phoneNumber: flowPhone,
+				flow_token: 'unused',
+				resource_type: 'petition',
+				resource_id: ids.petitionId
+			}
+		});
+
+		const { status } = await postWhatsAppInboundWebhook(request, webhookBody);
+		expect(status).toBe(200);
+
+		await detailPage.goto(ids.petitionId);
+		await detailPage.waitForLoaded();
+		await signaturesPage.summaryTable.waitFor({ state: 'visible', timeout: 15_000 });
+		await expect(signaturesPage.summaryTable).toContainText(flowGivenName, { timeout: 15_000 });
 	});
 });
 
