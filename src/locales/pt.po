@@ -284,6 +284,7 @@ msgstr "Crie uma nova assinatura de e-mail que será verificada com Postmark."
 msgid "Display name"
 msgstr "Nome de exibição"
 
+#: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
@@ -1546,7 +1547,6 @@ msgstr "(Sem assunto)"
 msgid "No emails found"
 msgstr "Nenhum e-mail encontrado"
 
-#. 0: (index + 1).toString()
 #. 0: (index + 1).toString()
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
@@ -2944,6 +2944,7 @@ msgstr "Convidar"
 msgid "user@example.com"
 msgstr "usuario@exemplo.com"
 
+#: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr "Enviando..."
@@ -4543,11 +4544,11 @@ msgstr "Início"
 
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Loading activities..."
-msgstr ""
+msgstr "Carregando atividades..."
 
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "No activities yet"
-msgstr ""
+msgstr "Ainda não há atividades"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the audio tag."
@@ -4579,14 +4580,6 @@ msgstr "Seu navegador não suporta o elemento de vídeo."
 #~ msgid "no_activities_yet"
 #~ msgstr ""
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "Loading activities..."
-msgstr "Carregando atividades..."
-
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "No activities yet"
-msgstr "Ainda não há atividades"
-
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "View event page"
 msgstr "Ver página do evento"
@@ -4608,7 +4601,7 @@ msgstr "E-mail de teste"
 msgid "Failed to send test email"
 msgstr "Falha ao enviar o e-mail de teste"
 
-#. 0: emailAddress
+#. 0: trimmedAddress
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Test email sent to {0}"
 msgstr "E-mail de teste enviado para {0}"
@@ -4620,3 +4613,9 @@ msgstr "Enviar e-mail de teste para"
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Send test email"
 msgstr "Enviar e-mail de teste"
+
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
+msgid "Everyone"
+msgstr ""

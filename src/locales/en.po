@@ -284,6 +284,7 @@ msgstr "Create a new email signature that will be verified with Postmark."
 msgid "Display name"
 msgstr "Display name"
 
+#: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
@@ -2943,6 +2944,7 @@ msgstr "Invite"
 msgid "user@example.com"
 msgstr "user@example.com"
 
+#: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr "Sending..."
@@ -4594,14 +4596,6 @@ msgstr "Your browser does not support the video tag."
 #~ msgid "no_activities_yet"
 #~ msgstr "no_activities_yet"
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "Loading activities..."
-msgstr "Loading activities..."
-
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "No activities yet"
-msgstr "No activities yet"
-
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "View event page"
 msgstr "View event page"
@@ -4623,7 +4617,7 @@ msgstr "Test email"
 msgid "Failed to send test email"
 msgstr "Failed to send test email"
 
-#. 0: emailAddress
+#. 0: trimmedAddress
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Test email sent to {0}"
 msgstr "Test email sent to {0}"
@@ -4635,3 +4629,9 @@ msgstr "Send test email to"
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Send test email"
 msgstr "Send test email"
+
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
+msgid "Everyone"
+msgstr "Everyone"
