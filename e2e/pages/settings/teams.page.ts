@@ -2,6 +2,7 @@ import type { Page, Locator } from '@playwright/test';
 
 export class TeamsPage {
 	readonly page: Page;
+	readonly settingsSidebarTeamsLink: Locator;
 	readonly newTeamTrigger: Locator;
 	readonly newTeamNameInput: Locator;
 	readonly newTeamSubmit: Locator;
@@ -10,6 +11,7 @@ export class TeamsPage {
 
 	constructor(page: Page) {
 		this.page = page;
+		this.settingsSidebarTeamsLink = page.getByTestId('settings-sidebar-teams');
 		this.newTeamTrigger = page.getByTestId('new-team-trigger');
 		this.newTeamNameInput = page.getByTestId('new-team-name');
 		this.newTeamSubmit = page.getByTestId('new-team-submit');

@@ -4651,6 +4651,10 @@ msgstr "Tag Add"
 msgid "Team Add"
 msgstr "Team Add"
 
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Test email"
+msgstr "Test email"
+
 #: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Failed to send test email"
@@ -4688,7 +4692,3 @@ msgstr "Select a team..."
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
 msgstr "Search team..."
-
-#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
-msgid "Test email"
-msgstr "Test email"

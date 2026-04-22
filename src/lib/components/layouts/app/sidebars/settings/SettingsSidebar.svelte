@@ -80,7 +80,7 @@
 								<Sidebar.MenuItem>
 									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 										{#snippet child({ props })}
-											<a href={item.url} {...props}>{item.title()}</a>
+											<a href={item.url} {...props} data-testid={item.dataTestId}>{item.title()}</a>
 										{/snippet}
 									</Sidebar.MenuButton>
 								</Sidebar.MenuItem>

@@ -146,18 +146,6 @@ const apiKeyTable = {
 			customType: null as unknown as string,
 			serverName: 'user_id'
 		},
-		configId: {
-			type: 'string',
-			optional: true,
-			customType: null as unknown as string,
-			serverName: 'config_id'
-		},
-		referenceId: {
-			type: 'string',
-			optional: false,
-			customType: null as unknown as string,
-			serverName: 'reference_id'
-		},
 		refillInterval: {
 			type: 'number',
 			optional: true,
@@ -1767,7 +1755,7 @@ const personTable = {
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
-								emoji: string;
+								emoji: string | null;
 								personId?: string | undefined;
 								phoneNumber?: string | undefined;
 								viaBelcoda: boolean;
@@ -1789,7 +1777,7 @@ const personTable = {
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
-								emoji: string;
+								emoji: string | null;
 								personId?: string | undefined;
 								phoneNumber?: string | undefined;
 								viaBelcoda: boolean;
@@ -1811,7 +1799,7 @@ const personTable = {
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
-								emoji: string;
+								emoji: string | null;
 								personId?: string | undefined;
 								phoneNumber?: string | undefined;
 								viaBelcoda: boolean;
@@ -2774,7 +2762,7 @@ const whatsappMessageTable = {
 				audio_url?: string | undefined;
 				buttons?: { text: string; action: string }[] | undefined;
 				emojiReactions: {
-					emoji: string;
+					emoji: string | null;
 					personId?: string | undefined;
 					phoneNumber?: string | undefined;
 					viaBelcoda: boolean;
@@ -2799,6 +2787,24 @@ const whatsappMessageTable = {
 			type: 'string',
 			optional: false,
 			customType: null as unknown as 'pending' | 'failed' | 'delivered' | 'read'
+		},
+		statusMessage: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string,
+			serverName: 'status_message'
+		},
+		deliveredAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'delivered_at'
+		},
+		readAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'read_at'
 		},
 		createdAt: {
 			type: 'number',

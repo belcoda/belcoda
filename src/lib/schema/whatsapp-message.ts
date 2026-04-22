@@ -1,9 +1,9 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-
 import {
 	whatsappMessage as whatsappMessageObjectSchema,
-	whatsappMessageActivityTypeSchema
+	whatsappMessageActivityTypeSchema,
+	type WhatsappMessageActivityType
 } from '$lib/schema/whatsapp/message';
 
 export const whatsappMessageStatus = v.picklist(['delivered', 'read', 'failed', 'pending']);
@@ -45,7 +45,21 @@ export type ReadWhatsappMessageRest = v.InferOutput<typeof readWhatsappMessageRe
 
 export const readWhatsappMessageZero = v.object({
 	...whatsappMessageSchema.entries,
-	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp
+	deliveredAt: v.nullable(helpers.unixTimestamp),
+	readAt: v.nullable(helpers.unixTimestamp),
+	createdAt: helpers.unixTimestamp,
+	updatedAt: helpers.unixTimestamp
 });
 export type ReadWhatsappMessageZero = v.InferOutput<typeof readWhatsappMessageZero>;
+
+export const emojiReactionMutatorSchemaZero = v.object({
+	personId: helpers.uuid,
+	organizationId: helpers.uuid,
+	whatsappMessage: readWhatsappMessageZero,
+	emoji: v.nullable(helpers.emoji)
+});
+export type EmojiReactionMutatorSchemaZero = v.InferOutput<typeof emojiReactionMutatorSchemaZero>;
+
+export function isReactionSupportedMessageType(type: WhatsappMessageActivityType): boolean {
+	return type === 'incoming_api_message' || type === 'outgoing_api_message';
+}

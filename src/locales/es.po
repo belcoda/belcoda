@@ -4604,74 +4604,74 @@ msgstr "Tabla detallada de inscripciones"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr ""
+msgstr "Mostrar archivados"
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr ""
+msgstr "Este evento se ha archivado."
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
-msgstr ""
+msgstr "Puedes ver este evento, pero las nuevas inscripciones están cerradas."
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Snapshot"
-msgstr ""
+msgstr "Instantánea"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Add Node"
-msgstr ""
+msgstr "Añadir nodo"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Petition Signup"
-msgstr ""
+msgstr "Inscripción a la petición"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Tag Add"
-msgstr ""
+msgstr "Añadir etiqueta"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
-msgstr ""
+msgstr "Añadir equipo"
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Test email"
+msgstr "Correo de prueba"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Failed to send test email"
-msgstr ""
+msgstr "No se pudo enviar el correo de prueba"
 
 #. 0: trimmedAddress
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Test email sent to {0}"
-msgstr ""
+msgstr "Correo de prueba enviado a {0}"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Send test email to"
-msgstr ""
+msgstr "Enviar correo de prueba a"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Send test email"
-msgstr ""
+msgstr "Enviar correo de prueba"
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Selecciona una petición..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Buscar petición..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
+msgstr "No se encontraron peticiones."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
-msgstr ""
+msgstr "Selecciona un equipo..."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
-msgstr ""
-
-#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
-msgid "Test email"
-msgstr ""
+msgstr "Buscar equipo..."

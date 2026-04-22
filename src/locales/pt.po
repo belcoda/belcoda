@@ -4605,74 +4605,74 @@ msgstr "Tabela detalhada de inscrições"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr ""
+msgstr "Mostrar arquivados"
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr ""
+msgstr "Este evento foi arquivado."
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
-msgstr ""
+msgstr "Você pode ver este evento, mas novas inscrições estão fechadas."
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Snapshot"
-msgstr ""
+msgstr "Instantâneo"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Add Node"
-msgstr ""
+msgstr "Adicionar nó"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Petition Signup"
-msgstr ""
+msgstr "Inscrição na petição"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Tag Add"
-msgstr ""
+msgstr "Adicionar etiqueta"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
-msgstr ""
+msgstr "Adicionar equipe"
+
+#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
+msgid "Test email"
+msgstr "E-mail de teste"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Failed to send test email"
-msgstr ""
+msgstr "Falha ao enviar o e-mail de teste"
 
 #. 0: trimmedAddress
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Test email sent to {0}"
-msgstr ""
+msgstr "E-mail de teste enviado para {0}"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Send test email to"
-msgstr ""
+msgstr "Enviar e-mail de teste para"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Send test email"
-msgstr ""
+msgstr "Enviar e-mail de teste"
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Selecione uma petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Pesquisar petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
+msgstr "Nenhuma petição encontrada."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
-msgstr ""
+msgstr "Selecione uma equipe..."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
-msgstr ""
-
-#: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
-msgid "Test email"
-msgstr ""
+msgstr "Pesquisar equipe..."

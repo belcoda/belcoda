@@ -2,6 +2,7 @@ import type { Page, Locator } from '@playwright/test';
 
 export class TagsPage {
 	readonly page: Page;
+	readonly settingsSidebarTagsLink: Locator;
 	readonly newTagTrigger: Locator;
 	readonly newTagNameInput: Locator;
 	readonly newTagSubmit: Locator;
@@ -11,6 +12,7 @@ export class TagsPage {
 
 	constructor(page: Page) {
 		this.page = page;
+		this.settingsSidebarTagsLink = page.getByTestId('settings-sidebar-tags');
 		this.newTagTrigger = page.getByTestId('new-tag-trigger');
 		this.newTagNameInput = page.getByTestId('new-tag-name');
 		this.newTagSubmit = page.getByTestId('new-tag-submit');

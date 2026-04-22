@@ -7,6 +7,7 @@ import { v7 as uuidv7 } from 'uuid';
 
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 
+import { env as privateEnv } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
 import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
 import { completeEventSignupHelper } from '$lib/server/api/data/event/signup';
@@ -26,6 +27,7 @@ import {
 import type { FlowResponses } from '$lib/schema/whatsapp/flows/responses';
 
 const log = pino(import.meta.url);
+const isMockExternalServices = privateEnv.MOCK_EXTERNAL_SERVICES === 'true';
 
 function resolveFlowResponsePhoneNumber({
 	userProvidedPhone,
@@ -69,6 +71,13 @@ async function sendConfirmationMessage({
 	tx: ServerTransaction;
 }) {
 	try {
+		if (isMockExternalServices) {
+			log.info(
+				{ from, organizationId, eventTitle },
+				'Mock mode: skipping outbound WhatsApp confirmation for event signup'
+			);
+			return;
+		}
 		// Get workspace settings for WhatsApp phone number
 		const organization = await getOrganizationByIdUnsafe({
 			organizationId,
@@ -144,6 +153,13 @@ async function sendPetitionConfirmationMessage({
 	tx: ServerTransaction;
 }) {
 	try {
+		if (isMockExternalServices) {
+			log.info(
+				{ from, organizationId, petitionTitle },
+				'Mock mode: skipping outbound WhatsApp confirmation for petition signature'
+			);
+			return;
+		}
 		const organization = await getOrganizationByIdUnsafe({
 			organizationId,
 			tx
