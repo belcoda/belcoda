@@ -92,7 +92,6 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await editPage.waitForForm();
 
 		ids.petitionTitle = `${ids.petitionTitle} (edited)`;
-		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
 		await editPage.clearAndFillTitle(ids.petitionTitle);
 		await editPage.submit();
 
@@ -128,6 +127,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		const href = await previewLink.getAttribute('href');
 		expect(href).toBeTruthy();
 		expect(href).toContain('/preview');
+		expect(ids.petitionSlug).not.toBe('');
 	});
 });
 
