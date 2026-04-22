@@ -214,7 +214,7 @@
 						onclick={() => (confirmArchiveOpen = true)}
 						data-testid="petition-archive-button"
 					>
-						>{t`Archive petition`}</Button
+						{t`Archive petition`}</Button
 					>
 					<ConfirmDialog
 						bind:open={confirmArchiveOpen}
@@ -247,7 +247,7 @@
 						onclick={() => (confirmDeleteOpen = true)}
 						data-testid="petition-delete-button"
 					>
-						>{t`Delete petition`}</Button
+						{t`Delete petition`}</Button
 					>
 					<ConfirmDialog
 						bind:open={confirmDeleteOpen}
