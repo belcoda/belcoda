@@ -17,7 +17,7 @@ export class PetitionCreatePage {
 		this.descriptionInput = page.getByTestId('petition-description-input');
 		this.targetInput = page.getByTestId('petition-target-input');
 		this.textInput = page.getByTestId('petition-text-input');
-		this.saveButton = page.getByRole('button', { name: 'Save' });
+		this.saveButton = page.getByTestId('petition-save-button');
 		this.createdModal = page.getByTestId('petition-created-modal');
 	}
 

@@ -13,7 +13,7 @@ export class PetitionEditPage {
 		this.page = page;
 		this.form = page.getByTestId('petition-form');
 		this.titleInput = page.getByTestId('petition-title-input');
-		this.saveButton = page.getByRole('button', { name: 'Save' });
+		this.saveButton = page.getByTestId('petition-save-button');
 		this.dangerZone = page.getByTestId('petition-danger-zone');
 		this.archiveButton = page.getByTestId('petition-archive-button');
 		this.deleteButton = page.getByTestId('petition-delete-button');
