@@ -221,6 +221,8 @@
 						title={t`Archive this petition?`}
 						description={t`This petition will be archived. You can still view it in the archived petitions list.`}
 						confirmText={t`Archive`}
+						confirmTestId="petition-confirm-archive"
+						cancelTestId="petition-cancel-archive"
 						confirmVariant="destructive"
 						onConfirm={() => {
 							z.mutate(
@@ -252,6 +254,8 @@
 						title={t`Delete this petition?`}
 						description={t`This draft petition will be permanently deleted. This action cannot be undone.`}
 						confirmText={t`Delete`}
+						confirmTestId="petition-confirm-delete"
+						cancelTestId="petition-cancel-delete"
 						confirmVariant="destructive"
 						onConfirm={() => {
 							z.mutate(

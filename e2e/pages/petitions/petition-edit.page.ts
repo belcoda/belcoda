@@ -44,14 +44,14 @@ export class PetitionEditPage {
 	async archivePetition() {
 		await this.ensureDangerZoneExpanded(this.archiveButton);
 		await this.archiveButton.click();
-		await this.page.getByRole('button', { name: 'Archive' }).click();
+		await this.page.getByTestId('petition-confirm-archive').click();
 		await this.page.waitForURL('/petitions', { timeout: 15_000 });
 	}
 
 	async deletePetition() {
 		await this.ensureDangerZoneExpanded(this.deleteButton);
 		await this.deleteButton.click();
-		await this.page.getByRole('button', { name: 'Delete' }).click();
+		await this.page.getByTestId('petition-confirm-delete').click();
 		await this.page.waitForURL('/petitions', { timeout: 15_000 });
 	}
 }
