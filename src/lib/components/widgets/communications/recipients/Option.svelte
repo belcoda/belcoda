@@ -22,6 +22,15 @@
 	</div>
 {/snippet}
 
+{#if filter.type === 'everyone'}
+	{#snippet everyoneImage()}
+		<div class="flex size-5 items-center overflow-hidden rounded-full">
+			<img src={`/images/icons/filters/icon-earth.svg`} alt={t`Everyone`} />
+		</div>
+	{/snippet}
+	{@render renderFilter(t`Everyone`, everyoneImage)}
+{/if}
+
 {#if filter.type === 'personId'}
 	{#snippet personIdImage()}
 		<Avatar
