@@ -90,6 +90,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		ids.petitionTitle = `${ids.petitionTitle} (edited)`;
 		await editPage.clearAndFillTitle(ids.petitionTitle);
 		await editPage.submit();
+		await page.waitForTimeout(400);
 
 		await detailPage.goto(ids.petitionId);
 		await detailPage.waitForLoaded();
