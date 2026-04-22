@@ -1,11 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { BASE_URL } from '../../helpers/config';
-
-function getPublicPetitionUrl(orgSlug: string, petitionSlug: string): string {
-	const url = new URL(BASE_URL);
-	url.hostname = `${orgSlug}.${url.hostname}`;
-	return `${url.origin}/petitions/${petitionSlug}`;
-}
+import { getPublicPetitionUrl } from '../../helpers/config';
 
 export class PetitionPublicPage {
 	readonly page: Page;
