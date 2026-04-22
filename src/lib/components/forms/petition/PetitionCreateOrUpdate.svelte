@@ -51,8 +51,8 @@
 					/* svelte-ignore state_referenced_locally */
 					initialData: petition,
 					onSubmit: async (data) => {
-						await onSubmit(data);
 						form.tainted.set(undefined);
+						await onSubmit(data);
 					}
 				})
 			: createForm({
@@ -63,8 +63,8 @@
 					}),
 					validateOnLoad: false,
 					onSubmit: async (data) => {
-						await onSubmit(data);
 						form.tainted.set(undefined);
+						await onSubmit(data);
 					}
 				})
 	);
