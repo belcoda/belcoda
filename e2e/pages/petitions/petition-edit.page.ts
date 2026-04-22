@@ -32,15 +32,24 @@ export class PetitionEditPage {
 		await this.saveButton.click();
 	}
 
-	async archivePetition() {
+	private async ensureDangerZoneExpanded(actionButton: Locator) {
 		await this.dangerZone.scrollIntoViewIfNeeded();
+		const isVisible = await actionButton.isVisible().catch(() => false);
+		if (!isVisible) {
+			await this.dangerZone.getByText('Danger zone').click();
+			await actionButton.waitFor({ state: 'visible', timeout: 10_000 });
+		}
+	}
+
+	async archivePetition() {
+		await this.ensureDangerZoneExpanded(this.archiveButton);
 		await this.archiveButton.click();
 		await this.page.getByRole('button', { name: 'Archive' }).click();
 		await this.page.waitForURL('/petitions', { timeout: 15_000 });
 	}
 
 	async deletePetition() {
-		await this.dangerZone.scrollIntoViewIfNeeded();
+		await this.ensureDangerZoneExpanded(this.deleteButton);
 		await this.deleteButton.click();
 		await this.page.getByRole('button', { name: 'Delete' }).click();
 		await this.page.waitForURL('/petitions', { timeout: 15_000 });
