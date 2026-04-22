@@ -136,7 +136,6 @@ test.describe.serial('Petitions: public page', () => {
 		await loginAsOwner(page);
 		// asset these to make sure we are using the petition created in the previous test
 		expect(ids.petitionId).not.toBe('');
-		expect(ids.petitionSlug).not.toBe('');
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -150,13 +149,25 @@ test.describe.serial('Petitions: public page', () => {
 			await publishSwitch.click();
 			await page.waitForTimeout(800);
 		}
+		expect(ids.petitionSlug).not.toBe('');
 	});
 
 	test('logged-in owner sees the edit navbar on the public petition page', async ({ page }) => {
 		await loginAsOwner(page);
 
-		const publicPage = new PetitionPublicPage(page);
-		await publicPage.gotoViaPath(ORG_SLUG, ids.petitionSlug);
+		const detailPage = new PetitionDetailPage(page);
+		await detailPage.goto(ids.petitionId);
+		await detailPage.waitForLoaded();
+		await detailPage.openActionDropdown();
+
+		const previewLink = page.getByTestId('petition-action-preview');
+		const href = await previewLink.getAttribute('href');
+		expect(href).toBeTruthy();
+		await page.goto(href!);
+		await expect(page).toHaveURL(new RegExp(`https?:\\/\\/${ORG_SLUG}\\.`), { timeout: 15_000 });
+		await expect(page).toHaveURL(new RegExp(`\\/petitions\\/${ids.petitionSlug}(\\?|$)`), {
+			timeout: 15_000
+		});
 
 		await expect(page.getByTestId('public-page-navbar')).toBeVisible({ timeout: 10_000 });
 		const editLink = page.getByTestId('public-page-edit-link');
