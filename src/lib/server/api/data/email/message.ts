@@ -13,7 +13,8 @@ import {
 	type SendMutatorSchemaOutput,
 	createMutatorSchema,
 	updateMutatorSchema,
-	sendMutatorSchema
+	sendMutatorSchema,
+	emailMessageWebhook
 } from '$lib/schema/email-message';
 import { getQueue } from '$lib/server/queue';
 import { countPersonsFromFilter } from '$lib/server/utils/person/filter';
@@ -74,6 +75,16 @@ export async function createEmailMessage({
 		throw new Error('Unable to create email message');
 	}
 
+	const { organizationId, ...msgData } = result;
+	const queueCreate = await getQueue();
+	queueCreate.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'email.message.created',
+			data: parse(emailMessageWebhook, msgData)
+		}
+	});
+
 	return result;
 }
 
@@ -98,7 +109,7 @@ export async function updateEmailMessage({
 		throw new Error('Email message not found');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const [updatedMsg] = await tx.dbTransaction.wrappedTransaction
 		.update(emailMessage)
 		.set({
 			...parsedInput.input,
@@ -109,7 +120,19 @@ export async function updateEmailMessage({
 				eq(emailMessage.id, parsedInput.metadata.emailMessageId),
 				eq(emailMessage.organizationId, parsedInput.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+	if (updatedMsg) {
+		const { organizationId, ...msgData } = updatedMsg;
+		const q = await getQueue();
+		q.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'email.message.updated',
+				data: parse(emailMessageWebhook, msgData)
+			}
+		});
+	}
 }
 
 export async function deleteEmailMessage({
@@ -139,6 +162,14 @@ export async function deleteEmailMessage({
 			updatedAt: new Date()
 		})
 		.where(and(eq(emailMessage.id, args.id), eq(emailMessage.organizationId, args.organizationId)));
+	const queueDel = await getQueue();
+	queueDel.triggerWebhook({
+		organizationId: emailMessageRecord.organizationId,
+		payload: {
+			type: 'email.message.deleted',
+			data: { emailMessageId: args.id }
+		}
+	});
 }
 
 export async function sendEmailMessage({
@@ -178,7 +209,7 @@ export async function sendEmailMessage({
 		'Calculated estimated recipient count'
 	);
 
-	await tx.dbTransaction.wrappedTransaction
+	const [sentRow] = await tx.dbTransaction.wrappedTransaction
 		.update(emailMessage)
 		.set({
 			subject: parsed.input.subject ?? emailMessageRecord.subject,
@@ -193,10 +224,21 @@ export async function sendEmailMessage({
 				eq(emailMessage.id, parsed.metadata.emailMessageId),
 				eq(emailMessage.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
 
 	// Queue the email for processing
 	const queue = await getQueue();
+	if (sentRow) {
+		const { organizationId, ...msgData } = sentRow;
+		queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'email.message.updated',
+				data: parse(emailMessageWebhook, msgData)
+			}
+		});
+	}
 	await queue.buildEmailMessageSendQueue({
 		emailMessageId: parsed.metadata.emailMessageId,
 		organizationId: parsed.metadata.organizationId

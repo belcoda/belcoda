@@ -7,7 +7,8 @@ import {
 	updateMutatorSchema,
 	type UpdateMutatorSchemaOutput,
 	deleteMutatorSchema,
-	type DeleteMutatorSchemaOutput
+	type DeleteMutatorSchemaOutput,
+	petitionSignatureWebhook
 } from '$lib/schema/petition/petition-signature';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -125,6 +126,14 @@ export async function createPetitionSignature({
 		referenceId: parsed.metadata.petitionSignatureId,
 		unread: false
 	});
+	const { organizationId, ...sigWebhookData } = result;
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'petition.signature.created',
+			data: parse(petitionSignatureWebhook, sigWebhookData)
+		}
+	});
 
 	await applyPetitionTagsToPersonUnsafe({
 		tx,
@@ -167,6 +176,15 @@ export async function updatePetitionSignature({
 	if (!result) {
 		throw new Error('Unable to update petition signature');
 	}
+	const queue = await getQueue();
+	const { organizationId, ...sigWebhookData } = result;
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'petition.signature.updated',
+			data: parse(petitionSignatureWebhook, sigWebhookData)
+		}
+	});
 	return result;
 }
 
@@ -334,6 +352,20 @@ export async function signPetitionUnsafe({
 	skipNotifications?: boolean;
 }) {
 	const id = petitionSignatureId || uuidv7();
+
+	const [existingPetitionSignature] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(petitionSignature)
+		.where(
+			and(
+				eq(petitionSignature.petitionId, petitionRecord.id),
+				eq(petitionSignature.personId, personRecord.id),
+				eq(petitionSignature.organizationId, organizationRecord.id),
+				isNull(petitionSignature.deletedAt)
+			)
+		)
+		.limit(1);
+
 	const petitionSignatureRecord: typeof petitionSignature.$inferInsert = {
 		id,
 		organizationId: organizationRecord.id,
@@ -384,6 +416,16 @@ export async function signPetitionUnsafe({
 		organizationId: organizationRecord.id
 	});
 	//TODO: Implement whatsapp notification
+
+	const queueSig = await getQueue();
+	const { organizationId, ...sigWebhookData } = insertedPetitionSignature;
+	queueSig.triggerWebhook({
+		organizationId,
+		payload: {
+			type: existingPetitionSignature ? 'petition.signature.updated' : 'petition.signature.created',
+			data: parse(petitionSignatureWebhook, sigWebhookData)
+		}
+	});
 
 	return insertedPetitionSignature;
 }
@@ -546,4 +588,12 @@ export async function deletePetitionSignature({
 				eq(petitionSignature.organizationId, parsed.metadata.organizationId)
 			)
 		);
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: petitionSignatureRecord.organizationId,
+		payload: {
+			type: 'petition.signature.deleted',
+			data: { petitionSignatureId: parsed.metadata.petitionSignatureId }
+		}
+	});
 }

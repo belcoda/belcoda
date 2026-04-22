@@ -14,6 +14,8 @@ import { parse } from 'valibot';
 
 import pino from '$lib/pino';
 import type { ServerTransaction } from '@rocicorp/zero';
+import { getQueue } from '$lib/server/queue';
+import { personWebhook } from '$lib/schema/person';
 const log = pino(import.meta.url);
 
 export async function findOrCreatePerson({
@@ -68,6 +70,14 @@ export async function findOrCreatePerson({
 				if (!updatedPerson) {
 					throw new Error('Unable to update person');
 				}
+				const queue = await getQueue();
+				queue.triggerWebhook({
+					organizationId,
+					payload: {
+						type: 'person.updated',
+						data: parse(personWebhook, updatedPerson)
+					}
+				});
 				return updatedPerson;
 			} catch (error) {
 				log.error({ error }, 'Unable to update person');
@@ -109,6 +119,13 @@ export async function findOrCreatePerson({
 		});
 	}
 
-	//return person;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'person.created',
+			data: parse(personWebhook, insertedPerson)
+		}
+	});
 	return insertedPerson;
 }

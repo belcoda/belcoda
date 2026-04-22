@@ -5,8 +5,10 @@ import {
 	addUserToTeamMutatorSchema,
 	type AddUserToTeamMutatorSchema,
 	removeUserFromTeamMutatorSchema,
-	type RemoveUserFromTeamMutatorSchema
+	type RemoveUserFromTeamMutatorSchema,
+	teamUserWebhook
 } from '$lib/schema/team';
+import { getQueue } from '$lib/server/queue';
 import { teamMember, member } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
@@ -61,6 +63,17 @@ export async function addUserToTeam({
 		teamId: parsed.metadata.teamId,
 		createdAt: new Date()
 	});
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'team.user.added',
+			data: parse(teamUserWebhook, {
+				teamId: parsed.metadata.teamId,
+				userId: parsed.metadata.userId
+			})
+		}
+	});
 }
 
 export async function removeUserFromTeam({
@@ -88,4 +101,15 @@ export async function removeUserFromTeam({
 				eq(teamMember.userId, parsed.metadata.userId)
 			)
 		);
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'team.user.removed',
+			data: parse(teamUserWebhook, {
+				teamId: parsed.metadata.teamId,
+				userId: parsed.metadata.userId
+			})
+		}
+	});
 }

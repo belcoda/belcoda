@@ -4,15 +4,19 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { person, personTeam, team } from '$lib/schema/drizzle';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
+import { getQueue } from '$lib/server/queue';
 import {
 	createMutatorSchemaZero,
 	type CreateMutatorSchemaZeroOutput,
 	deleteMutatorSchemaZero,
 	type DeleteMutatorSchemaZero,
 	updateMutatorSchemaZero,
-	type UpdateMutatorSchemaZeroOutput
+	type UpdateMutatorSchemaZeroOutput,
+	personWebhook
 } from '$lib/schema/person';
 import { parse } from 'valibot';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 export async function createPerson({
 	tx,
 	ctx,
@@ -78,6 +82,15 @@ export async function createPerson({
 			createdAt: new Date()
 		});
 	}
+
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'person.created',
+			data: parse(personWebhook, result)
+		}
+	});
 }
 
 export async function updatePerson({
@@ -117,6 +130,17 @@ export async function updatePerson({
 			)
 		)
 		.returning();
+	if (!result) {
+		throw new Error('Unable to update person');
+	}
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: input.metadata.organizationId,
+		payload: {
+			type: 'person.updated',
+			data: parse(personWebhook, result)
+		}
+	});
 	return result;
 }
 
@@ -152,6 +176,14 @@ export async function deletePerson({
 				eq(person.organizationId, args.metadata.organizationId)
 			)
 		);
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'person.deleted',
+			data: { personId: parsed.metadata.personId }
+		}
+	});
 	return;
 }
 

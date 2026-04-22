@@ -12,7 +12,8 @@ import {
 	updateMutatorSchemaZero,
 	type UpdateMutatorSchemaZero,
 	deleteMutatorSchemaZero,
-	type DeleteMutatorSchemaZero
+	type DeleteMutatorSchemaZero,
+	personNoteWebhook
 } from '$lib/schema/person-note';
 
 import { getPerson } from '$lib/server/api/data/person/person';
@@ -61,6 +62,13 @@ export async function createPersonNote({
 		referenceId: args.metadata.personNoteId,
 		unread: false
 	});
+	queue.triggerWebhook({
+		organizationId: args.metadata.organizationId,
+		payload: {
+			type: 'person.note.created',
+			data: parse(personNoteWebhook, result)
+		}
+	});
 
 	return result;
 }
@@ -96,6 +104,14 @@ export async function updatePersonNote({
 	if (!result) {
 		throw new Error('Unable to update person note');
 	}
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'person.note.updated',
+			data: parse(personNoteWebhook, result)
+		}
+	});
 	return result;
 }
 
@@ -127,5 +143,13 @@ export async function deletePersonNote({
 	if (!result) {
 		throw new Error('Unable to delete person note');
 	}
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'person.note.deleted',
+			data: { personNoteId: parsed.metadata.personNoteId }
+		}
+	});
 	return;
 }

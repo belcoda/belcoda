@@ -9,8 +9,10 @@ import {
 	type CreateMutatorSchema,
 	createMutatorSchema,
 	type DeleteMutatorSchema,
-	deleteMutatorSchema
+	deleteMutatorSchema,
+	tagWebhook
 } from '$lib/schema/tag';
+import { getQueue } from '$lib/server/queue';
 
 export async function createTag({
 	tx,
@@ -48,6 +50,15 @@ export async function createTag({
 	if (!result) {
 		throw new Error('Unable to create tag');
 	}
+	const { organizationId, ...tagData } = result;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'tag.created',
+			data: parse(tagWebhook, tagData)
+		}
+	});
 	return result;
 }
 
@@ -76,6 +87,15 @@ export async function updateTag({
 	if (!result) {
 		throw new Error('Unable to update tag');
 	}
+	const { organizationId, ...tagData } = result;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'tag.updated',
+			data: parse(tagWebhook, tagData)
+		}
+	});
 	return result;
 }
 
@@ -92,10 +112,21 @@ export async function deleteTag({
 	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(parsed.metadata.organizationId)) {
 		throw new Error('You are not authorized to delete a tag in this organization');
 	}
-	await tx.dbTransaction.wrappedTransaction
+	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(tag)
 		.set({ deletedAt: new Date() })
 		.where(
 			and(eq(tag.id, parsed.metadata.tagId), eq(tag.organizationId, parsed.metadata.organizationId))
-		);
+		)
+		.returning();
+	if (updated) {
+		const queue = await getQueue();
+		queue.triggerWebhook({
+			organizationId: updated.organizationId,
+			payload: {
+				type: 'tag.deleted',
+				data: { tagId: updated.id }
+			}
+		});
+	}
 }

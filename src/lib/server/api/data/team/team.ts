@@ -7,8 +7,10 @@ import {
 	type UpdateMutatorSchema,
 	updateMutatorSchema,
 	type CreateMutatorSchema,
-	createMutatorSchema
+	createMutatorSchema,
+	teamWebhook
 } from '$lib/schema/team';
+import { getQueue } from '$lib/server/queue';
 
 export async function createTeam({
 	tx,
@@ -50,6 +52,15 @@ export async function createTeam({
 	if (!result) {
 		throw new Error('Unable to create team');
 	}
+	const { organizationId, ...teamWebhookData } = result;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'team.created',
+			data: parse(teamWebhook, teamWebhookData)
+		}
+	});
 	return result;
 }
 
@@ -85,6 +96,27 @@ export async function updateTeam({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update team');
+	}
+	const queue = await getQueue();
+	const softDeleteThisRequest =
+		Object.prototype.hasOwnProperty.call(parsed.input, 'deletedAt') && parsed.input.deletedAt;
+	if (softDeleteThisRequest) {
+		queue.triggerWebhook({
+			organizationId: result.organizationId,
+			payload: {
+				type: 'team.deleted',
+				data: { teamId: result.id }
+			}
+		});
+	} else {
+		const { organizationId, ...teamWebhookData } = result;
+		queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'team.updated',
+				data: parse(teamWebhook, teamWebhookData)
+			}
+		});
 	}
 	return result;
 }

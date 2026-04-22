@@ -8,7 +8,8 @@ import {
 	createMutatorSchemaZero,
 	type CreateMutatorSchemaZeroOutput,
 	triggerImportQueueMutatorSchema,
-	type TriggerImportQueueMutatorSchemaOutput
+	type TriggerImportQueueMutatorSchemaOutput,
+	personImportWebhook
 } from '$lib/schema/person-import';
 
 import { getQueue } from '$lib/server/queue';
@@ -44,6 +45,15 @@ export async function insertPersonImport({
 	if (!inserted) {
 		throw new Error('Failed to insert person import');
 	}
+	const { organizationId, ...importWebhookData } = inserted;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'person.import.created',
+			data: parse(personImportWebhook, importWebhookData)
+		}
+	});
 	return inserted;
 }
 

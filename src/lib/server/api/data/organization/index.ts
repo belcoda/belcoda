@@ -7,8 +7,11 @@ import {
 	updateOrganizationZeroMutatorSchema,
 	updateOrganizationWhatsappSettingsMutatorSchema,
 	type UpdateOrganizationMutatorSchema,
-	type UpdateOrganizationWhatsappSettingsMutatorSchema
+	type UpdateOrganizationWhatsappSettingsMutatorSchema,
+	organizationWebhook
 } from '$lib/schema/organization';
+
+import { getQueue } from '$lib/server/queue';
 
 import {
 	type UpdateThemeZeroMutatorSchema,
@@ -41,6 +44,16 @@ export async function updateOrganization({
 	if (!updated) {
 		throw new Error('Failed to update organization');
 	}
+
+	const queue = await getQueue();
+	const { id: _omitId, ...orgWebhookData } = updated;
+	queue.triggerWebhook({
+		organizationId: updated.id,
+		payload: {
+			type: 'organization.updated',
+			data: parse(organizationWebhook, orgWebhookData)
+		}
+	});
 
 	return updated;
 }
@@ -77,6 +90,15 @@ export async function updateOrganizationWhatsappSettings({
 	if (!updated) {
 		throw new Error('Failed to update organization whatsapp settings');
 	}
+	const queue = await getQueue();
+	const { id: _omitId, ...orgWebhookData } = updated;
+	queue.triggerWebhook({
+		organizationId: updated.id,
+		payload: {
+			type: 'organization.updated',
+			data: parse(organizationWebhook, orgWebhookData)
+		}
+	});
 	return updated;
 }
 
@@ -115,6 +137,15 @@ export async function updateTheme({
 	if (!updated) {
 		throw new Error('Failed to update theme');
 	}
+	const queue = await getQueue();
+	const { id: _omitId, ...orgWebhookData } = updated;
+	queue.triggerWebhook({
+		organizationId: updated.id,
+		payload: {
+			type: 'organization.updated',
+			data: parse(organizationWebhook, orgWebhookData)
+		}
+	});
 	return updated;
 }
 

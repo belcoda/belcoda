@@ -14,7 +14,8 @@ import {
 	updateWhatsappThread as updateWhatsappThreadSchema,
 	createWhatsappThread as createWhatsappThreadSchema,
 	type CreateWhatsappThread as CreateWhatsappThreadSchema,
-	type UpdateWhatsappThread as UpdateWhatsappThreadSchema
+	type UpdateWhatsappThread as UpdateWhatsappThreadSchema,
+	whatsappThreadWebhook
 } from '$lib/schema/whatsapp-thread';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -60,7 +61,17 @@ export async function createWhatsappThread({
 	if (result.length === 0) {
 		throw new Error('Failed to create WhatsApp thread');
 	}
-	return result[0];
+	const created = result[0];
+	const { organizationId, ...threadData } = created;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'whatsapp.thread.created',
+			data: parse(whatsappThreadWebhook, threadData)
+		}
+	});
+	return created;
 }
 
 export async function updateWhatsappThread({
@@ -102,7 +113,17 @@ export async function updateWhatsappThread({
 	if (updated.length === 0) {
 		throw new Error('Failed to update WhatsApp thread');
 	}
-	return updated[0];
+	const u = updated[0];
+	const { organizationId, ...threadData } = u;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'whatsapp.thread.updated',
+			data: parse(whatsappThreadWebhook, threadData)
+		}
+	});
+	return u;
 }
 
 export async function deleteWhatsappThread({
@@ -137,6 +158,14 @@ export async function deleteWhatsappThread({
 				eq(whatsappThreadTable.organizationId, args.organizationId)
 			)
 		);
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: record.organizationId,
+		payload: {
+			type: 'whatsapp.thread.deleted',
+			data: { whatsappThreadId: args.id }
+		}
+	});
 }
 
 export async function buildThreadMetadata({
@@ -231,7 +260,15 @@ export async function sendWhatsappThread({
 		throw new Error('WhatsApp thread has only one node');
 	}
 
+	const { organizationId, ...threadData } = claimed;
 	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'whatsapp.thread.updated',
+			data: parse(whatsappThreadWebhook, threadData)
+		}
+	});
 	await queue.buildWhatsappThreadSendQueue({
 		thread: claimed,
 		sentByUserId: ctx.userId,

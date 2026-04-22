@@ -14,6 +14,8 @@ import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
 import { structuredClone } from '$lib/utils/structuredClone';
+import { getQueue } from '$lib/server/queue';
+import { whatsappMessageWebhook } from '$lib/schema/whatsapp-message';
 export async function _findWhatsAppMessageByWamidIdUnsafe({
 	wamidId,
 	tx
@@ -95,7 +97,7 @@ export async function handleIncomingReaction({
 				});
 			}
 
-			await tx.dbTransaction.wrappedTransaction
+			const [updatedMsg] = await tx.dbTransaction.wrappedTransaction
 				.update(whatsappMessage)
 				.set({
 					message: {
@@ -103,7 +105,19 @@ export async function handleIncomingReaction({
 						emojiReactions: reactions
 					}
 				})
-				.where(eq(whatsappMessage.id, messageActivity.id));
+				.where(eq(whatsappMessage.id, messageActivity.id))
+				.returning();
+			if (updatedMsg) {
+				const { organizationId, externalId: _externalId, ...rest } = updatedMsg;
+				const q = await getQueue();
+				q.triggerWebhook({
+					organizationId,
+					payload: {
+						type: 'whatsapp.message.updated',
+						data: parse(whatsappMessageWebhook, rest)
+					}
+				});
+			}
 		}
 	}
 }
@@ -142,5 +156,15 @@ export async function createWhatsAppMessage({
 	if (result.length === 0) {
 		throw new Error('Failed to create WhatsApp message');
 	}
-	return result[0];
+	const created = result[0];
+	const { organizationId: orgId, externalId: _externalId, ...rest } = created;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: orgId,
+		payload: {
+			type: 'whatsapp.message.created',
+			data: parse(whatsappMessageWebhook, rest)
+		}
+	});
+	return created;
 }

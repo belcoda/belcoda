@@ -10,7 +10,8 @@ import {
 	updatePetitionZeroMutatorSchema,
 	archivePetitionMutatorSchema,
 	type DeletePetitionMutatorSchema,
-	deletePetitionMutatorSchema
+	deletePetitionMutatorSchema,
+	petitionWebhook
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -124,6 +125,15 @@ export async function createPetition({
 	if (!result) {
 		throw new Error('Unable to create petition');
 	}
+	const { organizationId, ...petitionData } = result;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'petition.created',
+			data: parse(petitionWebhook, petitionData)
+		}
+	});
 	return result;
 }
 
@@ -181,6 +191,16 @@ export async function updatePetition({
 			);
 		}
 	}
+
+	const queue = await getQueue();
+	const { organizationId, ...petitionData } = updatedPetition;
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'petition.updated',
+			data: parse(petitionWebhook, petitionData)
+		}
+	});
 }
 
 export async function archivePetition({
@@ -204,7 +224,7 @@ export async function archivePetition({
 		throw new Error('Petition not found');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const [archivedPetition] = await tx.dbTransaction.wrappedTransaction
 		.update(petition)
 		.set({
 			archivedAt: new Date(),
@@ -215,7 +235,19 @@ export async function archivePetition({
 				eq(petition.id, parsed.metadata.petitionId),
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+	if (archivedPetition) {
+		const queue = await getQueue();
+		const { organizationId, ...petitionData } = archivedPetition;
+		queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'petition.updated',
+				data: parse(petitionWebhook, petitionData)
+			}
+		});
+	}
 }
 
 export async function deletePetition({
@@ -251,6 +283,14 @@ export async function deletePetition({
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
 		);
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: petitionRecord.organizationId,
+		payload: {
+			type: 'petition.deleted',
+			data: { petitionId: parsed.metadata.petitionId }
+		}
+	});
 }
 
 export async function getPetitionById({

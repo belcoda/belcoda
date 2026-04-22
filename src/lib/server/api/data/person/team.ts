@@ -18,6 +18,9 @@ import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
+import { getQueue } from '$lib/server/queue';
+import { teamPersonWebhook } from '$lib/schema/team';
+import { activityWebhook } from '$lib/schema/activity';
 
 export async function addPersonToTeam({
 	tx,
@@ -58,6 +61,17 @@ export async function addPersonToTeam({
 		organizationId: parsed.metadata.organizationId,
 		createdAt: new Date()
 	});
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: args.metadata.organizationId,
+		payload: {
+			type: 'team.person.added',
+			data: parse(teamPersonWebhook, {
+				teamId: args.metadata.teamId,
+				personId: parsed.metadata.personId
+			})
+		}
+	});
 }
 
 export async function _addPersonTeamDataUnsafe({
@@ -97,16 +111,30 @@ export async function _addPersonTeamDataUnsafe({
 		return null;
 	}
 
-	await tx.dbTransaction.wrappedTransaction.insert(activity).values({
-		id: uuidv7(),
-		type: 'team_added',
-		referenceId: args.teamId,
-		unread: false,
-		userId: null,
-		organizationId: args.organizationId,
-		createdAt: new Date(),
-		personId: args.personId
-	});
+	const [teamActivity] = await tx.dbTransaction.wrappedTransaction
+		.insert(activity)
+		.values({
+			id: uuidv7(),
+			type: 'team_added',
+			referenceId: args.teamId,
+			unread: false,
+			userId: null,
+			organizationId: args.organizationId,
+			createdAt: new Date(),
+			personId: args.personId
+		})
+		.returning();
+	if (teamActivity) {
+		const { organizationId: actOrg, ...actData } = teamActivity;
+		const actQueue = await getQueue();
+		actQueue.triggerWebhook({
+			organizationId: actOrg,
+			payload: {
+				type: 'activity.created',
+				data: parse(activityWebhook, actData)
+			}
+		});
+	}
 
 	await updateLatestActivity({
 		tx,
@@ -118,6 +146,14 @@ export async function _addPersonTeamDataUnsafe({
 				teamName: teamRecord.name,
 				teamId: args.teamId
 			}
+		}
+	});
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: args.organizationId,
+		payload: {
+			type: 'team.person.added',
+			data: parse(teamPersonWebhook, { teamId: args.teamId, personId: args.personId })
 		}
 	});
 	return inserted;
@@ -147,4 +183,15 @@ export async function removePersonFromTeam({
 				eq(personTeam.organizationId, parsed.metadata.organizationId)
 			)
 		);
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'team.person.removed',
+			data: parse(teamPersonWebhook, {
+				teamId: parsed.metadata.teamId,
+				personId: parsed.metadata.personId
+			})
+		}
+	});
 }

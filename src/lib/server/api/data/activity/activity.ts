@@ -2,10 +2,25 @@ import type { ServerTransaction } from '@rocicorp/zero';
 
 import { activity, person } from '$lib/schema/drizzle';
 import { type ActivityType } from '$lib/schema/activity/types';
+import { activityWebhook } from '$lib/schema/activity';
 import { and, eq } from 'drizzle-orm';
 import { generatePreview } from '$lib/server/api/utils/activity/generate_preview';
+import { getQueue } from '$lib/server/queue';
+import { parse } from 'valibot';
 
 import { v7 as uuidv7 } from 'uuid';
+
+async function triggerActivityCreatedWebhook(row: typeof activity.$inferSelect) {
+	const { organizationId, ...data } = row;
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId,
+		payload: {
+			type: 'activity.created',
+			data: parse(activityWebhook, data)
+		}
+	});
+}
 
 export async function createActivityWhatsAppMessageIncoming({
 	organizationId,
@@ -37,6 +52,7 @@ export async function createActivityWhatsAppMessageIncoming({
 	if (result.length === 0) {
 		throw new Error('Failed to create activity');
 	}
+	await triggerActivityCreatedWebhook(result[0]);
 	return result[0];
 }
 
@@ -70,6 +86,7 @@ export async function createActivityWhatsAppMessageOutgoing({
 	if (result.length === 0) {
 		throw new Error('Failed to create activity');
 	}
+	await triggerActivityCreatedWebhook(result[0]);
 	return result[0];
 }
 
@@ -107,7 +124,13 @@ export async function insertActivity({
 		userId: userId || null,
 		createdAt: new Date()
 	};
-	await tx.dbTransaction.wrappedTransaction.insert(activity).values(activityInsert);
+	const [insertedActivity] = await tx.dbTransaction.wrappedTransaction
+		.insert(activity)
+		.values(activityInsert)
+		.returning();
+	if (insertedActivity) {
+		await triggerActivityCreatedWebhook(insertedActivity);
+	}
 
 	const preview = await generatePreview({ type, referenceId });
 	await tx.dbTransaction.wrappedTransaction

@@ -12,6 +12,9 @@ import { personTag, activity, tag } from '$lib/schema/drizzle';
 import { eq, and, isNull } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
+import { getQueue } from '$lib/server/queue';
+import { personTagWebhook } from '$lib/schema/tag';
+import { activityWebhook } from '$lib/schema/activity';
 
 export async function addPersonTag({
 	tx,
@@ -87,16 +90,30 @@ export async function _addPersonTagData({
 		throw new Error('Unable to add person tag');
 	}
 
-	await tx.dbTransaction.wrappedTransaction.insert(activity).values({
-		id: uuidv7(),
-		type: 'tag_added',
-		referenceId: args.tagId,
-		unread: false,
-		userId: null,
-		organizationId: args.organizationId,
-		createdAt: new Date(),
-		personId: args.personId
-	});
+	const [tagActivity] = await tx.dbTransaction.wrappedTransaction
+		.insert(activity)
+		.values({
+			id: uuidv7(),
+			type: 'tag_added',
+			referenceId: args.tagId,
+			unread: false,
+			userId: null,
+			organizationId: args.organizationId,
+			createdAt: new Date(),
+			personId: args.personId
+		})
+		.returning();
+	if (tagActivity) {
+		const { organizationId: actOrg, ...actData } = tagActivity;
+		const actQueue = await getQueue();
+		actQueue.triggerWebhook({
+			organizationId: actOrg,
+			payload: {
+				type: 'activity.created',
+				data: parse(activityWebhook, actData)
+			}
+		});
+	}
 
 	await updateLatestActivity({
 		tx,
@@ -108,6 +125,14 @@ export async function _addPersonTagData({
 				tagName: tagRecord.name,
 				tagId: args.tagId
 			}
+		}
+	});
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: args.organizationId,
+		payload: {
+			type: 'tag.person.added',
+			data: parse(personTagWebhook, { personId: args.personId, tagId: args.tagId })
 		}
 	});
 	return result;
@@ -142,7 +167,7 @@ export async function applyTagToPersonUnsafe({
 	if (!tagRow) {
 		return;
 	}
-	await db
+	const [inserted] = await db
 		.insert(personTag)
 		.values({
 			personId,
@@ -150,7 +175,18 @@ export async function applyTagToPersonUnsafe({
 			organizationId,
 			createdAt: new Date()
 		})
-		.onConflictDoNothing();
+		.onConflictDoNothing()
+		.returning();
+	if (inserted) {
+		const queue = await getQueue();
+		queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'tag.person.added',
+				data: parse(personTagWebhook, { personId, tagId })
+			}
+		});
+	}
 }
 
 export async function removePersonTag({
@@ -175,4 +211,15 @@ export async function removePersonTag({
 			eq(personTag.organizationId, args.metadata.organizationId) // make sure the tag and person belongs to the organization
 		)
 	);
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: args.metadata.organizationId,
+		payload: {
+			type: 'tag.person.removed',
+			data: parse(personTagWebhook, {
+				personId: args.metadata.personId,
+				tagId: args.metadata.tagId
+			})
+		}
+	});
 }

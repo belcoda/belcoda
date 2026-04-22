@@ -14,6 +14,8 @@ import {
 	archiveEventMutatorSchemaZero,
 	type ArchiveEventMutatorSchemaZero
 } from '$lib/schema/event';
+import { eventWebhook } from '$lib/schema/event';
+import { eventSignupWebhook } from '$lib/schema/event-signup';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { parse } from 'valibot';
 import { _insertActionCodeUnsafe } from '$lib/server/api/data/action/insert';
@@ -119,6 +121,14 @@ export async function createEvent({
 	if (!result) {
 		throw new Error('Unable to create event');
 	}
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsedInput.metadata.organizationId,
+		payload: {
+			type: 'event.created',
+			data: parse(eventWebhook, result)
+		}
+	});
 	return result;
 }
 
@@ -163,8 +173,15 @@ export async function updateEvent({
 	const publishedStatusChanged =
 		eventRecord?.published !== undefined && eventRecord?.published !== updatedEvent?.published;
 
+	const queue = await getQueue();
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'event.updated',
+			data: parse(eventWebhook, updatedEvent)
+		}
+	});
 	if (structureChanged || publishedStatusChanged) {
-		const queue = await getQueue();
 		queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
 	}
 }
@@ -194,7 +211,7 @@ export async function deleteEvent({
 		throw new Error('Cannot delete a published event. Archive it instead.');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const cancelledSignups = await tx.dbTransaction.wrappedTransaction
 		.update(eventSignup)
 		.set({ status: 'cancelled', updatedAt: new Date() })
 		.where(
@@ -202,7 +219,20 @@ export async function deleteEvent({
 				eq(eventSignup.eventId, parsed.metadata.eventId),
 				eq(eventSignup.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+
+	const queue = await getQueue();
+	for (const row of cancelledSignups) {
+		const { organizationId, ...signupWebhookData } = row;
+		queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'event.signup.updated',
+				data: parse(eventSignupWebhook, signupWebhookData)
+			}
+		});
+	}
 
 	await tx.dbTransaction.wrappedTransaction
 		.update(event)
@@ -213,6 +243,13 @@ export async function deleteEvent({
 				eq(event.organizationId, parsed.metadata.organizationId)
 			)
 		);
+	queue.triggerWebhook({
+		organizationId: parsed.metadata.organizationId,
+		payload: {
+			type: 'event.deleted',
+			data: { eventId: parsed.metadata.eventId }
+		}
+	});
 }
 
 export async function archiveEvent({
@@ -240,7 +277,7 @@ export async function archiveEvent({
 		throw new Error('Cannot archive a draft event. Delete it instead.');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const [archived] = await tx.dbTransaction.wrappedTransaction
 		.update(event)
 		.set({ archivedAt: new Date(), updatedAt: new Date() })
 		.where(
@@ -248,7 +285,18 @@ export async function archiveEvent({
 				eq(event.id, parsed.metadata.eventId),
 				eq(event.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+	if (archived) {
+		const queue = await getQueue();
+		queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'event.updated',
+				data: parse(eventWebhook, archived)
+			}
+		});
+	}
 }
 
 export async function _getEventBySlugUnsafe({
