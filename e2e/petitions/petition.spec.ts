@@ -6,6 +6,7 @@ import { PetitionDetailPage } from '../pages/petitions/petition-detail.page';
 import { PetitionEditPage } from '../pages/petitions/petition-edit.page';
 import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page';
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
+import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
 import { TEST_USERS } from '../helpers/auth';
 
 const ORG_SLUG = 'e2e-event-org';
@@ -241,6 +242,100 @@ test.describe.serial('Petitions: public page', () => {
 
 		const signaturesPage = new PetitionSignaturesPage(page);
 		await expect(signaturesPage.detailedTable).toBeVisible({ timeout: 15_000 });
+	});
+});
+
+test.describe.serial('Petitions: signup fields', () => {
+	const CUSTOM_QUESTION_LABEL = 'What is your biggest concern?';
+	let petitionSlug = '';
+
+	test('owner creates petition with standard and custom signup fields', async ({ page }) => {
+		const suffix = Date.now();
+		const title = `E2E Fields Petition ${suffix}`;
+
+		await loginAsOwner(page);
+
+		const createPage = new PetitionCreatePage(page);
+		await createPage.goto();
+		await expect(createPage.form).toBeVisible();
+
+		await createPage.fillTitle(title);
+		await createPage.fillDescription('Testing petition extra signup fields');
+		await createPage.fillTarget('Petition target for signup field tests');
+		await createPage.fillPetitionText('Petition text for signup field tests.');
+
+		const surveyPage = new PetitionSurveyPage(page);
+		await surveyPage.checkStandardField('address');
+		await surveyPage.addShortTextQuestion(CUSTOM_QUESTION_LABEL);
+
+		await createPage.submit();
+		await createPage.waitForModal();
+		await expect(createPage.createdModal).toBeVisible();
+
+		const publishToggle = page.getByTestId('petition-publish-toggle');
+		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
+		const isPublished = await publishToggle.isChecked().catch(() => false);
+		if (!isPublished) {
+			await publishToggle.click();
+			await page.waitForTimeout(800);
+		}
+
+		await createPage.closeModal();
+
+		await expect(page).toHaveURL(
+			/\/petitions\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
+			{ timeout: 10_000 }
+		);
+
+		petitionSlug = slugifyTitle(title);
+		expect(petitionSlug).not.toBe('');
+	});
+
+	test('public petition page shows standard address fields', async ({ page }) => {
+		const publicPage = new PetitionPublicPage(page);
+		await publicPage.goto(ORG_SLUG, petitionSlug);
+
+		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
+		await expect(publicPage.addressLine1Input).toBeVisible();
+		await expect(publicPage.addressLocalityInput).toBeVisible();
+		await expect(publicPage.addressRegionInput).toBeVisible();
+		await expect(publicPage.addressPostcodeInput).toBeVisible();
+	});
+
+	test('public petition page shows the custom question field', async ({ page }) => {
+		const publicPage = new PetitionPublicPage(page);
+		await publicPage.goto(ORG_SLUG, petitionSlug);
+
+		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByLabel(CUSTOM_QUESTION_LABEL)).toBeVisible();
+	});
+
+	test('visitor can submit petition signature with all extra fields', async ({ page }) => {
+		const suffix = Date.now();
+		const publicPage = new PetitionPublicPage(page);
+		await publicPage.goto(ORG_SLUG, petitionSlug);
+
+		await publicPage.fillSignupForm({
+			givenName: 'Fields',
+			familyName: `Petitioner ${suffix}`,
+			email: `petition-fields-${suffix}@belcoda.test`
+		});
+
+		await publicPage.addressLine1Input.fill('789 Petition Street');
+		await publicPage.addressLocalityInput.fill('Petition City');
+		await publicPage.addressRegionInput.fill('Petition State');
+		await publicPage.addressPostcodeInput.fill('77777');
+
+		await page.getByLabel(CUSTOM_QUESTION_LABEL).fill('Housing affordability');
+
+		await publicPage.submitSignup();
+
+		await expect(page).toHaveURL(
+			new RegExp(`${ORG_SLUG}.*\\/petitions\\/${petitionSlug}\\/signed`),
+			{
+				timeout: 15_000
+			}
+		);
 	});
 });
 
