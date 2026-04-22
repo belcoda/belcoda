@@ -91,7 +91,9 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await editPage.clearAndFillTitle(ids.petitionTitle);
 		await editPage.submit();
 
-		await expect(page).toHaveURL(`/petitions/${ids.petitionId}/edit`, { timeout: 10_000 });
+		await detailPage.goto(ids.petitionId);
+		await detailPage.waitForLoaded();
+		await expect(detailPage.titleDisplay).toContainText(ids.petitionTitle);
 	});
 
 	test('owner can publish a petition from the action menu', async ({ page }) => {

@@ -4,11 +4,13 @@ export class PetitionDetailPage {
 	readonly page: Page;
 	readonly actionDropdownTrigger: Locator;
 	readonly signaturesTable: Locator;
+	readonly titleDisplay: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
 		this.actionDropdownTrigger = page.getByTestId('petition-action-dropdown');
 		this.signaturesTable = page.getByTestId('petition-signature-table');
+		this.titleDisplay = page.getByTestId('petition-title-display');
 	}
 
 	async goto(petitionId: string) {

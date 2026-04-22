@@ -17,7 +17,7 @@
 	</div>
 	<div>
 		<div class="flex items-center gap-2">
-			<div class="text-lg font-medium">{petition.title}</div>
+			<div class="text-lg font-medium" data-testid="petition-title-display">{petition.title}</div>
 			<ColorBadge color={petition.published ? 'green' : 'gray'}>
 				{petition.published ? t`Published` : t`Draft`}
 			</ColorBadge>
