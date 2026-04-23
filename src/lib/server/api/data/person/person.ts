@@ -95,6 +95,7 @@ export async function createPerson({
 	} catch (err) {
 		log.error({ err }, 'Failed to trigger webhook');
 	}
+	return result;
 }
 
 export async function updatePerson({
