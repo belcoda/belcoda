@@ -90,7 +90,9 @@ export async function updateTag({
 			active: parsed.input.active,
 			updatedAt: new Date()
 		})
-		.where(eq(tag.id, parsed.metadata.tagId))
+		.where(
+			and(eq(tag.id, parsed.metadata.tagId), eq(tag.organizationId, parsed.metadata.organizationId))
+		)
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update tag');
