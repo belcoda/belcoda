@@ -14,6 +14,8 @@ import { and, eq } from 'drizzle-orm';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function addUserToTeam({
 	tx,
@@ -93,23 +95,30 @@ export async function removeUserFromTeam({
 		tx
 	});
 
-	await tx.dbTransaction.wrappedTransaction
+	const [result] = await tx.dbTransaction.wrappedTransaction
 		.delete(teamMember)
 		.where(
 			and(
 				eq(teamMember.teamId, parsed.metadata.teamId),
 				eq(teamMember.userId, parsed.metadata.userId)
 			)
-		);
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: parsed.metadata.organizationId,
-		payload: {
-			type: 'team.user.removed',
-			data: parse(teamUserWebhook, {
-				teamId: parsed.metadata.teamId,
-				userId: parsed.metadata.userId
-			})
+		)
+		.returning();
+	if (result) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: parsed.metadata.organizationId,
+				payload: {
+					type: 'team.user.removed',
+					data: parse(teamUserWebhook, {
+						teamId: parsed.metadata.teamId,
+						userId: parsed.metadata.userId
+					})
+				}
+			});
+		} catch (error) {
+			log.error({ error }, 'Unable to trigger webhook');
 		}
-	});
+	}
 }
