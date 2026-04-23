@@ -16,6 +16,7 @@ import {
 } from '$lib/schema/person';
 import { parse } from 'valibot';
 import pino from '$lib/pino';
+import { _addPersonTeamDataUnsafe } from './team';
 const log = pino(import.meta.url);
 export async function createPerson({
 	tx,
@@ -75,11 +76,13 @@ export async function createPerson({
 	}
 
 	if (args.metadata.teamId) {
-		await tx.dbTransaction.wrappedTransaction.insert(personTeam).values({
-			personId: result.id,
-			teamId: args.metadata.teamId,
-			organizationId: args.metadata.organizationId,
-			createdAt: new Date()
+		await _addPersonTeamDataUnsafe({
+			tx,
+			args: {
+				personId: result.id,
+				teamId: args.metadata.teamId,
+				organizationId: parsed.metadata.organizationId
+			}
 		});
 	}
 
