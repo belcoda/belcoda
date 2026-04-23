@@ -219,26 +219,31 @@ export async function removePersonTag({
 	) {
 		throw new Error('You are not authorized to remove a person from a tag in this organization');
 	}
-	await tx.dbTransaction.wrappedTransaction.delete(personTag).where(
-		and(
-			eq(personTag.personId, args.metadata.personId),
-			eq(personTag.tagId, args.metadata.tagId),
-			eq(personTag.organizationId, args.metadata.organizationId) // make sure the tag and person belongs to the organization
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.delete(personTag)
+		.where(
+			and(
+				eq(personTag.personId, args.metadata.personId),
+				eq(personTag.tagId, args.metadata.tagId),
+				eq(personTag.organizationId, args.metadata.organizationId) // make sure the tag and person belongs to the organization
+			)
 		)
-	);
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
-			organizationId: args.metadata.organizationId,
-			payload: {
-				type: 'tag.person.removed',
-				data: parse(personTagWebhook, {
-					personId: args.metadata.personId,
-					tagId: args.metadata.tagId
-				})
-			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
+		.returning();
+	if (result) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: args.metadata.organizationId,
+				payload: {
+					type: 'tag.person.removed',
+					data: parse(personTagWebhook, {
+						personId: args.metadata.personId,
+						tagId: args.metadata.tagId
+					})
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 }
