@@ -37,14 +37,18 @@ export class PersonProfilePage {
 	}
 
 	async editName(givenName: string, familyName: string) {
+		await this.waitForLoaded();
 		await this.nameEditButton.click();
+		await this.nameSaveButton.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.givenNameInput.fill(givenName);
 		await this.familyNameInput.fill(familyName);
 		await this.nameSaveButton.click();
 	}
 
 	async editEmail(email: string) {
+		await this.waitForLoaded();
 		await this.emailEditButton.click();
+		await this.emailSaveButton.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.emailInput.fill(email);
 		await this.emailSaveButton.click();
 	}

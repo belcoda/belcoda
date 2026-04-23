@@ -41,6 +41,7 @@
 	type="button"
 	class="w-full bg-green-600 text-white transition-colors hover:bg-green-700"
 	onclick={handleWhatsAppSignup}
+	data-testid="whatsapp-signup-btn"
 >
 	<span class="icon-[ri--whatsapp-line] size-5"></span>
 	{t`Sign petition via WhatsApp`}
@@ -73,7 +74,11 @@
 					<span class="text-sm font-medium text-gray-900">{t`Or scan QR code`}</span>
 				</div>
 				<div class="flex flex-col items-center gap-4">
-					<img src={qrCodeDataUrl} alt={t`WhatsApp Petition Signup QR Code`} class="rounded-lg border" />
+					<img
+						src={qrCodeDataUrl}
+						alt={t`WhatsApp Petition Signup QR Code`}
+						class="rounded-lg border"
+					/>
 					<p class="text-xs text-gray-500">{t`Scan with your phone to sign via WhatsApp`}</p>
 				</div>
 			</div>

@@ -153,7 +153,11 @@
 						</Empty.Header>
 					</Empty.Root>
 				{:else}
-					<div class="w-full" bind:this={tableContainer}>
+					<div
+						class="w-full"
+						bind:this={tableContainer}
+						data-testid="petition-signatures-detailed-table"
+					>
 						<ScrollArea
 							orientation="horizontal"
 							class="h-auto w-96"
@@ -210,6 +214,7 @@
 					variant="outline"
 					size="sm"
 					disabled={!downloadCsvReady}
+					data-testid="petition-signatures-download-csv"
 					onclick={downloadTableAsCSV}><DownloadIcon /> {t`Download CSV`}</Button
 				>
 				<AddPersonModal
@@ -225,5 +230,6 @@
 	</div>
 {/snippet}
 
-{#snippet addPersonTrigger()}<Button><UserPlusIcon strokeWidth={2.5} /> {t`Add signature`}</Button
+{#snippet addPersonTrigger()}<Button data-testid="petition-signatures-add-signature"
+		><UserPlusIcon strokeWidth={2.5} /> {t`Add signature`}</Button
 	>{/snippet}

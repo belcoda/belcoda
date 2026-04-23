@@ -4673,6 +4673,20 @@ msgstr "Send test email to"
 msgid "Send test email"
 msgstr "Send test email"
 
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
+msgid "Everyone"
+msgstr "Everyone"
+
+#: src/lib/components/flow/nodes/team_add/Combobox.svelte
+msgid "Select a team..."
+msgstr "Select a team..."
+
+#: src/lib/components/flow/nodes/team_add/Combobox.svelte
+msgid "Search team..."
+msgstr "Search team..."
+
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
 msgstr "Select a petition..."
@@ -4684,11 +4698,3 @@ msgstr "Search petition..."
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
 msgstr "No petitions found."
-
-#: src/lib/components/flow/nodes/team_add/Combobox.svelte
-msgid "Select a team..."
-msgstr "Select a team..."
-
-#: src/lib/components/flow/nodes/team_add/Combobox.svelte
-msgid "Search team..."
-msgstr "Search team..."

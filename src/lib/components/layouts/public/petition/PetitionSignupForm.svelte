@@ -167,7 +167,11 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Given name`}</Form.Label>
-								<Input {...props} bind:value={$dataForm.person.givenName} />
+								<Input
+									{...props}
+									bind:value={$dataForm.person.givenName}
+									data-testid="petition-signup-given-name"
+								/>
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
@@ -177,7 +181,11 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Family name`}</Form.Label>
-								<Input {...props} bind:value={$dataForm.person.familyName} />
+								<Input
+									{...props}
+									bind:value={$dataForm.person.familyName}
+									data-testid="petition-signup-family-name"
+								/>
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
@@ -188,7 +196,12 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Email address`}</Form.Label>
-							<Input {...props} type="email" bind:value={$dataForm.person.emailAddress} />
+							<Input
+								{...props}
+								type="email"
+								bind:value={$dataForm.person.emailAddress}
+								data-testid="petition-signup-email"
+							/>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -213,7 +226,11 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Address line 1`}</Form.Label>
-								<Input {...props} bind:value={$dataForm.person.addressLine1} />
+								<Input
+									{...props}
+									bind:value={$dataForm.person.addressLine1}
+									data-testid="signup-address-line1"
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -230,7 +247,11 @@
 							<Form.Control>
 								{#snippet children({ props })}
 									<Form.Label>{t`Locality`}</Form.Label>
-									<Input {...props} bind:value={$dataForm.person.locality} />
+									<Input
+										{...props}
+										bind:value={$dataForm.person.locality}
+										data-testid="signup-address-locality"
+									/>
 								{/snippet}
 							</Form.Control>
 						</Form.Field>
@@ -238,7 +259,11 @@
 							<Form.Control>
 								{#snippet children({ props })}
 									<Form.Label>{t`Region`}</Form.Label>
-									<Input {...props} bind:value={$dataForm.person.region} />
+									<Input
+										{...props}
+										bind:value={$dataForm.person.region}
+										data-testid="signup-address-region"
+									/>
 								{/snippet}
 							</Form.Control>
 						</Form.Field>
@@ -246,7 +271,11 @@
 							<Form.Control>
 								{#snippet children({ props })}
 									<Form.Label>{t`Postcode`}</Form.Label>
-									<Input {...props} bind:value={$dataForm.person.postcode} />
+									<Input
+										{...props}
+										bind:value={$dataForm.person.postcode}
+										data-testid="signup-address-postcode"
+									/>
 								{/snippet}
 							</Form.Control>
 						</Form.Field>
@@ -322,6 +351,7 @@
 										{...props}
 										required={field.required}
 										bind:value={$dataForm.customFields[field.id]}
+										data-testid={`signup-custom-field-${field.id}`}
 									/>
 								{/snippet}
 							</Form.Control>
@@ -340,6 +370,7 @@
 										{...props}
 										required={field.required}
 										bind:value={$dataForm.customFields[field.id]}
+										data-testid={`signup-custom-field-${field.id}`}
 									/>
 								{/snippet}
 							</Form.Control>
@@ -358,6 +389,7 @@
 										{...props}
 										required={field.required}
 										bind:value={$dataForm.customFields[field.id]}
+										data-testid={`signup-custom-field-${field.id}`}
 									/>
 								{/snippet}
 							</Form.Control>
@@ -376,6 +408,7 @@
 										{...props}
 										required={field.required}
 										bind:value={$dataForm.customFields[field.id]}
+										data-testid={`signup-custom-field-${field.id}`}
 									/>
 								{/snippet}
 							</Form.Control>
@@ -389,11 +422,13 @@
 										>{field.label ||
 											renderQuestionTypeName(field.type, page.data.locale)}</Form.Label
 									>
-									<PhoneNumberInput
-										country={$dataForm.person.country}
-										{...props}
-										bind:value={$dataForm.customFields[field.id]}
-									/>
+									<div data-testid={`signup-custom-field-${field.id}`}>
+										<PhoneNumberInput
+											country={$dataForm.person.country}
+											{...props}
+											bind:value={$dataForm.customFields[field.id]}
+										/>
+									</div>
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
@@ -411,6 +446,7 @@
 										{...props}
 										required={field.required}
 										bind:value={$dataForm.customFields[field.id]}
+										data-testid={`signup-custom-field-${field.id}`}
 									/>
 								{/snippet}
 							</Form.Control>
@@ -424,7 +460,11 @@
 										>{field.label ||
 											renderQuestionTypeName(field.type, page.data.locale)}</Form.Label
 									>
-									<RadioGroup.Root {...props} bind:value={$dataForm.customFields[field.id]}>
+									<RadioGroup.Root
+										{...props}
+										bind:value={$dataForm.customFields[field.id]}
+										data-testid={`signup-custom-field-${field.id}`}
+									>
 										{#each field.options || [] as option}
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value={option} id={`${field.id}-${option}`} />
@@ -449,7 +489,7 @@
 										>{field.label ||
 											renderQuestionTypeName(field.type, page.data.locale)}</Form.Label
 									>
-									<div class="space-y-2">
+									<div class="space-y-2" data-testid={`signup-custom-field-${field.id}`}>
 										{#each field.options || [] as option}
 											<div class="flex items-center space-x-2">
 												<Checkbox
@@ -491,20 +531,22 @@
 										>{field.label ||
 											renderQuestionTypeName(field.type, page.data.locale)}</Form.Label
 									>
-									<Select.Root
-										type="single"
-										{...props}
-										bind:value={$dataForm.customFields[field.id]}
-									>
-										<Select.Trigger class="w-full">
-											{$dataForm.customFields[field.id] || t`Select an option`}
-										</Select.Trigger>
-										<Select.Content>
-											{#each field.options || [] as option}
-												<Select.Item value={option}>{option}</Select.Item>
-											{/each}
-										</Select.Content>
-									</Select.Root>
+									<div data-testid={`signup-custom-field-${field.id}`}>
+										<Select.Root
+											type="single"
+											{...props}
+											bind:value={$dataForm.customFields[field.id]}
+										>
+											<Select.Trigger class="w-full">
+												{$dataForm.customFields[field.id] || t`Select an option`}
+											</Select.Trigger>
+											<Select.Content>
+												{#each field.options || [] as option}
+													<Select.Item value={option}>{option}</Select.Item>
+												{/each}
+											</Select.Content>
+										</Select.Root>
+									</div>
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
@@ -512,7 +554,13 @@
 					{/if}
 				{/each}
 
-				<Button type="submit" class="w-full" size="lg" disabled={$submitting}>
+				<Button
+					type="submit"
+					class="w-full"
+					size="lg"
+					disabled={$submitting}
+					data-testid="petition-signup-submit"
+				>
 					<PenLineIcon class="mr-2 size-5" />
 					{#if $delayed}<Spinner class="mr-2 size-4" />{/if}
 					{$submitting ? t`Signing...` : t`Sign this petition`}
