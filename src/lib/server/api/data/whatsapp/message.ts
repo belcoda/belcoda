@@ -112,6 +112,7 @@ export async function handleIncomingReaction({
 			const [updatedMsg] = await tx.dbTransaction.wrappedTransaction
 				.update(whatsappMessage)
 				.set({
+					updatedAt: new Date(),
 					message: {
 						...messageActivity.message,
 						emojiReactions: reactions
@@ -207,6 +208,7 @@ export async function emojiReaction({
 		await tx.dbTransaction.wrappedTransaction
 			.update(whatsappMessage)
 			.set({
+				updatedAt: new Date(),
 				message: { ...messageActivity.message, emojiReactions: emojiReactionArray }
 			})
 			.where(eq(whatsappMessage.id, messageActivity.id));
