@@ -118,6 +118,7 @@ export async function updatePerson({
 		builder.person
 			.where('id', '=', input.metadata.personId)
 			.where('organizationId', '=', input.metadata.organizationId)
+			.where('deletedAt', 'IS', null)
 			.where((expr) => personReadPermissions(expr, ctx))
 			.one()
 	);
