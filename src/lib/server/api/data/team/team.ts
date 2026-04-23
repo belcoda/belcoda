@@ -98,7 +98,12 @@ export async function updateTeam({
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(team)
 		.set(updates)
-		.where(eq(team.id, parsed.metadata.teamId))
+		.where(
+			and(
+				eq(team.id, parsed.metadata.teamId),
+				eq(team.organizationId, parsed.metadata.organizationId)
+			)
+		)
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update team');
