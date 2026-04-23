@@ -19,6 +19,7 @@ import { emailMessageWebhook } from '$lib/schema/email-message';
 
 import { CURRENT_API_VERSION } from '$lib/schema/helpers';
 import { type WebhookEvent } from '$lib/schema/webhook';
+
 async function generateOpenSchemaFromValibot(
 	input: BaseSchema<unknown, unknown, BaseIssue<unknown>>
 ) {
@@ -329,7 +330,13 @@ const WEBHOOK_EVENT_SPECS: WebhookBoilerplateArgs[] = [
 	}
 ];
 
-export async function GET() {
+let openApiSchemaObject: Record<string, unknown> | null = null;
+
+async function buildOpenApiSchema() {
+	if (openApiSchemaObject) {
+		return openApiSchemaObject;
+	}
+
 	const [
 		activityOpenApiSchema,
 		personOpenApiSchema,
@@ -369,8 +376,7 @@ export async function GET() {
 		generateOpenSchemaFromValibot(whatsappThreadWebhook),
 		generateOpenSchemaFromValibot(emailMessageWebhook)
 	]);
-
-	return json({
+	openApiSchemaObject = {
 		openapi: '3.1.0',
 		info: {
 			title: 'Belcoda Webhooks Reference',
@@ -460,5 +466,10 @@ export async function GET() {
 				}
 			}
 		}
-	});
+	};
+	return openApiSchemaObject;
+}
+
+export async function GET() {
+	return json(await buildOpenApiSchema());
 }
