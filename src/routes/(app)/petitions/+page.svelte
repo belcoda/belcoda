@@ -19,11 +19,14 @@
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content>
-			<Button href="/petitions/new">{t`Create petition`}</Button>
+			<Button href="/petitions/new" data-testid="petitions-create-button"
+				>{t`Create petition`}</Button
+			>
 		</Empty.Content>
 		<Button variant="link" class="text-muted-foreground" size="sm">
 			<a href="#/">
-				{t`Learn more about petitions`} <ExternalLinkIcon class="inline" />
+				{t`Learn more about petitions`}
+				<ExternalLinkIcon class="inline" />
 			</a>
 		</Button>
 	</Empty.Root>

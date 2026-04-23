@@ -55,6 +55,6 @@
 {#snippet footer()}
 	<div class="flex w-full justify-end gap-2">
 		<Button variant="outline" href={`/petitions/${params.petitionId}`}>{t`Cancel`}</Button>
-		<Button type="submit" form="petition-form">{t`Save`}</Button>
+		<Button type="submit" form="petition-form" data-testid="petition-save-button">{t`Save`}</Button>
 	</div>
 {/snippet}

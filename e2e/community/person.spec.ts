@@ -114,18 +114,13 @@ test.describe.serial('Community and person pages', () => {
 	test('owner can delete the person from the person profile page', async ({ page }) => {
 		const communityPage = new CommunityPage(page);
 		const profilePage = new PersonProfilePage(page);
-
 		await loginAsOwner(page);
 		await profilePage.goto(ids.personPath);
 		await profilePage.waitForLoaded();
-		await expect(page.getByTestId('person-profile-danger-zone')).toBeVisible();
-
+		await expect(profilePage.deleteButton).toBeVisible({ timeout: 10_000 });
 		await profilePage.deletePersonWithConfirm();
-
 		await expect(page).toHaveURL(/\/community\/?$/);
 		await communityPage.searchCommunityList(ids.familyName);
-		await expect(communityPage.personListLink(ids.personId)).toHaveCount(0, {
-			timeout: 20_000
-		});
+		await expect(communityPage.personListLink(ids.personId)).toHaveCount(0, { timeout: 20_000 });
 	});
 });

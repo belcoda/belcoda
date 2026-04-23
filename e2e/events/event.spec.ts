@@ -8,22 +8,12 @@ import { EventSignupsPage } from '../pages/events/event-signups.page';
 import { EventPublicPage } from '../pages/events/event-public-page.page';
 import { EventSurveyPage } from '../pages/events/event-survey.page';
 import { TEST_USERS } from '../helpers/auth';
+import { E2E_ORG_SLUG, slugifyTitle } from '../helpers/config';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
 	postWhatsAppInboundWebhook,
 	getE2EDefaultWhatsAppNumber
 } from '../helpers/whatsapp-webhook';
-
-const ORG_SLUG = 'e2e-event-org';
-
-function slugifyTitle(title: string): string {
-	return title
-		.trim()
-		.toLowerCase()
-		.replace(/[^a-z0-9 -]/g, '')
-		.replace(/\s+/g, '-')
-		.replace(/-+/g, '-');
-}
 
 async function loginAsOwner(page: Page) {
 	const loginPage = new LoginPage(page);
@@ -121,7 +111,7 @@ test.describe.serial('Events', () => {
 		ids.eventSlug = ids.originalEventSlug;
 
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+		await publicPage.goto(E2E_ORG_SLUG, ids.eventSlug);
 		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
 	});
 
@@ -129,7 +119,7 @@ test.describe.serial('Events', () => {
 		await loginAsOwner(page);
 
 		const publicPage = new EventPublicPage(page);
-		await publicPage.gotoViaPath(ORG_SLUG, ids.eventSlug);
+		await publicPage.gotoViaPath(E2E_ORG_SLUG, ids.eventSlug);
 
 		await expect(page.getByTestId('public-page-navbar')).toBeVisible({ timeout: 10_000 });
 		const editLink = page.getByTestId('public-page-edit-link');
@@ -141,7 +131,7 @@ test.describe.serial('Events', () => {
 		page
 	}) => {
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+		await publicPage.goto(E2E_ORG_SLUG, ids.eventSlug);
 
 		await expect(page.getByTestId('public-page-navbar')).toHaveCount(0);
 		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
@@ -150,7 +140,7 @@ test.describe.serial('Events', () => {
 
 	test('public event page shows WhatsApp signup link', async ({ page }) => {
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+		await publicPage.goto(E2E_ORG_SLUG, ids.eventSlug);
 
 		await expect(publicPage.submitButton).toBeVisible({ timeout: 10_000 });
 		// The WhatsApp button should be visible (either mobile or desktop version)
@@ -162,7 +152,7 @@ test.describe.serial('Events', () => {
 		ids.signupPersonName = `E2E Signup ${suffix}`;
 
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, ids.eventSlug);
+		await publicPage.goto(E2E_ORG_SLUG, ids.eventSlug);
 
 		await publicPage.fillSignupForm({
 			givenName: 'E2E',
@@ -172,7 +162,7 @@ test.describe.serial('Events', () => {
 		await publicPage.submitSignup();
 
 		await expect(page).toHaveURL(
-			new RegExp(`${ORG_SLUG}.*\\/events\\/${ids.eventSlug}\\/signed-up`),
+			new RegExp(`${E2E_ORG_SLUG}.*\\/events\\/${ids.eventSlug}\\/signed-up`),
 			{ timeout: 15_000 }
 		);
 	});
@@ -389,7 +379,7 @@ test.describe.serial('Event signup fields', () => {
 
 	test('public signup page shows standard address fields', async ({ page }) => {
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, eventSlug);
+		await publicPage.goto(E2E_ORG_SLUG, eventSlug);
 
 		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
 		await expect(publicPage.addressLine1Input).toBeVisible();
@@ -400,7 +390,7 @@ test.describe.serial('Event signup fields', () => {
 
 	test('public signup page shows the custom question field', async ({ page }) => {
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, eventSlug);
+		await publicPage.goto(E2E_ORG_SLUG, eventSlug);
 
 		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
 		await expect(page.getByLabel(CUSTOM_QUESTION_LABEL)).toBeVisible();
@@ -410,7 +400,7 @@ test.describe.serial('Event signup fields', () => {
 		const suffix = Date.now();
 
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, eventSlug);
+		await publicPage.goto(E2E_ORG_SLUG, eventSlug);
 
 		await publicPage.fillSignupForm({
 			givenName: 'Fields',
@@ -427,8 +417,11 @@ test.describe.serial('Event signup fields', () => {
 
 		await publicPage.submitSignup();
 
-		await expect(page).toHaveURL(new RegExp(`${ORG_SLUG}.*\\/events\\/${eventSlug}\\/signed-up`), {
-			timeout: 15_000
-		});
+		await expect(page).toHaveURL(
+			new RegExp(`${E2E_ORG_SLUG}.*\\/events\\/${eventSlug}\\/signed-up`),
+			{
+				timeout: 15_000
+			}
+		);
 	});
 });
