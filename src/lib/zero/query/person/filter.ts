@@ -51,6 +51,9 @@ export function processFilters(
 	const filterArr = [];
 	for (const filter of filters) {
 		switch (filter.type) {
+			case 'everyone':
+				filterArr.push(cmp('id', 'IS NOT', null)); //if we want to include everyone, this should do it!
+				break;
 			case 'personId':
 				filterArr.push(cmp('id', '=', filter.personId));
 				break;

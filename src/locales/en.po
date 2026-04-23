@@ -284,6 +284,7 @@ msgstr "Create a new email signature that will be verified with Postmark."
 msgid "Display name"
 msgstr "Display name"
 
+#: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
@@ -482,6 +483,7 @@ msgstr "Filter"
 msgid "Search..."
 msgstr "Search..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
@@ -510,6 +512,7 @@ msgstr "Teams"
 msgid "Filter teams..."
 msgstr "Filter teams..."
 
+#: src/lib/components/flow/nodes/team_add/Combobox.svelte
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
@@ -540,7 +543,6 @@ msgstr "Filter tags..."
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/AddTag.svelte
@@ -890,6 +892,7 @@ msgstr "Given name"
 msgid "Family name"
 msgstr "Family name"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
@@ -1331,6 +1334,7 @@ msgstr "Subject"
 msgid "Enter email subject..."
 msgstr "Enter email subject..."
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
@@ -1546,6 +1550,7 @@ msgstr "(No subject)"
 msgid "No emails found"
 msgstr "No emails found"
 
+#. 0: (index + 1).toString()
 #. 0: (index + 1).toString()
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
@@ -1848,6 +1853,7 @@ msgstr "You can view the petition, but you can't sign it or add signatures."
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionListItem.svelte
 msgid "Published"
@@ -1868,6 +1874,7 @@ msgstr "Target:"
 
 #: src/lib/components/widgets/event/share/EventShareModal.svelte
 #: src/lib/components/widgets/petition/share/PetitionShareModal.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 msgid "Share"
 msgstr "Share"
@@ -1903,6 +1910,7 @@ msgstr "View petition page"
 msgid "Preview petition page"
 msgstr "Preview petition page"
 
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionMakeACopy.svelte
@@ -2240,6 +2248,7 @@ msgstr "We'll let the organiser know you can't attend."
 msgid "Age Group"
 msgstr "Age Group"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 msgid "Event Signup"
 msgstr "Event Signup"
@@ -2436,6 +2445,7 @@ msgstr "No draft selected"
 msgid "Select a draft from the list to view its details"
 msgstr "Select a draft from the list to view its details"
 
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 msgid "Edit event"
 msgstr "Edit event"
@@ -2595,11 +2605,13 @@ msgstr "Are you sure you want to discard this email draft?"
 msgid "Email Draft"
 msgstr "Email Draft"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Discard"
 
+#: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Send"
@@ -2943,6 +2955,7 @@ msgstr "Invite"
 msgid "user@example.com"
 msgstr "user@example.com"
 
+#: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr "Sending..."
@@ -3688,7 +3701,6 @@ msgstr "Select a tag..."
 #: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Search tag..."
 msgstr "Search tag..."
 
@@ -4315,8 +4327,10 @@ msgstr "Could not update personal information. Please try again."
 msgid "WhatsApp draft sent successfully"
 msgstr "WhatsApp draft sent successfully"
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventArchivedFilter.svelte
 #: src/lib/components/widgets/person/filter/display/DisplayPetitionStatusFilter.svelte
 msgid "Archived"
 msgstr "Archived"
@@ -4358,6 +4372,7 @@ msgid "Archive this petition?"
 msgstr "Archive this petition?"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "Archive"
 msgstr "Archive"
 
@@ -4515,12 +4530,10 @@ msgid "Clear selection"
 msgstr "Clear selection"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Remove tag"
 msgstr "Remove tag"
 
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
-#: src/lib/components/ui/tag-select/TagSelectMulti.svelte
 msgid "Select tags..."
 msgstr "Select tags..."
 
@@ -4594,14 +4607,6 @@ msgstr "Your browser does not support the video tag."
 #~ msgid "no_activities_yet"
 #~ msgstr "no_activities_yet"
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "Loading activities..."
-msgstr "Loading activities..."
-
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "No activities yet"
-msgstr "No activities yet"
-
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "View event page"
 msgstr "View event page"
@@ -4623,7 +4628,7 @@ msgstr "Test email"
 msgid "Failed to send test email"
 msgstr "Failed to send test email"
 
-#. 0: emailAddress
+#. 0: trimmedAddress
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Test email sent to {0}"
 msgstr "Test email sent to {0}"
@@ -4635,3 +4640,61 @@ msgstr "Send test email to"
 #: src/lib/components/forms/email/SendTestEmail.svelte
 msgid "Send test email"
 msgstr "Send test email"
+
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
+msgid "Everyone"
+msgstr "Everyone"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Snapshot"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Add Node"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Petition Signup"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Tag Add"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Team Add"
+msgstr "Team Add"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "This event has been archived."
+msgstr "This event has been archived."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "You can view this event, but new signups are closed."
+msgstr "You can view this event, but new signups are closed."
+
+#: src/lib/components/flow/nodes/team_add/Combobox.svelte
+msgid "Select a team..."
+msgstr "Select a team..."
+
+#: src/lib/components/flow/nodes/team_add/Combobox.svelte
+msgid "Search team..."
+msgstr "Search team..."
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Select a petition..."
+msgstr "Select a petition..."
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "Search petition..."
+msgstr "Search petition..."
+
+#: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
+msgid "No petitions found."
+msgstr "No petitions found."
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr "Show archived"

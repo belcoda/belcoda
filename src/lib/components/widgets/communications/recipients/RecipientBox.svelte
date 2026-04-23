@@ -101,7 +101,11 @@
 							status: eventStatus as 'any' | 'signup' | 'attended' | 'noshow',
 							label: `${event.title}${suffix}`
 						};
-					})
+					}),
+					{
+						type: 'everyone' as const,
+						label: t`Everyone`
+					}
 				]
 			);
 		} else {
