@@ -57,7 +57,7 @@ export async function addPersonToTeam({
 		throw new Error('Team not found');
 	}
 
-	await _addPersonTeamDataUnsafe({
+	const result = await _addPersonTeamDataUnsafe({
 		tx,
 		args: {
 			personId: parsed.metadata.personId,
@@ -65,6 +65,7 @@ export async function addPersonToTeam({
 			organizationId: parsed.metadata.organizationId
 		}
 	});
+	return result;
 }
 
 export async function _addPersonTeamDataUnsafe({
@@ -176,7 +177,7 @@ export async function removePersonFromTeam({
 		ctx,
 		tx
 	});
-	await tx.dbTransaction.wrappedTransaction
+	const [result] = await tx.dbTransaction.wrappedTransaction
 		.delete(personTeam)
 		.where(
 			and(
@@ -184,20 +185,23 @@ export async function removePersonFromTeam({
 				eq(personTeam.teamId, parsed.metadata.teamId),
 				eq(personTeam.organizationId, parsed.metadata.organizationId)
 			)
-		);
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
-			organizationId: parsed.metadata.organizationId,
-			payload: {
-				type: 'team.person.removed',
-				data: parse(teamPersonWebhook, {
-					teamId: parsed.metadata.teamId,
-					personId: parsed.metadata.personId
-				})
-			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
+		)
+		.returning();
+	if (result) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: parsed.metadata.organizationId,
+				payload: {
+					type: 'team.person.removed',
+					data: parse(teamPersonWebhook, {
+						teamId: parsed.metadata.teamId,
+						personId: parsed.metadata.personId
+					})
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 }
