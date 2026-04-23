@@ -134,9 +134,6 @@ export async function insertActivity({
 		.insert(activity)
 		.values(activityInsert)
 		.returning();
-	if (insertedActivity) {
-		await triggerActivityCreatedWebhook(insertedActivity);
-	}
 
 	const preview = await generatePreview({ type, referenceId });
 	await tx.dbTransaction.wrappedTransaction
@@ -146,4 +143,8 @@ export async function insertActivity({
 			mostRecentActivityAt: new Date()
 		})
 		.where(and(eq(person.id, personId), eq(person.organizationId, organizationId)));
+
+	if (insertedActivity) {
+		await triggerActivityCreatedWebhook(insertedActivity);
+	}
 }

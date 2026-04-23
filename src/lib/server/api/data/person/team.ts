@@ -130,6 +130,20 @@ export async function _addPersonTeamDataUnsafe({
 			personId: args.personId
 		})
 		.returning();
+
+	await updateLatestActivity({
+		tx,
+		args: {
+			personId: args.personId,
+			organizationId: args.organizationId,
+			activityPreview: {
+				type: 'team_added',
+				teamName: teamRecord.name,
+				teamId: args.teamId
+			}
+		}
+	});
+
 	if (teamActivity) {
 		const { organizationId: actOrg, ...actData } = teamActivity;
 		try {
@@ -145,19 +159,6 @@ export async function _addPersonTeamDataUnsafe({
 			log.error({ err }, 'Failed to trigger webhook');
 		}
 	}
-
-	await updateLatestActivity({
-		tx,
-		args: {
-			personId: args.personId,
-			organizationId: args.organizationId,
-			activityPreview: {
-				type: 'team_added',
-				teamName: teamRecord.name,
-				teamId: args.teamId
-			}
-		}
-	});
 	try {
 		const queue = await getQueue();
 		await queue.triggerWebhook({

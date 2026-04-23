@@ -241,6 +241,11 @@ export async function sendEmailMessage({
 
 	// Queue the email for processing
 	const queue = await getQueue();
+	await queue.buildEmailMessageSendQueue({
+		emailMessageId: parsed.metadata.emailMessageId,
+		organizationId: parsed.metadata.organizationId
+	});
+
 	if (sentRow) {
 		const { organizationId, ...msgData } = sentRow;
 		try {
@@ -255,10 +260,6 @@ export async function sendEmailMessage({
 			log.error({ err }, 'Failed to trigger webhook');
 		}
 	}
-	await queue.buildEmailMessageSendQueue({
-		emailMessageId: parsed.metadata.emailMessageId,
-		organizationId: parsed.metadata.organizationId
-	});
 
 	log.debug(
 		{ emailMessageId: parsed.metadata.emailMessageId },

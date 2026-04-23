@@ -128,6 +128,14 @@ export async function createPetitionSignature({
 		referenceId: parsed.metadata.petitionSignatureId,
 		unread: false
 	});
+
+	await applyPetitionTagsToPersonUnsafe({
+		tx,
+		petitionSettings: petition.settings,
+		personId: parsed.metadata.personId,
+		organizationId: parsed.metadata.organizationId
+	});
+
 	const { organizationId, ...sigWebhookData } = result;
 	try {
 		await queue.triggerWebhook({
@@ -140,13 +148,6 @@ export async function createPetitionSignature({
 	} catch (err) {
 		log.error({ err }, 'Failed to trigger webhook');
 	}
-
-	await applyPetitionTagsToPersonUnsafe({
-		tx,
-		petitionSettings: petition.settings,
-		personId: parsed.metadata.personId,
-		organizationId: parsed.metadata.organizationId
-	});
 	return result;
 }
 

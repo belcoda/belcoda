@@ -276,6 +276,12 @@ export async function sendWhatsappThread({
 
 	const { organizationId, ...threadData } = claimed;
 	const queue = await getQueue();
+	await queue.buildWhatsappThreadSendQueue({
+		thread: claimed,
+		sentByUserId: ctx.userId,
+		tx
+	});
+
 	try {
 		await queue.triggerWebhook({
 			organizationId,
@@ -287,11 +293,6 @@ export async function sendWhatsappThread({
 	} catch (err) {
 		log.error({ err }, 'Failed to trigger webhook');
 	}
-	await queue.buildWhatsappThreadSendQueue({
-		thread: claimed,
-		sentByUserId: ctx.userId,
-		tx
-	});
 
 	return claimed;
 }

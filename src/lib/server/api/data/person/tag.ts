@@ -105,6 +105,20 @@ export async function _addPersonTagData({
 			personId: args.personId
 		})
 		.returning();
+
+	await updateLatestActivity({
+		tx,
+		args: {
+			personId: args.personId,
+			organizationId: args.organizationId,
+			activityPreview: {
+				type: 'tag_added',
+				tagName: tagRecord.name,
+				tagId: args.tagId
+			}
+		}
+	});
+
 	if (tagActivity) {
 		const { organizationId: actOrg, ...actData } = tagActivity;
 		try {
@@ -120,19 +134,6 @@ export async function _addPersonTagData({
 			log.error({ err }, 'Failed to trigger webhook');
 		}
 	}
-
-	await updateLatestActivity({
-		tx,
-		args: {
-			personId: args.personId,
-			organizationId: args.organizationId,
-			activityPreview: {
-				type: 'tag_added',
-				tagName: tagRecord.name,
-				tagId: args.tagId
-			}
-		}
-	});
 	try {
 		const queue = await getQueue();
 		await queue.triggerWebhook({

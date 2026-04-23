@@ -179,8 +179,12 @@ export async function updateEvent({
 	const publishedStatusChanged =
 		eventRecord?.published !== undefined && eventRecord?.published !== updatedEvent?.published;
 
+	const queue = await getQueue();
+	if (structureChanged || publishedStatusChanged) {
+		queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
+	}
+
 	try {
-		const queue = await getQueue();
 		await queue.triggerWebhook({
 			organizationId: parsed.metadata.organizationId,
 			payload: {
@@ -190,10 +194,6 @@ export async function updateEvent({
 		});
 	} catch (err) {
 		log.error({ err }, 'Failed to trigger webhook');
-	}
-	if (structureChanged || publishedStatusChanged) {
-		const queue = await getQueue();
-		queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
 	}
 }
 
@@ -233,6 +233,16 @@ export async function deleteEvent({
 		)
 		.returning();
 
+	await tx.dbTransaction.wrappedTransaction
+		.update(event)
+		.set({ deletedAt: new Date(), updatedAt: new Date() })
+		.where(
+			and(
+				eq(event.id, parsed.metadata.eventId),
+				eq(event.organizationId, parsed.metadata.organizationId)
+			)
+		);
+
 	const queue = await getQueue();
 	for (const row of cancelledSignups) {
 		const { organizationId, ...signupWebhookData } = row;
@@ -248,16 +258,6 @@ export async function deleteEvent({
 			log.error({ err }, 'Failed to trigger webhook');
 		}
 	}
-
-	await tx.dbTransaction.wrappedTransaction
-		.update(event)
-		.set({ deletedAt: new Date(), updatedAt: new Date() })
-		.where(
-			and(
-				eq(event.id, parsed.metadata.eventId),
-				eq(event.organizationId, parsed.metadata.organizationId)
-			)
-		);
 	try {
 		await queue.triggerWebhook({
 			organizationId: parsed.metadata.organizationId,
