@@ -2,9 +2,12 @@
 import { ScalarApiReference } from '@scalar/sveltekit';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/public';
-const { PUBLIC_HOST } = env;
+const host = env.PUBLIC_HOST?.replace(/\/$/, '');
+if (!host) {
+	throw new Error('webhooks docs: PUBLIC_HOST is not configured');
+}
 const render = ScalarApiReference({
-	url: `${PUBLIC_HOST}/api/docs/webhooks/json`
+	url: `${host}/api/docs/webhooks/json`
 });
 export const GET: RequestHandler = () => {
 	return render();
