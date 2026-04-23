@@ -32,7 +32,9 @@ export async function createTag({
 	const [existingTag] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(tag)
-		.where(eq(tag.name, parsed.input.name))
+		.where(
+			and(eq(tag.name, parsed.input.name), eq(tag.organizationId, parsed.metadata.organizationId))
+		)
 		.limit(1);
 	if (existingTag) {
 		throw new Error('A tag with this name already exists for this organization');
