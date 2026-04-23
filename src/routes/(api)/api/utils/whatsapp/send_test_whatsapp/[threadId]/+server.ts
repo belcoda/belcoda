@@ -2,11 +2,8 @@ import { json, error } from '@sveltejs/kit';
 import * as v from 'valibot';
 import { isoPhoneNumber } from '$lib/schema/helpers';
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
-import { db, drizzle } from '$lib/server/db';
-import { builder } from '$lib/zero/schema';
-import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';
-import { organization, whatsappTemplate } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { getOrganization } from '$lib/server/api/data/organization';
+import { getWhatsappThreadById } from '$lib/server/api/data/whatsapp/thread';
 import {
 	convertNodeToFullMessage,
 	convertWhatsAppTemplateMessageToApiFormat,
@@ -16,6 +13,7 @@ import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_ap
 import { env as publicEnv } from '$env/dynamic/public';
 import type { Flow, MessageNodeData, TemplateMessageNode } from '$lib/schema/flow';
 import pino from '$lib/pino';
+import { getWhatsappTemplateById } from '$lib/server/api/data/whatsapp/template.js';
 
 const log = pino(import.meta.url);
 
@@ -54,22 +52,18 @@ export async function POST(event) {
 	}
 
 	try {
-		const ctx = await getQueryContext(event.locals.session.user.id);
-		const thread = await db.run(
-			builder.whatsappThread
-				.where('id', '=', threadId)
-				.where((expr) => whatsappThreadReadPermissions(expr, ctx))
-				.where('deletedAt', 'IS', null)
-				.one()
-		);
+		const userId = event.locals.session.user.id;
+		const ctx = await getQueryContext(userId);
+		const thread = await getWhatsappThreadById({ threadId, ctx });
 
 		if (!thread) {
 			return error(404, 'WhatsApp thread not found');
 		}
 
-		const org = await drizzle.query.organization.findFirst({
-			where: eq(organization.id, thread.organizationId)
-		});
+		const org = await getOrganization({
+			userId,
+			organizationId: thread.organizationId
+		}).catch(() => undefined);
 		if (!org) {
 			return error(404, 'Organization not found');
 		}
@@ -83,11 +77,9 @@ export async function POST(event) {
 		const whatsappMessageId = crypto.randomUUID();
 
 		if (outboundNode.type === 'templateMessage') {
-			const template = await drizzle.query.whatsappTemplate.findFirst({
-				where: and(
-					eq(whatsappTemplate.id, outboundNode.data.templateId),
-					eq(whatsappTemplate.organizationId, thread.organizationId)
-				)
+			const template = await getWhatsappTemplateById({
+				templateId: outboundNode.data.templateId,
+				organizationId: thread.organizationId
 			});
 			if (!template) {
 				return error(404, 'WhatsApp template not found');
