@@ -31,7 +31,7 @@ export async function triggerWebhook({
 					eq(row.enabled, true)
 				)
 		});
-		log.info(`Found ${returnedWebhooks.length} webhook(s) to trigger`);
+		log.info({ webhooksCount: returnedWebhooks.length }, 'Found webhooks to trigger');
 		for (const webhook of returnedWebhooks) {
 			const webhookBody = {
 				id: uuidv7(),
