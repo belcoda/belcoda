@@ -16,7 +16,7 @@ import {
 } from '$lib/schema/person';
 import { parse } from 'valibot';
 import pino from '$lib/pino';
-import { _addPersonTeamDataUnsafe } from './team';
+import { _addPersonTeamDataUnsafe, addPersonToTeam } from './team';
 const log = pino(import.meta.url);
 export async function createPerson({
 	tx,
@@ -76,12 +76,15 @@ export async function createPerson({
 	}
 
 	if (args.metadata.teamId) {
-		await _addPersonTeamDataUnsafe({
+		await addPersonToTeam({
 			tx,
+			ctx,
 			args: {
-				personId: result.id,
-				teamId: args.metadata.teamId,
-				organizationId: parsed.metadata.organizationId
+				metadata: {
+					personId: result.id,
+					teamId: args.metadata.teamId,
+					organizationId: parsed.metadata.organizationId
+				}
 			}
 		});
 	}
@@ -184,6 +187,7 @@ export async function deletePerson({
 		})
 		.where(
 			and(
+				isNull(person.deletedAt),
 				eq(person.id, args.metadata.personId),
 				eq(person.organizationId, args.metadata.organizationId)
 			)

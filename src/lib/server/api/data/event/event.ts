@@ -234,15 +234,17 @@ export async function deleteEvent({
 		)
 		.returning();
 
-	await tx.dbTransaction.wrappedTransaction
+	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(event)
 		.set({ deletedAt: new Date(), updatedAt: new Date() })
 		.where(
 			and(
 				eq(event.id, parsed.metadata.eventId),
+				isNull(event.deletedAt),
 				eq(event.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
 
 	const queue = await getQueue();
 	const signupResults = await Promise.allSettled(
@@ -262,16 +264,18 @@ export async function deleteEvent({
 			log.error({ err: result.reason }, 'Failed to trigger webhook');
 		}
 	}
-	try {
-		await queue.triggerWebhook({
-			organizationId: parsed.metadata.organizationId,
-			payload: parse(eventDeletedWebhookSchema, {
-				type: 'event.deleted',
-				data: { eventId: parsed.metadata.eventId }
-			})
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
+	if (result) {
+		try {
+			await queue.triggerWebhook({
+				organizationId: parsed.metadata.organizationId,
+				payload: parse(eventDeletedWebhookSchema, {
+					type: 'event.deleted',
+					data: { eventId: parsed.metadata.eventId }
+				})
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 }
 

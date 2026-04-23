@@ -3,7 +3,7 @@ import { type QueryContext, builder } from '$lib/zero/schema';
 
 import { personNote } from '$lib/schema/drizzle';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
-import { eq } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 
 import { parse } from 'valibot';
 import {
@@ -148,7 +148,13 @@ export async function deletePersonNote({
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(personNote)
 		.set({ deletedAt: new Date() })
-		.where(eq(personNote.id, parsed.metadata.personNoteId))
+		.where(
+			and(
+				eq(personNote.id, parsed.metadata.personNoteId),
+				eq(personNote.organizationId, parsed.metadata.organizationId),
+				isNull(personNote.deletedAt)
+			)
+		)
 		.returning();
 	if (!result) {
 		throw new Error('Unable to delete person note');

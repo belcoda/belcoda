@@ -1,7 +1,7 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import { tag } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { parse } from 'valibot';
 import {
 	type UpdateMutatorSchema,
@@ -130,7 +130,11 @@ export async function deleteTag({
 		.update(tag)
 		.set({ deletedAt: new Date() })
 		.where(
-			and(eq(tag.id, parsed.metadata.tagId), eq(tag.organizationId, parsed.metadata.organizationId))
+			and(
+				eq(tag.id, parsed.metadata.tagId),
+				eq(tag.organizationId, parsed.metadata.organizationId),
+				isNull(tag.deletedAt)
+			)
 		)
 		.returning();
 	if (updated) {
