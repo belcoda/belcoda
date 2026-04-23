@@ -65,6 +65,7 @@ export async function POST(event) {
 			organizationId: thread.organizationId
 		}).catch(() => undefined);
 		if (!org) {
+			log.error({ userId, threadId }, 'Failed to get organization');
 			return error(404, 'Organization not found');
 		}
 
