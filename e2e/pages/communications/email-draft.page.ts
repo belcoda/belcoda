@@ -5,6 +5,7 @@ export class EmailDraftPage {
 	readonly draftPage: Locator;
 	readonly form: Locator;
 	readonly subjectInput: Locator;
+	readonly bodyEditor: Locator;
 	readonly discardButton: Locator;
 	readonly saveButton: Locator;
 	readonly testEmailToggleButton: Locator;
@@ -18,6 +19,7 @@ export class EmailDraftPage {
 		this.draftPage = page.getByTestId('email-draft-page');
 		this.form = page.getByTestId('email-form');
 		this.subjectInput = page.getByTestId('email-form-subject');
+		this.bodyEditor = this.form.locator('[contenteditable="true"]').first();
 		this.discardButton = page.getByTestId('email-draft-discard');
 		this.saveButton = page.getByTestId('email-draft-save');
 		this.testEmailToggleButton = page.getByTestId('email-draft-test-toggle');
@@ -42,6 +44,11 @@ export class EmailDraftPage {
 
 	async fillSubject(subject: string) {
 		await this.subjectInput.fill(subject);
+	}
+
+	async fillBody(body: string) {
+		await this.bodyEditor.click();
+		await this.bodyEditor.fill(body);
 	}
 
 	async save() {
