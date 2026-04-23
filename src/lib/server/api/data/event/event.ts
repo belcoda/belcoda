@@ -17,6 +17,7 @@ import {
 import { eventWebhook } from '$lib/schema/event';
 import { eventSignupWebhook } from '$lib/schema/event-signup';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
+import { eventDeletedWebhookSchema } from '$lib/schema/webhook';
 import { parse } from 'valibot';
 import { _insertActionCodeUnsafe } from '$lib/server/api/data/action/insert';
 import { getQueue } from '$lib/server/queue';
@@ -244,27 +245,30 @@ export async function deleteEvent({
 		);
 
 	const queue = await getQueue();
-	for (const row of cancelledSignups) {
-		const { organizationId, ...signupWebhookData } = row;
-		try {
+	const signupResults = await Promise.allSettled(
+		cancelledSignups.map(async (row) => {
+			const { organizationId: _omit, ...signupWebhookData } = row;
 			await queue.triggerWebhook({
-				organizationId,
+				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'event.signup.updated',
 					data: parse(eventSignupWebhook, signupWebhookData)
 				}
 			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
+		})
+	);
+	for (const result of signupResults) {
+		if (result.status === 'rejected') {
+			log.error({ err: result.reason }, 'Failed to trigger webhook');
 		}
 	}
 	try {
 		await queue.triggerWebhook({
 			organizationId: parsed.metadata.organizationId,
-			payload: {
+			payload: parse(eventDeletedWebhookSchema, {
 				type: 'event.deleted',
 				data: { eventId: parsed.metadata.eventId }
-			}
+			})
 		});
 	} catch (err) {
 		log.error({ err }, 'Failed to trigger webhook');
