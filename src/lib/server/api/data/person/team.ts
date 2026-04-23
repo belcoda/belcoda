@@ -57,27 +57,14 @@ export async function addPersonToTeam({
 		throw new Error('Team not found');
 	}
 
-	await tx.dbTransaction.wrappedTransaction.insert(personTeam).values({
-		personId: parsed.metadata.personId,
-		teamId: parsed.metadata.teamId,
-		organizationId: parsed.metadata.organizationId,
-		createdAt: new Date()
+	await _addPersonTeamDataUnsafe({
+		tx,
+		args: {
+			personId: parsed.metadata.personId,
+			teamId: parsed.metadata.teamId,
+			organizationId: parsed.metadata.organizationId
+		}
 	});
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
-			organizationId: args.metadata.organizationId,
-			payload: {
-				type: 'team.person.added',
-				data: parse(teamPersonWebhook, {
-					teamId: args.metadata.teamId,
-					personId: parsed.metadata.personId
-				})
-			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
 }
 
 export async function _addPersonTeamDataUnsafe({
