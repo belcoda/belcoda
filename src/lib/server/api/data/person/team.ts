@@ -21,6 +21,8 @@ import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organiz
 import { getQueue } from '$lib/server/queue';
 import { teamPersonWebhook } from '$lib/schema/team';
 import { activityWebhook } from '$lib/schema/activity';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function addPersonToTeam({
 	tx,
@@ -61,17 +63,21 @@ export async function addPersonToTeam({
 		organizationId: parsed.metadata.organizationId,
 		createdAt: new Date()
 	});
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: args.metadata.organizationId,
-		payload: {
-			type: 'team.person.added',
-			data: parse(teamPersonWebhook, {
-				teamId: args.metadata.teamId,
-				personId: parsed.metadata.personId
-			})
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: args.metadata.organizationId,
+			payload: {
+				type: 'team.person.added',
+				data: parse(teamPersonWebhook, {
+					teamId: args.metadata.teamId,
+					personId: parsed.metadata.personId
+				})
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }
 
 export async function _addPersonTeamDataUnsafe({
@@ -126,14 +132,18 @@ export async function _addPersonTeamDataUnsafe({
 		.returning();
 	if (teamActivity) {
 		const { organizationId: actOrg, ...actData } = teamActivity;
-		const actQueue = await getQueue();
-		actQueue.triggerWebhook({
-			organizationId: actOrg,
-			payload: {
-				type: 'activity.created',
-				data: parse(activityWebhook, actData)
-			}
-		});
+		try {
+			const actQueue = await getQueue();
+			await actQueue.triggerWebhook({
+				organizationId: actOrg,
+				payload: {
+					type: 'activity.created',
+					data: parse(activityWebhook, actData)
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 
 	await updateLatestActivity({
@@ -148,14 +158,18 @@ export async function _addPersonTeamDataUnsafe({
 			}
 		}
 	});
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: args.organizationId,
-		payload: {
-			type: 'team.person.added',
-			data: parse(teamPersonWebhook, { teamId: args.teamId, personId: args.personId })
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: args.organizationId,
+			payload: {
+				type: 'team.person.added',
+				data: parse(teamPersonWebhook, { teamId: args.teamId, personId: args.personId })
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return inserted;
 }
 
@@ -183,15 +197,19 @@ export async function removePersonFromTeam({
 				eq(personTeam.organizationId, parsed.metadata.organizationId)
 			)
 		);
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: parsed.metadata.organizationId,
-		payload: {
-			type: 'team.person.removed',
-			data: parse(teamPersonWebhook, {
-				teamId: parsed.metadata.teamId,
-				personId: parsed.metadata.personId
-			})
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'team.person.removed',
+				data: parse(teamPersonWebhook, {
+					teamId: parsed.metadata.teamId,
+					personId: parsed.metadata.personId
+				})
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }

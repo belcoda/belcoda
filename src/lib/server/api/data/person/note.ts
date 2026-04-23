@@ -18,6 +18,8 @@ import {
 
 import { getPerson } from '$lib/server/api/data/person/person';
 import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function createPersonNote({
 	tx,
@@ -62,13 +64,17 @@ export async function createPersonNote({
 		referenceId: args.metadata.personNoteId,
 		unread: false
 	});
-	queue.triggerWebhook({
-		organizationId: args.metadata.organizationId,
-		payload: {
-			type: 'person.note.created',
-			data: parse(personNoteWebhook, result)
-		}
-	});
+	try {
+		await queue.triggerWebhook({
+			organizationId: args.metadata.organizationId,
+			payload: {
+				type: 'person.note.created',
+				data: parse(personNoteWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 
 	return result;
 }
@@ -104,14 +110,18 @@ export async function updatePersonNote({
 	if (!result) {
 		throw new Error('Unable to update person note');
 	}
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: parsed.metadata.organizationId,
-		payload: {
-			type: 'person.note.updated',
-			data: parse(personNoteWebhook, result)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'person.note.updated',
+				data: parse(personNoteWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -143,13 +153,17 @@ export async function deletePersonNote({
 	if (!result) {
 		throw new Error('Unable to delete person note');
 	}
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: parsed.metadata.organizationId,
-		payload: {
-			type: 'person.note.deleted',
-			data: { personNoteId: parsed.metadata.personNoteId }
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'person.note.deleted',
+				data: { personNoteId: parsed.metadata.personNoteId }
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return;
 }

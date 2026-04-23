@@ -76,14 +76,18 @@ export async function createEmailMessage({
 	}
 
 	const { organizationId, ...msgData } = result;
-	const queueCreate = await getQueue();
-	queueCreate.triggerWebhook({
-		organizationId,
-		payload: {
-			type: 'email.message.created',
-			data: parse(emailMessageWebhook, msgData)
-		}
-	});
+	try {
+		const queueCreate = await getQueue();
+		await queueCreate.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'email.message.created',
+				data: parse(emailMessageWebhook, msgData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 
 	return result;
 }
@@ -124,14 +128,18 @@ export async function updateEmailMessage({
 		.returning();
 	if (updatedMsg) {
 		const { organizationId, ...msgData } = updatedMsg;
-		const q = await getQueue();
-		q.triggerWebhook({
-			organizationId,
-			payload: {
-				type: 'email.message.updated',
-				data: parse(emailMessageWebhook, msgData)
-			}
-		});
+		try {
+			const q = await getQueue();
+			await q.triggerWebhook({
+				organizationId,
+				payload: {
+					type: 'email.message.updated',
+					data: parse(emailMessageWebhook, msgData)
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 }
 
@@ -162,14 +170,18 @@ export async function deleteEmailMessage({
 			updatedAt: new Date()
 		})
 		.where(and(eq(emailMessage.id, args.id), eq(emailMessage.organizationId, args.organizationId)));
-	const queueDel = await getQueue();
-	queueDel.triggerWebhook({
-		organizationId: emailMessageRecord.organizationId,
-		payload: {
-			type: 'email.message.deleted',
-			data: { emailMessageId: args.id }
-		}
-	});
+	try {
+		const queueDel = await getQueue();
+		await queueDel.triggerWebhook({
+			organizationId: emailMessageRecord.organizationId,
+			payload: {
+				type: 'email.message.deleted',
+				data: { emailMessageId: args.id }
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }
 
 export async function sendEmailMessage({
@@ -231,13 +243,17 @@ export async function sendEmailMessage({
 	const queue = await getQueue();
 	if (sentRow) {
 		const { organizationId, ...msgData } = sentRow;
-		queue.triggerWebhook({
-			organizationId,
-			payload: {
-				type: 'email.message.updated',
-				data: parse(emailMessageWebhook, msgData)
-			}
-		});
+		try {
+			await queue.triggerWebhook({
+				organizationId,
+				payload: {
+					type: 'email.message.updated',
+					data: parse(emailMessageWebhook, msgData)
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 	await queue.buildEmailMessageSendQueue({
 		emailMessageId: parsed.metadata.emailMessageId,

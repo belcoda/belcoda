@@ -65,17 +65,21 @@ export async function addUserToTeam({
 		teamId: parsed.metadata.teamId,
 		createdAt: new Date()
 	});
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: parsed.metadata.organizationId,
-		payload: {
-			type: 'team.user.added',
-			data: parse(teamUserWebhook, {
-				teamId: parsed.metadata.teamId,
-				userId: parsed.metadata.userId
-			})
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'team.user.added',
+				data: parse(teamUserWebhook, {
+					teamId: parsed.metadata.teamId,
+					userId: parsed.metadata.userId
+				})
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }
 
 export async function removeUserFromTeam({
@@ -117,8 +121,8 @@ export async function removeUserFromTeam({
 					})
 				}
 			});
-		} catch (error) {
-			log.error({ error }, 'Unable to trigger webhook');
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
 		}
 	}
 }

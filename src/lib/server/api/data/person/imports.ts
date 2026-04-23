@@ -13,6 +13,8 @@ import {
 } from '$lib/schema/person-import';
 
 import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function insertPersonImport({
 	tx,
@@ -46,14 +48,18 @@ export async function insertPersonImport({
 		throw new Error('Failed to insert person import');
 	}
 	const { organizationId, ...importWebhookData } = inserted;
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId,
-		payload: {
-			type: 'person.import.created',
-			data: parse(personImportWebhook, importWebhookData)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'person.import.created',
+				data: parse(personImportWebhook, importWebhookData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return inserted;
 }
 

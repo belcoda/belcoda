@@ -13,6 +13,8 @@ import {
 	tagWebhook
 } from '$lib/schema/tag';
 import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function createTag({
 	tx,
@@ -51,14 +53,18 @@ export async function createTag({
 		throw new Error('Unable to create tag');
 	}
 	const { organizationId, ...tagData } = result;
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId,
-		payload: {
-			type: 'tag.created',
-			data: parse(tagWebhook, tagData)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'tag.created',
+				data: parse(tagWebhook, tagData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -88,14 +94,18 @@ export async function updateTag({
 		throw new Error('Unable to update tag');
 	}
 	const { organizationId, ...tagData } = result;
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId,
-		payload: {
-			type: 'tag.updated',
-			data: parse(tagWebhook, tagData)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'tag.updated',
+				data: parse(tagWebhook, tagData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -120,13 +130,17 @@ export async function deleteTag({
 		)
 		.returning();
 	if (updated) {
-		const queue = await getQueue();
-		queue.triggerWebhook({
-			organizationId: updated.organizationId,
-			payload: {
-				type: 'tag.deleted',
-				data: { tagId: updated.id }
-			}
-		});
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: updated.organizationId,
+				payload: {
+					type: 'tag.deleted',
+					data: { tagId: updated.id }
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 }

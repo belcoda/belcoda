@@ -19,6 +19,9 @@ import {
 } from '$lib/schema/organization/settings';
 
 import { parse } from 'valibot';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
+
 export async function updateOrganization({
 	tx,
 	ctx,
@@ -45,15 +48,19 @@ export async function updateOrganization({
 		throw new Error('Failed to update organization');
 	}
 
-	const queue = await getQueue();
 	const { id: _omitId, ...orgWebhookData } = updated;
-	queue.triggerWebhook({
-		organizationId: updated.id,
-		payload: {
-			type: 'organization.updated',
-			data: parse(organizationWebhook, orgWebhookData)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: updated.id,
+			payload: {
+				type: 'organization.updated',
+				data: parse(organizationWebhook, orgWebhookData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 
 	return updated;
 }
@@ -90,15 +97,19 @@ export async function updateOrganizationWhatsappSettings({
 	if (!updated) {
 		throw new Error('Failed to update organization whatsapp settings');
 	}
-	const queue = await getQueue();
 	const { id: _omitId, ...orgWebhookData } = updated;
-	queue.triggerWebhook({
-		organizationId: updated.id,
-		payload: {
-			type: 'organization.updated',
-			data: parse(organizationWebhook, orgWebhookData)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: updated.id,
+			payload: {
+				type: 'organization.updated',
+				data: parse(organizationWebhook, orgWebhookData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return updated;
 }
 
@@ -137,15 +148,19 @@ export async function updateTheme({
 	if (!updated) {
 		throw new Error('Failed to update theme');
 	}
-	const queue = await getQueue();
 	const { id: _omitId, ...orgWebhookData } = updated;
-	queue.triggerWebhook({
-		organizationId: updated.id,
-		payload: {
-			type: 'organization.updated',
-			data: parse(organizationWebhook, orgWebhookData)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: updated.id,
+			payload: {
+				type: 'organization.updated',
+				data: parse(organizationWebhook, orgWebhookData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return updated;
 }
 

@@ -83,14 +83,18 @@ export async function createPerson({
 		});
 	}
 
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: parsed.metadata.organizationId,
-		payload: {
-			type: 'person.created',
-			data: parse(personWebhook, result)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'person.created',
+				data: parse(personWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }
 
 export async function updatePerson({
@@ -133,14 +137,18 @@ export async function updatePerson({
 	if (!result) {
 		throw new Error('Unable to update person');
 	}
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: input.metadata.organizationId,
-		payload: {
-			type: 'person.updated',
-			data: parse(personWebhook, result)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: input.metadata.organizationId,
+			payload: {
+				type: 'person.updated',
+				data: parse(personWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -176,14 +184,18 @@ export async function deletePerson({
 				eq(person.organizationId, args.metadata.organizationId)
 			)
 		);
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: parsed.metadata.organizationId,
-		payload: {
-			type: 'person.deleted',
-			data: { personId: parsed.metadata.personId }
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'person.deleted',
+				data: { personId: parsed.metadata.personId }
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return;
 }
 

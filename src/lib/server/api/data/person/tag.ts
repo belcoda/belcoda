@@ -15,6 +15,8 @@ import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity
 import { getQueue } from '$lib/server/queue';
 import { personTagWebhook } from '$lib/schema/tag';
 import { activityWebhook } from '$lib/schema/activity';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function addPersonTag({
 	tx,
@@ -105,14 +107,18 @@ export async function _addPersonTagData({
 		.returning();
 	if (tagActivity) {
 		const { organizationId: actOrg, ...actData } = tagActivity;
-		const actQueue = await getQueue();
-		actQueue.triggerWebhook({
-			organizationId: actOrg,
-			payload: {
-				type: 'activity.created',
-				data: parse(activityWebhook, actData)
-			}
-		});
+		try {
+			const actQueue = await getQueue();
+			await actQueue.triggerWebhook({
+				organizationId: actOrg,
+				payload: {
+					type: 'activity.created',
+					data: parse(activityWebhook, actData)
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 
 	await updateLatestActivity({
@@ -127,14 +133,18 @@ export async function _addPersonTagData({
 			}
 		}
 	});
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: args.organizationId,
-		payload: {
-			type: 'tag.person.added',
-			data: parse(personTagWebhook, { personId: args.personId, tagId: args.tagId })
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: args.organizationId,
+			payload: {
+				type: 'tag.person.added',
+				data: parse(personTagWebhook, { personId: args.personId, tagId: args.tagId })
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -178,14 +188,18 @@ export async function applyTagToPersonUnsafe({
 		.onConflictDoNothing()
 		.returning();
 	if (inserted) {
-		const queue = await getQueue();
-		queue.triggerWebhook({
-			organizationId,
-			payload: {
-				type: 'tag.person.added',
-				data: parse(personTagWebhook, { personId, tagId })
-			}
-		});
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId,
+				payload: {
+					type: 'tag.person.added',
+					data: parse(personTagWebhook, { personId, tagId })
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
 	}
 }
 
@@ -211,15 +225,19 @@ export async function removePersonTag({
 			eq(personTag.organizationId, args.metadata.organizationId) // make sure the tag and person belongs to the organization
 		)
 	);
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: args.metadata.organizationId,
-		payload: {
-			type: 'tag.person.removed',
-			data: parse(personTagWebhook, {
-				personId: args.metadata.personId,
-				tagId: args.metadata.tagId
-			})
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: args.metadata.organizationId,
+			payload: {
+				type: 'tag.person.removed',
+				data: parse(personTagWebhook, {
+					personId: args.metadata.personId,
+					tagId: args.metadata.tagId
+				})
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }

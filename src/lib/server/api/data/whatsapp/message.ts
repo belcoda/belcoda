@@ -121,14 +121,18 @@ export async function handleIncomingReaction({
 				.returning();
 			if (updatedMsg) {
 				const { organizationId, externalId: _externalId, ...rest } = updatedMsg;
-				const q = await getQueue();
-				q.triggerWebhook({
-					organizationId,
-					payload: {
-						type: 'whatsapp.message.updated',
-						data: parse(whatsappMessageWebhook, rest)
-					}
-				});
+				try {
+					const q = await getQueue();
+					await q.triggerWebhook({
+						organizationId,
+						payload: {
+							type: 'whatsapp.message.updated',
+							data: parse(whatsappMessageWebhook, rest)
+						}
+					});
+				} catch (err) {
+					log.error({ err }, 'Failed to trigger webhook');
+				}
 			}
 		}
 	}
@@ -261,13 +265,17 @@ export async function createWhatsAppMessage({
 	}
 	const created = result[0];
 	const { organizationId: orgId, externalId: _externalId, ...rest } = created;
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId: orgId,
-		payload: {
-			type: 'whatsapp.message.created',
-			data: parse(whatsappMessageWebhook, rest)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: orgId,
+			payload: {
+				type: 'whatsapp.message.created',
+				data: parse(whatsappMessageWebhook, rest)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return created;
 }

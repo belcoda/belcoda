@@ -70,14 +70,18 @@ export async function findOrCreatePerson({
 				if (!updatedPerson) {
 					throw new Error('Unable to update person');
 				}
-				const queue = await getQueue();
-				queue.triggerWebhook({
-					organizationId,
-					payload: {
-						type: 'person.updated',
-						data: parse(personWebhook, updatedPerson)
-					}
-				});
+				try {
+					const queue = await getQueue();
+					await queue.triggerWebhook({
+						organizationId,
+						payload: {
+							type: 'person.updated',
+							data: parse(personWebhook, updatedPerson)
+						}
+					});
+				} catch (err) {
+					log.error({ err }, 'Failed to trigger webhook');
+				}
 				return updatedPerson;
 			} catch (error) {
 				log.error({ error }, 'Unable to update person');
@@ -119,13 +123,17 @@ export async function findOrCreatePerson({
 		});
 	}
 
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId,
-		payload: {
-			type: 'person.created',
-			data: parse(personWebhook, insertedPerson)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'person.created',
+				data: parse(personWebhook, insertedPerson)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return insertedPerson;
 }

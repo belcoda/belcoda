@@ -9,17 +9,23 @@ import { getQueue } from '$lib/server/queue';
 import { parse } from 'valibot';
 
 import { v7 as uuidv7 } from 'uuid';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 async function triggerActivityCreatedWebhook(row: typeof activity.$inferSelect) {
 	const { organizationId, ...data } = row;
-	const queue = await getQueue();
-	queue.triggerWebhook({
-		organizationId,
-		payload: {
-			type: 'activity.created',
-			data: parse(activityWebhook, data)
-		}
-	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'activity.created',
+				data: parse(activityWebhook, data)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }
 
 export async function createActivityWhatsAppMessageIncoming({
