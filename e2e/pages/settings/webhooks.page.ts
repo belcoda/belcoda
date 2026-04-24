@@ -31,6 +31,18 @@ export class WebhooksPage {
 		return this.page.getByTestId('settings-webhooks-submit');
 	}
 
+	get webhookEditNameInput(): Locator {
+		return this.page.getByTestId('settings-webhooks-edit-name-input');
+	}
+
+	get webhookEditUrlInput(): Locator {
+		return this.page.getByTestId('settings-webhooks-edit-url-input');
+	}
+
+	get editSubmitButton(): Locator {
+		return this.page.getByTestId('settings-webhooks-edit-submit');
+	}
+
 	webhookRow(name: string, targetUrl: string): Locator {
 		return this.page
 			.getByTestId('settings-webhooks-row')
@@ -50,5 +62,17 @@ export class WebhooksPage {
 	async deleteWebhook(name: string, targetUrl: string) {
 		const row = this.webhookRow(name, targetUrl);
 		await row.getByTestId('settings-webhooks-delete').click();
+	}
+
+	async editWebhook(
+		currentName: string,
+		currentTargetUrl: string,
+		next: { name: string; targetUrl: string }
+	) {
+		const row = this.webhookRow(currentName, currentTargetUrl);
+		await row.getByTestId('settings-webhooks-edit').click();
+		await this.webhookEditNameInput.fill(next.name);
+		await this.webhookEditUrlInput.fill(next.targetUrl);
+		await this.editSubmitButton.click();
 	}
 }
