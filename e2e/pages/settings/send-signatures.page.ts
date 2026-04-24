@@ -12,27 +12,29 @@ export class SendSignaturesPage {
 	}
 
 	get newSignatureTrigger(): Locator {
-		return this.page.getByRole('button', { name: 'New' });
+		return this.page.getByTestId('settings-send-signatures-new-button');
 	}
 
 	get createSignatureButton(): Locator {
-		return this.page.getByRole('button', { name: 'Create signature' });
+		return this.page.getByTestId('settings-send-signature-create-submit-button');
 	}
 
 	get saveChangesButton(): Locator {
-		return this.page.getByRole('button', { name: 'Save changes' });
+		return this.page.getByTestId('settings-send-signature-edit-submit-button');
 	}
 
 	get defaultSignatureTrigger(): Locator {
-		return this.page.locator('button[data-select-trigger]').first();
+		return this.page.getByTestId('settings-send-signatures-default-select-trigger');
 	}
 
 	get systemSignatureCard(): Locator {
-		return this.page.getByRole('heading', { name: 'System send signature' });
+		return this.page.getByTestId('settings-send-signatures-system-card');
 	}
 
 	signatureRowByEmail(emailAddress: string): Locator {
-		return this.page.getByRole('row').filter({ hasText: emailAddress });
+		return this.page.locator(
+			`[data-testid="settings-send-signatures-custom-row"][data-email-address="${emailAddress}"]`
+		);
 	}
 
 	async createSignature(input: {
@@ -42,20 +44,31 @@ export class SendSignaturesPage {
 		returnPathDomain?: string;
 	}) {
 		await this.newSignatureTrigger.click();
-		await this.page.getByLabel('Display name').fill(input.displayName);
-		await this.page.getByLabel('Email address').fill(input.emailAddress);
+		await this.page
+			.getByTestId('settings-send-signature-create-name-input')
+			.fill(input.displayName);
+		await this.page
+			.getByTestId('settings-send-signature-create-email-address-input')
+			.fill(input.emailAddress);
 		if (input.replyTo !== undefined) {
-			await this.page.getByLabel('Reply-to address').fill(input.replyTo);
+			await this.page
+				.getByTestId('settings-send-signature-create-reply-to-input')
+				.fill(input.replyTo);
 		}
 		if (input.returnPathDomain !== undefined) {
-			await this.page.getByLabel('Return path domain').fill(input.returnPathDomain);
+			await this.page
+				.getByTestId('settings-send-signature-create-return-path-input')
+				.fill(input.returnPathDomain);
 		}
 		await this.createSignatureButton.click();
 	}
 
 	async openEditForSignature(emailAddress: string) {
-		const row = this.signatureRowByEmail(emailAddress);
-		await row.getByRole('button').first().click();
+		await this.page
+			.locator(
+				`[data-testid="settings-send-signatures-row-edit-button"][data-email-address="${emailAddress}"]`
+			)
+			.click();
 	}
 
 	async editSignature(
@@ -64,26 +77,38 @@ export class SendSignaturesPage {
 	) {
 		await this.openEditForSignature(emailAddress);
 		if (input.displayName !== undefined) {
-			await this.page.getByLabel('Display name').fill(input.displayName);
+			await this.page
+				.getByTestId('settings-send-signature-edit-name-input')
+				.fill(input.displayName);
 		}
 		if (input.replyTo !== undefined) {
-			await this.page.getByLabel('Reply-to address').fill(input.replyTo);
+			await this.page
+				.getByTestId('settings-send-signature-edit-reply-to-input')
+				.fill(input.replyTo);
 		}
 		if (input.returnPathDomain !== undefined) {
-			await this.page.getByLabel('Return path domain').fill(input.returnPathDomain);
+			await this.page
+				.getByTestId('settings-send-signature-edit-return-path-input')
+				.fill(input.returnPathDomain);
 		}
 		await this.saveChangesButton.click();
 	}
 
 	async verifySignature(emailAddress: string) {
-		const row = this.signatureRowByEmail(emailAddress);
-		await row.getByRole('button').nth(1).click();
+		await this.page
+			.locator(
+				`[data-testid="settings-send-signatures-row-verify-button"][data-email-address="${emailAddress}"]`
+			)
+			.click();
 	}
 
 	async deleteSignature(emailAddress: string) {
 		this.page.once('dialog', (dialog) => dialog.accept());
-		const row = this.signatureRowByEmail(emailAddress);
-		await row.getByRole('button').nth(2).click();
+		await this.page
+			.locator(
+				`[data-testid="settings-send-signatures-row-delete-button"][data-email-address="${emailAddress}"]`
+			)
+			.click();
 	}
 
 	async selectDefaultSignature(optionLabel: string) {
