@@ -118,17 +118,15 @@
 							<Table.Row data-testid="settings-webhooks-row">
 								<Table.Cell class="font-medium">{webhook.name}</Table.Cell>
 								<Table.Cell>
-									<!-- User-configured webhook target URL; not an in-app path -->
-									<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- dynamic external URL -->
-									<a
-										href={webhook.targetUrl}
-										target="_blank"
-										rel="external noopener noreferrer"
-										class="text-primary hover:underline"
+									<Button
+										type="button"
+										variant="link"
+										class="h-auto p-0 text-left break-all"
 										data-testid="settings-webhooks-target-link"
+										onclick={() => window.open(webhook.targetUrl, '_blank', 'noopener,noreferrer')}
 									>
 										{webhook.targetUrl}
-									</a>
+									</Button>
 								</Table.Cell>
 								<Table.Cell>{formatEventTypes(webhook.eventTypes)}</Table.Cell>
 								<Table.Cell>{formatDate(webhook.createdAt)}</Table.Cell>
