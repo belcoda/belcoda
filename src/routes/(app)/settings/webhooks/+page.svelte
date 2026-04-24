@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
+	import WebhookEditModal from './WebhookEditModal.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { getListFilter, appState } from '$lib/state.svelte';
@@ -12,13 +13,10 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { v7 as uuidv7 } from 'uuid';
 	import { parse } from 'valibot';
-	import {
-		createWebhookZero,
-		deleteMutatorSchemaZero,
-		type ReadWebhookZero
-	} from '$lib/schema/webhook';
+	import { createWebhookZero, deleteMutatorSchemaZero } from '$lib/schema/webhook';
 	import { toast } from 'svelte-sonner';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import { formatDate } from '$lib/utils/date';
 	import { t } from '$lib/index.svelte';
 	let webhookListFilter = $state({
@@ -29,6 +27,13 @@
 	let createModalOpen = $state(false);
 	let name = $state('');
 	let targetUrl = $state('');
+
+	let editModalOpen = $state(false);
+	let editingWebhook = $state<{
+		id: string;
+		name: string;
+		targetUrl: string;
+	} | null>(null);
 
 	async function handleCreateWebhook() {
 		if (!name.trim() || !targetUrl.trim()) {
@@ -90,6 +95,11 @@
 		}
 		return eventTypes.join(', ');
 	}
+
+	function openEditWebhook(w: { id: string; name: string; targetUrl: string }) {
+		editingWebhook = { id: w.id, name: w.name, targetUrl: w.targetUrl };
+		editModalOpen = true;
+	}
 </script>
 
 <ContentLayout rootLink="/settings" {header}>
@@ -120,28 +130,39 @@
 							<Table.Row data-testid="settings-webhooks-row">
 								<Table.Cell class="font-medium">{webhook.name}</Table.Cell>
 								<Table.Cell>
-									<a
-										href={webhook.targetUrl}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="text-primary hover:underline"
+									<button
+										type="button"
+										class="text-left text-primary hover:underline"
 										data-testid="settings-webhooks-target-link"
+										onclick={() => window.open(webhook.targetUrl, '_blank', 'noopener,noreferrer')}
 									>
 										{webhook.targetUrl}
-									</a>
+									</button>
 								</Table.Cell>
 								<Table.Cell>{formatEventTypes(webhook.eventTypes)}</Table.Cell>
 								<Table.Cell>{formatDate(webhook.createdAt)}</Table.Cell>
 								<Table.Cell class="text-right">
 									{#if appState.isAdminOrOwner}
-										<Button
-											variant="ghost"
-											size="sm"
-											data-testid="settings-webhooks-delete"
-											onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
-										>
-											<TrashIcon class="h-4 w-4" />
-										</Button>
+										<div class="flex items-center justify-end gap-0">
+											<Button
+												variant="ghost"
+												size="sm"
+												data-testid="settings-webhooks-edit"
+												onclick={() => openEditWebhook(webhook)}
+												aria-label={t`Edit webhook`}
+											>
+												<PencilIcon class="h-4 w-4" />
+											</Button>
+											<Button
+												variant="ghost"
+												size="sm"
+												data-testid="settings-webhooks-delete"
+												onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
+												aria-label={t`Delete webhook`}
+											>
+												<TrashIcon class="h-4 w-4" />
+											</Button>
+										</div>
 									{/if}
 								</Table.Cell>
 							</Table.Row>
@@ -157,6 +178,12 @@
 			</Table.Root>
 		{/if}
 	</div>
+
+	<WebhookEditModal
+		bind:open={editModalOpen}
+		webhook={editingWebhook}
+		onClose={() => (editingWebhook = null)}
+	/>
 </ContentLayout>
 
 {#snippet header()}
@@ -171,29 +198,27 @@
 				{#snippet trigger()}
 					<Button data-testid="settings-webhooks-create">{t`Create Webhook`}</Button>
 				{/snippet}
-				{#snippet children()}
-					<div class="space-y-2">
-						<Label for="webhook-name-header">{t`Name`}</Label>
-						<Input
-							id="webhook-name-header"
-							data-testid="settings-webhooks-name-input"
-							bind:value={name}
-							placeholder={t`My Webhook`}
-							required
-						/>
-					</div>
-					<div class="space-y-2">
-						<Label for="webhook-url-header">{t`Target URL`}</Label>
-						<Input
-							id="webhook-url-header"
-							data-testid="settings-webhooks-url-input"
-							bind:value={targetUrl}
-							type="url"
-							placeholder={t`https://example.com/webhook`}
-							required
-						/>
-					</div>
-				{/snippet}
+				<div class="space-y-2">
+					<Label for="webhook-name-header">{t`Name`}</Label>
+					<Input
+						id="webhook-name-header"
+						data-testid="settings-webhooks-name-input"
+						bind:value={name}
+						placeholder={t`My Webhook`}
+						required
+					/>
+				</div>
+				<div class="space-y-2">
+					<Label for="webhook-url-header">{t`Target URL`}</Label>
+					<Input
+						id="webhook-url-header"
+						data-testid="settings-webhooks-url-input"
+						bind:value={targetUrl}
+						type="url"
+						placeholder={t`https://example.com/webhook`}
+						required
+					/>
+				</div>
 				{#snippet footer()}
 					<div class="flex justify-end gap-2">
 						<Button variant="outline" onclick={() => (createModalOpen = false)}>{t`Cancel`}</Button>
