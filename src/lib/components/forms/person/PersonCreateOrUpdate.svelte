@@ -111,6 +111,20 @@
 		$data.country || appState.activeOrganization?.data?.country || defaultCountryCode
 	);
 
+	import { dateToInputValue, inputValueToDate } from '$lib/utils/date';
+
+	function getDateOfBirth() {
+		const returnedDate = $data.dateOfBirth ? dateToInputValue(new Date($data.dateOfBirth)) : null;
+		return returnedDate;
+	}
+	function setDateOfBirth(dateString: string) {
+		const date = inputValueToDate(dateString);
+		console.log(date, 'date');
+		if (date) {
+			$data.dateOfBirth = date.getTime();
+		}
+	}
+	import InputDate from '$lib/components/ui/custom-input/date.svelte';
 	$effect(() => {
 		const handler = (e: BeforeUnloadEvent) => {
 			if (!helpers.isTainted()) return;
@@ -316,7 +330,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Date of birth`}</Form.Label>
-								<Input {...props} bind:value={$data.dateOfBirth} />
+								<InputDate {...props} bind:value={$data.dateOfBirth} />
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
