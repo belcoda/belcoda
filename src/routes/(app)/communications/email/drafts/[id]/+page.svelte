@@ -96,7 +96,7 @@
 		</div>
 	{/snippet}
 	{#if !emailId}
-		<div data-testid="email-draft-page" class="flex h-full items-center justify-center">
+		<div data-testid="email-draft-page-invalid" class="flex h-full items-center justify-center">
 			<p class="text-muted-foreground">{t`Invalid email ID`}</p>
 		</div>
 	{:else if emailSearchComplete && email}
