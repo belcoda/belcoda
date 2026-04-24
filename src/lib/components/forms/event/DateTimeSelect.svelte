@@ -66,11 +66,7 @@
 			$data.timezone || getLocalTimeZone()
 		)
 	);
-	function getStartTime() {
-		return $data.startsAt
-			? generateTimeString($data.startsAt, $data.timezone || getLocalTimeZone())
-			: '18:00:00';
-	}
+
 	function setStartTime(time: string) {
 		if (time) {
 			const newStartsAt = updateTimestampTime(
@@ -85,11 +81,7 @@
 			$data.startsAt = newStartsAt;
 		}
 	}
-	function getEndTime() {
-		return $data.endsAt
-			? generateTimeString($data.endsAt, $data.timezone || getLocalTimeZone())
-			: '20:00:00';
-	}
+
 	function setEndTime(time: string) {
 		if (time) {
 			const newEndsAt = updateTimestampTime(
@@ -113,6 +105,7 @@
 		const { endsAt } = defaultStartsAtEndsAt($data.timezone || getLocalTimeZone());
 		$data.endsAt = endsAt;
 	}
+	import TimePicker12h from '$lib/components/ui/custom-select/time/time-picker-12h-timestamp.svelte';
 </script>
 
 {@render dateTimeSelect()}
@@ -265,14 +258,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>{t`From`}</Form.Label>
-
-				<Input
-					type="time"
-					{...props}
-					step="1"
-					bind:value={getStartTime, setStartTime}
-					class="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-				/>
+				<TimePicker12h bind:timestamp={$data.startsAt} view={'dotted'} timezone={$data.timezone} />
 			{/snippet}
 		</Form.Control>
 	</Form.Field>
@@ -284,13 +270,7 @@
 			{#snippet children({ props })}
 				<Form.Label>{t`To`}</Form.Label>
 
-				<Input
-					type="time"
-					{...props}
-					step="1"
-					bind:value={getEndTime, setEndTime}
-					class="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-				/>
+				<TimePicker12h bind:timestamp={$data.endsAt} view={'dotted'} timezone={$data.timezone} />
 			{/snippet}
 		</Form.Control>
 	</Form.Field>
@@ -394,7 +374,7 @@
 
 {#snippet trigger()}
 	<Collapsible.Trigger
-		class={buttonVariants({ variant: 'ghost', size: 'default', class: 'w-9 p-0' })}
+		class={buttonVariants({ variant: 'ghost', size: 'default', class: 'mb-2 w-9 p-0' })}
 	>
 		<ChevronsUpDownIcon />
 		<span class="sr-only">{t`Toggle`}</span>
