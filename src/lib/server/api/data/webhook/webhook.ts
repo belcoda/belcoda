@@ -127,7 +127,7 @@ export async function deleteWebhook({
 	}
 
 	// only owners can delete webhooks
-	if (!ctx.adminOrgs.includes(webhookRecord.organizationId)) {
+	if (!ctx.ownerOrgs.includes(webhookRecord.organizationId)) {
 		throw new Error('You are not authorized to delete this webhook');
 	}
 
