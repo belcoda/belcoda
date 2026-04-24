@@ -33,7 +33,7 @@
 		return getPeriodFromTime(time);
 	}
 
-	let period = $derived(derivePeriod(timestamp));
+	let period: Period = $derived(derivePeriod(timestamp));
 	let minuteRef = $state<HTMLInputElement | null>(null);
 	let hourRef = $state<HTMLInputElement | null>(null);
 	let secondRef = $state<HTMLInputElement | null>(null);
