@@ -191,6 +191,7 @@ msgstr "El dominio de ruta de retorno se usa para el manejo de rebotes."
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Status"
 msgstr "Estado"
@@ -4681,3 +4682,107 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
 msgstr ""
+
+#~ msgid "Target URL is required"
+#~ msgstr ""
+
+#~ msgid "Webhook URL updated successfully"
+#~ msgstr ""
+
+#~ msgid "Failed to update webhook URL"
+#~ msgstr ""
+
+#~ msgid "Edit target URL"
+#~ msgstr ""
+
+#~ msgid "Delete webhook"
+#~ msgstr ""
+
+#~ msgid "Change the endpoint where this webhook receives events."
+#~ msgstr ""
+
+#~ msgid "Please fill in all required fields"
+#~ msgstr ""
+
+#~ msgid "Webhook updated successfully"
+#~ msgstr ""
+
+#~ msgid "Failed to update webhook"
+#~ msgstr ""
+
+#~ msgid "Edit webhook"
+#~ msgstr ""
+
+#~ msgid "Change the name and the endpoint where this webhook receives events."
+#~ msgstr ""
+
+#~ msgid "Could not load the webhook secret."
+#~ msgstr "No se pudo cargar el secreto del webhook."
+
+#~ msgid "Secret copied to clipboard"
+#~ msgstr "Secreto copiado al portapapeles"
+
+#~ msgid "Secret"
+#~ msgstr "Secreto"
+
+#~ msgid "About webhook secrets"
+#~ msgstr "Sobre los secretos de webhook"
+
+#~ msgid "The secret is sent with each delivery in the "
+#~ msgstr ""
+
+#~ msgid "header so your endpoint can verify the request came from Belcoda."
+#~ msgstr ""
+
+#~ msgid "View secret"
+#~ msgstr "Ver secreto"
+
+#~ msgid "Webhook secret"
+#~ msgstr "Secreto del webhook"
+
+#~ msgid "Signing secret for \"{0}\""
+#~ msgstr "Secreto de firma para \"{0}\""
+
+#~ msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+#~ msgstr "El secreto se envía con cada entrega en el encabezado X-Webhook-Secret para que su endpoint pueda verificar que la solicitud provino de Belcoda."
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View delivery logs"
+msgstr "Ver registros de entregas"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Loading delivery logs..."
+msgstr "Cargando registros de entregas..."
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "No delivery logs yet"
+msgstr "Aún no hay registros de entregas"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Time"
+msgstr "Hora"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Event"
+msgstr "Evento"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "HTTP"
+msgstr "HTTP"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Attempt"
+msgstr "Intento"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Payload"
+msgstr "Carga útil"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Response"
+msgstr "Respuesta"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs"
+msgstr "Registros de entregas"

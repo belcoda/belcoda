@@ -191,6 +191,7 @@ msgstr "The return path domain is used for bounce handling."
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Status"
 msgstr "Status"
@@ -4698,3 +4699,107 @@ msgstr "No petitions found."
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
 msgstr "Show archived"
+
+#~ msgid "Target URL is required"
+#~ msgstr "Target URL is required"
+
+#~ msgid "Webhook URL updated successfully"
+#~ msgstr "Webhook URL updated successfully"
+
+#~ msgid "Failed to update webhook URL"
+#~ msgstr "Failed to update webhook URL"
+
+#~ msgid "Edit target URL"
+#~ msgstr "Edit target URL"
+
+#~ msgid "Delete webhook"
+#~ msgstr "Delete webhook"
+
+#~ msgid "Change the endpoint where this webhook receives events."
+#~ msgstr "Change the endpoint where this webhook receives events."
+
+#~ msgid "Please fill in all required fields"
+#~ msgstr "Please fill in all required fields"
+
+#~ msgid "Webhook updated successfully"
+#~ msgstr "Webhook updated successfully"
+
+#~ msgid "Failed to update webhook"
+#~ msgstr "Failed to update webhook"
+
+#~ msgid "Edit webhook"
+#~ msgstr "Edit webhook"
+
+#~ msgid "Change the name and the endpoint where this webhook receives events."
+#~ msgstr "Change the name and the endpoint where this webhook receives events."
+
+#~ msgid "Could not load the webhook secret."
+#~ msgstr "Could not load the webhook secret."
+
+#~ msgid "Secret copied to clipboard"
+#~ msgstr "Secret copied to clipboard"
+
+#~ msgid "Secret"
+#~ msgstr "Secret"
+
+#~ msgid "About webhook secrets"
+#~ msgstr "About webhook secrets"
+
+#~ msgid "The secret is sent with each delivery in the "
+#~ msgstr "The secret is sent with each delivery in the "
+
+#~ msgid "header so your endpoint can verify the request came from Belcoda."
+#~ msgstr "header so your endpoint can verify the request came from Belcoda."
+
+#~ msgid "View secret"
+#~ msgstr "View secret"
+
+#~ msgid "Webhook secret"
+#~ msgstr "Webhook secret"
+
+#~ msgid "Signing secret for \"{0}\""
+#~ msgstr "Signing secret for \"{0}\""
+
+#~ msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+#~ msgstr "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View delivery logs"
+msgstr "View delivery logs"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Loading delivery logs..."
+msgstr "Loading delivery logs..."
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "No delivery logs yet"
+msgstr "No delivery logs yet"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Time"
+msgstr "Time"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Event"
+msgstr "Event"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "HTTP"
+msgstr "HTTP"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Attempt"
+msgstr "Attempt"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Payload"
+msgstr "Payload"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Response"
+msgstr "Response"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs"
+msgstr "Delivery logs"
