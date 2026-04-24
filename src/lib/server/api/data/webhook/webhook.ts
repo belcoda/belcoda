@@ -12,8 +12,34 @@ import {
 } from '$lib/schema/webhook';
 
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
+import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
+import { drizzle } from '$lib/server/db';
 import { parse } from 'valibot';
-import { builder } from '$lib/zero/schema';
+
+/**
+ * Returns the full webhook row (including secret) if the user is an organization owner
+ * for that webhook's organization. Otherwise returns null (including when the webhook
+ * id does not exist) so callers can respond with 404 without leaking membership.
+ */
+export async function getWebhookSecretByIdForOwner({
+	userId,
+	webhookId
+}: {
+	userId: string;
+	webhookId: string;
+}): Promise<string> {
+	const ctx = await getQueryContext(userId);
+	const row = await drizzle.query.webhook.findFirst({
+		where: eq(webhook.id, webhookId)
+	});
+	if (!row) {
+		throw new Error('Webhook not found');
+	}
+	if (!ctx.ownerOrgs.includes(row.organizationId)) {
+		throw new Error('You are not authorized to get the secret for this webhook');
+	}
+	return row.secret;
+}
 
 export async function createWebhook({
 	tx,
