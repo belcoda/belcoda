@@ -12,14 +12,12 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { v7 as uuidv7 } from 'uuid';
 	import { parse } from 'valibot';
-	import {
-		createWebhookZero,
-		deleteMutatorSchemaZero,
-		type ReadWebhookZero
-	} from '$lib/schema/webhook';
+	import { createWebhookZero, deleteMutatorSchemaZero } from '$lib/schema/webhook';
 	import { toast } from 'svelte-sonner';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
 	import { formatDate } from '$lib/utils/date';
+	import { resolve } from '$app/paths';
 	import { t } from '$lib/index.svelte';
 	let webhookListFilter = $state({
 		...getListFilter(appState.organizationId)
@@ -120,10 +118,12 @@
 							<Table.Row data-testid="settings-webhooks-row">
 								<Table.Cell class="font-medium">{webhook.name}</Table.Cell>
 								<Table.Cell>
+									<!-- User-configured webhook target URL; not an in-app path -->
+									<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- dynamic external URL -->
 									<a
 										href={webhook.targetUrl}
 										target="_blank"
-										rel="noopener noreferrer"
+										rel="external noopener noreferrer"
 										class="text-primary hover:underline"
 										data-testid="settings-webhooks-target-link"
 									>
@@ -134,14 +134,25 @@
 								<Table.Cell>{formatDate(webhook.createdAt)}</Table.Cell>
 								<Table.Cell class="text-right">
 									{#if appState.isAdminOrOwner}
-										<Button
-											variant="ghost"
-											size="sm"
-											data-testid="settings-webhooks-delete"
-											onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
-										>
-											<TrashIcon class="h-4 w-4" />
-										</Button>
+										<div class="inline-flex items-center justify-end gap-0">
+											<Button
+												variant="ghost"
+												size="sm"
+												href={resolve(`/settings/webhooks/${webhook.id}/logs`)}
+												data-testid="settings-webhooks-logs"
+												aria-label={t`View delivery logs`}
+											>
+												<ScrollTextIcon class="h-4 w-4" />
+											</Button>
+											<Button
+												variant="ghost"
+												size="sm"
+												data-testid="settings-webhooks-delete"
+												onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
+											>
+												<TrashIcon class="h-4 w-4" />
+											</Button>
+										</div>
 									{/if}
 								</Table.Cell>
 							</Table.Row>
@@ -171,29 +182,27 @@
 				{#snippet trigger()}
 					<Button data-testid="settings-webhooks-create">{t`Create Webhook`}</Button>
 				{/snippet}
-				{#snippet children()}
-					<div class="space-y-2">
-						<Label for="webhook-name-header">{t`Name`}</Label>
-						<Input
-							id="webhook-name-header"
-							data-testid="settings-webhooks-name-input"
-							bind:value={name}
-							placeholder={t`My Webhook`}
-							required
-						/>
-					</div>
-					<div class="space-y-2">
-						<Label for="webhook-url-header">{t`Target URL`}</Label>
-						<Input
-							id="webhook-url-header"
-							data-testid="settings-webhooks-url-input"
-							bind:value={targetUrl}
-							type="url"
-							placeholder={t`https://example.com/webhook`}
-							required
-						/>
-					</div>
-				{/snippet}
+				<div class="space-y-2">
+					<Label for="webhook-name-header">{t`Name`}</Label>
+					<Input
+						id="webhook-name-header"
+						data-testid="settings-webhooks-name-input"
+						bind:value={name}
+						placeholder={t`My Webhook`}
+						required
+					/>
+				</div>
+				<div class="space-y-2">
+					<Label for="webhook-url-header">{t`Target URL`}</Label>
+					<Input
+						id="webhook-url-header"
+						data-testid="settings-webhooks-url-input"
+						bind:value={targetUrl}
+						type="url"
+						placeholder={t`https://example.com/webhook`}
+						required
+					/>
+				</div>
 				{#snippet footer()}
 					<div class="flex justify-end gap-2">
 						<Button variant="outline" onclick={() => (createModalOpen = false)}>{t`Cancel`}</Button>
