@@ -16,7 +16,7 @@ export class WhatsAppTemplatesListPage {
 	}
 
 	createTemplateLink(): Locator {
-		return this.page.getByTestId('whatsapp-templates-create');
+		return this.page.getByTestId('whatsapp-templates-create').first();
 	}
 
 	rowForTemplateId(templateId: string): Locator {
