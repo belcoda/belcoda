@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { EmailNavigationPage } from '../pages/communications/email-navigation.page';
 import { EmailDraftPage } from '../pages/communications/email-draft.page';
+import { EmailSentPage } from '../pages/communications/email-sent.page';
 import { TEST_USERS } from '../helpers/auth';
 
 async function loginAsOwner(page: Page) {
@@ -18,7 +19,9 @@ test.describe.serial('Communications: Email Drafts', () => {
 	const state = {
 		draftId: '',
 		subject: '',
-		body: ''
+		body: '',
+		sentSubject: '',
+		sentBody: ''
 	};
 
 	test('owner can compose and save an email draft', async ({ page }) => {
@@ -69,16 +72,35 @@ test.describe.serial('Communications: Email Drafts', () => {
 
 	test('owner can send an email draft', async ({ page }) => {
 		const suffix = Date.now();
+		state.sentSubject = `E2E Send Email ${suffix}`;
+		state.sentBody = `E2E Send Body ${suffix}`;
 
 		await loginAsOwner(page);
 
 		const draftPage = new EmailDraftPage(page);
 		await draftPage.gotoNewDraft();
 		await draftPage.waitForLoaded();
-		await draftPage.fillSubject(`E2E Send Email ${suffix}`);
-		await draftPage.fillBody(`E2E Send Body ${suffix}`);
+		await draftPage.fillSubject(state.sentSubject);
+		await draftPage.fillBody(state.sentBody);
 		await draftPage.send();
 
 		await expect(page).toHaveURL('/communications/email/sent', { timeout: 15_000 });
+	});
+
+	test('owner can open a sent email from the list and view details', async ({ page }) => {
+		await loginAsOwner(page);
+
+		const sentPage = new EmailSentPage(page);
+		await sentPage.gotoSentFolder();
+		await sentPage.waitForList();
+		await sentPage.openSentItemBySubject(state.sentSubject);
+
+		await expect(page).toHaveURL(/\/communications\/email\/sent\/[0-9a-f-]{36}$/i, {
+			timeout: 15_000
+		});
+
+		await sentPage.waitForDetail();
+		await expect(sentPage.detailSubject).toContainText(state.sentSubject, { timeout: 10_000 });
+		await expect(sentPage.detailMessage).toContainText(state.sentBody, { timeout: 15_000 });
 	});
 });
