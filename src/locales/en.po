@@ -109,6 +109,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -863,8 +864,8 @@ msgstr "Copied \"{0}\" to clipboard"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied!"
-msgstr "Copied!"
+msgid "Copied! "
+msgstr "Copied! "
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -875,8 +876,8 @@ msgstr "Copied!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy"
-msgstr "Copy"
+msgid "Copy "
+msgstr "Copy "
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
@@ -909,6 +910,7 @@ msgstr "Family name"
 #: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
 #: src/routes/(app)/petitions/new/+page.svelte
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Save"
 msgstr "Save"
@@ -1247,6 +1249,7 @@ msgstr "Create an account to get started"
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Name"
@@ -2075,6 +2078,7 @@ msgstr "Create Webhook"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Target URL"
 msgstr "Target URL"
 
@@ -2096,10 +2100,12 @@ msgid "Register a new webhook endpoint"
 msgstr "Register a new webhook endpoint"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "My Webhook"
 msgstr "My Webhook"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
 
@@ -4698,3 +4704,43 @@ msgstr "No petitions found."
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
 msgstr "Show archived"
+
+#~ msgid "Target URL is required"
+#~ msgstr "Target URL is required"
+
+#~ msgid "Webhook URL updated successfully"
+#~ msgstr "Webhook URL updated successfully"
+
+#~ msgid "Failed to update webhook URL"
+#~ msgstr "Failed to update webhook URL"
+
+#~ msgid "Edit target URL"
+#~ msgstr "Edit target URL"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Delete webhook"
+msgstr "Delete webhook"
+
+#~ msgid "Change the endpoint where this webhook receives events."
+#~ msgstr "Change the endpoint where this webhook receives events."
+
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Please fill in all required fields"
+msgstr "Please fill in all required fields"
+
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Webhook updated successfully"
+msgstr "Webhook updated successfully"
+
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Failed to update webhook"
+msgstr "Failed to update webhook"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Edit webhook"
+msgstr "Edit webhook"
+
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Change the name and the endpoint where this webhook receives events."
+msgstr "Change the name and the endpoint where this webhook receives events."
