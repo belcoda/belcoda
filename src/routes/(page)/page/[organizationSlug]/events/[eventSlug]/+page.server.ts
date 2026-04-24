@@ -123,6 +123,7 @@ export const actions = {
 			) {
 				throw err;
 			}
+			log.error({ err }, 'Error signing up for event');
 			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
 		}
 	},
