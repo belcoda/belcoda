@@ -77,6 +77,13 @@ test.describe.serial('Settings: Send Signatures', () => {
 		});
 		await expect(row).toContainText(state.updatedDisplayName, { timeout: 15_000 });
 		await expect(row).toContainText(state.updatedReplyTo, { timeout: 15_000 });
+		await expect(row.getByTestId('settings-send-signatures-row-reply-to')).toContainText(
+			state.updatedReplyTo,
+			{ timeout: 15_000 }
+		);
+		await expect(row.getByTestId('settings-send-signatures-row-reply-to')).not.toContainText(
+			state.emailAddress
+		);
 		await expect(row).toContainText(state.updatedReturnPathDomain, { timeout: 15_000 });
 	});
 
@@ -90,6 +97,8 @@ test.describe.serial('Settings: Send Signatures', () => {
 		await expect(page.getByText('Email signature verification status updated')).toBeVisible({
 			timeout: 15_000
 		});
+		const row = sendSignaturesPage.signatureRowByEmail(state.emailAddress);
+		await expect(row).toContainText('Verified', { timeout: 15_000 });
 	});
 
 	test('owner can set custom send signature as default', async ({ page }) => {
