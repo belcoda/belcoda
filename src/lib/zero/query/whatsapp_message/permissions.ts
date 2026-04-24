@@ -13,9 +13,11 @@ export function whatsappMessageReadPermissions(
 	const filterArr = [
 		cmp('organizationId', 'IN', ctx.adminOrgs),
 		cmp('organizationId', 'IN', ctx.ownerOrgs),
-		cmp('organizationId', 'IN', ctx.otherOrgs), //We ideally would want to limit this to people that the user has access to,
-		cmp('userId', '=', ctx.userId)
+		cmp('organizationId', 'IN', ctx.otherOrgs) //We ideally would want to limit this to people that the user has access to,
 	];
+	if (ctx.userId) {
+		filterArr.push(cmp('userId', '=', ctx.userId!));
+	}
 
 	return or(...filterArr);
 }

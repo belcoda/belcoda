@@ -24,7 +24,7 @@ export async function createPersonNote({
 	args
 }: {
 	tx: ServerTransaction;
-	ctx: QueryContext;
+	ctx: QueryContext & { userId: string }; // we want to make sure the userId is set here. Creating a person note is a user action and should not be allowed via the API
 	args: CreateMutatorSchemaZero;
 }) {
 	const parsed = parse(createMutatorSchemaZero, args);

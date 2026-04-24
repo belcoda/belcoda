@@ -10,9 +10,9 @@ export function organizationReadPermissions(
 ) {
 	const { and, or, cmp, exists } = builder;
 	const filterArr = [
-		exists('memberships', (m) => {
-			return m.where('userId', '=', ctx.userId);
-		})
+		cmp('id', 'IN', ctx.adminOrgs),
+		cmp('id', 'IN', ctx.ownerOrgs),
+		cmp('id', 'IN', ctx.otherOrgs)
 	];
 
 	return or(...filterArr);
