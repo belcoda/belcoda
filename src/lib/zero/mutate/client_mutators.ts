@@ -77,6 +77,7 @@ export const mutators = defineMutators({
 	},
 	webhook: {
 		create: webhook.createWebhook,
+		update: webhook.updateWebhook,
 		delete: webhook.deleteWebhook
 	},
 	tag: {
