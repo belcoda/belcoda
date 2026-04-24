@@ -1,19 +1,20 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import { webhook } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 import { randomBytes } from 'crypto';
 
 import {
 	type CreateMutatorSchemaZeroOutput,
 	type DeleteMutatorSchemaZero,
+	type UpdateWebhookMutatorSchemaZeroOutput,
 	createMutatorSchemaZero,
-	deleteMutatorSchemaZero
+	deleteMutatorSchemaZero,
+	updateWebhookMutatorSchemaZero
 } from '$lib/schema/webhook';
 
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 import { parse } from 'valibot';
-import { builder } from '$lib/zero/schema';
 
 export async function createWebhook({
 	tx,
@@ -101,7 +102,7 @@ export async function deleteWebhook({
 	}
 
 	// only owners can delete webhooks
-	if (!ctx.adminOrgs.includes(webhookRecord.organizationId)) {
+	if (!ctx.ownerOrgs.includes(webhookRecord.organizationId)) {
 		throw new Error('You are not authorized to delete this webhook');
 	}
 
@@ -112,4 +113,63 @@ export async function deleteWebhook({
 	await tx.dbTransaction.wrappedTransaction
 		.delete(webhook)
 		.where(eq(webhook.id, parsed.metadata.webhookId));
+}
+
+export async function updateWebhook({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateWebhookMutatorSchemaZeroOutput;
+}) {
+	const parsed = parse(updateWebhookMutatorSchemaZero, args);
+	const [webhookRecord] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(webhook)
+		.where(eq(webhook.id, parsed.metadata.webhookId))
+		.limit(1);
+	if (!webhookRecord) {
+		throw new Error('Webhook not found');
+	}
+
+	if (!ctx.ownerOrgs.includes(webhookRecord.organizationId)) {
+		throw new Error('You are not authorized to update this webhook');
+	}
+
+	if (webhookRecord.organizationId !== parsed.metadata.organizationId) {
+		throw new Error('Webhook does not belong to the specified organization');
+	}
+
+	if (parsed.input.name !== webhookRecord.name) {
+		const [nameConflict] = await tx.dbTransaction.wrappedTransaction
+			.select()
+			.from(webhook)
+			.where(
+				and(
+					eq(webhook.name, parsed.input.name),
+					eq(webhook.organizationId, parsed.metadata.organizationId),
+					ne(webhook.id, parsed.metadata.webhookId)
+				)
+			)
+			.limit(1);
+		if (nameConflict) {
+			throw new Error('A webhook with this name already exists for this organization');
+		}
+	}
+
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.update(webhook)
+		.set({
+			name: parsed.input.name,
+			targetUrl: parsed.input.targetUrl,
+			updatedAt: new Date()
+		})
+		.where(eq(webhook.id, parsed.metadata.webhookId))
+		.returning();
+	if (!result) {
+		throw new Error('Unable to update webhook');
+	}
+	return result;
 }
