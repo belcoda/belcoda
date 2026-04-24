@@ -122,7 +122,7 @@ export const familyName = v.nullable(mediumString);
 
 export const count = v.pipe(v.number(), v.minValue(0, 'Must be a positive number'), v.integer());
 export const integer = v.pipe(v.number(), v.integer());
-export const unixTimestamp = v.pipe(v.number(), v.minValue(0, 'Must be a positive number'));
+export const unixTimestamp = v.pipe(v.number());
 
 export const date = v.date();
 export const isoTimestamp = v.pipe(v.string(), v.isoTimestamp('Invalid ISO timestamp format'));
