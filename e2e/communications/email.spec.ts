@@ -82,6 +82,9 @@ test.describe.serial('Communications: Email Drafts', () => {
 		await draftPage.waitForLoaded();
 		await draftPage.fillSubject(state.sentSubject);
 		await draftPage.fillBody(state.sentBody);
+
+		await draftPage.selectEveryoneRecipient();
+		await draftPage.save();
 		await draftPage.send();
 
 		await expect(page).toHaveURL('/communications/email/sent', { timeout: 15_000 });

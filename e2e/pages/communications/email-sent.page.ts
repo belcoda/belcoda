@@ -21,6 +21,10 @@ export class EmailSentPage {
 		return this.page.getByTestId('email-list-item').filter({ hasText: subject });
 	}
 
+	listItemById(emailId: string): Locator {
+		return this.page.locator(`[data-testid="email-list-item"][data-email-id="${emailId}"]`);
+	}
+
 	async gotoSentFolder() {
 		await this.page.goto('/communications/email/sent');
 	}
@@ -31,6 +35,12 @@ export class EmailSentPage {
 
 	async openSentItemBySubject(subject: string) {
 		const item = this.listItemBySubject(subject);
+		await item.waitFor({ state: 'visible', timeout: 20_000 });
+		await item.click();
+	}
+
+	async openSentItemById(emailId: string) {
+		const item = this.listItemById(emailId);
 		await item.waitFor({ state: 'visible', timeout: 20_000 });
 		await item.click();
 	}

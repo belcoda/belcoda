@@ -6,6 +6,7 @@ export class EmailDraftPage {
 	readonly form: Locator;
 	readonly subjectInput: Locator;
 	readonly bodyEditor: Locator;
+	readonly recipientsInput: Locator;
 	readonly discardButton: Locator;
 	readonly saveButton: Locator;
 	readonly testEmailToggleButton: Locator;
@@ -20,6 +21,7 @@ export class EmailDraftPage {
 		this.form = page.getByTestId('email-form');
 		this.subjectInput = page.getByTestId('email-form-subject');
 		this.bodyEditor = this.form.locator('[contenteditable="true"]').first();
+		this.recipientsInput = this.page.getByPlaceholder('Recipients').first();
 		this.discardButton = page.getByTestId('email-draft-discard');
 		this.saveButton = page.getByTestId('email-draft-save');
 		this.testEmailToggleButton = page.getByTestId('email-draft-test-toggle');
@@ -49,6 +51,16 @@ export class EmailDraftPage {
 	async fillBody(body: string) {
 		await this.bodyEditor.click();
 		await this.bodyEditor.fill(body);
+	}
+
+	async selectEveryoneRecipient() {
+		await this.recipientsInput.click();
+		await this.recipientsInput.fill('Everyone');
+
+		// svelte-multiselect is most reliable with keyboard selection.
+		await this.page.keyboard.press('ArrowDown');
+		await this.page.keyboard.press('Enter');
+		await this.page.keyboard.press('Escape');
 	}
 
 	async save() {
