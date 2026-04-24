@@ -85,13 +85,8 @@ test.describe.serial('Communications: Email Drafts', () => {
 		await draftPage.send();
 
 		await expect(page).toHaveURL('/communications/email/sent', { timeout: 15_000 });
-	});
-
-	test('owner can open a sent email from the list and view details', async ({ page }) => {
-		await loginAsOwner(page);
 
 		const sentPage = new EmailSentPage(page);
-		await sentPage.gotoSentFolder();
 		await sentPage.waitForList();
 		await sentPage.openSentItemBySubject(state.sentSubject);
 
