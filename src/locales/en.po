@@ -1051,6 +1051,7 @@ msgstr "No failure details available"
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Close"
 msgstr "Close"
 
@@ -1994,6 +1995,7 @@ msgid "Your API Key"
 msgstr "Your API Key"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Copy to clipboard"
 msgstr "Copy to clipboard"
 
@@ -4698,3 +4700,76 @@ msgstr "No petitions found."
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
 msgstr "Show archived"
+
+#~ msgid "Target URL is required"
+#~ msgstr "Target URL is required"
+
+#~ msgid "Webhook URL updated successfully"
+#~ msgstr "Webhook URL updated successfully"
+
+#~ msgid "Failed to update webhook URL"
+#~ msgstr "Failed to update webhook URL"
+
+#~ msgid "Edit target URL"
+#~ msgstr "Edit target URL"
+
+#~ msgid "Delete webhook"
+#~ msgstr "Delete webhook"
+
+#~ msgid "Change the endpoint where this webhook receives events."
+#~ msgstr "Change the endpoint where this webhook receives events."
+
+#~ msgid "Please fill in all required fields"
+#~ msgstr "Please fill in all required fields"
+
+#~ msgid "Webhook updated successfully"
+#~ msgstr "Webhook updated successfully"
+
+#~ msgid "Failed to update webhook"
+#~ msgstr "Failed to update webhook"
+
+#~ msgid "Edit webhook"
+#~ msgstr "Edit webhook"
+
+#~ msgid "Change the name and the endpoint where this webhook receives events."
+#~ msgstr "Change the name and the endpoint where this webhook receives events."
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Could not load the webhook secret."
+msgstr "Could not load the webhook secret."
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Secret copied to clipboard"
+msgstr "Secret copied to clipboard"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Secret"
+msgstr "Secret"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "About webhook secrets"
+msgstr "About webhook secrets"
+
+#~ msgid "The secret is sent with each delivery in the "
+#~ msgstr "The secret is sent with each delivery in the "
+
+#~ msgid "header so your endpoint can verify the request came from Belcoda."
+#~ msgstr "header so your endpoint can verify the request came from Belcoda."
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View secret"
+msgstr "View secret"
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Webhook secret"
+msgstr "Webhook secret"
+
+#. 0: webhookName
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Signing secret for \"{0}\""
+msgstr "Signing secret for \"{0}\""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+msgstr "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."

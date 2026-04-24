@@ -1051,6 +1051,7 @@ msgstr "Nenhum detalhe de falha disponível"
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Close"
 msgstr "Fechar"
 
@@ -1994,6 +1995,7 @@ msgid "Your API Key"
 msgstr "Sua chave API"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Copy to clipboard"
 msgstr "Copiar para a área de transferência"
 
@@ -4682,3 +4684,76 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
 msgstr ""
+
+#~ msgid "Target URL is required"
+#~ msgstr ""
+
+#~ msgid "Webhook URL updated successfully"
+#~ msgstr ""
+
+#~ msgid "Failed to update webhook URL"
+#~ msgstr ""
+
+#~ msgid "Edit target URL"
+#~ msgstr ""
+
+#~ msgid "Delete webhook"
+#~ msgstr ""
+
+#~ msgid "Change the endpoint where this webhook receives events."
+#~ msgstr ""
+
+#~ msgid "Please fill in all required fields"
+#~ msgstr ""
+
+#~ msgid "Webhook updated successfully"
+#~ msgstr ""
+
+#~ msgid "Failed to update webhook"
+#~ msgstr ""
+
+#~ msgid "Edit webhook"
+#~ msgstr ""
+
+#~ msgid "Change the name and the endpoint where this webhook receives events."
+#~ msgstr ""
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Could not load the webhook secret."
+msgstr "Não foi possível carregar o segredo do webhook."
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Secret copied to clipboard"
+msgstr "Segredo copiado para a área de transferência"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Secret"
+msgstr "Segredo"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "About webhook secrets"
+msgstr "Sobre os segredos de webhook"
+
+#~ msgid "The secret is sent with each delivery in the "
+#~ msgstr ""
+
+#~ msgid "header so your endpoint can verify the request came from Belcoda."
+#~ msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View secret"
+msgstr "Ver segredo"
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Webhook secret"
+msgstr "Segredo do webhook"
+
+#. 0: webhookName
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Signing secret for \"{0}\""
+msgstr "Segredo de assinatura para \"{0}\""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+msgstr "O segredo é enviado em cada entrega no cabeçalho X-Webhook-Secret para que o endpoint possa verificar se o pedido veio da Belcoda."
