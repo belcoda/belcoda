@@ -190,10 +190,6 @@ export function display12HourValue(hours: number) {
 
 export function convertTimestampToTime(timestamp: number, timezone: string) {
 	const date = fromAbsolute(timestamp, timezone);
-	console.log(
-		{ date, timestamp, timezone, iso: new Date(timestamp).toISOString() },
-		'convertTimestampToTime'
-	);
 	const time = new Time(date.hour, date.minute, date.second, date.millisecond);
 	return time;
 }
@@ -214,15 +210,7 @@ export function updateTimestampTime({
 		second: 0,
 		millisecond: 0
 	});
-	console.log(
-		{
-			oldTimestamp: timestamp,
-			newTime,
-			oldIso: new Date(timestamp).toISOString(),
-			newIso: newDate.toDate().toISOString()
-		},
-		'updateTimestampTime'
-	);
+
 	return newDate.toDate().getTime();
 }
 
