@@ -50,7 +50,9 @@ export class EmailDraftPage {
 
 	async fillBody(body: string) {
 		await this.bodyEditor.click();
-		await this.bodyEditor.fill(body);
+		await this.page.keyboard.press('ControlOrMeta+A');
+		await this.page.keyboard.press('Backspace');
+		await this.page.keyboard.type(body);
 	}
 
 	async selectEveryoneRecipient() {
