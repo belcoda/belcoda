@@ -29,15 +29,11 @@
 	} = $props();
 
 	function derivePeriod(timestamp: number) {
-		console.log(timestamp, 'timestamp');
-		console.log(timezone, 'timezone');
-		console.log(new Date(timestamp).toISOString(), 'date');
 		const time = convertTimestampToTime(timestamp, timezone);
-		console.log(time, 'time');
 		return getPeriodFromTime(time);
 	}
 
-	let period = $state<Period>(derivePeriod(timestamp));
+	let period = $derived(derivePeriod(timestamp));
 	let minuteRef = $state<HTMLInputElement | null>(null);
 	let hourRef = $state<HTMLInputElement | null>(null);
 	let secondRef = $state<HTMLInputElement | null>(null);
@@ -52,11 +48,9 @@
 	}
 
 	function getPeriod() {
-		console.log(period, 'getPeriod');
 		return period;
 	}
 	function setNewPeriod(newPeriod: Period) {
-		console.log(period, newPeriod, 'setPeriod');
 		period = newPeriod;
 	}
 </script>
