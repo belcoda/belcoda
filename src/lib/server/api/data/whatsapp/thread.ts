@@ -279,8 +279,7 @@ export async function sendWhatsappThread({
 	const queue = await getQueue();
 	await queue.buildWhatsappThreadSendQueue({
 		thread: claimed,
-		sentByUserId: ctx.userId,
-		tx
+		sentByUserId: ctx.userId
 	});
 
 	try {
