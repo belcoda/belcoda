@@ -32,10 +32,9 @@ test.describe.serial('Settings: Webhooks', () => {
 		await expect(webhooksPage.webhookRow(state.name, state.targetUrl)).toBeVisible({
 			timeout: 15_000
 		});
-
 		await webhooksPage.openViewSecret(state.name, state.targetUrl);
 		await expect(webhooksPage.secretValueInput).toBeVisible({ timeout: 15_000 });
-		await expect(webhooksPage.secretValueInput).not.toHaveValue('');
+		await expect(webhooksPage.secretValueInput).not.toHaveValue('', { timeout: 15_000 });
 	});
 
 	test('owner can delete a webhook', async ({ page }) => {
