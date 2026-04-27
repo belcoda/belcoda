@@ -24,9 +24,16 @@
 <ContentLayout rootLink="/settings">
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-bold">{t`WhatsApp templates`}</h1>
+			<h1 class="text-2xl font-bold" data-testid="whatsapp-templates-heading">
+				{t`WhatsApp templates`}
+			</h1>
 			{#if appState.activeOrganization.data?.settings?.whatsApp?.wabaId}
-				<Button variant="default" size="sm" href="/settings/whatsapp/templates/new">
+				<Button
+					variant="default"
+					size="sm"
+					href="/settings/whatsapp/templates/new"
+					data-testid="whatsapp-templates-create"
+				>
 					{t`Create template`}
 				</Button>
 			{/if}
@@ -47,12 +54,16 @@
 						</Table.Header>
 						<Table.Body>
 							{#each templates.data as template}
-								<Table.Row>
-									<Table.Cell>{template.name}</Table.Cell>
+								<Table.Row
+									data-testid="whatsapp-template-row"
+									data-template-id={template.id}
+									data-template-name={template.name}
+								>
+									<Table.Cell data-testid="whatsapp-template-row-name">{template.name}</Table.Cell>
 									<Table.Cell
 										>{getLocalizedLanguageName(clampLanguageCode(template.locale))}</Table.Cell
 									>
-									<Table.Cell class="uppercase">
+									<Table.Cell class="uppercase" data-testid="whatsapp-template-row-status">
 										{#if template.status === 'APPROVED'}
 											<Badge variant="default">{t`Approved`}</Badge>
 										{:else if template.status === 'REJECTED'}
@@ -78,6 +89,8 @@
 											<Button
 												variant="outline"
 												size="sm"
+												data-testid="whatsapp-template-submit"
+												data-template-id={template.id}
 												onclick={() => {
 													z.mutate(
 														mutators.whatsappTemplate.submit({
@@ -94,6 +107,8 @@
 											variant="outline"
 											size="sm"
 											href="/settings/whatsapp/templates/{template.id}"
+											data-testid="whatsapp-template-edit"
+											data-template-id={template.id}
 										>
 											{t`Edit`}
 										</Button>
@@ -116,7 +131,12 @@
 					>
 				</Empty.Header>
 				<Empty.Content>
-					<Button variant="default" size="sm" href="/settings/whatsapp/templates/new">
+					<Button
+						variant="default"
+						size="sm"
+						href="/settings/whatsapp/templates/new"
+						data-testid="whatsapp-templates-create"
+					>
 						{t`Create template`}
 					</Button>
 				</Empty.Content>
@@ -134,7 +154,12 @@
 				>
 			</Empty.Header>
 			<Empty.Content>
-				<Button variant="default" size="sm" href="/settings/whatsapp/accounts">
+				<Button
+					variant="default"
+					size="sm"
+					href="/settings/whatsapp/accounts"
+					data-testid="whatsapp-templates-activate-account"
+				>
 					{t`Activate business account`}
 				</Button>
 			</Empty.Content>
