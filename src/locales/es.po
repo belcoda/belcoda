@@ -4684,6 +4684,31 @@ msgstr ""
 msgid "Show archived"
 msgstr ""
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "Sign-up has closed"
+msgstr ""
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "The sign-up period for this event has ended, so you can no longer register on this page."
+msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Secret"
+msgstr "Secreto"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "About webhook secrets"
+msgstr "Sobre los secretos de webhook"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+msgstr "El secreto se envía con cada entrega en el encabezado X-Webhook-Secret para que su endpoint pueda verificar que la solicitud provino de Belcoda."
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View secret"
+msgstr "Ver secreto"
+
 #~ msgid "Target URL is required"
 #~ msgstr ""
 
@@ -4722,27 +4747,19 @@ msgid "Could not load the webhook secret."
 msgstr "No se pudo cargar el secreto del webhook."
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Secret copied to clipboard"
 msgstr "Secreto copiado al portapapeles"
 
-#: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
-msgid "Secret"
-msgstr "Secreto"
-
-#: src/routes/(app)/settings/webhooks/+page.svelte
-msgid "About webhook secrets"
-msgstr "Sobre los secretos de webhook"
+msgid "Could not copy the secret to the clipboard. Try selecting it manually."
+msgstr "No se pudo copiar el secreto al portapapeles. Intente seleccionarlo manualmente."
 
 #~ msgid "The secret is sent with each delivery in the "
 #~ msgstr ""
 
 #~ msgid "header so your endpoint can verify the request came from Belcoda."
 #~ msgstr ""
-
-#: src/routes/(app)/settings/webhooks/+page.svelte
-msgid "View secret"
-msgstr "Ver secreto"
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Webhook secret"
@@ -4753,6 +4770,6 @@ msgstr "Secreto del webhook"
 msgid "Signing secret for \"{0}\""
 msgstr "Secreto de firma para \"{0}\""
 
-#: src/routes/(app)/settings/webhooks/+page.svelte
-msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
-msgstr "El secreto se envía con cada entrega en el encabezado X-Webhook-Secret para que su endpoint pueda verificar que la solicitud provino de Belcoda."
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Could not copy the secret to the clipboard. Try selecting it manually."
+msgstr ""
