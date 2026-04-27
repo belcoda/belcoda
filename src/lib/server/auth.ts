@@ -26,6 +26,8 @@ import {
 
 import { parse } from 'valibot';
 import { userRole } from '$lib/schema/user';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 import { LRUCache } from 'lru-cache';
 const cache = new LRUCache<string, string>({
@@ -179,47 +181,59 @@ export function buildBetterAuth(localeInput: string) {
 				organizationHooks: {
 					afterAddMember: async ({ member, user, organization }) => {
 						//trigger webhook
-						const queue = await getQueue();
-						await queue.triggerWebhook({
-							organizationId: organization.id,
-							payload: {
-								type: 'member.created',
-								data: {
-									organizationId: organization.id,
-									userId: user.id,
-									role: parse(userRole, member.role)
+						try {
+							const queue = await getQueue();
+							await queue.triggerWebhook({
+								organizationId: organization.id,
+								payload: {
+									type: 'member.created',
+									data: {
+										organizationId: organization.id,
+										userId: user.id,
+										role: parse(userRole, member.role)
+									}
 								}
-							}
-						});
+							});
+						} catch (error) {
+							log.error({ error, member, user, organization }, 'Failed to trigger webhook');
+						}
 					},
 					afterRemoveMember: async ({ user, organization }) => {
 						//trigger webhook
-						const queue = await getQueue();
-						await queue.triggerWebhook({
-							organizationId: organization.id,
-							payload: {
-								type: 'member.deleted',
-								data: {
-									organizationId: organization.id,
-									userId: user.id
+						try {
+							const queue = await getQueue();
+							await queue.triggerWebhook({
+								organizationId: organization.id,
+								payload: {
+									type: 'member.deleted',
+									data: {
+										organizationId: organization.id,
+										userId: user.id
+									}
 								}
-							}
-						});
+							});
+						} catch (error) {
+							log.error({ error, user, organization }, 'Failed to trigger webhook');
+						}
 					},
 					afterUpdateMemberRole: async ({ member, user, organization }) => {
 						//trigger webhook
-						const queue = await getQueue();
-						await queue.triggerWebhook({
-							organizationId: organization.id,
-							payload: {
-								type: 'member.updated',
-								data: {
-									organizationId: organization.id,
-									userId: user.id,
-									role: parse(userRole, member.role)
+						try {
+							const queue = await getQueue();
+							await queue.triggerWebhook({
+								organizationId: organization.id,
+								payload: {
+									type: 'member.updated',
+									data: {
+										organizationId: organization.id,
+										userId: user.id,
+										role: parse(userRole, member.role)
+									}
 								}
-							}
-						});
+							});
+						} catch (error) {
+							log.error({ error, member, user, organization }, 'Failed to trigger webhook');
+						}
 					}
 				},
 				schema: {
