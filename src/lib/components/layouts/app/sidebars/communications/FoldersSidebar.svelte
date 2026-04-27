@@ -14,6 +14,7 @@
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger
 				class={cn(buttonVariants({ variant: 'default', size: 'sm' }), 'w-full')}
+				data-testid="communications-compose-trigger"
 			>
 				<span class="icon-[lucide--pencil] size-4"></span>
 				{t`Compose`}
@@ -22,7 +23,11 @@
 			<DropdownMenu.Content>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a href="/communications/email/drafts/new" {...props}>
+						<a
+							href="/communications/email/drafts/new"
+							data-testid="communications-compose-email-link"
+							{...props}
+						>
 							<span class="icon-[mdi--email] size-4"></span>
 							{t`Compose email`}
 						</a>
@@ -74,6 +79,11 @@
 {#snippet linkItem(item: { url: string; title: string; icon: Snippet })}
 	<a
 		href={item.url}
+		data-testid={item.url === '/communications/email/drafts'
+			? 'communications-email-drafts-link'
+			: item.url === '/communications/email/sent'
+				? 'communications-email-sent-link'
+				: undefined}
 		class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted {page.url.pathname.includes(
 			item.url
 		)
