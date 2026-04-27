@@ -24,6 +24,9 @@ import {
 	parseCreditPurchaseAmountUsd
 } from '$lib/utils/billing/credit';
 
+import { parse } from 'valibot';
+import { userRole } from '$lib/schema/user';
+
 import { LRUCache } from 'lru-cache';
 const cache = new LRUCache<string, string>({
 	max: 1000, // Max 100 sessions
@@ -184,12 +187,12 @@ export function buildBetterAuth(localeInput: string) {
 								data: {
 									organizationId: organization.id,
 									userId: user.id,
-									role: member.role as 'member' | 'admin' | 'owner'
+									role: parse(userRole, member.role)
 								}
 							}
 						});
 					},
-					afterRemoveMember: async ({ member, user, organization }) => {
+					afterRemoveMember: async ({ user, organization }) => {
 						//trigger webhook
 						const queue = await getQueue();
 						await queue.triggerWebhook({
@@ -203,7 +206,7 @@ export function buildBetterAuth(localeInput: string) {
 							}
 						});
 					},
-					afterUpdateMemberRole: async ({ member, previousRole, user, organization }) => {
+					afterUpdateMemberRole: async ({ member, user, organization }) => {
 						//trigger webhook
 						const queue = await getQueue();
 						await queue.triggerWebhook({
@@ -213,7 +216,7 @@ export function buildBetterAuth(localeInput: string) {
 								data: {
 									organizationId: organization.id,
 									userId: user.id,
-									role: member.role as 'member' | 'admin' | 'owner'
+									role: parse(userRole, member.role)
 								}
 							}
 						});
