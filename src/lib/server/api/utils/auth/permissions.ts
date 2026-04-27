@@ -20,13 +20,13 @@ export async function getQueryContext(userId: string): Promise<QueryContext> {
 	};
 }
 
-export async function getApiQueryContext(organizationId: string): Promise<QueryContext> {
+export function getApiQueryContext(organizationId: string): QueryContext {
 	return {
 		userId: null,
 		authTeams: [],
-		adminOrgs: [organizationId],
+		adminOrgs: [],
 		ownerOrgs: [organizationId],
-		otherOrgs: [organizationId]
+		otherOrgs: []
 	};
 }
 

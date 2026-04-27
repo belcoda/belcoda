@@ -20,7 +20,7 @@ export async function getPersonRecordsFromFilter({
 		organizationId: organizationId
 	};
 
-	const ctx = userId ? await getQueryContext(userId) : await getApiQueryContext(organizationId);
+	const ctx = userId ? await getQueryContext(userId) : getApiQueryContext(organizationId);
 
 	const result = await tx.run(
 		builder.person.where((expr) => whereClause(expr, { filter: filterInput, ctx }))
