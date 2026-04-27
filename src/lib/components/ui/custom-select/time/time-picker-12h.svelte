@@ -27,7 +27,7 @@
 	let minuteRef = $state<HTMLInputElement | null>(null);
 	let hourRef = $state<HTMLInputElement | null>(null);
 	let secondRef = $state<HTMLInputElement | null>(null);
-	let periodRef = $state<HTMLInputElement | null>(null);
+	let periodRef = $state<HTMLButtonElement | null>(null);
 </script>
 
 <div class={cn('flex items-center gap-2', view === 'dotted' && 'gap-1')}>
@@ -92,8 +92,6 @@
 		<TimePeriodSelect
 			bind:period
 			bind:time
-			{setPeriod}
-			{setTime}
 			ref={periodRef}
 			onLeftFocus={() => secondRef?.focus()}
 		/>
