@@ -263,7 +263,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>{t`From`}</Form.Label>
-				<TimePicker12h bind:timestamp={$data.startsAt} view={'dotted'} timezone={$data.timezone} />
+				<TimePicker12h bind:timestamp={$data.startsAt} view="dotted" timezone={$data.timezone} />
 			{/snippet}
 		</Form.Control>
 	</Form.Field>
