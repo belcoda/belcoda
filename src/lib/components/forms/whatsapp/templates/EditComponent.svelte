@@ -127,21 +127,23 @@
 	}
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col" data-testid="whatsapp-template-form">
 	<div class="flex flex-col gap-2">
 		<div class="grid grid-cols-1 gap-2">
 			{#if error}
-				<Alert.Root variant="destructive">
+				<Alert.Root variant="destructive" data-testid="whatsapp-template-form-error">
 					<Alert.Title>{error}</Alert.Title>
 				</Alert.Root>
 			{/if}
 			<Label>{t`Template name`}</Label>
-			<Input bind:value={name} />
+			<Input bind:value={name} data-testid="whatsapp-template-name-input" />
 			<p class="text-sm text-gray-500">
 				{t`Can only contain lowercase latin alphabet letters, numbers, and underscores.`}
 			</p>
 			<Label>{t`Template language`}</Label>
-			<LanguageSelect bind:value={locale} />
+			<div data-testid="whatsapp-template-language-select">
+				<LanguageSelect bind:value={locale} />
+			</div>
 		</div>
 		<hr class="my-4 border-gray-200" />
 		{#if headerIndex !== -1}
@@ -158,10 +160,26 @@
 			{@render createButtons()}
 		{/if}
 		<div class="mt-4 flex items-center justify-end gap-2">
-			<Button variant="outline" href="/settings/whatsapp/templates">{t`Discard`}</Button>
-			<Button variant="default" size="sm" onclick={saveTemplate}
-				>{mode === 'edit' ? t`Save` : t`Create new template`}</Button
+			<Button
+				variant="outline"
+				href="/settings/whatsapp/templates"
+				data-testid="whatsapp-template-discard">{t`Discard`}</Button
 			>
+			{#if mode === 'edit'}
+				<Button
+					variant="default"
+					size="sm"
+					data-testid="whatsapp-template-save"
+					onclick={saveTemplate}>{t`Save`}</Button
+				>
+			{:else}
+				<Button
+					variant="default"
+					size="sm"
+					data-testid="whatsapp-template-create-submit"
+					onclick={saveTemplate}>{t`Create new template`}</Button
+				>
+			{/if}
 		</div>
 	</div>
 </div>

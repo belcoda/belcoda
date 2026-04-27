@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-const { POSTMARK_ACCOUNT_TOKEN } = env;
+const { POSTMARK_ACCOUNT_TOKEN, MOCK_EXTERNAL_SERVICES, NODE_ENV } = env;
 
 import type {
 	CreateEmailFromSignature,
@@ -10,6 +10,12 @@ import { integer, email, mediumString, domainName, shortString } from '$lib/sche
 import pino from '$lib/pino';
 
 const log = pino(import.meta.url);
+const mockSendSignatures = new Map<number, PostmarkReadSendSignatureBody>();
+let mockExternalIdCounter = 9_000_000;
+
+function useMockExternalServices() {
+	return MOCK_EXTERNAL_SERVICES === 'true' && NODE_ENV !== 'production';
+}
 
 export const postmarkReadSendSignatureBodySchema = object({
 	ID: integer,
@@ -49,6 +55,24 @@ export async function createSendSignature({
 	emailFromSignature: CreateEmailFromSignature;
 }) {
 	log.debug({ organizationId, emailFromSignature }, 'Creating send signature');
+	if (useMockExternalServices()) {
+		const mockId = ++mockExternalIdCounter;
+		const mockResult: PostmarkReadSendSignatureBody = {
+			ID: mockId,
+			EmailAddress: emailFromSignature.emailAddress,
+			Name: emailFromSignature.name,
+			Confirmed: false,
+			ReturnPathDomain: emailFromSignature.returnPathDomain || null,
+			ReturnPathDomainVerified: false
+		};
+		mockSendSignatures.set(mockId, mockResult);
+		log.info(
+			{ organizationId, emailAddress: emailFromSignature.emailAddress, mockId },
+			'MOCK_EXTERNAL_SERVICES enabled, skipping Postmark create'
+		);
+		return parse(postmarkReadSendSignatureBodySchema, mockResult);
+	}
+
 	const body: PostmarkCreateSendSignatureBody = {
 		FromEmail: emailFromSignature.emailAddress,
 		Name: emailFromSignature.name,
@@ -81,6 +105,24 @@ export async function verifySendSignature({
 	emailSignatureExternalId: number;
 }) {
 	log.debug({ organizationId, emailSignatureExternalId }, 'Verifying send signature');
+	if (useMockExternalServices()) {
+		const existing = mockSendSignatures.get(emailSignatureExternalId);
+		const mockResult: PostmarkReadSendSignatureBody = {
+			ID: emailSignatureExternalId,
+			EmailAddress: existing?.EmailAddress || `mock-${emailSignatureExternalId}@example.com`,
+			Name: existing?.Name || `Mock Signature ${emailSignatureExternalId}`,
+			Confirmed: true,
+			ReturnPathDomain: existing?.ReturnPathDomain || null,
+			ReturnPathDomainVerified: existing?.ReturnPathDomain ? true : false
+		};
+		mockSendSignatures.set(emailSignatureExternalId, mockResult);
+		log.info(
+			{ organizationId, emailSignatureExternalId },
+			'MOCK_EXTERNAL_SERVICES enabled, skipping Postmark verify'
+		);
+		return parse(postmarkReadSendSignatureBodySchema, mockResult);
+	}
+
 	const result = await fetch(`https://api.postmarkapp.com/senders/${emailSignatureExternalId}`, {
 		method: 'GET',
 		headers: {
@@ -106,6 +148,30 @@ export async function updateSendSignature({
 	signatureBody: PostmarkUpdateSendSignatureBody;
 }) {
 	log.debug({ emailSignatureExternalId, signatureBody }, 'Updating send signature');
+	if (useMockExternalServices()) {
+		const existing = mockSendSignatures.get(emailSignatureExternalId);
+		const mockResult: PostmarkReadSendSignatureBody = {
+			ID: emailSignatureExternalId,
+			EmailAddress: existing?.EmailAddress || `mock-${emailSignatureExternalId}@example.com`,
+			Name: signatureBody.Name || existing?.Name || `Mock Signature ${emailSignatureExternalId}`,
+			Confirmed: existing?.Confirmed ?? false,
+			ReturnPathDomain:
+				signatureBody.ReturnPathDomain === undefined
+					? (existing?.ReturnPathDomain ?? null)
+					: signatureBody.ReturnPathDomain,
+			ReturnPathDomainVerified:
+				signatureBody.ReturnPathDomain === undefined
+					? (existing?.ReturnPathDomainVerified ?? false)
+					: !!signatureBody.ReturnPathDomain
+		};
+		mockSendSignatures.set(emailSignatureExternalId, mockResult);
+		log.info(
+			{ emailSignatureExternalId },
+			'MOCK_EXTERNAL_SERVICES enabled, skipping Postmark update'
+		);
+		return parse(postmarkReadSendSignatureBodySchema, mockResult);
+	}
+
 	const result = await fetch(`https://api.postmarkapp.com/senders/${emailSignatureExternalId}`, {
 		method: 'PUT',
 		headers: {

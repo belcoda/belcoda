@@ -79,13 +79,18 @@
 	bind:open={isOpen}
 >
 	{#snippet children()}
-		<form use:form.enhance class="space-y-4">
+		<form use:form.enhance class="space-y-4" data-testid="settings-send-signature-create-form">
 			<Errors {errors} />
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Display name`}</Form.Label>
-						<Input {...props} bind:value={$data.name} placeholder={t`Display name`} />
+						<Input
+							{...props}
+							bind:value={$data.name}
+							placeholder={t`Display name`}
+							data-testid="settings-send-signature-create-name-input"
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -101,6 +106,7 @@
 							bind:value={$data.emailAddress}
 							placeholder={t`email@example.com`}
 							class="font-mono"
+							data-testid="settings-send-signature-create-email-address-input"
 						/>
 					{/snippet}
 				</Form.Control>
@@ -118,6 +124,7 @@
 							bind:value={$data.replyTo}
 							placeholder={t`reply@example.com`}
 							class="font-mono"
+							data-testid="settings-send-signature-create-reply-to-input"
 						/>
 					{/snippet}
 				</Form.Control>
@@ -136,6 +143,7 @@
 							bind:value={$data.returnPathDomain}
 							placeholder={t`bounce.example.com`}
 							class="font-mono"
+							data-testid="settings-send-signature-create-return-path-input"
 						/>
 					{/snippet}
 				</Form.Control>
@@ -154,6 +162,7 @@
 				onclick={() => {
 					form.submit();
 				}}
+				data-testid="settings-send-signature-create-submit-button"
 			>
 				{t`Create signature`}
 			</Button>
