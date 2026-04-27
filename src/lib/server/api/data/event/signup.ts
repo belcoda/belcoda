@@ -921,7 +921,20 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
-	if (event.endsAt <= Date.now()) {
+	if (
+		parsed.input.details.channel.type !== 'adminPanel' &&
+		getEventHasEnded({
+			...event,
+			endsAt: new Date(event.endsAt),
+			startsAt: new Date(event.startsAt),
+			createdAt: new Date(event.createdAt),
+			updatedAt: new Date(event.updatedAt),
+			reminderSentAt: event.reminderSentAt ? new Date(event.reminderSentAt) : null,
+			cancelledAt: event.cancelledAt ? new Date(event.cancelledAt) : null,
+			deletedAt: event.deletedAt ? new Date(event.deletedAt) : null,
+			archivedAt: event.archivedAt ? new Date(event.archivedAt) : null
+		})
+	) {
 		throw new Error('Event signup period has ended');
 	}
 	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
