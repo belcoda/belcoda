@@ -6,6 +6,7 @@ import { and, eq, isNull, or, inArray, sql, type SQL } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import { builder } from '$lib/zero/schema';
+import { db } from '$lib/server/db';
 import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';
 import { createMessageFromTemplateAndTemplateMessage } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
 import { type Flow } from '$lib/schema/flow/index';
@@ -319,4 +320,20 @@ export async function _getWhatsappThreadByIdUnsafeNoTenantCheck({
 		return null;
 	}
 	return whatsappThreadRecord;
+}
+
+export async function getWhatsappThreadById({
+	threadId,
+	ctx
+}: {
+	threadId: string;
+	ctx: QueryContext;
+}) {
+	return db.run(
+		builder.whatsappThread
+			.where('id', '=', threadId)
+			.where((expr) => whatsappThreadReadPermissions(expr, ctx))
+			.where('deletedAt', 'IS', null)
+			.one()
+	);
 }
