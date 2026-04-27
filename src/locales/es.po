@@ -2198,6 +2198,7 @@ msgstr "Miniatura del adjunto"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "Esta es una vista previa del evento. Publica el evento antes de compartirlo con otros."
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Unirse a este evento"
@@ -2228,6 +2229,14 @@ msgstr "Evento no publicado"
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "This event is not published yet. Please check back later."
 msgstr "Este evento aún no está publicado. Por favor vuelve más tarde."
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "Sign-up has closed"
+msgstr "La inscripción ha finalizado"
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "The sign-up period for this event has ended, so you can no longer register on this page."
+msgstr "El periodo de inscripción de este evento ha terminado, por lo que ya no puedes registrarte en esta página."
 
 #: src/lib/components/layouts/public/event/EventDeclineSuccess.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
