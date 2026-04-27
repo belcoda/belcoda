@@ -17,10 +17,9 @@
 </script>
 
 <script lang="ts">
-	import { display12HourValue, setDateByType } from './time-picker-utils';
+	import { display12HourValue, getPeriodFromTime, setDateByType } from './time-picker-utils';
 	import { Time } from '@internationalized/date';
 	import * as Select from '$lib/components/ui/select';
-	import { onMount } from 'svelte';
 
 	let {
 		period = $bindable('PM'),
@@ -34,18 +33,25 @@
 	}: PeriodSelectorProps = $props();
 
 	function handlePeriod() {
+		if (!time) {
+			return;
+		}
 		const tempTime = time.copy();
 		const hours = display12HourValue(time.hour);
-		const _time = setDateByType(
-			tempTime,
-			hours.toString(),
-			'12hours',
-			period === 'AM' ? 'AM' : 'PM'
-		);
+		const _time = setDateByType(tempTime, hours.toString(), '12hours', period);
 
 		time = _time;
 		setTime?.(_time);
 	}
+
+	$effect(() => {
+		if (time) {
+			const next = getPeriodFromTime(time);
+			if (next !== period) {
+				period = next;
+			}
+		}
+	});
 
 	function handleKeyDown(e: KeyboardEvent) {
 		if (e.key === 'ArrowRight') onRightFocus?.();
@@ -64,10 +70,6 @@
 			handlePeriod();
 		}
 	}
-
-	onMount(() => {
-		handlePeriod();
-	});
 </script>
 
 <div class="flex h-10 items-center">
