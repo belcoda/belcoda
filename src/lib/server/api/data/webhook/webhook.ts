@@ -14,12 +14,20 @@ import {
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { drizzle } from '$lib/server/db';
-import { parse } from 'valibot';
+import { object, parse } from 'valibot';
+import { uuid } from '$lib/schema/helpers';
+
+const getWebhookSecretByIdForOwnerArgsSchema = object({
+	userId: uuid,
+	webhookId: uuid
+});
 
 /**
- * Returns the full webhook row (including secret) if the user is an organization owner
- * for that webhook's organization. Otherwise returns null (including when the webhook
- * id does not exist) so callers can respond with 404 without leaking membership.
+ * Returns the webhook signing secret when the user is an organization owner for that
+ * webhook's organization. Returns `null` when the webhook does not exist or the user is
+ * not an owner (callers should respond with 404 without distinguishing the two).
+ *
+ * Throws Valibot `ValiError` when `userId` / `webhookId` fail validation (e.g. malformed UUID).
  */
 export async function getWebhookSecretByIdForOwner({
 	userId,
@@ -27,16 +35,17 @@ export async function getWebhookSecretByIdForOwner({
 }: {
 	userId: string;
 	webhookId: string;
-}): Promise<string> {
-	const ctx = await getQueryContext(userId);
-	const row = await drizzle.query.webhook.findFirst({
-		where: eq(webhook.id, webhookId)
+}): Promise<string | null> {
+	const { userId: uid, webhookId: wid } = parse(getWebhookSecretByIdForOwnerArgsSchema, {
+		userId,
+		webhookId
 	});
-	if (!row) {
-		throw new Error('Webhook not found');
-	}
-	if (!ctx.ownerOrgs.includes(row.organizationId)) {
-		throw new Error('You are not authorized to get the secret for this webhook');
+	const ctx = await getQueryContext(uid);
+	const row = await drizzle.query.webhook.findFirst({
+		where: eq(webhook.id, wid)
+	});
+	if (!row || !ctx.ownerOrgs.includes(row.organizationId)) {
+		return null;
 	}
 	return row.secret;
 }
