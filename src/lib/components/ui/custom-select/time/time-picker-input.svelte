@@ -62,7 +62,8 @@
 
 	let commitTimer: ReturnType<typeof setTimeout> | null = null;
 
-	let calculatedValue = $derived.by(() => getDateByType(time, picker));
+	const safeTime = $derived(time ?? new Time(0, 0));
+	let calculatedValue = $derived.by(() => getDateByType(safeTime, picker));
 
 	function clearCommitTimer() {
 		if (commitTimer !== null) {
@@ -89,7 +90,7 @@
 	}
 
 	function applyPadded(padded: string) {
-		const tempTime = time.copy();
+		const tempTime = safeTime.copy();
 		time = setDateByType(tempTime, padded, picker, period);
 		setTime?.(time);
 	}
@@ -190,7 +191,7 @@
 			resetDigitEntry();
 			const step = e.key === 'ArrowUp' ? 1 : -1;
 			const newValue = getArrowByType(calculatedValue, step, picker);
-			const tempTime = time.copy();
+			const tempTime = safeTime.copy();
 			time = setDateByType(tempTime, newValue, picker, period);
 			setTime?.(time);
 		}
@@ -219,12 +220,12 @@
 		resetDigitEntry();
 	}}
 	onblur={(e) => {
-		onblur?.(e);
 		clearCommitTimer();
-		// If there is a lone digit waiting, apply it the same as timeout (except 12h "0").
-		if (digitBuffer.length === 1) {
-			tryCommitBuffer(true);
+		tryCommitBuffer(true);
+		if (picker === '12hours' && digitBuffer === '0') {
+			resetDigitEntry();
 		}
+		onblur?.(e);
 	}}
 	{type}
 	inputmode="decimal"
