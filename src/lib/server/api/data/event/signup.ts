@@ -12,7 +12,8 @@ import {
 	type CreateMutatorSchema,
 	createMutatorSchema,
 	type UpdateMutatorSchemaOutput,
-	updateMutatorSchema
+	updateMutatorSchema,
+	eventSignupWebhook
 } from '$lib/schema/event-signup';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -29,6 +30,8 @@ import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 import { clampLocale } from '$lib/utils/language';
 
 import {
@@ -36,6 +39,27 @@ import {
 	_getPersonByIdUnsafe
 } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
+
+type QueueT = Awaited<ReturnType<typeof getQueue>>;
+
+async function queueEventSignupWebhook(
+	queue: QueueT,
+	kind: 'event.signup.created' | 'event.signup.updated',
+	row: typeof eventSignup.$inferSelect
+) {
+	const { organizationId, ...data } = row;
+	try {
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: kind,
+				data: parse(eventSignupWebhook, data)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
+}
 
 export async function getEventByIdUnsafe({
 	eventId,
@@ -339,6 +363,8 @@ export async function createIncompleteEventSignupByPersonId({
 		if (!updated) {
 			throw new Error('Unable to update existing event signup');
 		}
+		const queue = await getQueue();
+		await queueEventSignupWebhook(queue, 'event.signup.updated', updated);
 		return updated;
 	}
 
@@ -359,6 +385,8 @@ export async function createIncompleteEventSignupByPersonId({
 	if (!inserted) {
 		throw new Error('Unable to create incomplete event signup');
 	}
+	const queueIncomplete = await getQueue();
+	await queueEventSignupWebhook(queueIncomplete, 'event.signup.created', inserted);
 	return inserted;
 }
 
@@ -482,8 +510,8 @@ export async function completeEventSignupByPersonId({
 
 	const transitionedToComplete =
 		!isCompleteEventSignupStatus(previousStatus) && isCompleteEventSignupStatus(result.status);
+	const queue = await getQueue();
 	if (transitionedToComplete) {
-		const queue = await getQueue();
 		await queue.insertActivity({
 			organizationId,
 			personId,
@@ -493,6 +521,11 @@ export async function completeEventSignupByPersonId({
 			unread: false
 		});
 	}
+	await queueEventSignupWebhook(
+		queue,
+		existingEventSignup ? 'event.signup.updated' : 'event.signup.created',
+		result
+	);
 
 	return result;
 }
@@ -596,6 +629,12 @@ export async function signUpForEventUnsafe({
 		});
 	}
 	//TODO: Implement whatsapp notification
+	const queueSignup = await getQueue();
+	await queueEventSignupWebhook(
+		queueSignup,
+		existingEventSignup ? 'event.signup.updated' : 'event.signup.created',
+		insertedEventSignup
+	);
 
 	return insertedEventSignup;
 }
@@ -714,6 +753,18 @@ export async function declineEventHelper({
 
 	const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
 
+	const [existingDeclineSignup] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(eventSignup)
+		.where(
+			and(
+				eq(eventSignup.eventId, eventRecord.id),
+				eq(eventSignup.personId, personRecord.id),
+				eq(eventSignup.organizationId, organizationRecord.id)
+			)
+		)
+		.limit(1);
+
 	// Create event signup with notattending status
 	const eventSignupRecord: typeof eventSignup.$inferInsert = {
 		id: eventSignupId,
@@ -751,6 +802,11 @@ export async function declineEventHelper({
 		referenceId: insertedEventSignup.id,
 		unread: false
 	});
+	await queueEventSignupWebhook(
+		queue,
+		existingDeclineSignup ? 'event.signup.updated' : 'event.signup.created',
+		insertedEventSignup
+	);
 
 	return insertedEventSignup;
 }
@@ -818,6 +874,11 @@ export async function updateEventSignupStatus({
 		newStatus: parsed,
 		previousStatus
 	});
+	const [updatedStatusRow] = result;
+	if (updatedStatusRow) {
+		const q = await getQueue();
+		await queueEventSignupWebhook(q, 'event.signup.updated', updatedStatusRow);
+	}
 	return result;
 }
 
@@ -943,6 +1004,13 @@ export async function createEventSignup({
 		previousStatus: undefined
 	});
 
+	queue = queue || (await getQueue());
+	await queueEventSignupWebhook(
+		queue,
+		existingEventSignup ? 'event.signup.updated' : 'event.signup.created',
+		insertedEventSignup
+	);
+
 	return insertedEventSignup;
 }
 
@@ -1015,4 +1083,6 @@ export async function updateEventSignup({
 		newStatus: args.input.status,
 		previousStatus
 	});
+	const q = await getQueue();
+	await queueEventSignupWebhook(q, 'event.signup.updated', result);
 }

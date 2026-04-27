@@ -4603,6 +4603,38 @@ msgstr "Pré-visualizar página do evento"
 msgid "Detailed signups table"
 msgstr "Tabela detalhada de inscrições"
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr "Mostrar arquivados"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "This event has been archived."
+msgstr "Este evento foi arquivado."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "You can view this event, but new signups are closed."
+msgstr "Você pode ver este evento, mas novas inscrições estão fechadas."
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Instantâneo"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Adicionar nó"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Inscrição na petição"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Adicionar etiqueta"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Team Add"
+msgstr "Adicionar equipe"
+
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Test email"
 msgstr "E-mail de teste"
@@ -4629,56 +4661,24 @@ msgstr "Enviar e-mail de teste"
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
-msgstr ""
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Snapshot"
-msgstr ""
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Add Node"
-msgstr ""
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Petition Signup"
-msgstr ""
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Tag Add"
-msgstr ""
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Team Add"
-msgstr ""
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "This event has been archived."
-msgstr ""
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "You can view this event, but new signups are closed."
-msgstr ""
+msgstr "Todos"
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
-msgstr ""
+msgstr "Selecione uma equipe..."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
-msgstr ""
+msgstr "Pesquisar equipe..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Selecione uma petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Pesquisar petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
-
-#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-msgid "Show archived"
-msgstr ""
+msgstr "Nenhuma petição encontrada."

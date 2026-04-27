@@ -4619,6 +4619,38 @@ msgstr "Preview event page"
 msgid "Detailed signups table"
 msgstr "Detailed signups table"
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr "Show archived"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "This event has been archived."
+msgstr "This event has been archived."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "You can view this event, but new signups are closed."
+msgstr "You can view this event, but new signups are closed."
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Snapshot"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Add Node"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Petition Signup"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Tag Add"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Team Add"
+msgstr "Team Add"
+
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Test email"
 msgstr "Test email"
@@ -4647,34 +4679,6 @@ msgstr "Send test email"
 msgid "Everyone"
 msgstr "Everyone"
 
-#: src/lib/components/flow/Flow.svelte
-msgid "Snapshot"
-msgstr "Snapshot"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Add Node"
-msgstr "Add Node"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Petition Signup"
-msgstr "Petition Signup"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Tag Add"
-msgstr "Tag Add"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Team Add"
-msgstr "Team Add"
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "This event has been archived."
-msgstr "This event has been archived."
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "You can view this event, but new signups are closed."
-msgstr "You can view this event, but new signups are closed."
-
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
 msgstr "Select a team..."
@@ -4694,7 +4698,3 @@ msgstr "Search petition..."
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
 msgstr "No petitions found."
-
-#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-msgid "Show archived"
-msgstr "Show archived"
