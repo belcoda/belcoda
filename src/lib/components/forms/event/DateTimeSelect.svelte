@@ -24,6 +24,7 @@
 
 	//* FOO IMPORTS (//) *//
 	import Calendar from '$lib/components/ui/calendar/calendar.svelte';
+	import TimePicker12h from '$lib/components/ui/custom-select/time/time-picker-12h-timestamp.svelte';
 	import TimezoneSelect from '$lib/components/ui/custom-select/timezone/timezone.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { toast } from 'svelte-sonner';
@@ -105,7 +106,6 @@
 		const { endsAt } = defaultStartsAtEndsAt($data.timezone || getLocalTimeZone());
 		$data.endsAt = endsAt;
 	}
-	import TimePicker12h from '$lib/components/ui/custom-select/time/time-picker-12h-timestamp.svelte';
 </script>
 
 {@render dateTimeSelect()}
@@ -258,7 +258,11 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>{t`From`}</Form.Label>
-				<TimePicker12h bind:timestamp={$data.startsAt} view="dotted" timezone={$data.timezone} />
+				<TimePicker12h
+					bind:timestamp={$data.startsAt}
+					view="dotted"
+					timezone={$data.timezone || getLocalTimeZone()}
+				/>
 			{/snippet}
 		</Form.Control>
 	</Form.Field>
@@ -270,7 +274,11 @@
 			{#snippet children({ props })}
 				<Form.Label>{t`To`}</Form.Label>
 
-				<TimePicker12h bind:timestamp={$data.endsAt} view={'dotted'} timezone={$data.timezone} />
+				<TimePicker12h
+					bind:timestamp={$data.endsAt}
+					view="dotted"
+					timezone={$data.timezone || getLocalTimeZone()}
+				/>
 			{/snippet}
 		</Form.Control>
 	</Form.Field>
