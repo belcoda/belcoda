@@ -153,13 +153,17 @@
 											>
 											<Tooltip.Root>
 												<Tooltip.Trigger>
-													<button
-														type="button"
-														class="text-muted-foreground hover:text-foreground"
-														aria-label={t`About webhook secrets`}
-													>
-														<InfoIcon class="h-4 w-4 shrink-0" />
-													</button>
+													{#snippet child({ props })}
+														<Button
+															{...props}
+															variant="ghost"
+															size="icon-sm"
+															class="text-muted-foreground hover:text-foreground"
+															aria-label={t`About webhook secrets`}
+														>
+															<InfoIcon class="h-4 w-4 shrink-0" />
+														</Button>
+													{/snippet}
 												</Tooltip.Trigger>
 												<Tooltip.Content class="max-w-sm" side="top">
 													{t`The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda.`}
