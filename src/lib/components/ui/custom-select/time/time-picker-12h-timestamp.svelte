@@ -28,30 +28,29 @@
 		setPeriod?: (period: Period) => void;
 	} = $props();
 
-	function derivePeriod(timestamp: number) {
-		const time = convertTimestampToTime(timestamp, timezone);
-		return getPeriodFromTime(time);
-	}
+	const effectiveTimezone = $derived((timezone ?? getLocalTimeZone()) as string);
+	const displayTime = $derived(convertTimestampToTime(timestamp, effectiveTimezone));
 
-	let period: Period = $derived(derivePeriod(timestamp));
+	let localPeriod = $state<Period>('AM');
+
+	$effect.pre(() => {
+		localPeriod = getPeriodFromTime(displayTime);
+	});
+
 	let minuteRef = $state<HTMLInputElement | null>(null);
 	let hourRef = $state<HTMLInputElement | null>(null);
 	let secondRef = $state<HTMLInputElement | null>(null);
-	let periodRef = $state<HTMLInputElement | null>(null);
+	let periodRef = $state<HTMLButtonElement | null>(null);
 
 	function getTime() {
-		return convertTimestampToTime(timestamp, timezone);
+		return displayTime;
 	}
 	function setNewTime(time: Time) {
-		const newTimestamp = updateTimestampTime({ timestamp, timezone, newTime: time });
-		timestamp = newTimestamp;
-	}
-
-	function getPeriod() {
-		return period;
-	}
-	function setNewPeriod(newPeriod: Period) {
-		period = newPeriod;
+		timestamp = updateTimestampTime({
+			timestamp,
+			timezone: effectiveTimezone,
+			newTime: time
+		});
 	}
 </script>
 
@@ -66,7 +65,7 @@
 			bind:time={getTime, setNewTime}
 			bind:ref={hourRef}
 			{setTime}
-			{period}
+			period={localPeriod}
 			onRightFocus={() => minuteRef?.focus()}
 		/>
 	</div>
@@ -117,10 +116,10 @@
 		{/if}
 
 		<TimePeriodSelect
-			bind:period={getPeriod, setNewPeriod}
+			bind:period={localPeriod}
 			bind:time={getTime, setNewTime}
-			{setPeriod}
 			{setTime}
+			{setPeriod}
 			ref={periodRef}
 			onLeftFocus={() => secondRef?.focus()}
 		/>
