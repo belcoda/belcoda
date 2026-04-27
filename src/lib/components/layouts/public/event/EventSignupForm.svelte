@@ -109,7 +109,17 @@
 		validators: valibot(surveySchema),
 		dataType: 'json',
 		delayMs: 200,
-		timeoutMs: 12000
+		timeoutMs: 12000,
+		onResult: ({ result }) => {
+			if (result.type === 'failure' && result.data && typeof result.data === 'object') {
+				const err = (result.data as { error?: unknown }).error;
+				if (typeof err === 'string') {
+					submissionError = err;
+					return;
+				}
+			}
+			submissionError = null;
+		}
 	});
 	const { form: data, submitting, delayed, allErrors } = $derived(form);
 </script>

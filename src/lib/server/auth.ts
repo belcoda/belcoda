@@ -17,11 +17,17 @@ import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 import { apiKey } from '@better-auth/api-key';
 import { stripe } from '@better-auth/stripe';
 import type Stripe from 'stripe';
+import { getQueue } from '$lib/server/queue';
 import { stripeClient } from '$lib/server/stripe';
 import {
 	CREDIT_PURCHASE_METADATA_TYPE,
 	parseCreditPurchaseAmountUsd
 } from '$lib/utils/billing/credit';
+
+import { parse } from 'valibot';
+import { userRole } from '$lib/schema/user';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 import { LRUCache } from 'lru-cache';
 const cache = new LRUCache<string, string>({
@@ -171,6 +177,64 @@ export function buildBetterAuth(localeInput: string) {
 						stream: 'outbound',
 						context: email
 					});
+				},
+				organizationHooks: {
+					afterAddMember: async ({ member, user, organization }) => {
+						//trigger webhook
+						try {
+							const queue = await getQueue();
+							await queue.triggerWebhook({
+								organizationId: organization.id,
+								payload: {
+									type: 'member.created',
+									data: {
+										organizationId: organization.id,
+										userId: user.id,
+										role: parse(userRole, member.role)
+									}
+								}
+							});
+						} catch (error) {
+							log.error({ error, member, user, organization }, 'Failed to trigger webhook');
+						}
+					},
+					afterRemoveMember: async ({ user, organization }) => {
+						//trigger webhook
+						try {
+							const queue = await getQueue();
+							await queue.triggerWebhook({
+								organizationId: organization.id,
+								payload: {
+									type: 'member.deleted',
+									data: {
+										organizationId: organization.id,
+										userId: user.id
+									}
+								}
+							});
+						} catch (error) {
+							log.error({ error, user, organization }, 'Failed to trigger webhook');
+						}
+					},
+					afterUpdateMemberRole: async ({ member, user, organization }) => {
+						//trigger webhook
+						try {
+							const queue = await getQueue();
+							await queue.triggerWebhook({
+								organizationId: organization.id,
+								payload: {
+									type: 'member.updated',
+									data: {
+										organizationId: organization.id,
+										userId: user.id,
+										role: parse(userRole, member.role)
+									}
+								}
+							});
+						} catch (error) {
+							log.error({ error, member, user, organization }, 'Failed to trigger webhook');
+						}
+					}
 				},
 				schema: {
 					organization: {

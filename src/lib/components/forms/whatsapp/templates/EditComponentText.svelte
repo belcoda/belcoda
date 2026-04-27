@@ -79,6 +79,9 @@
 			bind:value={getValue, setValue}
 			maxlength={type === 'header' ? 60 : 1024}
 			class="block w-full"
+			data-testid={type === 'header'
+				? 'whatsapp-template-header-text'
+				: 'whatsapp-template-body-text'}
 		></Textarea>
 		<div class="ms-1 text-sm text-gray-500">
 			{type === 'header'
@@ -129,7 +132,11 @@
 							{`{{${i + 1}}}`}
 						</th>
 						<td class="px-6 py-2">
-							<Input bind:value={items[i]} />
+							<Input
+								bind:value={items[i]}
+								data-testid="whatsapp-template-example-input"
+								data-example-index={String(i)}
+							/>
 						</td>
 						<td class="px-6 py-2">
 							<Button

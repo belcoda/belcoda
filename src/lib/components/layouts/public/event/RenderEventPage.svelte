@@ -17,6 +17,8 @@
 		layout: 'default' | 'embed';
 		success?: boolean;
 		declined?: boolean;
+		/** When false, public registration is not shown; defaults true for success/declined sub-routes. */
+		signupWindowOpen?: boolean;
 	};
 	const {
 		event,
@@ -27,7 +29,8 @@
 		whatsAppSignupLink,
 		form,
 		success = false,
-		declined = false
+		declined = false,
+		signupWindowOpen = true
 	}: Props = $props();
 
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
@@ -37,6 +40,7 @@
 
 	const currentSignups = $derived(signupCount);
 	import EventSignupForm from './EventSignupForm.svelte';
+	import EventSignupClosed from './EventSignupClosed.svelte';
 	import EventDetails from './EventDetails.svelte';
 </script>
 
@@ -128,16 +132,20 @@
 				<div class="lg:col-span-1">
 					<div class="sticky top-8">
 						<div class="rounded-lg bg-white p-6 shadow-sm">
-							{#if form && whatsAppSignupLink && !success && !declined}
-								<EventSignupForm
-									{form}
-									{currentSignups}
-									{event}
-									{organization}
-									{session}
-									{layout}
-									{whatsAppSignupLink}
-								/>
+							{#if !success && !declined}
+								{#if !signupWindowOpen}
+									<EventSignupClosed {event} {organization} {currentSignups} {layout} />
+								{:else if form && whatsAppSignupLink}
+									<EventSignupForm
+										{form}
+										{currentSignups}
+										{event}
+										{organization}
+										{session}
+										{layout}
+										{whatsAppSignupLink}
+									/>
+								{/if}
 							{/if}
 							{#if success}
 								<EventSignUpSuccess {event} {organization} />
@@ -153,15 +161,19 @@
 	</main>
 {:else if layout === 'embed'}
 	<div class="mx-auto max-w-md bg-white">
-		{#if form && whatsAppSignupLink && !success && !declined}
-			<EventSignupForm
-				{currentSignups}
-				{form}
-				{event}
-				{organization}
-				{layout}
-				{whatsAppSignupLink}
-			/>
+		{#if !success && !declined}
+			{#if !signupWindowOpen}
+				<EventSignupClosed {event} {organization} {currentSignups} {layout} />
+			{:else if form && whatsAppSignupLink}
+				<EventSignupForm
+					{currentSignups}
+					{form}
+					{event}
+					{organization}
+					{layout}
+					{whatsAppSignupLink}
+				/>
+			{/if}
 		{/if}
 		{#if success}
 			<EventSignUpSuccess {event} {organization} />

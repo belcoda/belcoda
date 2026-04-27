@@ -17,7 +17,9 @@
 <ContentLayout rootLink="/settings/whatsapp/templates">
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-bold">{t`New WhatsApp template`}</h1>
+			<h1 class="text-2xl font-bold" data-testid="whatsapp-template-new-heading">
+				{t`New WhatsApp template`}
+			</h1>
 		</div>
 	{/snippet}
 	<CreateOrEditWhatsAppTemplate {template} mode="create" />

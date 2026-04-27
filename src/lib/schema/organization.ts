@@ -6,6 +6,7 @@ import {
 	whatsappOrganizationSettingsSchema
 } from '$lib/schema/organization/settings';
 import { organizationNameSchema, organizationSlugSchema } from '$lib/schema/organization/names';
+import { userRole } from '$lib/schema/user';
 
 export const organizationSchema = v.object({
 	id: helpers.uuid,
@@ -32,7 +33,7 @@ export const organizationWebhook = v.object({
 export const organizationMemberWebhook = v.object({
 	organizationId: helpers.uuid,
 	userId: helpers.uuid,
-	role: v.picklist(['admin', 'owner', 'member'])
+	role: userRole
 });
 
 export const readOrganizationRest = v.object({

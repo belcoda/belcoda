@@ -325,6 +325,71 @@ test.describe.serial('Events', () => {
 		await signupsPage.signupTable.waitFor({ state: 'visible', timeout: 15_000 });
 		await expect(signupsPage.signupTable).toContainText(flowGivenName, { timeout: 15_000 });
 	});
+
+	test('public event page shows sign-up closed when the event has ended', async ({
+		page,
+		context
+	}) => {
+		const suffix = Date.now();
+		const title = `E2E Past Event ${suffix}`;
+
+		await loginAsOwner(page);
+
+		const createPage = new EventCreatePage(page);
+		await createPage.goto();
+		await createPage.fillTitle(title);
+		await createPage.fillDescription('E2E event in the past for closed signup');
+		await createPage.submit();
+		await createPage.waitForModal();
+
+		const publishToggle = page.locator('[id="publish-toggle"]');
+		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
+		if (!(await publishToggle.isChecked().catch(() => false))) {
+			await publishToggle.click();
+			await page.waitForTimeout(800);
+		}
+		await createPage.closeModal();
+
+		await expect(page).toHaveURL(
+			/\/events\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
+			{ timeout: 10_000 }
+		);
+		const eventId = new URL(page.url()).pathname.split('/')[2] ?? '';
+		const pastEventSlug = slugifyTitle(title);
+		expect(eventId).not.toBe('');
+
+		const editPage = new EventEditPage(page);
+		await page.goto(`/events/${eventId}/edit`);
+		await editPage.waitForForm();
+
+		await page.getByTestId('event-form-date').click();
+		const popover = page.locator('[data-slot=popover-content]');
+		await popover.waitFor({ state: 'visible', timeout: 5_000 });
+		const previousMonth = popover.getByRole('button', { name: /previous/i });
+		for (let i = 0; i < 18; i++) {
+			await previousMonth.click();
+		}
+		const day = popover.getByRole('gridcell', { name: '15' });
+		if ((await day.count()) > 0) {
+			await day.first().click();
+		} else {
+			await popover.getByRole('button', { name: '15' }).first().click();
+		}
+
+		await editPage.submit();
+		await editPage.waitForModal();
+		await editPage.closeModal();
+
+		const anon = await context.newPage();
+		const publicPage = new EventPublicPage(anon);
+		await publicPage.goto(E2E_ORG_SLUG, pastEventSlug);
+		try {
+			await expect(anon.getByTestId('event-signup-closed')).toBeVisible({ timeout: 20_000 });
+			await expect(anon.getByTestId('event-signup-given-name')).toHaveCount(0);
+		} finally {
+			await anon.close();
+		}
+	});
 });
 
 test.describe.serial('Event signup fields', () => {

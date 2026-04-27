@@ -1,7 +1,7 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import { tag } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { parse } from 'valibot';
 import {
 	type UpdateMutatorSchema,
@@ -9,8 +9,12 @@ import {
 	type CreateMutatorSchema,
 	createMutatorSchema,
 	type DeleteMutatorSchema,
-	deleteMutatorSchema
+	deleteMutatorSchema,
+	tagWebhook
 } from '$lib/schema/tag';
+import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function createTag({
 	tx,
@@ -28,7 +32,9 @@ export async function createTag({
 	const [existingTag] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(tag)
-		.where(eq(tag.name, parsed.input.name))
+		.where(
+			and(eq(tag.name, parsed.input.name), eq(tag.organizationId, parsed.metadata.organizationId))
+		)
 		.limit(1);
 	if (existingTag) {
 		throw new Error('A tag with this name already exists for this organization');
@@ -47,6 +53,19 @@ export async function createTag({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to create tag');
+	}
+	const { organizationId, ...tagData } = result;
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'tag.created',
+				data: parse(tagWebhook, tagData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
 	}
 	return result;
 }
@@ -71,10 +90,25 @@ export async function updateTag({
 			active: parsed.input.active,
 			updatedAt: new Date()
 		})
-		.where(eq(tag.id, parsed.metadata.tagId))
+		.where(
+			and(eq(tag.id, parsed.metadata.tagId), eq(tag.organizationId, parsed.metadata.organizationId))
+		)
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update tag');
+	}
+	const { organizationId, ...tagData } = result;
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'tag.updated',
+				data: parse(tagWebhook, tagData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
 	}
 	return result;
 }
@@ -92,10 +126,29 @@ export async function deleteTag({
 	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(parsed.metadata.organizationId)) {
 		throw new Error('You are not authorized to delete a tag in this organization');
 	}
-	await tx.dbTransaction.wrappedTransaction
+	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(tag)
 		.set({ deletedAt: new Date() })
 		.where(
-			and(eq(tag.id, parsed.metadata.tagId), eq(tag.organizationId, parsed.metadata.organizationId))
-		);
+			and(
+				eq(tag.id, parsed.metadata.tagId),
+				eq(tag.organizationId, parsed.metadata.organizationId),
+				isNull(tag.deletedAt)
+			)
+		)
+		.returning();
+	if (updated) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: updated.organizationId,
+				payload: {
+					type: 'tag.deleted',
+					data: { tagId: updated.id }
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
 }

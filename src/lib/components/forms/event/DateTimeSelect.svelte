@@ -154,7 +154,12 @@
 				<Popover.Root bind:open={startDateOpen} {...props}>
 					<Popover.Trigger id="{id}-start-date">
 						{#snippet child({ props })}
-							<Button {...props} variant="outline" class="w-full justify-between font-normal">
+							<Button
+								{...props}
+								data-testid="event-form-date"
+								variant="outline"
+								class="w-full justify-between font-normal"
+							>
 								{$data.startsAt
 									? renderDate($data.startsAt, $data.timezone || getLocalTimeZone(), locale.current)
 									: t`Select date`}
