@@ -168,6 +168,7 @@
 
 	function handleKeyDown(e: KeyboardEvent) {
 		if (e.key === 'Tab') return;
+		if (e.ctrlKey || e.metaKey || e.altKey) return;
 
 		const isNavKey = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key);
 		const isDigit = e.key >= '0' && e.key <= '9';
