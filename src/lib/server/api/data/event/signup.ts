@@ -860,7 +860,7 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
-	if (event.endsAt <= Date.now()) {
+	if (event.endsAt <= Date.now() && parsed.input.details.channel.type !== 'adminPanel') {
 		throw new Error('Event signup period has ended');
 	}
 	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
