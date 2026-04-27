@@ -12,17 +12,14 @@ export function userReadPermissions(builder: ExpressionBuilder<'user', Schema>, 
 		exists('orgMemberships', (m) => {
 			return m.whereExists('organization', (o) => {
 				return o.where(({ or, cmp }) => {
-					return or(
-						cmp('id', 'IN', ctx.adminOrgs),
-						cmp('id', 'IN', ctx.ownerOrgs),
-						cmp('id', 'IN', ctx.otherOrgs)
-					);
+					const orgIds = [...ctx.ownerOrgs, ...ctx.adminOrgs, ...ctx.otherOrgs];
+					return cmp('id', 'IN', orgIds);
 				});
 			});
 		})
 	];
 	if (ctx.userId) {
-		filterArr.push(cmp('id', '=', ctx.userId!));
+		filterArr.push(cmp('id', '=', ctx.userId));
 	}
 
 	return or(...filterArr);
