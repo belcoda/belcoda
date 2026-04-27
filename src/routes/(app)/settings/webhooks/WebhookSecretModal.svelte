@@ -7,12 +7,15 @@
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import { toast } from 'svelte-sonner';
 	import { t } from '$lib/index.svelte';
+	import { get } from '$lib/utils/http';
+	import { object, string } from 'valibot';
 
 	let open = $state(false);
 	let webhookName = $state<string | null>(null);
 	let loading = $state(false);
 	let error = $state<string | null>(null);
 	let secret = $state<string | null>(null);
+	let loadRequestId = 0;
 
 	function reset() {
 		secret = null;
@@ -23,36 +26,63 @@
 
 	function handleOpenChange(next: boolean) {
 		if (!next) {
+			loadRequestId++;
 			open = false;
 			reset();
 		}
 	}
-	import { get } from '$lib/utils/http';
-	import { object, string } from 'valibot';
+
 	export async function openFor(target: { id: string; name: string }) {
+		const myRequestId = ++loadRequestId;
 		webhookName = target.name;
 		secret = null;
 		error = null;
 		loading = true;
 		open = true;
+		const loadErrorMessage = t`Could not load the webhook secret.`;
 		try {
 			const result = await get({
 				path: `/api/utils/webhook/${target.id}`,
 				schema: object({ secret: string() })
 			});
+			if (myRequestId !== loadRequestId) return;
 			secret = result.secret;
 		} catch {
-			error = t`Could not load the webhook secret.`;
+			if (myRequestId !== loadRequestId) return;
+			error = loadErrorMessage;
+			toast.error(loadErrorMessage);
 		} finally {
-			loading = false;
+			if (myRequestId === loadRequestId) {
+				loading = false;
+			}
 		}
 	}
 
-	function copySecretToClipboard() {
-		if (secret) {
-			navigator.clipboard.writeText(secret);
+	async function copySecretToClipboard() {
+		if (!secret) return;
+		try {
+			await navigator.clipboard.writeText(secret);
 			toast.success(t`Secret copied to clipboard`);
+			return;
+		} catch {
+			// Clipboard API can fail in non-secure contexts or when permission is denied.
 		}
+		try {
+			const el = document.getElementById('webhook-secret-display');
+			if (el instanceof HTMLInputElement) {
+				el.focus();
+				el.select();
+				el.setSelectionRange(0, secret.length);
+				const copied = document.execCommand('copy');
+				if (copied) {
+					toast.success(t`Secret copied to clipboard`);
+					return;
+				}
+			}
+		} catch {
+			// fall through to error toast
+		}
+		toast.error(t`Could not copy the secret to the clipboard. Try selecting it manually.`);
 	}
 </script>
 
@@ -84,7 +114,7 @@
 						type="button"
 						variant="outline"
 						size="icon"
-						onclick={copySecretToClipboard}
+						onclick={() => void copySecretToClipboard()}
 						title={t`Copy to clipboard`}
 						data-testid="settings-webhooks-secret-copy"
 					>
