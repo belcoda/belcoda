@@ -1,7 +1,7 @@
 import { Time, fromAbsolute } from '@internationalized/date';
 
 /**
- * regular expression to check for valid hour format (01-23)
+ * regular expression to check for valid hour format (00-23)
  */
 export function isValidHour(value: string) {
 	return /^(0[0-9]|1[0-9]|2[0-3])$/.test(value);
@@ -134,9 +134,10 @@ export function getDateByType(time: Time, type: TimePickerType) {
 			return getValidMinuteOrSecond(String(time.second));
 		case 'hours':
 			return getValidHour(String(time.hour));
-		case '12hours':
+		case '12hours': {
 			const hours = display12HourValue(time.hour);
 			return getValid12Hour(String(hours));
+		}
 		default:
 			return '00';
 	}
@@ -182,10 +183,14 @@ export function convert12HourTo24Hour(hour: number, period: Period) {
  * in its 12-hour representation
  */
 export function display12HourValue(hours: number) {
-	if (hours === 0 || hours === 12) return '12';
-	if (hours >= 22) return `${hours - 12}`;
-	if (hours % 12 > 9) return `${hours}`;
-	return `0${hours % 12}`;
+	const twelveHour = ((hours + 11) % 12) + 1;
+	if (twelveHour === 12) {
+		return '12';
+	}
+	if (twelveHour < 10) {
+		return `0${twelveHour}`;
+	}
+	return String(twelveHour);
 }
 
 export function convertTimestampToTime(timestamp: number, timezone: string) {
@@ -207,8 +212,8 @@ export function updateTimestampTime({
 	const newDate = date.set({
 		hour: newTime.hour,
 		minute: newTime.minute,
-		second: 0,
-		millisecond: 0
+		second: newTime.second ?? 0,
+		millisecond: newTime.millisecond ?? 0
 	});
 
 	return newDate.toDate().getTime();
