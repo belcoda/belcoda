@@ -14,11 +14,12 @@ export function personNoteReadPermissions(
 	const filterArr = [
 		cmp('organizationId', 'IN', ctx.adminOrgs),
 		cmp('organizationId', 'IN', ctx.ownerOrgs),
-		cmp('userId', '=', ctx.userId),
 		exists('person', (p) => {
 			return p.where((pBuilder) => personReadPermissions(pBuilder, ctx));
 		})
 	];
-
+	if (ctx.userId) {
+		filterArr.push(cmp('userId', '=', ctx.userId!));
+	}
 	return or(...filterArr);
 }

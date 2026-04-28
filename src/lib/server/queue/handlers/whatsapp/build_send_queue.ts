@@ -7,7 +7,8 @@ export async function buildWhatsappThreadSendQueue({
 	sentByUserId
 }: {
 	thread: typeof whatsappThread.$inferSelect;
-	sentByUserId: string;
+	sentByUserId?: string | null;
+	tx: ServerTransaction;
 }) {
 	const templateMessageNode = thread.flow.nodes[1]; // second node after targeting
 	if (!templateMessageNode) {

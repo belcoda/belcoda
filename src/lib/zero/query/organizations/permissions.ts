@@ -9,11 +9,8 @@ export function organizationReadPermissions(
 	ctx: QueryContext
 ) {
 	const { and, or, cmp, exists } = builder;
-	const filterArr = [
-		exists('memberships', (m) => {
-			return m.where('userId', '=', ctx.userId);
-		})
-	];
+	const orgIds = [...ctx.ownerOrgs, ...ctx.adminOrgs, ...ctx.otherOrgs];
+	const filterArr = [cmp('id', 'IN', orgIds)];
 
 	return or(...filterArr);
 }
