@@ -37,7 +37,7 @@ export function listPersonsQuery({
 	let q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input, userId: ctx.userId }))
+		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
 		.limit(input.pageSize || 50);
 	if (input.startAfter) {
@@ -60,7 +60,7 @@ export function listFilteredPersonsQuery({
 	const q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input, userId: ctx.userId }))
+		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
 		.limit(input.pageSize || 50);
 	return q;
@@ -86,7 +86,7 @@ export const listPersonByIdsArray = defineQuery(object({ ids: array(uuid) }), ({
 
 function whereClause(
 	builder: ExpressionBuilder<'person', Schema>,
-	{ filter, userId }: { filter: InferOutput<typeof inputSchema>; userId: string }
+	{ filter }: { filter: InferOutput<typeof inputSchema> }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
 	const { and, or, exists, cmp } = builder;

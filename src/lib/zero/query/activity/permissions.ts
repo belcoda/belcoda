@@ -15,11 +15,13 @@ export function activityReadPermissions(
 ) {
 	const { and, or, cmp, exists } = builder;
 	const filterArr = [
-		cmp('userId', '=', ctx.userId),
 		exists('person', (p) => {
 			return p.where((pBuilder) => personReadPermissions(pBuilder, ctx));
 		})
 	];
+	if (ctx.userId) {
+		filterArr.push(cmp('userId', '=', ctx.userId!));
+	}
 
 	return or(...filterArr);
 }

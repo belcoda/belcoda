@@ -8,8 +8,12 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 export function tagReadPermissions(builder: ExpressionBuilder<'tag', Schema>, ctx: QueryContext) {
 	const { and, or, cmp, exists } = builder;
 	return exists('organization', (m) => {
-		return m.whereExists('memberships', (m) => {
-			return m.where('userId', '=', ctx.userId);
+		return m.where(({ or, cmp }) => {
+			return or(
+				cmp('id', 'IN', ctx.adminOrgs),
+				cmp('id', 'IN', ctx.ownerOrgs),
+				cmp('id', 'IN', ctx.otherOrgs)
+			);
 		});
 	});
 }

@@ -12,13 +12,18 @@ export function memberReadPermissions(
 	const { and, or, cmp, exists } = builder;
 	const filterArr = [
 		exists('organization', (t) => {
-			return t.whereExists('memberships', (m) => {
-				return m.where(({ and, cmp }) => {
-					return and(cmp('userId', '=', ctx.userId));
-				});
+			return t.where(({ or, cmp }) => {
+				return or(
+					cmp('id', 'IN', ctx.adminOrgs),
+					cmp('id', 'IN', ctx.ownerOrgs),
+					cmp('id', 'IN', ctx.otherOrgs)
+				);
 			});
 		})
 	];
+	if (ctx.userId) {
+		filterArr.push(cmp('userId', '=', ctx.userId!));
+	}
 
 	return and(...filterArr);
 }
