@@ -7,22 +7,23 @@ import {
 	updateMutatorSchema,
 	type UpdateMutatorSchemaOutput,
 	deleteMutatorSchema,
-	type DeleteMutatorSchemaOutput
+	type DeleteMutatorSchemaOutput,
+	petitionSignatureWebhook
 } from '$lib/schema/petition/petition-signature';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
+import { surveyResponsesSchema } from '$lib/schema/survey/responses';
 
 import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
-import { type PersonAddedFrom, personAddedFrom } from '$lib/schema/person/meta';
 import {
 	type PetitionSignatureDetails,
 	petitionSignatureDetails
 } from '$lib/schema/petition/settings';
 
-import { parse } from 'valibot';
+import { parse, nullable } from 'valibot';
 
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
@@ -33,7 +34,10 @@ import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 import { clampLocale } from '$lib/utils/language';
+import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 
 async function applyPetitionTagsToPersonUnsafe({
 	tx,
@@ -131,6 +135,19 @@ export async function createPetitionSignature({
 		personId: parsed.metadata.personId,
 		organizationId: parsed.metadata.organizationId
 	});
+
+	const { organizationId, ...sigWebhookData } = result;
+	try {
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'petition.signature.created',
+				data: parse(petitionSignatureWebhook, sigWebhookData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -165,6 +182,19 @@ export async function updatePetitionSignature({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update petition signature');
+	}
+	const { organizationId, ...sigWebhookData } = result;
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'petition.signature.updated',
+				data: parse(petitionSignatureWebhook, sigWebhookData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
 	}
 	return result;
 }
@@ -216,7 +246,8 @@ export async function signPetitionHelper({
 	personAction,
 	signatureDetails,
 	organizationId,
-	skipNotifications = false
+	skipNotifications = false,
+	responses = null
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
@@ -224,11 +255,12 @@ export async function signPetitionHelper({
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
+	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
 	const parsedActionHelper = parse(personActionHelper, personAction);
-
+	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult) {
 		throw new Error('Petition not found');
@@ -262,7 +294,8 @@ export async function signPetitionHelper({
 		personRecord: personRecord,
 		organizationRecord: organizationRecord,
 		details: parsedSignatureDetails,
-		skipNotifications
+		skipNotifications,
+		responses: parsedResponses
 	});
 	return petitionSignatureResult;
 }
@@ -272,15 +305,18 @@ export async function signPetitionWithId({
 	petitionId,
 	personId,
 	organizationId,
-	signupDetails
+	signupDetails,
+	responses
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
 	personId: string;
 	organizationId: string;
 	signupDetails: PetitionSignatureDetails;
+	responses?: Record<string, unknown> | null;
 }) {
 	const parsedSignupDetails = parse(petitionSignatureDetails, signupDetails);
+	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult.published) {
@@ -302,7 +338,8 @@ export async function signPetitionWithId({
 		petitionRecord: petitionResult,
 		personRecord,
 		organizationRecord,
-		details: parsedSignupDetails
+		details: parsedSignupDetails,
+		responses: parsedResponses
 	});
 }
 
@@ -313,7 +350,8 @@ export async function signPetitionUnsafe({
 	organizationRecord,
 	tx,
 	details,
-	skipNotifications = false
+	skipNotifications = false,
+	responses = null
 }: {
 	petitionSignatureId?: string;
 	tx: ServerTransaction;
@@ -321,9 +359,24 @@ export async function signPetitionUnsafe({
 	personRecord: typeof person.$inferSelect;
 	organizationRecord: typeof organization.$inferSelect;
 	details: PetitionSignatureDetails;
+	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
 }) {
 	const id = petitionSignatureId || uuidv7();
+
+	const [existingPetitionSignature] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(petitionSignature)
+		.where(
+			and(
+				eq(petitionSignature.petitionId, petitionRecord.id),
+				eq(petitionSignature.personId, personRecord.id),
+				eq(petitionSignature.organizationId, organizationRecord.id),
+				isNull(petitionSignature.deletedAt)
+			)
+		)
+		.limit(1);
+
 	const petitionSignatureRecord: typeof petitionSignature.$inferInsert = {
 		id,
 		organizationId: organizationRecord.id,
@@ -331,9 +384,16 @@ export async function signPetitionUnsafe({
 		petitionId: petitionRecord.id,
 		personId: personRecord.id,
 		details,
-		responses: null,
+		responses: responses ?? null,
 		createdAt: new Date(),
 		updatedAt: new Date()
+	};
+
+	const conflictSet: Partial<typeof petitionSignature.$inferInsert> = {
+		details: petitionSignatureRecord.details,
+		teamId: petitionRecord.teamId,
+		updatedAt: new Date(),
+		...(responses == null ? {} : { responses: petitionSignatureRecord.responses }) //strips responses if null or undefined, to avoid overwriting existing responses
 	};
 
 	const [insertedPetitionSignature] = await tx.dbTransaction.wrappedTransaction
@@ -341,12 +401,8 @@ export async function signPetitionUnsafe({
 		.values(petitionSignatureRecord)
 		.onConflictDoUpdate({
 			target: [petitionSignature.petitionId, petitionSignature.personId],
-			set: {
-				details: petitionSignatureRecord.details,
-				teamId: petitionRecord.teamId,
-				updatedAt: new Date()
-			},
-			setWhere: and(isNull(petitionSignature.deletedAt), isNull(petitionSignature.responses))
+			set: conflictSet,
+			setWhere: and(isNull(petitionSignature.deletedAt))
 		})
 		.returning();
 	if (!insertedPetitionSignature) {
@@ -372,7 +428,148 @@ export async function signPetitionUnsafe({
 	});
 	//TODO: Implement whatsapp notification
 
+	const { organizationId, ...sigWebhookData } = insertedPetitionSignature;
+	try {
+		const queueSig = await getQueue();
+		await queueSig.triggerWebhook({
+			organizationId,
+			payload: {
+				type: existingPetitionSignature
+					? 'petition.signature.updated'
+					: 'petition.signature.created',
+				data: parse(petitionSignatureWebhook, sigWebhookData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
+
 	return insertedPetitionSignature;
+}
+
+export async function completePetitionSignatureHelper({
+	petitionId,
+	teamId,
+	tx,
+	personAction,
+	signatureDetails,
+	organizationId,
+	responses = null,
+	skipNotifications = true
+}: {
+	tx: ServerTransaction;
+	petitionId: string;
+	personAction: PersonActionHelper;
+	signatureDetails: PetitionSignatureDetails;
+	organizationId: string;
+	teamId?: string;
+	responses?: Record<string, unknown> | null;
+	skipNotifications?: boolean;
+}) {
+	const result = await signPetitionHelper({
+		petitionId,
+		teamId,
+		tx,
+		personAction,
+		signatureDetails,
+		organizationId,
+		skipNotifications,
+		responses
+	});
+	const queue = await getQueue();
+	await queue.insertActivity({
+		organizationId,
+		personId: result.personId,
+		userId: undefined,
+		type: 'petition_signed',
+		referenceId: result.id,
+		unread: false
+	});
+	return result;
+}
+
+export async function createIncompletePetitionSignatureHelper({
+	petitionId,
+	organizationId,
+	tx,
+	personAction,
+	signatureDetails,
+	teamId,
+	flowMessageFrom,
+	flowMessageTo
+}: {
+	tx: ServerTransaction;
+	petitionId: string;
+	organizationId: string;
+	personAction: PersonActionHelper;
+	signatureDetails: PetitionSignatureDetails;
+	teamId?: string;
+	flowMessageFrom: string;
+	flowMessageTo: string;
+}) {
+	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
+	if (!petitionResult.published) {
+		throw new Error('Petition is not published');
+	}
+	if (petitionResult.deletedAt != null || petitionResult.archivedAt != null) {
+		throw new Error('Petition is archived or deleted');
+	}
+
+	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
+	const parsedActionHelper = parse(personActionHelper, personAction);
+	const petitionSignatureId = uuidv7();
+
+	const personRecord = await findOrCreatePerson({
+		tx,
+		personAction: parsedActionHelper,
+		addedFrom: {
+			type: 'added_from_petition',
+			petitionSignatureId
+		},
+		organizationId,
+		teamId: teamId ?? petitionResult.teamId ?? undefined,
+		updateExistingPerson: true
+	});
+
+	const settings = parse(petitionSettingsSchema, petitionResult.settings ?? {});
+	const flowId = settings.whatsappFlowId;
+
+	if (flowId) {
+		try {
+			await sendFlowMessage({
+				from: flowMessageFrom,
+				to: flowMessageTo,
+				flowId: flowId,
+				flowCta: 'Sign',
+				headerText: petitionResult.title,
+				bodyText: `Complete the form to sign ${petitionResult.title}`,
+				footerText: 'Tap to sign the petition'
+			});
+			return { flowSent: true as const, personId: personRecord.id };
+		} catch (error) {
+			return await completePetitionSignatureHelper({
+				petitionId,
+				teamId,
+				tx,
+				personAction,
+				signatureDetails: parsedSignatureDetails,
+				organizationId,
+				responses: null,
+				skipNotifications: true
+			});
+		}
+	}
+
+	return await completePetitionSignatureHelper({
+		petitionId,
+		teamId,
+		tx,
+		personAction,
+		signatureDetails: parsedSignatureDetails,
+		organizationId,
+		responses: null,
+		skipNotifications: true
+	});
 }
 
 export async function deletePetitionSignature({
@@ -408,4 +605,16 @@ export async function deletePetitionSignature({
 				eq(petitionSignature.organizationId, parsed.metadata.organizationId)
 			)
 		);
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: petitionSignatureRecord.organizationId,
+			payload: {
+				type: 'petition.signature.deleted',
+				data: { petitionSignatureId: parsed.metadata.petitionSignatureId }
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }

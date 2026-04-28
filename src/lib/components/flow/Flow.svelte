@@ -24,15 +24,17 @@
 		edges: inputEdges,
 		onSave = async ({ nodes, edges }: Flow) => {},
 		onSend = async ({ nodes, edges }: Flow) => {},
-		onDiscard = async () => {}
+		onDiscard = async () => {},
+		onTest
 	}: {
 		backButtonUrl?: string;
 		disabled?: boolean;
 		nodes: Node[];
 		edges: Edge[];
-		onSave?: ({ nodes, edges }: Flow) => Promise<void>;
-		onSend?: ({ nodes, edges }: Flow) => Promise<void>;
-		onDiscard?: () => Promise<void>;
+		onSave?: ({ nodes, edges }: Flow) => Promise<void> | void;
+		onSend?: ({ nodes, edges }: Flow) => Promise<void> | void;
+		onDiscard?: () => Promise<void> | void;
+		onTest?: ({ nodes, edges }: Flow) => Promise<void> | void;
 	} = $props();
 	//nodes
 	import Message from '$lib/components/flow/nodes/Message.svelte';
@@ -73,6 +75,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
+	import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
 
 	const activeWhatsAppOnboarded = $derived(
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
@@ -122,6 +125,20 @@
 									onclick={() => alert(JSON.stringify($state.snapshot({ nodes, edges })))}
 								>
 									{t`Snapshot`}
+								</Button>
+							{/if}
+							{#if onTest}
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={() =>
+										onTest({
+											nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
+											edges: $state.snapshot(edges) as Flow['edges']
+										})}
+								>
+									<FlaskConicalIcon class="size-4" />
+									{t`Send test message`}
 								</Button>
 							{/if}
 							<Button variant="destructive" size="sm" onclick={onDiscard}>{t`Discard`}</Button>

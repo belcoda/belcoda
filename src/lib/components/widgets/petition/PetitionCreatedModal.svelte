@@ -57,7 +57,10 @@
 
 {#if isDesktop.current}
 	<Dialog.Root bind:open {onOpenChange}>
-		<Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+		<Dialog.Content
+			class="max-h-[90vh] overflow-y-auto sm:max-w-2xl"
+			data-testid="petition-created-modal"
+		>
 			<Dialog.Header class="relative">
 				<Dialog.Title
 					>{mode === 'create' ? t`Petition Created!` : t`Petition Updated!`}</Dialog.Title
@@ -76,7 +79,7 @@
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open {onOpenChange}>
-		<Drawer.Content class="max-h-[90vh]">
+		<Drawer.Content class="max-h-[90vh]" data-testid="petition-created-modal">
 			<Drawer.Header class="relative text-start">
 				<Drawer.Title
 					>{mode === 'create' ? t`Petition Created!` : t`Petition Updated!`}</Drawer.Title
@@ -178,6 +181,7 @@
 				id="publish-toggle"
 				checked={petition.published}
 				onCheckedChange={handlePublishChange}
+				data-testid="petition-publish-toggle"
 			/>
 			<Label for="publish-toggle" class="cursor-pointer">
 				{petition.published ? t`Published` : t`Publish petition`}

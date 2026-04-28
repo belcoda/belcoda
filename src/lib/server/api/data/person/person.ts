@@ -4,15 +4,20 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { person, personTeam, team } from '$lib/schema/drizzle';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
+import { getQueue } from '$lib/server/queue';
 import {
 	createMutatorSchemaZero,
 	type CreateMutatorSchemaZeroOutput,
 	deleteMutatorSchemaZero,
 	type DeleteMutatorSchemaZero,
 	updateMutatorSchemaZero,
-	type UpdateMutatorSchemaZeroOutput
+	type UpdateMutatorSchemaZeroOutput,
+	personWebhook
 } from '$lib/schema/person';
 import { parse } from 'valibot';
+import pino from '$lib/pino';
+import { _addPersonTeamDataUnsafe, addPersonToTeam } from './team';
+const log = pino(import.meta.url);
 export async function createPerson({
 	tx,
 	ctx,
@@ -71,13 +76,32 @@ export async function createPerson({
 	}
 
 	if (args.metadata.teamId) {
-		await tx.dbTransaction.wrappedTransaction.insert(personTeam).values({
-			personId: result.id,
-			teamId: args.metadata.teamId,
-			organizationId: args.metadata.organizationId,
-			createdAt: new Date()
+		await addPersonToTeam({
+			tx,
+			ctx,
+			args: {
+				metadata: {
+					personId: result.id,
+					teamId: args.metadata.teamId,
+					organizationId: parsed.metadata.organizationId
+				}
+			}
 		});
 	}
+
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'person.created',
+				data: parse(personWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
+	return result;
 }
 
 export async function updatePerson({
@@ -94,6 +118,7 @@ export async function updatePerson({
 		builder.person
 			.where('id', '=', input.metadata.personId)
 			.where('organizationId', '=', input.metadata.organizationId)
+			.where('deletedAt', 'IS', null)
 			.where((expr) => personReadPermissions(expr, ctx))
 			.one()
 	);
@@ -117,6 +142,21 @@ export async function updatePerson({
 			)
 		)
 		.returning();
+	if (!result) {
+		throw new Error('Unable to update person');
+	}
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: input.metadata.organizationId,
+			payload: {
+				type: 'person.updated',
+				data: parse(personWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -148,10 +188,23 @@ export async function deletePerson({
 		})
 		.where(
 			and(
+				isNull(person.deletedAt),
 				eq(person.id, args.metadata.personId),
 				eq(person.organizationId, args.metadata.organizationId)
 			)
 		);
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'person.deleted',
+				data: { personId: parsed.metadata.personId }
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return;
 }
 

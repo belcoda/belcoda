@@ -134,7 +134,7 @@
 	<div class="w-full" bind:this={tableContainer}>
 		<ScrollArea orientation="horizontal" class="h-auto w-96" style={`width: ${size.width}px`}>
 			{#if transformedTable}
-				<Table.Root>
+				<Table.Root data-testid="event-signups-detailed-table">
 					<Table.Header>
 						<Table.Row>
 							{#each Object.keys(transformedTable[0] || {}) as header}

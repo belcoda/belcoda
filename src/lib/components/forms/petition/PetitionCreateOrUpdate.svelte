@@ -51,8 +51,8 @@
 					/* svelte-ignore state_referenced_locally */
 					initialData: petition,
 					onSubmit: async (data) => {
-						await onSubmit(data);
 						form.tainted.set(undefined);
+						await onSubmit(data);
 					}
 				})
 			: createForm({
@@ -63,8 +63,8 @@
 					}),
 					validateOnLoad: false,
 					onSubmit: async (data) => {
-						await onSubmit(data);
 						form.tainted.set(undefined);
+						await onSubmit(data);
 					}
 				})
 	);
@@ -95,6 +95,7 @@
 	import { defaultPetitionSettings } from '$lib/schema/petition/settings';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import PetitionSignupSurvey from '$lib/components/forms/petition/PetitionSignupSurvey.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { TagSelectMulti } from '$lib/components/ui/custom-select/tag/index.js';
@@ -119,7 +120,12 @@
 	let editSlugOpen = $state(false);
 </script>
 
-<form use:form.enhance class="mx-auto flex w-full max-w-4xl flex-col gap-4" id="petition-form">
+<form
+	use:form.enhance
+	class="mx-auto flex w-full max-w-4xl flex-col gap-4"
+	id="petition-form"
+	data-testid="petition-form"
+>
 	<Errors {errors} />
 
 	<Card.Root>
@@ -160,6 +166,17 @@
 		</Card.Content>
 	</Card.Root>
 
+	{#if $data.settings && $data.settings.survey}
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{t`Survey`}</Card.Title>
+			</Card.Header>
+			<Card.Content class="space-y-6">
+				<PetitionSignupSurvey bind:form bind:data bind:errors />
+			</Card.Content>
+		</Card.Root>
+	{/if}
+
 	{#if $data.settings}
 		<Card.Root>
 			<Card.Header>
@@ -175,7 +192,11 @@
 	{/if}
 
 	{#if petition}
-		<Collapsible.Root bind:open={dangerOpen} class="rounded-lg border border-destructive/40">
+		<Collapsible.Root
+			bind:open={dangerOpen}
+			class="rounded-lg border border-destructive/40"
+			data-testid="petition-danger-zone"
+		>
 			<Collapsible.Trigger
 				class="flex w-full items-center justify-between gap-2 p-4 text-left font-medium text-destructive"
 			>
@@ -187,14 +208,21 @@
 					<p class="mb-3 text-sm text-muted-foreground">
 						{t`Archive this petition. You can still view it in the archived petitions list.`}
 					</p>
-					<Button type="button" variant="destructive" onclick={() => (confirmArchiveOpen = true)}
-						>{t`Archive petition`}</Button
+					<Button
+						type="button"
+						variant="destructive"
+						onclick={() => (confirmArchiveOpen = true)}
+						data-testid="petition-archive-button"
+					>
+						{t`Archive petition`}</Button
 					>
 					<ConfirmDialog
 						bind:open={confirmArchiveOpen}
 						title={t`Archive this petition?`}
 						description={t`This petition will be archived. You can still view it in the archived petitions list.`}
 						confirmText={t`Archive`}
+						confirmTestId="petition-confirm-archive"
+						cancelTestId="petition-cancel-archive"
 						confirmVariant="destructive"
 						onConfirm={() => {
 							z.mutate(
@@ -213,14 +241,21 @@
 					<p class="mb-3 text-sm text-muted-foreground">
 						{t`Permanently delete this draft petition. This action cannot be undone.`}
 					</p>
-					<Button type="button" variant="destructive" onclick={() => (confirmDeleteOpen = true)}
-						>{t`Delete petition`}</Button
+					<Button
+						type="button"
+						variant="destructive"
+						onclick={() => (confirmDeleteOpen = true)}
+						data-testid="petition-delete-button"
+					>
+						{t`Delete petition`}</Button
 					>
 					<ConfirmDialog
 						bind:open={confirmDeleteOpen}
 						title={t`Delete this petition?`}
 						description={t`This draft petition will be permanently deleted. This action cannot be undone.`}
 						confirmText={t`Delete`}
+						confirmTestId="petition-confirm-delete"
+						cancelTestId="petition-cancel-delete"
 						confirmVariant="destructive"
 						onConfirm={() => {
 							z.mutate(
@@ -240,7 +275,7 @@
 		</Collapsible.Root>
 	{/if}
 
-	<Debug {data} hide={true} />
+	<Debug {data} />
 </form>
 
 {#snippet titleInput()}
@@ -252,6 +287,7 @@
 					<InputGroup.Input
 						bind:value={$data.title}
 						{...props}
+						data-testid="petition-title-input"
 						placeholder={t`Title`}
 						oninput={useDebounce(
 							() => {
@@ -331,6 +367,7 @@
 					<InputGroup.Textarea
 						bind:value={$data.shortDescription}
 						{...props}
+						data-testid="petition-description-input"
 						placeholder={t`Description`}
 						class="min-h-[80px]"
 					/>
@@ -355,6 +392,7 @@
 					<InputGroup.Input
 						bind:value={$data.petitionTarget}
 						{...props}
+						data-testid="petition-target-input"
 						placeholder={t`e.g., Local Government, CEO of Company X`}
 					/>
 				</InputGroup.Root>
@@ -376,6 +414,7 @@
 					<InputGroup.Textarea
 						bind:value={$data.petitionText}
 						{...props}
+						data-testid="petition-text-input"
 						placeholder={t`Full text of the petition`}
 						class="min-h-[120px]"
 					/>

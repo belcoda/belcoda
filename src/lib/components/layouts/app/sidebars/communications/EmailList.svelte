@@ -47,20 +47,22 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 </script>
 
-<div class="flex w-full flex-col bg-background md:w-[300px] md:shrink-0">
+<div class="flex w-full flex-col bg-background md:w-[300px] md:shrink-0" data-testid="email-list">
 	<div class="flex flex-col gap-3 border-b p-4">
 		<div class="flex w-full items-center justify-between">
 			<div class="text-xl font-semibold text-foreground">
 				{activeItem.title}
 			</div>
 		</div>
-		<Input placeholder={t`Type to search...`} bind:value={search} />
+		<Input placeholder={t`Type to search...`} bind:value={search} data-testid="email-list-search" />
 	</div>
 	<div class="flex-1 overflow-auto">
 		<div class="flex flex-col">
 			{#each emails as email (email.id)}
 				<a
 					href="/communications/email/{folder}/{email.id}"
+					data-testid="email-list-item"
+					data-email-id={email.id}
 					class="flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-muted"
 				>
 					<div class="flex w-full items-center justify-between gap-2">

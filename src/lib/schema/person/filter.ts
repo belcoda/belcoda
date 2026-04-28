@@ -36,6 +36,11 @@ export const filterTypes = {
 		label: mediumString
 	}),
 
+	everyone: v.object({
+		type: v.literal('everyone'),
+		label: mediumString
+	}),
+
 	// FIELDS THAT REQUIRE SEARCHING TO PRESENT THE OPTIONS
 	//event
 

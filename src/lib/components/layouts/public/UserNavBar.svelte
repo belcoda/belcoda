@@ -10,7 +10,10 @@
 </script>
 
 {#if session}
-	<div class="fixed top-0 right-0 left-0 z-50 bg-foreground shadow-lg">
+	<div
+		class="fixed top-0 right-0 left-0 z-50 bg-foreground shadow-lg"
+		data-testid="public-page-navbar"
+	>
 		<div class="mx-auto px-4">
 			<div class="flex h-12 items-center justify-between py-1">
 				<!-- User Info -->
@@ -26,7 +29,13 @@
 				</div>
 
 				<!-- Edit Button -->
-				<Button href={linkUrl} variant="secondary" size="sm" class="gap-2 shadow-md">
+				<Button
+					href={linkUrl}
+					variant="secondary"
+					size="sm"
+					class="gap-2 shadow-md"
+					data-testid="public-page-edit-link"
+				>
 					<PencilIcon class="size-4" />
 					{linkText}
 				</Button>

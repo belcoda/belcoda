@@ -33,7 +33,7 @@
 
 <ContentLayout rootLink={`/community/${params.personId}`} {header}>
 	{#if person.data}
-		<div class="space-y-2">
+		<div class="space-y-2" data-testid="person-profile-loaded">
 			<div class="mx-auto max-w-xl space-y-4">
 				<ProfilePicture person={person.data} />
 				<NameRow person={person.data} />

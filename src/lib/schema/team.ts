@@ -12,6 +12,23 @@ export const teamSchema = v.object({
 });
 export type TeamSchema = v.InferOutput<typeof teamSchema>;
 
+export const teamWebhook = v.object({
+	...v.omit(teamSchema, ['organizationId']).entries,
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString)
+});
+
+export const teamPersonWebhook = v.object({
+	teamId: helpers.uuid,
+	personId: helpers.uuid
+});
+
+export const teamUserWebhook = v.object({
+	teamId: helpers.uuid,
+	userId: helpers.uuid
+});
+
 export const readTeamRest = v.object({
 	id: teamSchema.entries.id,
 	name: teamSchema.entries.name,

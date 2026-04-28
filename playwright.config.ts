@@ -1,4 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import { STORAGE_STATE_PATH } from './e2e/setup/global-setup';
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig();
 
 const BASE_URL = process.env.E2E_BASE_URL || process.env.PUBLIC_HOST || 'http://localhost:5173';
 const useLocalServer = !process.env.E2E_BASE_URL;
@@ -17,7 +20,8 @@ export default defineConfig({
 		: 'html',
 	use: {
 		baseURL: BASE_URL,
-		trace: 'on-first-retry'
+		trace: 'on-first-retry',
+		storageState: STORAGE_STATE_PATH
 	},
 	webServer: useLocalServer
 		? {

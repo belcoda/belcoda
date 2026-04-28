@@ -273,7 +273,7 @@ z.createQuery(queries.person.list(listFilter));
 - Use `$props()` for component props
 - Use `$state`, `$derived`, `$derived.by` for reactivity
 - Use `{@render children?.()}` and snippets for composition
-- Use `$effect` for side effects
+- Use `$effect` for side effects. Do not use `$effect` unless there's no other practical option. Especially avoid `$effect` for updating state. Where possible, use `$derived` values, or, if state needs to be updated based on user action use event callbacks or function bindings.
 
 ### Forms
 
@@ -298,6 +298,15 @@ z.createQuery(queries.person.list(listFilter));
 - `PUBLIC_ZERO_SERVER` – Zero server URL for client
 - `PUBLIC_ROOT_DOMAIN` – For CORS, cookies
 - Stripe, Google OAuth, etc. per better-auth docs
+
+### Global Operations
+
+Belcoda serves organizations across multiple locales (en, es, pt, etc), so features must work correctly regardless of user location:
+
+- Format dates, numbers, and currency using locale-aware utilities
+- CSV imports etc must respect regional conventions (e.g., European CSVs use semicolons as delimiters because commas are used as decimal separators)
+- Phone number inputs should be parsed and formatted using a library like `awesome-phonenumber`
+- Timezone handling is critical for scheduled events and communications
 
 ---
 

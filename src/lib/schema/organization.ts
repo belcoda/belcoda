@@ -6,6 +6,7 @@ import {
 	whatsappOrganizationSettingsSchema
 } from '$lib/schema/organization/settings';
 import { organizationNameSchema, organizationSlugSchema } from '$lib/schema/organization/names';
+import { userRole } from '$lib/schema/user';
 
 export const organizationSchema = v.object({
 	id: helpers.uuid,
@@ -22,6 +23,18 @@ export const organizationSchema = v.object({
 	updatedAt: helpers.date
 });
 export type OrganizationSchema = v.InferOutput<typeof organizationSchema>;
+
+export const organizationWebhook = v.object({
+	...v.omit(organizationSchema, ['id']).entries,
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString
+});
+
+export const organizationMemberWebhook = v.object({
+	organizationId: helpers.uuid,
+	userId: helpers.uuid,
+	role: userRole
+});
 
 export const readOrganizationRest = v.object({
 	...organizationSchema.entries,

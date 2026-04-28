@@ -10,15 +10,19 @@ import {
 	updatePetitionZeroMutatorSchema,
 	archivePetitionMutatorSchema,
 	type DeletePetitionMutatorSchema,
-	deletePetitionMutatorSchema
+	deletePetitionMutatorSchema,
+	petitionWebhook
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
-
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { team } from '$lib/schema/drizzle';
 import { and, eq, isNull } from 'drizzle-orm';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
+import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
+
 export async function createPetition({
 	tx,
 	ctx,
@@ -121,6 +125,19 @@ export async function createPetition({
 	if (!result) {
 		throw new Error('Unable to create petition');
 	}
+	const { organizationId, ...petitionData } = result;
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'petition.created',
+				data: parse(petitionWebhook, petitionData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -145,7 +162,7 @@ export async function updatePetition({
 		throw new Error('Petition not found');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const [updatedPetition] = await tx.dbTransaction.wrappedTransaction
 		.update(petition)
 		.set({
 			...parsed.input,
@@ -156,7 +173,42 @@ export async function updatePetition({
 				eq(petition.id, parsed.metadata.petitionId),
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+	if (!updatedPetition) {
+		throw new Error('Unable to update petition: Petition not found');
+	}
+
+	const structureChanged =
+		petitionRecord.title !== updatedPetition.title ||
+		JSON.stringify(petitionRecord.settings) !== JSON.stringify(updatedPetition.settings);
+	const publishedStatusChanged = petitionRecord.published !== updatedPetition.published;
+
+	if (updatedPetition?.published && (structureChanged || publishedStatusChanged)) {
+		try {
+			const queue = await getQueue();
+			await queue.deployPetitionWhatsAppFlow({ petitionId: parsed.metadata.petitionId });
+		} catch (error) {
+			log.error(
+				{ error, petitionId: parsed.metadata.petitionId },
+				'Error deploying petition WhatsApp flow'
+			);
+		}
+	}
+
+	const { organizationId, ...petitionData } = updatedPetition;
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'petition.updated',
+				data: parse(petitionWebhook, petitionData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }
 
 export async function archivePetition({
@@ -180,7 +232,7 @@ export async function archivePetition({
 		throw new Error('Petition not found');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const [archivedPetition] = await tx.dbTransaction.wrappedTransaction
 		.update(petition)
 		.set({
 			archivedAt: new Date(),
@@ -191,7 +243,23 @@ export async function archivePetition({
 				eq(petition.id, parsed.metadata.petitionId),
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+	if (archivedPetition) {
+		const { organizationId, ...petitionData } = archivedPetition;
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId,
+				payload: {
+					type: 'petition.updated',
+					data: parse(petitionWebhook, petitionData)
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
 }
 
 export async function deletePetition({
@@ -227,6 +295,18 @@ export async function deletePetition({
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
 		);
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: petitionRecord.organizationId,
+			payload: {
+				type: 'petition.deleted',
+				data: { petitionId: parsed.metadata.petitionId }
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }
 
 export async function getPetitionById({

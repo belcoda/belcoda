@@ -1,10 +1,23 @@
-import { picklist, object, array, type InferOutput, fallback, string } from 'valibot';
+import {
+	picklist,
+	object,
+	array,
+	type InferOutput,
+	fallback,
+	string,
+	optional,
+	nullable
+} from 'valibot';
+import { shortString, unixTimestamp } from '$lib/schema/helpers';
 import { surveySchema } from '$lib/schema/survey/collection';
 import { v4 as uuidv4 } from 'uuid';
 
 export const petitionSettingsSchema = object({
 	survey: surveySchema,
-	tags: fallback(array(string()), []) // Array of tag IDs to auto-apply to signers
+	tags: fallback(array(string()), []), // Array of tag IDs to auto-apply to signers
+	whatsappFlowId: optional(nullable(shortString), null),
+	whatsappFlowYCloudId: optional(nullable(shortString), null),
+	whatsappFlowCreatedAt: optional(nullable(unixTimestamp), null)
 });
 export type PetitionSettingsSchema = InferOutput<typeof petitionSettingsSchema>;
 
@@ -23,7 +36,10 @@ export function defaultPetitionSettings(): PetitionSettingsSchema {
 				}
 			]
 		},
-		tags: []
+		tags: [],
+		whatsappFlowId: null,
+		whatsappFlowYCloudId: null,
+		whatsappFlowCreatedAt: null
 	};
 }
 

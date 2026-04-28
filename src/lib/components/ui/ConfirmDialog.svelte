@@ -12,6 +12,8 @@
 		description,
 		confirmText = 'Confirm',
 		cancelText = 'Cancel',
+		confirmTestId,
+		cancelTestId,
 		confirmVariant = 'default',
 		onConfirm,
 		onCancel,
@@ -22,6 +24,8 @@
 		description?: string;
 		confirmText?: string;
 		cancelText?: string;
+		confirmTestId?: string;
+		cancelTestId?: string;
 		confirmVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 		onConfirm: () => void;
 		onCancel?: () => void;
@@ -54,8 +58,12 @@
 				</div>
 			{/if}
 			<div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-2">
-				<Button variant="outline" onclick={handleCancel}>{cancelText}</Button>
-				<Button variant={confirmVariant} onclick={handleConfirm}>{confirmText}</Button>
+				<Button variant="outline" onclick={handleCancel} data-testid={cancelTestId}
+					>{cancelText}</Button
+				>
+				<Button variant={confirmVariant} onclick={handleConfirm} data-testid={confirmTestId}
+					>{confirmText}</Button
+				>
 			</div>
 		</Dialog.Content>
 	</Dialog.Root>
@@ -69,13 +77,17 @@
 				{/if}
 			</Drawer.Header>
 			{#if children}
-				<div class="grid gap-4 py-4 px-4">
+				<div class="grid gap-4 px-4 py-4">
 					{@render children?.()}
 				</div>
 			{/if}
 			<div class="flex flex-col-reverse gap-2 px-4 pb-4">
-				<Button variant="outline" onclick={handleCancel}>{cancelText}</Button>
-				<Button variant={confirmVariant} onclick={handleConfirm}>{confirmText}</Button>
+				<Button variant="outline" onclick={handleCancel} data-testid={cancelTestId}
+					>{cancelText}</Button
+				>
+				<Button variant={confirmVariant} onclick={handleConfirm} data-testid={confirmTestId}
+					>{confirmText}</Button
+				>
 			</div>
 		</Drawer.Content>
 	</Drawer.Root>

@@ -56,10 +56,11 @@ export async function load({ locals, params, url }) {
 		try {
 			renderedDescription = await lexicalRenderer.render(eventObj.description);
 			renderedDescription = sanitize(renderedDescription);
-			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		} catch (err) {
 			log.warn({ err, eventId: eventObj.id }, 'Failed to render event description');
 			renderedDescription = null;
+		} finally {
+			clearWindow(); //Release JSDom resources to avoid memory accumulation
 		}
 	}
 
@@ -67,11 +68,13 @@ export async function load({ locals, params, url }) {
 		...eventObj,
 		description: renderedDescription
 	};
+	const signupWindowOpen = eventObj.endsAt.getTime() > Date.now();
 	return {
 		event: renderedEvent,
 		organization: organizationObj,
 		whatsAppSignupLink,
 		signupCount,
+		signupWindowOpen,
 		form,
 		session: locals.session
 	};

@@ -15,6 +15,7 @@ import * as tag from '$lib/server/api/mutate/tag';
 import * as team from '$lib/server/api/mutate/team';
 import * as whatsappTemplate from '$lib/server/api/mutate/whatsapp_template';
 import * as whatsappThread from '$lib/server/api/mutate/whatsapp_thread';
+import * as whatsappMessage from '$lib/server/api/mutate/whatsapp_message';
 
 export const mutators = defineMutators({
 	person: {
@@ -77,6 +78,7 @@ export const mutators = defineMutators({
 	},
 	webhook: {
 		create: webhook.createWebhook,
+		update: webhook.updateWebhook,
 		delete: webhook.deleteWebhook
 	},
 	tag: {
@@ -100,5 +102,8 @@ export const mutators = defineMutators({
 		update: whatsappThread.updateWhatsappThread,
 		delete: whatsappThread.deleteWhatsappThread,
 		send: whatsappThread.sendWhatsappThread
+	},
+	whatsappMessage: {
+		emojiReaction: whatsappMessage.emojiReaction
 	}
 });

@@ -13,7 +13,7 @@ import * as tag from '$lib/zero/mutate/tag';
 import * as team from '$lib/zero/mutate/team';
 import * as whatsappTemplate from '$lib/zero/mutate/whatsapp/template';
 import * as whatsappThread from '$lib/zero/mutate/whatsapp/thread';
-
+import * as whatsappMessage from '$lib/zero/mutate/whatsapp/message';
 import { defineMutators } from '@rocicorp/zero';
 
 export const mutators = defineMutators({
@@ -77,6 +77,7 @@ export const mutators = defineMutators({
 	},
 	webhook: {
 		create: webhook.createWebhook,
+		update: webhook.updateWebhook,
 		delete: webhook.deleteWebhook
 	},
 	tag: {
@@ -100,5 +101,8 @@ export const mutators = defineMutators({
 		update: whatsappThread.updateWhatsappThread,
 		delete: whatsappThread.deleteWhatsappThread,
 		send: whatsappThread.sendWhatsappThread
+	},
+	whatsappMessage: {
+		emojiReaction: whatsappMessage.emojiReaction
 	}
 });

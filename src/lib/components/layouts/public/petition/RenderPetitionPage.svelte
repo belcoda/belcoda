@@ -2,103 +2,56 @@
 	import { t } from '$lib/index.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Progress } from '$lib/components/ui/progress/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
-	import PenLineIcon from '@lucide/svelte/icons/pen-line';
 	import ShareIcon from '@lucide/svelte/icons/share-2';
-	import { enhance } from '$app/forms';
 	import { formatDate } from '$lib/utils/date';
-	import { env } from '$env/dynamic/public';
-	import WhatsAppPetitionSignup from './WhatsAppPetitionSignup.svelte';
-	import PetitionSignSuccess from '$lib/components/layouts/public/petition/PetitionSignSuccess.svelte';
+	import PetitionSignupForm from '$lib/components/layouts/public/petition/PetitionSignupForm.svelte';
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
+	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { SurveySchema } from '$lib/schema/survey/questions';
+	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
+	import type { OrganizationSchema } from '$lib/schema/organization';
+	import type { ReadPersonZero } from '$lib/schema/person';
 
-	type PublicPetition = {
-		title: string;
-		shortDescription: string;
-		description?: string | null;
-		petitionTarget?: string | null;
-		petitionText?: string | null;
-		featureImage?: string | null;
-	};
-	type PublicOrg = {
-		name: string;
-		icon?: string | null;
-		settings?: {
-			theme?: {
-				primaryColor?: string | null;
-				secondaryColor?: string | null;
-			} | null;
-		} | null;
+	type SerializedPublicPetition = Omit<
+		ReadPetitionZero,
+		'createdAt' | 'updatedAt' | 'deletedAt' | 'archivedAt'
+	> & {
+		createdAt: number | null;
+		updatedAt: number | null;
+		deletedAt: number | null;
+		archivedAt: number | null;
 	};
 
-	const {
-		data,
-		form,
-		petitionId,
-		layout = 'default',
-		success = false
-	}: {
+	type RecentSignaturePreview = Pick<ReadPersonZero, 'givenName' | 'familyName'> & {
+		createdAt?: number | null;
+	};
+
+	type Props = {
 		data: {
-			petition: PublicPetition;
-			organization: PublicOrg;
+			petition: SerializedPublicPetition;
+			organization: OrganizationSchema;
 			signatureCount: number;
-			recentSignatures?: {
-				givenName?: string | null;
-				familyName?: string | null;
-				createdAt?: number | null;
-			}[];
+			recentSignatures?: RecentSignaturePreview[];
 			whatsAppSignupLink?: string | null;
 		};
-		petitionId: string;
-		form?: { error?: string; success?: boolean } | null;
+		form?: SuperValidated<SurveySchema>;
 		layout?: 'default' | 'embed';
 		success?: boolean;
-	} = $props();
+	};
 
-	const editPetitionUrl = $derived(`${env.PUBLIC_HOST}/petitions/${petitionId}`);
+	const { data, form, layout = 'default', success = false }: Props = $props();
+
 	const primaryColor = $derived(
 		data.organization.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
 	);
-
-	function calculateTarget(currentSignatures: number): number {
-		const milestones = [
-			100, 200, 500, 1000, 1500, 2000, 2500, 5000, 7500, 10000, 15000, 20000, 25000, 50000, 75000,
-			100000, 150000, 200000, 250000, 500000, 1000000
-		];
-
-		for (const milestone of milestones) {
-			if (currentSignatures <= milestone) {
-				return milestone;
-			}
-		}
-
-		return Math.ceil(currentSignatures / 100000) * 100000;
-	}
-
-	const currentTarget = $derived(calculateTarget(data.signatureCount));
-	const progress = $derived((data.signatureCount / currentTarget) * 100);
 
 	function formatNumber(num: number): string {
 		return num.toLocaleString();
 	}
 
-	let signingInProgress = $state(false);
-	let formValues = $state({
-		givenName: '',
-		familyName: '',
-		emailAddress: '',
-		phoneNumber: ''
-	});
-
 	const petitionSignatureCount = (count: string) => {
 		return t`${count} people have signed this petition`;
-	};
-
-	const targetToGoal = (current: string, target: string) => {
-		return t`${current} more signatures needed to reach ${target}`;
 	};
 </script>
 
@@ -195,172 +148,42 @@
 				</div>
 
 				<div class="lg:col-span-1">
-					{@render signatureForm()}
+					<PetitionSignupForm
+						petition={data.petition}
+						organization={data.organization}
+						signatureCount={data.signatureCount}
+						whatsAppSignupLink={data.whatsAppSignupLink}
+						{form}
+						{layout}
+						{success}
+					/>
 				</div>
 			</div>
 		</div>
 	</main>
 {:else if layout === 'embed'}
 	<div class="mx-auto max-w-md bg-white p-6">
-		{@render signatureForm()}
+		<PetitionSignupForm
+			petition={data.petition}
+			organization={data.organization}
+			signatureCount={data.signatureCount}
+			whatsAppSignupLink={data.whatsAppSignupLink}
+			{form}
+			{layout}
+			{success}
+		/>
 	</div>
 {/if}
 
-{#snippet signatureForm()}
-	<div class="sticky top-8">
-		<div class="rounded-lg bg-white p-6 shadow-sm">
-			{#if layout === 'embed'}
-				<div class="mb-4">
-					<h3 class="text-lg font-semibold">{data.petition.title}</h3>
-					{#if data.petition.shortDescription}
-						<p class="text-sm text-muted-foreground">{data.petition.shortDescription}</p>
-					{/if}
-				</div>
-			{/if}
-
-			{#if !success}
-				<div class="mb-6 space-y-4">
-					<div class="flex items-baseline justify-between">
-						<div>
-							<div class="text-3xl font-bold">{formatNumber(data.signatureCount)}</div>
-							<div class="text-xs tracking-wide text-muted-foreground uppercase">
-								{t`signatures`}
-							</div>
-						</div>
-						<div class="text-right">
-							<div class="text-lg font-semibold">{Math.round(progress)}%</div>
-							<div class="text-xs text-muted-foreground">{t`of goal`}</div>
-						</div>
-					</div>
-					<Progress value={progress} class="h-2.5" />
-					<div class="text-right text-xs text-muted-foreground">
-						{t`Goal: ${formatNumber(currentTarget)}`}
-					</div>
-
-					{#if data.signatureCount > 0}
-						<div class="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary">
-							{#if data.signatureCount >= currentTarget}
-								<div class="flex items-start gap-2">
-									<span class="text-lg">🎉</span>
-									<div>
-										{t`Goal reached! Keep the momentum going to make an even bigger impact.`}
-									</div>
-								</div>
-							{:else}
-								{targetToGoal(
-									formatNumber(currentTarget - data.signatureCount),
-									formatNumber(currentTarget)
-								)}
-							{/if}
-						</div>
-					{/if}
-				</div>
-			{/if}
-
-			{#if success}
-				<PetitionSignSuccess petition={data.petition} organization={data.organization} />
-			{:else}
-				<form
-					method="POST"
-					action="?/sign"
-					class="space-y-4"
-					use:enhance={() => {
-						signingInProgress = true;
-						return async ({ update }) => {
-							await update();
-							signingInProgress = false;
-						};
-					}}
-				>
-					<input type="hidden" name="layout" value={layout} />
-
-					{#if form?.error}
-						<div
-							class="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
-						>
-							{form.error}
-						</div>
-					{/if}
-
-					<div class="space-y-2">
-						<Label for="givenName">{t`First name`}</Label>
-						<Input
-							id="givenName"
-							name="givenName"
-							bind:value={formValues.givenName}
-							placeholder={t`First name`}
-							required
-							disabled={signingInProgress}
-						/>
-					</div>
-
-					<div class="space-y-2">
-						<Label for="familyName">{t`Last name`}</Label>
-						<Input
-							id="familyName"
-							name="familyName"
-							bind:value={formValues.familyName}
-							placeholder={t`Last name`}
-							required
-							disabled={signingInProgress}
-						/>
-					</div>
-
-					<div class="space-y-2">
-						<Label for="emailAddress">{t`Email`}</Label>
-						<Input
-							id="emailAddress"
-							name="emailAddress"
-							type="email"
-							bind:value={formValues.emailAddress}
-							placeholder={t`your@email.com`}
-							required
-							disabled={signingInProgress}
-						/>
-					</div>
-
-					<div class="space-y-2">
-						<Label for="phoneNumber">{t`Phone (optional)`}</Label>
-						<Input
-							id="phoneNumber"
-							name="phoneNumber"
-							type="tel"
-							bind:value={formValues.phoneNumber}
-							placeholder="+1234567890"
-							disabled={signingInProgress}
-						/>
-					</div>
-
-					<Button type="submit" class="w-full" size="lg" disabled={signingInProgress}>
-						<PenLineIcon class="mr-2 size-5" />
-						{signingInProgress ? t`Signing...` : t`Sign this petition`}
-					</Button>
-
-					{#if data.whatsAppSignupLink}
-						<div class="flex items-center gap-2 py-2">
-							<div class="h-px flex-1 bg-gray-200"></div>
-							<span class="text-xs text-muted-foreground">{t`or`}</span>
-							<div class="h-px flex-1 bg-gray-200"></div>
-						</div>
-						<WhatsAppPetitionSignup whatsAppSignupLink={data.whatsAppSignupLink} />
-					{/if}
-
-					<p class="text-xs text-muted-foreground">
-						{t`By signing, you agree to receive updates about this petition and related campaigns.`}
-					</p>
-				</form>
-			{/if}
-		</div>
-
-		{#if layout === 'default' && !success}
-			<Card.Root class="mt-4">
-				<Card.Content class="pt-6">
-					<Button variant="outline" class="w-full">
-						<ShareIcon class="mr-2 size-4" />
-						{t`Share this petition`}
-					</Button>
-				</Card.Content>
-			</Card.Root>
-		{/if}
+{#if layout === 'default' && !success}
+	<div class="mx-auto mt-4 max-w-5xl px-4 sm:px-6 lg:px-8">
+		<Card.Root class="ml-auto w-full lg:w-[calc((100%-2rem)/2)]">
+			<Card.Content class="pt-6">
+				<Button variant="outline" class="w-full">
+					<ShareIcon class="mr-2 size-4" />
+					{t`Share this petition`}
+				</Button>
+			</Card.Content>
+		</Card.Root>
 	</div>
-{/snippet}
+{/if}

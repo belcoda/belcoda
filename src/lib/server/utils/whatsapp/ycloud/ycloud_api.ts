@@ -183,6 +183,20 @@ export async function deployFlow({
 	publish?: boolean;
 	endpointUri?: string;
 }): Promise<{ flowId: string; success: boolean }> {
+	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+		const flowId = flow.metadata.ycloudFlowId?.trim() || `mock-${flow.metadata.id}`;
+		log.info(
+			{
+				ycloudFlowId: flow.metadata.ycloudFlowId,
+				internalId: flow.metadata.id,
+				returnedFlowId: flowId,
+				isMock: true
+			},
+			'Mocking YCloud flow deployment — returnedFlowId is synthetic and must not be treated as a real YCloud id'
+		);
+		return { flowId, success: true };
+	}
+
 	const requestBody = convertInternalToYCloudRequest(flow, {
 		wabaId,
 		publish,
@@ -334,6 +348,27 @@ export async function deprecateFlow({
 
 // templates
 
+function mockWhatsappTemplateResponse({
+	wabaId,
+	name,
+	language,
+	category
+}: {
+	wabaId: string;
+	name: string;
+	language: string;
+	category: string;
+}) {
+	return {
+		wabaId,
+		name,
+		language,
+		category,
+		status: 'PENDING' as const,
+		qualityRating: 'UNKNOWN' as const
+	};
+}
+
 export async function createWhatsappTemplate({
 	wabaId,
 	components,
@@ -347,6 +382,19 @@ export async function createWhatsappTemplate({
 	language: string;
 	category?: 'MARKETING' | 'UTILITY' | 'AUTHENTICATION';
 }) {
+	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+		const synthetic = mockWhatsappTemplateResponse({ wabaId, name, language, category });
+		log.info(
+			{ wabaId, name, language, isMock: true },
+			'Mocking YCloud template create — no external template is registered'
+		);
+		const parsed = await v.parseAsync(whatsAppTemplateResponseSchema, synthetic).catch((e) => {
+			log.error(renderValiError(e), 'Error parsing mock YCloud template response');
+			throw new Error('Invalid mock template response');
+		});
+		return { ...parsed };
+	}
+
 	const response = await sendToYCloud({
 		endpoint: '/whatsapp/templates',
 		body: {
@@ -424,6 +472,14 @@ export async function checkWhatsappTemplateExists({
 	templateName: string;
 	locale: string;
 }) {
+	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+		log.debug(
+			{ wabaId, templateName, locale, isMock: true },
+			'Mocking YCloud template existence check — treating as not on provider'
+		);
+		return false;
+	}
+
 	try {
 		await sendToYCloud({
 			endpoint: `/whatsapp/templates/${wabaId}/${templateName}/${locale}`,

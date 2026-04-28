@@ -80,7 +80,10 @@
 
 {#if isDesktop.current}
 	<Dialog.Root bind:open {onOpenChange}>
-		<Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+		<Dialog.Content
+			class="max-h-[90vh] overflow-y-auto sm:max-w-2xl"
+			data-testid="event-created-modal"
+		>
 			<Dialog.Header class="relative">
 				<Dialog.Title>{mode === 'create' ? t`Event Created!` : t`Event Updated!`}</Dialog.Title>
 				<Dialog.Description>
@@ -214,7 +217,11 @@
 		</div>
 
 		<div class="flex gap-2">
-			<Button variant="outline" onclick={handleViewFullPage}>
+			<Button
+				variant="outline"
+				onclick={handleViewFullPage}
+				data-testid="event-created-modal-view-page"
+			>
 				<ExternalLinkIcon class="mr-2 size-4" />
 				{t`View full page`}
 			</Button>

@@ -26,6 +26,15 @@ export const emailMessageSchema = v.object({
 });
 export type EmailMessageSchema = v.InferOutput<typeof emailMessageSchema>;
 
+export const emailMessageWebhook = v.object({
+	...v.omit(emailMessageSchema, ['organizationId']).entries,
+	startedAt: v.nullable(helpers.dateToString),
+	completedAt: v.nullable(helpers.dateToString),
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString)
+});
+
 export const readEmailMessageRest = v.object({
 	...v.omit(emailMessageSchema, ['organizationId']).entries,
 	startedAt: v.nullable(helpers.dateToString),

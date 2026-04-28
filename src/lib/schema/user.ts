@@ -3,6 +3,9 @@ import * as helpers from '$lib/schema/helpers';
 
 import { LOCALES } from '$lib/utils/language';
 
+export const userRole = v.picklist(['member', 'admin', 'owner']);
+export type UserRole = v.InferOutput<typeof userRole>;
+
 export const userSchema = v.object({
 	id: helpers.uuid,
 	name: helpers.mediumString,

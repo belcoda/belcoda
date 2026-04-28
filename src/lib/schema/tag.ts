@@ -13,6 +13,18 @@ export const tagSchema = v.object({
 
 export type TagSchema = v.InferOutput<typeof tagSchema>;
 
+export const tagWebhook = v.object({
+	...v.omit(tagSchema, ['organizationId']).entries,
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString)
+});
+
+export const personTagWebhook = v.object({
+	personId: helpers.uuid,
+	tagId: helpers.uuid
+});
+
 export const readTagRest = v.object({
 	id: tagSchema.entries.id,
 	name: tagSchema.entries.name,

@@ -46,10 +46,22 @@ export class CommunityPage {
 
 	async openOrgMenu() {
 		await this.orgMenu.click();
+		await this.page.getByRole('menu').waitFor({ state: 'visible', timeout: 5_000 });
 	}
 
 	async clickSettings() {
+		if (!(await this.settingsLink.isVisible().catch(() => false))) {
+			await this.openOrgMenu();
+		}
+
+		if (!(await this.settingsLink.isVisible().catch(() => false))) {
+			await this.page.keyboard.press('Escape');
+			await this.openOrgMenu();
+		}
+
+		await this.settingsLink.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.settingsLink.click();
+		await this.page.waitForURL(/\/settings\/?$/, { timeout: 10_000 });
 	}
 
 	async logout() {

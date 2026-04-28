@@ -34,6 +34,14 @@ export const petitionSchema = v.object({
 });
 export type PetitionSchema = v.InferOutput<typeof petitionSchema>;
 
+export const petitionWebhook = v.object({
+	...v.omit(petitionSchema, ['organizationId']).entries,
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString),
+	archivedAt: v.nullable(helpers.dateToString)
+});
+
 export const readPetitionRest = v.object({
 	...petitionSchema.entries,
 	createdAt: helpers.unixTimestamp,

@@ -109,7 +109,17 @@
 		validators: valibot(surveySchema),
 		dataType: 'json',
 		delayMs: 200,
-		timeoutMs: 12000
+		timeoutMs: 12000,
+		onResult: ({ result }) => {
+			if (result.type === 'failure' && result.data && typeof result.data === 'object') {
+				const err = (result.data as { error?: unknown }).error;
+				if (typeof err === 'string') {
+					submissionError = err;
+					return;
+				}
+			}
+			submissionError = null;
+		}
 	});
 	const { form: data, submitting, delayed, allErrors } = $derived(form);
 </script>
@@ -154,7 +164,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Given name`}</Form.Label>
-							<Input {...props} bind:value={$data.person.givenName} />
+							<Input
+								{...props}
+								bind:value={$data.person.givenName}
+								data-testid="event-signup-given-name"
+							/>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -164,7 +178,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Family name`}</Form.Label>
-							<Input {...props} bind:value={$data.person.familyName} />
+							<Input
+								{...props}
+								bind:value={$data.person.familyName}
+								data-testid="event-signup-family-name"
+							/>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
@@ -174,7 +192,11 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Email address`}</Form.Label>
-						<Input {...props} bind:value={$data.person.emailAddress} />
+						<Input
+							{...props}
+							bind:value={$data.person.emailAddress}
+							data-testid="event-signup-email"
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -200,7 +222,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Address line 1`}</Form.Label>
-							<Input {...props} bind:value={$data.person.addressLine1} />
+							<Input
+								{...props}
+								bind:value={$data.person.addressLine1}
+								data-testid="signup-address-line1"
+							/>
 						{/snippet}
 					</Form.Control>
 				</Form.Field>
@@ -208,7 +234,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{t`Address line 2 (optional)`}</Form.Label>
-							<Input {...props} bind:value={$data.person.addressLine2} />
+							<Input
+								{...props}
+								bind:value={$data.person.addressLine2}
+								data-testid="signup-address-line2"
+							/>
 						{/snippet}
 					</Form.Control>
 				</Form.Field>
@@ -217,7 +247,11 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Locality`}</Form.Label>
-								<Input {...props} bind:value={$data.person.locality} />
+								<Input
+									{...props}
+									bind:value={$data.person.locality}
+									data-testid="signup-address-locality"
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -225,7 +259,11 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Region`}</Form.Label>
-								<Input {...props} bind:value={$data.person.region} />
+								<Input
+									{...props}
+									bind:value={$data.person.region}
+									data-testid="signup-address-region"
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -233,7 +271,11 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{t`Postcode`}</Form.Label>
-								<Input {...props} bind:value={$data.person.postcode} />
+								<Input
+									{...props}
+									bind:value={$data.person.postcode}
+									data-testid="signup-address-postcode"
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -303,7 +345,12 @@
 							<Form.Control>
 								{#snippet children({ props })}
 									<Form.Label>{field.label}</Form.Label>
-									<Input type="text" {...props} bind:value={$data.customFields[field.id]} />
+									<Input
+										type="text"
+										{...props}
+										bind:value={$data.customFields[field.id]}
+										data-testid="signup-custom-field-{field.id}"
+									/>
 								{/snippet}
 							</Form.Control>
 						</Form.Field>
@@ -442,7 +489,13 @@
 			{/if}
 
 			<div class="mt-4 flex flex-col gap-3">
-				<Button type="submit" class="w-full" disabled={$submitting} formaction="?/signup">
+				<Button
+					type="submit"
+					class="w-full"
+					disabled={$submitting}
+					formaction="?/signup"
+					data-testid="event-signup-submit"
+				>
 					{#if $delayed}<Spinner class="size-4" />{/if}
 					{t`Sign up now`}</Button
 				>

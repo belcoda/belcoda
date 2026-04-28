@@ -3,18 +3,18 @@
 	import { defaultDisplaySettings } from '$lib/schema/organization/settings';
 	import Check from '@lucide/svelte/icons/check';
 	import PenLineIcon from '@lucide/svelte/icons/pen-line';
+	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
+	import type { OrganizationSchema } from '$lib/schema/organization';
+
+	type PetitionSignSuccessPetition = Pick<ReadPetitionZero, 'title' | 'petitionTarget'>;
+	type PetitionSignSuccessOrganization = Pick<OrganizationSchema, 'name' | 'settings'>;
 
 	const {
 		petition,
 		organization
 	}: {
-		petition: { title: string; petitionTarget?: string | null };
-		organization: {
-			name: string;
-			settings?: {
-				theme?: { secondaryColor?: string | null } | null;
-			} | null;
-		};
+		petition: PetitionSignSuccessPetition;
+		organization: PetitionSignSuccessOrganization;
 	} = $props();
 
 	const secondaryColor = $derived(
