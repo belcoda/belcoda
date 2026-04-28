@@ -183,14 +183,14 @@ export type UpdateWebhookMutatorSchemaZeroOutput = v.InferOutput<
 	typeof updateWebhookMutatorSchemaZero
 >;
 
-import { eventWebhook } from '$lib/schema/event';
+import { eventApiSchema } from '$lib/schema/event';
 export const eventCreatedWebhookSchema = v.object({
 	type: v.literal('event.created'),
-	data: eventWebhook
+	data: eventApiSchema
 });
 export const eventUpdatedWebhookSchema = v.object({
 	type: v.literal('event.updated'),
-	data: eventWebhook
+	data: eventApiSchema
 });
 export const eventDeletedWebhookSchema = v.object({
 	type: v.literal('event.deleted'),
@@ -199,14 +199,14 @@ export const eventDeletedWebhookSchema = v.object({
 	})
 });
 
-import { eventSignupWebhook } from '$lib/schema/event-signup';
+import { eventSignupApiSchema } from '$lib/schema/event-signup';
 export const eventSignupCreatedWebhookSchema = v.object({
 	type: v.literal('event.signup.created'),
-	data: eventSignupWebhook
+	data: eventSignupApiSchema
 });
 export const eventSignupUpdatedWebhookSchema = v.object({
 	type: v.literal('event.signup.updated'),
-	data: eventSignupWebhook
+	data: eventSignupApiSchema
 });
 export const eventSignupDeletedWebhookSchema = v.object({
 	type: v.literal('event.signup.deleted'),
@@ -215,14 +215,14 @@ export const eventSignupDeletedWebhookSchema = v.object({
 	})
 });
 
-import { personWebhook } from '$lib/schema/person';
+import { personApiSchema } from '$lib/schema/person';
 export const personCreatedWebhookSchema = v.object({
 	type: v.literal('person.created'),
-	data: personWebhook
+	data: personApiSchema
 });
 export const personUpdatedWebhookSchema = v.object({
 	type: v.literal('person.updated'),
-	data: personWebhook
+	data: personApiSchema
 });
 export const personDeletedWebhookSchema = v.object({
 	type: v.literal('person.deleted'),
@@ -230,14 +230,14 @@ export const personDeletedWebhookSchema = v.object({
 		personId: helpers.uuid
 	})
 });
-import { personNoteWebhook } from '$lib/schema/person-note';
+import { personNoteApiSchema } from '$lib/schema/person-note';
 export const personNoteCreatedWebhookSchema = v.object({
 	type: v.literal('person.note.created'),
-	data: personNoteWebhook
+	data: personNoteApiSchema
 });
 export const personNoteUpdatedWebhookSchema = v.object({
 	type: v.literal('person.note.updated'),
-	data: personNoteWebhook
+	data: personNoteApiSchema
 });
 export const personNoteDeletedWebhookSchema = v.object({
 	type: v.literal('person.note.deleted'),
@@ -245,26 +245,26 @@ export const personNoteDeletedWebhookSchema = v.object({
 		personNoteId: helpers.uuid
 	})
 });
-import { personImportWebhook } from '$lib/schema/person-import';
+import { personImportApiSchema } from '$lib/schema/person-import';
 export const personImportCreatedWebhookSchema = v.object({
 	type: v.literal('person.import.created'),
-	data: personImportWebhook
+	data: personImportApiSchema
 });
 
-import { activityWebhook } from '$lib/schema/activity';
+import { activityApiSchema } from '$lib/schema/activity';
 export const activityCreatedWebhookSchema = v.object({
 	type: v.literal('activity.created'),
-	data: activityWebhook
+	data: activityApiSchema
 });
 
-import { petitionWebhook } from '$lib/schema/petition/petition';
+import { petitionApiSchema } from '$lib/schema/petition/petition';
 export const petitionCreatedWebhookSchema = v.object({
 	type: v.literal('petition.created'),
-	data: petitionWebhook
+	data: petitionApiSchema
 });
 export const petitionUpdatedWebhookSchema = v.object({
 	type: v.literal('petition.updated'),
-	data: petitionWebhook
+	data: petitionApiSchema
 });
 export const petitionDeletedWebhookSchema = v.object({
 	type: v.literal('petition.deleted'),
@@ -273,14 +273,14 @@ export const petitionDeletedWebhookSchema = v.object({
 	})
 });
 
-import { petitionSignatureWebhook } from '$lib/schema/petition/petition-signature';
+import { petitionSignatureApiSchema } from '$lib/schema/petition/petition-signature';
 export const petitionSignatureCreatedWebhookSchema = v.object({
 	type: v.literal('petition.signature.created'),
-	data: petitionSignatureWebhook
+	data: petitionSignatureApiSchema
 });
 export const petitionSignatureUpdatedWebhookSchema = v.object({
 	type: v.literal('petition.signature.updated'),
-	data: petitionSignatureWebhook
+	data: petitionSignatureApiSchema
 });
 export const petitionSignatureDeletedWebhookSchema = v.object({
 	type: v.literal('petition.signature.deleted'),
@@ -289,14 +289,14 @@ export const petitionSignatureDeletedWebhookSchema = v.object({
 	})
 });
 
-import { tagWebhook, personTagWebhook } from '$lib/schema/tag';
+import { tagApiSchema, personTagApiSchema } from '$lib/schema/tag';
 export const tagCreatedWebhookSchema = v.object({
 	type: v.literal('tag.created'),
-	data: tagWebhook
+	data: tagApiSchema
 });
 export const tagUpdatedWebhookSchema = v.object({
 	type: v.literal('tag.updated'),
-	data: tagWebhook
+	data: tagApiSchema
 });
 export const tagDeletedWebhookSchema = v.object({
 	type: v.literal('tag.deleted'),
@@ -306,21 +306,21 @@ export const tagDeletedWebhookSchema = v.object({
 });
 export const personTagAddedWebhookSchema = v.object({
 	type: v.literal('tag.person.added'),
-	data: personTagWebhook
+	data: personTagApiSchema
 });
 export const personTagRemovedWebhookSchema = v.object({
 	type: v.literal('tag.person.removed'),
-	data: personTagWebhook
+	data: personTagApiSchema
 });
 
-import { teamWebhook, teamPersonWebhook, teamUserWebhook } from '$lib/schema/team';
+import { teamApiSchema, teamPersonApiSchema, teamUserApiSchema } from '$lib/schema/team';
 export const teamCreatedWebhookSchema = v.object({
 	type: v.literal('team.created'),
-	data: teamWebhook
+	data: teamApiSchema
 });
 export const teamUpdatedWebhookSchema = v.object({
 	type: v.literal('team.updated'),
-	data: teamWebhook
+	data: teamApiSchema
 });
 export const teamDeletedWebhookSchema = v.object({
 	type: v.literal('team.deleted'),
@@ -330,29 +330,29 @@ export const teamDeletedWebhookSchema = v.object({
 });
 export const teamPersonAddedWebhookSchema = v.object({
 	type: v.literal('team.person.added'),
-	data: teamPersonWebhook
+	data: teamPersonApiSchema
 });
 export const teamPersonRemovedWebhookSchema = v.object({
 	type: v.literal('team.person.removed'),
-	data: teamPersonWebhook
+	data: teamPersonApiSchema
 });
 export const teamUserAddedWebhookSchema = v.object({
 	type: v.literal('team.user.added'),
-	data: teamUserWebhook
+	data: teamUserApiSchema
 });
 export const teamUserRemovedWebhookSchema = v.object({
 	type: v.literal('team.user.removed'),
-	data: teamUserWebhook
+	data: teamUserApiSchema
 });
 
-import { whatsappMessageWebhook } from '$lib/schema/whatsapp-message';
+import { whatsappMessageApiSchema } from '$lib/schema/whatsapp-message';
 export const whatsappMessageCreatedWebhookSchema = v.object({
 	type: v.literal('whatsapp.message.created'),
-	data: whatsappMessageWebhook
+	data: whatsappMessageApiSchema
 });
 export const whatsappMessageUpdatedWebhookSchema = v.object({
 	type: v.literal('whatsapp.message.updated'),
-	data: whatsappMessageWebhook
+	data: whatsappMessageApiSchema
 });
 export const whatsappMessageDeletedWebhookSchema = v.object({
 	type: v.literal('whatsapp.message.deleted'),
@@ -361,14 +361,14 @@ export const whatsappMessageDeletedWebhookSchema = v.object({
 	})
 });
 
-import { whatsappThreadWebhook } from '$lib/schema/whatsapp-thread';
+import { whatsappThreadApiSchema } from '$lib/schema/whatsapp-thread';
 export const whatsappThreadCreatedWebhookSchema = v.object({
 	type: v.literal('whatsapp.thread.created'),
-	data: whatsappThreadWebhook
+	data: whatsappThreadApiSchema
 });
 export const whatsappThreadUpdatedWebhookSchema = v.object({
 	type: v.literal('whatsapp.thread.updated'),
-	data: whatsappThreadWebhook
+	data: whatsappThreadApiSchema
 });
 export const whatsappThreadDeletedWebhookSchema = v.object({
 	type: v.literal('whatsapp.thread.deleted'),
@@ -377,14 +377,14 @@ export const whatsappThreadDeletedWebhookSchema = v.object({
 	})
 });
 
-import { emailMessageWebhook } from '$lib/schema/email-message';
+import { emailMessageApiSchema } from '$lib/schema/email-message';
 export const emailMessageCreatedWebhookSchema = v.object({
 	type: v.literal('email.message.created'),
-	data: emailMessageWebhook
+	data: emailMessageApiSchema
 });
 export const emailMessageUpdatedWebhookSchema = v.object({
 	type: v.literal('email.message.updated'),
-	data: emailMessageWebhook
+	data: emailMessageApiSchema
 });
 export const emailMessageDeletedWebhookSchema = v.object({
 	type: v.literal('email.message.deleted'),
@@ -393,18 +393,18 @@ export const emailMessageDeletedWebhookSchema = v.object({
 	})
 });
 
-import { organizationWebhook, organizationMemberWebhook } from '$lib/schema/organization';
+import { organizationApiSchema, organizationMemberApiSchema } from '$lib/schema/organization';
 export const organizationUpdatedWebhookSchema = v.object({
 	type: v.literal('organization.updated'),
-	data: organizationWebhook
+	data: organizationApiSchema
 });
 export const organizationMemberCreatedWebhookSchema = v.object({
 	type: v.literal('member.created'),
-	data: organizationMemberWebhook
+	data: organizationMemberApiSchema
 });
 export const organizationMemberUpdatedWebhookSchema = v.object({
 	type: v.literal('member.updated'),
-	data: organizationMemberWebhook
+	data: organizationMemberApiSchema
 });
 export const organizationMemberDeletedWebhookSchema = v.object({
 	type: v.literal('member.deleted'),
