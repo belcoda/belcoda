@@ -1053,6 +1053,7 @@ msgstr ""
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Close"
 msgstr ""
 
@@ -1997,6 +1998,7 @@ msgid "Your API Key"
 msgstr ""
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Copy to clipboard"
 msgstr ""
 
@@ -2962,6 +2964,7 @@ msgid "user@example.com"
 msgstr ""
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr ""
@@ -4774,12 +4777,6 @@ msgstr ""
 msgid "Signing secret for \"{0}\""
 msgstr ""
 
-#~ msgid "No petitions found.<<<<<<< HEAD"
-#~ msgstr ""
-
-#~ msgid "Signing secret for \"{0}\"=======>>>>>>> develop"
-#~ msgstr ""
-
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Test WhatsApp"
 msgstr ""
@@ -4814,21 +4811,38 @@ msgstr ""
 msgid "Send test message"
 msgstr ""
 
-#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-msgid "Show archived<<<<<<< HEAD======="
-msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Loading delivery logs..."
+msgstr "Cargando registros de entregas..."
 
-#~ msgid "View secret>>>>>>> develop"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "No delivery logs yet"
+msgstr "Aún no hay registros de entregas"
 
-#~ msgid "Edit target URL<<<<<<< HEAD"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Time"
+msgstr "Hora"
 
-#~ msgid "Delete webhook>>>>>>> develop"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Event"
+msgstr "Evento"
 
-#~ msgid "Change the endpoint where this webhook receives events.<<<<<<< HEAD"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "HTTP"
+msgstr "HTTP"
 
-#~ msgid "Send test message>>>>>>> develop"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Attempt"
+msgstr "Intento"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Payload"
+msgstr "Carga útil"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Response"
+msgstr "Respuesta"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs"
+msgstr "Registros de entregas"

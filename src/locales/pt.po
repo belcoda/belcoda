@@ -1053,6 +1053,7 @@ msgstr "Nenhum detalhe de falha disponível"
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Close"
 msgstr "Fechar"
 
@@ -1997,6 +1998,7 @@ msgid "Your API Key"
 msgstr "Sua chave API"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Copy to clipboard"
 msgstr "Copiar para a área de transferência"
 
@@ -2962,6 +2964,7 @@ msgid "user@example.com"
 msgstr "usuario@exemplo.com"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr "Enviando..."
@@ -4635,59 +4638,59 @@ msgstr "Enviar e-mail de teste"
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
-msgstr ""
+msgstr "Todos"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Snapshot"
-msgstr ""
+msgstr "Instantâneo"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Add Node"
-msgstr ""
+msgstr "Adicionar nó"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Petition Signup"
-msgstr ""
+msgstr "Inscrição na petição"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Tag Add"
-msgstr ""
+msgstr "Adicionar etiqueta"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
-msgstr ""
+msgstr "Adicionar equipa"
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr ""
+msgstr "Este evento foi arquivado."
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
-msgstr ""
+msgstr "Pode ver este evento, mas as novas inscrições estão encerradas."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
-msgstr ""
+msgstr "Selecione uma equipa..."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
-msgstr ""
+msgstr "Pesquisar equipa..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Selecione uma petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Pesquisar petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
+msgstr "Nenhuma petição encontrada."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr ""
+msgstr "Mostrar arquivados"
 
 #: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 msgid "Sign-up has closed"
@@ -4714,45 +4717,30 @@ msgstr "O segredo é enviado em cada entrega no cabeçalho X-Webhook-Secret para
 msgid "View secret"
 msgstr "Ver segredo"
 
-#~ msgid "Target URL is required"
-#~ msgstr ""
-
-#~ msgid "Webhook URL updated successfully"
-#~ msgstr ""
-
-#~ msgid "Failed to update webhook URL"
-#~ msgstr ""
-
-#~ msgid "Edit target URL"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Delete webhook"
-msgstr ""
-
-#~ msgid "Change the endpoint where this webhook receives events."
-#~ msgstr ""
+msgstr "Eliminar webhook"
 
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Please fill in all required fields"
-msgstr ""
+msgstr "Por favor, preencha todos os campos obrigatórios"
 
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Webhook updated successfully"
-msgstr ""
+msgstr "Webhook atualizado com sucesso"
 
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Failed to update webhook"
-msgstr ""
+msgstr "Falha ao atualizar o webhook"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Edit webhook"
-msgstr ""
+msgstr "Editar webhook"
 
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Change the name and the endpoint where this webhook receives events."
-msgstr ""
+msgstr "Altere o nome e o endpoint onde este webhook recebe eventos."
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not load the webhook secret."
@@ -4767,12 +4755,6 @@ msgstr "Segredo copiado para a área de transferência"
 msgid "Could not copy the secret to the clipboard. Try selecting it manually."
 msgstr "Não foi possível copiar o segredo para a área de transferência. Tente selecioná-lo manualmente."
 
-#~ msgid "The secret is sent with each delivery in the "
-#~ msgstr ""
-
-#~ msgid "header so your endpoint can verify the request came from Belcoda."
-#~ msgstr ""
-
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Webhook secret"
 msgstr "Segredo do webhook"
@@ -4782,61 +4764,72 @@ msgstr "Segredo do webhook"
 msgid "Signing secret for \"{0}\""
 msgstr "Segredo de assinatura para \"{0}\""
 
-#~ msgid "No petitions found.<<<<<<< HEAD"
-#~ msgstr "Nenhuma petição encontrada.<<<<<<< HEAD"
-
-#~ msgid "Signing secret for \"{0}\"=======>>>>>>> develop"
-#~ msgstr "Segredo de assinatura para \"{0}\"=======>>>>>>> develop"
-
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Test WhatsApp"
-msgstr ""
+msgstr "WhatsApp de teste"
 
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Send a test message before sending this draft."
-msgstr ""
+msgstr "Envie uma mensagem de teste antes de enviar este rascunho."
 
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 msgid "Failed to send test WhatsApp"
-msgstr ""
+msgstr "Falha ao enviar o WhatsApp de teste"
 
 #. 0: trimmedPhoneNumber
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 msgid "Test WhatsApp sent to {0}"
-msgstr ""
+msgstr "WhatsApp de teste enviado para {0}"
 
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 msgid "Send test WhatsApp to"
-msgstr ""
+msgstr "Enviar WhatsApp de teste para"
 
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 msgid "Include country code, e.g. +14101234567"
-msgstr ""
+msgstr "Inclua o indicativo do país, por exemplo +14101234567"
 
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 msgid "Send test WhatsApp"
-msgstr ""
+msgstr "Enviar WhatsApp de teste"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Send test message"
-msgstr ""
+msgstr "Enviar mensagem de teste"
 
-#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-msgid "Show archived<<<<<<< HEAD======="
-msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Loading delivery logs..."
+msgstr "A carregar registos de entregas..."
 
-#~ msgid "View secret>>>>>>> develop"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "No delivery logs yet"
+msgstr "Ainda não há registos de entregas"
 
-#~ msgid "Edit target URL<<<<<<< HEAD"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Time"
+msgstr "Hora"
 
-#~ msgid "Delete webhook>>>>>>> develop"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Event"
+msgstr "Evento"
 
-#~ msgid "Change the endpoint where this webhook receives events.<<<<<<< HEAD"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "HTTP"
+msgstr "HTTP"
 
-#~ msgid "Send test message>>>>>>> develop"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Attempt"
+msgstr "Tentativa"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Payload"
+msgstr "Payload"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Response"
+msgstr "Resposta"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs"
+msgstr "Registos de entregas"
