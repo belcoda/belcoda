@@ -47,7 +47,7 @@ export const personSchema = v.object({
 });
 export type PersonSchema = v.InferOutput<typeof personSchema>;
 
-export const personWebhook = v.object({
+export const personApiSchema = v.object({
 	...v.omit(personSchema, ['organizationId']).entries,
 	dateOfBirth: v.nullable(helpers.dateToString),
 	mostRecentActivityAt: helpers.dateToString,

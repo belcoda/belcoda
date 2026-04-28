@@ -48,7 +48,7 @@ export const eventSchema = v.object({
 });
 export type EventSchema = v.InferOutput<typeof eventSchema>;
 
-export const eventWebhook = v.object({
+export const eventApiSchema = v.object({
 	...v.omit(eventSchema, ['organizationId']).entries,
 	startsAt: helpers.dateToString,
 	endsAt: helpers.dateToString,

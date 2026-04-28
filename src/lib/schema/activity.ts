@@ -15,7 +15,7 @@ export const activitySchema = v.object({
 });
 export type ActivitySchema = v.InferOutput<typeof activitySchema>;
 
-export const activityWebhook = v.object({
+export const activityApiSchema = v.object({
 	...v.omit(activitySchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString
 });

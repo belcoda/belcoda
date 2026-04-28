@@ -24,13 +24,13 @@ export const organizationSchema = v.object({
 });
 export type OrganizationSchema = v.InferOutput<typeof organizationSchema>;
 
-export const organizationWebhook = v.object({
+export const organizationApiSchema = v.object({
 	...v.omit(organizationSchema, ['id']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString
 });
 
-export const organizationMemberWebhook = v.object({
+export const organizationMemberApiSchema = v.object({
 	organizationId: helpers.uuid,
 	userId: helpers.uuid,
 	role: userRole
