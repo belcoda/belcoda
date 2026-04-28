@@ -55,7 +55,7 @@ test.describe.serial('Events', () => {
 		const isChecked = await publishToggle.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishToggle.click();
-			await page.waitForTimeout(800);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 
 		await createPage.closeModal();
@@ -236,10 +236,11 @@ test.describe.serial('Events', () => {
 		await createPage.waitForModal();
 
 		const publishToggle = page.locator('[id="publish-toggle"]');
+		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
 		const isChecked = await publishToggle.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishToggle.click();
-			await page.waitForTimeout(500);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 		await createPage.closeModal();
 
@@ -346,7 +347,7 @@ test.describe.serial('Events', () => {
 		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
 		if (!(await publishToggle.isChecked().catch(() => false))) {
 			await publishToggle.click();
-			await page.waitForTimeout(800);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 		await createPage.closeModal();
 
@@ -428,7 +429,7 @@ test.describe.serial('Event signup fields', () => {
 		const isChecked = await publishToggle.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishToggle.click();
-			await page.waitForTimeout(800);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 
 		await createPage.closeModal();
