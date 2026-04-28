@@ -40,11 +40,13 @@
 		<p class="text-muted-foreground">{t`Invalid email ID`}</p>
 	</div>
 {:else if email}
-	<div class="flex h-full flex-col">
+	<div class="flex h-full flex-col" data-testid="email-sent-detail">
 		<div class="border-b p-4">
 			<div class="flex items-center justify-between">
 				<div>
-					<h2 class="text-xl font-semibold">{email.subject || t`(No subject)`}</h2>
+					<h2 class="text-xl font-semibold" data-testid="email-sent-detail-subject">
+						{email.subject || t`(No subject)`}
+					</h2>
 					<p class="text-sm text-muted-foreground">
 						{t`Sent`}
 						{formatShortTimestamp(email.startedAt || email.createdAt)}
@@ -74,7 +76,7 @@
 					</div>
 				{/if}
 
-				<div>
+				<div data-testid="email-sent-detail-message">
 					<h3 class="mb-2 text-sm font-medium text-muted-foreground">{t`Message`}</h3>
 					{#key emailId}
 						{#if parsedBody()}

@@ -1053,6 +1053,7 @@ msgstr ""
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Close"
 msgstr ""
 
@@ -1997,6 +1998,7 @@ msgid "Your API Key"
 msgstr ""
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Copy to clipboard"
 msgstr ""
 
@@ -2962,6 +2964,7 @@ msgid "user@example.com"
 msgstr ""
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr ""
@@ -4689,18 +4692,22 @@ msgstr ""
 msgid "The sign-up period for this event has ended, so you can no longer register on this page."
 msgstr ""
 
+#: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Secret"
 msgstr ""
 
-#~ msgid "About webhook secrets"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "About webhook secrets"
+msgstr ""
 
-#~ msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+msgstr ""
 
-#~ msgid "View secret"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View secret"
+msgstr ""
 
 #~ msgid "Target URL is required"
 #~ msgstr ""
@@ -4774,11 +4781,13 @@ msgstr ""
 #~ msgid "Signing secret for \"{0}\"=======>>>>>>> develop"
 #~ msgstr ""
 
-#~ msgid "Test WhatsApp"
-#~ msgstr ""
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Test WhatsApp"
+msgstr ""
 
-#~ msgid "Send a test message before sending this draft."
-#~ msgstr ""
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Send a test message before sending this draft."
+msgstr ""
 
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
@@ -4802,8 +4811,9 @@ msgstr ""
 msgid "Send test WhatsApp"
 msgstr ""
 
-#~ msgid "Send test message"
-#~ msgstr ""
+#: src/lib/components/flow/Flow.svelte
+msgid "Send test message"
+msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived<<<<<<< HEAD======="
@@ -4861,6 +4871,30 @@ msgid "Response"
 msgstr "Respuesta"
 
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
-#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Delivery logs"
+msgstr "Registros de entregas"
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "The sign-up period for this event has ended, so you can no longer register on this page.<<<<<<< HEAD======="
+msgstr ""
+
+#~ msgid "Secret<<<<<<< HEAD"
+#~ msgstr ""
+
+#~ msgid "Change the name and the endpoint where this webhook receives events.>>>>>>> develop"
+#~ msgstr ""
+
+#~ msgid "Signing secret for \"{0}\"<<<<<<< HEAD"
+#~ msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Send a test message before sending this draft.>>>>>>> develop"
+msgstr ""
+
+#~ msgid "Send test WhatsApp<<<<<<< HEAD"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs======="
 msgstr "Registros de entregas"

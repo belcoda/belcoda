@@ -5,13 +5,17 @@ import {
 	addUserToTeamMutatorSchema,
 	type AddUserToTeamMutatorSchema,
 	removeUserFromTeamMutatorSchema,
-	type RemoveUserFromTeamMutatorSchema
+	type RemoveUserFromTeamMutatorSchema,
+	teamUserWebhook
 } from '$lib/schema/team';
+import { getQueue } from '$lib/server/queue';
 import { teamMember, member } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function addUserToTeam({
 	tx,
@@ -61,6 +65,21 @@ export async function addUserToTeam({
 		teamId: parsed.metadata.teamId,
 		createdAt: new Date()
 	});
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'team.user.added',
+				data: parse(teamUserWebhook, {
+					teamId: parsed.metadata.teamId,
+					userId: parsed.metadata.userId
+				})
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 }
 
 export async function removeUserFromTeam({
@@ -80,12 +99,30 @@ export async function removeUserFromTeam({
 		tx
 	});
 
-	await tx.dbTransaction.wrappedTransaction
+	const [result] = await tx.dbTransaction.wrappedTransaction
 		.delete(teamMember)
 		.where(
 			and(
 				eq(teamMember.teamId, parsed.metadata.teamId),
 				eq(teamMember.userId, parsed.metadata.userId)
 			)
-		);
+		)
+		.returning();
+	if (result) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: parsed.metadata.organizationId,
+				payload: {
+					type: 'team.user.removed',
+					data: parse(teamUserWebhook, {
+						teamId: parsed.metadata.teamId,
+						userId: parsed.metadata.userId
+					})
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
 }

@@ -160,9 +160,11 @@
 	</Alert.Root>
 
 	{#if organization.data}
-		<Card.Root class="mt-6">
+		<Card.Root class="mt-6" data-testid="settings-send-signatures-system-card">
 			<Card.Header>
-				<Card.Title>{t`System send signature`}</Card.Title>
+				<Card.Title data-testid="settings-send-signatures-system-title"
+					>{t`System send signature`}</Card.Title
+				>
 				<Card.Description>
 					{t`This is the default send signature provided to every organization. You can customize the name and reply-to address.`}
 				</Card.Description>
@@ -198,7 +200,10 @@
 							}}
 							disabled={updatingDefault}
 						>
-							<Select.Trigger class="w-full justify-between">
+							<Select.Trigger
+								class="w-full justify-between"
+								data-testid="settings-send-signatures-default-select-trigger"
+							>
 								{signatureOptions.find((opt) => opt.value === displayedSelectedSignatureValue)
 									?.label || t`Select default signature`}
 							</Select.Trigger>
@@ -263,8 +268,11 @@
 					</Table.Header>
 					<Table.Body>
 						{#each emailFromSignatureList.data as signature}
-							<Table.Row>
-								<Table.Cell>
+							<Table.Row
+								data-testid="settings-send-signatures-custom-row"
+								data-email-address={signature.emailAddress}
+							>
+								<Table.Cell data-testid="settings-send-signatures-row-name-email">
 									<div class="flex items-center gap-3">
 										<Avatar>
 											<AvatarFallback>{signature.emailAddress[0]?.toUpperCase()}</AvatarFallback>
@@ -277,12 +285,12 @@
 										</div>
 									</div>
 								</Table.Cell>
-								<Table.Cell>
+								<Table.Cell data-testid="settings-send-signatures-row-reply-to">
 									<p class="font-mono text-sm">
 										{signature.replyTo || signature.emailAddress}
 									</p>
 								</Table.Cell>
-								<Table.Cell>
+								<Table.Cell data-testid="settings-send-signatures-row-return-path">
 									{#if signature.returnPathDomain}
 										<div class="space-y-1">
 											<p class="text-sm">{signature.returnPathDomain}</p>
@@ -294,7 +302,7 @@
 										<Badge color="gray">{t`Not set`}</Badge>
 									{/if}
 								</Table.Cell>
-								<Table.Cell>
+								<Table.Cell data-testid="settings-send-signatures-row-status">
 									<Badge color={signature.verified ? 'green' : 'red'}>
 										{signature.verified ? t`Verified` : t`Not verified`}
 									</Badge>
@@ -306,7 +314,12 @@
 												{#snippet trigger()}
 													<Tooltip.Root>
 														<Tooltip.Trigger>
-															<Button variant="ghost" size="icon-sm">
+															<Button
+																variant="ghost"
+																size="icon-sm"
+																data-testid="settings-send-signatures-row-edit-button"
+																data-email-address={signature.emailAddress}
+															>
 																<PencilIcon class="size-4" />
 															</Button>
 														</Tooltip.Trigger>
@@ -323,6 +336,8 @@
 														size="icon-sm"
 														onclick={() => verifyEmailFromSignature(signature.id)}
 														disabled={loadingArr.includes(signature.id)}
+														data-testid="settings-send-signatures-row-verify-button"
+														data-email-address={signature.emailAddress}
 													>
 														{#if loadingArr.includes(signature.id)}
 															<LoaderIcon class="size-4 animate-spin" />
@@ -341,6 +356,8 @@
 														variant="ghost"
 														size="icon-sm"
 														onclick={() => deleteEmailFromSignature(signature.id)}
+														data-testid="settings-send-signatures-row-delete-button"
+														data-email-address={signature.emailAddress}
 													>
 														<TrashIcon class="size-4 text-destructive" />
 													</Button>
@@ -470,7 +487,7 @@
 			<H2>{t`Email from signatures`}</H2>
 			<CreateModal>
 				{#snippet trigger()}
-					<Button variant="outline">
+					<Button variant="outline" data-testid="settings-send-signatures-new-button">
 						<PlusIcon class="size-4" />
 						{t`New`}
 					</Button>

@@ -1053,6 +1053,7 @@ msgstr "Nenhum detalhe de falha disponível"
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Close"
 msgstr "Fechar"
 
@@ -1997,6 +1998,7 @@ msgid "Your API Key"
 msgstr "Sua chave API"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Copy to clipboard"
 msgstr "Copiar para a área de transferência"
 
@@ -2962,6 +2964,7 @@ msgid "user@example.com"
 msgstr "usuario@exemplo.com"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr "Enviando..."
@@ -4697,18 +4700,22 @@ msgstr "As inscrições encerraram"
 msgid "The sign-up period for this event has ended, so you can no longer register on this page."
 msgstr "O período de inscrição deste evento terminou, portanto não é mais possível inscrever-se nesta página."
 
+#: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Secret"
 msgstr "Segredo"
 
-#~ msgid "About webhook secrets"
-#~ msgstr "Sobre os segredos do webhook"
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "About webhook secrets"
+msgstr "Sobre os segredos do webhook"
 
-#~ msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
-#~ msgstr "O segredo é enviado em cada entrega no cabeçalho X-Webhook-Secret para que seu endpoint possa verificar se a solicitação veio da Belcoda."
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+msgstr "O segredo é enviado em cada entrega no cabeçalho X-Webhook-Secret para que seu endpoint possa verificar se a solicitação veio da Belcoda."
 
-#~ msgid "View secret"
-#~ msgstr "Ver segredo"
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View secret"
+msgstr "Ver segredo"
 
 #~ msgid "Target URL is required"
 #~ msgstr ""
@@ -4782,11 +4789,13 @@ msgstr "Segredo de assinatura para \"{0}\""
 #~ msgid "Signing secret for \"{0}\"=======>>>>>>> develop"
 #~ msgstr "Segredo de assinatura para \"{0}\"=======>>>>>>> develop"
 
-#~ msgid "Test WhatsApp"
-#~ msgstr ""
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Test WhatsApp"
+msgstr ""
 
-#~ msgid "Send a test message before sending this draft."
-#~ msgstr ""
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Send a test message before sending this draft."
+msgstr ""
 
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
@@ -4810,8 +4819,9 @@ msgstr ""
 msgid "Send test WhatsApp"
 msgstr ""
 
-#~ msgid "Send test message"
-#~ msgstr ""
+#: src/lib/components/flow/Flow.svelte
+msgid "Send test message"
+msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived<<<<<<< HEAD======="
@@ -4869,6 +4879,30 @@ msgid "Response"
 msgstr "Resposta"
 
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
-#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Delivery logs"
+msgstr "Registos de entregas"
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "The sign-up period for this event has ended, so you can no longer register on this page.<<<<<<< HEAD======="
+msgstr "O período de inscrição deste evento terminou, portanto não é mais possível inscrever-se nesta página."
+
+#~ msgid "Secret<<<<<<< HEAD"
+#~ msgstr "Segredo"
+
+#~ msgid "Change the name and the endpoint where this webhook receives events.>>>>>>> develop"
+#~ msgstr ""
+
+#~ msgid "Signing secret for \"{0}\"<<<<<<< HEAD"
+#~ msgstr "Segredo de assinatura para \"{0}\""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Send a test message before sending this draft.>>>>>>> develop"
+msgstr ""
+
+#~ msgid "Send test WhatsApp<<<<<<< HEAD"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs======="
 msgstr "Registos de entregas"

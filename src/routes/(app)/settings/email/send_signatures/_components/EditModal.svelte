@@ -89,13 +89,18 @@
 	bind:open={isOpen}
 >
 	{#snippet children()}
-		<form use:form.enhance class="space-y-4">
+		<form use:form.enhance class="space-y-4" data-testid="settings-send-signature-edit-form">
 			<Errors {errors} />
 			<Form.Field {form} name="name">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{t`Display name`}</Form.Label>
-						<Input {...props} bind:value={$data.name} placeholder={t`Display name`} />
+						<Input
+							{...props}
+							bind:value={$data.name}
+							placeholder={t`Display name`}
+							data-testid="settings-send-signature-edit-name-input"
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -103,7 +108,12 @@
 
 			<div>
 				<Label>{t`Email address`}</Label>
-				<p class="mt-1 font-mono text-sm text-muted-foreground">{signature.emailAddress}</p>
+				<p
+					class="mt-1 font-mono text-sm text-muted-foreground"
+					data-testid="settings-send-signature-edit-email-address-text"
+				>
+					{signature.emailAddress}
+				</p>
 				<p class="mt-1 text-sm text-muted-foreground">
 					{t`The email address cannot be changed.`}
 				</p>
@@ -119,6 +129,7 @@
 							bind:value={$data.replyTo}
 							placeholder={signature.emailAddress}
 							class="font-mono"
+							data-testid="settings-send-signature-edit-reply-to-input"
 						/>
 					{/snippet}
 				</Form.Control>
@@ -137,6 +148,7 @@
 							bind:value={$data.returnPathDomain}
 							placeholder={t`bounce.example.com`}
 							class="font-mono"
+							data-testid="settings-send-signature-edit-return-path-input"
 						/>
 					{/snippet}
 				</Form.Control>
@@ -155,6 +167,7 @@
 				onclick={() => {
 					form.submit();
 				}}
+				data-testid="settings-send-signature-edit-submit-button"
 			>
 				{t`Save changes`}
 			</Button>

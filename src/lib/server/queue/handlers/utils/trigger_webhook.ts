@@ -19,6 +19,7 @@ export async function triggerWebhook({
 	organizationId: string;
 }) {
 	try {
+		log.info({ payloadType: payload.type, organizationId }, 'Triggering webhook');
 		const parsed = parse(webhookPayloadSchema, payload);
 		const eventType = parsed.type;
 
@@ -30,6 +31,7 @@ export async function triggerWebhook({
 					eq(row.enabled, true)
 				)
 		});
+		log.info({ webhooksCount: returnedWebhooks.length }, 'Found webhooks to trigger');
 		for (const webhook of returnedWebhooks) {
 			const webhookBody = {
 				id: uuidv7(),

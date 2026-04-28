@@ -51,4 +51,13 @@ export class WebhooksPage {
 		const row = this.webhookRow(name, targetUrl);
 		await row.getByTestId('settings-webhooks-delete').click();
 	}
+
+	async openViewSecret(name: string, targetUrl: string) {
+		const row = this.webhookRow(name, targetUrl);
+		await row.getByTestId('settings-webhooks-view-secret').click();
+	}
+
+	get secretValueInput(): Locator {
+		return this.page.getByTestId('settings-webhooks-secret-value');
+	}
 }
