@@ -61,7 +61,10 @@ export class WebhooksPage {
 
 	async deleteWebhook(name: string, targetUrl: string) {
 		const row = this.webhookRow(name, targetUrl);
-		await row.getByTestId('settings-webhooks-delete').click();
+		await Promise.all([
+			this.page.waitForEvent('dialog').then((dialog) => dialog.accept()),
+			row.getByTestId('settings-webhooks-delete').click()
+		]);
 	}
 
 	async editWebhook(

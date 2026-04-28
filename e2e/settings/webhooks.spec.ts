@@ -62,9 +62,7 @@ test.describe.serial('Settings: Webhooks', () => {
 		await loginAsOwner(page);
 		await webhooksPage.goto();
 
-		page.once('dialog', (dialog) => dialog.accept());
 		await webhooksPage.deleteWebhook(state.name, state.targetUrl);
-
 		await expect(webhooksPage.webhookRow(state.name, state.targetUrl)).toHaveCount(0, {
 			timeout: 15_000
 		});
