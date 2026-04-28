@@ -58,6 +58,7 @@
 			<Button
 				variant="destructive"
 				size="sm"
+				data-testid="email-draft-discard"
 				onclick={async () => {
 					if (window.confirm(t`Are you sure you want to discard this email draft?`)) {
 						await formRef?.discard();
@@ -68,18 +69,25 @@
 			<Button
 				variant="outline"
 				size="sm"
+				data-testid="email-draft-save"
 				onclick={async () => {
 					await formRef?.save();
 					toast.success(t`Email saved`);
 				}}>{t`Save`}</Button
 			>
-			<Button variant="outline" size="sm" onclick={() => formRef?.toggleTestEmail()}>
+			<Button
+				variant="outline"
+				size="sm"
+				data-testid="email-draft-test-toggle"
+				onclick={() => formRef?.toggleTestEmail()}
+			>
 				<FlaskConicalIcon class="size-4" />
 				{t`Test email`}
 			</Button>
 			<Button
 				variant="default"
 				size="sm"
+				data-testid="email-draft-send"
 				onclick={async () => {
 					await formRef?.send();
 					goto('/communications/email/sent');
@@ -88,12 +96,14 @@
 		</div>
 	{/snippet}
 	{#if !emailId}
-		<div class="flex h-full items-center justify-center">
+		<div data-testid="email-draft-page-invalid" class="flex h-full items-center justify-center">
 			<p class="text-muted-foreground">{t`Invalid email ID`}</p>
 		</div>
 	{:else if emailSearchComplete && email}
 		{#key email.id}
-			<EmailDraftForm bind:this={formRef} {email} {emailExists} />
+			<div data-testid="email-draft-page">
+				<EmailDraftForm bind:this={formRef} {email} {emailExists} />
+			</div>
 		{/key}
 	{/if}
 </ContentLayout>

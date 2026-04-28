@@ -68,11 +68,13 @@ export async function load({ locals, params, url }) {
 		...eventObj,
 		description: renderedDescription
 	};
+	const signupWindowOpen = eventObj.endsAt.getTime() > Date.now();
 	return {
 		event: renderedEvent,
 		organization: organizationObj,
 		whatsAppSignupLink,
 		signupCount,
+		signupWindowOpen,
 		form,
 		session: locals.session
 	};

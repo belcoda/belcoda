@@ -125,11 +125,18 @@ export const integer = v.pipe(v.number(), v.integer());
 export const unixTimestamp = v.pipe(v.number(), v.minValue(0, 'Must be a positive number'));
 
 export const date = v.date();
+export const isoTimestamp = v.pipe(v.string(), v.isoTimestamp('Invalid ISO timestamp format'));
 export const pastDate = v.pipe(date, v.maxValue(new Date(), 'Must be in the past'));
 export const dateToString = v.pipe(
-	date,
-	v.transform((input) => input.toISOString())
+	v.union([date, isoTimestamp]),
+	v.transform((input) => {
+		if (typeof input === 'string') {
+			return new Date(input).toISOString();
+		}
+		return input.toISOString();
+	})
 );
+
 export const dateStringToDate = v.pipe(
 	v.string(),
 	v.isoDateTime(),
@@ -234,8 +241,6 @@ export const url = v.pipe(
 export const domainNameOrUrl = v.union([domainName, url], 'Must be a valid domain name or URL');
 
 export const emoji = v.pipe(v.string(), v.length(1, 'Must be exactly one emoji'), v.emoji());
-
-export const isoTimestamp = v.pipe(v.string(), v.isoTimestamp('Invalid ISO timestamp format'));
 
 export const dbDate = v.union([
 	v.pipe(v.string(), v.isoDate()),

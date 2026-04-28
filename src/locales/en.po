@@ -2232,6 +2232,14 @@ msgstr "Event not published"
 msgid "This event is not published yet. Please check back later."
 msgstr "This event is not published yet. Please check back later."
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "Sign-up has closed"
+msgstr "Sign-up has closed"
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "The sign-up period for this event has ended, so you can no longer register on this page."
+msgstr "The sign-up period for this event has ended, so you can no longer register on this page."
+
 #: src/lib/components/layouts/public/event/EventDeclineSuccess.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Not joining this event"
@@ -4622,6 +4630,38 @@ msgstr "Preview event page"
 msgid "Detailed signups table"
 msgstr "Detailed signups table"
 
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr "Show archived"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "This event has been archived."
+msgstr "This event has been archived."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "You can view this event, but new signups are closed."
+msgstr "You can view this event, but new signups are closed."
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Snapshot"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Add Node"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Petition Signup"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Tag Add"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Team Add"
+msgstr "Team Add"
+
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Test email"
 msgstr "Test email"
@@ -4649,34 +4689,6 @@ msgstr "Send test email"
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
 msgstr "Everyone"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Snapshot"
-msgstr "Snapshot"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Add Node"
-msgstr "Add Node"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Petition Signup"
-msgstr "Petition Signup"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Tag Add"
-msgstr "Tag Add"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Team Add"
-msgstr "Team Add"
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "This event has been archived."
-msgstr "This event has been archived."
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "You can view this event, but new signups are closed."
-msgstr "You can view this event, but new signups are closed."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."

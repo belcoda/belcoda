@@ -107,14 +107,19 @@
 	}
 </script>
 
-<div class="space-y-4">
-	<div>
+<div class="space-y-4" data-testid="settings-send-signature-system-section">
+	<div data-testid="settings-send-signature-system-email-address-section">
 		<p class="mb-1 text-sm font-medium">{t`Email address`}</p>
-		<p class="font-mono text-sm text-muted-foreground">{emailAddress}</p>
+		<p
+			class="font-mono text-sm text-muted-foreground"
+			data-testid="settings-send-signature-system-email-address"
+		>
+			{emailAddress}
+		</p>
 		<p class="mt-1 text-xs text-muted-foreground">{t`This email address cannot be changed.`}</p>
 	</div>
 
-	<div>
+	<div data-testid="settings-send-signature-system-name-section">
 		<p class="mb-1 text-sm font-medium">{t`Display name`}</p>
 		{#if editingName}
 			<div class="space-y-2">
@@ -124,11 +129,24 @@
 						placeholder={t`Display name`}
 						class="flex-1"
 						disabled={saving}
+						data-testid="settings-send-signature-system-name-input"
 					/>
-					<Button variant="ghost" size="icon" onclick={handleSaveName} disabled={saving}>
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={handleSaveName}
+						disabled={saving}
+						data-testid="settings-send-signature-system-name-save-button"
+					>
 						<CheckIcon class="size-4" />
 					</Button>
-					<Button variant="ghost" size="icon" onclick={handleCancelName} disabled={saving}>
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={handleCancelName}
+						disabled={saving}
+						data-testid="settings-send-signature-system-name-cancel-button"
+					>
 						<XIcon class="size-4" />
 					</Button>
 				</div>
@@ -146,6 +164,7 @@
 						editingName = true;
 						newName = name || '';
 					}}
+					data-testid="settings-send-signature-system-name-edit-button"
 				>
 					<PencilIcon class="size-4" />
 				</Button>
@@ -153,7 +172,7 @@
 		{/if}
 	</div>
 
-	<div>
+	<div data-testid="settings-send-signature-system-reply-to-section">
 		<p class="mb-1 text-sm font-medium">{t`Reply-to address`}</p>
 		{#if editingReplyTo}
 			<div class="space-y-2">
@@ -164,11 +183,24 @@
 						placeholder={emailAddress}
 						class="flex-1 font-mono"
 						disabled={saving}
+						data-testid="settings-send-signature-system-reply-to-input"
 					/>
-					<Button variant="ghost" size="icon" onclick={handleSaveReplyTo} disabled={saving}>
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={handleSaveReplyTo}
+						disabled={saving}
+						data-testid="settings-send-signature-system-reply-to-save-button"
+					>
 						<CheckIcon class="size-4" />
 					</Button>
-					<Button variant="ghost" size="icon" onclick={handleCancelReplyTo} disabled={saving}>
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={handleCancelReplyTo}
+						disabled={saving}
+						data-testid="settings-send-signature-system-reply-to-cancel-button"
+					>
 						<XIcon class="size-4" />
 					</Button>
 				</div>
@@ -186,6 +218,7 @@
 						editingReplyTo = true;
 						newReplyTo = replyTo || emailAddress;
 					}}
+					data-testid="settings-send-signature-system-reply-to-edit-button"
 				>
 					<PencilIcon class="size-4" />
 				</Button>

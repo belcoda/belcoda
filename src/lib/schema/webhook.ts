@@ -392,7 +392,7 @@ export const organizationMemberUpdatedWebhookSchema = v.object({
 export const organizationMemberDeletedWebhookSchema = v.object({
 	type: v.literal('member.deleted'),
 	data: v.object({
-		organizationMemberId: helpers.uuid,
+		organizationId: helpers.uuid,
 		userId: helpers.uuid
 	})
 });

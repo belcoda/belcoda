@@ -7,8 +7,12 @@ import {
 	type UpdateMutatorSchema,
 	updateMutatorSchema,
 	type CreateMutatorSchema,
-	createMutatorSchema
+	createMutatorSchema,
+	teamWebhook
 } from '$lib/schema/team';
+import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function createTeam({
 	tx,
@@ -50,6 +54,19 @@ export async function createTeam({
 	if (!result) {
 		throw new Error('Unable to create team');
 	}
+	const { organizationId, ...teamWebhookData } = result;
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId,
+			payload: {
+				type: 'team.created',
+				data: parse(teamWebhook, teamWebhookData)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -81,10 +98,40 @@ export async function updateTeam({
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(team)
 		.set(updates)
-		.where(eq(team.id, parsed.metadata.teamId))
+		.where(
+			and(
+				eq(team.id, parsed.metadata.teamId),
+				eq(team.organizationId, parsed.metadata.organizationId)
+			)
+		)
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update team');
+	}
+	const softDeleteThisRequest =
+		Object.prototype.hasOwnProperty.call(parsed.input, 'deletedAt') && parsed.input.deletedAt;
+	try {
+		const queue = await getQueue();
+		if (softDeleteThisRequest) {
+			await queue.triggerWebhook({
+				organizationId: result.organizationId,
+				payload: {
+					type: 'team.deleted',
+					data: { teamId: result.id }
+				}
+			});
+		} else {
+			const { organizationId, ...teamWebhookData } = result;
+			await queue.triggerWebhook({
+				organizationId,
+				payload: {
+					type: 'team.updated',
+					data: parse(teamWebhook, teamWebhookData)
+				}
+			});
+		}
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
 	}
 	return result;
 }

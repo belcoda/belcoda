@@ -12,6 +12,11 @@ import { personTag, activity, tag } from '$lib/schema/drizzle';
 import { eq, and, isNull } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
+import { getQueue } from '$lib/server/queue';
+import { personTagWebhook } from '$lib/schema/tag';
+import { activityWebhook } from '$lib/schema/activity';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function addPersonTag({
 	tx,
@@ -87,16 +92,19 @@ export async function _addPersonTagData({
 		throw new Error('Unable to add person tag');
 	}
 
-	await tx.dbTransaction.wrappedTransaction.insert(activity).values({
-		id: uuidv7(),
-		type: 'tag_added',
-		referenceId: args.tagId,
-		unread: false,
-		userId: null,
-		organizationId: args.organizationId,
-		createdAt: new Date(),
-		personId: args.personId
-	});
+	const [tagActivity] = await tx.dbTransaction.wrappedTransaction
+		.insert(activity)
+		.values({
+			id: uuidv7(),
+			type: 'tag_added',
+			referenceId: args.tagId,
+			unread: false,
+			userId: null,
+			organizationId: args.organizationId,
+			createdAt: new Date(),
+			personId: args.personId
+		})
+		.returning();
 
 	await updateLatestActivity({
 		tx,
@@ -110,6 +118,34 @@ export async function _addPersonTagData({
 			}
 		}
 	});
+
+	if (tagActivity) {
+		const { organizationId: actOrg, ...actData } = tagActivity;
+		try {
+			const actQueue = await getQueue();
+			await actQueue.triggerWebhook({
+				organizationId: actOrg,
+				payload: {
+					type: 'activity.created',
+					data: parse(activityWebhook, actData)
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: args.organizationId,
+			payload: {
+				type: 'tag.person.added',
+				data: parse(personTagWebhook, { personId: args.personId, tagId: args.tagId })
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -142,7 +178,7 @@ export async function applyTagToPersonUnsafe({
 	if (!tagRow) {
 		return;
 	}
-	await db
+	const [inserted] = await db
 		.insert(personTag)
 		.values({
 			personId,
@@ -150,7 +186,22 @@ export async function applyTagToPersonUnsafe({
 			organizationId,
 			createdAt: new Date()
 		})
-		.onConflictDoNothing();
+		.onConflictDoNothing()
+		.returning();
+	if (inserted) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId,
+				payload: {
+					type: 'tag.person.added',
+					data: parse(personTagWebhook, { personId, tagId })
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
 }
 
 export async function removePersonTag({
@@ -168,11 +219,31 @@ export async function removePersonTag({
 	) {
 		throw new Error('You are not authorized to remove a person from a tag in this organization');
 	}
-	await tx.dbTransaction.wrappedTransaction.delete(personTag).where(
-		and(
-			eq(personTag.personId, args.metadata.personId),
-			eq(personTag.tagId, args.metadata.tagId),
-			eq(personTag.organizationId, args.metadata.organizationId) // make sure the tag and person belongs to the organization
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.delete(personTag)
+		.where(
+			and(
+				eq(personTag.personId, args.metadata.personId),
+				eq(personTag.tagId, args.metadata.tagId),
+				eq(personTag.organizationId, args.metadata.organizationId) // make sure the tag and person belongs to the organization
+			)
 		)
-	);
+		.returning();
+	if (result) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: args.metadata.organizationId,
+				payload: {
+					type: 'tag.person.removed',
+					data: parse(personTagWebhook, {
+						personId: args.metadata.personId,
+						tagId: args.metadata.tagId
+					})
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
 }

@@ -1,5 +1,6 @@
 import { whatsappTemplate as whatsappTemplateTable } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
+import { drizzle } from '$lib/server/db';
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import pino from '$lib/pino';
@@ -19,6 +20,21 @@ import {
 import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
+
+export async function getWhatsappTemplateById({
+	templateId,
+	organizationId
+}: {
+	templateId: string;
+	organizationId: string;
+}) {
+	return drizzle.query.whatsappTemplate.findFirst({
+		where: and(
+			eq(whatsappTemplateTable.id, templateId),
+			eq(whatsappTemplateTable.organizationId, organizationId)
+		)
+	});
+}
 
 export async function createWhatsappTemplate({
 	ctx,

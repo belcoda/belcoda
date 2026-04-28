@@ -14,10 +14,15 @@ import {
 	archiveEventMutatorSchemaZero,
 	type ArchiveEventMutatorSchemaZero
 } from '$lib/schema/event';
+import { eventWebhook } from '$lib/schema/event';
+import { eventSignupWebhook } from '$lib/schema/event-signup';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
+import { eventDeletedWebhookSchema } from '$lib/schema/webhook';
 import { parse } from 'valibot';
 import { _insertActionCodeUnsafe } from '$lib/server/api/data/action/insert';
 import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function createEvent({
 	tx,
@@ -119,6 +124,18 @@ export async function createEvent({
 	if (!result) {
 		throw new Error('Unable to create event');
 	}
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsedInput.metadata.organizationId,
+			payload: {
+				type: 'event.created',
+				data: parse(eventWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -163,9 +180,21 @@ export async function updateEvent({
 	const publishedStatusChanged =
 		eventRecord?.published !== undefined && eventRecord?.published !== updatedEvent?.published;
 
+	const queue = await getQueue();
 	if (structureChanged || publishedStatusChanged) {
-		const queue = await getQueue();
 		queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
+	}
+
+	try {
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'event.updated',
+				data: parse(eventWebhook, updatedEvent)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
 	}
 }
 
@@ -194,7 +223,7 @@ export async function deleteEvent({
 		throw new Error('Cannot delete a published event. Archive it instead.');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const cancelledSignups = await tx.dbTransaction.wrappedTransaction
 		.update(eventSignup)
 		.set({ status: 'cancelled', updatedAt: new Date() })
 		.where(
@@ -202,17 +231,52 @@ export async function deleteEvent({
 				eq(eventSignup.eventId, parsed.metadata.eventId),
 				eq(eventSignup.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
 
-	await tx.dbTransaction.wrappedTransaction
+	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(event)
 		.set({ deletedAt: new Date(), updatedAt: new Date() })
 		.where(
 			and(
 				eq(event.id, parsed.metadata.eventId),
+				isNull(event.deletedAt),
 				eq(event.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+
+	const queue = await getQueue();
+	const signupResults = await Promise.allSettled(
+		cancelledSignups.map(async (row) => {
+			const { organizationId: _omit, ...signupWebhookData } = row;
+			await queue.triggerWebhook({
+				organizationId: parsed.metadata.organizationId,
+				payload: {
+					type: 'event.signup.updated',
+					data: parse(eventSignupWebhook, signupWebhookData)
+				}
+			});
+		})
+	);
+	for (const result of signupResults) {
+		if (result.status === 'rejected') {
+			log.error({ err: result.reason }, 'Failed to trigger webhook');
+		}
+	}
+	if (result) {
+		try {
+			await queue.triggerWebhook({
+				organizationId: parsed.metadata.organizationId,
+				payload: parse(eventDeletedWebhookSchema, {
+					type: 'event.deleted',
+					data: { eventId: parsed.metadata.eventId }
+				})
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
 }
 
 export async function archiveEvent({
@@ -240,7 +304,7 @@ export async function archiveEvent({
 		throw new Error('Cannot archive a draft event. Delete it instead.');
 	}
 
-	await tx.dbTransaction.wrappedTransaction
+	const [archived] = await tx.dbTransaction.wrappedTransaction
 		.update(event)
 		.set({ archivedAt: new Date(), updatedAt: new Date() })
 		.where(
@@ -248,7 +312,22 @@ export async function archiveEvent({
 				eq(event.id, parsed.metadata.eventId),
 				eq(event.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+	if (archived) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: parsed.metadata.organizationId,
+				payload: {
+					type: 'event.updated',
+					data: parse(eventWebhook, archived)
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
 }
 
 export async function _getEventBySlugUnsafe({
