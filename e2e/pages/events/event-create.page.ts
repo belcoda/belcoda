@@ -58,5 +58,6 @@ export class EventCreatePage {
 
 	async closeModal() {
 		await this.page.keyboard.press('Escape');
+		await this.createdModal.waitFor({ state: 'hidden', timeout: 10_000 });
 	}
 }
