@@ -39,18 +39,19 @@
 	}
 </script>
 
-<div class="space-y-3">
+<div class="space-y-3" data-testid="email-test-form">
 	<div class="space-y-1.5">
 		<Label for="test-email-address">{t`Send test email to`}</Label>
 		<Input
 			id="test-email-address"
 			type="email"
 			placeholder={t`Email address`}
+			data-testid="email-test-address"
 			bind:value={emailAddress}
 			class="w-full"
 		/>
 	</div>
-	<Button disabled={!canSend} onclick={sendTestEmail} class="w-full">
+	<Button data-testid="email-test-send" disabled={!canSend} onclick={sendTestEmail} class="w-full">
 		{loading ? t`Sending...` : t`Send test email`}
 	</Button>
 </div>

@@ -21,6 +21,7 @@
 	event={data.event}
 	organization={data.organization}
 	{layout}
+	signupWindowOpen={data.signupWindowOpen}
 	form={data.form}
 	whatsAppSignupLink={data.whatsAppSignupLink ?? undefined}
 	signupCount={data.signupCount ?? undefined}

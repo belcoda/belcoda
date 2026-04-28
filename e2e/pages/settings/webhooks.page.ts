@@ -75,4 +75,13 @@ export class WebhooksPage {
 		await this.webhookEditUrlInput.fill(next.targetUrl);
 		await this.editSubmitButton.click();
 	}
+
+	async openViewSecret(name: string, targetUrl: string) {
+		const row = this.webhookRow(name, targetUrl);
+		await row.getByTestId('settings-webhooks-view-secret').click();
+	}
+
+	get secretValueInput(): Locator {
+		return this.page.getByTestId('settings-webhooks-secret-value');
+	}
 }

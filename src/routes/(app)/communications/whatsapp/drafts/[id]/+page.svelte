@@ -8,6 +8,8 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 	import { tick } from 'svelte';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import SendTestWhatsApp from '$lib/components/forms/whatsapp/SendTestWhatsApp.svelte';
 	const whatsappThreadQuery = $derived.by(() =>
 		z.createQuery(
 			queries.whatsappThread.read({
@@ -18,6 +20,24 @@
 	import { appState } from '$lib/state.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { onDestroy } from 'svelte';
+	import type { Flow as WhatsappFlow } from '$lib/schema/flow';
+	let showTestWhatsApp = $state(false);
+	let latestDraftFlow = $state<WhatsappFlow | null>(null);
+
+	async function persistDraftFlow(flow: WhatsappFlow) {
+		latestDraftFlow = flow;
+		await z.mutate(
+			mutators.whatsappThread.update({
+				metadata: {
+					whatsappThreadId: params.id,
+					organizationId: appState.organizationId
+				},
+				input: {
+					flow
+				}
+			})
+		);
+	}
 	onDestroy(() => {
 		//if (whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data) {
 		//if whatsapp thread is EXACTLY deepEqual to the starting state, delete it.
@@ -28,38 +48,23 @@
 
 {#key params.id}
 	{#if whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data}
+		{@const currentFlow = latestDraftFlow ?? whatsappThreadQuery.data.flow}
 		<Flow
 			backButtonUrl="/communications/whatsapp"
-			nodes={whatsappThreadQuery.data.flow.nodes}
-			edges={whatsappThreadQuery.data.flow.edges}
+			nodes={currentFlow.nodes}
+			edges={currentFlow.edges}
+			onTest={({ nodes, edges }) => {
+				latestDraftFlow = { nodes, edges };
+				showTestWhatsApp = true;
+			}}
 			onSave={async ({ nodes, edges }) => {
 				console.log('Saving thread', nodes, edges);
-				await z.mutate(
-					mutators.whatsappThread.update({
-						metadata: {
-							whatsappThreadId: params.id,
-							organizationId: appState.organizationId
-						},
-						input: {
-							flow: { nodes, edges }
-						}
-					})
-				);
+				await persistDraftFlow({ nodes, edges });
 			}}
 			onSend={async ({ nodes, edges }) => {
 				// First che
 				if (window.confirm(t`Are you sure you want to send this WhatsApp draft?`)) {
-					await z.mutate(
-						mutators.whatsappThread.update({
-							metadata: {
-								whatsappThreadId: params.id,
-								organizationId: appState.organizationId
-							},
-							input: {
-								flow: { nodes, edges }
-							}
-						})
-					);
+					await persistDraftFlow({ nodes, edges });
 					const result = z.mutate(
 						mutators.whatsappThread.send({
 							whatsappThreadId: params.id,
@@ -84,6 +89,25 @@
 				await goto('/communications/whatsapp/drafts');
 			}}
 		/>
+		<Dialog.Root bind:open={showTestWhatsApp}>
+			<Dialog.Content class="sm:max-w-md">
+				<Dialog.Header>
+					<Dialog.Title>{t`Test WhatsApp`}</Dialog.Title>
+					<Dialog.Description>
+						{t`Send a test message before sending this draft.`}
+					</Dialog.Description>
+				</Dialog.Header>
+				<SendTestWhatsApp
+					whatsappThreadId={params.id}
+					beforeSend={async () => {
+						await persistDraftFlow(currentFlow);
+					}}
+					onSent={() => {
+						showTestWhatsApp = false;
+					}}
+				/>
+			</Dialog.Content>
+		</Dialog.Root>
 	{:else}
 		<Skeleton class="h-48 w-full" />
 		<Skeleton class="h-48 w-full" />
