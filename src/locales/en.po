@@ -4835,6 +4835,10 @@ msgstr "Send test WhatsApp"
 msgid "Send test message"
 msgstr "Send test message"
 
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View delivery logs"
+msgstr "View delivery logs"
+
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Loading delivery logs..."
 msgstr "Loading delivery logs..."

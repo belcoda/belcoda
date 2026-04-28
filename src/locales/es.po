@@ -4775,7 +4775,7 @@ msgstr ""
 #. 0: webhookName
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Signing secret for \"{0}\""
-msgstr ""
+msgstr "Secreto de firma para \"{0}\""
 
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Test WhatsApp"
@@ -4810,6 +4810,10 @@ msgstr ""
 #: src/lib/components/flow/Flow.svelte
 msgid "Send test message"
 msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View delivery logs"
+msgstr "Ver registros de entregas"
 
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Loading delivery logs..."

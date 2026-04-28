@@ -18,8 +18,10 @@
 	import { toast } from 'svelte-sonner';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
+	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
 	import InfoIcon from '@lucide/svelte/icons/info';
 	import { formatDate } from '$lib/utils/date';
+	import { resolve } from '$app/paths';
 	import { t } from '$lib/index.svelte';
 	import WebhookSecretModal from './WebhookSecretModal.svelte';
 
@@ -144,14 +146,15 @@
 							<Table.Row data-testid="settings-webhooks-row">
 								<Table.Cell class="font-medium">{webhook.name}</Table.Cell>
 								<Table.Cell>
-									<button
+									<Button
 										type="button"
-										class="text-left text-primary hover:underline"
+										variant="link"
+										class="h-auto p-0 text-left break-all"
 										data-testid="settings-webhooks-target-link"
 										onclick={() => window.open(webhook.targetUrl, '_blank', 'noopener,noreferrer')}
 									>
 										{webhook.targetUrl}
-									</button>
+									</Button>
 								</Table.Cell>
 								<Table.Cell>{formatEventTypes(webhook.eventTypes)}</Table.Cell>
 								<Table.Cell>{formatDate(webhook.createdAt)}</Table.Cell>
@@ -195,7 +198,7 @@
 								{/if}
 								<Table.Cell class="text-right">
 									{#if appState.isAdminOrOwner}
-										<div class="flex items-center justify-end gap-0">
+										<div class="inline-flex items-center justify-end gap-0">
 											<Button
 												variant="ghost"
 												size="sm"
@@ -204,6 +207,15 @@
 												aria-label={t`Edit webhook`}
 											>
 												<PencilIcon class="h-4 w-4" />
+											</Button>
+											<Button
+												variant="ghost"
+												size="sm"
+												href={resolve(`/settings/webhooks/${webhook.id}/logs`)}
+												data-testid="settings-webhooks-logs"
+												aria-label={t`View delivery logs`}
+											>
+												<ScrollTextIcon class="h-4 w-4" />
 											</Button>
 											<Button
 												variant="ghost"

@@ -4638,23 +4638,23 @@ msgstr "Enviar e-mail de teste"
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
-msgstr "Todos"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Snapshot"
-msgstr "Instantâneo"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Add Node"
-msgstr "Adicionar nó"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Petition Signup"
-msgstr "Inscrição na petição"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Tag Add"
-msgstr "Adicionar etiqueta"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
@@ -4662,7 +4662,7 @@ msgstr "Adicionar equipa"
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr "Este evento foi arquivado."
+msgstr ""
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
@@ -4678,19 +4678,19 @@ msgstr "Pesquisar equipa..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr "Selecione uma petição..."
+msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr "Pesquisar petição..."
+msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr "Nenhuma petição encontrada."
+msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr "Mostrar arquivados"
+msgstr ""
 
 #: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 msgid "Sign-up has closed"
@@ -4717,9 +4717,24 @@ msgstr "O segredo é enviado em cada entrega no cabeçalho X-Webhook-Secret para
 msgid "View secret"
 msgstr "Ver segredo"
 
+#~ msgid "Target URL is required"
+#~ msgstr ""
+
+#~ msgid "Webhook URL updated successfully"
+#~ msgstr ""
+
+#~ msgid "Failed to update webhook URL"
+#~ msgstr ""
+
+#~ msgid "Edit target URL"
+#~ msgstr ""
+
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Delete webhook"
 msgstr "Eliminar webhook"
+
+#~ msgid "Change the endpoint where this webhook receives events."
+#~ msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Please fill in all required fields"
@@ -4754,6 +4769,12 @@ msgstr "Segredo copiado para a área de transferência"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not copy the secret to the clipboard. Try selecting it manually."
 msgstr "Não foi possível copiar o segredo para a área de transferência. Tente selecioná-lo manualmente."
+
+#~ msgid "The secret is sent with each delivery in the "
+#~ msgstr ""
+
+#~ msgid "header so your endpoint can verify the request came from Belcoda."
+#~ msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Webhook secret"
@@ -4797,6 +4818,10 @@ msgstr "Enviar WhatsApp de teste"
 #: src/lib/components/flow/Flow.svelte
 msgid "Send test message"
 msgstr "Enviar mensagem de teste"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View delivery logs"
+msgstr "Ver registos de entregas"
 
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Loading delivery logs..."
