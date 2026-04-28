@@ -17,6 +17,7 @@ import {
 import { parse } from 'valibot';
 import pino from '$lib/pino';
 import { _addPersonTeamDataUnsafe, addPersonToTeam } from './team';
+import { type ListFilter } from '$lib/schema/helpers';
 const log = pino(import.meta.url);
 export async function createPerson({
 	tx,
@@ -292,4 +293,18 @@ export async function _getPersonByIdUnsafeNoTenantCheck({
 		.where(and(eq(person.id, personId), isNull(person.deletedAt)))
 		.limit(1);
 	return row?.organizationId ?? null;
+}
+import { listPersonsQuery } from '$lib/zero/query/person/list';
+export async function listPersons({
+	ctx,
+	input,
+	tx
+}: {
+	ctx: QueryContext;
+	input: ListFilter;
+	tx: ServerTransaction;
+}) {
+	const result = await tx.run(listPersonsQuery({ ctx, input }));
+	const parsedResult = result.map((person) => parse(personApiSchema, person));
+	return parsedResult;
 }
