@@ -32,6 +32,28 @@ test.describe.serial('Settings: Webhooks', () => {
 		await expect(webhooksPage.webhookRow(state.name, state.targetUrl)).toBeVisible({
 			timeout: 15_000
 		});
+		await webhooksPage.openViewSecret(state.name, state.targetUrl);
+		await expect(webhooksPage.secretValueInput).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.secretValueInput).not.toHaveValue('', { timeout: 15_000 });
+	});
+
+	test('owner can update webhook name and target URL', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+		const updatedUrl = `https://example.com/e2e/webhook/updated/${Date.now()}`;
+		const updatedName = `${state.name} updated`;
+
+		await loginAsOwner(page);
+		await webhooksPage.goto();
+		await webhooksPage.editWebhook(state.name, state.targetUrl, {
+			name: updatedName,
+			targetUrl: updatedUrl
+		});
+		state.name = updatedName;
+		state.targetUrl = updatedUrl;
+
+		await expect(webhooksPage.webhookRow(updatedName, updatedUrl)).toBeVisible({
+			timeout: 15_000
+		});
 	});
 
 	test('owner can delete a webhook', async ({ page }) => {

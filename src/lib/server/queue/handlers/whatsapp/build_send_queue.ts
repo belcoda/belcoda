@@ -1,12 +1,10 @@
 import { whatsappThread } from '$lib/schema/drizzle';
 import { getPersonRecordsFromFilter } from '$lib/server/api/data/person/filter';
 import { getQueue } from '$lib/server/queue/index';
-import type { ServerTransaction } from '@rocicorp/zero';
-
+import { db } from '$lib/server/db';
 export async function buildWhatsappThreadSendQueue({
 	thread,
-	sentByUserId,
-	tx
+	sentByUserId
 }: {
 	thread: typeof whatsappThread.$inferSelect;
 	sentByUserId?: string | null;
@@ -23,11 +21,13 @@ export async function buildWhatsappThreadSendQueue({
 	if (!filterGroup) {
 		throw new Error('Filter group not found');
 	}
-	const recipients = await getPersonRecordsFromFilter({
-		filter: filterGroup,
-		tx,
-		organizationId: thread.organizationId,
-		userId: sentByUserId
+	const recipients = await db.transaction(async (tx) => {
+		return await getPersonRecordsFromFilter({
+			filter: filterGroup,
+			tx,
+			organizationId: thread.organizationId,
+			userId: sentByUserId
+		});
 	});
 
 	const queue = await getQueue();

@@ -10,7 +10,7 @@ export function webhookLogReadPermissions(
 	builder: ExpressionBuilder<'webhookLog', Schema>,
 	ctx: QueryContext
 ) {
-	const { and, or, cmp, exists } = builder;
+	const { and, exists } = builder;
 	const filterArr = [
 		exists('webhook', (w) => {
 			return w.where((wBuilder) => webhookReadPermissions(wBuilder, ctx));

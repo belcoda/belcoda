@@ -166,6 +166,23 @@ export const deleteMutatorSchemaZero = v.object({
 });
 export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;
 
+export const updateWebhookInput = v.object({
+	name: webhookSchema.entries.name,
+	targetUrl: webhookSchema.entries.targetUrl
+});
+export type UpdateWebhookInput = v.InferOutput<typeof updateWebhookInput>;
+
+export const updateWebhookMutatorSchemaZero = v.object({
+	input: updateWebhookInput,
+	metadata: mutatorMetadata
+});
+export type UpdateWebhookMutatorSchemaZeroInput = v.InferInput<
+	typeof updateWebhookMutatorSchemaZero
+>;
+export type UpdateWebhookMutatorSchemaZeroOutput = v.InferOutput<
+	typeof updateWebhookMutatorSchemaZero
+>;
+
 import { eventWebhook } from '$lib/schema/event';
 export const eventCreatedWebhookSchema = v.object({
 	type: v.literal('event.created'),
@@ -392,7 +409,7 @@ export const organizationMemberUpdatedWebhookSchema = v.object({
 export const organizationMemberDeletedWebhookSchema = v.object({
 	type: v.literal('member.deleted'),
 	data: v.object({
-		organizationMemberId: helpers.uuid,
+		organizationId: helpers.uuid,
 		userId: helpers.uuid
 	})
 });

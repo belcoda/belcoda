@@ -3,7 +3,7 @@ import { type QueryContext, builder } from '$lib/zero/schema';
 
 import { personNote } from '$lib/schema/drizzle';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
-import { eq } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 
 import { parse } from 'valibot';
 import {
@@ -12,11 +12,14 @@ import {
 	updateMutatorSchemaZero,
 	type UpdateMutatorSchemaZero,
 	deleteMutatorSchemaZero,
-	type DeleteMutatorSchemaZero
+	type DeleteMutatorSchemaZero,
+	personNoteWebhook
 } from '$lib/schema/person-note';
 
 import { getPerson } from '$lib/server/api/data/person/person';
 import { getQueue } from '$lib/server/queue';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function createPersonNote({
 	tx,
@@ -61,6 +64,17 @@ export async function createPersonNote({
 		referenceId: args.metadata.personNoteId,
 		unread: false
 	});
+	try {
+		await queue.triggerWebhook({
+			organizationId: args.metadata.organizationId,
+			payload: {
+				type: 'person.note.created',
+				data: parse(personNoteWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 
 	return result;
 }
@@ -96,6 +110,18 @@ export async function updatePersonNote({
 	if (!result) {
 		throw new Error('Unable to update person note');
 	}
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'person.note.updated',
+				data: parse(personNoteWebhook, result)
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return result;
 }
 
@@ -122,10 +148,28 @@ export async function deletePersonNote({
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(personNote)
 		.set({ deletedAt: new Date() })
-		.where(eq(personNote.id, parsed.metadata.personNoteId))
+		.where(
+			and(
+				eq(personNote.id, parsed.metadata.personNoteId),
+				eq(personNote.organizationId, parsed.metadata.organizationId),
+				isNull(personNote.deletedAt)
+			)
+		)
 		.returning();
 	if (!result) {
 		throw new Error('Unable to delete person note');
+	}
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: parsed.metadata.organizationId,
+			payload: {
+				type: 'person.note.deleted',
+				data: { personNoteId: parsed.metadata.personNoteId }
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
 	}
 	return;
 }

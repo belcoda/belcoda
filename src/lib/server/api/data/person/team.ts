@@ -18,6 +18,11 @@ import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
+import { getQueue } from '$lib/server/queue';
+import { teamPersonWebhook } from '$lib/schema/team';
+import { activityWebhook } from '$lib/schema/activity';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function addPersonToTeam({
 	tx,
@@ -52,12 +57,15 @@ export async function addPersonToTeam({
 		throw new Error('Team not found');
 	}
 
-	await tx.dbTransaction.wrappedTransaction.insert(personTeam).values({
-		personId: parsed.metadata.personId,
-		teamId: parsed.metadata.teamId,
-		organizationId: parsed.metadata.organizationId,
-		createdAt: new Date()
+	const result = await _addPersonTeamDataUnsafe({
+		tx,
+		args: {
+			personId: parsed.metadata.personId,
+			teamId: parsed.metadata.teamId,
+			organizationId: parsed.metadata.organizationId
+		}
 	});
+	return result;
 }
 
 export async function _addPersonTeamDataUnsafe({
@@ -97,16 +105,19 @@ export async function _addPersonTeamDataUnsafe({
 		return null;
 	}
 
-	await tx.dbTransaction.wrappedTransaction.insert(activity).values({
-		id: uuidv7(),
-		type: 'team_added',
-		referenceId: args.teamId,
-		unread: false,
-		userId: null,
-		organizationId: args.organizationId,
-		createdAt: new Date(),
-		personId: args.personId
-	});
+	const [teamActivity] = await tx.dbTransaction.wrappedTransaction
+		.insert(activity)
+		.values({
+			id: uuidv7(),
+			type: 'team_added',
+			referenceId: args.teamId,
+			unread: false,
+			userId: null,
+			organizationId: args.organizationId,
+			createdAt: new Date(),
+			personId: args.personId
+		})
+		.returning();
 
 	await updateLatestActivity({
 		tx,
@@ -120,6 +131,34 @@ export async function _addPersonTeamDataUnsafe({
 			}
 		}
 	});
+
+	if (teamActivity) {
+		const { organizationId: actOrg, ...actData } = teamActivity;
+		try {
+			const actQueue = await getQueue();
+			await actQueue.triggerWebhook({
+				organizationId: actOrg,
+				payload: {
+					type: 'activity.created',
+					data: parse(activityWebhook, actData)
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook({
+			organizationId: args.organizationId,
+			payload: {
+				type: 'team.person.added',
+				data: parse(teamPersonWebhook, { teamId: args.teamId, personId: args.personId })
+			}
+		});
+	} catch (err) {
+		log.error({ err }, 'Failed to trigger webhook');
+	}
 	return inserted;
 }
 
@@ -138,7 +177,7 @@ export async function removePersonFromTeam({
 		ctx,
 		tx
 	});
-	await tx.dbTransaction.wrappedTransaction
+	const [result] = await tx.dbTransaction.wrappedTransaction
 		.delete(personTeam)
 		.where(
 			and(
@@ -146,5 +185,23 @@ export async function removePersonFromTeam({
 				eq(personTeam.teamId, parsed.metadata.teamId),
 				eq(personTeam.organizationId, parsed.metadata.organizationId)
 			)
-		);
+		)
+		.returning();
+	if (result) {
+		try {
+			const queue = await getQueue();
+			await queue.triggerWebhook({
+				organizationId: parsed.metadata.organizationId,
+				payload: {
+					type: 'team.person.removed',
+					data: parse(teamPersonWebhook, {
+						teamId: parsed.metadata.teamId,
+						personId: parsed.metadata.personId
+					})
+				}
+			});
+		} catch (err) {
+			log.error({ err }, 'Failed to trigger webhook');
+		}
+	}
 }

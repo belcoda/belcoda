@@ -42,18 +42,18 @@
 	import RecipientBox from '$lib/components/widgets/communications/recipients/RecipientBox.svelte';
 </script>
 
-<div class="flex h-full flex-col">
+<div class="flex h-full flex-col" data-testid="email-form">
 	<div class="flex-1">
 		<div class="mx-auto max-w-4xl space-y-6">
 			<div class="space-y-2">
 				<Label for="recipients">{t`From`}</Label>
-				<div class="flex items-center gap-2">
+				<div class="flex items-center gap-2" data-testid="email-form-from">
 					<EmailFrom bind:value={emailFromSignatureId} onValueChange={debouncedTriggerUpdate} />
 				</div>
 			</div>
 			<div class="space-y-2">
 				<Label for="recipients">{t`Recipients`}</Label>
-				<div class="">
+				<div class="" data-testid="email-form-recipients">
 					<RecipientBox
 						bind:filter={recipients}
 						initialSelected={recipients.filters}
@@ -70,6 +70,7 @@
 					id="subject"
 					type="text"
 					placeholder={t`Enter email subject...`}
+					data-testid="email-form-subject"
 					bind:value={subject}
 					oninput={debouncedTriggerUpdate}
 				/>
