@@ -92,41 +92,39 @@
 	bind:open
 	onOpenChange={handleOpenChange}
 >
-	{#snippet children()}
-		{#if loading}
-			<div class="flex justify-center py-6">
-				<Spinner class="h-8 w-8" />
+	{#if loading}
+		<div class="flex justify-center py-6">
+			<Spinner class="h-8 w-8" />
+		</div>
+	{:else if error}
+		<p class="text-sm text-destructive">{error}</p>
+	{:else if secret}
+		<div class="space-y-2">
+			<Label for="webhook-secret-display">{t`Secret`}</Label>
+			<div class="flex items-center gap-2">
+				<Input
+					id="webhook-secret-display"
+					value={secret}
+					readonly
+					class="font-mono text-sm"
+					data-testid="settings-webhooks-secret-value"
+				/>
+				<Button
+					type="button"
+					variant="outline"
+					size="icon"
+					onclick={() => void copySecretToClipboard()}
+					title={t`Copy to clipboard`}
+					data-testid="settings-webhooks-secret-copy"
+				>
+					<CopyIcon class="h-4 w-4" />
+				</Button>
 			</div>
-		{:else if error}
-			<p class="text-sm text-destructive">{error}</p>
-		{:else if secret}
-			<div class="space-y-2">
-				<Label for="webhook-secret-display">{t`Secret`}</Label>
-				<div class="flex items-center gap-2">
-					<Input
-						id="webhook-secret-display"
-						value={secret}
-						readonly
-						class="font-mono text-sm"
-						data-testid="settings-webhooks-secret-value"
-					/>
-					<Button
-						type="button"
-						variant="outline"
-						size="icon"
-						onclick={() => void copySecretToClipboard()}
-						title={t`Copy to clipboard`}
-						data-testid="settings-webhooks-secret-copy"
-					>
-						<CopyIcon class="h-4 w-4" />
-					</Button>
-				</div>
-			</div>
-		{/if}
-	{/snippet}
+		</div>
+	{/if}
 	{#snippet footer()}
 		<div class="flex justify-end">
-			<Button variant="outline" onclick={() => (open = false)}>{t`Close`}</Button>
+			<Button variant="outline" onclick={() => handleOpenChange(false)}>{t`Close`}</Button>
 		</div>
 	{/snippet}
 </ResponsiveModal>
