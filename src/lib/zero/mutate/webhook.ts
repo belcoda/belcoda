@@ -1,9 +1,12 @@
-import { type Transaction } from '@rocicorp/zero';
-import { type Schema } from '$lib/zero/schema';
 import { defineMutator } from '@rocicorp/zero';
-import { createMutatorSchemaZero, deleteMutatorSchemaZero } from '$lib/schema/webhook';
+import {
+	createMutatorSchemaZero,
+	deleteMutatorSchemaZero,
+	updateWebhookMutatorSchemaZero
+} from '$lib/schema/webhook';
+import { parse } from 'valibot';
 
-export const createWebhook = defineMutator(createMutatorSchemaZero, async ({ tx, args, ctx }) => {
+export const createWebhook = defineMutator(createMutatorSchemaZero, async ({ tx, args }) => {
 	const now = Date.now();
 	tx.mutate.webhook.insert({
 		id: args.metadata.webhookId,
@@ -20,8 +23,18 @@ export const createWebhook = defineMutator(createMutatorSchemaZero, async ({ tx,
 	});
 });
 
-export const deleteWebhook = defineMutator(deleteMutatorSchemaZero, async ({ tx, args, ctx }) => {
+export const deleteWebhook = defineMutator(deleteMutatorSchemaZero, async ({ tx, args }) => {
 	tx.mutate.webhook.delete({
 		id: args.metadata.webhookId
+	});
+});
+
+export const updateWebhook = defineMutator(updateWebhookMutatorSchemaZero, async ({ tx, args }) => {
+	const parsed = parse(updateWebhookMutatorSchemaZero, args);
+	tx.mutate.webhook.update({
+		id: parsed.metadata.webhookId,
+		name: parsed.input.name,
+		targetUrl: parsed.input.targetUrl,
+		updatedAt: Date.now()
 	});
 });

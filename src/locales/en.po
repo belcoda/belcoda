@@ -4745,8 +4745,9 @@ msgstr "View secret"
 #~ msgid "Edit target URL"
 #~ msgstr "Edit target URL"
 
-#~ msgid "Delete webhook"
-#~ msgstr "Delete webhook"
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "Delete webhook"
+msgstr "Delete webhook"
 
 #~ msgid "Change the endpoint where this webhook receives events."
 #~ msgstr "Change the endpoint where this webhook receives events."
@@ -4763,6 +4764,7 @@ msgstr "Webhook updated successfully"
 msgid "Failed to update webhook"
 msgstr "Failed to update webhook"
 
+#: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Edit webhook"
 msgstr "Edit webhook"
@@ -4799,12 +4801,6 @@ msgstr "Webhook secret"
 msgid "Signing secret for \"{0}\""
 msgstr "Signing secret for \"{0}\""
 
-#~ msgid "No petitions found.<<<<<<< HEAD"
-#~ msgstr "No petitions found.<<<<<<< HEAD"
-
-#~ msgid "Signing secret for \"{0}\"=======>>>>>>> develop"
-#~ msgstr "Signing secret for \"{0}\"=======>>>>>>> develop"
-
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Test WhatsApp"
 msgstr "Test WhatsApp"
@@ -4838,25 +4834,6 @@ msgstr "Send test WhatsApp"
 #: src/lib/components/flow/Flow.svelte
 msgid "Send test message"
 msgstr "Send test message"
-
-#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-msgid "Show archived<<<<<<< HEAD======="
-msgstr "Show archived<<<<<<< HEAD======="
-
-#~ msgid "View secret>>>>>>> develop"
-#~ msgstr "View secret>>>>>>> develop"
-
-#~ msgid "Edit target URL<<<<<<< HEAD"
-#~ msgstr "Edit target URL<<<<<<< HEAD"
-
-#~ msgid "Delete webhook>>>>>>> develop"
-#~ msgstr "Delete webhook>>>>>>> develop"
-
-#~ msgid "Change the endpoint where this webhook receives events.<<<<<<< HEAD"
-#~ msgstr "Change the endpoint where this webhook receives events.<<<<<<< HEAD"
-
-#~ msgid "Send test message>>>>>>> develop"
-#~ msgstr "Send test message>>>>>>> develop"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "View delivery logs"
@@ -4897,28 +4874,3 @@ msgstr "Response"
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Delivery logs"
 msgstr "Delivery logs"
-
-#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
-msgid "The sign-up period for this event has ended, so you can no longer register on this page.<<<<<<< HEAD======="
-msgstr "The sign-up period for this event has ended, so you can no longer register on this page.<<<<<<< HEAD======="
-
-#~ msgid "Secret<<<<<<< HEAD"
-#~ msgstr "Secret<<<<<<< HEAD"
-
-#~ msgid "Change the name and the endpoint where this webhook receives events.>>>>>>> develop"
-#~ msgstr "Change the name and the endpoint where this webhook receives events.>>>>>>> develop"
-
-#~ msgid "Signing secret for \"{0}\"<<<<<<< HEAD"
-#~ msgstr "Signing secret for \"{0}\"<<<<<<< HEAD"
-
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
-msgid "Send a test message before sending this draft.>>>>>>> develop"
-msgstr "Send a test message before sending this draft.>>>>>>> develop"
-
-#~ msgid "Send test WhatsApp<<<<<<< HEAD"
-#~ msgstr "Send test WhatsApp<<<<<<< HEAD"
-
-#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
-#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
-msgid "Delivery logs======="
-msgstr "Delivery logs======="

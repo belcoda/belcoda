@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
+	import WebhookEditModal from './WebhookEditModal.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { getListFilter, appState } from '$lib/state.svelte';
@@ -16,6 +17,7 @@
 	import { createWebhookZero, deleteMutatorSchemaZero } from '$lib/schema/webhook';
 	import { toast } from 'svelte-sonner';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
 	import InfoIcon from '@lucide/svelte/icons/info';
 	import { formatDate } from '$lib/utils/date';
@@ -36,6 +38,12 @@
 	let name = $state('');
 	let targetUrl = $state('');
 
+	let editModalOpen = $state(false);
+	let editingWebhook = $state<{
+		id: string;
+		name: string;
+		targetUrl: string;
+	} | null>(null);
 	let webhooksSecretModal = $state<
 		{ openFor: (target: { id: string; name: string }) => Promise<void> } | undefined
 	>(undefined);
@@ -99,6 +107,11 @@
 			return t`All events`;
 		}
 		return eventTypes.join(', ');
+	}
+
+	function openEditWebhook(w: { id: string; name: string; targetUrl: string }) {
+		editingWebhook = { id: w.id, name: w.name, targetUrl: w.targetUrl };
+		editModalOpen = true;
 	}
 </script>
 
@@ -189,6 +202,15 @@
 											<Button
 												variant="ghost"
 												size="sm"
+												data-testid="settings-webhooks-edit"
+												onclick={() => openEditWebhook(webhook)}
+												aria-label={t`Edit webhook`}
+											>
+												<PencilIcon class="h-4 w-4" />
+											</Button>
+											<Button
+												variant="ghost"
+												size="sm"
 												href={resolve(`/settings/webhooks/${webhook.id}/logs`)}
 												data-testid="settings-webhooks-logs"
 												aria-label={t`View delivery logs`}
@@ -200,6 +222,7 @@
 												size="sm"
 												data-testid="settings-webhooks-delete"
 												onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
+												aria-label={t`Delete webhook`}
 											>
 												<TrashIcon class="h-4 w-4" />
 											</Button>
@@ -219,6 +242,12 @@
 			</Table.Root>
 		{/if}
 	</div>
+
+	<WebhookEditModal
+		bind:open={editModalOpen}
+		webhook={editingWebhook}
+		onClose={() => (editingWebhook = null)}
+	/>
 </ContentLayout>
 
 {#if appState.isOwner}

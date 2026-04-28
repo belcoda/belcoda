@@ -43,7 +43,7 @@
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
-	<Drawer.Root bind:open>
+	<Drawer.Root bind:open {onOpenChange}>
 		{#if trigger}<Drawer.Trigger>{@render trigger?.()}</Drawer.Trigger>{/if}
 		<Drawer.Content class="pb-4">
 			<Drawer.Header class="text-start">
