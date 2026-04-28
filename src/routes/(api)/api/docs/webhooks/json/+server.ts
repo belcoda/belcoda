@@ -2,20 +2,20 @@ import { json } from '@sveltejs/kit';
 import { toJsonSchema } from '@valibot/to-json-schema';
 import { convert } from '@openapi-contrib/json-schema-to-openapi-schema';
 import { type BaseSchema, type BaseIssue } from 'valibot';
-import { activityWebhook } from '$lib/schema/activity';
-import { personWebhook } from '$lib/schema/person';
-import { eventWebhook } from '$lib/schema/event';
-import { eventSignupWebhook } from '$lib/schema/event-signup';
-import { personNoteWebhook } from '$lib/schema/person-note';
-import { personImportWebhook } from '$lib/schema/person-import';
-import { petitionWebhook } from '$lib/schema/petition/petition';
-import { petitionSignatureWebhook } from '$lib/schema/petition/petition-signature';
-import { tagWebhook, personTagWebhook } from '$lib/schema/tag';
-import { teamWebhook, teamPersonWebhook, teamUserWebhook } from '$lib/schema/team';
-import { organizationWebhook, organizationMemberWebhook } from '$lib/schema/organization';
-import { whatsappMessageWebhook } from '$lib/schema/whatsapp-message';
-import { whatsappThreadWebhook } from '$lib/schema/whatsapp-thread';
-import { emailMessageWebhook } from '$lib/schema/email-message';
+import { activityApiSchema } from '$lib/schema/activity';
+import { personApiSchema } from '$lib/schema/person';
+import { eventApiSchema } from '$lib/schema/event';
+import { eventSignupApiSchema } from '$lib/schema/event-signup';
+import { personNoteApiSchema } from '$lib/schema/person-note';
+import { personImportApiSchema } from '$lib/schema/person-import';
+import { petitionApiSchema } from '$lib/schema/petition/petition';
+import { petitionSignatureApiSchema } from '$lib/schema/petition/petition-signature';
+import { tagApiSchema, personTagApiSchema } from '$lib/schema/tag';
+import { teamApiSchema, teamPersonApiSchema, teamUserApiSchema } from '$lib/schema/team';
+import { organizationApiSchema, organizationMemberApiSchema } from '$lib/schema/organization';
+import { whatsappMessageApiSchema } from '$lib/schema/whatsapp-message';
+import { whatsappThreadApiSchema } from '$lib/schema/whatsapp-thread';
+import { emailMessageApiSchema } from '$lib/schema/email-message';
 
 import { CURRENT_API_VERSION } from '$lib/schema/helpers';
 import { type WebhookEvent } from '$lib/schema/webhook';
@@ -357,24 +357,24 @@ async function buildOpenApiSchema() {
 		whatsappThreadOpenApiSchema,
 		emailMessageOpenApiSchema
 	] = await Promise.all([
-		generateOpenSchemaFromValibot(activityWebhook),
-		generateOpenSchemaFromValibot(personWebhook),
-		generateOpenSchemaFromValibot(eventWebhook),
-		generateOpenSchemaFromValibot(eventSignupWebhook),
-		generateOpenSchemaFromValibot(personNoteWebhook),
-		generateOpenSchemaFromValibot(personImportWebhook),
-		generateOpenSchemaFromValibot(petitionWebhook),
-		generateOpenSchemaFromValibot(petitionSignatureWebhook),
-		generateOpenSchemaFromValibot(tagWebhook),
-		generateOpenSchemaFromValibot(personTagWebhook),
-		generateOpenSchemaFromValibot(teamWebhook),
-		generateOpenSchemaFromValibot(teamPersonWebhook),
-		generateOpenSchemaFromValibot(teamUserWebhook),
-		generateOpenSchemaFromValibot(organizationWebhook),
-		generateOpenSchemaFromValibot(organizationMemberWebhook),
-		generateOpenSchemaFromValibot(whatsappMessageWebhook),
-		generateOpenSchemaFromValibot(whatsappThreadWebhook),
-		generateOpenSchemaFromValibot(emailMessageWebhook)
+		generateOpenSchemaFromValibot(activityApiSchema),
+		generateOpenSchemaFromValibot(personApiSchema),
+		generateOpenSchemaFromValibot(eventApiSchema),
+		generateOpenSchemaFromValibot(eventSignupApiSchema),
+		generateOpenSchemaFromValibot(personNoteApiSchema),
+		generateOpenSchemaFromValibot(personImportApiSchema),
+		generateOpenSchemaFromValibot(petitionApiSchema),
+		generateOpenSchemaFromValibot(petitionSignatureApiSchema),
+		generateOpenSchemaFromValibot(tagApiSchema),
+		generateOpenSchemaFromValibot(personTagApiSchema),
+		generateOpenSchemaFromValibot(teamApiSchema),
+		generateOpenSchemaFromValibot(teamPersonApiSchema),
+		generateOpenSchemaFromValibot(teamUserApiSchema),
+		generateOpenSchemaFromValibot(organizationApiSchema),
+		generateOpenSchemaFromValibot(organizationMemberApiSchema),
+		generateOpenSchemaFromValibot(whatsappMessageApiSchema),
+		generateOpenSchemaFromValibot(whatsappThreadApiSchema),
+		generateOpenSchemaFromValibot(emailMessageApiSchema)
 	]);
 	openApiSchemaObject = {
 		openapi: '3.1.0',
