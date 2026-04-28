@@ -109,6 +109,7 @@ msgstr "Cor de destaque para estados de sucesso e elementos secundários em pág
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -863,7 +864,7 @@ msgstr "Copiado \"{0}\" para a área de transferência"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied!"
+msgid "Copied! "
 msgstr "Copiado!"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -875,7 +876,7 @@ msgstr "Copiado!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy"
+msgid "Copy "
 msgstr "Copiar"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -909,6 +910,7 @@ msgstr "Sobrenome"
 #: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
 #: src/routes/(app)/petitions/new/+page.svelte
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Save"
 msgstr "Salvar"
@@ -1248,6 +1250,7 @@ msgstr "Crie uma conta para começar"
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Name"
@@ -2077,6 +2080,7 @@ msgstr "Criar webhook"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Target URL"
 msgstr "URL de destino"
 
@@ -2098,10 +2102,12 @@ msgid "Register a new webhook endpoint"
 msgstr "Registrar um novo endpoint de webhook"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "My Webhook"
 msgstr "Meu webhook"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "https://example.com/webhook"
 msgstr "https://exemplo.com/webhook"
 
@@ -2200,7 +2206,6 @@ msgstr "Miniatura do anexo"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "Esta é uma visualização do evento. Publique o evento antes de compartilhá-lo com outros."
 
-#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Participar deste evento"
@@ -4633,59 +4638,59 @@ msgstr "Enviar e-mail de teste"
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
-msgstr "Todos"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Snapshot"
-msgstr "Instantâneo"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Add Node"
-msgstr "Adicionar nó"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Petition Signup"
-msgstr "Inscrição na petição"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Tag Add"
-msgstr "Adicionar etiqueta"
+msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
-msgstr "Adicionar equipe"
+msgstr ""
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr "Este evento foi arquivado."
+msgstr ""
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
-msgstr "Você pode ver este evento, mas novas inscrições estão fechadas."
+msgstr ""
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
-msgstr "Selecione uma equipe..."
+msgstr ""
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
-msgstr "Pesquisar equipe..."
+msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr "Selecione uma petição..."
+msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr "Pesquisar petição..."
+msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr "Nenhuma petição encontrada."
+msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr "Mostrar arquivados"
+msgstr ""
 
 #: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 msgid "Sign-up has closed"
@@ -4730,20 +4735,25 @@ msgstr "Ver segredo"
 #~ msgid "Change the endpoint where this webhook receives events."
 #~ msgstr ""
 
-#~ msgid "Please fill in all required fields"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Please fill in all required fields"
+msgstr ""
 
-#~ msgid "Webhook updated successfully"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Webhook updated successfully"
+msgstr ""
 
-#~ msgid "Failed to update webhook"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Failed to update webhook"
+msgstr ""
 
-#~ msgid "Edit webhook"
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Edit webhook"
+msgstr ""
 
-#~ msgid "Change the name and the endpoint where this webhook receives events."
-#~ msgstr ""
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Change the name and the endpoint where this webhook receives events."
+msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not load the webhook secret."
@@ -4772,6 +4782,12 @@ msgstr "Segredo do webhook"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Signing secret for \"{0}\""
 msgstr "Segredo de assinatura para \"{0}\""
+
+#~ msgid "No petitions found.<<<<<<< HEAD"
+#~ msgstr "Nenhuma petição encontrada.<<<<<<< HEAD"
+
+#~ msgid "Signing secret for \"{0}\"=======>>>>>>> develop"
+#~ msgstr "Segredo de assinatura para \"{0}\"=======>>>>>>> develop"
 
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Test WhatsApp"
@@ -4806,3 +4822,87 @@ msgstr ""
 #: src/lib/components/flow/Flow.svelte
 msgid "Send test message"
 msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived<<<<<<< HEAD======="
+msgstr ""
+
+#~ msgid "View secret>>>>>>> develop"
+#~ msgstr ""
+
+#~ msgid "Edit target URL<<<<<<< HEAD"
+#~ msgstr ""
+
+#~ msgid "Delete webhook>>>>>>> develop"
+#~ msgstr ""
+
+#~ msgid "Change the endpoint where this webhook receives events.<<<<<<< HEAD"
+#~ msgstr ""
+
+#~ msgid "Send test message>>>>>>> develop"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View delivery logs"
+msgstr "Ver registos de entregas"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Loading delivery logs..."
+msgstr "A carregar registos de entregas..."
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "No delivery logs yet"
+msgstr "Ainda não há registos de entregas"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Time"
+msgstr "Hora"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Event"
+msgstr "Evento"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "HTTP"
+msgstr "HTTP"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Attempt"
+msgstr "Tentativa"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Payload"
+msgstr "Payload"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Response"
+msgstr "Resposta"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs"
+msgstr "Registos de entregas"
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "The sign-up period for this event has ended, so you can no longer register on this page.<<<<<<< HEAD======="
+msgstr "O período de inscrição deste evento terminou, portanto não é mais possível inscrever-se nesta página."
+
+#~ msgid "Secret<<<<<<< HEAD"
+#~ msgstr "Segredo"
+
+#~ msgid "Change the name and the endpoint where this webhook receives events.>>>>>>> develop"
+#~ msgstr ""
+
+#~ msgid "Signing secret for \"{0}\"<<<<<<< HEAD"
+#~ msgstr "Segredo de assinatura para \"{0}\""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Send a test message before sending this draft.>>>>>>> develop"
+msgstr ""
+
+#~ msgid "Send test WhatsApp<<<<<<< HEAD"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs======="
+msgstr "Registos de entregas"

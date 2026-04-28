@@ -16,8 +16,10 @@
 	import { createWebhookZero, deleteMutatorSchemaZero } from '$lib/schema/webhook';
 	import { toast } from 'svelte-sonner';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
 	import InfoIcon from '@lucide/svelte/icons/info';
 	import { formatDate } from '$lib/utils/date';
+	import { resolve } from '$app/paths';
 	import { t } from '$lib/index.svelte';
 	import WebhookSecretModal from './WebhookSecretModal.svelte';
 
@@ -131,15 +133,15 @@
 							<Table.Row data-testid="settings-webhooks-row">
 								<Table.Cell class="font-medium">{webhook.name}</Table.Cell>
 								<Table.Cell>
-									<a
-										href={webhook.targetUrl}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="text-primary hover:underline"
+									<Button
+										type="button"
+										variant="link"
+										class="h-auto p-0 text-left break-all"
 										data-testid="settings-webhooks-target-link"
+										onclick={() => window.open(webhook.targetUrl, '_blank', 'noopener,noreferrer')}
 									>
 										{webhook.targetUrl}
-									</a>
+									</Button>
 								</Table.Cell>
 								<Table.Cell>{formatEventTypes(webhook.eventTypes)}</Table.Cell>
 								<Table.Cell>{formatDate(webhook.createdAt)}</Table.Cell>
@@ -183,14 +185,25 @@
 								{/if}
 								<Table.Cell class="text-right">
 									{#if appState.isAdminOrOwner}
-										<Button
-											variant="ghost"
-											size="sm"
-											data-testid="settings-webhooks-delete"
-											onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
-										>
-											<TrashIcon class="h-4 w-4" />
-										</Button>
+										<div class="inline-flex items-center justify-end gap-0">
+											<Button
+												variant="ghost"
+												size="sm"
+												href={resolve(`/settings/webhooks/${webhook.id}/logs`)}
+												data-testid="settings-webhooks-logs"
+												aria-label={t`View delivery logs`}
+											>
+												<ScrollTextIcon class="h-4 w-4" />
+											</Button>
+											<Button
+												variant="ghost"
+												size="sm"
+												data-testid="settings-webhooks-delete"
+												onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
+											>
+												<TrashIcon class="h-4 w-4" />
+											</Button>
+										</div>
 									{/if}
 								</Table.Cell>
 							</Table.Row>
@@ -224,29 +237,27 @@
 				{#snippet trigger()}
 					<Button data-testid="settings-webhooks-create">{t`Create Webhook`}</Button>
 				{/snippet}
-				{#snippet children()}
-					<div class="space-y-2">
-						<Label for="webhook-name-header">{t`Name`}</Label>
-						<Input
-							id="webhook-name-header"
-							data-testid="settings-webhooks-name-input"
-							bind:value={name}
-							placeholder={t`My Webhook`}
-							required
-						/>
-					</div>
-					<div class="space-y-2">
-						<Label for="webhook-url-header">{t`Target URL`}</Label>
-						<Input
-							id="webhook-url-header"
-							data-testid="settings-webhooks-url-input"
-							bind:value={targetUrl}
-							type="url"
-							placeholder={t`https://example.com/webhook`}
-							required
-						/>
-					</div>
-				{/snippet}
+				<div class="space-y-2">
+					<Label for="webhook-name-header">{t`Name`}</Label>
+					<Input
+						id="webhook-name-header"
+						data-testid="settings-webhooks-name-input"
+						bind:value={name}
+						placeholder={t`My Webhook`}
+						required
+					/>
+				</div>
+				<div class="space-y-2">
+					<Label for="webhook-url-header">{t`Target URL`}</Label>
+					<Input
+						id="webhook-url-header"
+						data-testid="settings-webhooks-url-input"
+						bind:value={targetUrl}
+						type="url"
+						placeholder={t`https://example.com/webhook`}
+						required
+					/>
+				</div>
 				{#snippet footer()}
 					<div class="flex justify-end gap-2">
 						<Button variant="outline" onclick={() => (createModalOpen = false)}>{t`Cancel`}</Button>

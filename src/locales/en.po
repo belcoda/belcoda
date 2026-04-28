@@ -109,6 +109,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -863,8 +864,8 @@ msgstr "Copied \"{0}\" to clipboard"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied!"
-msgstr "Copied!"
+msgid "Copied! "
+msgstr "Copied! "
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -875,8 +876,8 @@ msgstr "Copied!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy"
-msgstr "Copy"
+msgid "Copy "
+msgstr "Copy "
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
@@ -909,6 +910,7 @@ msgstr "Family name"
 #: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
 #: src/routes/(app)/petitions/new/+page.svelte
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Save"
 msgstr "Save"
@@ -1248,6 +1250,7 @@ msgstr "Create an account to get started"
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Name"
@@ -2077,6 +2080,7 @@ msgstr "Create Webhook"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Target URL"
 msgstr "Target URL"
 
@@ -2098,10 +2102,12 @@ msgid "Register a new webhook endpoint"
 msgstr "Register a new webhook endpoint"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "My Webhook"
 msgstr "My Webhook"
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
 
@@ -2200,7 +2206,6 @@ msgstr "Attachment thumbnail"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "This is a preview of the event. Publish the event before sharing it with others."
 
-#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Join this event"
@@ -4746,20 +4751,25 @@ msgstr "View secret"
 #~ msgid "Change the endpoint where this webhook receives events."
 #~ msgstr "Change the endpoint where this webhook receives events."
 
-#~ msgid "Please fill in all required fields"
-#~ msgstr "Please fill in all required fields"
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Please fill in all required fields"
+msgstr "Please fill in all required fields"
 
-#~ msgid "Webhook updated successfully"
-#~ msgstr "Webhook updated successfully"
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Webhook updated successfully"
+msgstr "Webhook updated successfully"
 
-#~ msgid "Failed to update webhook"
-#~ msgstr "Failed to update webhook"
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Failed to update webhook"
+msgstr "Failed to update webhook"
 
-#~ msgid "Edit webhook"
-#~ msgstr "Edit webhook"
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Edit webhook"
+msgstr "Edit webhook"
 
-#~ msgid "Change the name and the endpoint where this webhook receives events."
-#~ msgstr "Change the name and the endpoint where this webhook receives events."
+#: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+msgid "Change the name and the endpoint where this webhook receives events."
+msgstr "Change the name and the endpoint where this webhook receives events."
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not load the webhook secret."
@@ -4788,6 +4798,12 @@ msgstr "Webhook secret"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Signing secret for \"{0}\""
 msgstr "Signing secret for \"{0}\""
+
+#~ msgid "No petitions found.<<<<<<< HEAD"
+#~ msgstr "No petitions found.<<<<<<< HEAD"
+
+#~ msgid "Signing secret for \"{0}\"=======>>>>>>> develop"
+#~ msgstr "Signing secret for \"{0}\"=======>>>>>>> develop"
 
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Test WhatsApp"
@@ -4822,3 +4838,87 @@ msgstr "Send test WhatsApp"
 #: src/lib/components/flow/Flow.svelte
 msgid "Send test message"
 msgstr "Send test message"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived<<<<<<< HEAD======="
+msgstr "Show archived<<<<<<< HEAD======="
+
+#~ msgid "View secret>>>>>>> develop"
+#~ msgstr "View secret>>>>>>> develop"
+
+#~ msgid "Edit target URL<<<<<<< HEAD"
+#~ msgstr "Edit target URL<<<<<<< HEAD"
+
+#~ msgid "Delete webhook>>>>>>> develop"
+#~ msgstr "Delete webhook>>>>>>> develop"
+
+#~ msgid "Change the endpoint where this webhook receives events.<<<<<<< HEAD"
+#~ msgstr "Change the endpoint where this webhook receives events.<<<<<<< HEAD"
+
+#~ msgid "Send test message>>>>>>> develop"
+#~ msgstr "Send test message>>>>>>> develop"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View delivery logs"
+msgstr "View delivery logs"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Loading delivery logs..."
+msgstr "Loading delivery logs..."
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "No delivery logs yet"
+msgstr "No delivery logs yet"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Time"
+msgstr "Time"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Event"
+msgstr "Event"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "HTTP"
+msgstr "HTTP"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Attempt"
+msgstr "Attempt"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Payload"
+msgstr "Payload"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Response"
+msgstr "Response"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs"
+msgstr "Delivery logs"
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "The sign-up period for this event has ended, so you can no longer register on this page.<<<<<<< HEAD======="
+msgstr "The sign-up period for this event has ended, so you can no longer register on this page.<<<<<<< HEAD======="
+
+#~ msgid "Secret<<<<<<< HEAD"
+#~ msgstr "Secret<<<<<<< HEAD"
+
+#~ msgid "Change the name and the endpoint where this webhook receives events.>>>>>>> develop"
+#~ msgstr "Change the name and the endpoint where this webhook receives events.>>>>>>> develop"
+
+#~ msgid "Signing secret for \"{0}\"<<<<<<< HEAD"
+#~ msgstr "Signing secret for \"{0}\"<<<<<<< HEAD"
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Send a test message before sending this draft.>>>>>>> develop"
+msgstr "Send a test message before sending this draft.>>>>>>> develop"
+
+#~ msgid "Send test WhatsApp<<<<<<< HEAD"
+#~ msgstr "Send test WhatsApp<<<<<<< HEAD"
+
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+#: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+msgid "Delivery logs======="
+msgstr "Delivery logs======="

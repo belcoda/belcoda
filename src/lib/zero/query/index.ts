@@ -62,6 +62,10 @@ import { readUser } from '$lib/zero/query/user/read';
 
 // webhook
 import { listWebhooks } from '$lib/zero/query/webhook/list';
+import { readWebhook } from '$lib/zero/query/webhook/read';
+
+// webhook_log
+import { listWebhookLogs } from '$lib/zero/query/webhook_log/list';
 
 //whatsapp
 import { readWhatsappTemplate } from '$lib/zero/query/whatsapp_template/read';
@@ -116,6 +120,9 @@ export {
 	readUser,
 	// webhook
 	listWebhooks,
+	readWebhook,
+	// webhook_log
+	listWebhookLogs,
 	// whatsapp template
 	readWhatsappTemplate,
 	listWhatsappTemplates,
@@ -198,6 +205,10 @@ export default defineQueries({
 		read: readUser
 	},
 	webhook: {
-		list: listWebhooks
+		list: listWebhooks,
+		read: readWebhook
+	},
+	webhookLog: {
+		list: listWebhookLogs
 	}
 });
