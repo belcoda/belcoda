@@ -2200,6 +2200,7 @@ msgstr "Attachment thumbnail"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "This is a preview of the event. Publish the event before sharing it with others."
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Join this event"
@@ -4786,7 +4787,3 @@ msgstr "Webhook secret"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Signing secret for \"{0}\""
 msgstr "Signing secret for \"{0}\""
-
-#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
-msgid "Could not copy the secret to the clipboard. Try selecting it manually."
-msgstr "Could not copy the secret to the clipboard. Try selecting it manually."

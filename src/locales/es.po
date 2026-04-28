@@ -2200,6 +2200,7 @@ msgstr "Miniatura del adjunto"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "Esta es una vista previa del evento. Publica el evento antes de compartirlo con otros."
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Unirse a este evento"
@@ -4630,84 +4631,84 @@ msgstr "Enviar correo de prueba"
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
-msgstr ""
+msgstr "Todos"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Snapshot"
-msgstr ""
+msgstr "Instantánea"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Add Node"
-msgstr ""
+msgstr "Añadir nodo"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Petition Signup"
-msgstr ""
+msgstr "Inscripción a la petición"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Tag Add"
-msgstr ""
+msgstr "Añadir etiqueta"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
-msgstr ""
+msgstr "Añadir equipo"
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr ""
+msgstr "Este evento se ha archivado."
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
-msgstr ""
+msgstr "Puedes ver este evento, pero las nuevas inscripciones están cerradas."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
-msgstr ""
+msgstr "Selecciona un equipo..."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
-msgstr ""
+msgstr "Buscar equipo..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Selecciona una petición..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Buscar petición..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
+msgstr "No se encontraron peticiones."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr ""
+msgstr "Mostrar archivados"
 
 #: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 msgid "Sign-up has closed"
-msgstr ""
+msgstr "La inscripción ha finalizado"
 
 #: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 msgid "The sign-up period for this event has ended, so you can no longer register on this page."
-msgstr ""
+msgstr "El periodo de inscripción de este evento ha terminado, por lo que ya no puedes registrarte en esta página."
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Secret"
-msgstr "Secreto"
+msgstr ""
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "About webhook secrets"
-msgstr "Sobre los secretos de webhook"
+msgstr ""
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
-msgstr "El secreto se envía con cada entrega en el encabezado X-Webhook-Secret para que su endpoint pueda verificar que la solicitud provino de Belcoda."
+msgstr ""
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "View secret"
-msgstr "Ver secreto"
+msgstr ""
 
 #~ msgid "Target URL is required"
 #~ msgstr ""
@@ -4753,7 +4754,7 @@ msgstr "Secreto copiado al portapapeles"
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not copy the secret to the clipboard. Try selecting it manually."
-msgstr "No se pudo copiar el secreto al portapapeles. Intente seleccionarlo manualmente."
+msgstr ""
 
 #~ msgid "The secret is sent with each delivery in the "
 #~ msgstr ""
@@ -4769,7 +4770,3 @@ msgstr "Secreto del webhook"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Signing secret for \"{0}\""
 msgstr "Secreto de firma para \"{0}\""
-
-#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
-msgid "Could not copy the secret to the clipboard. Try selecting it manually."
-msgstr ""

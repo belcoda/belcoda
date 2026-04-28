@@ -2200,6 +2200,7 @@ msgstr "Miniatura do anexo"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "Esta é uma visualização do evento. Publique o evento antes de compartilhá-lo com outros."
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Participar deste evento"
@@ -4631,59 +4632,59 @@ msgstr "Enviar e-mail de teste"
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
-msgstr ""
+msgstr "Todos"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Snapshot"
-msgstr ""
+msgstr "Instantâneo"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Add Node"
-msgstr ""
+msgstr "Adicionar nó"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Petition Signup"
-msgstr ""
+msgstr "Inscrição na petição"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Tag Add"
-msgstr ""
+msgstr "Adicionar etiqueta"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "Team Add"
-msgstr ""
+msgstr "Adicionar equipe"
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr ""
+msgstr "Este evento foi arquivado."
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
-msgstr ""
+msgstr "Você pode ver este evento, mas novas inscrições estão fechadas."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
-msgstr ""
+msgstr "Selecione uma equipe..."
 
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Search team..."
-msgstr ""
+msgstr "Pesquisar equipe..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Selecione uma petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Pesquisar petição..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
+msgstr "Nenhuma petição encontrada."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr ""
+msgstr "Mostrar arquivados"
 
 #: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 msgid "Sign-up has closed"
@@ -4696,19 +4697,19 @@ msgstr "O período de inscrição deste evento terminou, portanto não é mais p
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Secret"
-msgstr "Segredo"
+msgstr ""
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "About webhook secrets"
-msgstr "Sobre os segredos de webhook"
+msgstr ""
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
-msgstr "O segredo é enviado em cada entrega no cabeçalho X-Webhook-Secret para que o endpoint possa verificar se o pedido veio da Belcoda."
+msgstr ""
 
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "View secret"
-msgstr "Ver segredo"
+msgstr ""
 
 #~ msgid "Target URL is required"
 #~ msgstr ""
@@ -4754,7 +4755,7 @@ msgstr "Segredo copiado para a área de transferência"
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not copy the secret to the clipboard. Try selecting it manually."
-msgstr "Não foi possível copiar o segredo para a área de transferência. Tente selecioná-lo manualmente."
+msgstr ""
 
 #~ msgid "The secret is sent with each delivery in the "
 #~ msgstr ""
@@ -4770,7 +4771,3 @@ msgstr "Segredo do webhook"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Signing secret for \"{0}\""
 msgstr "Segredo de assinatura para \"{0}\""
-
-#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
-msgid "Could not copy the secret to the clipboard. Try selecting it manually."
-msgstr ""
