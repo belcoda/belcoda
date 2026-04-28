@@ -2232,14 +2232,6 @@ msgstr "Evento não publicado"
 msgid "This event is not published yet. Please check back later."
 msgstr "Este evento ainda não foi publicado. Por favor volte mais tarde."
 
-#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
-msgid "Sign-up has closed"
-msgstr "As inscrições encerraram"
-
-#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
-msgid "The sign-up period for this event has ended, so you can no longer register on this page."
-msgstr "O período de inscrição deste evento terminou, portanto não é mais possível inscrever-se nesta página."
-
 #: src/lib/components/layouts/public/event/EventDeclineSuccess.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Not joining this event"
@@ -2967,6 +2959,7 @@ msgid "user@example.com"
 msgstr "usuario@exemplo.com"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr "Enviando..."
@@ -4614,38 +4607,6 @@ msgstr "Pré-visualizar página do evento"
 msgid "Detailed signups table"
 msgstr "Tabela detalhada de inscrições"
 
-#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-msgid "Show archived"
-msgstr "Mostrar arquivados"
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "This event has been archived."
-msgstr "Este evento foi arquivado."
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "You can view this event, but new signups are closed."
-msgstr "Você pode ver este evento, mas novas inscrições estão fechadas."
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Snapshot"
-msgstr "Instantâneo"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Add Node"
-msgstr "Adicionar nó"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Petition Signup"
-msgstr "Inscrição na petição"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Tag Add"
-msgstr "Adicionar etiqueta"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Team Add"
-msgstr "Adicionar equipe"
-
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Test email"
 msgstr "E-mail de teste"
@@ -4811,3 +4772,37 @@ msgstr "Segredo do webhook"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Signing secret for \"{0}\""
 msgstr "Segredo de assinatura para \"{0}\""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Test WhatsApp"
+msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Send a test message before sending this draft."
+msgstr ""
+
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Failed to send test WhatsApp"
+msgstr ""
+
+#. 0: trimmedPhoneNumber
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Test WhatsApp sent to {0}"
+msgstr ""
+
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Send test WhatsApp to"
+msgstr ""
+
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Include country code, e.g. +14101234567"
+msgstr ""
+
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Send test WhatsApp"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Send test message"
+msgstr ""
