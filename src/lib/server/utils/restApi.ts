@@ -14,20 +14,24 @@ import { type QueryContext } from '$lib/zero/schema';
  * @returns The query context for the API route.
  * @throws {import('@sveltejs/kit').HttpError} If the organizationId is not present (unauthorized).
  */
-export function safeApiRouteQueryContext(
-	organizationIdDerivedFromApiKey: string | null
-): QueryContext {
+export function safeApiRouteQueryContext(organizationIdDerivedFromApiKey: string | null): {
+	ctx: QueryContext;
+	organizationId: string;
+} {
 	if (!organizationIdDerivedFromApiKey) {
 		throw error(401, {
 			message: 'Unauthorized: Attempted to access API route without a valid API key'
 		});
 	}
-	return getApiQueryContext(organizationIdDerivedFromApiKey);
+	return {
+		ctx: getApiQueryContext(organizationIdDerivedFromApiKey),
+		organizationId: organizationIdDerivedFromApiKey
+	};
 }
 
 import type { ListFilter } from '$lib/schema/helpers';
 
-export function buildApiListQueryFromUrl({
+export function buildApiListFilter({
 	organizationId,
 	url
 }: {
