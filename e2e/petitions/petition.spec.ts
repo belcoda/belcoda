@@ -24,6 +24,35 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function ensurePetitionForPublicTests(page: Page) {
+	if (ids.petitionId && ids.petitionSlug) {
+		return;
+	}
+
+	const suffix = Date.now();
+	ids.petitionTitle = `E2E Petition Public ${suffix}`;
+
+	const createPage = new PetitionCreatePage(page);
+	await createPage.goto();
+	await expect(createPage.form).toBeVisible();
+	await createPage.fillTitle(ids.petitionTitle);
+	await createPage.fillDescription('E2E petition for public page tests');
+	await createPage.fillTarget('E2E public petition target');
+	await createPage.fillPetitionText('E2E petition text for public page tests');
+	await createPage.submit();
+	await createPage.waitForModal();
+	await createPage.closeModal();
+	await expect(page).toHaveURL(
+		/\/petitions\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
+		{ timeout: 10_000 }
+	);
+
+	ids.petitionId = new URL(page.url()).pathname.split('/')[2] ?? '';
+	ids.petitionSlug = slugifyTitle(ids.petitionTitle);
+	expect(ids.petitionId).not.toBe('');
+	expect(ids.petitionSlug).not.toBe('');
+}
+
 const ids = {
 	petitionId: '',
 	petitionSlug: '',
@@ -136,6 +165,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 test.describe.serial('Petitions: public page', () => {
 	test('owner publishes the previously created petition for public tests', async ({ page }) => {
 		await loginAsOwner(page);
+		await ensurePetitionForPublicTests(page);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
