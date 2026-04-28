@@ -7,28 +7,36 @@
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { v7 as uuidv7 } from 'uuid';
 	import { parse } from 'valibot';
-	import {
-		createWebhookZero,
-		deleteMutatorSchemaZero,
-		type ReadWebhookZero
-	} from '$lib/schema/webhook';
+	import { createWebhookZero, deleteMutatorSchemaZero } from '$lib/schema/webhook';
 	import { toast } from 'svelte-sonner';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import InfoIcon from '@lucide/svelte/icons/info';
 	import { formatDate } from '$lib/utils/date';
 	import { t } from '$lib/index.svelte';
+	import WebhookSecretModal from './WebhookSecretModal.svelte';
+
+	const SECRET_PLACEHOLDER = '••••••••';
+
 	let webhookListFilter = $state({
 		...getListFilter(appState.organizationId)
 	});
 	const webhookList = $derived.by(() => z.createQuery(queries.webhook.list(webhookListFilter)));
 
+	const tableColCount = $derived(appState.isOwner ? 6 : 5);
+
 	let createModalOpen = $state(false);
 	let name = $state('');
 	let targetUrl = $state('');
+
+	let webhooksSecretModal = $state<
+		{ openFor: (target: { id: string; name: string }) => Promise<void> } | undefined
+	>(undefined);
 
 	async function handleCreateWebhook() {
 		if (!name.trim() || !targetUrl.trim()) {
@@ -111,6 +119,9 @@
 						<Table.Head>{t`Target URL`}</Table.Head>
 						<Table.Head>{t`Event Types`}</Table.Head>
 						<Table.Head>{t`Created`}</Table.Head>
+						{#if appState.isOwner}
+							<Table.Head>{t`Secret`}</Table.Head>
+						{/if}
 						<Table.Head class="text-right">{t`Actions`}</Table.Head>
 					</Table.Row>
 				</Table.Header>
@@ -132,6 +143,44 @@
 								</Table.Cell>
 								<Table.Cell>{formatEventTypes(webhook.eventTypes)}</Table.Cell>
 								<Table.Cell>{formatDate(webhook.createdAt)}</Table.Cell>
+								{#if appState.isOwner}
+									<Table.Cell>
+										<div class="flex max-w-full flex-wrap items-center gap-2">
+											<span
+												class="font-mono text-sm text-muted-foreground"
+												data-testid="settings-webhooks-secret-placeholder"
+												>{SECRET_PLACEHOLDER}</span
+											>
+											<Tooltip.Root>
+												<Tooltip.Trigger>
+													{#snippet child({ props })}
+														<Button
+															{...props}
+															variant="ghost"
+															size="icon-sm"
+															class="text-muted-foreground hover:text-foreground"
+															aria-label={t`About webhook secrets`}
+														>
+															<InfoIcon class="h-4 w-4 shrink-0" />
+														</Button>
+													{/snippet}
+												</Tooltip.Trigger>
+												<Tooltip.Content class="max-w-sm" side="top">
+													{t`The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda.`}
+												</Tooltip.Content>
+											</Tooltip.Root>
+											<Button
+												variant="outline"
+												size="sm"
+												data-testid="settings-webhooks-view-secret"
+												class="shrink-0"
+												onclick={() => void webhooksSecretModal?.openFor(webhook)}
+											>
+												{t`View secret`}
+											</Button>
+										</div>
+									</Table.Cell>
+								{/if}
 								<Table.Cell class="text-right">
 									{#if appState.isAdminOrOwner}
 										<Button
@@ -148,7 +197,7 @@
 						{/each}
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={5} class="py-8 text-center text-muted-foreground">
+							<Table.Cell colspan={tableColCount} class="py-8 text-center text-muted-foreground">
 								{t`Loading webhooks...`}
 							</Table.Cell>
 						</Table.Row>
@@ -158,6 +207,10 @@
 		{/if}
 	</div>
 </ContentLayout>
+
+{#if appState.isOwner}
+	<WebhookSecretModal bind:this={webhooksSecretModal} />
+{/if}
 
 {#snippet header()}
 	<div class="flex items-center justify-between">

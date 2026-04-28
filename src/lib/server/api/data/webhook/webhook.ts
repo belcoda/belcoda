@@ -12,8 +12,43 @@ import {
 } from '$lib/schema/webhook';
 
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
-import { parse } from 'valibot';
-import { builder } from '$lib/zero/schema';
+import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
+import { drizzle } from '$lib/server/db';
+import { object, parse } from 'valibot';
+import { uuid } from '$lib/schema/helpers';
+
+const getWebhookSecretByIdForOwnerArgsSchema = object({
+	userId: uuid,
+	webhookId: uuid
+});
+
+/**
+ * Returns the webhook signing secret when the user is an organization owner for that
+ * webhook's organization. Returns `null` when the webhook does not exist or the user is
+ * not an owner (callers should respond with 404 without distinguishing the two).
+ *
+ * Throws Valibot `ValiError` when `userId` / `webhookId` fail validation (e.g. malformed UUID).
+ */
+export async function getWebhookSecretByIdForOwner({
+	userId,
+	webhookId
+}: {
+	userId: string;
+	webhookId: string;
+}): Promise<string | null> {
+	const { userId: uid, webhookId: wid } = parse(getWebhookSecretByIdForOwnerArgsSchema, {
+		userId,
+		webhookId
+	});
+	const ctx = await getQueryContext(uid);
+	const row = await drizzle.query.webhook.findFirst({
+		where: eq(webhook.id, wid)
+	});
+	if (!row || !ctx.ownerOrgs.includes(row.organizationId)) {
+		return null;
+	}
+	return row.secret;
+}
 
 export async function createWebhook({
 	tx,
@@ -101,7 +136,7 @@ export async function deleteWebhook({
 	}
 
 	// only owners can delete webhooks
-	if (!ctx.adminOrgs.includes(webhookRecord.organizationId)) {
+	if (!ctx.ownerOrgs.includes(webhookRecord.organizationId)) {
 		throw new Error('You are not authorized to delete this webhook');
 	}
 

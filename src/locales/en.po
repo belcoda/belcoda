@@ -1051,6 +1051,7 @@ msgstr "No failure details available"
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Close"
 msgstr "Close"
 
@@ -1994,6 +1995,7 @@ msgid "Your API Key"
 msgstr "Your API Key"
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Copy to clipboard"
 msgstr "Copy to clipboard"
 
@@ -2229,14 +2231,6 @@ msgstr "Event not published"
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "This event is not published yet. Please check back later."
 msgstr "This event is not published yet. Please check back later."
-
-#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
-msgid "Sign-up has closed"
-msgstr "Sign-up has closed"
-
-#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
-msgid "The sign-up period for this event has ended, so you can no longer register on this page."
-msgstr "The sign-up period for this event has ended, so you can no longer register on this page."
 
 #: src/lib/components/layouts/public/event/EventDeclineSuccess.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
@@ -2965,6 +2959,7 @@ msgid "user@example.com"
 msgstr "user@example.com"
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr "Sending..."
@@ -4628,38 +4623,6 @@ msgstr "Preview event page"
 msgid "Detailed signups table"
 msgstr "Detailed signups table"
 
-#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-msgid "Show archived"
-msgstr "Show archived"
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "This event has been archived."
-msgstr "This event has been archived."
-
-#: src/routes/(app)/events/[eventId]/+page.svelte
-msgid "You can view this event, but new signups are closed."
-msgstr "You can view this event, but new signups are closed."
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Snapshot"
-msgstr "Snapshot"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Add Node"
-msgstr "Add Node"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Petition Signup"
-msgstr "Petition Signup"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Tag Add"
-msgstr "Tag Add"
-
-#: src/lib/components/flow/Flow.svelte
-msgid "Team Add"
-msgstr "Team Add"
-
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Test email"
 msgstr "Test email"
@@ -4688,6 +4651,34 @@ msgstr "Send test email"
 msgid "Everyone"
 msgstr "Everyone"
 
+#: src/lib/components/flow/Flow.svelte
+msgid "Snapshot"
+msgstr "Snapshot"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Add Node"
+msgstr "Add Node"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Petition Signup"
+msgstr "Petition Signup"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Tag Add"
+msgstr "Tag Add"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Team Add"
+msgstr "Team Add"
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "This event has been archived."
+msgstr "This event has been archived."
+
+#: src/routes/(app)/events/[eventId]/+page.svelte
+msgid "You can view this event, but new signups are closed."
+msgstr "You can view this event, but new signups are closed."
+
 #: src/lib/components/flow/nodes/team_add/Combobox.svelte
 msgid "Select a team..."
 msgstr "Select a team..."
@@ -4707,3 +4698,127 @@ msgstr "Search petition..."
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
 msgstr "No petitions found."
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+msgid "Show archived"
+msgstr "Show archived"
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "Sign-up has closed"
+msgstr "Sign-up has closed"
+
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
+msgid "The sign-up period for this event has ended, so you can no longer register on this page."
+msgstr "The sign-up period for this event has ended, so you can no longer register on this page."
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Secret"
+msgstr "Secret"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "About webhook secrets"
+msgstr "About webhook secrets"
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+msgstr "The secret is sent with each delivery in the X-Webhook-Secret header so your endpoint can verify the request came from Belcoda."
+
+#: src/routes/(app)/settings/webhooks/+page.svelte
+msgid "View secret"
+msgstr "View secret"
+
+#~ msgid "Target URL is required"
+#~ msgstr "Target URL is required"
+
+#~ msgid "Webhook URL updated successfully"
+#~ msgstr "Webhook URL updated successfully"
+
+#~ msgid "Failed to update webhook URL"
+#~ msgstr "Failed to update webhook URL"
+
+#~ msgid "Edit target URL"
+#~ msgstr "Edit target URL"
+
+#~ msgid "Delete webhook"
+#~ msgstr "Delete webhook"
+
+#~ msgid "Change the endpoint where this webhook receives events."
+#~ msgstr "Change the endpoint where this webhook receives events."
+
+#~ msgid "Please fill in all required fields"
+#~ msgstr "Please fill in all required fields"
+
+#~ msgid "Webhook updated successfully"
+#~ msgstr "Webhook updated successfully"
+
+#~ msgid "Failed to update webhook"
+#~ msgstr "Failed to update webhook"
+
+#~ msgid "Edit webhook"
+#~ msgstr "Edit webhook"
+
+#~ msgid "Change the name and the endpoint where this webhook receives events."
+#~ msgstr "Change the name and the endpoint where this webhook receives events."
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Could not load the webhook secret."
+msgstr "Could not load the webhook secret."
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Secret copied to clipboard"
+msgstr "Secret copied to clipboard"
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Could not copy the secret to the clipboard. Try selecting it manually."
+msgstr "Could not copy the secret to the clipboard. Try selecting it manually."
+
+#~ msgid "The secret is sent with each delivery in the "
+#~ msgstr "The secret is sent with each delivery in the "
+
+#~ msgid "header so your endpoint can verify the request came from Belcoda."
+#~ msgstr "header so your endpoint can verify the request came from Belcoda."
+
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Webhook secret"
+msgstr "Webhook secret"
+
+#. 0: webhookName
+#: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
+msgid "Signing secret for \"{0}\""
+msgstr "Signing secret for \"{0}\""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Test WhatsApp"
+msgstr "Test WhatsApp"
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Send a test message before sending this draft."
+msgstr "Send a test message before sending this draft."
+
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Failed to send test WhatsApp"
+msgstr "Failed to send test WhatsApp"
+
+#. 0: trimmedPhoneNumber
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Test WhatsApp sent to {0}"
+msgstr "Test WhatsApp sent to {0}"
+
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Send test WhatsApp to"
+msgstr "Send test WhatsApp to"
+
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Include country code, e.g. +14101234567"
+msgstr "Include country code, e.g. +14101234567"
+
+#: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+msgid "Send test WhatsApp"
+msgstr "Send test WhatsApp"
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Send test message"
+msgstr "Send test message"
