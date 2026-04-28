@@ -51,6 +51,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 		await expect(page.getByText('Email signature created successfully')).toBeVisible({
 			timeout: 15_000
 		});
+		await sendSignaturesPage.goto();
 		await expect(sendSignaturesPage.signatureRowByEmail(state.emailAddress)).toBeVisible({
 			timeout: 15_000
 		});
