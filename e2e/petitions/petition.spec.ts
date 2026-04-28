@@ -85,7 +85,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		// unpublish so we can edit it in the subsequent test
 		if (isPublished) {
 			await publishToggle.click();
-			await page.waitForTimeout(400);
+			await expect(publishToggle).not.toBeChecked({ timeout: 10_000 });
 		}
 
 		await createPage.closeModal();
@@ -142,7 +142,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		const isChecked = await publishSwitch.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishSwitch.click();
-			await page.waitForTimeout(800);
+			await expect(publishSwitch).toBeChecked({ timeout: 10_000 });
 		}
 	});
 
@@ -177,7 +177,7 @@ test.describe.serial('Petitions: public page', () => {
 		const isChecked = await publishSwitch.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishSwitch.click();
-			await page.waitForTimeout(800);
+			await expect(publishSwitch).toBeChecked({ timeout: 10_000 });
 		}
 		expect(ids.petitionSlug).not.toBe('');
 	});
@@ -344,7 +344,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		const isPublished = await publishToggle.isChecked().catch(() => false);
 		if (!isPublished) {
 			await publishToggle.click();
-			await page.waitForTimeout(800);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 
 		await createPage.closeModal();
@@ -423,7 +423,7 @@ test.describe.serial('Petitions: archive', () => {
 		const isChecked = await publishToggle.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishToggle.click();
-			await page.waitForTimeout(500);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 		await createPage.closeModal();
 
@@ -464,7 +464,7 @@ test.describe.serial('Petitions: delete draft', () => {
 		const isPublished = await publishToggle.isChecked().catch(() => false);
 		if (isPublished) {
 			await publishToggle.click();
-			await page.waitForTimeout(400);
+			await expect(publishToggle).not.toBeChecked({ timeout: 10_000 });
 		}
 		await createPage.closeModal();
 
