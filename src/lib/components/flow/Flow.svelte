@@ -131,6 +131,7 @@
 								<Button
 									variant="outline"
 									size="sm"
+									data-testid="flow-test-button"
 									onclick={() =>
 										onTest({
 											nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
@@ -141,10 +142,16 @@
 									{t`Send test message`}
 								</Button>
 							{/if}
-							<Button variant="destructive" size="sm" onclick={onDiscard}>{t`Discard`}</Button>
+							<Button
+								variant="destructive"
+								size="sm"
+								data-testid="flow-discard-button"
+								onclick={onDiscard}>{t`Discard`}</Button
+							>
 							<Button
 								variant="outline"
 								size="sm"
+								data-testid="flow-save-button"
 								onclick={() =>
 									onSave({
 										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
@@ -154,6 +161,7 @@
 							<Button
 								variant="default"
 								size="sm"
+								data-testid="flow-send-button"
 								onclick={() =>
 									onSend({
 										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
