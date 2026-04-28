@@ -2,7 +2,7 @@ import type { ServerTransaction } from '@rocicorp/zero';
 
 import { activity, person } from '$lib/schema/drizzle';
 import { type ActivityType } from '$lib/schema/activity/types';
-import { activityWebhook } from '$lib/schema/activity';
+import { activityApiSchema } from '$lib/schema/activity';
 import { and, eq } from 'drizzle-orm';
 import { generatePreview } from '$lib/server/api/utils/activity/generate_preview';
 import { getQueue } from '$lib/server/queue';
@@ -20,7 +20,7 @@ async function triggerActivityCreatedWebhook(row: typeof activity.$inferSelect) 
 			organizationId,
 			payload: {
 				type: 'activity.created',
-				data: parse(activityWebhook, data)
+				data: parse(activityApiSchema, data)
 			}
 		});
 	} catch (err) {

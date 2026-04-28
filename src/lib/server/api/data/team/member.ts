@@ -6,7 +6,7 @@ import {
 	type AddUserToTeamMutatorSchema,
 	removeUserFromTeamMutatorSchema,
 	type RemoveUserFromTeamMutatorSchema,
-	teamUserWebhook
+	teamUserApiSchema
 } from '$lib/schema/team';
 import { getQueue } from '$lib/server/queue';
 import { teamMember, member } from '$lib/schema/drizzle';
@@ -71,7 +71,7 @@ export async function addUserToTeam({
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'team.user.added',
-				data: parse(teamUserWebhook, {
+				data: parse(teamUserApiSchema, {
 					teamId: parsed.metadata.teamId,
 					userId: parsed.metadata.userId
 				})
@@ -115,7 +115,7 @@ export async function removeUserFromTeam({
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'team.user.removed',
-					data: parse(teamUserWebhook, {
+					data: parse(teamUserApiSchema, {
 						teamId: parsed.metadata.teamId,
 						userId: parsed.metadata.userId
 					})

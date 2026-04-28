@@ -14,8 +14,8 @@ import {
 	archiveEventMutatorSchemaZero,
 	type ArchiveEventMutatorSchemaZero
 } from '$lib/schema/event';
-import { eventWebhook } from '$lib/schema/event';
-import { eventSignupWebhook } from '$lib/schema/event-signup';
+import { eventApiSchema } from '$lib/schema/event';
+import { eventSignupApiSchema } from '$lib/schema/event-signup';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { eventDeletedWebhookSchema } from '$lib/schema/webhook';
 import { parse } from 'valibot';
@@ -130,7 +130,7 @@ export async function createEvent({
 			organizationId: parsedInput.metadata.organizationId,
 			payload: {
 				type: 'event.created',
-				data: parse(eventWebhook, result)
+				data: parse(eventApiSchema, result)
 			}
 		});
 	} catch (err) {
@@ -190,7 +190,7 @@ export async function updateEvent({
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'event.updated',
-				data: parse(eventWebhook, updatedEvent)
+				data: parse(eventApiSchema, updatedEvent)
 			}
 		});
 	} catch (err) {
@@ -254,7 +254,7 @@ export async function deleteEvent({
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'event.signup.updated',
-					data: parse(eventSignupWebhook, signupWebhookData)
+					data: parse(eventSignupApiSchema, signupWebhookData)
 				}
 			});
 		})
@@ -321,7 +321,7 @@ export async function archiveEvent({
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'event.updated',
-					data: parse(eventWebhook, archived)
+					data: parse(eventApiSchema, archived)
 				}
 			});
 		} catch (err) {

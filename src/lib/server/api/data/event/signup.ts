@@ -13,7 +13,7 @@ import {
 	createMutatorSchema,
 	type UpdateMutatorSchemaOutput,
 	updateMutatorSchema,
-	eventSignupWebhook
+	eventSignupApiSchema
 } from '$lib/schema/event-signup';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -53,7 +53,7 @@ async function queueEventSignupWebhook(
 			organizationId,
 			payload: {
 				type: kind,
-				data: parse(eventSignupWebhook, data)
+				data: parse(eventSignupApiSchema, data)
 			}
 		});
 	} catch (err) {

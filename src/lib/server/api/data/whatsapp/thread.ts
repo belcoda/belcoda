@@ -16,7 +16,7 @@ import {
 	createWhatsappThread as createWhatsappThreadSchema,
 	type CreateWhatsappThread as CreateWhatsappThreadSchema,
 	type UpdateWhatsappThread as UpdateWhatsappThreadSchema,
-	whatsappThreadWebhook
+	whatsappThreadApiSchema
 } from '$lib/schema/whatsapp-thread';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -72,7 +72,7 @@ export async function createWhatsappThread({
 			organizationId,
 			payload: {
 				type: 'whatsapp.thread.created',
-				data: parse(whatsappThreadWebhook, threadData)
+				data: parse(whatsappThreadApiSchema, threadData)
 			}
 		});
 	} catch (err) {
@@ -128,7 +128,7 @@ export async function updateWhatsappThread({
 			organizationId,
 			payload: {
 				type: 'whatsapp.thread.updated',
-				data: parse(whatsappThreadWebhook, threadData)
+				data: parse(whatsappThreadApiSchema, threadData)
 			}
 		});
 	} catch (err) {
@@ -287,7 +287,7 @@ export async function sendWhatsappThread({
 			organizationId,
 			payload: {
 				type: 'whatsapp.thread.updated',
-				data: parse(whatsappThreadWebhook, threadData)
+				data: parse(whatsappThreadApiSchema, threadData)
 			}
 		});
 	} catch (err) {

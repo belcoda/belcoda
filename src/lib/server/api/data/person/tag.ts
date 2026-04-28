@@ -13,8 +13,8 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
 import { getQueue } from '$lib/server/queue';
-import { personTagWebhook } from '$lib/schema/tag';
-import { activityWebhook } from '$lib/schema/activity';
+import { personTagApiSchema } from '$lib/schema/tag';
+import { activityApiSchema } from '$lib/schema/activity';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
@@ -127,7 +127,7 @@ export async function _addPersonTagData({
 				organizationId: actOrg,
 				payload: {
 					type: 'activity.created',
-					data: parse(activityWebhook, actData)
+					data: parse(activityApiSchema, actData)
 				}
 			});
 		} catch (err) {
@@ -140,7 +140,7 @@ export async function _addPersonTagData({
 			organizationId: args.organizationId,
 			payload: {
 				type: 'tag.person.added',
-				data: parse(personTagWebhook, { personId: args.personId, tagId: args.tagId })
+				data: parse(personTagApiSchema, { personId: args.personId, tagId: args.tagId })
 			}
 		});
 	} catch (err) {
@@ -195,7 +195,7 @@ export async function applyTagToPersonUnsafe({
 				organizationId,
 				payload: {
 					type: 'tag.person.added',
-					data: parse(personTagWebhook, { personId, tagId })
+					data: parse(personTagApiSchema, { personId, tagId })
 				}
 			});
 		} catch (err) {
@@ -236,7 +236,7 @@ export async function removePersonTag({
 				organizationId: args.metadata.organizationId,
 				payload: {
 					type: 'tag.person.removed',
-					data: parse(personTagWebhook, {
+					data: parse(personTagApiSchema, {
 						personId: args.metadata.personId,
 						tagId: args.metadata.tagId
 					})

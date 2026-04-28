@@ -8,7 +8,7 @@ import {
 	updateMutatorSchema,
 	type CreateMutatorSchema,
 	createMutatorSchema,
-	teamWebhook
+	teamApiSchema
 } from '$lib/schema/team';
 import { getQueue } from '$lib/server/queue';
 import pino from '$lib/pino';
@@ -61,7 +61,7 @@ export async function createTeam({
 			organizationId,
 			payload: {
 				type: 'team.created',
-				data: parse(teamWebhook, teamWebhookData)
+				data: parse(teamApiSchema, teamWebhookData)
 			}
 		});
 	} catch (err) {
@@ -126,7 +126,7 @@ export async function updateTeam({
 				organizationId,
 				payload: {
 					type: 'team.updated',
-					data: parse(teamWebhook, teamWebhookData)
+					data: parse(teamApiSchema, teamWebhookData)
 				}
 			});
 		}

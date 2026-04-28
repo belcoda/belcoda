@@ -12,7 +12,7 @@ import {
 	type DeleteMutatorSchemaZero,
 	updateMutatorSchemaZero,
 	type UpdateMutatorSchemaZeroOutput,
-	personWebhook
+	personApiSchema
 } from '$lib/schema/person';
 import { parse } from 'valibot';
 import pino from '$lib/pino';
@@ -95,7 +95,7 @@ export async function createPerson({
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'person.created',
-				data: parse(personWebhook, result)
+				data: parse(personApiSchema, result)
 			}
 		});
 	} catch (err) {
@@ -151,7 +151,7 @@ export async function updatePerson({
 			organizationId: input.metadata.organizationId,
 			payload: {
 				type: 'person.updated',
-				data: parse(personWebhook, result)
+				data: parse(personApiSchema, result)
 			}
 		});
 	} catch (err) {

@@ -19,8 +19,8 @@ import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 import { getQueue } from '$lib/server/queue';
-import { teamPersonWebhook } from '$lib/schema/team';
-import { activityWebhook } from '$lib/schema/activity';
+import { teamPersonApiSchema } from '$lib/schema/team';
+import { activityApiSchema } from '$lib/schema/activity';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
@@ -140,7 +140,7 @@ export async function _addPersonTeamDataUnsafe({
 				organizationId: actOrg,
 				payload: {
 					type: 'activity.created',
-					data: parse(activityWebhook, actData)
+					data: parse(activityApiSchema, actData)
 				}
 			});
 		} catch (err) {
@@ -153,7 +153,7 @@ export async function _addPersonTeamDataUnsafe({
 			organizationId: args.organizationId,
 			payload: {
 				type: 'team.person.added',
-				data: parse(teamPersonWebhook, { teamId: args.teamId, personId: args.personId })
+				data: parse(teamPersonApiSchema, { teamId: args.teamId, personId: args.personId })
 			}
 		});
 	} catch (err) {
@@ -194,7 +194,7 @@ export async function removePersonFromTeam({
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'team.person.removed',
-					data: parse(teamPersonWebhook, {
+					data: parse(teamPersonApiSchema, {
 						teamId: parsed.metadata.teamId,
 						personId: parsed.metadata.personId
 					})

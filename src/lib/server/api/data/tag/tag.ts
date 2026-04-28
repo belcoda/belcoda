@@ -10,7 +10,7 @@ import {
 	createMutatorSchema,
 	type DeleteMutatorSchema,
 	deleteMutatorSchema,
-	tagWebhook
+	tagApiSchema
 } from '$lib/schema/tag';
 import { getQueue } from '$lib/server/queue';
 import pino from '$lib/pino';
@@ -61,7 +61,7 @@ export async function createTag({
 			organizationId,
 			payload: {
 				type: 'tag.created',
-				data: parse(tagWebhook, tagData)
+				data: parse(tagApiSchema, tagData)
 			}
 		});
 	} catch (err) {
@@ -104,7 +104,7 @@ export async function updateTag({
 			organizationId,
 			payload: {
 				type: 'tag.updated',
-				data: parse(tagWebhook, tagData)
+				data: parse(tagApiSchema, tagData)
 			}
 		});
 	} catch (err) {

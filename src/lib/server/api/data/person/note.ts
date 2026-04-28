@@ -13,7 +13,7 @@ import {
 	type UpdateMutatorSchemaZero,
 	deleteMutatorSchemaZero,
 	type DeleteMutatorSchemaZero,
-	personNoteWebhook
+	personNoteApiSchema
 } from '$lib/schema/person-note';
 
 import { getPerson } from '$lib/server/api/data/person/person';
@@ -69,7 +69,7 @@ export async function createPersonNote({
 			organizationId: args.metadata.organizationId,
 			payload: {
 				type: 'person.note.created',
-				data: parse(personNoteWebhook, result)
+				data: parse(personNoteApiSchema, result)
 			}
 		});
 	} catch (err) {
@@ -116,7 +116,7 @@ export async function updatePersonNote({
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'person.note.updated',
-				data: parse(personNoteWebhook, result)
+				data: parse(personNoteApiSchema, result)
 			}
 		});
 	} catch (err) {

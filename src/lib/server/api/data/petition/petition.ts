@@ -11,7 +11,7 @@ import {
 	archivePetitionMutatorSchema,
 	type DeletePetitionMutatorSchema,
 	deletePetitionMutatorSchema,
-	petitionWebhook
+	petitionApiSchema
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -132,7 +132,7 @@ export async function createPetition({
 			organizationId,
 			payload: {
 				type: 'petition.created',
-				data: parse(petitionWebhook, petitionData)
+				data: parse(petitionApiSchema, petitionData)
 			}
 		});
 	} catch (err) {
@@ -203,7 +203,7 @@ export async function updatePetition({
 			organizationId,
 			payload: {
 				type: 'petition.updated',
-				data: parse(petitionWebhook, petitionData)
+				data: parse(petitionApiSchema, petitionData)
 			}
 		});
 	} catch (err) {
@@ -253,7 +253,7 @@ export async function archivePetition({
 				organizationId,
 				payload: {
 					type: 'petition.updated',
-					data: parse(petitionWebhook, petitionData)
+					data: parse(petitionApiSchema, petitionData)
 				}
 			});
 		} catch (err) {

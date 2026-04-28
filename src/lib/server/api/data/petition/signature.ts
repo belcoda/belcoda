@@ -8,7 +8,7 @@ import {
 	type UpdateMutatorSchemaOutput,
 	deleteMutatorSchema,
 	type DeleteMutatorSchemaOutput,
-	petitionSignatureWebhook
+	petitionSignatureApiSchema
 } from '$lib/schema/petition/petition-signature';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -142,7 +142,7 @@ export async function createPetitionSignature({
 			organizationId,
 			payload: {
 				type: 'petition.signature.created',
-				data: parse(petitionSignatureWebhook, sigWebhookData)
+				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		});
 	} catch (err) {
@@ -190,7 +190,7 @@ export async function updatePetitionSignature({
 			organizationId,
 			payload: {
 				type: 'petition.signature.updated',
-				data: parse(petitionSignatureWebhook, sigWebhookData)
+				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		});
 	} catch (err) {
@@ -437,7 +437,7 @@ export async function signPetitionUnsafe({
 				type: existingPetitionSignature
 					? 'petition.signature.updated'
 					: 'petition.signature.created',
-				data: parse(petitionSignatureWebhook, sigWebhookData)
+				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		});
 	} catch (err) {
