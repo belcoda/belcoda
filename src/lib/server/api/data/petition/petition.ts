@@ -16,7 +16,13 @@ import {
 import { parse } from 'valibot';
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { team } from '$lib/schema/drizzle';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull, isNotNull, ilike, not, inArray, count as countRows } from 'drizzle-orm';
+import { readPetitionQuery } from '$lib/zero/query/petition/read';
+import {
+	inputSchema as listPetitionsInputSchema,
+	listPetitionsQuery
+} from '$lib/zero/query/petition/list';
+import type { InferOutput } from 'valibot';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { getQueue } from '$lib/server/queue';
@@ -307,6 +313,76 @@ export async function deletePetition({
 	} catch (err) {
 		log.error({ err }, 'Failed to trigger webhook');
 	}
+}
+
+export async function loadPetitionForApi({
+	petitionId,
+	ctx,
+	tx
+}: {
+	petitionId: string;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const row = await tx.run(readPetitionQuery({ ctx, input: { petitionId } }));
+	if (!row) {
+		throw new Error('Petition not found');
+	}
+	return row;
+}
+
+export async function listPetitionsForOrg({
+	ctx,
+	input,
+	tx
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof listPetitionsInputSchema>;
+	tx: ServerTransaction;
+}) {
+	return await tx.run(listPetitionsQuery({ ctx, input }));
+}
+
+export async function countPetitionsForOrg({
+	tx,
+	input
+}: {
+	tx: ServerTransaction;
+	input: InferOutput<typeof listPetitionsInputSchema>;
+}) {
+	const isDeleted = input.isDeleted ?? false;
+	const whereParts = [
+		eq(petition.organizationId, input.organizationId),
+		isDeleted ? isNotNull(petition.deletedAt) : isNull(petition.deletedAt)
+	];
+	if (input.excludedIds.length > 0) {
+		whereParts.push(not(inArray(petition.id, input.excludedIds)));
+	}
+	if (input.searchString && input.searchString.length > 0) {
+		whereParts.push(ilike(petition.title, `%${input.searchString}%`));
+	}
+	if (input.teamId) {
+		whereParts.push(eq(petition.teamId, input.teamId));
+	}
+	if (input.status) {
+		if (input.status === 'draft') {
+			whereParts.push(eq(petition.published, false));
+			whereParts.push(isNull(petition.archivedAt));
+		} else if (input.status === 'published') {
+			whereParts.push(eq(petition.published, true));
+			whereParts.push(isNull(petition.archivedAt));
+		} else if (input.status === 'archived') {
+			whereParts.push(isNotNull(petition.archivedAt));
+		}
+	} else {
+		whereParts.push(isNull(petition.archivedAt));
+	}
+	const whereClause = and(...whereParts);
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: countRows() })
+		.from(petition)
+		.where(whereClause);
+	return result!.count;
 }
 
 export async function getPetitionById({
