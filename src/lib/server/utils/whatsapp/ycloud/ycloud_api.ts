@@ -62,6 +62,14 @@ async function sendToYCloud({
 export async function sendWhatsappMessage(
 	message: ReturnType<typeof convertWhatsappMessageToApiFormat>
 ) {
+	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+		log.info(
+			{ isMock: true, externalId: (message as any).externalId },
+			'Mocking YCloud WhatsApp message send'
+		);
+		return (message as any).externalId ?? `mock-${Date.now()}`;
+	}
+
 	const response = await sendToYCloud({
 		endpoint: '/whatsapp/messages',
 		body: message,
@@ -88,6 +96,11 @@ export async function sendFlowMessage({
 	bodyText?: string;
 	footerText?: string;
 }) {
+	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+		log.info({ isMock: true, flowId }, 'Mocking YCloud WhatsApp flow message send');
+		return `mock-flow-${flowId}`;
+	}
+
 	const message: any = {
 		from,
 		to,
@@ -133,6 +146,11 @@ export async function sendEmojiReaction({
 	from: string;
 	to: string;
 }) {
+	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+		log.info({ isMock: true, emoji, messageWamid }, 'Mocking YCloud WhatsApp emoji reaction send');
+		return;
+	}
+
 	const response = await sendToYCloud({
 		endpoint: '/whatsapp/messages',
 		method: 'POST',
