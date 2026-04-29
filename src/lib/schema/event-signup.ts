@@ -90,6 +90,14 @@ export const createMutatorSchema = v.object({
 export type CreateMutatorSchema = v.InferInput<typeof createMutatorSchema>;
 export type CreateMutatorSchemaOutput = v.InferOutput<typeof createMutatorSchema>;
 
+/** Body for REST `POST /api/v1/event/:eventId/signups` (`eventId` comes from path) */
+export const createEventSignupApiBody = v.object({
+	personId: eventSignupSchema.entries.personId,
+	details: eventSignupSchema.entries.details,
+	status: eventSignupSchema.entries.status
+});
+export type CreateEventSignupApiBody = v.InferInput<typeof createEventSignupApiBody>;
+
 export const updateMutatorSchema = v.object({
 	input: updateEventSignup,
 	metadata: mutatorMetadata
