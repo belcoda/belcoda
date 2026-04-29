@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { isHttpError } from '@sveltejs/kit';
 import { getApiQueryContext } from '$lib/server/api/utils/auth/permissions';
-import { safeApiRouteQueryContext, buildApiListQueryFromUrl } from './restApi';
+import { safeApiRouteQueryContext, buildApiListFilter } from './restApi';
 
 describe('safeApiRouteQueryContext', () => {
 	it('throws 401 with message when organization id is null', () => {
@@ -34,12 +34,12 @@ describe('safeApiRouteQueryContext', () => {
 
 	it('sets ownerOrgs to the provided organization id', () => {
 		const orgId = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
-		const ctx = safeApiRouteQueryContext(orgId);
-		expect(ctx.ownerOrgs).toEqual([orgId]);
-		expect(ctx.userId).toBeNull();
-		expect(ctx.authTeams).toEqual([]);
-		expect(ctx.adminOrgs).toEqual([]);
-		expect(ctx.otherOrgs).toEqual([]);
+		const output = safeApiRouteQueryContext(orgId);
+		expect(output.ctx.ownerOrgs).toEqual([orgId]);
+		expect(output.ctx.userId).toBeNull();
+		expect(output.ctx.authTeams).toEqual([]);
+		expect(output.ctx.adminOrgs).toEqual([]);
+		expect(output.ctx.otherOrgs).toEqual([]);
 	});
 });
 
@@ -52,7 +52,7 @@ describe('buildApiListQueryFromUrl', () => {
 
 	it('uses defaults when search params are absent', () => {
 		expect(
-			buildApiListQueryFromUrl({
+			buildApiListFilter({
 				organizationId: orgId,
 				url: new URL('https://example.test/api')
 			})
@@ -69,7 +69,7 @@ describe('buildApiListQueryFromUrl', () => {
 
 	it('reads pageSize from pageSize query param', () => {
 		expect(
-			buildApiListQueryFromUrl({
+			buildApiListFilter({
 				organizationId: orgId,
 				url: urlWith('pageSize=100')
 			}).pageSize
@@ -78,7 +78,7 @@ describe('buildApiListQueryFromUrl', () => {
 
 	it('caps pageSize at 100 when param exceeds maximum', () => {
 		expect(
-			buildApiListQueryFromUrl({
+			buildApiListFilter({
 				organizationId: orgId,
 				url: urlWith('pageSize=9001')
 			}).pageSize
@@ -87,7 +87,7 @@ describe('buildApiListQueryFromUrl', () => {
 
 	it('reads search from search query param', () => {
 		expect(
-			buildApiListQueryFromUrl({
+			buildApiListFilter({
 				organizationId: orgId,
 				url: urlWith('search=alice')
 			}).searchString
@@ -96,7 +96,7 @@ describe('buildApiListQueryFromUrl', () => {
 
 	it('reads startAfter from startAfter query param', () => {
 		expect(
-			buildApiListQueryFromUrl({
+			buildApiListFilter({
 				organizationId: orgId,
 				url: urlWith('startAfter=cursor-token')
 			}).startAfter
@@ -104,7 +104,7 @@ describe('buildApiListQueryFromUrl', () => {
 	});
 
 	it('preserves organizationId from arguments regardless of URL', () => {
-		const built = buildApiListQueryFromUrl({
+		const built = buildApiListFilter({
 			organizationId: orgId,
 			url: urlWith('organizationId=other-org')
 		});
@@ -113,7 +113,7 @@ describe('buildApiListQueryFromUrl', () => {
 
 	it('combines multiple query params', () => {
 		expect(
-			buildApiListQueryFromUrl({
+			buildApiListFilter({
 				organizationId: orgId,
 				url: urlWith('pageSize=10&search=pat&startAfter=s1')
 			})
@@ -130,7 +130,7 @@ describe('buildApiListQueryFromUrl', () => {
 
 	it('falls back to default pageSize when pageSize is not a number', () => {
 		expect(
-			buildApiListQueryFromUrl({
+			buildApiListFilter({
 				organizationId: orgId,
 				url: urlWith('pageSize=not-a-number')
 			}).pageSize
@@ -139,7 +139,7 @@ describe('buildApiListQueryFromUrl', () => {
 
 	it('uses 0 for pageSize when pageSize is zero', () => {
 		expect(
-			buildApiListQueryFromUrl({
+			buildApiListFilter({
 				organizationId: orgId,
 				url: urlWith('pageSize=0')
 			}).pageSize
