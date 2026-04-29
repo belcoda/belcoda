@@ -11,7 +11,7 @@ import {
 	type RemovePersonFromTeamMutatorSchemaZero
 } from '$lib/schema/person';
 import { activity, person, personTeam, team } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, count } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
@@ -22,7 +22,52 @@ import { getQueue } from '$lib/server/queue';
 import { teamPersonApiSchema } from '$lib/schema/team';
 import { activityApiSchema } from '$lib/schema/activity';
 import pino from '$lib/pino';
+import type { ListFilter } from '$lib/schema/helpers';
+import { listPersonTeamsQuery } from '$lib/zero/query/person_team/list';
 const log = pino(import.meta.url);
+
+export async function listPersonTeams({
+	tx,
+	ctx,
+	input,
+	personId
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	input: ListFilter;
+	personId: string;
+}) {
+	return await tx.run(
+		listPersonTeamsQuery({
+			ctx,
+			input: {
+				organizationId: input.organizationId,
+				searchString: input.searchString,
+				startAfter: input.startAfter,
+				pageSize: input.pageSize,
+				personId
+			}
+		})
+	);
+}
+
+export async function countPersonTeams({
+	tx,
+	input,
+	personId
+}: {
+	tx: ServerTransaction;
+	input: ListFilter;
+	personId: string;
+}) {
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: count() })
+		.from(personTeam)
+		.where(
+			and(eq(personTeam.personId, personId), eq(personTeam.organizationId, input.organizationId))
+		);
+	return result.count;
+}
 
 export async function addPersonToTeam({
 	tx,
