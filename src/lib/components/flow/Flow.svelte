@@ -175,13 +175,14 @@
 					<Panel position="top-right">
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
-								<Button variant="default" size="sm">
+								<Button variant="default" size="sm" data-testid="flow-add-node-trigger">
 									<ChevronDownIcon />
 									{t`Add Node`}
 								</Button>
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content>
 								<DropdownMenu.Item
+									data-testid="flow-add-node-message"
 									onclick={() => {
 										const nodesSnapshot = $state.snapshot(nodes);
 										const lastNodeIndex = nodesSnapshot.length - 1;
