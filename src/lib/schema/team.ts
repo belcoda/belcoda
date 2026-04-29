@@ -24,6 +24,11 @@ export const teamPersonApiSchema = v.object({
 	personId: helpers.uuid
 });
 
+/** Body for REST `POST /api/v1/person/:personId/teams` */
+export const addPersonTeamApiBody = v.object({
+	teamId: helpers.uuid
+});
+
 export const teamUserApiSchema = v.object({
 	teamId: helpers.uuid,
 	userId: helpers.uuid
