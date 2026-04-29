@@ -1,14 +1,8 @@
 import type { APIRequestContext } from '@playwright/test';
-import { BASE_URL, E2E_MOCK_WABA_ID } from './config';
+import { BASE_URL, E2E_DUMMY_WHATSAPP_NUMBER, E2E_MOCK_WABA_ID } from './config';
 
 export function getE2EDefaultWhatsAppNumber(): string {
-	const number = process.env.PUBLIC_DEFAULT_WHATSAPP_NUMBER?.trim() || '';
-	if (!number) {
-		throw new Error(
-			'Missing PUBLIC_DEFAULT_WHATSAPP_NUMBER in your env. This is the WhatsApp sender number for the E2E org.'
-		);
-	}
-	return number;
+	return E2E_DUMMY_WHATSAPP_NUMBER;
 }
 
 export function buildWhatsAppInboundFlowReplyWebhook({

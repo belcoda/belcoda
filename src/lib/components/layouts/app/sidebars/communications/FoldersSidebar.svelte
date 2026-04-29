@@ -35,7 +35,11 @@
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
 					{#snippet child({ props })}
-						<a href="/communications/whatsapp/drafts/new" {...props}>
+						<a
+							href="/communications/whatsapp/drafts/new"
+							data-testid="communications-compose-whatsapp-link"
+							{...props}
+						>
 							<span class="icon-[dashicons--whatsapp] size-4"></span>
 							{t`Compose WhatsApp`}
 						</a>
@@ -83,7 +87,11 @@
 			? 'communications-email-drafts-link'
 			: item.url === '/communications/email/sent'
 				? 'communications-email-sent-link'
-				: undefined}
+				: item.url === '/communications/whatsapp/drafts'
+					? 'communications-whatsapp-drafts-link'
+					: item.url === '/communications/whatsapp/sent'
+						? 'communications-whatsapp-sent-link'
+						: undefined}
 		class="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted {page.url.pathname.includes(
 			item.url
 		)

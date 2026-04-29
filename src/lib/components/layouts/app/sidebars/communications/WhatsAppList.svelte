@@ -55,17 +55,28 @@
 				{activeItem.title}
 			</div>
 		</div>
-		<Input placeholder={t`Type to search...`} bind:value={search} />
+		<Input
+			placeholder={t`Type to search...`}
+			data-testid="communications-whatsapp-search-input"
+			bind:value={search}
+		/>
 	</div>
 	<div class="flex-1 overflow-auto">
 		<div class="flex flex-col">
 			{#each whatsappThreads as whatsappThread (whatsappThread.id)}
 				<a
 					href="/communications/whatsapp/{folder}/{whatsappThread.id}"
+					data-testid="communications-whatsapp-thread-row"
+					data-thread-id={whatsappThread.id}
 					class="flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-muted"
 				>
 					<div class="flex w-full items-center justify-between gap-2">
-						<div class="line-clamp-1 font-medium">{whatsappThread.title || t`(No title)`}</div>
+						<div
+							class="line-clamp-1 font-medium"
+							data-testid="communications-whatsapp-thread-title"
+						>
+							{whatsappThread.title || t`(No title)`}
+						</div>
 						<div class="text-xs text-nowrap text-muted-foreground">
 							{formatShortTimestamp(whatsappThread.updatedAt)}
 						</div>

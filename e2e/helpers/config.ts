@@ -1,6 +1,7 @@
 export const BASE_URL =
 	process.env.E2E_BASE_URL ?? process.env.PUBLIC_HOST ?? 'http://localhost:5173';
 export const E2E_MOCK_WABA_ID = 'e2e-mock-waba-id';
+export const E2E_DUMMY_WHATSAPP_NUMBER = '+15555555555';
 
 export const E2E_ORG_SLUG = 'e2e-event-org';
 

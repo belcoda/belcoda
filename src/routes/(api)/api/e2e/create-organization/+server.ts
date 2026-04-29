@@ -5,7 +5,8 @@ import * as schema from '$lib/schema/drizzle';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 import { error, json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { E2E_MOCK_WABA_ID } from '../../../../../../e2e/helpers/config';
+import { E2E_DUMMY_WHATSAPP_NUMBER, E2E_MOCK_WABA_ID } from '../../../../../../e2e/helpers/config';
+import { createDefaultTemplate } from '$lib/server/db/seed/whatsapp/template';
 
 /**
  * This endpoint is ONLY available in development mode for E2E testing.
@@ -49,10 +50,14 @@ export const POST: RequestHandler = async ({ request }) => {
 		const now = new Date();
 		const orgId = crypto.randomUUID();
 		const effectiveWabaId = wabaId?.trim() || E2E_MOCK_WABA_ID;
+		const defaultWhatsappTemplateId = crypto.randomUUID();
+		const dummyWhatsappNumber = E2E_DUMMY_WHATSAPP_NUMBER;
 		const settings = defaultOrganizationSettings();
 		settings.whatsApp = {
 			...settings.whatsApp,
-			wabaId: effectiveWabaId
+			wabaId: effectiveWabaId,
+			number: dummyWhatsappNumber,
+			defaultTemplateId: defaultWhatsappTemplateId
 		};
 
 		// Check if org already exists
@@ -80,6 +85,15 @@ export const POST: RequestHandler = async ({ request }) => {
 			createdAt: now,
 			updatedAt: now
 		});
+
+		// Create the default WhatsApp template referenced by `defaultTemplateId`.
+		// This ensures WhatsApp flows are considered "activated" in E2E.
+		await drizzle.insert(schema.whatsappTemplate).values(
+			createDefaultTemplate({
+				organizationId: orgId,
+				id: defaultWhatsappTemplateId
+			})
+		);
 
 		// Create owner member record
 		await drizzle.insert(schema.member).values({

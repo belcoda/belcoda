@@ -131,7 +131,12 @@
 		</div>
 	</NodeToolbar>
 	<div class="relative w-[260px] font-sans drop-shadow-md">
-		<Handle type="target" position={Position.Top} class="z-20 h-3! w-3!" />
+		<Handle
+			type="target"
+			position={Position.Top}
+			class="z-20 h-3! w-3!"
+			data-testid="flow-handle-target"
+		/>
 
 		<div class="rounded-lg border border-[#b7e4ac] bg-[#d9fdd3]">
 			{#if templateHeader && templateHeader.format === 'IMAGE'}
@@ -208,12 +213,18 @@
 								id={buttons[i]?.id || uuidv4()}
 								position={Position.Right}
 								class="h-3! w-3!"
+								data-testid="flow-handle-source"
 							/>
 						</div>
 					{/each}
 				</div>
 			{:else}
-				<Handle type="source" position={Position.Bottom} class="h-3! w-3!" />
+				<Handle
+					type="source"
+					position={Position.Bottom}
+					class="h-3! w-3!"
+					data-testid="flow-handle-source"
+				/>
 			{/if}
 		</div>
 	</div>
