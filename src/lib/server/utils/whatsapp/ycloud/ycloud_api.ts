@@ -97,10 +97,10 @@ export async function sendWhatsappMessage(
 ) {
 	if (isMockExternalServicesEnabled()) {
 		log.info(
-			{ isMock: true, externalId: (message as any).externalId },
+			{ isMock: true, externalId: message.externalId },
 			'Mocking YCloud WhatsApp message send'
 		);
-		return (message as any).externalId ?? `mock-${Date.now()}`;
+		return message.externalId ?? `mock-${Date.now()}`;
 	}
 
 	const response = await sendToYCloud({
