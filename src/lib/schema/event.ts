@@ -60,19 +60,6 @@ export const eventApiSchema = v.object({
 	cancelledAt: v.nullable(helpers.dateToString)
 });
 
-export const readEventRest = v.object({
-	...eventSchema.entries,
-	startsAt: helpers.dateToString,
-	endsAt: helpers.dateToString,
-	reminderSentAt: v.nullable(helpers.dateToString),
-	createdAt: helpers.dateToString,
-	updatedAt: helpers.dateToString,
-	deletedAt: v.nullable(helpers.dateToString),
-	archivedAt: v.nullable(helpers.dateToString),
-	cancelledAt: v.nullable(helpers.dateToString)
-});
-export type ReadEventRest = v.InferOutput<typeof readEventRest>;
-
 export const readEventZero = v.object({
 	...eventSchema.entries,
 	startsAt: helpers.unixTimestamp,
