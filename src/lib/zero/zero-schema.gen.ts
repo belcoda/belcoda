@@ -888,10 +888,10 @@ const eventSignupTable = {
 			type: 'string',
 			optional: false,
 			customType: null as unknown as
+				| 'incomplete'
 				| 'signup'
 				| 'attended'
 				| 'noshow'
-				| 'incomplete'
 				| 'notattending'
 				| 'cancelled'
 				| 'deleted'
@@ -1844,7 +1844,8 @@ const personTable = {
 				| { type: 'added_from_event'; eventSignupId: string }
 				| { type: 'added_from_petition'; petitionSignatureId: string }
 				| { type: 'incoming_whatsapp_message'; messageId: string }
-				| { type: 'migration' },
+				| { type: 'migration' }
+				| { type: 'rest_api' },
 			serverName: 'added_from'
 		},
 		createdAt: {
@@ -1891,7 +1892,7 @@ const personImportTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'pending' | 'failed' | 'processing' | 'completed'
+			customType: null as unknown as 'failed' | 'pending' | 'processing' | 'completed'
 		},
 		totalRows: {
 			type: 'number',
@@ -2565,7 +2566,7 @@ const webhookLogTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'pending' | 'success' | 'failed'
+			customType: null as unknown as 'not_sent' | 'success' | 'failed'
 		},
 		payload: {
 			type: 'json',
@@ -2786,7 +2787,7 @@ const whatsappMessageTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'pending' | 'failed' | 'delivered' | 'read'
+			customType: null as unknown as 'failed' | 'pending' | 'delivered' | 'read'
 		},
 		statusMessage: {
 			type: 'string',
