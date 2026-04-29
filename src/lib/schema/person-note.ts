@@ -50,6 +50,12 @@ export const createPersonNoteZero = v.object({
 });
 export type CreatePersonNoteZero = v.InferOutput<typeof createPersonNoteZero>;
 
+export const createPersonNoteApi = v.object({
+	note: personNoteSchema.entries.note,
+	userId: helpers.uuid //needed because we don't have a logged in user ID when creating a note via the API
+});
+export type CreatePersonNoteApi = v.InferOutput<typeof createPersonNoteApi>;
+
 export const updatePersonNoteZero = v.object({
 	note: personNoteSchema.entries.note
 });
@@ -59,7 +65,7 @@ export const mutatorMetadata = v.object({
 	personNoteId: helpers.uuid,
 	organizationId: helpers.uuid,
 	personId: helpers.uuid,
-	userId: helpers.uuid
+	userId: v.optional(helpers.uuid)
 });
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
