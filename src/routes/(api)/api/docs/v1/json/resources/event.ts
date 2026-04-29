@@ -25,7 +25,7 @@ export async function buildEventResourceSpec() {
 	]);
 
 	return {
-		tags: [{ name: 'Event' }, { name: 'Event Signups' }],
+		tags: [{ name: 'Events' }, { name: 'Event Signups' }],
 		paths: {
 			'/api/v1/events': {
 				get: {
