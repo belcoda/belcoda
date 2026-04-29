@@ -69,6 +69,8 @@ export class WhatsAppDraftPage {
 	readonly testButton: Locator;
 	readonly recipientsPicker: Locator;
 	readonly recipientOptions: Locator;
+	readonly addNodeTrigger: Locator;
+	readonly addMessageNodeOption: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
@@ -78,6 +80,8 @@ export class WhatsAppDraftPage {
 		this.testButton = page.getByTestId('flow-test-button');
 		this.recipientsPicker = page.getByTestId('communications-recipients-multiselect');
 		this.recipientOptions = page.getByTestId('communications-recipient-option');
+		this.addNodeTrigger = page.getByTestId('flow-add-node-trigger');
+		this.addMessageNodeOption = page.getByTestId('flow-add-node-message');
 	}
 
 	async gotoDraftById(threadId: string) {
@@ -105,5 +109,10 @@ export class WhatsAppDraftPage {
 		const everyoneOption = this.recipientOptions.filter({ hasText: /Everyone/i }).first();
 		await everyoneOption.waitFor({ state: 'visible', timeout: 10_000 });
 		await everyoneOption.click();
+	}
+
+	async addSimpleMessageNode() {
+		await this.addNodeTrigger.click();
+		await this.addMessageNodeOption.click();
 	}
 }
