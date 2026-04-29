@@ -281,7 +281,12 @@ export function buildBetterAuth(localeInput: string) {
 			apiKey({
 				storage: 'secondary-storage',
 				fallbackToDatabase: true,
-				references: 'organization'
+				references: 'organization',
+				rateLimit: {
+					enabled: true,
+					timeWindow: 60 * 1000, //1 minute
+					maxRequests: 1000 //1000 requests per minute
+				}
 			}),
 			stripe({
 				stripeClient,
