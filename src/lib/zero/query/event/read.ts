@@ -28,5 +28,3 @@ export function readEventQuery({
 export const readEvent = defineQuery(inputSchema, ({ ctx, args }) => {
 	return readEventQuery({ ctx, input: { eventId: args.eventId } });
 });
-
-export const outputSchema = readEventRest;
