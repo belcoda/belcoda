@@ -44,7 +44,12 @@ export async function POST(event) {
 			ctx: { ...ctx, userId: input.userId },
 			args: {
 				input: { note: input.note },
-				metadata: { personId: event.params.personId, organizationId, personNoteId: uuidv7() }
+				metadata: {
+					personId: event.params.personId,
+					organizationId,
+					personNoteId: uuidv7(),
+					userId: input.userId
+				}
 			},
 			tx
 		});

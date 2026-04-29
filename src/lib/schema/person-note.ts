@@ -65,7 +65,7 @@ export const mutatorMetadata = v.object({
 	personNoteId: helpers.uuid,
 	organizationId: helpers.uuid,
 	personId: helpers.uuid,
-	userId: v.optional(helpers.uuid)
+	userId: helpers.uuid
 });
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
