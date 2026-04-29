@@ -62,14 +62,14 @@ export const eventApiSchema = v.object({
 
 export const readEventRest = v.object({
 	...eventSchema.entries,
-	startsAt: helpers.unixTimestamp,
-	endsAt: helpers.unixTimestamp,
-	reminderSentAt: v.nullable(helpers.unixTimestamp),
-	createdAt: helpers.unixTimestamp,
-	updatedAt: helpers.unixTimestamp,
-	deletedAt: v.nullable(helpers.unixTimestamp),
-	archivedAt: v.nullable(helpers.unixTimestamp),
-	cancelledAt: v.nullable(helpers.unixTimestamp)
+	startsAt: helpers.dateToString,
+	endsAt: helpers.dateToString,
+	reminderSentAt: v.nullable(helpers.dateToString),
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString,
+	deletedAt: v.nullable(helpers.dateToString),
+	archivedAt: v.nullable(helpers.dateToString),
+	cancelledAt: v.nullable(helpers.dateToString)
 });
 export type ReadEventRest = v.InferOutput<typeof readEventRest>;
 
@@ -119,6 +119,13 @@ export const createEventZero = v.object({
 });
 export type CreateEventZero = v.InferOutput<typeof createEventZero>;
 
+export const createEventRest = v.object({
+	...createEventZero.entries,
+	startsAt: helpers.dateStringToDate,
+	endsAt: helpers.dateStringToDate
+});
+export type CreateEventRest = v.InferOutput<typeof createEventRest>;
+
 export function generateCreateEventZeroAsyncSchema(organizationId: string) {
 	const { title, slug } = generateEventTitleAsyncSchema(organizationId);
 	const createEventZeroAsync = v.objectAsync({
@@ -142,6 +149,13 @@ export const updateEventZero = v.object({
 	endsAt: helpers.unixTimestamp
 });
 export type UpdateEventZero = v.InferOutput<typeof updateEventZero>;
+
+export const updateEventRest = v.object({
+	...updateEventZero.entries,
+	startsAt: helpers.dateStringToDate,
+	endsAt: helpers.dateStringToDate
+});
+export type UpdateEventRest = v.InferOutput<typeof updateEventRest>;
 
 export const mutatorMetadata = v.object({
 	organizationId: eventSchema.entries.organizationId,
