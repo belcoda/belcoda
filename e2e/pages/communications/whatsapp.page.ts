@@ -67,6 +67,8 @@ export class WhatsAppDraftPage {
 	readonly sendButton: Locator;
 	readonly discardButton: Locator;
 	readonly testButton: Locator;
+	readonly recipientsPicker: Locator;
+	readonly recipientOptions: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
@@ -74,6 +76,8 @@ export class WhatsAppDraftPage {
 		this.sendButton = page.getByTestId('flow-send-button');
 		this.discardButton = page.getByTestId('flow-discard-button');
 		this.testButton = page.getByTestId('flow-test-button');
+		this.recipientsPicker = page.getByTestId('communications-recipients-multiselect');
+		this.recipientOptions = page.getByTestId('communications-recipient-option');
 	}
 
 	async gotoDraftById(threadId: string) {
@@ -92,5 +96,14 @@ export class WhatsAppDraftPage {
 	async sendAndConfirm() {
 		this.page.once('dialog', (dialog) => dialog.accept());
 		await this.sendButton.click();
+	}
+
+	async selectEveryoneRecipient() {
+		const recipientsInput = this.recipientsPicker.getByPlaceholder('Recipients').first();
+		await recipientsInput.click();
+
+		const everyoneOption = this.recipientOptions.filter({ hasText: /Everyone/i }).first();
+		await everyoneOption.waitFor({ state: 'visible', timeout: 10_000 });
+		await everyoneOption.click();
 	}
 }
