@@ -1,6 +1,6 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
-import { eq, and, isNull } from 'drizzle-orm';
+import { eq, and, isNull, or, ilike, count } from 'drizzle-orm';
 import { person, personTeam, team } from '$lib/schema/drizzle';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
@@ -294,6 +294,7 @@ export async function _getPersonByIdUnsafeNoTenantCheck({
 		.limit(1);
 	return row?.organizationId ?? null;
 }
+
 import { listPersonsQuery } from '$lib/zero/query/person/list';
 export async function listPersons({
 	ctx,
@@ -304,7 +305,36 @@ export async function listPersons({
 	input: ListFilter;
 	tx: ServerTransaction;
 }) {
-	const result = await tx.run(listPersonsQuery({ ctx, input }));
-	const parsedResult = result.map((person) => parse(personApiSchema, person));
-	return parsedResult;
+	return await tx.run(listPersonsQuery({ ctx, input }));
+}
+
+export async function _countPersons({
+	organizationId,
+	searchString,
+	tx
+}: {
+	organizationId: string;
+	searchString: string | null;
+	tx: ServerTransaction;
+}) {
+	const baseWhereClause = and(eq(person.organizationId, organizationId), isNull(person.deletedAt));
+	let whereClause;
+	if (searchString) {
+		whereClause = and(
+			baseWhereClause,
+			or(
+				ilike(person.givenName, `%${searchString}%`),
+				ilike(person.familyName, `%${searchString}%`),
+				ilike(person.emailAddress, `%${searchString}%`),
+				ilike(person.phoneNumber, `%${searchString}%`)
+			)
+		);
+	} else {
+		whereClause = baseWhereClause;
+	}
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: count() })
+		.from(person)
+		.where(whereClause);
+	return result.count;
 }
