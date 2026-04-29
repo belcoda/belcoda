@@ -125,8 +125,8 @@ export const createPersonZero = v.pipe(
 );
 export type CreatePersonZero = v.InferOutput<typeof createPersonZero>;
 export const createPersonRest = v.object({
-	...createPerson.entries,
-	dateOfBirth: v.optional(v.nullable(helpers.dateToTimestamp), null)
+	...createPersonZero.entries,
+	dateOfBirth: v.optional(v.nullable(helpers.dateOfBirthToDate), null)
 });
 export type CreatePersonRest = v.InferOutput<typeof createPersonRest>;
 
