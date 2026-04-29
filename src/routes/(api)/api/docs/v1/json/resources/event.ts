@@ -27,9 +27,9 @@ export async function buildEventResourceSpec() {
 	return {
 		tags: [{ name: 'Event' }, { name: 'Event Signups' }],
 		paths: {
-			'/api/v1/event': {
+			'/api/v1/events': {
 				get: {
-					tags: ['Event'],
+					tags: ['Events'],
 					summary: 'List events',
 					parameters: [
 						...params.list,
@@ -97,7 +97,7 @@ export async function buildEventResourceSpec() {
 					}
 				},
 				post: {
-					tags: ['Event'],
+					tags: ['Events'],
 					summary: 'Create event',
 					requestBody: {
 						required: true,
@@ -122,9 +122,9 @@ export async function buildEventResourceSpec() {
 					}
 				}
 			},
-			'/api/v1/event/{eventId}': {
+			'/api/v1/events/{eventId}': {
 				get: {
-					tags: ['Event'],
+					tags: ['Events'],
 					summary: 'Get event',
 					parameters: params.eventId,
 					responses: {
@@ -137,7 +137,7 @@ export async function buildEventResourceSpec() {
 					}
 				},
 				put: {
-					tags: ['Event'],
+					tags: ['Events'],
 					summary: 'Update event',
 					parameters: params.eventId,
 					requestBody: {
@@ -159,7 +159,7 @@ export async function buildEventResourceSpec() {
 					}
 				},
 				delete: {
-					tags: ['Event'],
+					tags: ['Events'],
 					summary: 'Delete event',
 					parameters: params.eventId,
 					responses: {
@@ -169,7 +169,7 @@ export async function buildEventResourceSpec() {
 					}
 				}
 			},
-			'/api/v1/event/{eventId}/signups': {
+			'/api/v1/events/{eventId}/signups': {
 				get: {
 					tags: ['Event Signups'],
 					summary: 'List event signups',
@@ -249,7 +249,7 @@ export async function buildEventResourceSpec() {
 					}
 				}
 			},
-			'/api/v1/event/{eventId}/signups/{eventSignupId}': {
+			'/api/v1/events/{eventId}/signups/{eventSignupId}': {
 				get: {
 					tags: ['Event Signups'],
 					summary: 'Get event signup',
