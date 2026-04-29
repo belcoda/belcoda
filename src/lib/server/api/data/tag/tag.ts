@@ -1,7 +1,9 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
+import type { InferOutput } from 'valibot';
+import { listTagsQuery, inputSchema as listTagsInputSchema } from '$lib/zero/query/tag/list';
 import { tag } from '$lib/schema/drizzle';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, ilike, inArray, isNotNull, isNull, count, not } from 'drizzle-orm';
 import { parse } from 'valibot';
 import {
 	type UpdateMutatorSchema,
@@ -13,8 +15,68 @@ import {
 	tagApiSchema
 } from '$lib/schema/tag';
 import { getQueue } from '$lib/server/queue';
+import type { ListFilter } from '$lib/schema/helpers';
+import { readTagQuery } from '$lib/zero/query/tag/read';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
+
+export async function listTags({
+	tx,
+	ctx,
+	input
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	input: InferOutput<typeof listTagsInputSchema>;
+}) {
+	return await tx.run(listTagsQuery({ ctx, input }));
+}
+
+export async function countTags({
+	tx,
+	input,
+	includeInactive
+}: {
+	tx: ServerTransaction;
+	input: ListFilter;
+	includeInactive?: boolean;
+}) {
+	const isDeleted = input.isDeleted ?? false;
+	const whereParts = [
+		eq(tag.organizationId, input.organizationId),
+		isDeleted ? isNotNull(tag.deletedAt) : isNull(tag.deletedAt)
+	];
+	if (!includeInactive) {
+		whereParts.push(eq(tag.active, true));
+	}
+	if (input.searchString && input.searchString.length > 0) {
+		whereParts.push(ilike(tag.name, `%${input.searchString}%`));
+	}
+	if (input.excludedIds.length > 0) {
+		whereParts.push(not(inArray(tag.id, input.excludedIds)));
+	}
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: count() })
+		.from(tag)
+		.where(and(...whereParts));
+	return result.count;
+}
+
+export async function getTag({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: { tagId: string };
+}) {
+	const row = await tx.run(readTagQuery({ ctx, input: { tagId: args.tagId } }));
+	if (!row) {
+		throw new Error('Tag not found');
+	}
+	return row;
+}
 
 export async function createTag({
 	tx,
@@ -83,13 +145,21 @@ export async function updateTag({
 	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(parsed.metadata.organizationId)) {
 		throw new Error('You are not authorized to update a tag in this organization');
 	}
+	const updates: {
+		name?: string;
+		active?: boolean;
+		updatedAt: Date;
+	} = { updatedAt: new Date() };
+	if (parsed.input.name !== undefined) {
+		updates.name = parsed.input.name;
+	}
+	if (parsed.input.active !== undefined) {
+		updates.active = parsed.input.active;
+	}
+
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(tag)
-		.set({
-			name: parsed.input.name,
-			active: parsed.input.active,
-			updatedAt: new Date()
-		})
+		.set(updates)
 		.where(
 			and(eq(tag.id, parsed.metadata.tagId), eq(tag.organizationId, parsed.metadata.organizationId))
 		)
