@@ -65,6 +65,15 @@ export const updatePetitionSignature = v.object({
 });
 export type UpdatePetitionSignature = v.InferInput<typeof updatePetitionSignature>;
 
+/** POST body for API; `petitionId` is taken from the URL path. */
+export const createPetitionSignatureApiBody = v.object({
+	personId: petitionSignatureSchema.entries.personId,
+	details: petitionSignatureSchema.entries.details,
+	responses: v.optional(petitionSignatureSchema.entries.responses, null)
+});
+
+export const updatePetitionSignatureRest = updatePetitionSignature;
+
 export const mutatorMetadata = v.object({
 	organizationId: petitionSignatureSchema.entries.organizationId,
 	petitionId: petitionSignatureSchema.entries.petitionId,
