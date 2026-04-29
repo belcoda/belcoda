@@ -42,15 +42,6 @@ export const petitionApiSchema = v.object({
 	archivedAt: v.nullable(helpers.dateToString)
 });
 
-export const readPetitionRest = v.object({
-	...petitionSchema.entries,
-	createdAt: helpers.unixTimestamp,
-	updatedAt: helpers.unixTimestamp,
-	deletedAt: v.nullable(helpers.unixTimestamp),
-	archivedAt: v.nullable(helpers.unixTimestamp)
-});
-export type ReadPetitionRest = v.InferOutput<typeof readPetitionRest>;
-
 export const readPetitionZero = v.object({
 	...petitionSchema.entries,
 	createdAt: helpers.unixTimestamp,
