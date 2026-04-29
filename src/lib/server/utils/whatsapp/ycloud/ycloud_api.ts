@@ -294,6 +294,14 @@ export async function updateFlow({
 	publish?: boolean;
 	endpointUri?: string;
 }): Promise<{ flowId: string; success: boolean }> {
+	if (isMockExternalServicesEnabled()) {
+		log.info(
+			{ ycloudFlowId, internalId: flow.metadata.id, isMock: true },
+			'Mocking YCloud flow update'
+		);
+		return { flowId: ycloudFlowId, success: true };
+	}
+
 	const requestBody = convertInternalToYCloudRequest(flow, {
 		wabaId,
 		publish,
