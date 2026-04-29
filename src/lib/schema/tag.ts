@@ -25,6 +25,11 @@ export const personTagApiSchema = v.object({
 	tagId: helpers.uuid
 });
 
+/** Body for REST `POST /api/v1/person/:personId/tags` */
+export const addPersonTagApiBody = v.object({
+	tagId: helpers.uuid
+});
+
 export const readTagRest = v.object({
 	id: tagSchema.entries.id,
 	name: tagSchema.entries.name,
