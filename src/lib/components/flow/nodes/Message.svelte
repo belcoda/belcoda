@@ -90,7 +90,12 @@
 		</div>
 	</NodeToolbar>
 	<div class="relative w-[260px] font-sans drop-shadow-md">
-		<Handle type="target" position={Position.Top} class="z-20 h-3! w-3!" />
+		<Handle
+			type="target"
+			position={Position.Top}
+			class="z-20 h-3! w-3!"
+			data-testid="flow-handle-target"
+		/>
 
 		<div class="rounded-lg border border-[#b7e4ac] bg-[#d9fdd3]">
 			{#if imageUrl}
@@ -105,6 +110,8 @@
 
 			<Textarea
 				bind:value={text}
+				data-testid="flow-message-textarea"
+				data-node-id={id}
 				class={cn(
 					'w-full resize-none border-none bg-transparent text-[14.5px] leading-relaxed text-[#111b21] outline-none',
 					buttons.length > 0 && 'rounded-b-none',
@@ -128,12 +135,23 @@
 								<Trash2 size={14} />
 							</button>
 
-							<Handle type="source" id={btn.id} position={Position.Right} class="h-3! w-3!" />
+							<Handle
+								type="source"
+								id={btn.id}
+								position={Position.Right}
+								class="h-3! w-3!"
+								data-testid="flow-handle-source"
+							/>
 						</div>
 					{/each}
 				</div>
 			{:else}
-				<Handle type="source" position={Position.Bottom} class="h-3! w-3!" />
+				<Handle
+					type="source"
+					position={Position.Bottom}
+					class="h-3! w-3!"
+					data-testid="flow-handle-source"
+				/>
 			{/if}
 		</div>
 	</div>

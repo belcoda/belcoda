@@ -60,6 +60,8 @@ test.describe.serial('Communications: WhatsApp', () => {
 		await draftPage.gotoDraftById(state.threadId);
 		await draftPage.waitForLoaded();
 		await draftPage.addSimpleMessageNode();
+		await draftPage.connectLatestNodeToPreviousByDrag();
+		await draftPage.editLatestMessageText('E2E follow-up text message');
 		await draftPage.selectEveryoneRecipient();
 		await draftPage.sendAndConfirm();
 
