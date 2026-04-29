@@ -59,6 +59,7 @@ test.describe.serial('Communications: WhatsApp', () => {
 		const draftPage = new WhatsAppDraftPage(page);
 		await draftPage.gotoDraftById(state.threadId);
 		await draftPage.waitForLoaded();
+		await draftPage.selectEveryoneRecipient();
 		await draftPage.sendAndConfirm();
 
 		await expect(page).toHaveURL(`/communications/whatsapp/sent/${state.threadId}`, {
