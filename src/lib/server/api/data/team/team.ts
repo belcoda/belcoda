@@ -1,18 +1,69 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
+import type { InferOutput } from 'valibot';
 import { team } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, ilike, inArray, isNotNull, isNull, count, not } from 'drizzle-orm';
 import { parse } from 'valibot';
 import {
 	type UpdateMutatorSchema,
 	updateMutatorSchema,
 	type CreateMutatorSchema,
 	createMutatorSchema,
-	teamWebhook
+	teamApiSchema
 } from '$lib/schema/team';
 import { getQueue } from '$lib/server/queue';
+import type { ListFilter } from '$lib/schema/helpers';
+import { inputSchema as listTeamsInputSchema, listTeamsQuery } from '$lib/zero/query/team/list';
+import { readTeamQuery } from '$lib/zero/query/team/read';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
+
+export async function listTeams({
+	tx,
+	ctx,
+	input
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	input: InferOutput<typeof listTeamsInputSchema>;
+}) {
+	return await tx.run(listTeamsQuery({ ctx, input }));
+}
+
+export async function countTeams({ tx, input }: { tx: ServerTransaction; input: ListFilter }) {
+	const isDeleted = input.isDeleted ?? false;
+	const whereParts = [
+		eq(team.organizationId, input.organizationId),
+		isDeleted ? isNotNull(team.deletedAt) : isNull(team.deletedAt)
+	];
+	if (input.searchString && input.searchString.length > 0) {
+		whereParts.push(ilike(team.name, `%${input.searchString}%`));
+	}
+	if (input.excludedIds.length > 0) {
+		whereParts.push(not(inArray(team.id, input.excludedIds)));
+	}
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: count() })
+		.from(team)
+		.where(and(...whereParts));
+	return result.count;
+}
+
+export async function getTeam({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: { teamId: string };
+}) {
+	const row = await tx.run(readTeamQuery({ ctx, input: { teamId: args.teamId } }));
+	if (!row) {
+		throw new Error('Team not found');
+	}
+	return row;
+}
 
 export async function createTeam({
 	tx,
@@ -61,7 +112,7 @@ export async function createTeam({
 			organizationId,
 			payload: {
 				type: 'team.created',
-				data: parse(teamWebhook, teamWebhookData)
+				data: parse(teamApiSchema, teamWebhookData)
 			}
 		});
 	} catch (err) {
@@ -126,7 +177,7 @@ export async function updateTeam({
 				organizationId,
 				payload: {
 					type: 'team.updated',
-					data: parse(teamWebhook, teamWebhookData)
+					data: parse(teamApiSchema, teamWebhookData)
 				}
 			});
 		}

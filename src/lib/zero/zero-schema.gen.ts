@@ -1856,7 +1856,8 @@ const personTable = {
 				| { type: 'added_from_event'; eventSignupId: string }
 				| { type: 'added_from_petition'; petitionSignatureId: string }
 				| { type: 'incoming_whatsapp_message'; messageId: string }
-				| { type: 'migration' },
+				| { type: 'migration' }
+				| { type: 'rest_api' },
 			serverName: 'added_from'
 		},
 		createdAt: {

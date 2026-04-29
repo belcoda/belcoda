@@ -36,6 +36,12 @@ import { listPersonImports } from '$lib/zero/query/person_import/list';
 // person_note
 import { listPersonNotes } from '$lib/zero/query/person_note/list';
 
+// person_tag
+import { listPersonTags } from '$lib/zero/query/person_tag/list';
+
+// person_team
+import { listPersonTeams } from '$lib/zero/query/person_team/list';
+
 // petition
 import { listPetitions } from '$lib/zero/query/petition/list';
 import { readPetition } from '$lib/zero/query/petition/read';
@@ -102,6 +108,10 @@ export {
 	listPersonImports,
 	// person_note
 	listPersonNotes,
+	// person_tag
+	listPersonTags,
+	// person_team
+	listPersonTeams,
 	// petition
 	listPetitions,
 	readPetition,
@@ -181,6 +191,12 @@ export default defineQueries({
 	},
 	personNote: {
 		list: listPersonNotes
+	},
+	personTag: {
+		list: listPersonTags
+	},
+	personTeam: {
+		list: listPersonTeams
 	},
 	petition: {
 		list: listPetitions,

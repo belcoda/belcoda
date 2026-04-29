@@ -1,5 +1,18 @@
 import { drizzle } from '$lib/server/db';
-import { eq, and, isNull, sql } from 'drizzle-orm';
+import {
+	eq,
+	and,
+	or,
+	isNull,
+	isNotNull,
+	sql,
+	ilike,
+	gte,
+	lte,
+	count as countRows,
+	not,
+	inArray
+} from 'drizzle-orm';
 import { event, eventSignup, team } from '$lib/schema/drizzle';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
@@ -14,8 +27,11 @@ import {
 	archiveEventMutatorSchemaZero,
 	type ArchiveEventMutatorSchemaZero
 } from '$lib/schema/event';
-import { eventWebhook } from '$lib/schema/event';
-import { eventSignupWebhook } from '$lib/schema/event-signup';
+import { eventApiSchema } from '$lib/schema/event';
+import { eventSignupApiSchema } from '$lib/schema/event-signup';
+import { readEventQuery } from '$lib/zero/query/event/read';
+import { inputSchema as listEventsInputSchema, listEventsQuery } from '$lib/zero/query/event/list';
+import type { InferOutput } from 'valibot';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { eventDeletedWebhookSchema } from '$lib/schema/webhook';
 import { parse } from 'valibot';
@@ -130,7 +146,7 @@ export async function createEvent({
 			organizationId: parsedInput.metadata.organizationId,
 			payload: {
 				type: 'event.created',
-				data: parse(eventWebhook, result)
+				data: parse(eventApiSchema, result)
 			}
 		});
 	} catch (err) {
@@ -190,7 +206,7 @@ export async function updateEvent({
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'event.updated',
-				data: parse(eventWebhook, updatedEvent)
+				data: parse(eventApiSchema, updatedEvent)
 			}
 		});
 	} catch (err) {
@@ -254,7 +270,7 @@ export async function deleteEvent({
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'event.signup.updated',
-					data: parse(eventSignupWebhook, signupWebhookData)
+					data: parse(eventSignupApiSchema, signupWebhookData)
 				}
 			});
 		})
@@ -321,7 +337,7 @@ export async function archiveEvent({
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'event.updated',
-					data: parse(eventWebhook, archived)
+					data: parse(eventApiSchema, archived)
 				}
 			});
 		} catch (err) {
@@ -403,4 +419,95 @@ export async function getEventById({
 		throw new Error('Event not found');
 	}
 	return eventRecord;
+}
+
+export async function loadEventForApi({
+	eventId,
+	ctx,
+	tx
+}: {
+	eventId: string;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const row = await tx.run(readEventQuery({ ctx, input: { eventId } }));
+	if (!row) {
+		throw new Error('Event not found');
+	}
+	return row;
+}
+
+export async function listEventsForOrg({
+	ctx,
+	input,
+	tx
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof listEventsInputSchema>;
+	tx: ServerTransaction;
+}) {
+	return await tx.run(listEventsQuery({ ctx, input }));
+}
+
+export async function countEventsForOrg({
+	tx,
+	input
+}: {
+	tx: ServerTransaction;
+	input: InferOutput<typeof listEventsInputSchema>;
+}) {
+	const isDeleted = input.isDeleted ?? false;
+	const isArchived = input.isArchived ?? false;
+	const whereParts = [
+		eq(event.organizationId, input.organizationId),
+		isDeleted ? isNotNull(event.deletedAt) : isNull(event.deletedAt),
+		isArchived ? isNotNull(event.archivedAt) : isNull(event.archivedAt)
+	];
+	if (input.excludedIds.length > 0) {
+		whereParts.push(not(inArray(event.id, input.excludedIds)));
+	}
+	if (input.searchString && input.searchString.length > 0) {
+		whereParts.push(ilike(event.title, `%${input.searchString}%`));
+	}
+	if (input.teamId) {
+		whereParts.push(eq(event.teamId, input.teamId));
+	}
+	if (input.tagId) {
+		whereParts.push(or(eq(event.signupTag, input.tagId), eq(event.attendanceTag, input.tagId))!);
+	}
+	if (input.eventType) {
+		if (input.eventType === 'online') {
+			whereParts.push(isNotNull(event.onlineLink));
+		} else if (input.eventType === 'in-person') {
+			whereParts.push(isNotNull(event.addressLine1));
+		}
+	}
+	if (input.status) {
+		if (input.status === 'draft') {
+			whereParts.push(eq(event.published, false));
+		} else if (input.status === 'published') {
+			whereParts.push(eq(event.published, true));
+		} else if (input.status === 'cancelled') {
+			whereParts.push(isNotNull(event.cancelledAt));
+		}
+	}
+	if (input.dateRange?.start != null) {
+		whereParts.push(gte(event.startsAt, new Date(input.dateRange.start)));
+	}
+	if (input.dateRange?.end != null) {
+		whereParts.push(lte(event.endsAt, new Date(input.dateRange.end)));
+	}
+	if (input.hasSignups) {
+		whereParts.push(
+			sql`exists (select 1 from ${eventSignup} es where ${eq(eventSignup.eventId, event.id)})`
+		);
+	}
+
+	const whereClause = and(...whereParts);
+
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: countRows() })
+		.from(event)
+		.where(whereClause);
+	return result.count;
 }

@@ -47,7 +47,7 @@ export const personSchema = v.object({
 });
 export type PersonSchema = v.InferOutput<typeof personSchema>;
 
-export const personWebhook = v.object({
+export const personApiSchema = v.object({
 	...v.omit(personSchema, ['organizationId']).entries,
 	dateOfBirth: v.nullable(helpers.dateToString),
 	mostRecentActivityAt: helpers.dateToString,
@@ -125,8 +125,8 @@ export const createPersonZero = v.pipe(
 );
 export type CreatePersonZero = v.InferOutput<typeof createPersonZero>;
 export const createPersonRest = v.object({
-	...createPerson.entries,
-	dateOfBirth: v.optional(v.nullable(helpers.dateToTimestamp), null)
+	...createPersonZero.entries,
+	dateOfBirth: v.optional(v.nullable(helpers.dateOfBirthToDate), null)
 });
 export type CreatePersonRest = v.InferOutput<typeof createPersonRest>;
 
@@ -140,7 +140,7 @@ export const updatePersonZero = v.object({
 export type UpdatePersonZero = v.InferOutput<typeof updatePersonZero>;
 export const updatePersonRest = v.object({
 	...updatePerson.entries,
-	dateOfBirth: v.nullable(helpers.dateStringToDate)
+	dateOfBirth: v.nullable(helpers.dateOfBirthToDate)
 });
 export type UpdatePersonRest = v.InferOutput<typeof updatePersonRest>;
 

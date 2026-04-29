@@ -127,10 +127,23 @@ export const unixTimestamp = v.pipe(v.number());
 export const date = v.date();
 export const isoTimestamp = v.pipe(v.string(), v.isoTimestamp('Invalid ISO timestamp format'));
 export const pastDate = v.pipe(date, v.maxValue(new Date(), 'Must be in the past'));
+
+export const dateOfBirthToDate = v.pipe(
+	v.string(),
+	v.regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
+	v.transform((input) => {
+		const [year, month, day] = input.split('-').map(Number);
+		return new Date(Date.UTC(year, month - 1, day));
+	})
+);
+
 export const dateToString = v.pipe(
-	v.union([date, isoTimestamp]),
+	v.union([date, isoTimestamp, unixTimestamp]),
 	v.transform((input) => {
 		if (typeof input === 'string') {
+			return new Date(input).toISOString();
+		}
+		if (typeof input === 'number') {
 			return new Date(input).toISOString();
 		}
 		return input.toISOString();

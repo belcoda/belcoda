@@ -1,6 +1,6 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
-import { eq, and, isNull } from 'drizzle-orm';
+import { eq, and, isNull, or, ilike, count } from 'drizzle-orm';
 import { person, personTeam, team } from '$lib/schema/drizzle';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
@@ -12,11 +12,12 @@ import {
 	type DeleteMutatorSchemaZero,
 	updateMutatorSchemaZero,
 	type UpdateMutatorSchemaZeroOutput,
-	personWebhook
+	personApiSchema
 } from '$lib/schema/person';
 import { parse } from 'valibot';
 import pino from '$lib/pino';
 import { _addPersonTeamDataUnsafe, addPersonToTeam } from './team';
+import { type ListFilter } from '$lib/schema/helpers';
 const log = pino(import.meta.url);
 export async function createPerson({
 	tx,
@@ -95,7 +96,7 @@ export async function createPerson({
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'person.created',
-				data: parse(personWebhook, result)
+				data: parse(personApiSchema, result)
 			}
 		});
 	} catch (err) {
@@ -151,7 +152,7 @@ export async function updatePerson({
 			organizationId: input.metadata.organizationId,
 			payload: {
 				type: 'person.updated',
-				data: parse(personWebhook, result)
+				data: parse(personApiSchema, result)
 			}
 		});
 	} catch (err) {
@@ -292,4 +293,48 @@ export async function _getPersonByIdUnsafeNoTenantCheck({
 		.where(and(eq(person.id, personId), isNull(person.deletedAt)))
 		.limit(1);
 	return row?.organizationId ?? null;
+}
+
+import { listPersonsQuery } from '$lib/zero/query/person/list';
+export async function listPersons({
+	ctx,
+	input,
+	tx
+}: {
+	ctx: QueryContext;
+	input: ListFilter;
+	tx: ServerTransaction;
+}) {
+	return await tx.run(listPersonsQuery({ ctx, input }));
+}
+
+export async function _countPersons({
+	organizationId,
+	searchString,
+	tx
+}: {
+	organizationId: string;
+	searchString: string | null;
+	tx: ServerTransaction;
+}) {
+	const baseWhereClause = and(eq(person.organizationId, organizationId), isNull(person.deletedAt));
+	let whereClause;
+	if (searchString) {
+		whereClause = and(
+			baseWhereClause,
+			or(
+				ilike(person.givenName, `%${searchString}%`),
+				ilike(person.familyName, `%${searchString}%`),
+				ilike(person.emailAddress, `%${searchString}%`),
+				ilike(person.phoneNumber, `%${searchString}%`)
+			)
+		);
+	} else {
+		whereClause = baseWhereClause;
+	}
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: count() })
+		.from(person)
+		.where(whereClause);
+	return result.count;
 }

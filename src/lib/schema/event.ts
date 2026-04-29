@@ -48,7 +48,7 @@ export const eventSchema = v.object({
 });
 export type EventSchema = v.InferOutput<typeof eventSchema>;
 
-export const eventWebhook = v.object({
+export const eventApiSchema = v.object({
 	...v.omit(eventSchema, ['organizationId']).entries,
 	startsAt: helpers.dateToString,
 	endsAt: helpers.dateToString,
@@ -59,19 +59,6 @@ export const eventWebhook = v.object({
 	archivedAt: v.nullable(helpers.dateToString),
 	cancelledAt: v.nullable(helpers.dateToString)
 });
-
-export const readEventRest = v.object({
-	...eventSchema.entries,
-	startsAt: helpers.unixTimestamp,
-	endsAt: helpers.unixTimestamp,
-	reminderSentAt: v.nullable(helpers.unixTimestamp),
-	createdAt: helpers.unixTimestamp,
-	updatedAt: helpers.unixTimestamp,
-	deletedAt: v.nullable(helpers.unixTimestamp),
-	archivedAt: v.nullable(helpers.unixTimestamp),
-	cancelledAt: v.nullable(helpers.unixTimestamp)
-});
-export type ReadEventRest = v.InferOutput<typeof readEventRest>;
 
 export const readEventZero = v.object({
 	...eventSchema.entries,
@@ -119,6 +106,13 @@ export const createEventZero = v.object({
 });
 export type CreateEventZero = v.InferOutput<typeof createEventZero>;
 
+export const createEventRest = v.object({
+	...createEventZero.entries,
+	startsAt: helpers.dateStringToDate,
+	endsAt: helpers.dateStringToDate
+});
+export type CreateEventRest = v.InferOutput<typeof createEventRest>;
+
 export function generateCreateEventZeroAsyncSchema(organizationId: string) {
 	const { title, slug } = generateEventTitleAsyncSchema(organizationId);
 	const createEventZeroAsync = v.objectAsync({
@@ -142,6 +136,13 @@ export const updateEventZero = v.object({
 	endsAt: helpers.unixTimestamp
 });
 export type UpdateEventZero = v.InferOutput<typeof updateEventZero>;
+
+export const updateEventRest = v.object({
+	...updateEventZero.entries,
+	startsAt: helpers.dateStringToDate,
+	endsAt: helpers.dateStringToDate
+});
+export type UpdateEventRest = v.InferOutput<typeof updateEventRest>;
 
 export const mutatorMetadata = v.object({
 	organizationId: eventSchema.entries.organizationId,

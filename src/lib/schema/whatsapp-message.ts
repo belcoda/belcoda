@@ -28,7 +28,7 @@ export const whatsappMessageSchema = v.object({
 });
 export type WhatsappMessageSchema = v.InferOutput<typeof whatsappMessageSchema>;
 
-export const whatsappMessageWebhook = v.object({
+export const whatsappMessageApiSchema = v.object({
 	...v.omit(whatsappMessageSchema, ['organizationId', 'externalId']).entries,
 	deliveredAt: v.nullable(helpers.dateToString),
 	readAt: v.nullable(helpers.dateToString),

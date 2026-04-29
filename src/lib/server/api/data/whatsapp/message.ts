@@ -20,7 +20,7 @@ import { parse } from 'valibot';
 import { isReactionSupportedMessageType } from '$lib/schema/whatsapp-message';
 import { structuredClone } from '$lib/utils/structuredClone';
 import { getQueue } from '$lib/server/queue';
-import { whatsappMessageWebhook } from '$lib/schema/whatsapp-message';
+import { whatsappMessageApiSchema } from '$lib/schema/whatsapp-message';
 import type { QueryContext } from '$lib/zero/schema';
 import { getPerson } from '$lib/server/api/data/person/person';
 import { getOrganizationByIdUnsafe } from '../organization';
@@ -128,7 +128,7 @@ export async function handleIncomingReaction({
 						organizationId,
 						payload: {
 							type: 'whatsapp.message.updated',
-							data: parse(whatsappMessageWebhook, rest)
+							data: parse(whatsappMessageApiSchema, rest)
 						}
 					});
 				} catch (err) {
@@ -273,7 +273,7 @@ export async function createWhatsAppMessage({
 			organizationId: orgId,
 			payload: {
 				type: 'whatsapp.message.created',
-				data: parse(whatsappMessageWebhook, rest)
+				data: parse(whatsappMessageApiSchema, rest)
 			}
 		});
 	} catch (err) {

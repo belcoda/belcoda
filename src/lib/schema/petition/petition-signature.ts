@@ -21,7 +21,7 @@ export const petitionSignatureSchema = v.object({
 });
 export type PetitionSignatureSchema = v.InferOutput<typeof petitionSignatureSchema>;
 
-export const petitionSignatureWebhook = v.object({
+export const petitionSignatureApiSchema = v.object({
 	...v.omit(petitionSignatureSchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString,
@@ -64,6 +64,15 @@ export const updatePetitionSignature = v.object({
 	responses: petitionSignatureSchema.entries.responses
 });
 export type UpdatePetitionSignature = v.InferInput<typeof updatePetitionSignature>;
+
+/** POST body for API; `petitionId` is taken from the URL path. */
+export const createPetitionSignatureApiBody = v.object({
+	personId: petitionSignatureSchema.entries.personId,
+	details: petitionSignatureSchema.entries.details,
+	responses: v.optional(petitionSignatureSchema.entries.responses, null)
+});
+
+export const updatePetitionSignatureRest = updatePetitionSignature;
 
 export const mutatorMetadata = v.object({
 	organizationId: petitionSignatureSchema.entries.organizationId,
