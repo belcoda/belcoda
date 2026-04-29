@@ -1,6 +1,8 @@
-import { error } from '@sveltejs/kit';
+import { error, type RequestEvent, json } from '@sveltejs/kit';
 import { getApiQueryContext } from '$lib/server/api/utils/auth/permissions';
+import { type BaseSchema, type BaseIssue, parse } from 'valibot';
 import { type QueryContext } from '$lib/zero/schema';
+import { renderValiError } from '$lib/schema/helpers';
 /**
  * Checks if the provided `organizationIdDerivedFromApiKey` is a valid organization ID.
  *
@@ -48,7 +50,7 @@ export function buildApiListFilter({
 		searchString: url.searchParams.get('search') || null,
 		teamId: null,
 		isDeleted: null,
-		startAfter: url.searchParams.get('startAfter') || null,
+		startAfter: url.searchParams.get('startAfter') || null, //Note: Currently ignored due to potential bug in Z2S compiler not yet supporting pagination
 		excludedIds: []
 	};
 }
@@ -85,3 +87,57 @@ export const queryParamsOpenAPIDefinition = {
 			'The ID of the last item in the previous page. Used for pagination. The value of this parameter should be the value of the `id` field of the last item in the previous page.'
 	}
 };
+
+export function buildApiErrorResponse(error: unknown): Response {
+	const valiError = renderValiError(error);
+	if (valiError.isValiError) {
+		return json({ error: valiError.message }, { status: 400 });
+	} else {
+		return json({ error: 'An unknown error occurred' }, { status: 500 });
+	}
+}
+
+export function buildApiListResponse<T>({ data, count }: { data: T; count: number }) {
+	return {
+		metadata: {
+			count
+		},
+		data
+	};
+}
+
+export async function processIncomingBody<T>(
+	event: RequestEvent,
+	schema: BaseSchema<unknown, T, BaseIssue<unknown>>
+): Promise<T> {
+	let body: unknown;
+	try {
+		body = await event.request.json();
+	} catch (err) {
+		throw error(400, {
+			message: 'Invalid JSON body'
+		});
+	}
+	if (!body) {
+		throw error(400, {
+			message: 'No body provided'
+		});
+	}
+	try {
+		return parse(schema, body);
+	} catch (err) {
+		throw buildApiErrorResponse(err);
+	}
+}
+
+export function processOutgoingBody<T, U>(
+	body: T,
+	schema: BaseSchema<T, U, BaseIssue<unknown>>
+): U {
+	try {
+		const parsed = parse(schema, body);
+		return parsed;
+	} catch (err) {
+		throw buildApiErrorResponse(err);
+	}
+}
