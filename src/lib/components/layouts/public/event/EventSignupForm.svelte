@@ -89,8 +89,8 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import AddToCalendarDropdown from './AddToCalendarDropdown.svelte';
 	import PhoneNumberInput from '$lib/components/ui/custom-select/phone-number/phone-number.svelte';
-	import DateOfBirth from '$lib/components/ui/custom-select/date-of-birth/date-of-birth.svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index';
+	import InputDate from '$lib/components/ui/custom-input/date-jsdateinput.svelte';
 
 	//icons
 	import AlertTriangle from '@lucide/svelte/icons/alert-triangle';
@@ -295,7 +295,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>{renderPersonQuestion('person.dateOfBirth')}</Form.Label>
-							<DateOfBirth {...props} bind:value={$data.person.dateOfBirth} />
+							<InputDate {...props} bind:value={$data.person.dateOfBirth} />
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />

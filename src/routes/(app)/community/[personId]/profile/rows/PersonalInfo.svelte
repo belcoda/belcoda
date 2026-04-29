@@ -5,7 +5,7 @@
 	let { person }: { person: ReadPersonZero } = $props();
 	let edit = $state(false);
 	import { cn } from '$lib/utils';
-	import { formatDate } from '$lib/utils/date';
+	import { formatTextDate } from '$lib/utils/date';
 	import { renderGender } from '$lib/utils/person/gender/render';
 	import * as Item from '$lib/components/ui/item/index.js';
 	import VenusAndMarsIcon from '@lucide/svelte/icons/venus-and-mars';
@@ -43,7 +43,7 @@
 				<Item.Content>
 					{#if person.dateOfBirth}
 						<Item.Title class="font-normal">
-							{formatDate(person.dateOfBirth)}
+							{formatTextDate(person.dateOfBirth)}
 						</Item.Title>
 					{:else}
 						<Item.Description>{t`Not specified`}</Item.Description>
