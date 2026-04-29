@@ -82,6 +82,6 @@ export const updateMutatorSchemaZero = v.object({
 export type UpdateMutatorSchemaZero = v.InferOutput<typeof updateMutatorSchemaZero>;
 
 export const deleteMutatorSchemaZero = v.object({
-	metadata: mutatorMetadata
+	metadata: v.omit(mutatorMetadata, ['userId'])
 });
 export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;
