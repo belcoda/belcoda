@@ -13,6 +13,24 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsAdmin(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.admin.email, TEST_USERS.admin.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 test.describe.serial('Settings: Webhooks', () => {
 	const state = {
 		name: '',
@@ -54,6 +72,31 @@ test.describe.serial('Settings: Webhooks', () => {
 		await expect(webhooksPage.webhookRow(updatedName, updatedUrl)).toBeVisible({
 			timeout: 15_000
 		});
+	});
+
+	test('admin can view webhooks but cannot manage them', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+
+		await loginAsAdmin(page);
+		await webhooksPage.goto();
+
+		const row = webhooksPage.webhookRow(state.name, state.targetUrl);
+		await expect(row).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.createWebhookTrigger).toHaveCount(0);
+		await expect(row.getByTestId('settings-webhooks-edit')).toHaveCount(0);
+		await expect(row.getByTestId('settings-webhooks-delete')).toHaveCount(0);
+		await expect(row.getByTestId('settings-webhooks-view-secret')).toHaveCount(0);
+	});
+
+	test('member cannot access webhook management', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+
+		await loginAsMember(page);
+		await webhooksPage.goto();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.root).toHaveCount(0);
+		await expect(webhooksPage.createWebhookTrigger).toHaveCount(0);
 	});
 
 	test('owner can delete a webhook', async ({ page }) => {

@@ -13,6 +13,15 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 test.describe.serial('Settings: Send Signatures', () => {
 	const state = {
 		displayName: '',
@@ -111,6 +120,19 @@ test.describe.serial('Settings: Send Signatures', () => {
 
 		await expect(page.getByText('Default send signature updated successfully')).toBeVisible({
 			timeout: 15_000
+		});
+	});
+
+	test('member cannot access send signature management', async ({ page }) => {
+		const sendSignaturesPage = new SendSignaturesPage(page);
+
+		await loginAsMember(page);
+		await sendSignaturesPage.goto();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(sendSignaturesPage.newSignatureTrigger).toHaveCount(0);
+		await expect(sendSignaturesPage.signatureRowByEmail(state.emailAddress)).toHaveCount(0, {
+			timeout: 5_000
 		});
 	});
 

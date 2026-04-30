@@ -13,6 +13,15 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 test.describe.serial('Settings: API Keys', () => {
 	const state = {
 		name: ''
@@ -30,6 +39,17 @@ test.describe.serial('Settings: API Keys', () => {
 		await expect(apiKeysPage.keyDisplay).toBeVisible();
 		await apiKeysPage.closeCreateModalButton.click();
 		await expect(apiKeysPage.apiKeyRow(state.name)).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('member cannot access API key management', async ({ page }) => {
+		const apiKeysPage = new ApiKeysPage(page);
+
+		await loginAsMember(page);
+		await apiKeysPage.goto();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(apiKeysPage.newApiKeyTrigger).toHaveCount(0);
+		await expect(apiKeysPage.apiKeyRow(state.name)).toHaveCount(0);
 	});
 
 	test('owner can delete an API key', async ({ page }) => {
