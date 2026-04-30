@@ -24,6 +24,13 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function expectEventSlugPreview(page: Page, title: string) {
+	await expect(page.getByTestId('event-slug-preview')).toContainText(
+		`/events/${slugifyTitle(title)}`,
+		{ timeout: 5_000 }
+	);
+}
+
 test.describe.serial('Events', () => {
 	const ids = {
 		eventId: '',
@@ -44,6 +51,7 @@ test.describe.serial('Events', () => {
 		await expect(createPage.form).toBeVisible();
 
 		await createPage.fillTitle(ids.eventTitle);
+		await expectEventSlugPreview(page, ids.eventTitle);
 		await createPage.fillDescription('E2E test event description');
 		await createPage.submit();
 
@@ -55,7 +63,7 @@ test.describe.serial('Events', () => {
 		const isChecked = await publishToggle.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishToggle.click();
-			await page.waitForTimeout(800);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 
 		await createPage.closeModal();
@@ -88,6 +96,7 @@ test.describe.serial('Events', () => {
 		ids.eventTitle = `${ids.eventTitle} (edited)`;
 		ids.originalEventSlug = slugifyTitle(ids.eventTitle);
 		await editPage.clearAndFillTitle(ids.eventTitle);
+		await expectEventSlugPreview(page, ids.eventTitle);
 		await editPage.submit();
 
 		await editPage.waitForModal();
@@ -229,17 +238,20 @@ test.describe.serial('Events', () => {
 		await loginAsOwner(page);
 
 		const createPage = new EventCreatePage(page);
+		const archiveTitle = `E2E Archive Test ${Date.now()}`;
 		await createPage.goto();
-		await createPage.fillTitle(`E2E Archive Test ${Date.now()}`);
+		await createPage.fillTitle(archiveTitle);
+		await expectEventSlugPreview(page, archiveTitle);
 		await createPage.fillDescription('To be archived');
 		await createPage.submit();
 		await createPage.waitForModal();
 
 		const publishToggle = page.locator('[id="publish-toggle"]');
+		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
 		const isChecked = await publishToggle.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishToggle.click();
-			await page.waitForTimeout(500);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 		await createPage.closeModal();
 
@@ -266,8 +278,10 @@ test.describe.serial('Events', () => {
 		await loginAsOwner(page);
 
 		const createPage = new EventCreatePage(page);
+		const deleteTitle = `E2E Delete Test ${Date.now()}`;
 		await createPage.goto();
-		await createPage.fillTitle(`E2E Delete Test ${Date.now()}`);
+		await createPage.fillTitle(deleteTitle);
+		await expectEventSlugPreview(page, deleteTitle);
 		await createPage.fillDescription('To be deleted');
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -338,6 +352,7 @@ test.describe.serial('Events', () => {
 		const createPage = new EventCreatePage(page);
 		await createPage.goto();
 		await createPage.fillTitle(title);
+		await expectEventSlugPreview(page, title);
 		await createPage.fillDescription('E2E event in the past for closed signup');
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -346,7 +361,7 @@ test.describe.serial('Events', () => {
 		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
 		if (!(await publishToggle.isChecked().catch(() => false))) {
 			await publishToggle.click();
-			await page.waitForTimeout(800);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 		await createPage.closeModal();
 
@@ -408,6 +423,7 @@ test.describe.serial('Event signup fields', () => {
 		await createPage.goto();
 
 		await createPage.fillTitle(title);
+		await expectEventSlugPreview(page, title);
 		await createPage.fillDescription('Testing extra signup fields');
 		await createPage.fillAddress({
 			line1: '123 Test Street',
@@ -417,8 +433,9 @@ test.describe.serial('Event signup fields', () => {
 		});
 
 		const surveyPage = new EventSurveyPage(page);
-		await surveyPage.checkStandardField('address');
 		await surveyPage.addShortTextQuestion(CUSTOM_QUESTION_LABEL);
+		await surveyPage.checkStandardField('address');
+		await expect(surveyPage.standardFieldCheckbox('address')).toBeChecked();
 
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -428,7 +445,7 @@ test.describe.serial('Event signup fields', () => {
 		const isChecked = await publishToggle.isChecked().catch(() => false);
 		if (!isChecked) {
 			await publishToggle.click();
-			await page.waitForTimeout(800);
+			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 
 		await createPage.closeModal();

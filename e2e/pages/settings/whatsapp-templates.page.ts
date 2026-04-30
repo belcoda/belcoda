@@ -105,7 +105,6 @@ export class WhatsAppTemplateFormPage {
 		const input = this.templateNameInput();
 		await input.waitFor({ state: 'visible', timeout: 10_000 });
 		await input.fill(name);
-		await this.page.waitForTimeout(400);
 	}
 
 	async fillBodyText(text: string) {

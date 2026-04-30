@@ -5,6 +5,7 @@ export class EventCreatePage {
 	readonly form: Locator;
 	readonly titleInput: Locator;
 	readonly descriptionInput: Locator;
+	readonly slugPreview: Locator;
 	readonly saveButton: Locator;
 	readonly createdModal: Locator;
 
@@ -13,6 +14,7 @@ export class EventCreatePage {
 		this.form = page.getByTestId('event-form');
 		this.titleInput = page.getByTestId('event-title-input');
 		this.descriptionInput = page.getByTestId('event-description-input');
+		this.slugPreview = page.getByTestId('event-slug-preview');
 		this.saveButton = page.getByTestId('event-save-button');
 		this.createdModal = page.getByTestId('event-created-modal');
 	}
@@ -24,7 +26,6 @@ export class EventCreatePage {
 
 	async fillTitle(title: string) {
 		await this.titleInput.fill(title);
-		await this.page.waitForTimeout(400);
 	}
 
 	async fillDescription(description: string) {
@@ -58,5 +59,6 @@ export class EventCreatePage {
 
 	async closeModal() {
 		await this.page.keyboard.press('Escape');
+		await this.createdModal.waitFor({ state: 'hidden', timeout: 10_000 });
 	}
 }

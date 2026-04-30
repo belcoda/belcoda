@@ -4,6 +4,7 @@ export class PetitionEditPage {
 	readonly page: Page;
 	readonly form: Locator;
 	readonly titleInput: Locator;
+	readonly slugPreview: Locator;
 	readonly saveButton: Locator;
 	readonly dangerZone: Locator;
 	readonly archiveButton: Locator;
@@ -13,6 +14,7 @@ export class PetitionEditPage {
 		this.page = page;
 		this.form = page.getByTestId('petition-form');
 		this.titleInput = page.getByTestId('petition-title-input');
+		this.slugPreview = page.getByTestId('petition-slug-preview');
 		this.saveButton = page.getByTestId('petition-save-button');
 		this.dangerZone = page.getByTestId('petition-danger-zone');
 		this.archiveButton = page.getByTestId('petition-archive-button');
@@ -25,13 +27,11 @@ export class PetitionEditPage {
 
 	async clearAndFillTitle(title: string) {
 		await this.titleInput.clear();
-		await this.page.waitForTimeout(400);
 		await this.titleInput.click();
 		await this.page.keyboard.press('Meta+A');
 		await this.page.keyboard.press('Backspace');
 		await this.titleInput.pressSequentially(title, { delay: 25 });
 		await this.titleInput.blur();
-		await this.page.waitForTimeout(400);
 	}
 
 	async submit() {

@@ -1,6 +1,6 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
-import { webhook } from '$lib/schema/drizzle';
+import { webhook, webhookLog } from '$lib/schema/drizzle';
 import { and, eq, ne } from 'drizzle-orm';
 import { randomBytes } from 'crypto';
 
@@ -145,6 +145,10 @@ export async function deleteWebhook({
 	if (webhookRecord.organizationId !== parsed.metadata.organizationId) {
 		throw new Error('Webhook does not belong to the specified organization');
 	}
+
+	await tx.dbTransaction.wrappedTransaction
+		.delete(webhookLog)
+		.where(eq(webhookLog.webhookId, parsed.metadata.webhookId));
 
 	await tx.dbTransaction.wrappedTransaction
 		.delete(webhook)

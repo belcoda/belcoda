@@ -4,6 +4,7 @@ export class EventEditPage {
 	readonly page: Page;
 	readonly form: Locator;
 	readonly titleInput: Locator;
+	readonly slugPreview: Locator;
 	readonly saveButton: Locator;
 	readonly createdModal: Locator;
 	readonly archiveButton: Locator;
@@ -13,6 +14,7 @@ export class EventEditPage {
 		this.page = page;
 		this.form = page.getByTestId('event-form');
 		this.titleInput = page.getByTestId('event-title-input');
+		this.slugPreview = page.getByTestId('event-slug-preview');
 		this.saveButton = page.getByTestId('event-save-button');
 		this.createdModal = page.getByTestId('event-created-modal');
 		this.archiveButton = page.getByTestId('event-archive-button');
@@ -25,7 +27,6 @@ export class EventEditPage {
 
 	async clearAndFillTitle(title: string) {
 		await this.titleInput.fill(title);
-		await this.page.waitForTimeout(400);
 	}
 
 	async submit() {
@@ -38,6 +39,7 @@ export class EventEditPage {
 
 	async closeModal() {
 		await this.page.keyboard.press('Escape');
+		await this.createdModal.waitFor({ state: 'hidden', timeout: 10_000 });
 	}
 
 	async archiveEvent(page: Page) {

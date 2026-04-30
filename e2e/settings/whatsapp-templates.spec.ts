@@ -94,7 +94,12 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 		await expect(submitBtn).toBeVisible({ timeout: 10_000 });
 		await submitBtn.click();
 
-		await expect(listPage.statusCellForRow(row)).toContainText('Pending', { timeout: 25_000 });
-		await expect(submitBtn).toHaveCount(0);
+		await listPage.goto();
+		const refreshedRow = listPage.rowForTemplateId(ids.templateId);
+		await expect(refreshedRow).toBeVisible({ timeout: 20_000 });
+		await expect(listPage.statusCellForRow(refreshedRow)).toContainText('Pending', {
+			timeout: 25_000
+		});
+		await expect(listPage.submitButtonForRow(refreshedRow)).toHaveCount(0);
 	});
 });
