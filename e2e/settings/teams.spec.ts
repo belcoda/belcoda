@@ -127,6 +127,28 @@ test.describe.serial('Settings: Teams', () => {
 		await expect(teamDetail.personRow(ids.personId)).toBeVisible({ timeout: 15_000 });
 	});
 
+	test('member cannot access team management', async ({ page }) => {
+		const teamsPage = new TeamsPage(page);
+
+		await loginAsMember(page);
+		await teamsPage.goto();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(teamsPage.newTeamTrigger).toHaveCount(0);
+		await expect(teamsPage.teamRow(ids.teamId)).toHaveCount(0);
+	});
+
+	test('member cannot access team detail management', async ({ page }) => {
+		const teamDetail = new TeamDetailPage(page);
+
+		await loginAsMember(page);
+		await teamDetail.goto(ids.teamId);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(teamDetail.addPersonTrigger).toHaveCount(0);
+		await expect(teamDetail.removePersonButton(ids.personId)).toHaveCount(0);
+	});
+
 	test('owner can remove a person from the team', async ({ page }) => {
 		const teamDetail = new TeamDetailPage(page);
 
@@ -136,53 +158,5 @@ test.describe.serial('Settings: Teams', () => {
 		await teamDetail.removePersonButton(ids.personId).click();
 
 		await expect(teamDetail.personRow(ids.personId)).toHaveCount(0, { timeout: 15_000 });
-	});
-
-	test('member cannot create a team', async ({ page }) => {
-		const teamsPage = new TeamsPage(page);
-		const suffix = `${Date.now()}`;
-		const teamName = `E2E Member Team ${suffix}`;
-
-		await loginAsMember(page);
-		await teamsPage.goto();
-
-		await teamsPage.createTeam(teamName);
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-		await expect(teamsPage.teamRowByName(teamName)).toHaveCount(0, { timeout: 15_000 });
-	});
-
-	test('member cannot edit a team', async ({ page }) => {
-		const teamsPage = new TeamsPage(page);
-		const newName = `${ids.teamName} Member Edit`;
-
-		await loginAsMember(page);
-		await teamsPage.goto();
-
-		await teamsPage.editTeam(ids.teamId, newName);
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-	});
-
-	test('member cannot add person to team', async ({ page }) => {
-		const teamDetail = new TeamDetailPage(page);
-
-		await loginAsMember(page);
-		await teamDetail.goto(ids.teamId);
-
-		await teamDetail.addPersonTrigger.click();
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-	});
-
-	test('member cannot remove person from team', async ({ page }) => {
-		const teamDetail = new TeamDetailPage(page);
-
-		await loginAsMember(page);
-		await teamDetail.goto(ids.teamId);
-
-		await teamDetail.removePersonButton(ids.personId).click();
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
 	});
 });
