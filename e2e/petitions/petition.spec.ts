@@ -343,8 +343,9 @@ test.describe.serial('Petitions: signup fields', () => {
 		await createPage.fillPetitionText('Petition text for signup field tests.');
 
 		const surveyPage = new PetitionSurveyPage(page);
-		await surveyPage.checkStandardField('address');
 		await surveyPage.addShortTextQuestion(CUSTOM_QUESTION_LABEL);
+		await surveyPage.checkStandardField('address');
+		await expect(surveyPage.standardFieldCheckbox('address')).toBeChecked();
 
 		await createPage.submit();
 		await createPage.waitForModal();

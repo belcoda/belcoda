@@ -433,8 +433,9 @@ test.describe.serial('Event signup fields', () => {
 		});
 
 		const surveyPage = new EventSurveyPage(page);
-		await surveyPage.checkStandardField('address');
 		await surveyPage.addShortTextQuestion(CUSTOM_QUESTION_LABEL);
+		await surveyPage.checkStandardField('address');
+		await expect(surveyPage.standardFieldCheckbox('address')).toBeChecked();
 
 		await createPage.submit();
 		await createPage.waitForModal();

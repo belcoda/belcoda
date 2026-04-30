@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 export class PetitionSurveyPage {
 	readonly page: Page;
@@ -11,21 +11,20 @@ export class PetitionSurveyPage {
 		this.accordionTrigger = page.locator('[data-slot="accordion-trigger"]');
 	}
 
+	standardFieldCheckbox(field: 'address' | 'gender' | 'dob' | 'workplace' | 'position') {
+		return this.page.locator(`#standard-information-${field}`);
+	}
+
 	async checkStandardField(field: 'address' | 'gender' | 'dob' | 'workplace' | 'position') {
-		const checkbox = this.page.locator(`#standard-information-${field}`);
+		const checkbox = this.standardFieldCheckbox(field);
 		await checkbox.waitFor({ state: 'visible', timeout: 10_000 });
 		await checkbox.scrollIntoViewIfNeeded();
-		for (let i = 0; i < 3; i++) {
-			const isChecked = await checkbox.isChecked().catch(async () => {
-				return (await checkbox.getAttribute('aria-checked')) === 'true';
-			});
-			if (isChecked) {
-				break;
-			}
+		const isChecked = await checkbox.isChecked().catch(async () => {
+			return (await checkbox.getAttribute('aria-checked')) === 'true';
+		});
+		if (!isChecked) {
 			await checkbox.click();
-			await this.page.waitForTimeout(100);
 		}
-		await expect(checkbox).toBeChecked();
 	}
 
 	async addShortTextQuestion(label: string) {
