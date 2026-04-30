@@ -24,6 +24,13 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function expectEventSlugPreview(page: Page, title: string) {
+	await expect(page.getByTestId('event-slug-preview')).toContainText(
+		`/events/${slugifyTitle(title)}`,
+		{ timeout: 5_000 }
+	);
+}
+
 test.describe.serial('Events', () => {
 	const ids = {
 		eventId: '',
@@ -44,6 +51,7 @@ test.describe.serial('Events', () => {
 		await expect(createPage.form).toBeVisible();
 
 		await createPage.fillTitle(ids.eventTitle);
+		await expectEventSlugPreview(page, ids.eventTitle);
 		await createPage.fillDescription('E2E test event description');
 		await createPage.submit();
 
@@ -88,6 +96,7 @@ test.describe.serial('Events', () => {
 		ids.eventTitle = `${ids.eventTitle} (edited)`;
 		ids.originalEventSlug = slugifyTitle(ids.eventTitle);
 		await editPage.clearAndFillTitle(ids.eventTitle);
+		await expectEventSlugPreview(page, ids.eventTitle);
 		await editPage.submit();
 
 		await editPage.waitForModal();
@@ -229,8 +238,10 @@ test.describe.serial('Events', () => {
 		await loginAsOwner(page);
 
 		const createPage = new EventCreatePage(page);
+		const archiveTitle = `E2E Archive Test ${Date.now()}`;
 		await createPage.goto();
-		await createPage.fillTitle(`E2E Archive Test ${Date.now()}`);
+		await createPage.fillTitle(archiveTitle);
+		await expectEventSlugPreview(page, archiveTitle);
 		await createPage.fillDescription('To be archived');
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -267,8 +278,10 @@ test.describe.serial('Events', () => {
 		await loginAsOwner(page);
 
 		const createPage = new EventCreatePage(page);
+		const deleteTitle = `E2E Delete Test ${Date.now()}`;
 		await createPage.goto();
-		await createPage.fillTitle(`E2E Delete Test ${Date.now()}`);
+		await createPage.fillTitle(deleteTitle);
+		await expectEventSlugPreview(page, deleteTitle);
 		await createPage.fillDescription('To be deleted');
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -339,6 +352,7 @@ test.describe.serial('Events', () => {
 		const createPage = new EventCreatePage(page);
 		await createPage.goto();
 		await createPage.fillTitle(title);
+		await expectEventSlugPreview(page, title);
 		await createPage.fillDescription('E2E event in the past for closed signup');
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -409,6 +423,7 @@ test.describe.serial('Event signup fields', () => {
 		await createPage.goto();
 
 		await createPage.fillTitle(title);
+		await expectEventSlugPreview(page, title);
 		await createPage.fillDescription('Testing extra signup fields');
 		await createPage.fillAddress({
 			line1: '123 Test Street',

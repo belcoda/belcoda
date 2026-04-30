@@ -24,6 +24,13 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function expectPetitionSlugPreview(page: Page, title: string) {
+	await expect(page.getByTestId('petition-slug-preview')).toContainText(
+		`/petitions/${slugifyTitle(title)}`,
+		{ timeout: 5_000 }
+	);
+}
+
 async function ensurePetitionForPublicTests(page: Page) {
 	if (ids.petitionId && ids.petitionSlug) {
 		return;
@@ -36,6 +43,7 @@ async function ensurePetitionForPublicTests(page: Page) {
 	await createPage.goto();
 	await expect(createPage.form).toBeVisible();
 	await createPage.fillTitle(ids.petitionTitle);
+	await expectPetitionSlugPreview(page, ids.petitionTitle);
 	await createPage.fillDescription('E2E petition for public page tests');
 	await createPage.fillTarget('E2E public petition target');
 	await createPage.fillPetitionText('E2E petition text for public page tests');
@@ -71,6 +79,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await expect(createPage.form).toBeVisible();
 
 		await createPage.fillTitle(ids.petitionTitle);
+		await expectPetitionSlugPreview(page, ids.petitionTitle);
 		await createPage.fillDescription('E2E petition short description');
 		await createPage.fillTarget('E2E petition target');
 		await createPage.fillPetitionText('E2E petition full text for signers.');
@@ -118,8 +127,9 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 
 		ids.petitionTitle = `${ids.petitionTitle} (edited)`;
 		await editPage.clearAndFillTitle(ids.petitionTitle);
+		await expectPetitionSlugPreview(page, ids.petitionTitle);
 		await editPage.submit();
-		await page.waitForTimeout(400);
+		await expect(page).toHaveURL(`/petitions/${ids.petitionId}`, { timeout: 15_000 });
 
 		// save the changed slug
 		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
@@ -327,6 +337,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		await expect(createPage.form).toBeVisible();
 
 		await createPage.fillTitle(title);
+		await expectPetitionSlugPreview(page, title);
 		await createPage.fillDescription('Testing petition extra signup fields');
 		await createPage.fillTarget('Petition target for signup field tests');
 		await createPage.fillPetitionText('Petition text for signup field tests.');
@@ -411,8 +422,10 @@ test.describe.serial('Petitions: archive', () => {
 		await loginAsOwner(page);
 
 		const createPage = new PetitionCreatePage(page);
+		const archiveTitle = `E2E Archive Petition ${Date.now()}`;
 		await createPage.goto();
-		await createPage.fillTitle(`E2E Archive Petition ${Date.now()}`);
+		await createPage.fillTitle(archiveTitle);
+		await expectPetitionSlugPreview(page, archiveTitle);
 		await createPage.fillDescription('To be archived');
 		await createPage.fillTarget('Archive target');
 		await createPage.submit();
@@ -452,8 +465,10 @@ test.describe.serial('Petitions: delete draft', () => {
 		await loginAsOwner(page);
 
 		const createPage = new PetitionCreatePage(page);
+		const deleteTitle = `E2E Delete Petition ${Date.now()}`;
 		await createPage.goto();
-		await createPage.fillTitle(`E2E Delete Petition ${Date.now()}`);
+		await createPage.fillTitle(deleteTitle);
+		await expectPetitionSlugPreview(page, deleteTitle);
 		await createPage.fillDescription('To be deleted');
 		await createPage.fillTarget('Delete target');
 		await createPage.submit();
