@@ -1,4 +1,4 @@
-import { expect, type Page, type Locator } from '@playwright/test';
+import type { Page, Locator } from '@playwright/test';
 
 export class PersonProfilePage {
 	readonly page: Page;
@@ -50,9 +50,7 @@ export class PersonProfilePage {
 		await this.emailEditButton.click();
 		await this.emailInput.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.emailInput.fill(email);
-		await this.emailInput.blur();
-		await expect(this.emailSaveButton).toBeVisible({ timeout: 10_000 });
-		await expect(this.emailSaveButton).toBeEnabled({ timeout: 10_000 });
+		await this.emailSaveButton.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.emailSaveButton.click();
 	}
 
