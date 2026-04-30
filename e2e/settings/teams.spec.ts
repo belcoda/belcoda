@@ -14,6 +14,15 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 test.describe.serial('Settings: Teams', () => {
 	const ids = {
 		teamId: '',
@@ -127,5 +136,53 @@ test.describe.serial('Settings: Teams', () => {
 		await teamDetail.removePersonButton(ids.personId).click();
 
 		await expect(teamDetail.personRow(ids.personId)).toHaveCount(0, { timeout: 15_000 });
+	});
+
+	test('member cannot create a team', async ({ page }) => {
+		const teamsPage = new TeamsPage(page);
+		const suffix = `${Date.now()}`;
+		const teamName = `E2E Member Team ${suffix}`;
+
+		await loginAsMember(page);
+		await teamsPage.goto();
+
+		await teamsPage.createTeam(teamName);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(teamsPage.teamRowByName(teamName)).toHaveCount(0, { timeout: 15_000 });
+	});
+
+	test('member cannot edit a team', async ({ page }) => {
+		const teamsPage = new TeamsPage(page);
+		const newName = `${ids.teamName} Member Edit`;
+
+		await loginAsMember(page);
+		await teamsPage.goto();
+
+		await teamsPage.editTeam(ids.teamId, newName);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('member cannot add person to team', async ({ page }) => {
+		const teamDetail = new TeamDetailPage(page);
+
+		await loginAsMember(page);
+		await teamDetail.goto(ids.teamId);
+
+		await teamDetail.addPersonTrigger.click();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('member cannot remove person from team', async ({ page }) => {
+		const teamDetail = new TeamDetailPage(page);
+
+		await loginAsMember(page);
+		await teamDetail.goto(ids.teamId);
+
+		await teamDetail.removePersonButton(ids.personId).click();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
 	});
 });
