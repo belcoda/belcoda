@@ -5,27 +5,29 @@ import { type ActivityType } from '$lib/schema/activity/types';
 import { activityWebhook } from '$lib/schema/activity';
 import { and, eq } from 'drizzle-orm';
 import { generatePreview } from '$lib/server/api/utils/activity/generate_preview';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { parse } from 'valibot';
 
 import { v7 as uuidv7 } from 'uuid';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
-
-async function triggerActivityCreatedWebhook(row: typeof activity.$inferSelect) {
+async function triggerActivityCreatedWebhook({
+	row,
+	tx
+}: {
+	row: typeof activity.$inferSelect;
+	tx: ServerTransaction;
+}) {
 	const { organizationId, ...data } = row;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'activity.created',
 				data: parse(activityWebhook, data)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function createActivityWhatsAppMessageIncoming({
@@ -58,7 +60,7 @@ export async function createActivityWhatsAppMessageIncoming({
 	if (result.length === 0) {
 		throw new Error('Failed to create activity');
 	}
-	await triggerActivityCreatedWebhook(result[0]);
+	await triggerActivityCreatedWebhook({ row: result[0], tx });
 	return result[0];
 }
 
@@ -92,7 +94,7 @@ export async function createActivityWhatsAppMessageOutgoing({
 	if (result.length === 0) {
 		throw new Error('Failed to create activity');
 	}
-	await triggerActivityCreatedWebhook(result[0]);
+	await triggerActivityCreatedWebhook({ row: result[0], tx });
 	return result[0];
 }
 
@@ -145,6 +147,6 @@ export async function insertActivity({
 		.where(and(eq(person.id, personId), eq(person.organizationId, organizationId)));
 
 	if (insertedActivity) {
-		await triggerActivityCreatedWebhook(insertedActivity);
+		await triggerActivityCreatedWebhook({ row: insertedActivity, tx });
 	}
 }

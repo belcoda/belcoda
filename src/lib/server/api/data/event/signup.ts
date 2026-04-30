@@ -29,7 +29,7 @@ import { eq, and, sql } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 import { clampLocale } from '$lib/utils/language';
@@ -44,21 +44,21 @@ type QueueT = Awaited<ReturnType<typeof getQueue>>;
 
 async function queueEventSignupWebhook(
 	queue: QueueT,
+	tx: ServerTransaction,
 	kind: 'event.signup.created' | 'event.signup.updated',
 	row: typeof eventSignup.$inferSelect
 ) {
 	const { organizationId, ...data } = row;
-	try {
-		await queue.triggerWebhook({
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: kind,
 				data: parse(eventSignupWebhook, data)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function getEventByIdUnsafe({
@@ -364,7 +364,7 @@ export async function createIncompleteEventSignupByPersonId({
 			throw new Error('Unable to update existing event signup');
 		}
 		const queue = await getQueue();
-		await queueEventSignupWebhook(queue, 'event.signup.updated', updated);
+		await queueEventSignupWebhook(queue, tx, 'event.signup.updated', updated);
 		return updated;
 	}
 
@@ -386,7 +386,7 @@ export async function createIncompleteEventSignupByPersonId({
 		throw new Error('Unable to create incomplete event signup');
 	}
 	const queueIncomplete = await getQueue();
-	await queueEventSignupWebhook(queueIncomplete, 'event.signup.created', inserted);
+	await queueEventSignupWebhook(queueIncomplete, tx, 'event.signup.created', inserted);
 	return inserted;
 }
 
@@ -523,6 +523,7 @@ export async function completeEventSignupByPersonId({
 	}
 	await queueEventSignupWebhook(
 		queue,
+		tx,
 		existingEventSignup ? 'event.signup.updated' : 'event.signup.created',
 		result
 	);
@@ -632,6 +633,7 @@ export async function signUpForEventUnsafe({
 	const queueSignup = await getQueue();
 	await queueEventSignupWebhook(
 		queueSignup,
+		tx,
 		existingEventSignup ? 'event.signup.updated' : 'event.signup.created',
 		insertedEventSignup
 	);
@@ -804,6 +806,7 @@ export async function declineEventHelper({
 	});
 	await queueEventSignupWebhook(
 		queue,
+		tx,
 		existingDeclineSignup ? 'event.signup.updated' : 'event.signup.created',
 		insertedEventSignup
 	);
@@ -877,7 +880,7 @@ export async function updateEventSignupStatus({
 	const [updatedStatusRow] = result;
 	if (updatedStatusRow) {
 		const q = await getQueue();
-		await queueEventSignupWebhook(q, 'event.signup.updated', updatedStatusRow);
+		await queueEventSignupWebhook(q, tx, 'event.signup.updated', updatedStatusRow);
 	}
 	return result;
 }
@@ -1020,6 +1023,7 @@ export async function createEventSignup({
 	queue = queue || (await getQueue());
 	await queueEventSignupWebhook(
 		queue,
+		tx,
 		existingEventSignup ? 'event.signup.updated' : 'event.signup.created',
 		insertedEventSignup
 	);
@@ -1097,5 +1101,5 @@ export async function updateEventSignup({
 		previousStatus
 	});
 	const q = await getQueue();
-	await queueEventSignupWebhook(q, 'event.signup.updated', result);
+	await queueEventSignupWebhook(q, tx, 'event.signup.updated', result);
 }

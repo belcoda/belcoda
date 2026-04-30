@@ -16,7 +16,7 @@ import {
 	sendMutatorSchema,
 	emailMessageWebhook
 } from '$lib/schema/email-message';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { countPersonsFromFilter } from '$lib/server/utils/person/filter';
 import pino from '$lib/pino';
 
@@ -76,18 +76,17 @@ export async function createEmailMessage({
 	}
 
 	const { organizationId, ...msgData } = result;
-	try {
-		const queueCreate = await getQueue();
-		await queueCreate.triggerWebhook({
+	const queueCreate = await getQueue();
+	await queueCreate.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'email.message.created',
 				data: parse(emailMessageWebhook, msgData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 
 	return result;
 }
@@ -128,18 +127,17 @@ export async function updateEmailMessage({
 		.returning();
 	if (updatedMsg) {
 		const { organizationId, ...msgData } = updatedMsg;
-		try {
-			const q = await getQueue();
-			await q.triggerWebhook({
+		const q = await getQueue();
+		await q.triggerWebhook(
+			{
 				organizationId,
 				payload: {
 					type: 'email.message.updated',
 					data: parse(emailMessageWebhook, msgData)
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }
 
@@ -170,18 +168,17 @@ export async function deleteEmailMessage({
 			updatedAt: new Date()
 		})
 		.where(and(eq(emailMessage.id, args.id), eq(emailMessage.organizationId, args.organizationId)));
-	try {
-		const queueDel = await getQueue();
-		await queueDel.triggerWebhook({
+	const queueDel = await getQueue();
+	await queueDel.triggerWebhook(
+		{
 			organizationId: emailMessageRecord.organizationId,
 			payload: {
 				type: 'email.message.deleted',
 				data: { emailMessageId: args.id }
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function sendEmailMessage({
@@ -248,17 +245,16 @@ export async function sendEmailMessage({
 
 	if (sentRow) {
 		const { organizationId, ...msgData } = sentRow;
-		try {
-			await queue.triggerWebhook({
+		await queue.triggerWebhook(
+			{
 				organizationId,
 				payload: {
 					type: 'email.message.updated',
 					data: parse(emailMessageWebhook, msgData)
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 
 	log.debug(

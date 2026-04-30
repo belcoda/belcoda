@@ -21,9 +21,34 @@ export const DEFAULT_QUEUE_WORKER_OPTIONS: WorkerOptions = {
 
 type QueueHandlers = {
 	[K in keyof typeof allHandlersMap]: (
-		input: Parameters<(typeof allHandlersMap)[K]>[0]
+		input: Parameters<(typeof allHandlersMap)[K]>[0],
+		options?: QueueSendOptions
 	) => Promise<void>;
 };
+
+type QueueDbAdapter = {
+	executeSql: (text: string, values: unknown[]) => Promise<{ rows: unknown[]; rowCount?: number }>;
+};
+
+type QueueSendOptions = {
+	db?: QueueDbAdapter;
+};
+import type { ServerTransaction } from '@rocicorp/zero';
+function _createTxDbWrapper(trx: ServerTransaction) {
+	return {
+		executeSql: async (text: string, values: unknown[]) => {
+			const result = await trx.dbTransaction.query(text, values);
+			const resultArray = Array.from(result);
+			return { rows: resultArray, rowCount: resultArray.length };
+		}
+	};
+}
+
+export function queueSendOptionsFromTransaction(transaction: ServerTransaction): QueueSendOptions {
+	return {
+		db: _createTxDbWrapper(transaction)
+	};
+}
 
 type Queue = {
 	raw: PgBoss;
@@ -54,7 +79,7 @@ async function createAndStartQueues(queueInstance: Queue) {
 		await boss.work(queueName, DEFAULT_QUEUE_WORKER_OPTIONS, async (jobs) => {
 			for (const job of jobs) {
 				try {
-					await handler(job.data as any);
+					await handler(job.data as Parameters<typeof handler>[0]);
 				} catch (err) {
 					log.error({ err, jobId: job.id }, `🚨 Handler failed: ${queueName}`);
 					throw err;
@@ -80,8 +105,8 @@ async function stopQueues(queueInstance: Queue) {
 function createHandlers(queue: PgBoss): QueueHandlers {
 	const handlers = {} as QueueHandlers;
 	for (const queueName of handlersNames) {
-		handlers[queueName] = async (input: unknown) => {
-			await queue.send(queueName, input as object); // pgboss' send function expects type object rather than 'unknown' because we don't have solid inference here
+		handlers[queueName] = async (input: unknown, options?: QueueSendOptions) => {
+			await queue.send(queueName, input as object, options); // pgboss' send function expects type object rather than 'unknown' because we don't have solid inference here
 		};
 	}
 	return handlers;
