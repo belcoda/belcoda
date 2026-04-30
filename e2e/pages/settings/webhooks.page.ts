@@ -52,6 +52,12 @@ export class WebhooksPage {
 			});
 	}
 
+	webhookRowById(webhookId: string): Locator {
+		return this.page.locator(
+			`[data-testid="settings-webhooks-row"][data-webhook-id="${webhookId}"]`
+		);
+	}
+
 	async createWebhook(name: string, targetUrl: string) {
 		await this.createWebhookTrigger.click();
 		await this.webhookNameInput.fill(name);
@@ -61,6 +67,14 @@ export class WebhooksPage {
 
 	async deleteWebhook(name: string, targetUrl: string) {
 		const row = this.webhookRow(name, targetUrl);
+		await Promise.all([
+			this.page.waitForEvent('dialog').then((dialog) => dialog.accept()),
+			row.getByTestId('settings-webhooks-delete').click()
+		]);
+	}
+
+	async deleteWebhookById(webhookId: string) {
+		const row = this.webhookRowById(webhookId);
 		await Promise.all([
 			this.page.waitForEvent('dialog').then((dialog) => dialog.accept()),
 			row.getByTestId('settings-webhooks-delete').click()
@@ -79,8 +93,21 @@ export class WebhooksPage {
 		await this.editSubmitButton.click();
 	}
 
+	async editWebhookById(webhookId: string, next: { name: string; targetUrl: string }) {
+		const row = this.webhookRowById(webhookId);
+		await row.getByTestId('settings-webhooks-edit').click();
+		await this.webhookEditNameInput.fill(next.name);
+		await this.webhookEditUrlInput.fill(next.targetUrl);
+		await this.editSubmitButton.click();
+	}
+
 	async openViewSecret(name: string, targetUrl: string) {
 		const row = this.webhookRow(name, targetUrl);
+		await row.getByTestId('settings-webhooks-view-secret').click();
+	}
+
+	async openViewSecretById(webhookId: string) {
+		const row = this.webhookRowById(webhookId);
 		await row.getByTestId('settings-webhooks-view-secret').click();
 	}
 

@@ -143,7 +143,7 @@
 				<Table.Body>
 					{#if webhookList.data}
 						{#each webhookList.data as webhook (webhook.id)}
-							<Table.Row data-testid="settings-webhooks-row">
+							<Table.Row data-testid="settings-webhooks-row" data-webhook-id={webhook.id}>
 								<Table.Cell class="font-medium">{webhook.name}</Table.Cell>
 								<Table.Cell>
 									<Button
