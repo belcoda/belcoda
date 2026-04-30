@@ -13,6 +13,24 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsAdmin(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.admin.email, TEST_USERS.admin.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 test.describe.serial('Settings: Webhooks', () => {
 	const state = {
 		name: '',
@@ -66,6 +84,96 @@ test.describe.serial('Settings: Webhooks', () => {
 		await webhooksPage.deleteWebhook(state.name, state.targetUrl);
 
 		await expect(webhooksPage.webhookRow(state.name, state.targetUrl)).toHaveCount(0, {
+			timeout: 15_000
+		});
+	});
+
+	test('admin cannot create a webhook', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+		const suffix = Date.now();
+		const webhookName = `E2E Admin Webhook ${suffix}`;
+		const webhookUrl = `https://example.com/e2e/admin-webhook/${suffix}`;
+
+		await loginAsAdmin(page);
+		await webhooksPage.goto();
+		await webhooksPage.createWebhook(webhookName, webhookUrl);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.webhookRow(webhookName, webhookUrl)).toHaveCount(0, {
+			timeout: 15_000
+		});
+	});
+
+	test('member cannot create a webhook', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+		const suffix = Date.now();
+		const webhookName = `E2E Member Webhook ${suffix}`;
+		const webhookUrl = `https://example.com/e2e/member-webhook/${suffix}`;
+
+		await loginAsMember(page);
+		await webhooksPage.goto();
+		await webhooksPage.createWebhook(webhookName, webhookUrl);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.webhookRow(webhookName, webhookUrl)).toHaveCount(0, {
+			timeout: 15_000
+		});
+	});
+
+	test('admin cannot update a webhook', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+		const updatedUrl = `https://example.com/e2e/admin-webhook/updated/${Date.now()}`;
+
+		await loginAsAdmin(page);
+		await webhooksPage.goto();
+		await webhooksPage.editWebhook(state.name, state.targetUrl, {
+			name: state.name,
+			targetUrl: updatedUrl
+		});
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('member cannot update a webhook', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+		const updatedUrl = `https://example.com/e2e/member-webhook/updated/${Date.now()}`;
+
+		await loginAsMember(page);
+		await webhooksPage.goto();
+		await webhooksPage.editWebhook(state.name, state.targetUrl, {
+			name: state.name,
+			targetUrl: updatedUrl
+		});
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('admin cannot delete a webhook', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+
+		await loginAsAdmin(page);
+		await webhooksPage.goto();
+
+		page.once('dialog', (dialog) => dialog.accept());
+		await webhooksPage.deleteWebhook(state.name, state.targetUrl);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.webhookRow(state.name, state.targetUrl)).toHaveCount(1, {
+			timeout: 15_000
+		});
+	});
+
+	test('member cannot delete a webhook', async ({ page }) => {
+		const webhooksPage = new WebhooksPage(page);
+
+		await loginAsMember(page);
+		await webhooksPage.goto();
+
+		page.once('dialog', (dialog) => dialog.accept());
+		await webhooksPage.deleteWebhook(state.name, state.targetUrl);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.webhookRow(state.name, state.targetUrl)).toHaveCount(1, {
 			timeout: 15_000
 		});
 	});
