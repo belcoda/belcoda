@@ -33,42 +33,20 @@ type QueueDbAdapter = {
 type QueueSendOptions = {
 	db?: QueueDbAdapter;
 };
-
-function buildDbAdapter(transaction: unknown): QueueDbAdapter {
-	const transactionRecord = transaction as Record<string, unknown>;
-
+import type { ServerTransaction } from '@rocicorp/zero';
+function _createTxDbWrapper(trx: ServerTransaction) {
 	return {
-		async executeSql(text: string, values: unknown[]) {
-			const executeSql = transactionRecord.executeSql;
-			if (typeof executeSql === 'function') {
-				return (await executeSql(text, values)) as { rows: unknown[]; rowCount?: number };
-			}
-
-			const query = transactionRecord.query;
-			if (typeof query === 'function') {
-				return (await query(text, values)) as { rows: unknown[]; rowCount?: number };
-			}
-
-			const execute = transactionRecord.execute;
-			if (typeof execute === 'function') {
-				const result = await execute({ sql: text, params: values });
-				if (Array.isArray(result)) {
-					return { rows: result, rowCount: result.length };
-				}
-				if (result && typeof result === 'object' && 'rows' in result) {
-					return result as { rows: unknown[]; rowCount?: number };
-				}
-				return { rows: [] };
-			}
-
-			throw new Error('Unsupported transaction type for pg-boss db adapter');
+		executeSql: async (text: string, values: unknown[]) => {
+			const result = await trx.dbTransaction.query(text, values);
+			const resultArray = Array.from(result);
+			return { rows: resultArray, rowCount: resultArray.length };
 		}
 	};
 }
 
-export function queueSendOptionsFromTransaction(transaction: unknown): QueueSendOptions {
+export function queueSendOptionsFromTransaction(transaction: ServerTransaction): QueueSendOptions {
 	return {
-		db: buildDbAdapter(transaction)
+		db: _createTxDbWrapper(transaction)
 	};
 }
 
