@@ -13,6 +13,15 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 test.describe.serial('Settings: API Keys', () => {
 	const state = {
 		name: ''
@@ -40,5 +49,28 @@ test.describe.serial('Settings: API Keys', () => {
 		await apiKeysPage.deleteApiKey(state.name);
 
 		await expect(apiKeysPage.apiKeyRow(state.name)).toHaveCount(0, { timeout: 15_000 });
+	});
+
+	test('member cannot create an API key', async ({ page }) => {
+		const apiKeysPage = new ApiKeysPage(page);
+		const keyName = `E2E Member API Key ${Date.now()}`;
+
+		await loginAsMember(page);
+		await apiKeysPage.goto();
+		await apiKeysPage.createApiKey(keyName);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(apiKeysPage.apiKeyRow(keyName)).toHaveCount(0, { timeout: 15_000 });
+	});
+
+	test('member cannot delete an API key', async ({ page }) => {
+		const apiKeysPage = new ApiKeysPage(page);
+
+		await loginAsMember(page);
+		await apiKeysPage.goto();
+		await apiKeysPage.deleteApiKey(state.name);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(apiKeysPage.apiKeyRow(state.name)).toHaveCount(1, { timeout: 15_000 });
 	});
 });
