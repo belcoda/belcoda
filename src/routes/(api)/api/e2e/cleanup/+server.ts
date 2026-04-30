@@ -135,6 +135,8 @@ async function deleteTestOrganizationScopedRows(orgId: string) {
 
 	await drizzle.delete(schema.subscription).where(eq(schema.subscription.referenceId, orgId));
 
+	await drizzle.delete(schema.apiKey).where(eq(schema.apiKey.referenceId, orgId));
+
 	await drizzle.delete(schema.organization).where(eq(schema.organization.id, orgId));
 }
 
