@@ -41,6 +41,17 @@ test.describe.serial('Settings: API Keys', () => {
 		await expect(apiKeysPage.apiKeyRow(state.name)).toBeVisible({ timeout: 15_000 });
 	});
 
+	test('member cannot access API key management', async ({ page }) => {
+		const apiKeysPage = new ApiKeysPage(page);
+
+		await loginAsMember(page);
+		await apiKeysPage.goto();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(apiKeysPage.newApiKeyTrigger).toHaveCount(0);
+		await expect(apiKeysPage.apiKeyRow(state.name)).toHaveCount(0);
+	});
+
 	test('owner can delete an API key', async ({ page }) => {
 		const apiKeysPage = new ApiKeysPage(page);
 
@@ -49,28 +60,5 @@ test.describe.serial('Settings: API Keys', () => {
 		await apiKeysPage.deleteApiKey(state.name);
 
 		await expect(apiKeysPage.apiKeyRow(state.name)).toHaveCount(0, { timeout: 15_000 });
-	});
-
-	test('member cannot create an API key', async ({ page }) => {
-		const apiKeysPage = new ApiKeysPage(page);
-		const keyName = `E2E Member API Key ${Date.now()}`;
-
-		await loginAsMember(page);
-		await apiKeysPage.goto();
-		await apiKeysPage.createApiKey(keyName);
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-		await expect(apiKeysPage.apiKeyRow(keyName)).toHaveCount(0, { timeout: 15_000 });
-	});
-
-	test('member cannot delete an API key', async ({ page }) => {
-		const apiKeysPage = new ApiKeysPage(page);
-
-		await loginAsMember(page);
-		await apiKeysPage.goto();
-		await apiKeysPage.deleteApiKey(state.name);
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-		await expect(apiKeysPage.apiKeyRow(state.name)).toHaveCount(1, { timeout: 15_000 });
 	});
 });

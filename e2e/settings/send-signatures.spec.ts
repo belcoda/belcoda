@@ -123,6 +123,19 @@ test.describe.serial('Settings: Send Signatures', () => {
 		});
 	});
 
+	test('member cannot access send signature management', async ({ page }) => {
+		const sendSignaturesPage = new SendSignaturesPage(page);
+
+		await loginAsMember(page);
+		await sendSignaturesPage.goto();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(sendSignaturesPage.newSignatureTrigger).toHaveCount(0);
+		await expect(sendSignaturesPage.signatureRowByEmail(state.emailAddress)).toHaveCount(0, {
+			timeout: 5_000
+		});
+	});
+
 	test('owner can delete custom send signature', async ({ page }) => {
 		const sendSignaturesPage = new SendSignaturesPage(page);
 
@@ -136,70 +149,5 @@ test.describe.serial('Settings: Send Signatures', () => {
 		await expect(sendSignaturesPage.signatureRowByEmail(state.emailAddress)).toHaveCount(0, {
 			timeout: 15_000
 		});
-	});
-
-	test('member cannot create a signature', async ({ page }) => {
-		const sendSignaturesPage = new SendSignaturesPage(page);
-		const suffix = Date.now();
-		const displayName = `E2E Member Signature ${suffix}`;
-		const emailAddress = `e2e-member-signature-${suffix}@example.com`;
-
-		await loginAsMember(page);
-		await sendSignaturesPage.goto();
-		await sendSignaturesPage.createSignature({
-			displayName,
-			emailAddress,
-			replyTo: `e2e-reply-${suffix}@example.com`,
-			returnPathDomain: 'bounce.example.com'
-		});
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-		await expect(sendSignaturesPage.signatureRowByEmail(emailAddress)).toHaveCount(0, {
-			timeout: 15_000
-		});
-	});
-
-	test('member cannot edit a signature', async ({ page }) => {
-		const sendSignaturesPage = new SendSignaturesPage(page);
-
-		await loginAsMember(page);
-		await sendSignaturesPage.goto();
-		await sendSignaturesPage.editSignature(state.emailAddress, {
-			displayName: `${state.displayName} Member Edit`,
-			replyTo: `e2e-member-reply-${Date.now()}@example.com`,
-			returnPathDomain: 'mail.bounce.example.com'
-		});
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-	});
-
-	test('member cannot verify a signature', async ({ page }) => {
-		const sendSignaturesPage = new SendSignaturesPage(page);
-
-		await loginAsMember(page);
-		await sendSignaturesPage.goto();
-		await sendSignaturesPage.verifySignature(state.emailAddress);
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-	});
-
-	test('member cannot set default signature', async ({ page }) => {
-		const sendSignaturesPage = new SendSignaturesPage(page);
-
-		await loginAsMember(page);
-		await sendSignaturesPage.goto();
-		await sendSignaturesPage.selectDefaultSignature(`${state.displayName} <${state.emailAddress}>`);
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-	});
-
-	test('member cannot delete signature', async ({ page }) => {
-		const sendSignaturesPage = new SendSignaturesPage(page);
-
-		await loginAsMember(page);
-		await sendSignaturesPage.goto();
-		await sendSignaturesPage.deleteSignature(state.emailAddress);
-
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
 	});
 });

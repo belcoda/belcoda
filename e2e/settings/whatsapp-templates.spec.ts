@@ -107,54 +107,23 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 		await expect(submitBtn).toHaveCount(0);
 	});
 
-	test('member cannot create a WhatsApp template', async ({ page }) => {
-		const templateName = randomTemplateName();
-
+	test('member cannot access WhatsApp template management', async ({ page }) => {
 		await loginAsMember(page);
 
 		const listPage = new WhatsAppTemplatesListPage(page);
-		await listPage.goto();
-
-		await listPage.createTemplateLink().click();
-		await expect(page).toHaveURL(/\/settings\/whatsapp\/templates\/new\/?$/);
-
-		const formPage = new WhatsAppTemplateFormPage(page);
-		await page.getByTestId('whatsapp-template-form').waitFor({ state: 'visible', timeout: 15_000 });
-
-		await formPage.fillTemplateName(templateName);
-		await formPage.fillFirstExampleVariable('Maria');
-		await formPage.saveCreate();
+		await page.goto('/settings/whatsapp/templates');
 
 		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-		await expect(listPage.rowForTemplateName(templateName)).toHaveCount(0, { timeout: 15_000 });
+		await expect(listPage.createTemplateLink()).toHaveCount(0);
+		await expect(listPage.rowForTemplateId(ids.templateId)).toHaveCount(0);
 	});
 
-	test('member cannot edit a WhatsApp template', async ({ page }) => {
+	test('member cannot access WhatsApp template edit form', async ({ page }) => {
 		await loginAsMember(page);
 
-		const formPage = new WhatsAppTemplateFormPage(page);
-		await formPage.gotoEdit(ids.templateId);
-
-		await formPage.fillBodyText('Hi {{1}}, this is a member edit.');
-		await formPage.fillFirstExampleVariable('Pat');
-		await formPage.saveEdit();
+		await page.goto(`/settings/whatsapp/templates/${ids.templateId}`);
 
 		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-	});
-
-	test('member cannot submit a WhatsApp template for review', async ({ page }) => {
-		await loginAsMember(page);
-
-		const listPage = new WhatsAppTemplatesListPage(page);
-		await listPage.goto();
-
-		const row = listPage.rowForTemplateId(ids.templateId);
-		await expect(row).toBeVisible({ timeout: 20_000 });
-
-		const submitBtn = listPage.submitButtonForRow(row);
-		if (await submitBtn.isVisible()) {
-			await submitBtn.click();
-			await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
-		}
+		await expect(page.getByTestId('whatsapp-template-form')).toHaveCount(0);
 	});
 });
