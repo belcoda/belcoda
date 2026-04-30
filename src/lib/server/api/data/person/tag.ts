@@ -12,7 +12,7 @@ import { personTag, activity, tag } from '$lib/schema/drizzle';
 import { eq, and, isNull } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { personTagWebhook } from '$lib/schema/tag';
 import { activityWebhook } from '$lib/schema/activity';
 import pino from '$lib/pino';
@@ -123,26 +123,32 @@ export async function _addPersonTagData({
 		const { organizationId: actOrg, ...actData } = tagActivity;
 		try {
 			const actQueue = await getQueue();
-			await actQueue.triggerWebhook({
-				organizationId: actOrg,
-				payload: {
-					type: 'activity.created',
-					data: parse(activityWebhook, actData)
-				}
-			});
+			await actQueue.triggerWebhook(
+				{
+					organizationId: actOrg,
+					payload: {
+						type: 'activity.created',
+						data: parse(activityWebhook, actData)
+					}
+				},
+				queueSendOptionsFromTransaction(tx.dbTransaction.wrappedTransaction)
+			);
 		} catch (err) {
 			log.error({ err }, 'Failed to trigger webhook');
 		}
 	}
 	try {
 		const queue = await getQueue();
-		await queue.triggerWebhook({
-			organizationId: args.organizationId,
-			payload: {
-				type: 'tag.person.added',
-				data: parse(personTagWebhook, { personId: args.personId, tagId: args.tagId })
-			}
-		});
+		await queue.triggerWebhook(
+			{
+				organizationId: args.organizationId,
+				payload: {
+					type: 'tag.person.added',
+					data: parse(personTagWebhook, { personId: args.personId, tagId: args.tagId })
+				}
+			},
+			queueSendOptionsFromTransaction(tx.dbTransaction.wrappedTransaction)
+		);
 	} catch (err) {
 		log.error({ err }, 'Failed to trigger webhook');
 	}
@@ -191,13 +197,16 @@ export async function applyTagToPersonUnsafe({
 	if (inserted) {
 		try {
 			const queue = await getQueue();
-			await queue.triggerWebhook({
-				organizationId,
-				payload: {
-					type: 'tag.person.added',
-					data: parse(personTagWebhook, { personId, tagId })
-				}
-			});
+			await queue.triggerWebhook(
+				{
+					organizationId,
+					payload: {
+						type: 'tag.person.added',
+						data: parse(personTagWebhook, { personId, tagId })
+					}
+				},
+				queueSendOptionsFromTransaction(tx.dbTransaction.wrappedTransaction)
+			);
 		} catch (err) {
 			log.error({ err }, 'Failed to trigger webhook');
 		}
