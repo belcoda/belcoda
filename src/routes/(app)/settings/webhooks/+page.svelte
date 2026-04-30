@@ -198,7 +198,7 @@
 									</Table.Cell>
 								{/if}
 								<Table.Cell class="text-right">
-									{#if appState.isAdminOrOwner}
+									{#if appState.isOwner}
 										<div class="inline-flex items-center justify-end gap-0">
 											<Button
 												variant="ghost"
