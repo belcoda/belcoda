@@ -20,9 +20,7 @@ import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { eventDeletedWebhookSchema } from '$lib/schema/webhook';
 import { parse } from 'valibot';
 import { _insertActionCodeUnsafe } from '$lib/server/api/data/action/insert';
-import { getQueue } from '$lib/server/queue';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 
 export async function createEvent({
 	tx,
@@ -124,18 +122,17 @@ export async function createEvent({
 	if (!result) {
 		throw new Error('Unable to create event');
 	}
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: parsedInput.metadata.organizationId,
 			payload: {
 				type: 'event.created',
 				data: parse(eventWebhook, result)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -185,17 +182,16 @@ export async function updateEvent({
 		queue.deployEventWhatsAppFlow({ eventId: updatedEvent.id });
 	}
 
-	try {
-		await queue.triggerWebhook({
+	await queue.triggerWebhook(
+		{
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'event.updated',
 				data: parse(eventWebhook, updatedEvent)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function deleteEvent({
@@ -247,35 +243,32 @@ export async function deleteEvent({
 		.returning();
 
 	const queue = await getQueue();
-	const signupResults = await Promise.allSettled(
+	await Promise.all(
 		cancelledSignups.map(async (row) => {
 			const { organizationId: _omit, ...signupWebhookData } = row;
-			await queue.triggerWebhook({
-				organizationId: parsed.metadata.organizationId,
-				payload: {
-					type: 'event.signup.updated',
-					data: parse(eventSignupWebhook, signupWebhookData)
-				}
-			});
+			await queue.triggerWebhook(
+				{
+					organizationId: parsed.metadata.organizationId,
+					payload: {
+						type: 'event.signup.updated',
+						data: parse(eventSignupWebhook, signupWebhookData)
+					}
+				},
+				queueSendOptionsFromTransaction(tx)
+			);
 		})
 	);
-	for (const result of signupResults) {
-		if (result.status === 'rejected') {
-			log.error({ err: result.reason }, 'Failed to trigger webhook');
-		}
-	}
 	if (result) {
-		try {
-			await queue.triggerWebhook({
+		await queue.triggerWebhook(
+			{
 				organizationId: parsed.metadata.organizationId,
 				payload: parse(eventDeletedWebhookSchema, {
 					type: 'event.deleted',
 					data: { eventId: parsed.metadata.eventId }
 				})
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }
 
@@ -315,18 +308,17 @@ export async function archiveEvent({
 		)
 		.returning();
 	if (archived) {
-		try {
-			const queue = await getQueue();
-			await queue.triggerWebhook({
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'event.updated',
 					data: parse(eventWebhook, archived)
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }
 

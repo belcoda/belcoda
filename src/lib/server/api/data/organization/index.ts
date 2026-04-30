@@ -11,7 +11,7 @@ import {
 	organizationWebhook
 } from '$lib/schema/organization';
 
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 
 import {
 	type UpdateThemeZeroMutatorSchema,
@@ -19,8 +19,6 @@ import {
 } from '$lib/schema/organization/settings';
 
 import { parse } from 'valibot';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 
 export async function updateOrganization({
 	tx,
@@ -49,18 +47,17 @@ export async function updateOrganization({
 	}
 
 	const { id: _omitId, ...orgWebhookData } = updated;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: updated.id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationWebhook, orgWebhookData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 
 	return updated;
 }
@@ -98,18 +95,17 @@ export async function updateOrganizationWhatsappSettings({
 		throw new Error('Failed to update organization whatsapp settings');
 	}
 	const { id: _omitId, ...orgWebhookData } = updated;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: updated.id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationWebhook, orgWebhookData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return updated;
 }
 
@@ -149,18 +145,17 @@ export async function updateTheme({
 		throw new Error('Failed to update theme');
 	}
 	const { id: _omitId, ...orgWebhookData } = updated;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: updated.id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationWebhook, orgWebhookData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return updated;
 }
 

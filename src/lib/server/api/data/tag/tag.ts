@@ -12,9 +12,7 @@ import {
 	deleteMutatorSchema,
 	tagWebhook
 } from '$lib/schema/tag';
-import { getQueue } from '$lib/server/queue';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 
 export async function createTag({
 	tx,
@@ -55,18 +53,17 @@ export async function createTag({
 		throw new Error('Unable to create tag');
 	}
 	const { organizationId, ...tagData } = result;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'tag.created',
 				data: parse(tagWebhook, tagData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -98,18 +95,17 @@ export async function updateTag({
 		throw new Error('Unable to update tag');
 	}
 	const { organizationId, ...tagData } = result;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'tag.updated',
 				data: parse(tagWebhook, tagData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -138,17 +134,16 @@ export async function deleteTag({
 		)
 		.returning();
 	if (updated) {
-		try {
-			const queue = await getQueue();
-			await queue.triggerWebhook({
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
 				organizationId: updated.organizationId,
 				payload: {
 					type: 'tag.deleted',
 					data: { tagId: updated.id }
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }

@@ -18,11 +18,9 @@ import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { teamPersonWebhook } from '$lib/schema/team';
 import { activityWebhook } from '$lib/schema/activity';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 
 export async function addPersonToTeam({
 	tx,
@@ -134,31 +132,29 @@ export async function _addPersonTeamDataUnsafe({
 
 	if (teamActivity) {
 		const { organizationId: actOrg, ...actData } = teamActivity;
-		try {
-			const actQueue = await getQueue();
-			await actQueue.triggerWebhook({
+		const actQueue = await getQueue();
+		await actQueue.triggerWebhook(
+			{
 				organizationId: actOrg,
 				payload: {
 					type: 'activity.created',
 					data: parse(activityWebhook, actData)
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: args.organizationId,
 			payload: {
 				type: 'team.person.added',
 				data: parse(teamPersonWebhook, { teamId: args.teamId, personId: args.personId })
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return inserted;
 }
 
@@ -188,9 +184,9 @@ export async function removePersonFromTeam({
 		)
 		.returning();
 	if (result) {
-		try {
-			const queue = await getQueue();
-			await queue.triggerWebhook({
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'team.person.removed',
@@ -199,9 +195,8 @@ export async function removePersonFromTeam({
 						personId: parsed.metadata.personId
 					})
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }
