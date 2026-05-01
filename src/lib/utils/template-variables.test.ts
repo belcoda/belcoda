@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { formatTemplateVariable, insertTemplateVariable } from './template-variables';
+import {
+	formatTemplateVariable,
+	insertTemplateVariable,
+	resolveTemplateParamSources
+} from './template-variables';
 
 describe('template variable utilities', () => {
 	describe('formatTemplateVariable', () => {
@@ -56,6 +60,63 @@ describe('template variable utilities', () => {
 				value: '{{person.given_name}}',
 				cursorPosition: 21
 			});
+		});
+	});
+
+	describe('resolveTemplateParamSources', () => {
+		it('returns literal parameter values', () => {
+			expect(
+				resolveTemplateParamSources({
+					templateParams: [{ type: 'literal', value: 'Maria' }],
+					values: {}
+				})
+			).toEqual(['Maria']);
+		});
+
+		it('resolves variable parameter values', () => {
+			expect(
+				resolveTemplateParamSources({
+					templateParams: [{ type: 'variable', key: 'person.given_name' }],
+					values: { 'person.given_name': 'Ada' }
+				})
+			).toEqual(['Ada']);
+		});
+
+		it('uses fallback text when a variable value is missing', () => {
+			expect(
+				resolveTemplateParamSources({
+					templateParams: [{ type: 'variable', key: 'person.given_name', fallback: 'there' }],
+					values: {}
+				})
+			).toEqual(['there']);
+		});
+
+		it('uses an empty string when a variable value and fallback are missing', () => {
+			expect(
+				resolveTemplateParamSources({
+					templateParams: [{ type: 'variable', key: 'person.given_name' }],
+					values: {}
+				})
+			).toEqual(['']);
+		});
+
+		it('treats legacy template strings as literal values', () => {
+			expect(
+				resolveTemplateParamSources({
+					templateStrings: ['Maria', 'the rally'],
+					values: {}
+				})
+			).toEqual(['Maria', 'the rally']);
+		});
+
+		it('prefers template parameter sources over legacy template strings', () => {
+			expect(
+				resolveTemplateParamSources({
+					templateParams: [{ type: 'variable', key: 'person.given_name' }],
+					templateStrings: ['Maria'],
+					values: { 'person.given_name': 'Ada' }
+				})
+			).toEqual(['Ada']);
 		});
 	});
 });

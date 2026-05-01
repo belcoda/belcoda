@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as v from 'valibot';
 import {
+	templateParamSource,
 	templateVariableGroups,
 	templateVariableKey,
 	templateVariableKeys
@@ -31,5 +32,26 @@ describe('template variable schema', () => {
 				expect(variable.context).toBe(group.context);
 			}
 		}
+	});
+
+	it('accepts literal parameter sources', () => {
+		expect(v.parse(templateParamSource, { type: 'literal', value: 'Maria' })).toEqual({
+			type: 'literal',
+			value: 'Maria'
+		});
+	});
+
+	it('accepts variable parameter sources with fallback text', () => {
+		expect(
+			v.parse(templateParamSource, {
+				type: 'variable',
+				key: 'person.given_name',
+				fallback: 'there'
+			})
+		).toEqual({
+			type: 'variable',
+			key: 'person.given_name',
+			fallback: 'there'
+		});
 	});
 });
