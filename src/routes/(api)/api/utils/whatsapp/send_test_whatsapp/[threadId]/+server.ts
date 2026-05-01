@@ -12,6 +12,7 @@ import {
 import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { env as publicEnv } from '$env/dynamic/public';
 import type { Flow, MessageNodeData, TemplateMessageNode } from '$lib/schema/flow';
+import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import pino from '$lib/pino';
 import { getWhatsappTemplateById } from '$lib/server/api/data/whatsapp/template.js';
 import {
@@ -39,33 +40,40 @@ function getFirstOutboundNode(flow: Flow): TemplateMessageNode | MessageNodeData
 
 function resolveTemplateMessageForTestSend({
 	message,
+	template,
 	values
 }: {
 	message: TemplateMessageNode['data'];
+	template: TemplateMessageComponents;
 	values: TemplateVariableValueMap;
 }): TemplateMessageNode['data'] {
+	const templateHeader = template.find((component) => component.type === 'HEADER');
+	const templateBody = template.find((component) => component.type === 'BODY');
+
 	return {
 		...message,
-		header: message.header
-			? {
-					...message.header,
-					templateStrings: resolveTemplateParamSources({
-						templateParams: message.header.templateParams,
-						templateStrings: message.header.templateStrings,
-						values
-					})
-				}
-			: undefined,
-		body: message.body
-			? {
-					...message.body,
-					templateStrings: resolveTemplateParamSources({
-						templateParams: message.body.templateParams,
-						templateStrings: message.body.templateStrings,
-						values
-					})
-				}
-			: undefined
+		header:
+			templateHeader && message.header
+				? {
+						...message.header,
+						templateStrings: resolveTemplateParamSources({
+							templateParams: message.header.templateParams,
+							templateStrings: message.header.templateStrings,
+							values
+						})
+					}
+				: undefined,
+		body:
+			templateBody && message.body
+				? {
+						...message.body,
+						templateStrings: resolveTemplateParamSources({
+							templateParams: message.body.templateParams,
+							templateStrings: message.body.templateStrings,
+							values
+						})
+					}
+				: undefined
 	};
 }
 
@@ -123,6 +131,7 @@ export async function POST(event) {
 			}
 			const resolvedMessage = resolveTemplateMessageForTestSend({
 				message: outboundNode.data,
+				template: template.components,
 				values: {
 					'organization.name': org.name,
 					'organization.slug': org.slug,

@@ -16,6 +16,7 @@ import {
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { sendWhatsappMessage as sendWhatsappMessageToYCloud } from './ycloud/ycloud_api';
 import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
+import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
@@ -54,33 +55,40 @@ function buildTemplateVariableValues({
 
 function resolveWhatsappTemplateMessageData({
 	message,
+	template,
 	values
 }: {
 	message: WhatsappTemplateMessageData;
+	template: TemplateMessageComponents;
 	values: TemplateVariableValueMap;
 }): WhatsappTemplateMessageData {
+	const templateHeader = template.find((component) => component.type === 'HEADER');
+	const templateBody = template.find((component) => component.type === 'BODY');
+
 	return {
 		...message,
-		header: message.header
-			? {
-					...message.header,
-					templateStrings: resolveTemplateParamSources({
-						templateParams: message.header.templateParams,
-						templateStrings: message.header.templateStrings,
-						values
-					})
-				}
-			: undefined,
-		body: message.body
-			? {
-					...message.body,
-					templateStrings: resolveTemplateParamSources({
-						templateParams: message.body.templateParams,
-						templateStrings: message.body.templateStrings,
-						values
-					})
-				}
-			: undefined
+		header:
+			templateHeader && message.header
+				? {
+						...message.header,
+						templateStrings: resolveTemplateParamSources({
+							templateParams: message.header.templateParams,
+							templateStrings: message.header.templateStrings,
+							values
+						})
+					}
+				: undefined,
+		body:
+			templateBody && message.body
+				? {
+						...message.body,
+						templateStrings: resolveTemplateParamSources({
+							templateParams: message.body.templateParams,
+							templateStrings: message.body.templateStrings,
+							values
+						})
+					}
+				: undefined
 	};
 }
 
@@ -224,6 +232,7 @@ export async function sendWhatsappTemplateMessage({
 		const whatsappMessageId = uuidv7();
 		const resolvedMessage = resolveWhatsappTemplateMessageData({
 			message,
+			template: template.components,
 			values: buildTemplateVariableValues({
 				personObject,
 				organization,

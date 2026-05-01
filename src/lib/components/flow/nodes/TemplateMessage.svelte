@@ -221,7 +221,10 @@
 	watch(
 		() => templateHeader,
 		(data) => {
-			if (templateHeader?.format === 'IMAGE') {
+			if (!data) {
+				headerParams = [];
+				headerImageUrl = null;
+			} else if (data.format === 'IMAGE') {
 				headerImageUrl = headerImageUrl || templateHeader?.example.header_url[0];
 			} else {
 				ensureLiteralParam(headerParams, 0, templateHeader?.example.header_text[0] || '');
