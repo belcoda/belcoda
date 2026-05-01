@@ -7,6 +7,9 @@
 	import EmailFrom from '$lib/components/ui/custom-select/email-from/email-from.svelte';
 	import type { ReadEmailMessageZero } from '$lib/schema/email-message';
 	import { type FilterGroupType, defaultFilterGroup } from '$lib/schema/person/filter';
+	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
+	import { insertTemplateVariable } from '$lib/utils/template-variables';
+	import { tick } from 'svelte';
 
 	type UpdateEmailData = {
 		subject: string | undefined;
@@ -40,6 +43,24 @@
 	}
 	const debouncedTriggerUpdate = useDebounce(triggerUpdate, 1000);
 	import RecipientBox from '$lib/components/widgets/communications/recipients/RecipientBox.svelte';
+
+	let subjectInput = $state<HTMLInputElement | null>(null);
+
+	async function insertSubjectVariable(token: string) {
+		const result = insertTemplateVariable(
+			subject ?? '',
+			token,
+			subjectInput?.selectionStart,
+			subjectInput?.selectionEnd
+		);
+
+		subject = result.value;
+		debouncedTriggerUpdate();
+
+		await tick();
+		subjectInput?.focus();
+		subjectInput?.setSelectionRange(result.cursorPosition, result.cursorPosition);
+	}
 </script>
 
 <div class="flex h-full flex-col" data-testid="email-form">
@@ -66,14 +87,18 @@
 
 			<div class="space-y-2">
 				<Label for="subject">{t`Subject`}</Label>
-				<Input
-					id="subject"
-					type="text"
-					placeholder={t`Enter email subject...`}
-					data-testid="email-form-subject"
-					bind:value={subject}
-					oninput={debouncedTriggerUpdate}
-				/>
+				<div class="flex items-center gap-2">
+					<Input
+						bind:ref={subjectInput}
+						id="subject"
+						type="text"
+						placeholder={t`Enter email subject...`}
+						data-testid="email-form-subject"
+						bind:value={subject}
+						oninput={debouncedTriggerUpdate}
+					/>
+					<TemplateVariablePicker onSelect={insertSubjectVariable} />
+				</div>
 			</div>
 
 			<div class="space-y-2">
