@@ -103,7 +103,11 @@
 
 			<div class="space-y-2">
 				<Label for="body">{t`Message`}</Label>
-				<SvelteLexical bind:value={body} onChange={debouncedTriggerUpdate} />
+				<SvelteLexical
+					bind:value={body}
+					onChange={debouncedTriggerUpdate}
+					enableTemplateVariables
+				/>
 			</div>
 		</div>
 	</div>
