@@ -224,10 +224,14 @@
 			if (!data) {
 				headerParams = [];
 				headerImageUrl = null;
-			} else if (data.format === 'IMAGE') {
-				headerImageUrl = headerImageUrl || templateHeader?.example.header_url[0];
+			} else if (data.format === 'IMAGE' && 'header_url' in data.example) {
+				headerImageUrl = headerImageUrl || data.example.header_url[0];
 			} else {
-				ensureLiteralParam(headerParams, 0, templateHeader?.example.header_text[0] || '');
+				ensureLiteralParam(
+					headerParams,
+					0,
+					'header_text' in data.example ? data.example.header_text[0] || '' : ''
+				);
 			}
 		}
 	);
