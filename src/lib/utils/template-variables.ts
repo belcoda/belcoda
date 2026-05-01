@@ -3,6 +3,7 @@ import type {
 	TemplateVariable,
 	TemplateVariableKey
 } from '$lib/schema/template-variables';
+import { templateVariableKeys } from '$lib/schema/template-variables';
 
 export type TemplateVariableValueMap = Partial<
 	Record<TemplateVariableKey, string | null | undefined>
@@ -81,5 +82,22 @@ export function resolveTemplateParamSources({
 		}
 
 		return values[source.key] || source.fallback || '';
+	});
+}
+
+const templateVariableKeySet = new Set<string>(templateVariableKeys);
+const templateVariableTokenPattern = /\{\{\s*([a-z_]+\.[a-z_]+)\s*\}\}/g;
+
+/**
+ * Replaces named inline template variables in email subject/body content.
+ * Unknown variable tokens are preserved so user-written text is not unexpectedly removed.
+ */
+export function resolveTemplateVariables(value: string, values: TemplateVariableValueMap): string {
+	return value.replace(templateVariableTokenPattern, (token, key: string) => {
+		if (!templateVariableKeySet.has(key)) {
+			return token;
+		}
+
+		return values[key as TemplateVariableKey] || '';
 	});
 }
