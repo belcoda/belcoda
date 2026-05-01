@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { v4 as uuidv4 } from 'uuid';
+	import TriangleAlertIcon from '@lucide/svelte/icons/triangle-alert';
 	import {
 		Position,
 		useSvelteFlow,
@@ -14,7 +15,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { WhatsappTemplateMessageData } from '$lib/schema/flow/index';
-	import type { TemplateParamSource } from '$lib/schema/template-variables';
+	import type { TemplateParamSource, TemplateVariableKey } from '$lib/schema/template-variables';
 
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
@@ -46,7 +47,40 @@
 		const param = params[index];
 		if (!param) return placeholder;
 		if (param.type === 'literal') return param.value || placeholder;
-		return param.fallback || `{{${param.key}}}`;
+		return param.fallback || getVariableLabel(param.key);
+	}
+
+	function getVariableLabel(key: TemplateVariableKey) {
+		switch (key) {
+			case 'person.given_name':
+				return t`Given name`;
+			case 'person.family_name':
+				return t`Family name`;
+			case 'person.email_address':
+				return t`Email address`;
+			case 'person.phone_number':
+				return t`Phone number`;
+			case 'organization.name':
+				return t`Organization name`;
+			case 'organization.slug':
+				return t`Organization slug`;
+			case 'sender.name':
+				return t`Sender name`;
+			case 'sender.email':
+				return t`Sender email`;
+			case 'event.name':
+				return t`Event name`;
+			case 'event.start_date':
+				return t`Event start date`;
+			case 'event.location':
+				return t`Event location`;
+			case 'petition.name':
+				return t`Petition name`;
+			case 'petition.goal_count':
+				return t`Petition goal`;
+			default:
+				return key;
+		}
 	}
 
 	function getParamSource(params: TemplateParamSource[], index: number): TemplateParamSource {
@@ -355,7 +389,9 @@
 							});
 						}}
 					/>
-					<code class="truncate text-xs text-muted-foreground">{source.key}</code>
+					<span class="truncate text-sm text-muted-foreground">
+						{getVariableLabel(source.key)}
+					</span>
 				</div>
 				<Input
 					placeholder={t`Fallback text`}
@@ -364,6 +400,14 @@
 						setVariableParamFallback(params, index, event.currentTarget.value);
 					}}
 				/>
+				{#if !source.fallback?.trim()}
+					<div
+						class="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900"
+					>
+						<TriangleAlertIcon class="mt-0.5 size-3.5 shrink-0" />
+						<span>{t`Add fallback text for recipients without this value.`}</span>
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>
