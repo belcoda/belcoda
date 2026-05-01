@@ -9,9 +9,39 @@ import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 const lexicalRenderer = new LexicalHtmlRenderer();
 import { getEmailSignature } from '$lib/server/utils/email/signature';
 
-import { emailMessage, person, organization } from '$lib/schema/drizzle';
+import {
+	emailMessage,
+	person,
+	organization as organizationTable,
+	user as userTable
+} from '$lib/schema/drizzle';
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
+import {
+	resolveTemplateVariables,
+	type TemplateVariableValueMap
+} from '$lib/utils/template-variables';
+
+function buildTemplateVariableValues({
+	personObject,
+	organization,
+	sender
+}: {
+	personObject: typeof person.$inferSelect;
+	organization: typeof organizationTable.$inferSelect;
+	sender?: typeof userTable.$inferSelect | null;
+}): TemplateVariableValueMap {
+	return {
+		'person.given_name': personObject.givenName,
+		'person.family_name': personObject.familyName,
+		'person.email_address': personObject.emailAddress,
+		'person.phone_number': personObject.phoneNumber,
+		'organization.name': organization.name,
+		'organization.slug': organization.slug,
+		'sender.name': sender?.name,
+		'sender.email': sender?.email
+	};
+}
 
 export async function sendEmailMessage({
 	emailMessageId,
@@ -27,7 +57,7 @@ export async function sendEmailMessage({
 	try {
 		const output = await db.transaction(async (tx) => {
 			const org = await tx.dbTransaction.wrappedTransaction.query.organization.findFirst({
-				where: eq(organization.id, organizationId)
+				where: eq(organizationTable.id, organizationId)
 			});
 			if (!org) {
 				throw new Error('Organization not found');
@@ -61,11 +91,17 @@ export async function sendEmailMessage({
 			if (!recipient) {
 				throw new Error('Person not found');
 			}
+			const sender = sentByUserId
+				? await tx.dbTransaction.wrappedTransaction.query.user.findFirst({
+						where: eq(userTable.id, sentByUserId)
+					})
+				: null;
 			return {
 				recipient,
 				organization: org,
 				emailMessage: emailMessageObject,
-				signature
+				signature,
+				sender
 			};
 		});
 
@@ -86,6 +122,19 @@ export async function sendEmailMessage({
 
 			// For now, we use a simple template. In the future, we could use
 			// a custom template based on the email body (stored as Lexical JSON)
+			const variableValues = buildTemplateVariableValues({
+				personObject: output.recipient,
+				organization: output.organization,
+				sender: output.sender
+			});
+			const subject = resolveTemplateVariables(output.emailMessage.subject || '', variableValues);
+			const body = resolveTemplateVariables(
+				output.emailMessage.body
+					? await lexicalRenderer.render(JSON.stringify(output.emailMessage.body))
+					: '',
+				variableValues
+			);
+
 			await sendTemplateEmail({
 				to: output.recipient.emailAddress,
 				from: `${output.signature.name} <${output.signature.emailAddress}>`,
@@ -93,10 +142,8 @@ export async function sendEmailMessage({
 				template: POSTMARK_MESSAGE_TEMPLATE_ALIAS,
 				stream: 'broadcast',
 				context: {
-					subject: output.emailMessage.subject || '',
-					body: output.emailMessage.body
-						? await lexicalRenderer.render(JSON.stringify(output.emailMessage.body))
-						: '',
+					subject,
+					body,
 					organizationName: output.organization.name
 				}
 			});
