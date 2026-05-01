@@ -131,6 +131,7 @@
 								<Button
 									variant="outline"
 									size="sm"
+									data-testid="flow-test-button"
 									onclick={() =>
 										onTest({
 											nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
@@ -141,10 +142,16 @@
 									{t`Send test message`}
 								</Button>
 							{/if}
-							<Button variant="destructive" size="sm" onclick={onDiscard}>{t`Discard`}</Button>
+							<Button
+								variant="destructive"
+								size="sm"
+								data-testid="flow-discard-button"
+								onclick={onDiscard}>{t`Discard`}</Button
+							>
 							<Button
 								variant="outline"
 								size="sm"
+								data-testid="flow-save-button"
 								onclick={() =>
 									onSave({
 										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
@@ -154,6 +161,7 @@
 							<Button
 								variant="default"
 								size="sm"
+								data-testid="flow-send-button"
 								onclick={() =>
 									onSend({
 										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
@@ -167,13 +175,14 @@
 					<Panel position="top-right">
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
-								<Button variant="default" size="sm">
+								<Button variant="default" size="sm" data-testid="flow-add-node-trigger">
 									<ChevronDownIcon />
 									{t`Add Node`}
 								</Button>
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content>
 								<DropdownMenu.Item
+									data-testid="flow-add-node-message"
 									onclick={() => {
 										const nodesSnapshot = $state.snapshot(nodes);
 										const lastNodeIndex = nodesSnapshot.length - 1;

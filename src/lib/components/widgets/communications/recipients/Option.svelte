@@ -12,7 +12,7 @@
 </script>
 
 {#snippet renderFilter(text: string, image: Snippet)}
-	<div class="flex items-center gap-1">
+	<div class="flex items-center gap-1" data-testid="communications-recipient-option">
 		<div class="size-5">
 			{@render image()}
 		</div>
