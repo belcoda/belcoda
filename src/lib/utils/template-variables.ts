@@ -1,4 +1,12 @@
-import type { TemplateVariable, TemplateVariableKey } from '$lib/schema/template-variables';
+import type {
+	TemplateParamSource,
+	TemplateVariable,
+	TemplateVariableKey
+} from '$lib/schema/template-variables';
+
+export type TemplateVariableValueMap = Partial<
+	Record<TemplateVariableKey, string | null | undefined>
+>;
 
 /**
  * Converts a variable key into the token users insert into message templates.
@@ -49,4 +57,29 @@ export function insertTemplateVariable(
 		value: nextValue,
 		cursorPosition
 	};
+}
+
+/**
+ * Resolves stored parameter sources into the ordered strings WhatsApp expects.
+ * Existing templateStrings are treated as literal values until a draft is migrated to templateParams.
+ */
+export function resolveTemplateParamSources({
+	templateParams,
+	templateStrings,
+	values
+}: {
+	templateParams?: readonly TemplateParamSource[] | null;
+	templateStrings?: readonly string[] | null;
+	values: TemplateVariableValueMap;
+}): string[] {
+	const sources =
+		templateParams ?? templateStrings?.map((value) => ({ type: 'literal' as const, value })) ?? [];
+
+	return sources.map((source) => {
+		if (source.type === 'literal') {
+			return source.value;
+		}
+
+		return values[source.key] || source.fallback || '';
+	});
 }
