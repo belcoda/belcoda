@@ -1,9 +1,11 @@
-import type { TemplateVariable } from '$lib/schema/template-variables';
+import type { TemplateVariable, TemplateVariableKey } from '$lib/schema/template-variables';
 
 /**
- * Converts a variable key into the users insert into message templates.
+ * Converts a variable key into the token users insert into message templates.
  */
-export function formatTemplateVariable(variable: Pick<TemplateVariable, 'key'> | string) {
+export function formatTemplateVariable(
+	variable: Pick<TemplateVariable, 'key'> | TemplateVariableKey
+) {
 	const key = typeof variable === 'string' ? variable : variable.key;
 	return `{{${key}}}`;
 }

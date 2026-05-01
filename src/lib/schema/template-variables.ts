@@ -1,10 +1,46 @@
-export type TemplateVariableContext = 'person' | 'organization' | 'sender' | 'event' | 'petition';
+import * as v from 'valibot';
+
+export const templateVariableContexts = [
+	'person',
+	'organization',
+	'sender',
+	'event',
+	'petition'
+] as const;
+export const templateVariableContext = v.picklist(templateVariableContexts);
+export type TemplateVariableContext = v.InferOutput<typeof templateVariableContext>;
+
+export const defaultTemplateVariableContexts = ['person', 'organization', 'sender'] as const;
+
+export const templateVariableKeys = [
+	'person.given_name',
+	'person.family_name',
+	'person.email_address',
+	'person.phone_number',
+	'organization.name',
+	'organization.slug',
+	'sender.name',
+	'sender.email',
+	'event.name',
+	'event.start_date',
+	'event.location',
+	'petition.name',
+	'petition.goal_count'
+] as const;
+export const templateVariableKey = v.picklist(templateVariableKeys);
+export type TemplateVariableKey = v.InferOutput<typeof templateVariableKey>;
 
 export type TemplateVariable = {
 	context: TemplateVariableContext;
 	field: string;
-	key: `${TemplateVariableContext}.${string}`;
+	key: TemplateVariableKey;
 };
+
+export const templateVariable = v.object({
+	context: templateVariableContext,
+	field: v.string(),
+	key: templateVariableKey
+});
 
 export type TemplateVariableGroup = {
 	context: TemplateVariableContext;
@@ -12,63 +48,53 @@ export type TemplateVariableGroup = {
 	variables: readonly TemplateVariable[];
 };
 
-function createTemplateVariable<TContext extends TemplateVariableContext>(
-	context: TContext,
-	field: string
-): TemplateVariable {
+function createTemplateVariable(key: TemplateVariableKey): TemplateVariable {
+	const [context, field] = key.split('.') as [TemplateVariableContext, string];
+
 	return {
 		context,
 		field,
-		key: `${context}.${field}`
+		key
 	};
 }
 
-export const defaultTemplateVariableContexts = ['person', 'organization', 'sender'] as const;
-
-export const allTemplateVariableContexts = [
-	'person',
-	'organization',
-	'sender',
-	'event',
-	'petition'
-] as const satisfies readonly TemplateVariableContext[];
+function createTemplateVariableGroup<TContext extends TemplateVariableContext>({
+	context,
+	keys,
+	optional
+}: {
+	context: TContext;
+	keys: readonly Extract<TemplateVariableKey, `${TContext}.${string}`>[];
+	optional?: boolean;
+}): TemplateVariableGroup {
+	return {
+		context,
+		optional,
+		variables: keys.map(createTemplateVariable)
+	};
+}
 
 export const templateVariableGroups = [
-	{
+	createTemplateVariableGroup({
 		context: 'person',
-		variables: [
-			createTemplateVariable('person', 'given_name'),
-			createTemplateVariable('person', 'family_name'),
-			createTemplateVariable('person', 'email_address'),
-			createTemplateVariable('person', 'phone_number')
-		]
-	},
-	{
+		keys: ['person.given_name', 'person.family_name', 'person.email_address', 'person.phone_number']
+	}),
+	createTemplateVariableGroup({
 		context: 'organization',
-		variables: [
-			createTemplateVariable('organization', 'name'),
-			createTemplateVariable('organization', 'slug')
-		]
-	},
-	{
+		keys: ['organization.name', 'organization.slug']
+	}),
+	createTemplateVariableGroup({
 		context: 'sender',
-		variables: [createTemplateVariable('sender', 'name'), createTemplateVariable('sender', 'email')]
-	},
-	{
+		keys: ['sender.name', 'sender.email']
+	}),
+	createTemplateVariableGroup({
 		context: 'event',
 		optional: true,
-		variables: [
-			createTemplateVariable('event', 'name'),
-			createTemplateVariable('event', 'start_date'),
-			createTemplateVariable('event', 'location')
-		]
-	},
-	{
+		keys: ['event.name', 'event.start_date', 'event.location']
+	}),
+	createTemplateVariableGroup({
 		context: 'petition',
 		optional: true,
-		variables: [
-			createTemplateVariable('petition', 'name'),
-			createTemplateVariable('petition', 'goal_count')
-		]
-	}
+		keys: ['petition.name', 'petition.goal_count']
+	})
 ] as const satisfies readonly TemplateVariableGroup[];
