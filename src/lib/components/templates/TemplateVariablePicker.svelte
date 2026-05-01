@@ -6,7 +6,7 @@
 	import * as Command from '$lib/components/ui/command/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils.js';
-	import { formatTemplateVariableToken } from '$lib/utils/template-variables';
+	import { formatTemplateVariable } from '$lib/utils/template-variables';
 	import {
 		defaultTemplateVariableContexts,
 		templateVariableGroups,
@@ -95,7 +95,7 @@
 			getContextLabel(variable.context),
 			getVariableLabel(variable),
 			variable.key,
-			formatTemplateVariableToken(variable)
+			formatTemplateVariable(variable)
 		]
 			.join(' ')
 			.toLowerCase()
@@ -115,7 +115,7 @@
 	});
 
 	function selectVariable(variable: TemplateVariable) {
-		onSelect?.(formatTemplateVariableToken(variable), variable);
+		onSelect?.(formatTemplateVariable(variable), variable);
 		open = false;
 		tick().then(() => {
 			triggerRef?.focus();
@@ -149,7 +149,7 @@
 									<div class="flex min-w-0 flex-1 items-center justify-between gap-3">
 										<span class="truncate">{getVariableLabel(variable)}</span>
 										<code class="text-xs whitespace-nowrap text-muted-foreground">
-											{formatTemplateVariableToken(variable)}
+											{formatTemplateVariable(variable)}
 										</code>
 									</div>
 								</Command.Item>

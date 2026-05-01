@@ -1,6 +1,9 @@
 import type { TemplateVariable } from '$lib/schema/template-variables';
 
-export function formatTemplateVariableToken(variable: Pick<TemplateVariable, 'key'> | string) {
+/**
+ * Converts a variable key into the users insert into message templates.
+ */
+export function formatTemplateVariable(variable: Pick<TemplateVariable, 'key'> | string) {
 	const key = typeof variable === 'string' ? variable : variable.key;
 	return `{{${key}}}`;
 }
@@ -22,9 +25,13 @@ function normalizeSelectionIndex(
 	return Math.min(Math.max(index, 0), valueLength);
 }
 
-export function insertTemplateVariableToken(
+/**
+ * Inserts a template variable into plain text, replacing any selected range.
+ * The cursor position is returned so callers can restore focus after Svelte updates the input value.
+ */
+export function insertTemplateVariable(
 	value: string,
-	token: string,
+	variable: string,
 	selectionStart?: number | null,
 	selectionEnd?: number | null
 ): TemplateVariableTextInsertion {
@@ -33,8 +40,8 @@ export function insertTemplateVariableToken(
 	const end = normalizeSelectionIndex(selectionEnd, start, value.length);
 	const rangeStart = Math.min(start, end);
 	const rangeEnd = Math.max(start, end);
-	const nextValue = `${value.slice(0, rangeStart)}${token}${value.slice(rangeEnd)}`;
-	const cursorPosition = rangeStart + token.length;
+	const nextValue = `${value.slice(0, rangeStart)}${variable}${value.slice(rangeEnd)}`;
+	const cursorPosition = rangeStart + variable.length;
 
 	return {
 		value: nextValue,
