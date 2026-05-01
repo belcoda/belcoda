@@ -7,8 +7,12 @@ import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { env } from '$env/dynamic/private';
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import { db, drizzle } from '$lib/server/db';
-import { organization } from '$lib/schema/drizzle';
+import { organization as organizationTable, user as userTable } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
+import {
+	resolveTemplateVariables,
+	type TemplateVariableValueMap
+} from '$lib/utils/template-variables';
 
 import { builder } from '$lib/zero/schema';
 import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
@@ -21,6 +25,21 @@ const lexicalRenderer = new LexicalHtmlRenderer();
 const requestSchema = v.object({
 	emailAddress: emailSchema
 });
+
+function buildTestTemplateVariableValues({
+	organization,
+	sender
+}: {
+	organization: typeof organizationTable.$inferSelect;
+	sender: typeof userTable.$inferSelect | null;
+}): TemplateVariableValueMap {
+	return {
+		'organization.name': organization.name,
+		'organization.slug': organization.slug,
+		'sender.name': sender?.name,
+		'sender.email': sender?.email
+	};
+}
 
 export async function POST(event) {
 	if (!event.locals.session?.user?.id) {
@@ -56,7 +75,7 @@ export async function POST(event) {
 		}
 
 		const org = await drizzle.query.organization.findFirst({
-			where: eq(organization.id, emailMessageRecord.organizationId)
+			where: eq(organizationTable.id, emailMessageRecord.organizationId)
 		});
 		if (!org) {
 			return error(404, 'Organization not found');
@@ -67,9 +86,20 @@ export async function POST(event) {
 			organization: org
 		});
 
-		const body = emailMessageRecord.body
-			? await lexicalRenderer.render(JSON.stringify(emailMessageRecord.body))
-			: '';
+		const sender = await drizzle.query.user.findFirst({
+			where: eq(userTable.id, event.locals.session.user.id)
+		});
+		const variableValues = buildTestTemplateVariableValues({
+			organization: org,
+			sender: sender ?? null
+		});
+		const subject = resolveTemplateVariables(emailMessageRecord.subject || '', variableValues);
+		const body = resolveTemplateVariables(
+			emailMessageRecord.body
+				? await lexicalRenderer.render(JSON.stringify(emailMessageRecord.body))
+				: '',
+			variableValues
+		);
 
 		const postmarkMessageId = await sendTemplateEmail({
 			to: parsed.emailAddress,
@@ -78,7 +108,7 @@ export async function POST(event) {
 			template: POSTMARK_MESSAGE_TEMPLATE_ALIAS,
 			stream: 'broadcast',
 			context: {
-				subject: emailMessageRecord.subject || '',
+				subject,
 				body,
 				organizationName: org.name
 			}
