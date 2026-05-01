@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { formatTemplateVariable, insertTemplateVariable } from './template-variables';
 
 describe('template variable utilities', () => {
-	describe('formatTemplateVariableToken', () => {
+	describe('formatTemplateVariable', () => {
 		it('formats a variable key', () => {
 			expect(formatTemplateVariable('person.given_name')).toBe('{{person.given_name}}');
 		});
@@ -12,7 +12,7 @@ describe('template variable utilities', () => {
 		});
 	});
 
-	describe('insertTemplateVariableToken', () => {
+	describe('insertTemplateVariable', () => {
 		it('inserts the token at the cursor position', () => {
 			const result = insertTemplateVariable('Hello ', '{{person.given_name}}', 6, 6);
 
