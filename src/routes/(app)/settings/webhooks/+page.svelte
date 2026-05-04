@@ -82,7 +82,7 @@
 		}
 	}
 
-	function handleDeleteWebhook(webhook: { id: string; name: string }) {
+	async function handleDeleteWebhook(webhook: { id: string; name: string }) {
 		if (!window.confirm(t`Are you sure you want to delete the webhook "${webhook.name}"?`)) {
 			return;
 		}
@@ -95,7 +95,8 @@
 				}
 			});
 
-			z.mutate(mutators.webhook.delete(parsed));
+			const response = z.mutate(mutators.webhook.delete(parsed));
+			await response.server;
 			toast.success(t`Webhook deleted`);
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message : t`Failed to delete webhook`);
@@ -197,7 +198,7 @@
 									</Table.Cell>
 								{/if}
 								<Table.Cell class="text-right">
-									{#if appState.isAdminOrOwner}
+									{#if appState.isOwner}
 										<div class="inline-flex items-center justify-end gap-0">
 											<Button
 												variant="ghost"
@@ -221,7 +222,8 @@
 												variant="ghost"
 												size="sm"
 												data-testid="settings-webhooks-delete"
-												onclick={() => handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
+												onclick={() =>
+													void handleDeleteWebhook({ id: webhook.id, name: webhook.name })}
 												aria-label={t`Delete webhook`}
 											>
 												<TrashIcon class="h-4 w-4" />
