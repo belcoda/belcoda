@@ -5,9 +5,8 @@ const log = pino(import.meta.url);
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { env } from '$env/dynamic/private';
 const { POSTMARK_MESSAGE_TEMPLATE_ALIAS } = env;
-import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
-const lexicalRenderer = new LexicalHtmlRenderer();
 import { getEmailSignature } from '$lib/server/utils/email/signature';
+import { renderEmailMessage } from '$lib/server/utils/email/render_email_message';
 
 import {
 	emailMessage,
@@ -17,31 +16,6 @@ import {
 } from '$lib/schema/drizzle';
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import {
-	resolveTemplateVariables,
-	type TemplateVariableValueMap
-} from '$lib/utils/template-variables';
-
-function buildTemplateVariableValues({
-	personObject,
-	organization,
-	sender
-}: {
-	personObject: typeof person.$inferSelect;
-	organization: typeof organizationTable.$inferSelect;
-	sender?: typeof userTable.$inferSelect | null;
-}): TemplateVariableValueMap {
-	return {
-		'person.given_name': personObject.givenName,
-		'person.family_name': personObject.familyName,
-		'person.email_address': personObject.emailAddress,
-		'person.phone_number': personObject.phoneNumber,
-		'organization.name': organization.name,
-		'organization.slug': organization.slug,
-		'sender.name': sender?.name,
-		'sender.email': sender?.email
-	};
-}
 
 export async function sendEmailMessage({
 	emailMessageId,
@@ -122,18 +96,13 @@ export async function sendEmailMessage({
 
 			// For now, we use a simple template. In the future, we could use
 			// a custom template based on the email body (stored as Lexical JSON)
-			const variableValues = buildTemplateVariableValues({
+			const renderedEmail = await renderEmailMessage({
+				subject: output.emailMessage.subject,
+				body: output.emailMessage.body,
 				personObject: output.recipient,
 				organization: output.organization,
 				sender: output.sender
 			});
-			const subject = resolveTemplateVariables(output.emailMessage.subject || '', variableValues);
-			const body = resolveTemplateVariables(
-				output.emailMessage.body
-					? await lexicalRenderer.render(JSON.stringify(output.emailMessage.body))
-					: '',
-				variableValues
-			);
 
 			await sendTemplateEmail({
 				to: output.recipient.emailAddress,
@@ -142,8 +111,8 @@ export async function sendEmailMessage({
 				template: POSTMARK_MESSAGE_TEMPLATE_ALIAS,
 				stream: 'broadcast',
 				context: {
-					subject,
-					body,
+					subject: renderedEmail.subject,
+					body: renderedEmail.body,
 					organizationName: output.organization.name
 				}
 			});
