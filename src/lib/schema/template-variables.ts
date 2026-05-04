@@ -42,6 +42,23 @@ export const templateVariable = v.object({
 	key: templateVariableKey
 });
 
+export const templateLiteralParamSource = v.object({
+	type: v.literal('literal'),
+	value: v.string()
+});
+
+export const templateVariableParamSource = v.object({
+	type: v.literal('variable'),
+	key: templateVariableKey,
+	fallback: v.optional(v.string())
+});
+
+export const templateParamSource = v.variant('type', [
+	templateLiteralParamSource,
+	templateVariableParamSource
+]);
+export type TemplateParamSource = v.InferOutput<typeof templateParamSource>;
+
 export type TemplateVariableGroup = {
 	context: TemplateVariableContext;
 	optional?: boolean;

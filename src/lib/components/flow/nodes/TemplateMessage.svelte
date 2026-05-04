@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { v4 as uuidv4 } from 'uuid';
+	import TriangleAlertIcon from '@lucide/svelte/icons/triangle-alert';
 	import {
 		Position,
 		useSvelteFlow,
@@ -12,21 +13,141 @@
 	} from '@xyflow/svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import type { WhatsappTemplateMessageData } from '$lib/schema/flow/index';
+	import type { TemplateParamSource, TemplateVariableKey } from '$lib/schema/template-variables';
 
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
+	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
+	import { t } from '$lib/index.svelte';
 	let { id, data }: NodeProps<Node<WhatsappTemplateMessageData, 'templateMessage'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 
 	import Combobox from './template/Combobox.svelte';
 
+	function getInitialParamSources(
+		templateParams: TemplateParamSource[] | undefined,
+		templateStrings: string[] | undefined
+	): TemplateParamSource[] {
+		if (templateParams) {
+			return templateParams.map((param) => ({ ...param }));
+		}
+
+		return templateStrings?.map((value) => ({ type: 'literal' as const, value })) ?? [];
+	}
+
+	function getParamTemplateString(param: TemplateParamSource | undefined) {
+		if (!param) return '';
+		if (param.type === 'literal') return param.value;
+		return param.fallback ?? '';
+	}
+
+	function getParamDisplayValue(params: TemplateParamSource[], index: number, placeholder: string) {
+		const param = params[index];
+		if (!param) return placeholder;
+		if (param.type === 'literal') return param.value || placeholder;
+		return param.fallback || getVariableLabel(param.key);
+	}
+
+	function getVariableLabel(key: TemplateVariableKey) {
+		switch (key) {
+			case 'person.given_name':
+				return t`Given name`;
+			case 'person.family_name':
+				return t`Family name`;
+			case 'person.email_address':
+				return t`Email address`;
+			case 'person.phone_number':
+				return t`Phone number`;
+			case 'organization.name':
+				return t`Organization name`;
+			case 'organization.slug':
+				return t`Organization slug`;
+			case 'sender.name':
+				return t`Sender name`;
+			case 'sender.email':
+				return t`Sender email`;
+			case 'event.name':
+				return t`Event name`;
+			case 'event.start_date':
+				return t`Event start date`;
+			case 'event.location':
+				return t`Event location`;
+			case 'petition.name':
+				return t`Petition name`;
+			case 'petition.goal_count':
+				return t`Petition goal`;
+			default:
+				return key;
+		}
+	}
+
+	function getParamSource(params: TemplateParamSource[], index: number): TemplateParamSource {
+		return params[index] ?? { type: 'literal', value: '' };
+	}
+
+	function setParamSource(
+		params: TemplateParamSource[],
+		index: number,
+		source: TemplateParamSource
+	) {
+		params[index] = source;
+	}
+
+	function setParamSourceType(
+		params: TemplateParamSource[],
+		index: number,
+		type: TemplateParamSource['type']
+	) {
+		const current = getParamSource(params, index);
+		if (type === 'literal') {
+			setParamSource(params, index, {
+				type: 'literal',
+				value: getParamTemplateString(current)
+			});
+			return;
+		}
+
+		setParamSource(params, index, {
+			type: 'variable',
+			key: current.type === 'variable' ? current.key : 'person.given_name',
+			fallback: getParamTemplateString(current)
+		});
+	}
+
+	function setLiteralParamValue(params: TemplateParamSource[], index: number, value: string) {
+		setParamSource(params, index, { type: 'literal', value });
+	}
+
+	function setVariableParamFallback(
+		params: TemplateParamSource[],
+		index: number,
+		fallback: string
+	) {
+		const current = getParamSource(params, index);
+		setParamSource(params, index, {
+			type: 'variable',
+			key: current.type === 'variable' ? current.key : 'person.given_name',
+			fallback
+		});
+	}
+
+	function ensureLiteralParam(params: TemplateParamSource[], index: number, value: string) {
+		if (!params[index]) {
+			params[index] = { type: 'literal', value };
+		}
+	}
+
 	// --- State Management ---
 	// svelte-ignore state_referenced_locally
-	let headerValues = $state(data.header?.templateStrings ?? []);
+	let headerParams = $state(
+		getInitialParamSources(data.header?.templateParams, data.header?.templateStrings)
+	);
 	// svelte-ignore state_referenced_locally
-	let bodyValues = $state(data.body?.templateStrings ?? []);
-	$inspect(bodyValues);
+	let bodyParams = $state(
+		getInitialParamSources(data.body?.templateParams, data.body?.templateStrings)
+	);
 	// svelte-ignore state_referenced_locally
 	let buttons = $state(data.buttons ?? []);
 	// svelte-ignore state_referenced_locally
@@ -42,8 +163,15 @@
 	// Sync changes back to the Flow state
 	$effect(() => {
 		updateNodeData(id, {
-			header: { templateStrings: headerValues, imageUrl: headerImageUrl },
-			body: { templateStrings: bodyValues },
+			header: {
+				templateStrings: headerParams.map(getParamTemplateString),
+				templateParams: headerParams,
+				imageUrl: headerImageUrl
+			},
+			body: {
+				templateStrings: bodyParams.map(getParamTemplateString),
+				templateParams: bodyParams
+			},
 			buttons,
 			templateId
 		});
@@ -84,9 +212,7 @@
 			if (templateBody?.example) {
 				for (let i = 0; i < templateBody.example.body_text[0].length; i++) {
 					const value = templateBody.example.body_text[0][i];
-					if (!bodyValues[i]) {
-						bodyValues[i] = value;
-					}
+					ensureLiteralParam(bodyParams, i, value);
 				}
 			}
 		}
@@ -95,10 +221,17 @@
 	watch(
 		() => templateHeader,
 		(data) => {
-			if (templateHeader?.format === 'IMAGE') {
-				headerImageUrl = headerImageUrl || templateHeader?.example.header_url[0];
+			if (!data) {
+				headerParams = [];
+				headerImageUrl = null;
+			} else if (data.format === 'IMAGE' && 'header_url' in data.example) {
+				headerImageUrl = headerImageUrl || data.example.header_url[0];
 			} else {
-				headerValues[0] = headerValues[0] || templateHeader?.example.header_text[0] || '';
+				ensureLiteralParam(
+					headerParams,
+					0,
+					'header_text' in data.example ? data.example.header_text[0] || '' : ''
+				);
 			}
 		}
 	);
@@ -158,12 +291,12 @@
 										<span
 											{...props}
 											class="rounded-sm bg-blue-600/90 px-2 py-0.5 text-sm font-medium text-white outline-none"
-											>{headerValues[0] || `{{${item.id}}}`}</span
+											>{getParamDisplayValue(headerParams, 0, `{{${item.id}}}`)}</span
 										>
 									{/snippet}
 								</Popover.Trigger>
 								<Popover.Content class="w-80 bg-none">
-									<Input bind:value={headerValues[0]} />
+									{@render paramSourceEditor(headerParams, 0)}
 								</Popover.Content>
 							</Popover.Root>
 						{/if}
@@ -182,12 +315,16 @@
 										<span
 											{...props}
 											class="rounded-sm bg-blue-600/90 px-2 py-0.5 text-sm font-medium text-white outline-none"
-											>{bodyValues[getTokenArrayIndex(item.id)] || `{{${item.id}}}`}</span
+											>{getParamDisplayValue(
+												bodyParams,
+												getTokenArrayIndex(item.id),
+												`{{${item.id}}}`
+											)}</span
 										>
 									{/snippet}
 								</Popover.Trigger>
 								<Popover.Content class="w-80 bg-none">
-									<Input bind:value={bodyValues[getTokenArrayIndex(item.id)]} />
+									{@render paramSourceEditor(bodyParams, getTokenArrayIndex(item.id))}
 								</Popover.Content>
 							</Popover.Root>
 						{/if}
@@ -218,3 +355,67 @@
 		</div>
 	</div>
 </div>
+
+{#snippet paramSourceEditor(params: TemplateParamSource[], index: number)}
+	{@const source = getParamSource(params, index)}
+	<div class="space-y-3">
+		<div class="flex gap-2">
+			<Button
+				size="sm"
+				variant={source.type === 'literal' ? 'default' : 'outline'}
+				onclick={() => setParamSourceType(params, index, 'literal')}
+			>
+				{t`Text`}
+			</Button>
+			<Button
+				size="sm"
+				variant={source.type === 'variable' ? 'default' : 'outline'}
+				onclick={() => setParamSourceType(params, index, 'variable')}
+			>
+				{t`Variable`}
+			</Button>
+		</div>
+
+		{#if source.type === 'literal'}
+			<Input
+				value={source.value}
+				oninput={(event) => {
+					setLiteralParamValue(params, index, event.currentTarget.value);
+				}}
+			/>
+		{:else}
+			<div class="space-y-2">
+				<div class="flex items-center gap-2">
+					<TemplateVariablePicker
+						triggerLabel={t`Variable`}
+						onSelect={(_, variable) => {
+							setParamSource(params, index, {
+								type: 'variable',
+								key: variable.key,
+								fallback: source.fallback
+							});
+						}}
+					/>
+					<span class="truncate text-sm text-muted-foreground">
+						{getVariableLabel(source.key)}
+					</span>
+				</div>
+				<Input
+					placeholder={t`Fallback text`}
+					value={source.fallback ?? ''}
+					oninput={(event) => {
+						setVariableParamFallback(params, index, event.currentTarget.value);
+					}}
+				/>
+				{#if !source.fallback?.trim()}
+					<div
+						class="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900"
+					>
+						<TriangleAlertIcon class="mt-0.5 size-3.5 shrink-0" />
+						<span>{t`Add fallback text for recipients without this value.`}</span>
+					</div>
+				{/if}
+			</div>
+		{/if}
+	</div>
+{/snippet}

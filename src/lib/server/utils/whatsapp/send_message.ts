@@ -9,22 +9,88 @@ import { and, eq } from 'drizzle-orm';
 import {
 	organization as organizationTable,
 	person,
+	user as userTable,
 	whatsappMessage as whatsappMessageTable,
 	whatsappTemplate as whatsappTemplateTable
 } from '$lib/schema/drizzle';
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { sendWhatsappMessage as sendWhatsappMessageToYCloud } from './ycloud/ycloud_api';
 import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
+import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
 import { env as publicEnv } from '$env/dynamic/public';
 import { createActivityWhatsAppMessageOutgoing } from '$lib/server/api/data/activity/activity';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
+import {
+	resolveTemplateParamSources,
+	type TemplateVariableValueMap
+} from '$lib/utils/template-variables';
 
 type WhatsappMessage =
 	| ReturnType<typeof convertWhatsappMessageToApiFormat>
 	| ReturnType<typeof convertWhatsAppTemplateMessageToApiFormat>;
+
+function buildTemplateVariableValues({
+	personObject,
+	organization,
+	sender
+}: {
+	personObject: typeof person.$inferSelect;
+	organization: typeof organizationTable.$inferSelect;
+	sender?: typeof userTable.$inferSelect | null;
+}): TemplateVariableValueMap {
+	return {
+		'person.given_name': personObject.givenName,
+		'person.family_name': personObject.familyName,
+		'person.email_address': personObject.emailAddress,
+		'person.phone_number': personObject.phoneNumber,
+		'organization.name': organization.name,
+		'organization.slug': organization.slug,
+		'sender.name': sender?.name,
+		'sender.email': sender?.email
+	};
+}
+
+function resolveWhatsappTemplateMessageData({
+	message,
+	template,
+	values
+}: {
+	message: WhatsappTemplateMessageData;
+	template: TemplateMessageComponents;
+	values: TemplateVariableValueMap;
+}): WhatsappTemplateMessageData {
+	const templateHeader = template.find((component) => component.type === 'HEADER');
+	const templateBody = template.find((component) => component.type === 'BODY');
+
+	return {
+		...message,
+		header:
+			templateHeader && message.header
+				? {
+						...message.header,
+						templateStrings: resolveTemplateParamSources({
+							templateParams: message.header.templateParams,
+							templateStrings: message.header.templateStrings,
+							values
+						})
+					}
+				: undefined,
+		body:
+			templateBody && message.body
+				? {
+						...message.body,
+						templateStrings: resolveTemplateParamSources({
+							templateParams: message.body.templateParams,
+							templateStrings: message.body.templateStrings,
+							values
+						})
+					}
+				: undefined
+	};
+}
 
 export async function sendWhatsappMessage({
 	message,
@@ -154,13 +220,27 @@ export async function sendWhatsappTemplateMessage({
 		if (!personObject) {
 			throw new Error('Person not found');
 		}
+		const senderObject = sendingUserId
+			? await tx.dbTransaction.wrappedTransaction.query.user.findFirst({
+					where: eq(userTable.id, sendingUserId)
+				})
+			: null;
 		const to = personObject.whatsAppUsername || personObject.phoneNumber;
 		if (!to) {
 			throw new Error('Person does not have a WhatsApp username or phone number');
 		}
 		const whatsappMessageId = uuidv7();
+		const resolvedMessage = resolveWhatsappTemplateMessageData({
+			message,
+			template: template.components,
+			values: buildTemplateVariableValues({
+				personObject,
+				organization,
+				sender: senderObject
+			})
+		});
 		const messageToSend = await convertWhatsAppTemplateMessageToApiFormat({
-			templateMessage: message,
+			templateMessage: resolvedMessage,
 			nodeId: nodeId,
 			whatsappThreadId: threadId,
 			whatsappMessageId: whatsappMessageId,
@@ -175,7 +255,7 @@ export async function sendWhatsappTemplateMessage({
 			throw new Error('Failed to send message to YCloud');
 		}
 		const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
-			templateMessage: message,
+			templateMessage: resolvedMessage,
 			template: template.components,
 			messageId: whatsappMessageId,
 			threadId: threadId
