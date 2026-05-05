@@ -133,6 +133,7 @@ export async function buildEventResourceSpec() {
 							content: { 'application/json': { schema: { $ref: '#/components/schemas/Event' } } }
 						},
 						'401': { $ref: '#/components/responses/Unauthorized' },
+						'404': { $ref: '#/components/responses/NotFound' },
 						'500': { $ref: '#/components/responses/InternalServerError' }
 					}
 				},
@@ -155,6 +156,7 @@ export async function buildEventResourceSpec() {
 						},
 						'400': { $ref: '#/components/responses/BadRequest' },
 						'401': { $ref: '#/components/responses/Unauthorized' },
+						'404': { $ref: '#/components/responses/NotFound' },
 						'500': { $ref: '#/components/responses/InternalServerError' }
 					}
 				},
@@ -264,7 +266,7 @@ export async function buildEventResourceSpec() {
 							}
 						},
 						'401': { $ref: '#/components/responses/Unauthorized' },
-						'404': { $ref: '#/components/responses/BadRequest' },
+						'404': { $ref: '#/components/responses/NotFound' },
 						'500': { $ref: '#/components/responses/InternalServerError' }
 					}
 				},

@@ -88,6 +88,14 @@ export function buildSharedComponents() {
 					}
 				}
 			},
+			NotFound: {
+				description: 'Not found',
+				content: {
+					'application/json': {
+						schema: { $ref: '#/components/schemas/ErrorResponse' }
+					}
+				}
+			},
 			InternalServerError: {
 				description: 'Internal server error',
 				content: {
