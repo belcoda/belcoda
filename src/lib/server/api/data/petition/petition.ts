@@ -331,6 +331,7 @@ export async function loadPetitionForApi({
 	return row;
 }
 
+// this function doesn't have the same permissions as the list permissions query (using ctx for permissions check) but in the API context won't need it, because API keys are always owners.
 export async function listPetitionsForOrg({
 	ctx,
 	input,
