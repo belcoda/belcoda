@@ -28,7 +28,7 @@ export async function GET(event) {
 		throw error(404, { message: 'Petition signature not found' });
 	}
 
-	const { organizationId, ...rest } = row; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having organizationId field)
+	const { organizationId, ...rest } = row; // eslint-disable-line @typescript-eslint/no-unused-vars
 	return json(parse(petitionSignatureApiSchema, rest));
 }
 
@@ -67,7 +67,7 @@ export async function PUT(event) {
 		});
 	});
 
-	const { organizationId: _org, ...rest } = updated; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having organizationId field)
+	const { organizationId: _org, ...rest } = updated; // eslint-disable-line @typescript-eslint/no-unused-vars
 	return json(parse(petitionSignatureApiSchema, rest));
 }
 
