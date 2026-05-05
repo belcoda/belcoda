@@ -32,17 +32,22 @@ export async function PUT(event) {
 		...(startsAt !== undefined ? { startsAt: startsAt.getTime() } : {}),
 		...(endsAt !== undefined ? { endsAt: endsAt.getTime() } : {})
 	};
-	await db.transaction(async (tx) => {
-		await updateEvent({
-			ctx,
-			tx,
-			args: {
-				metadata: { organizationId, eventId },
-				input: patch
-			}
+	const refreshed = await db
+		.transaction(async (tx) => {
+			await updateEvent({
+				ctx,
+				tx,
+				args: {
+					metadata: { organizationId, eventId },
+					input: patch
+				}
+			});
+			return await loadEventForApi({ ctx, tx, eventId });
+		})
+		.catch((err) => {
+			log.error(err, 'Error updating event for API');
+			throw error(500, { message: 'Error updating event' });
 		});
-	});
-	const refreshed = await db.transaction(async (tx) => loadEventForApi({ ctx, tx, eventId }));
 	return json(processOutgoingBody(refreshed, eventApiSchema));
 }
 
