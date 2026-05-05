@@ -25,7 +25,7 @@ import { parse } from 'valibot';
 
 import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and, sql, ne, count as countRows } from 'drizzle-orm';
+import { eq, and, sql, ne, count as countRows, isNotNull, or } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
@@ -1138,6 +1138,24 @@ export async function countEventSignupsForOrg({
 	if (input.status) {
 		whereParts.push(eq(eventSignup.status, input.status));
 	}
+
+	const eventWhereBase = and(
+		eq(event.organizationId, input.organizationId),
+		isNotNull(event.deletedAt),
+		isNotNull(event.archivedAt),
+		isNotNull(event.cancelledAt)
+	);
+	const eventWhereArr = [eventWhereBase];
+	if (input.tagId) {
+		const eqTag = eq(event.signupTag, input.tagId);
+		const eqAttendanceTag = eq(event.attendanceTag, input.tagId);
+		const orTag = or(eqTag, eqAttendanceTag);
+		eventWhereArr.push(orTag);
+	}
+	if (input.teamId) {
+		eventWhereArr.push(eq(event.teamId, input.teamId));
+	}
+
 	const clause = and(...whereParts);
 
 	if (input.teamId) {
@@ -1145,7 +1163,7 @@ export async function countEventSignupsForOrg({
 			.select({ count: countRows() })
 			.from(eventSignup)
 			.innerJoin(event, eq(eventSignup.eventId, event.id))
-			.where(and(clause, eq(event.teamId, input.teamId)));
+			.where(and(clause, ...eventWhereArr));
 		return result.count;
 	}
 
