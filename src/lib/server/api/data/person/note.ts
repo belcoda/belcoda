@@ -108,7 +108,7 @@ export async function updatePersonNote({
 	if (!personNoteRecord) {
 		throw new Error('Person note not found');
 	}
-	const result = await _updatePersonNoteNoPermissionsCheck({
+	const result = await _updatePersonNoteNoPermissionsCheckUnsafe({
 		tx,
 		noteId: parsed.metadata.personNoteId,
 		organizationId: parsed.metadata.organizationId,
