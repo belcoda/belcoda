@@ -13,6 +13,15 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 test.describe.serial('Settings: Tags', () => {
 	const ids = {
 		tagId: '',
@@ -90,6 +99,17 @@ test.describe.serial('Settings: Tags', () => {
 
 		const row = tagsPage.tagRow(ids.tagId);
 		await expect(row.getByTestId('tag-row-status')).toHaveText('Active', { timeout: 15_000 });
+	});
+
+	test('member cannot access tag management', async ({ page }) => {
+		const tagsPage = new TagsPage(page);
+
+		await loginAsMember(page);
+		await tagsPage.goto();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(tagsPage.newTagTrigger).toHaveCount(0);
+		await expect(tagsPage.tagRow(ids.tagId)).toHaveCount(0);
 	});
 
 	test('owner can delete a tag', async ({ page }) => {
