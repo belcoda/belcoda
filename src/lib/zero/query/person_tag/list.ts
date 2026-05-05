@@ -28,6 +28,10 @@ export function listPersonTagsQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
+	if (input.startAfter) {
+		q = q.start({ id: input.startAfter });
+	}
+	return q;
 }
 
 export const listPersonTags = defineQuery(inputSchema, ({ ctx, args }) => {
