@@ -40,7 +40,7 @@ export async function PUT(event) {
 export async function DELETE(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const personId = event.params.personId;
-	const result = await db.transaction(async (tx) => {
+	await db.transaction(async (tx) => {
 		const person = await deletePerson({
 			ctx,
 			args: { metadata: { organizationId, personId } },
