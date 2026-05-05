@@ -28,14 +28,14 @@ export async function GET(event) {
 		throw error(404, { message: 'Petition signature not found' });
 	}
 
-	const { organizationId, ...rest } = row;
+	const { organizationId, ...rest } = row; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having organizationId field)
 	return json(parse(petitionSignatureApiSchema, rest));
 }
 
 export async function PUT(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
-	const petitionId = event.params.petitionId!;
-	const petitionSignatureId = event.params.signatureId!;
+	const petitionId = event.params.petitionId;
+	const petitionSignatureId = event.params.signatureId;
 	const inputBody = await processIncomingBody(event, updatePetitionSignatureRest);
 
 	const updated = await db.transaction(async (tx) => {
@@ -67,7 +67,7 @@ export async function PUT(event) {
 		});
 	});
 
-	const { organizationId: _org, ...rest } = updated;
+	const { organizationId: _org, ...rest } = updated; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having organizationId field)
 	return json(parse(petitionSignatureApiSchema, rest));
 }
 
