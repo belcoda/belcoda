@@ -21,7 +21,7 @@ export function listPersonTagsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	return builder.personTag
+	let q = builder.personTag
 		.where((expr) => personTagReadPermissions(expr, ctx))
 		.related('tag', (expr) => expr.one())
 		.where('organizationId', '=', input.organizationId)
@@ -29,7 +29,8 @@ export function listPersonTagsQuery({
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
 	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
+		const [tagId, personId] = input.startAfter.split('.'); //startAfter is a string of the form tagId.personId
+		q = q.start({ tagId, personId });
 	}
 	return q;
 }
