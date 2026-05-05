@@ -14,8 +14,8 @@ import {
 
 export async function GET(event) {
 	const { ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
-	const petitionId = event.params.petitionId!;
-	const petitionSignatureId = event.params.signatureId!;
+	const petitionId = event.params.petitionId;
+	const petitionSignatureId = event.params.signatureId;
 
 	const row = await db.transaction(async (tx) => {
 		return await getPetitionSignatureForApi({
@@ -27,8 +27,8 @@ export async function GET(event) {
 	if (row.petitionId !== petitionId) {
 		throw error(404, { message: 'Petition signature not found' });
 	}
-
-	const { organizationId, ...rest } = row; // eslint-disable-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+	const { organizationId, ...rest } = row;
 	return json(parse(petitionSignatureApiSchema, rest));
 }
 
@@ -66,8 +66,8 @@ export async function PUT(event) {
 			args: { petitionSignatureId }
 		});
 	});
-
-	const { organizationId: _org, ...rest } = updated; // eslint-disable-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+	const { organizationId: _org, ...rest } = updated;
 	return json(parse(petitionSignatureApiSchema, rest));
 }
 

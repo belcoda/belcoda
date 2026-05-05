@@ -60,7 +60,7 @@ export async function GET(event) {
 
 	const withoutPersonRows = result.junctionRows.map((row: { person?: unknown }) => {
 		const { person: _omit, ...signup } = row as Record<string, unknown> & {
-			person?: unknown; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having person field)
+			person?: unknown; // eslint-disable-next-line `@typescript-eslint/no-unused-vars`
 		};
 		return signup;
 	});

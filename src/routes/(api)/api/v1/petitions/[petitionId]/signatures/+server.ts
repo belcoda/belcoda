@@ -44,7 +44,8 @@ export async function GET(event) {
 	});
 
 	const withoutPersonRows = result.junctionRows.map((row: { person?: unknown }) => {
-		const { person: _omit, ...sig } = row as Record<string, unknown> & { person?: unknown }; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having person field)
+		// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+		const { person: _omit, ...sig } = row as Record<string, unknown> & { person?: unknown };
 		return sig;
 	});
 
@@ -80,6 +81,7 @@ export async function POST(event) {
 			}
 		});
 	});
-	const { organizationId: _org, ...data } = created; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having organizationId field)
+	// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+	const { organizationId: _org, ...data } = created;
 	return json(processOutgoingBody(data, petitionSignatureApiSchema));
 }
