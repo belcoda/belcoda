@@ -8,7 +8,7 @@ import { db } from '$lib/server/db';
 import { getTag, updateTag, deleteTag } from '$lib/server/api/data/tag/tag';
 import { tagApiSchema, updateTag as updateTagRestBody } from '$lib/schema/tag';
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const tagId = event.params.tagId!;
 	const record = await db.transaction(async (tx) => {
@@ -17,7 +17,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	return json(processOutgoingBody(record, tagApiSchema));
 }
 
-export async function PUT(event: import('@sveltejs/kit').RequestEvent) {
+export async function PUT(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const tagId = event.params.tagId!;
 	const input = await processIncomingBody(event, updateTagRestBody);
@@ -34,7 +34,7 @@ export async function PUT(event: import('@sveltejs/kit').RequestEvent) {
 	return json(processOutgoingBody(updated, tagApiSchema));
 }
 
-export async function DELETE(event: import('@sveltejs/kit').RequestEvent) {
+export async function DELETE(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const tagId = event.params.tagId!;
 	await db.transaction(async (tx) => {

@@ -32,7 +32,7 @@ function buildPetitionSignaturesListInput(organizationId: string, petitionId: st
 	};
 }
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const petitionId = event.params.petitionId!;
 	const input = buildPetitionSignaturesListInput(organizationId, petitionId, event.url);
@@ -56,7 +56,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	);
 }
 
-export async function POST(event: import('@sveltejs/kit').RequestEvent) {
+export async function POST(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const petitionId = event.params.petitionId!;
 	const body = await processIncomingBody(event, createPetitionSignatureApiBody);

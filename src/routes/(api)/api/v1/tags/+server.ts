@@ -12,7 +12,7 @@ import { array } from 'valibot';
 import { tagApiSchema, createTag as createTagRestBody } from '$lib/schema/tag';
 import { v7 as uuidv7 } from 'uuid';
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const input = buildApiListFilter({ organizationId, url: event.url });
 	const includeInactive = event.url.searchParams.get('includeInactive') === 'true';
@@ -35,7 +35,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	);
 }
 
-export async function POST(event: import('@sveltejs/kit').RequestEvent) {
+export async function POST(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const body = await processIncomingBody(event, createTagRestBody);
 	const created = await db.transaction(async (tx) => {

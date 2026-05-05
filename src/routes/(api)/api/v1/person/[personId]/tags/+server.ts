@@ -13,7 +13,7 @@ import { addPersonTagApiBody, tagApiSchema } from '$lib/schema/tag';
 import { tag } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const input = buildApiListFilter({ organizationId, url: event.url });
 	const personId = event.params.personId!;
@@ -34,10 +34,10 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	return json(buildApiListResponse({ data: output, count: result.count }));
 }
 
-export async function POST(event: import('@sveltejs/kit').RequestEvent) {
+export async function POST(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const body = await processIncomingBody(event, addPersonTagApiBody);
-	const personId = event.params.personId!;
+	const personId = event.params.personId;
 
 	const tagRow = await db.transaction(async (tx) => {
 		await addPersonTag({

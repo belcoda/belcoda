@@ -10,8 +10,6 @@ import {
 	deletePersonNote
 } from '$lib/server/api/data/person/note';
 import { personNoteApiSchema, updatePersonNoteZero } from '$lib/schema/person-note';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 
 export async function PUT(event) {
 	const { organizationId } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);

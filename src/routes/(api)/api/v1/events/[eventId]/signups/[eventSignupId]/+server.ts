@@ -14,7 +14,7 @@ import {
 	updateEventSignup as updateEventSignupRest
 } from '$lib/schema/event-signup';
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
 	const eventSignupId = event.params.eventSignupId!;
@@ -29,7 +29,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	return json(processOutgoingBody(row, eventSignupApiSchema));
 }
 
-export async function PUT(event: import('@sveltejs/kit').RequestEvent) {
+export async function PUT(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
 	const eventSignupId = event.params.eventSignupId!;
@@ -59,7 +59,7 @@ export async function PUT(event: import('@sveltejs/kit').RequestEvent) {
 	return json(processOutgoingBody(updated, eventSignupApiSchema));
 }
 
-export async function DELETE(event: import('@sveltejs/kit').RequestEvent) {
+export async function DELETE(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
 	const eventSignupId = event.params.eventSignupId!;

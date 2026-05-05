@@ -12,7 +12,7 @@ import { array } from 'valibot';
 import { teamApiSchema, createTeam as createTeamRestBody } from '$lib/schema/team';
 import { v7 as uuidv7 } from 'uuid';
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const input = buildApiListFilter({ organizationId, url: event.url });
 	const listInput = {
@@ -33,7 +33,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	);
 }
 
-export async function POST(event: import('@sveltejs/kit').RequestEvent) {
+export async function POST(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const body = await processIncomingBody(event, createTeamRestBody);
 	const created = await db.transaction(async (tx) => {

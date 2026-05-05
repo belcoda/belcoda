@@ -47,7 +47,7 @@ function buildEventSignupsListInput(organizationId: string, eventId: string, url
 	};
 }
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
 	const input = buildEventSignupsListInput(organizationId, eventId, event.url);
@@ -73,7 +73,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	);
 }
 
-export async function POST(event: import('@sveltejs/kit').RequestEvent) {
+export async function POST(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
 	const body = await processIncomingBody(event, createEventSignupApiBody);

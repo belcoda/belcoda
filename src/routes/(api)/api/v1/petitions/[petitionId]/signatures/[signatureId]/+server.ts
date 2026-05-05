@@ -12,7 +12,7 @@ import {
 	updatePetitionSignatureRest
 } from '$lib/schema/petition/petition-signature';
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const petitionId = event.params.petitionId!;
 	const petitionSignatureId = event.params.signatureId!;
@@ -32,7 +32,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	return json(parse(petitionSignatureApiSchema, rest));
 }
 
-export async function PUT(event: import('@sveltejs/kit').RequestEvent) {
+export async function PUT(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const petitionId = event.params.petitionId!;
 	const petitionSignatureId = event.params.signatureId!;
@@ -71,7 +71,7 @@ export async function PUT(event: import('@sveltejs/kit').RequestEvent) {
 	return json(parse(petitionSignatureApiSchema, rest));
 }
 
-export async function DELETE(event: import('@sveltejs/kit').RequestEvent) {
+export async function DELETE(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const petitionId = event.params.petitionId!;
 	const petitionSignatureId = event.params.signatureId!;

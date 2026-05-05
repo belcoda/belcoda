@@ -58,7 +58,7 @@ function buildEventsListInput(organizationId: string, url: URL) {
 	};
 }
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const input = buildEventsListInput(organizationId, event.url);
 
@@ -76,7 +76,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	);
 }
 
-export async function POST(event: import('@sveltejs/kit').RequestEvent) {
+export async function POST(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const body = await processIncomingBody(event, createEventRest);
 	const created = await db.transaction(async (tx) => {

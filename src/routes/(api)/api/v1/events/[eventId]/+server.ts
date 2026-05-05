@@ -10,7 +10,7 @@ import { eventApiSchema, updateEventRest } from '$lib/schema/event';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
-export async function GET(event: import('@sveltejs/kit').RequestEvent) {
+export async function GET(event) {
 	const { ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
 	const row = await db
@@ -22,7 +22,7 @@ export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	return json(processOutgoingBody(row, eventApiSchema));
 }
 
-export async function PUT(event: import('@sveltejs/kit').RequestEvent) {
+export async function PUT(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
 	const body = await processIncomingBody(event, updateEventRest);
@@ -46,7 +46,7 @@ export async function PUT(event: import('@sveltejs/kit').RequestEvent) {
 	return json(processOutgoingBody(refreshed, eventApiSchema));
 }
 
-export async function DELETE(event: import('@sveltejs/kit').RequestEvent) {
+export async function DELETE(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
 	await db.transaction(async (tx) => {
