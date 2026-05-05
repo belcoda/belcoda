@@ -1,11 +1,10 @@
 import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import { organization as organizationTable, person, user as userTable } from '$lib/schema/drizzle';
-import {
-	resolveTemplateVariables,
-	type TemplateVariableValueMap
-} from '$lib/utils/template-variables';
+import { templateVariableKeys, type TemplateVariableKey } from '$lib/schema/template-variables';
 
 const lexicalRenderer = new LexicalHtmlRenderer();
+const templateVariableKeySet = new Set<string>(templateVariableKeys);
+const templateVariableTokenPattern = /\{\{\s*([a-z_]+\.[a-z_]+)\s*\}\}/g;
 
 type EmailTemplatePerson = Pick<
 	typeof person.$inferSelect,
@@ -13,8 +12,9 @@ type EmailTemplatePerson = Pick<
 >;
 type EmailTemplateOrganization = Pick<typeof organizationTable.$inferSelect, 'name' | 'slug'>;
 type EmailTemplateSender = Pick<typeof userTable.$inferSelect, 'name' | 'email'>;
+type EmailTemplateValues = Partial<Record<TemplateVariableKey, string | null | undefined>>;
 
-function buildEmailTemplateVariableValues({
+function buildEmailTemplateValues({
 	personObject,
 	organization,
 	sender
@@ -22,7 +22,7 @@ function buildEmailTemplateVariableValues({
 	personObject?: EmailTemplatePerson | null;
 	organization: EmailTemplateOrganization;
 	sender?: EmailTemplateSender | null;
-}): TemplateVariableValueMap {
+}): EmailTemplateValues {
 	return {
 		'person.given_name': personObject?.givenName,
 		'person.family_name': personObject?.familyName,
@@ -35,26 +35,31 @@ function buildEmailTemplateVariableValues({
 	};
 }
 
-function resolveLexicalTextNodes(value: unknown, values: TemplateVariableValueMap): unknown {
-	if (Array.isArray(value)) {
-		return value.map((item) => resolveLexicalTextNodes(item, values));
-	}
+function escapeHtml(value: string) {
+	return value
+		.replaceAll('&', '&amp;')
+		.replaceAll('<', '&lt;')
+		.replaceAll('>', '&gt;')
+		.replaceAll('"', '&quot;')
+		.replaceAll("'", '&#39;');
+}
 
-	if (!value || typeof value !== 'object') {
-		return value;
-	}
+function renderTemplateVariables({
+	value,
+	values,
+	escape
+}: {
+	value: string;
+	values: EmailTemplateValues;
+	escape: (value: string) => string;
+}) {
+	return value.replace(templateVariableTokenPattern, (token, key: string) => {
+		if (!templateVariableKeySet.has(key)) {
+			return token;
+		}
 
-	const node = value as Record<string, unknown>;
-	const resolvedNode = Object.fromEntries(
-		Object.entries(node).map(([key, item]) => [key, resolveLexicalTextNodes(item, values)])
-	);
-
-	// Lexical stores user-visible text on text nodes. Resolve only that field before HTML rendering.
-	if (node.type === 'text' && typeof node.text === 'string') {
-		resolvedNode.text = resolveTemplateVariables(node.text, values);
-	}
-
-	return resolvedNode;
+		return escape(values[key as TemplateVariableKey] || '');
+	});
 }
 
 export async function renderEmailMessage({
@@ -70,19 +75,23 @@ export async function renderEmailMessage({
 	organization: EmailTemplateOrganization;
 	sender?: EmailTemplateSender | null;
 }) {
-	const values = buildEmailTemplateVariableValues({
+	const values = buildEmailTemplateValues({
 		personObject,
 		organization,
 		sender
 	});
-	const renderedSubject = resolveTemplateVariables(subject || '', values);
-	const resolvedBody = body ? resolveLexicalTextNodes(body, values) : null;
-	const renderedBody = resolvedBody
-		? resolveTemplateVariables(await lexicalRenderer.render(JSON.stringify(resolvedBody)), values)
-		: '';
+	const html = body ? await lexicalRenderer.render(JSON.stringify(body)) : '';
 
 	return {
-		subject: renderedSubject,
-		body: renderedBody
+		subject: renderTemplateVariables({
+			value: subject || '',
+			values,
+			escape: (value) => value
+		}),
+		body: renderTemplateVariables({
+			value: html,
+			values,
+			escape: escapeHtml
+		})
 	};
 }

@@ -4,15 +4,12 @@ import { email as emailSchema } from '$lib/schema/helpers';
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { getEmailSignature } from '$lib/server/utils/email/signature';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
+import { renderEmailMessage } from '$lib/server/utils/email/render_email_message';
 import { env } from '$env/dynamic/private';
-import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import { db, drizzle } from '$lib/server/db';
-import { organization as organizationTable, user as userTable } from '$lib/schema/drizzle';
+import { organization as organizationTable } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
-import {
-	resolveTemplateVariables,
-	type TemplateVariableValueMap
-} from '$lib/utils/template-variables';
+import { _getUserByIdUnsafe } from '$lib/server/api/data/user/user';
 
 import { builder } from '$lib/zero/schema';
 import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
@@ -20,26 +17,10 @@ import pino from '$lib/pino';
 
 const log = pino(import.meta.url);
 const { POSTMARK_MESSAGE_TEMPLATE_ALIAS } = env;
-const lexicalRenderer = new LexicalHtmlRenderer();
 
 const requestSchema = v.object({
 	emailAddress: emailSchema
 });
-
-function buildTestTemplateVariableValues({
-	organization,
-	sender
-}: {
-	organization: typeof organizationTable.$inferSelect;
-	sender: typeof userTable.$inferSelect | null;
-}): TemplateVariableValueMap {
-	return {
-		'organization.name': organization.name,
-		'organization.slug': organization.slug,
-		'sender.name': sender?.name,
-		'sender.email': sender?.email
-	};
-}
 
 export async function POST(event) {
 	if (!event.locals.session?.user?.id) {
@@ -86,20 +67,13 @@ export async function POST(event) {
 			organization: org
 		});
 
-		const sender = await drizzle.query.user.findFirst({
-			where: eq(userTable.id, event.locals.session.user.id)
-		});
-		const variableValues = buildTestTemplateVariableValues({
+		const sender = await _getUserByIdUnsafe({ userId: event.locals.session.user.id });
+		const renderedEmail = await renderEmailMessage({
+			subject: emailMessageRecord.subject,
+			body: emailMessageRecord.body,
 			organization: org,
 			sender: sender ?? null
 		});
-		const subject = resolveTemplateVariables(emailMessageRecord.subject || '', variableValues);
-		const body = resolveTemplateVariables(
-			emailMessageRecord.body
-				? await lexicalRenderer.render(JSON.stringify(emailMessageRecord.body))
-				: '',
-			variableValues
-		);
 
 		const postmarkMessageId = await sendTemplateEmail({
 			to: parsed.emailAddress,
@@ -108,8 +82,8 @@ export async function POST(event) {
 			template: POSTMARK_MESSAGE_TEMPLATE_ALIAS,
 			stream: 'broadcast',
 			context: {
-				subject,
-				body,
+				subject: renderedEmail.subject,
+				body: renderedEmail.body,
 				organizationName: org.name
 			}
 		});
