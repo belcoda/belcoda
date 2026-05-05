@@ -199,7 +199,7 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 			event.locals.authorizedApiOrganization = key.key?.referenceId || null; //organizationId by default
 		} else {
 			switch (key.error?.code) {
-				case 'RATE_LIMITED':
+				case 'RATE_LIMITED': {
 					let tryAgainText = 'Try again later';
 					//@ts-expect-error (typing on this seems wrong, it thinks that it shouldn't have details  but does in practice)
 					if (key.error?.details?.tryAgainIn) {
@@ -212,8 +212,10 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 						},
 						{ status: 429 }
 					);
-				default:
-					return json({ error: key.error?.message || 'Unknown error' }, { status: 500 });
+				}
+				default: {
+					return json({ error: key.error?.message || 'Invalid API key' }, { status: 401 }); // this is actually the default case if the error is in checking the API key
+				}
 			}
 		}
 	}
