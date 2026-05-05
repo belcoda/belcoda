@@ -226,12 +226,13 @@ export async function listPersonNotes({
 
 export async function countPersonNotes({
 	tx,
-	ctx,
+	// ctx is intentionally unused — only called in API context where org is already scoped
+	_ctx,
 	input,
 	personId
 }: {
 	tx: ServerTransaction;
-	ctx: QueryContext;
+	_ctx: QueryContext;
 	input: ListFilter;
 	personId: string;
 }) {
