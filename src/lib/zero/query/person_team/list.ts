@@ -21,13 +21,18 @@ export function listPersonTeamsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	return builder.personTeam
+	let q = builder.personTeam
 		.where((expr) => personTeamReadPermissions(expr, ctx))
 		.related('team', (expr) => expr.one())
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
+	if (input.startAfter) {
+		const [teamId, personId] = input.startAfter.split('.'); //startAfter is a string of the form teamId.personId
+		q = q.start({ teamId, personId });
+	}
+	return q;
 }
 
 export const listPersonTeams = defineQuery(inputSchema, ({ ctx, args }) => {
