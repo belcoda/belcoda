@@ -3,7 +3,7 @@ import { type QueryContext, builder } from '$lib/zero/schema';
 
 import { personNote } from '$lib/schema/drizzle';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
-import { eq, and, isNull, count } from 'drizzle-orm';
+import { eq, and, isNull, count, ilike } from 'drizzle-orm';
 
 import { parse } from 'valibot';
 import {
@@ -228,11 +228,17 @@ export async function countPersonNotes({
 	input: ListFilter;
 	personId: string;
 }) {
+	const filterArr = [
+		eq(personNote.personId, personId),
+		eq(personNote.organizationId, input.organizationId),
+		isNull(personNote.deletedAt)
+	];
+	if (input.searchString) {
+		filterArr.push(ilike(personNote.note, `%${input.searchString}%`));
+	}
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.select({ count: count() })
 		.from(personNote)
-		.where(
-			and(eq(personNote.personId, personId), eq(personNote.organizationId, input.organizationId))
-		);
+		.where(and(...filterArr));
 	return result.count;
 }
