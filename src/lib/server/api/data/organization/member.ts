@@ -1,5 +1,4 @@
 import type { ServerTransaction } from '@rocicorp/zero';
-import { type QueryContext, builder } from '$lib/zero/schema';
 import { and, eq } from 'drizzle-orm';
 import { member } from '$lib/schema/drizzle';
 
