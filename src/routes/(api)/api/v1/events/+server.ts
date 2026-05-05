@@ -32,11 +32,16 @@ function buildEventsListInput(organizationId: string, url: URL) {
 				: null;
 	const rangeStart = url.searchParams.get('dateRangeStart');
 	const rangeEnd = url.searchParams.get('dateRangeEnd');
+	const parseOptionalInt = (v: string | null): number | null => {
+		if (v == null || v.trim() === '') return null;
+		const n = Number.parseInt(v, 10);
+		return Number.isFinite(n) ? n : null;
+	};
 	const dateRange =
 		rangeStart != null || rangeEnd != null
 			? {
-					start: rangeStart != null ? Number.parseInt(rangeStart, 10) : null,
-					end: rangeEnd != null ? Number.parseInt(rangeEnd, 10) : null
+					start: parseOptionalInt(rangeStart),
+					end: parseOptionalInt(rangeEnd)
 				}
 			: null;
 
