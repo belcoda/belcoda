@@ -1,8 +1,11 @@
 import { error, type RequestEvent, json } from '@sveltejs/kit';
+import type { ListFilter } from '$lib/schema/helpers';
 import { getApiQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { type BaseSchema, type BaseIssue, parse } from 'valibot';
 import { type QueryContext } from '$lib/zero/schema';
 import { renderValiError } from '$lib/schema/helpers';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 /**
  * Checks if the provided `organizationIdDerivedFromApiKey` is a valid organization ID.
  *
@@ -30,8 +33,6 @@ export function safeApiRouteQueryContext(organizationIdDerivedFromApiKey: string
 		organizationId: organizationIdDerivedFromApiKey
 	};
 }
-
-import type { ListFilter } from '$lib/schema/helpers';
 
 export function buildApiListFilter({
 	organizationId,
@@ -88,10 +89,13 @@ export const queryParamsOpenAPIDefinition = {
 	}
 };
 
-export function buildApiErrorResponse(error: unknown): Response {
+export function buildApiErrorResponse(error: unknown, alwaysReturn500: boolean = false): Response {
 	const valiError = renderValiError(error);
-	if (valiError.isValiError) {
+	if (valiError.isValiError && !alwaysReturn500) {
 		return json({ error: valiError.message }, { status: 400 });
+	} else if (valiError.isValiError && alwaysReturn500) {
+		log.error({ valiError }, 'Error building API error response');
+		return json({ error: 'An unknown error occurred' }, { status: 500 });
 	} else {
 		return json({ error: 'An unknown error occurred' }, { status: 500 });
 	}
