@@ -34,7 +34,7 @@ function buildPetitionSignaturesListInput(organizationId: string, petitionId: st
 
 export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
-	const petitionId = event.params.petitionId!;
+	const petitionId = event.params.petitionId;
 	const input = buildPetitionSignaturesListInput(organizationId, petitionId, event.url);
 
 	const result = await db.transaction(async (tx) => {
@@ -44,7 +44,7 @@ export async function GET(event) {
 	});
 
 	const withoutPersonRows = result.junctionRows.map((row: { person?: unknown }) => {
-		const { person: _omit, ...sig } = row as Record<string, unknown> & { person?: unknown };
+		const { person: _omit, ...sig } = row as Record<string, unknown> & { person?: unknown }; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having person field)
 		return sig;
 	});
 
@@ -58,7 +58,7 @@ export async function GET(event) {
 
 export async function POST(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
-	const petitionId = event.params.petitionId!;
+	const petitionId = event.params.petitionId;
 	const body = await processIncomingBody(event, createPetitionSignatureApiBody);
 	const created = await db.transaction(async (tx) => {
 		return await createPetitionSignature({
@@ -80,6 +80,6 @@ export async function POST(event) {
 			}
 		});
 	});
-	const { organizationId: _org, ...data } = created;
+	const { organizationId: _org, ...data } = created; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having organizationId field)
 	return json(processOutgoingBody(data, petitionSignatureApiSchema));
 }
