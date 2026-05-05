@@ -140,7 +140,7 @@ export const updatePersonZero = v.object({
 export type UpdatePersonZero = v.InferOutput<typeof updatePersonZero>;
 export const updatePersonRest = v.object({
 	...updatePerson.entries,
-	dateOfBirth: v.nullable(helpers.dateOfBirthToDate)
+	dateOfBirth: v.optional(v.nullable(helpers.dateOfBirthToDate))
 });
 export type UpdatePersonRest = v.InferOutput<typeof updatePersonRest>;
 
