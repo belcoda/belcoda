@@ -71,7 +71,16 @@ reviews:
       mode: warning
     issue_assessment:
       mode: warning
-    custom_checks: []
+    custom_checks:
+      - name: 'E2E coverage for app changes'
+        mode: 'warning'
+        instructions: >-
+          Pass if one of the following is true:
+          (1) The PR does not change app/runtime code (anything under src/** excluding docs, config, and src/routes/(api)/api/e2e/**).
+          (2) The PR changes at least one file under e2e/** (Playwright E2E specs/pages/helpers), indicating E2E coverage was added/updated.
+          (3) The PR description includes an explicit exemption line starting with "E2E: N/A" followed by a brief rationale.
+
+          Fail (warning) if the PR changes app/runtime code under src/** (excluding src/routes/(api)/api/e2e/**) but does not modify any files under e2e/** and does not include the "E2E: N/A ..." exemption line.
   tools:
     ast-grep:
       rule_dirs: []
