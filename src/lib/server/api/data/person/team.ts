@@ -11,7 +11,7 @@ import {
 	type RemovePersonFromTeamMutatorSchemaZero
 } from '$lib/schema/person';
 import { activity, person, personTeam, team } from '$lib/schema/drizzle';
-import { and, eq, count } from 'drizzle-orm';
+import { and, eq, count, ilike } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
@@ -60,12 +60,18 @@ export async function countPersonTeams({
 	input: ListFilter;
 	personId: string;
 }) {
+	const whereParts = [
+		eq(personTeam.personId, personId),
+		eq(personTeam.organizationId, input.organizationId)
+	];
+	if (input.searchString && input.searchString.length > 0) {
+		whereParts.push(ilike(team.name, `%${input.searchString}%`));
+	}
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.select({ count: count() })
 		.from(personTeam)
-		.where(
-			and(eq(personTeam.personId, personId), eq(personTeam.organizationId, input.organizationId))
-		);
+		.innerJoin(team, eq(personTeam.teamId, team.id))
+		.where(and(...whereParts));
 	return result.count;
 }
 

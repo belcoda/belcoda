@@ -9,7 +9,7 @@ import {
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
 import { personTag, activity, tag } from '$lib/schema/drizzle';
-import { eq, and, isNull, count } from 'drizzle-orm';
+import { eq, and, isNull, count, ilike } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
 import { getQueue } from '$lib/server/queue';
@@ -54,12 +54,17 @@ export async function countPersonTags({
 	input: ListFilter;
 	personId: string;
 }) {
+	const whereParts = [
+		eq(personTag.personId, personId),
+		eq(personTag.organizationId, input.organizationId)
+	];
+	if (input.searchString && input.searchString.length > 0) {
+		whereParts.push(ilike(tag.name, `%${input.searchString}%`));
+	}
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.select({ count: count() })
 		.from(personTag)
-		.where(
-			and(eq(personTag.personId, personId), eq(personTag.organizationId, input.organizationId))
-		);
+		.where(and(...whereParts));
 	return result.count;
 }
 
