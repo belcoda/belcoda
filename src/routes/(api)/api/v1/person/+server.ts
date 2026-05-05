@@ -7,13 +7,8 @@ import {
 	processOutgoingBody
 } from '$lib/server/utils/restApi';
 import { db } from '$lib/server/db';
-import {
-	listPersons,
-	createPerson,
-	_countPersons,
-	_getPersonByIdUnsafe
-} from '$lib/server/api/data/person/person';
-import { parse, array } from 'valibot';
+import { listPersons, createPerson, _countPersons } from '$lib/server/api/data/person/person';
+import { array } from 'valibot';
 import { personApiSchema, createPersonRest as createPersonRestSchema } from '$lib/schema/person';
 import { v7 as uuidv7 } from 'uuid';
 
