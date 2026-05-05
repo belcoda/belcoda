@@ -6,7 +6,7 @@ import {
 } from '$lib/server/utils/restApi';
 import { db } from '$lib/server/db';
 import {
-	_updatePersonNoteNoPermissionsCheck,
+	_updatePersonNoteNoPermissionsCheckUnsafe,
 	deletePersonNote
 } from '$lib/server/api/data/person/note';
 import { personNoteApiSchema, updatePersonNoteZero } from '$lib/schema/person-note';
@@ -15,7 +15,7 @@ export async function PUT(event) {
 	const { organizationId } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const input = await processIncomingBody(event, updatePersonNoteZero);
 	const result = await db.transaction(async (tx) => {
-		const note = await _updatePersonNoteNoPermissionsCheck({
+		const note = await _updatePersonNoteNoPermissionsCheckUnsafe({
 			noteId: event.params.noteId,
 			organizationId,
 			note: input.note,
