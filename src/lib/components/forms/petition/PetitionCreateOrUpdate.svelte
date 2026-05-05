@@ -308,7 +308,9 @@
 					{#if $data.title && $data.title.length > 0}
 						<InputGroup.Addon align="block-end" class="flex items-center justify-end gap-2">
 							<InputGroup.Text>
-								<LinkIcon class="size-4" /><span class="font-mono text-xs"
+								<LinkIcon class="size-4" /><span
+									class="font-mono text-xs"
+									data-testid="petition-slug-preview"
 									>http{dev ? '' : 's'}://{appState.activeOrganization.data
 										?.slug}.{PUBLIC_ROOT_DOMAIN}/petitions/{$data.slug}</span
 								>

@@ -7,6 +7,7 @@ export class PetitionCreatePage {
 	readonly descriptionInput: Locator;
 	readonly targetInput: Locator;
 	readonly textInput: Locator;
+	readonly slugPreview: Locator;
 	readonly saveButton: Locator;
 	readonly createdModal: Locator;
 
@@ -17,6 +18,7 @@ export class PetitionCreatePage {
 		this.descriptionInput = page.getByTestId('petition-description-input');
 		this.targetInput = page.getByTestId('petition-target-input');
 		this.textInput = page.getByTestId('petition-text-input');
+		this.slugPreview = page.getByTestId('petition-slug-preview');
 		this.saveButton = page.getByTestId('petition-save-button');
 		this.createdModal = page.getByTestId('petition-created-modal');
 	}
@@ -28,7 +30,6 @@ export class PetitionCreatePage {
 
 	async fillTitle(title: string) {
 		await this.titleInput.fill(title);
-		await this.page.waitForTimeout(400);
 	}
 
 	async fillDescription(description: string) {
@@ -53,5 +54,6 @@ export class PetitionCreatePage {
 
 	async closeModal() {
 		await this.page.keyboard.press('Escape');
+		await this.createdModal.waitFor({ state: 'hidden', timeout: 10_000 });
 	}
 }
