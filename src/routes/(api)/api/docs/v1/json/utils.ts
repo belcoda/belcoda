@@ -19,7 +19,7 @@ export function buildListEnvelopeSchema(itemRef: string) {
 				required: ['count'],
 				properties: {
 					count: {
-						type: 'number',
+						type: 'integer',
 						description: 'Total number of matching records'
 					}
 				},
