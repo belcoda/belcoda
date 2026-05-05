@@ -17,6 +17,7 @@ import {
 } from '$lib/schema/person-note';
 
 import { getPerson } from '$lib/server/api/data/person/person';
+import { getOrganizationMember } from '$lib/server/api/data/organization/member';
 import { getQueue } from '$lib/server/queue';
 import pino from '$lib/pino';
 import type { ListFilter } from '$lib/schema/helpers';
@@ -33,6 +34,12 @@ export async function createPersonNote({
 	args: CreateMutatorSchemaZero;
 }) {
 	const parsed = parse(createMutatorSchemaZero, args);
+
+	//throws an error if the user is not a member of the organization
+	await getOrganizationMember({
+		tx,
+		args: { organizationId: parsed.metadata.organizationId, userId: ctx.userId }
+	});
 
 	//make sure the person exists and has permissions
 	await getPerson({
