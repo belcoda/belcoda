@@ -46,7 +46,70 @@ export async function handleWhatsappTemplateReviewed(body: any) {
 							)
 						)
 						.returning();
-					log.info({ updated }, 'Whatsapp template approved');
+					if (updated.length === 0) {
+						log.warn(
+							{
+								organizationId,
+								name: body.whatsappTemplate.name,
+								locale: body.whatsappTemplate.language
+							},
+							'No whatsapp template matched approved webhook payload'
+						);
+						return;
+					}
+
+					const approvedTemplateId = updated[0].id;
+					log.info({ approvedTemplateId, organizationId }, 'Whatsapp template approved');
+
+					const didSetDefaultTemplate = await db.transaction(async (tx) => {
+						const [currentOrganization] = await tx
+							.select({ id: organizationTable.id, settings: organizationTable.settings })
+							.from(organizationTable)
+							.where(eq(organizationTable.id, organizationId))
+							.limit(1);
+
+						if (!currentOrganization) {
+							throw new Error('Organization not found while setting default template');
+						}
+
+						const existingDefaultTemplateId =
+							currentOrganization.settings?.whatsApp?.defaultTemplateId ?? null;
+						if (existingDefaultTemplateId) {
+							return false;
+						}
+
+						const updatedSettings = {
+							...currentOrganization.settings,
+							whatsApp: {
+								...currentOrganization.settings?.whatsApp,
+								defaultTemplateId: approvedTemplateId
+							}
+						};
+
+						const [updated] = await tx
+							.update(organizationTable)
+							.set({
+								settings: updatedSettings,
+								updatedAt: new Date()
+							})
+							.where(eq(organizationTable.id, organizationId));
+						if (!updated) {
+							throw new Error('Failed to update organization');
+						}
+						return true;
+					});
+
+					if (didSetDefaultTemplate) {
+						log.info(
+							{ organizationId, approvedTemplateId },
+							'Set default WhatsApp template for organization'
+						);
+					} else {
+						log.debug(
+							{ organizationId, approvedTemplateId },
+							'Skipped setting default WhatsApp template because it already exists'
+						);
+					}
 				} else {
 					throw new Error('Whatsapp template not approved');
 				}
