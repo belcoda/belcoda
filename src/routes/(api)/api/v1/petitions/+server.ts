@@ -62,6 +62,6 @@ export async function POST(event) {
 			}
 		});
 	});
-	const { organizationId: _orgId, ...data } = created;
+	const { organizationId: _orgId, ...data } = created; // eslint-disable-line @typescript-eslint/no-unused-vars to suppress the warning about the unused variable (needed to avoid data having organizationId field)
 	return json(processOutgoingBody(data, petitionApiSchema));
 }
