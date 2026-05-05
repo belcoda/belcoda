@@ -113,7 +113,7 @@ export async function processIncomingBody<T>(
 	let body: unknown;
 	try {
 		body = await event.request.json();
-	} catch (err) {
+	} catch {
 		throw error(400, {
 			message: 'Invalid JSON body'
 		});
