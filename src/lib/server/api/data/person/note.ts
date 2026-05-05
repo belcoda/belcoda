@@ -110,7 +110,7 @@ export async function updatePersonNote({
 	return result;
 }
 
-export async function _updatePersonNoteNoPermissionsCheck({
+export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 	tx,
 	noteId,
 	organizationId,
