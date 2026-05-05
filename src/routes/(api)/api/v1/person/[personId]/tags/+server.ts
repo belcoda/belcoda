@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import {
 	buildApiListFilter,
 	buildApiListResponse,
@@ -53,7 +53,7 @@ export async function POST(event) {
 		return row;
 	});
 	if (!tagRow) {
-		throw new Error('Tag not found after link');
+		throw error(500, { message: 'Error adding tag to person' });
 	}
 	return json(processOutgoingBody(tagRow, tagApiSchema));
 }
