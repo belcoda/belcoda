@@ -1,7 +1,7 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
 import { eq, and, isNull, or, ilike, count } from 'drizzle-orm';
-import { person, personTeam, team } from '$lib/schema/drizzle';
+import { person, team } from '$lib/schema/drizzle';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { getQueue } from '$lib/server/queue';
@@ -16,7 +16,7 @@ import {
 } from '$lib/schema/person';
 import { parse } from 'valibot';
 import pino from '$lib/pino';
-import { _addPersonTeamDataUnsafe, addPersonToTeam } from './team';
+import { addPersonToTeam } from './team';
 import { type ListFilter } from '$lib/schema/helpers';
 const log = pino(import.meta.url);
 export async function createPerson({
