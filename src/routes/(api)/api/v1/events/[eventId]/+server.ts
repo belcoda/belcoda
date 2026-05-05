@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import {
 	safeApiRouteQueryContext,
 	processIncomingBody,
@@ -7,11 +7,18 @@ import {
 import { db } from '$lib/server/db';
 import { loadEventForApi, updateEvent, deleteEvent } from '$lib/server/api/data/event/event';
 import { eventApiSchema, updateEventRest } from '$lib/schema/event';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function GET(event: import('@sveltejs/kit').RequestEvent) {
 	const { ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const eventId = event.params.eventId!;
-	const row = await db.transaction(async (tx) => await loadEventForApi({ ctx, tx, eventId }));
+	const row = await db
+		.transaction(async (tx) => await loadEventForApi({ ctx, tx, eventId }))
+		.catch((err) => {
+			log.error(err, 'Error loading event for API');
+			throw error(404, { message: 'Event not found' });
+		});
 	return json(processOutgoingBody(row, eventApiSchema));
 }
 
