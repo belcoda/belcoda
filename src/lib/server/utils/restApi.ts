@@ -43,7 +43,7 @@ export function buildApiListFilter({
 	// set max page size to 100
 	const pageSizeParam = url.searchParams.get('pageSize');
 	const pageSizeParsed = parseInt(pageSizeParam ?? '25', 10);
-	const pageSize = Math.min(Number.isNaN(pageSizeParsed) ? 25 : pageSizeParsed, 100);
+	const pageSize = Math.max(1, Math.min(Number.isNaN(pageSizeParsed) ? 25 : pageSizeParsed, 100));
 	return {
 		organizationId,
 		pageSize,
