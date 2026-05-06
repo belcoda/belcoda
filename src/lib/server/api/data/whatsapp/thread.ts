@@ -10,7 +10,7 @@ import { db } from '$lib/server/db';
 import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';
 import { createMessageFromTemplateAndTemplateMessage } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
 import { type Flow } from '$lib/schema/flow/index';
-import { getQueue } from '$lib/server/queue/index';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue/index';
 import {
 	updateWhatsappThread as updateWhatsappThreadSchema,
 	createWhatsappThread as createWhatsappThreadSchema,
@@ -66,18 +66,17 @@ export async function createWhatsappThread({
 	}
 	const created = result[0];
 	const { organizationId, ...threadData } = created;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'whatsapp.thread.created',
 				data: parse(whatsappThreadWebhook, threadData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return created;
 }
 
@@ -122,18 +121,17 @@ export async function updateWhatsappThread({
 	}
 	const u = updated[0];
 	const { organizationId, ...threadData } = u;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'whatsapp.thread.updated',
 				data: parse(whatsappThreadWebhook, threadData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return u;
 }
 
@@ -169,18 +167,17 @@ export async function deleteWhatsappThread({
 				eq(whatsappThreadTable.organizationId, args.organizationId)
 			)
 		);
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: record.organizationId,
 			payload: {
 				type: 'whatsapp.thread.deleted',
 				data: { whatsappThreadId: args.id }
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function buildThreadMetadata({
@@ -282,17 +279,16 @@ export async function sendWhatsappThread({
 		sentByUserId: ctx.userId
 	});
 
-	try {
-		await queue.triggerWebhook({
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'whatsapp.thread.updated',
 				data: parse(whatsappThreadWebhook, threadData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 
 	return claimed;
 }

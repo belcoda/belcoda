@@ -8,14 +8,12 @@ import {
 	type RemoveUserFromTeamMutatorSchema,
 	teamUserWebhook
 } from '$lib/schema/team';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { teamMember, member } from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 
 export async function addUserToTeam({
 	tx,
@@ -65,9 +63,9 @@ export async function addUserToTeam({
 		teamId: parsed.metadata.teamId,
 		createdAt: new Date()
 	});
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'team.user.added',
@@ -76,10 +74,9 @@ export async function addUserToTeam({
 					userId: parsed.metadata.userId
 				})
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function removeUserFromTeam({
@@ -109,9 +106,9 @@ export async function removeUserFromTeam({
 		)
 		.returning();
 	if (result) {
-		try {
-			const queue = await getQueue();
-			await queue.triggerWebhook({
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'team.user.removed',
@@ -120,9 +117,8 @@ export async function removeUserFromTeam({
 						userId: parsed.metadata.userId
 					})
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }
