@@ -2,7 +2,6 @@ import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
 import { organization as organizationTable, person, user as userTable } from '$lib/schema/drizzle';
 import { templateVariableKeys, type TemplateVariableKey } from '$lib/schema/template-variables';
 
-const lexicalRenderer = new LexicalHtmlRenderer();
 const templateVariableKeySet = new Set<string>(templateVariableKeys);
 const templateVariableTokenPattern = /\{\{\s*([a-z_]+\.[a-z_]+)\s*\}\}/g;
 
@@ -84,6 +83,7 @@ export async function renderEmailMessage({
 	organization: EmailTemplateOrganization;
 	sender?: EmailTemplateSender | null;
 }) {
+	const lexicalRenderer = new LexicalHtmlRenderer();
 	const values = buildEmailTemplateValues({
 		personObject,
 		organization,
