@@ -19,6 +19,7 @@
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { toast } from 'svelte-sonner';
 </script>
 
 <ContentLayout rootLink="/settings">
@@ -53,7 +54,7 @@
 							</Table.Row>
 						</Table.Header>
 						<Table.Body>
-							{#each templates.data as template}
+							{#each templates.data as template, index (template.id)}
 								<Table.Row
 									data-testid="whatsapp-template-row"
 									data-template-id={template.id}
@@ -91,13 +92,32 @@
 												size="sm"
 												data-testid="whatsapp-template-submit"
 												data-template-id={template.id}
-												onclick={() => {
-													z.mutate(
+												onclick={async () => {
+													templates.data[index] = {
+														...template,
+														status: 'PENDING'
+													};
+													const response = z.mutate(
 														mutators.whatsappTemplate.submit({
 															whatsappTemplateId: template.id,
 															organizationId: appState.organizationId
 														})
 													);
+													const serverResponse = await response.server;
+													if (serverResponse.type === 'success') {
+														toast.success(t`Template submitted for approval`);
+													} else {
+														templates.data[index] = {
+															...template,
+															status: 'NOT_SUBMITTED'
+														};
+														const error = serverResponse.error;
+														if (error.type === 'app') {
+															toast.error(error.message);
+														} else {
+															toast.error(t`Failed to submit template`);
+														}
+													}
 												}}
 											>
 												{t`Submit`}
