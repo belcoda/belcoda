@@ -12,11 +12,9 @@ import { personTag, activity, tag } from '$lib/schema/drizzle';
 import { eq, and, isNull } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { personTagWebhook } from '$lib/schema/tag';
 import { activityWebhook } from '$lib/schema/activity';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 
 export async function addPersonTag({
 	tx,
@@ -121,31 +119,29 @@ export async function _addPersonTagData({
 
 	if (tagActivity) {
 		const { organizationId: actOrg, ...actData } = tagActivity;
-		try {
-			const actQueue = await getQueue();
-			await actQueue.triggerWebhook({
+		const actQueue = await getQueue();
+		await actQueue.triggerWebhook(
+			{
 				organizationId: actOrg,
 				payload: {
 					type: 'activity.created',
 					data: parse(activityWebhook, actData)
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: args.organizationId,
 			payload: {
 				type: 'tag.person.added',
 				data: parse(personTagWebhook, { personId: args.personId, tagId: args.tagId })
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -189,18 +185,17 @@ export async function applyTagToPersonUnsafe({
 		.onConflictDoNothing()
 		.returning();
 	if (inserted) {
-		try {
-			const queue = await getQueue();
-			await queue.triggerWebhook({
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
 				organizationId,
 				payload: {
 					type: 'tag.person.added',
 					data: parse(personTagWebhook, { personId, tagId })
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }
 
@@ -230,9 +225,9 @@ export async function removePersonTag({
 		)
 		.returning();
 	if (result) {
-		try {
-			const queue = await getQueue();
-			await queue.triggerWebhook({
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
 				organizationId: args.metadata.organizationId,
 				payload: {
 					type: 'tag.person.removed',
@@ -241,9 +236,8 @@ export async function removePersonTag({
 						tagId: args.metadata.tagId
 					})
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }

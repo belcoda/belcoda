@@ -9,7 +9,7 @@
 	import { cn } from '$lib/utils.js';
 </script>
 
-<div class="flex h-full w-[180px] flex-col border-r bg-background">
+<div class="flex h-full w-full flex-col border-r bg-background md:w-[180px]">
 	<div class="px-2 py-4">
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger

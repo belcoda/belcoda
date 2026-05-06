@@ -1,4 +1,5 @@
 export function stripHtmlAndTrim(html: string): string {
+	if (!html) return '';
 	const withSpaces = html
 		.replace(/<\s*(p|br)[^>]*>/gi, ' ') // Replace <p>, <br> with space
 		.replace(/<\/p>/gi, ' '); // Replace </p> with space
@@ -9,6 +10,7 @@ export function stripHtmlAndTrim(html: string): string {
 	return normalized.slice(0, 90);
 }
 export function stripHtmlTags(html: string): string {
+	if (!html) return '';
 	//replace <p> and <br> with line breaks
 	const withLineBreaks = html.replace(/<\s*(p|br)[^>]*>/gi, '\n');
 	const noTags = withLineBreaks.replace(/<[^>]*>/g, ''); // Remove other tags

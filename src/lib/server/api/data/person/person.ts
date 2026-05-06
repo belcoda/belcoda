@@ -4,7 +4,7 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { person, personTeam, team } from '$lib/schema/drizzle';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import {
 	createMutatorSchemaZero,
 	type CreateMutatorSchemaZeroOutput,
@@ -15,9 +15,7 @@ import {
 	personWebhook
 } from '$lib/schema/person';
 import { parse } from 'valibot';
-import pino from '$lib/pino';
 import { _addPersonTeamDataUnsafe, addPersonToTeam } from './team';
-const log = pino(import.meta.url);
 export async function createPerson({
 	tx,
 	ctx,
@@ -89,18 +87,17 @@ export async function createPerson({
 		});
 	}
 
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'person.created',
 				data: parse(personWebhook, result)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -145,18 +142,17 @@ export async function updatePerson({
 	if (!result) {
 		throw new Error('Unable to update person');
 	}
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: input.metadata.organizationId,
 			payload: {
 				type: 'person.updated',
 				data: parse(personWebhook, result)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -193,18 +189,17 @@ export async function deletePerson({
 				eq(person.organizationId, args.metadata.organizationId)
 			)
 		);
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'person.deleted',
 				data: { personId: parsed.metadata.personId }
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return;
 }
 

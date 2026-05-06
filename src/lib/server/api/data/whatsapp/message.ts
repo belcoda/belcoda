@@ -19,7 +19,7 @@ import { v7 as uuidv7 } from 'uuid';
 import { parse } from 'valibot';
 import { isReactionSupportedMessageType } from '$lib/schema/whatsapp-message';
 import { structuredClone } from '$lib/utils/structuredClone';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { whatsappMessageWebhook } from '$lib/schema/whatsapp-message';
 import type { QueryContext } from '$lib/zero/schema';
 import { getPerson } from '$lib/server/api/data/person/person';
@@ -122,18 +122,17 @@ export async function handleIncomingReaction({
 				.returning();
 			if (updatedMsg) {
 				const { organizationId, externalId: _externalId, ...rest } = updatedMsg;
-				try {
-					const q = await getQueue();
-					await q.triggerWebhook({
+				const q = await getQueue();
+				await q.triggerWebhook(
+					{
 						organizationId,
 						payload: {
 							type: 'whatsapp.message.updated',
 							data: parse(whatsappMessageWebhook, rest)
 						}
-					});
-				} catch (err) {
-					log.error({ err }, 'Failed to trigger webhook');
-				}
+					},
+					queueSendOptionsFromTransaction(tx)
+				);
 			}
 		}
 	}
@@ -267,17 +266,16 @@ export async function createWhatsAppMessage({
 	}
 	const created = result[0];
 	const { organizationId: orgId, externalId: _externalId, ...rest } = created;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: orgId,
 			payload: {
 				type: 'whatsapp.message.created',
 				data: parse(whatsappMessageWebhook, rest)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return created;
 }

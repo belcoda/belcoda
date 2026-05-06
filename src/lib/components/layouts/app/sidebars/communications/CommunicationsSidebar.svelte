@@ -20,23 +20,23 @@
 
 <Sidebar.Root
 	collapsible={!isMobile.current ? 'icon' : 'none'}
-	class="overflow-hidden *:data-[sidebar=sidebar]:flex-row"
+	class="flex min-h-0 flex-1 flex-col overflow-hidden *:data-[sidebar=sidebar]:flex-row"
 >
 	{#if !isMobile.current}
 		<DesktopNavSidebar />
 	{/if}
 
-	<Sidebar.Root collapsible="none" class="flex w-full flex-1">
-		<Sidebar.Content class="p-0">
-			<div class="flex h-full flex-1 overflow-hidden">
+	<Sidebar.Root collapsible="none" class="flex min-h-0 w-full flex-1">
+		<Sidebar.Content class="min-h-0 flex-1 p-0">
+			<div class="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
 				<FoldersSidebar />
 			</div>
 		</Sidebar.Content>
 	</Sidebar.Root>
 
-	<Sidebar.Root collapsible="none" class="flex w-full flex-1">
-		<Sidebar.Content class="p-0">
-			<div class="flex h-full flex-1 overflow-hidden">
+	<Sidebar.Root collapsible="none" class="flex min-h-0 w-full flex-1">
+		<Sidebar.Content class="min-h-0 flex-1 p-0">
+			<div class="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
 				<!-- Email List -->
 				{#if isEmail}
 					<EmailList {folder} />
