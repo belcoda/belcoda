@@ -7,7 +7,7 @@
 	const buttons = $derived(components.find((component) => component?.type === 'BUTTONS'));
 
 	import { stripHtmlTags } from '$lib/utils/html';
-	function renderBodyTexts(text: string) {
+	function renderBodyTexts(text: string | null | undefined) {
 		if (!text) return '';
 		const stripped = stripHtmlTags(text);
 		const replaced = stripped.replace(/\n/g, '<br />');
