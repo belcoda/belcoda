@@ -52,6 +52,55 @@ function mockYCloudResponseForEndpoint(endpoint: `/${string}`) {
 	return {};
 }
 
+function extractYCloudErrorMessage(errorResponse: unknown): string | undefined {
+	if (!errorResponse || typeof errorResponse !== 'object') {
+		return undefined;
+	}
+
+	const topLevelError =
+		'error' in errorResponse && errorResponse.error && typeof errorResponse.error === 'object'
+			? errorResponse.error
+			: undefined;
+	if (!topLevelError) {
+		return undefined;
+	}
+
+	const whatsappApiError =
+		'whatsappApiError' in topLevelError &&
+		topLevelError.whatsappApiError &&
+		typeof topLevelError.whatsappApiError === 'object'
+			? topLevelError.whatsappApiError
+			: undefined;
+
+	if (
+		whatsappApiError &&
+		'error_user_msg' in whatsappApiError &&
+		typeof whatsappApiError.error_user_msg === 'string' &&
+		whatsappApiError.error_user_msg.trim().length > 0
+	) {
+		return whatsappApiError.error_user_msg;
+	}
+
+	if (
+		whatsappApiError &&
+		'message' in whatsappApiError &&
+		typeof whatsappApiError.message === 'string' &&
+		whatsappApiError.message.trim().length > 0
+	) {
+		return whatsappApiError.message;
+	}
+
+	if (
+		'message' in topLevelError &&
+		typeof topLevelError.message === 'string' &&
+		topLevelError.message.trim().length > 0
+	) {
+		return topLevelError.message;
+	}
+
+	return undefined;
+}
+
 async function sendToYCloud({
 	endpoint,
 	body,
@@ -78,12 +127,20 @@ async function sendToYCloud({
 			}
 		});
 		if (!response.ok) {
-			const errorResponse = await response.json();
+			let errorResponse: unknown;
+			try {
+				errorResponse = await response.json();
+			} catch {
+				errorResponse = await response.text();
+			}
+			const userMessage =
+				extractYCloudErrorMessage(errorResponse) ??
+				`YCloud request failed (${response.status}). Please check the template details and try again.`;
 			log.error(
-				{ error: errorResponse },
+				{ error: errorResponse, userMessage },
 				`Error response from YCloud: ${endpoint} (${response.status})`
 			);
-			throw new Error(`Failed to send to YCloud: ${endpoint} (${response.status})`);
+			throw new Error(userMessage);
 		}
 		return response.json();
 	} catch (error) {
