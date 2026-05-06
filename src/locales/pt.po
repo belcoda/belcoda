@@ -4953,3 +4953,11 @@ msgstr ""
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
 msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Template submitted for approval"
+msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Failed to submit template"
+msgstr ""

@@ -4969,3 +4969,11 @@ msgstr "No variables found."
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Template submitted for approval"
+msgstr "Template submitted for approval"
+
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+msgid "Failed to submit template"
+msgstr "Failed to submit template"
