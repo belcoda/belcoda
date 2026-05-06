@@ -8,6 +8,7 @@
 
 	import { stripHtmlTags } from '$lib/utils/html';
 	function renderBodyTexts(text: string) {
+		if (!text) return '';
 		const stripped = stripHtmlTags(text);
 		const replaced = stripped.replace(/\n/g, '<br />');
 		//replace all {{variables}} with a badge span with the text inside
