@@ -26,11 +26,13 @@
 	import { appState } from '$lib/state.svelte';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
+	import type { WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 	let searchString = $state('');
 	import { getListFilter } from '$lib/state.svelte';
 	let filter = $derived({
 		...getListFilter(appState.organizationId),
-		searchString: searchString
+		searchString: searchString,
+		statusIn: ['APPROVED'] as WhatsappTemplateStatus[]
 	});
 	const templatesQuery = $derived.by(() => {
 		return z.createQuery(queries.whatsappTemplate.list(filter));
@@ -73,7 +75,14 @@
 		<Command.Root {...props}>
 			<Command.Input bind:value={searchString} placeholder={t`Search templates...`} />
 			<Command.List>
-				<Command.Empty>{t`No templates found.`}</Command.Empty>
+				<Command.Empty>
+					<div class="space-y-2 px-2 py-3 text-sm">
+						<p>{t`No approved templates found.`}</p>
+						<Button variant="link" class="h-auto p-0" href="/settings/whatsapp/templates"
+							>{t`Manage templates`}</Button
+						>
+					</div>
+				</Command.Empty>
 				<Command.Group value="templates">
 					{#each values as templateItem (templateItem.value)}
 						<Command.Item
