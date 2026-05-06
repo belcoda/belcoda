@@ -867,7 +867,7 @@ msgstr ""
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied! "
+msgid "Copied!"
 msgstr ""
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -879,7 +879,7 @@ msgstr ""
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy "
+msgid "Copy"
 msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
@@ -2215,6 +2215,7 @@ msgstr ""
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr ""
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr ""
@@ -4945,3 +4946,39 @@ msgstr ""
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
 msgstr ""
+
+#~ msgid "No approved templates found."
+#~ msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Manage templates"
+msgstr ""
+
+#~ msgid "Template not approved"
+#~ msgstr ""
+
+#~ msgid "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
+#~ msgstr ""
+
+#~ msgid "This template is not available or is not approved. Select an approved template before sending."
+#~ msgstr ""
+
+#~ msgid "View template settings"
+#~ msgstr ""
+
+#~ msgid "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
+#~ msgstr ""
+
+#~ msgid "Failed to send WhatsApp draft"
+#~ msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "No default template"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
+msgstr ""
+
+#~ msgid "Select a template"
+#~ msgstr ""
