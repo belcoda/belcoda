@@ -275,6 +275,31 @@ export async function sendWhatsappThread({
 		throw new Error('WhatsApp thread has only one node');
 	}
 
+	const templateMessageNode = claimed.flow.nodes.find((node) => node.type === 'templateMessage');
+	if (!templateMessageNode) {
+		throw new Error('WhatsApp thread is missing a template message node');
+	}
+	const outboundTemplateId =
+		templateMessageNode.type === 'templateMessage' ? templateMessageNode.data.templateId : null;
+	if (!outboundTemplateId) {
+		throw new Error('WhatsApp template message node has no template selected');
+	}
+	const outboundTemplate =
+		await tx.dbTransaction.wrappedTransaction.query.whatsappTemplate.findFirst({
+			where: and(
+				eq(whatsappTemplateTable.id, outboundTemplateId),
+				eq(whatsappTemplateTable.organizationId, args.organizationId)
+			)
+		});
+	if (!outboundTemplate) {
+		throw new Error('WhatsApp template not found');
+	}
+	if (outboundTemplate.status !== 'APPROVED') {
+		throw new Error(
+			`Cannot send: template "${outboundTemplate.name}" is ${outboundTemplate.status}. Use an approved template.`
+		);
+	}
+
 	const { organizationId, ...threadData } = claimed;
 	const queue = await getQueue();
 	await queue.buildWhatsappThreadSendQueue({
