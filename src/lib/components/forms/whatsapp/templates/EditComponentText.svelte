@@ -18,9 +18,13 @@
 		items: string[];
 	} = $props();
 
-	function syncVariablesWithValueString(value: string, variables: string[]): string[] {
+	function syncVariablesWithValueString(
+		value: string | null | undefined,
+		variables: string[]
+	): string[] {
+		const safeValue = value ?? '';
 		// Extract all unique {{param_name}} patterns from the string
-		const matches = Array.from(new Set([...value.matchAll(/{{([1-9])}}/g)].map((m) => m[1])));
+		const matches = Array.from(new Set([...safeValue.matchAll(/{{([1-9])}}/g)].map((m) => m[1])));
 
 		// Ensure matches and variables arrays are the same length
 		while (variables.length < matches.length) {
@@ -50,14 +54,14 @@
 		if (type === 'header' && items.length >= 1) {
 			return; // Don't add more variables for header type
 		}
-		value = value + `{{${(items?.length ?? 0) + 1}}}`;
+		value = (value ?? '') + `{{${(items?.length ?? 0) + 1}}}`;
 		items.push('');
 	}
 
 	function deleteVariable(index: number) {
 		const variableToRemove = index + 1;
 		// Remove the variable from the value string
-		value = value.replace(`{{${variableToRemove}}}`, '');
+		value = (value ?? '').replace(`{{${variableToRemove}}}`, '');
 		// Remove the variable from items array
 		items.splice(index, 1);
 	}
