@@ -3,6 +3,7 @@ import { type FilterGroupType, filterGroup } from '$lib/schema/person/filter';
 
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
+import { templateParamSource } from '$lib/schema/template-variables';
 
 export const nodeType = v.picklist([
 	'message',
@@ -99,12 +100,14 @@ export const whatsappTemplateMessageNodeData = v.object({
 	header: v.optional(
 		v.object({
 			templateStrings: v.optional(v.array(helpers.shortStringEmpty)),
+			templateParams: v.optional(v.array(templateParamSource)),
 			imageUrl: v.optional(v.nullable(helpers.url))
 		})
 	),
 	body: v.optional(
 		v.object({
-			templateStrings: v.optional(v.array(helpers.shortStringEmpty))
+			templateStrings: v.optional(v.array(helpers.shortStringEmpty)),
+			templateParams: v.optional(v.array(templateParamSource))
 		})
 	),
 	buttons: v.optional(v.array(v.object({ id: helpers.uuid })))

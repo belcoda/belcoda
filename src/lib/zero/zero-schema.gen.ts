@@ -146,6 +146,18 @@ const apiKeyTable = {
 			customType: null as unknown as string,
 			serverName: 'user_id'
 		},
+		configId: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string,
+			serverName: 'config_id'
+		},
+		referenceId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'reference_id'
+		},
 		refillInterval: {
 			type: 'number',
 			optional: true,
@@ -888,10 +900,10 @@ const eventSignupTable = {
 			type: 'string',
 			optional: false,
 			customType: null as unknown as
+				| 'incomplete'
 				| 'signup'
 				| 'attended'
 				| 'noshow'
-				| 'incomplete'
 				| 'notattending'
 				| 'cancelled'
 				| 'deleted'
@@ -1891,7 +1903,7 @@ const personImportTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'pending' | 'failed' | 'processing' | 'completed'
+			customType: null as unknown as 'failed' | 'pending' | 'processing' | 'completed'
 		},
 		totalRows: {
 			type: 'number',
@@ -2565,7 +2577,7 @@ const webhookLogTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'pending' | 'success' | 'failed'
+			customType: null as unknown as 'not_sent' | 'success' | 'failed'
 		},
 		payload: {
 			type: 'json',
@@ -2786,7 +2798,7 @@ const whatsappMessageTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'pending' | 'failed' | 'delivered' | 'read'
+			customType: null as unknown as 'failed' | 'pending' | 'delivered' | 'read'
 		},
 		statusMessage: {
 			type: 'string',

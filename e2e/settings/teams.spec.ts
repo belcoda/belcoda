@@ -14,6 +14,15 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 test.describe.serial('Settings: Teams', () => {
 	const ids = {
 		teamId: '',
@@ -116,6 +125,28 @@ test.describe.serial('Settings: Teams', () => {
 		await teamDetail.goto(ids.teamId);
 
 		await expect(teamDetail.personRow(ids.personId)).toBeVisible({ timeout: 15_000 });
+	});
+
+	test('member cannot access team management', async ({ page }) => {
+		const teamsPage = new TeamsPage(page);
+
+		await loginAsMember(page);
+		await teamsPage.goto();
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(teamsPage.newTeamTrigger).toHaveCount(0);
+		await expect(teamsPage.teamRow(ids.teamId)).toHaveCount(0);
+	});
+
+	test('member cannot access team detail management', async ({ page }) => {
+		const teamDetail = new TeamDetailPage(page);
+
+		await loginAsMember(page);
+		await teamDetail.goto(ids.teamId);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(teamDetail.addPersonTrigger).toHaveCount(0);
+		await expect(teamDetail.removePersonButton(ids.personId)).toHaveCount(0);
 	});
 
 	test('owner can remove a person from the team', async ({ page }) => {

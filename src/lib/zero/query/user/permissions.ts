@@ -9,15 +9,18 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 export function userReadPermissions(builder: ExpressionBuilder<'user', Schema>, ctx: QueryContext) {
 	const { and, or, cmp, exists } = builder;
 	const filterArr = [
-		cmp('id', '=', ctx.userId),
 		exists('orgMemberships', (m) => {
 			return m.whereExists('organization', (o) => {
-				return o.whereExists('memberships', (m) => {
-					return m.where('userId', '=', ctx.userId);
+				return o.where(({ or, cmp }) => {
+					const orgIds = [...ctx.ownerOrgs, ...ctx.adminOrgs, ...ctx.otherOrgs];
+					return cmp('id', 'IN', orgIds);
 				});
 			});
 		})
 	];
+	if (ctx.userId) {
+		filterArr.push(cmp('id', '=', ctx.userId));
+	}
 
 	return or(...filterArr);
 }

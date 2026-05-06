@@ -12,7 +12,6 @@ export function apiKeyReadPermissions(
 ) {
 	const { and, or, cmp, exists } = builder;
 	const filterArr = [
-		cmp('userId', '=', ctx.userId),
 		exists('user', (m) => {
 			return m.whereExists('orgMemberships', (om) => {
 				return om.where(({ or, cmp }) =>
