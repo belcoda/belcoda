@@ -58,7 +58,16 @@ function renderTemplateVariables({
 			return token;
 		}
 
-		return escape(values[key as TemplateVariableKey] || '');
+		if (!Object.prototype.hasOwnProperty.call(values, key)) {
+			return token;
+		}
+
+		const resolved = values[key as TemplateVariableKey];
+		if (resolved === undefined) {
+			return token;
+		}
+
+		return escape(resolved ?? '');
 	});
 }
 
