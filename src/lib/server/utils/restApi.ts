@@ -142,6 +142,6 @@ export function processOutgoingBody<T, U>(
 		const parsed = parse(schema, body);
 		return parsed;
 	} catch (err) {
-		throw buildApiErrorResponse(err);
+		throw buildApiErrorResponse(err, true); // always 500 — even validation errors on outgoing body is a server fault
 	}
 }
