@@ -73,8 +73,8 @@ export async function PUT(event) {
 
 export async function DELETE(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
-	const petitionId = event.params.petitionId!;
-	const petitionSignatureId = event.params.signatureId!;
+	const petitionId = event.params.petitionId;
+	const petitionSignatureId = event.params.signatureId;
 
 	await db.transaction(async (tx) => {
 		const existing = await getPetitionSignatureForApi({
