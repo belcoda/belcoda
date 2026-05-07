@@ -19,7 +19,7 @@ type EventSignupApi = {
 // `YYYY-MM-DDTHH:MM` (no seconds/timezone). Strip the milliseconds + Z that
 // `Date.toISOString()` emits.
 function toApiDateTime(d: Date): string {
-	return d.toISOString().slice(0, 16);
+	return d.toISOString();
 }
 
 function buildEventBody() {
