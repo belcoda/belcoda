@@ -865,8 +865,8 @@ msgstr "Copied \"{0}\" to clipboard"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied! "
-msgstr "Copied! "
+msgid "Copied!"
+msgstr "Copied!"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -877,8 +877,8 @@ msgstr "Copied! "
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy "
-msgstr "Copy "
+msgid "Copy"
+msgstr "Copy"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
@@ -2207,6 +2207,7 @@ msgstr "Attachment thumbnail"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "This is a preview of the event. Publish the event before sharing it with others."
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Join this event"
@@ -4876,3 +4877,57 @@ msgstr "Response"
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Delivery logs"
 msgstr "Delivery logs"
+
+#~ msgid "Text"
+#~ msgstr "Text"
+
+#~ msgid "Variable"
+#~ msgstr "Variable"
+
+#~ msgid "Fallback text"
+#~ msgstr "Fallback text"
+
+#~ msgid "Insert variable"
+#~ msgstr "Insert variable"
+
+#~ msgid "Person"
+#~ msgstr "Person"
+
+#~ msgid "Sender"
+#~ msgstr "Sender"
+
+#~ msgid "Petition"
+#~ msgstr "Petition"
+
+#~ msgid "Organization slug"
+#~ msgstr "Organization slug"
+
+#~ msgid "Sender name"
+#~ msgstr "Sender name"
+
+#~ msgid "Sender email"
+#~ msgstr "Sender email"
+
+#~ msgid "Event name"
+#~ msgstr "Event name"
+
+#~ msgid "Event start date"
+#~ msgstr "Event start date"
+
+#~ msgid "Event location"
+#~ msgstr "Event location"
+
+#~ msgid "Petition name"
+#~ msgstr "Petition name"
+
+#~ msgid "Petition goal"
+#~ msgstr "Petition goal"
+
+#~ msgid "Search variables..."
+#~ msgstr "Search variables..."
+
+#~ msgid "No variables found."
+#~ msgstr "No variables found."
+
+#~ msgid "Add fallback text for recipients without this value."
+#~ msgstr "Add fallback text for recipients without this value."

@@ -865,7 +865,7 @@ msgstr ""
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied! "
+msgid "Copied!"
 msgstr ""
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -877,7 +877,7 @@ msgstr ""
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy "
+msgid "Copy"
 msgstr ""
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -2207,6 +2207,7 @@ msgstr ""
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr ""
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr ""
@@ -4852,3 +4853,57 @@ msgstr "Respuesta"
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Delivery logs"
 msgstr "Registros de entregas"
+
+#~ msgid "Text"
+#~ msgstr ""
+
+#~ msgid "Variable"
+#~ msgstr ""
+
+#~ msgid "Fallback text"
+#~ msgstr ""
+
+#~ msgid "Insert variable"
+#~ msgstr ""
+
+#~ msgid "Person"
+#~ msgstr ""
+
+#~ msgid "Sender"
+#~ msgstr ""
+
+#~ msgid "Petition"
+#~ msgstr ""
+
+#~ msgid "Organization slug"
+#~ msgstr ""
+
+#~ msgid "Sender name"
+#~ msgstr ""
+
+#~ msgid "Sender email"
+#~ msgstr ""
+
+#~ msgid "Event name"
+#~ msgstr ""
+
+#~ msgid "Event start date"
+#~ msgstr ""
+
+#~ msgid "Event location"
+#~ msgstr ""
+
+#~ msgid "Petition name"
+#~ msgstr ""
+
+#~ msgid "Petition goal"
+#~ msgstr ""
+
+#~ msgid "Search variables..."
+#~ msgstr ""
+
+#~ msgid "No variables found."
+#~ msgstr ""
+
+#~ msgid "Add fallback text for recipients without this value."
+#~ msgstr ""
