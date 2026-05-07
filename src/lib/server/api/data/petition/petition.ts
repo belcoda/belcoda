@@ -25,7 +25,7 @@ import {
 import type { InferOutput } from 'valibot';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
@@ -132,18 +132,17 @@ export async function createPetition({
 		throw new Error('Unable to create petition');
 	}
 	const { organizationId, ...petitionData } = result;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'petition.created',
 				data: parse(petitionApiSchema, petitionData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -203,18 +202,17 @@ export async function updatePetition({
 	}
 
 	const { organizationId, ...petitionData } = updatedPetition;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'petition.updated',
 				data: parse(petitionApiSchema, petitionData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function archivePetition({
@@ -253,18 +251,17 @@ export async function archivePetition({
 		.returning();
 	if (archivedPetition) {
 		const { organizationId, ...petitionData } = archivedPetition;
-		try {
-			const queue = await getQueue();
-			await queue.triggerWebhook({
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
 				organizationId,
 				payload: {
 					type: 'petition.updated',
 					data: parse(petitionApiSchema, petitionData)
 				}
-			});
-		} catch (err) {
-			log.error({ err }, 'Failed to trigger webhook');
-		}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 }
 
@@ -301,18 +298,17 @@ export async function deletePetition({
 				eq(petition.organizationId, parsed.metadata.organizationId)
 			)
 		);
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: petitionRecord.organizationId,
 			payload: {
 				type: 'petition.deleted',
 				data: { petitionId: parsed.metadata.petitionId }
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function loadPetitionForApi({

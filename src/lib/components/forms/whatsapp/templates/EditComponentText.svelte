@@ -19,6 +19,7 @@
 	} = $props();
 
 	function syncVariablesWithValueString(value: string, variables: string[]): string[] {
+		if (!value) return variables;
 		// Extract all unique {{param_name}} patterns from the string
 		const matches = Array.from(new Set([...value.matchAll(/{{([1-9])}}/g)].map((m) => m[1])));
 

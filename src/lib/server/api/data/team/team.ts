@@ -11,10 +11,11 @@ import {
 	createMutatorSchema,
 	teamApiSchema
 } from '$lib/schema/team';
-import { getQueue } from '$lib/server/queue';
 import type { ListFilter } from '$lib/schema/helpers';
 import { inputSchema as listTeamsInputSchema, listTeamsQuery } from '$lib/zero/query/team/list';
 import { readTeamQuery } from '$lib/zero/query/team/read';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
+
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
@@ -106,18 +107,17 @@ export async function createTeam({
 		throw new Error('Unable to create team');
 	}
 	const { organizationId, ...teamWebhookData } = result;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'team.created',
 				data: parse(teamApiSchema, teamWebhookData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -161,28 +161,30 @@ export async function updateTeam({
 	}
 	const softDeleteThisRequest =
 		Object.prototype.hasOwnProperty.call(parsed.input, 'deletedAt') && parsed.input.deletedAt;
-	try {
-		const queue = await getQueue();
-		if (softDeleteThisRequest) {
-			await queue.triggerWebhook({
+	const queue = await getQueue();
+	if (softDeleteThisRequest) {
+		await queue.triggerWebhook(
+			{
 				organizationId: result.organizationId,
 				payload: {
 					type: 'team.deleted',
 					data: { teamId: result.id }
 				}
-			});
-		} else {
-			const { organizationId, ...teamWebhookData } = result;
-			await queue.triggerWebhook({
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	} else {
+		const { organizationId, ...teamWebhookData } = result;
+		await queue.triggerWebhook(
+			{
 				organizationId,
 				payload: {
 					type: 'team.updated',
 					data: parse(teamApiSchema, teamWebhookData)
 				}
-			});
-		}
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
 	}
 	return result;
 }
