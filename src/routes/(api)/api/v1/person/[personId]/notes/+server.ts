@@ -22,8 +22,8 @@ export async function GET(event) {
 	const result = await db.transaction(async (tx) => {
 		const notes = await listPersonNotes({ ctx, input, tx, personId: event.params.personId });
 		const count = await countPersonNotes({
-			_ctx: ctx,
 			input,
+			organizationId,
 			tx,
 			personId: event.params.personId
 		});
