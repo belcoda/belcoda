@@ -1129,53 +1129,41 @@ export async function countEventSignupsForOrg({
 	tx: ServerTransaction;
 	input: InferOutput<typeof listEventSignupsInputSchema>;
 }) {
-	const whereParts = [eq(eventSignup.organizationId, input.organizationId)];
-	if (input.eventId) {
-		whereParts.push(eq(eventSignup.eventId, input.eventId));
-	}
-	if (input.includeDeleted !== true) {
-		whereParts.push(ne(eventSignup.status, 'deleted'));
-	}
-	if (input.includeIncomplete !== true) {
-		whereParts.push(ne(eventSignup.status, 'incomplete'));
-	}
-	if (input.status) {
-		whereParts.push(eq(eventSignup.status, input.status));
-	}
-
-	const eventWhereBase = and(
+	const filters = [
+		eq(eventSignup.organizationId, input.organizationId),
 		eq(event.organizationId, input.organizationId),
 		isNull(event.deletedAt),
 		isNull(event.archivedAt),
 		isNull(event.cancelledAt)
-	);
-	const eventWhereArr = [eventWhereBase];
+	];
+
+	if (input.eventId) {
+		filters.push(eq(eventSignup.eventId, input.eventId));
+	}
+	if (input.includeDeleted !== true) {
+		filters.push(ne(eventSignup.status, 'deleted'));
+	}
+	if (input.includeIncomplete !== true) {
+		filters.push(ne(eventSignup.status, 'incomplete'));
+	}
+	if (input.status) {
+		filters.push(eq(eventSignup.status, input.status));
+	}
 	if (input.tagId) {
-		const eqTag = eq(event.signupTag, input.tagId);
-		const eqAttendanceTag = eq(event.attendanceTag, input.tagId);
-		const orTag = or(eqTag, eqAttendanceTag);
-		eventWhereArr.push(orTag);
+		const tagFilter = or(eq(event.signupTag, input.tagId), eq(event.attendanceTag, input.tagId));
+		if (tagFilter) {
+			filters.push(tagFilter);
+		}
 	}
 	if (input.teamId) {
-		eventWhereArr.push(eq(event.teamId, input.teamId));
-	}
-
-	const clause = and(...whereParts);
-
-	if (input.teamId) {
-		const [result] = await tx.dbTransaction.wrappedTransaction
-			.select({ count: countRows() })
-			.from(eventSignup)
-			.innerJoin(event, eq(eventSignup.eventId, event.id))
-			.where(and(clause, ...eventWhereArr));
-		return result.count;
+		filters.push(eq(event.teamId, input.teamId));
 	}
 
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.select({ count: countRows() })
 		.from(eventSignup)
-		.where(clause);
-
+		.innerJoin(event, eq(eventSignup.eventId, event.id))
+		.where(and(...filters));
 	return result.count;
 }
 
