@@ -9,7 +9,6 @@ import {
 import { db } from '$lib/server/db';
 import {
 	listPersonNotes,
-	countPersonNotes,
 	createPersonNote,
 	_countPersonNotesUnsafe
 } from '$lib/server/api/data/person/note';
