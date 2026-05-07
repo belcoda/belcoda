@@ -152,7 +152,7 @@ export const dateToString = v.pipe(
 
 export const dateStringToDate = v.pipe(
 	v.string(),
-	v.isoDateTime(),
+	v.isoTimestamp(),
 	v.transform((input) => new Date(input))
 );
 export const dateToTimestamp = v.pipe(
