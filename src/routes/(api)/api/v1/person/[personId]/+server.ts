@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import {
 	safeApiRouteQueryContext,
 	processIncomingBody,
@@ -7,12 +7,18 @@ import {
 import { db } from '$lib/server/db';
 import { getPerson, updatePerson, deletePerson } from '$lib/server/api/data/person/person';
 import { personApiSchema, updatePersonRest as updatePersonRestSchema } from '$lib/schema/person';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const personId = event.params.personId;
-	const result = await db.transaction(
-		async (tx) => await getPerson({ ctx, args: { organizationId, personId }, tx })
-	);
+	const result = await db.transaction(async (tx) => {
+		const person = await getPerson({ ctx, args: { organizationId, personId }, tx }).catch((err) => {
+			log.error(err, 'Error getting person for API');
+			throw error(404, { message: 'Person not found' });
+		});
+		return person;
+	});
 	return json(processOutgoingBody(result, personApiSchema));
 }
 
