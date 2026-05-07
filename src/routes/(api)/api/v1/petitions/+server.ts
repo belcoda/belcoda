@@ -62,7 +62,7 @@ export async function POST(event) {
 			}
 		});
 	});
-	// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+	// eslint-disable-next-line `@typescript-eslint/no-unused-vars
 	const { organizationId: _orgId, ...data } = created;
 	return json(processOutgoingBody(data, petitionApiSchema));
 }

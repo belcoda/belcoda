@@ -27,7 +27,7 @@ export async function GET(event) {
 	if (row.petitionId !== petitionId) {
 		throw error(404, { message: 'Petition signature not found' });
 	}
-	// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+	// eslint-disable-next-line `@typescript-eslint/no-unused-vars
 	const { organizationId, ...rest } = row;
 	return json(parse(petitionSignatureApiSchema, rest));
 }
@@ -66,7 +66,7 @@ export async function PUT(event) {
 			args: { petitionSignatureId }
 		});
 	});
-	// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+	// eslint-disable-next-line `@typescript-eslint/no-unused-vars
 	const { organizationId: _org, ...rest } = updated;
 	return json(parse(petitionSignatureApiSchema, rest));
 }
