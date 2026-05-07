@@ -66,9 +66,9 @@
 		defaultTemplateId: appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
 	});
 	/* svelte-ignore state_referenced_locally */
-	let nodes: Node[] = $state.raw(inputNodes ?? startingNodesList);
+	let nodes: Node[] = $state(inputNodes ?? startingNodesList);
 	/* svelte-ignore state_referenced_locally */
-	let edges = $state.raw(inputEdges ?? startingEdgesList);
+	let edges = $state(inputEdges ?? startingEdgesList);
 
 	//components
 	import { Button } from '$lib/components/ui/button/index.js';
