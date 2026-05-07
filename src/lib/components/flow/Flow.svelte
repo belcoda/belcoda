@@ -84,7 +84,6 @@
 	const hasTemplateId = $derived(
 		appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
 	);
-
 	const canEditFlow = $derived(activeWhatsAppOnboarded && hasTemplateId);
 </script>
 
@@ -274,41 +273,38 @@
 			</SvelteFlow>
 		</SvelteFlowProvider>
 	</div>
-{:else}
-	{#if !activeWhatsAppOnboarded}
-		<div class="flex h-full w-full items-center justify-center">
-			<Empty.Root>
-				<Empty.Header>
-					<Empty.Media variant="icon">
-						<FolderCodeIcon />
-					</Empty.Media>
-					<Empty.Title>{t`WhatsApp not activated`}</Empty.Title>
-					<Empty.Description
-						>{t`In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account.`}</Empty.Description
-					>
-				</Empty.Header>
-				<Empty.Content>
-					<Button href="/settings/whatsapp/accounts">{t`Activate WhatsApp`}</Button>
-				</Empty.Content>
-			</Empty.Root>
-		</div>
-	{/if}
-	{#if !hasTemplateId}
-		<div class="flex h-full w-full items-center justify-center">
-			<Empty.Root>
-				<Empty.Header>
-					<Empty.Media variant="icon">
-						<FolderCodeIcon />
-					</Empty.Media>
-					<Empty.Title>{t`No default template`}</Empty.Title>
-					<Empty.Description
-						>{t`You must create WhatsApp templates and select a default for your organization before creating a flow`}</Empty.Description
-					>
-				</Empty.Header>
-				<Empty.Content>
-					<Button href="/settings/whatsapp/templates">{t`Manage templates`}</Button>
-				</Empty.Content>
-			</Empty.Root>
-		</div>
-	{/if}
+{:else if !activeWhatsAppOnboarded}
+	<div class="flex h-full w-full items-center justify-center">
+		<Empty.Root>
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<FolderCodeIcon />
+				</Empty.Media>
+				<Empty.Title>{t`WhatsApp not activated`}</Empty.Title>
+				<Empty.Description
+					>{t`In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account.`}</Empty.Description
+				>
+			</Empty.Header>
+			<Empty.Content>
+				<Button href="/settings/whatsapp/accounts">{t`Activate WhatsApp`}</Button>
+			</Empty.Content>
+		</Empty.Root>
+	</div>
+{:else if !hasTemplateId}
+	<div class="flex h-full w-full items-center justify-center">
+		<Empty.Root>
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<FolderCodeIcon />
+				</Empty.Media>
+				<Empty.Title>{t`No default template`}</Empty.Title>
+				<Empty.Description
+					>{t`You must create WhatsApp templates and select a default for your organization before creating a flow`}</Empty.Description
+				>
+			</Empty.Header>
+			<Empty.Content>
+				<Button href="/settings/whatsapp/templates">{t`Manage templates`}</Button>
+			</Empty.Content>
+		</Empty.Root>
+	</div>
 {/if}
