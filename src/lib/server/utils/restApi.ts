@@ -89,15 +89,18 @@ export const queryParamsOpenAPIDefinition = {
 	}
 };
 
-export function buildApiErrorResponse(error: unknown, alwaysReturn500: boolean = false): Response {
-	const valiError = renderValiError(error);
+export function buildApiErrorResponse(
+	responseError: unknown,
+	alwaysReturn500: boolean = false
+): Response {
+	const valiError = renderValiError(responseError);
 	if (valiError.isValiError && !alwaysReturn500) {
-		return json({ error: valiError.message }, { status: 400 });
+		return error(400, { message: valiError.message });
 	} else if (valiError.isValiError && alwaysReturn500) {
 		log.error({ valiError }, 'Error building API error response');
-		return json({ error: 'An unknown error occurred' }, { status: 500 });
+		return error(500, { message: 'An unknown error occurred' });
 	} else {
-		return json({ error: 'An unknown error occurred' }, { status: 500 });
+		return error(500, { message: 'An unknown error occurred' });
 	}
 }
 
