@@ -64,6 +64,7 @@ export async function countPersonTags({
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.select({ count: count() })
 		.from(personTag)
+		.innerJoin(tag, eq(personTag.tagId, tag.id))
 		.where(and(...whereParts));
 	return result.count;
 }
