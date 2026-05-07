@@ -89,15 +89,16 @@ export const queryParamsOpenAPIDefinition = {
 	}
 };
 
-export function buildApiErrorResponse(error: unknown, alwaysReturn500: boolean = false): Response {
-	const valiError = renderValiError(error);
+export function buildApiErrorResponse(err: unknown, alwaysReturn500: boolean = false): Response {
+	const valiError = renderValiError(err);
 	if (valiError.isValiError && !alwaysReturn500) {
-		return json({ error: valiError.message }, { status: 400 });
+		log.error({ valiError }, 'Error building API error response');
+		throw error(400, { message: valiError.message });
 	} else if (valiError.isValiError && alwaysReturn500) {
 		log.error({ valiError }, 'Error building API error response');
-		return json({ error: 'An unknown error occurred' }, { status: 500 });
+		throw error(500, { message: 'An unknown error occurred' });
 	} else {
-		return json({ error: 'An unknown error occurred' }, { status: 500 });
+		throw error(500, { message: 'An unknown error occurred' });
 	}
 }
 
@@ -128,8 +129,10 @@ export async function processIncomingBody<T>(
 		});
 	}
 	try {
-		return parse(schema, body);
+		const parsed = parse(schema, body);
+		return parsed;
 	} catch (err) {
+		log.error({ err }, 'Error parsing incoming body');
 		throw buildApiErrorResponse(err);
 	}
 }
