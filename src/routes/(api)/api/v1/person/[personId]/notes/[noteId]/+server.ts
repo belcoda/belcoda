@@ -17,6 +17,7 @@ export async function PUT(event) {
 	const result = await db.transaction(async (tx) => {
 		const note = await _updatePersonNoteNoPermissionsCheckUnsafe({
 			noteId: event.params.noteId,
+			personId: event.params.personId,
 			organizationId,
 			note: input.note,
 			tx

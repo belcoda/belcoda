@@ -110,6 +110,7 @@ export async function updatePersonNote({
 	}
 	const result = await _updatePersonNoteNoPermissionsCheckUnsafe({
 		tx,
+		personId: personNoteRecord.personId,
 		noteId: parsed.metadata.personNoteId,
 		organizationId: parsed.metadata.organizationId,
 		note: parsed.input.note
@@ -121,10 +122,12 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 	tx,
 	noteId,
 	organizationId,
+	personId,
 	note
 }: {
 	tx: ServerTransaction;
 	noteId: string;
+	personId: string;
 	organizationId: string;
 	note: string;
 }) {
@@ -136,6 +139,7 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 		})
 		.where(
 			and(
+				eq(personNote.personId, personId),
 				eq(personNote.id, noteId),
 				eq(personNote.organizationId, organizationId),
 				isNull(personNote.deletedAt)
