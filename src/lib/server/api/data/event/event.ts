@@ -267,7 +267,7 @@ export async function deleteEvent({
 					organizationId: parsed.metadata.organizationId,
 					payload: {
 						type: 'event.signup.updated',
-						data: parse(eventSignupWebhook, signupWebhookData)
+						data: parse(eventSignupApiSchema, signupWebhookData)
 					}
 				},
 				queueSendOptionsFromTransaction(tx)
