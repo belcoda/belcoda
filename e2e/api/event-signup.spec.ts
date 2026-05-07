@@ -173,8 +173,17 @@ test.describe.serial('API v1 Event Signup', () => {
 		await loginAsOwner(page);
 		await page.goto(`/events/${ids.eventId}`);
 		const signupsPage = new EventSignupsPage(page);
-		await signupsPage.signupTable.waitFor({ state: 'visible', timeout: 15_000 });
-		await expect(signupsPage.signupTable).not.toContainText(ids.familyName, { timeout: 15_000 });
+		// After deletion, the page either shows the signup table (if other signups remain)
+		// or an empty state ("No signups found"). Wait for either to render, then assert
+		// that the deleted signup's familyName is no longer present anywhere on the page.
+		const emptyState = page.getByText('No signups found').first();
+		await Promise.race([
+			signupsPage.signupTable.waitFor({ state: 'visible', timeout: 15_000 }),
+			emptyState.waitFor({ state: 'visible', timeout: 15_000 })
+		]);
+		await expect(page.locator('main').first()).not.toContainText(ids.familyName, {
+			timeout: 15_000
+		});
 	});
 
 	test('GET /api/v1/events/:eventId/signups/:signupId for a different event returns 404', async ({
