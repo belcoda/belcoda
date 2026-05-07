@@ -92,7 +92,8 @@ export async function handleWhatsappTemplateReviewed(body: any) {
 								settings: updatedSettings,
 								updatedAt: new Date()
 							})
-							.where(eq(organizationTable.id, organizationId));
+							.where(eq(organizationTable.id, organizationId))
+							.returning();
 						if (!updated) {
 							throw new Error('Failed to update organization');
 						}
