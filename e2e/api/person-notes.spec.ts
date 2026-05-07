@@ -1,6 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 import { PersonCreatePage } from '../pages/community/person-create.page';
-import { PersonProfilePage } from '../pages/community/person-profile.page';
 import { createApiClient, type ApiClient } from './api-client';
 import { ensureOwnerApiKey } from './api-key.helper';
 import { expectValidationError, loginAsOwner } from './test-helpers';
