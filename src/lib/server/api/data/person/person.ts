@@ -16,10 +16,7 @@ import {
 } from '$lib/schema/person';
 import { parse } from 'valibot';
 import { type ListFilter } from '$lib/schema/helpers';
-import { _addPersonTeamDataUnsafe, addPersonToTeam } from '$lib/server/api/data/person/team';
-
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
+import { addPersonToTeam } from '$lib/server/api/data/person/team';
 
 export async function createPerson({
 	tx,

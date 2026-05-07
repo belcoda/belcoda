@@ -1,4 +1,4 @@
-import { error, type RequestEvent, json } from '@sveltejs/kit';
+import { error, type RequestEvent } from '@sveltejs/kit';
 import type { ListFilter } from '$lib/schema/helpers';
 import { getApiQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { type BaseSchema, type BaseIssue, parse } from 'valibot';
