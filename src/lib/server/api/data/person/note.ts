@@ -226,7 +226,7 @@ export async function listPersonNotes({
 	return result;
 }
 
-export async function countPersonNotes({
+export async function _countPersonNotesUnsafe({
 	tx,
 	input,
 	organizationId,
