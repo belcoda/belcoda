@@ -26,7 +26,7 @@ function buildPetitionsListInput(organizationId: string, url: URL) {
 		teamId: teamId ?? null,
 		status:
 			status === 'draft' || status === 'published' || status === 'archived'
-				? (status as const) // needed so that the return signature isn't string
+				? (status as 'draft' | 'published' | 'archived') // needed so that the return signature isn't string
 				: null
 	};
 }
