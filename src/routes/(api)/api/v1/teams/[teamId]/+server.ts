@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import {
 	safeApiRouteQueryContext,
 	processIncomingBody,
@@ -12,7 +12,11 @@ export async function GET(event) {
 	const { ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const teamId = event.params.teamId!;
 	const record = await db.transaction(async (tx) => {
-		return await getTeam({ ctx, tx, args: { teamId } });
+		const team = await getTeam({ ctx, tx, args: { teamId } });
+		if (!team) {
+			return error(404, { message: 'Team not found' });
+		}
+		return team;
 	});
 	return json(processOutgoingBody(record, teamApiSchema));
 }

@@ -14,8 +14,8 @@ import { parse } from 'valibot';
 
 import pino from '$lib/pino';
 import type { ServerTransaction } from '@rocicorp/zero';
-import { getQueue } from '$lib/server/queue';
 import { personApiSchema } from '$lib/schema/person';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 const log = pino(import.meta.url);
 
 export async function findOrCreatePerson({
@@ -70,18 +70,17 @@ export async function findOrCreatePerson({
 				if (!updatedPerson) {
 					throw new Error('Unable to update person');
 				}
-				try {
-					const queue = await getQueue();
-					await queue.triggerWebhook({
+				const queue = await getQueue();
+				await queue.triggerWebhook(
+					{
 						organizationId,
 						payload: {
 							type: 'person.updated',
 							data: parse(personApiSchema, updatedPerson)
 						}
-					});
-				} catch (err) {
-					log.error({ err }, 'Failed to trigger webhook');
-				}
+					},
+					queueSendOptionsFromTransaction(tx)
+				);
 				return updatedPerson;
 			} catch (error) {
 				log.error({ error }, 'Unable to update person');
@@ -123,17 +122,16 @@ export async function findOrCreatePerson({
 		});
 	}
 
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'person.created',
 				data: parse(personApiSchema, insertedPerson)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return insertedPerson;
 }

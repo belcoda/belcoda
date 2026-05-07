@@ -33,7 +33,7 @@ import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 import { clampLocale } from '$lib/utils/language';
@@ -144,17 +144,16 @@ export async function createPetitionSignature({
 	});
 
 	const { organizationId, ...sigWebhookData } = result;
-	try {
-		await queue.triggerWebhook({
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'petition.signature.created',
 				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -191,18 +190,17 @@ export async function updatePetitionSignature({
 		throw new Error('Unable to update petition signature');
 	}
 	const { organizationId, ...sigWebhookData } = result;
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: 'petition.signature.updated',
 				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 	return result;
 }
 
@@ -436,9 +434,9 @@ export async function signPetitionUnsafe({
 	//TODO: Implement whatsapp notification
 
 	const { organizationId, ...sigWebhookData } = insertedPetitionSignature;
-	try {
-		const queueSig = await getQueue();
-		await queueSig.triggerWebhook({
+	const queueSig = await getQueue();
+	await queueSig.triggerWebhook(
+		{
 			organizationId,
 			payload: {
 				type: existingPetitionSignature
@@ -446,10 +444,9 @@ export async function signPetitionUnsafe({
 					: 'petition.signature.created',
 				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 
 	return insertedPetitionSignature;
 }
@@ -612,18 +609,17 @@ export async function deletePetitionSignature({
 				eq(petitionSignature.organizationId, parsed.metadata.organizationId)
 			)
 		);
-	try {
-		const queue = await getQueue();
-		await queue.triggerWebhook({
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
 			organizationId: petitionSignatureRecord.organizationId,
 			payload: {
 				type: 'petition.signature.deleted',
 				data: { petitionSignatureId: parsed.metadata.petitionSignatureId }
 			}
-		});
-	} catch (err) {
-		log.error({ err }, 'Failed to trigger webhook');
-	}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function listPetitionSignaturesForOrg({
