@@ -25,7 +25,7 @@ import { parse } from 'valibot';
 
 import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and, sql, ne, count as countRows, isNotNull, or } from 'drizzle-orm';
+import { eq, and, sql, ne, count as countRows, isNull, or } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
@@ -1145,9 +1145,9 @@ export async function countEventSignupsForOrg({
 
 	const eventWhereBase = and(
 		eq(event.organizationId, input.organizationId),
-		isNotNull(event.deletedAt),
-		isNotNull(event.archivedAt),
-		isNotNull(event.cancelledAt)
+		isNull(event.deletedAt),
+		isNull(event.archivedAt),
+		isNull(event.cancelledAt)
 	);
 	const eventWhereArr = [eventWhereBase];
 	if (input.tagId) {
