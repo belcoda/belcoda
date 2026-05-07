@@ -1,4 +1,4 @@
-import { error, type RequestEvent, json } from '@sveltejs/kit';
+import { error, type RequestEvent } from '@sveltejs/kit';
 import type { ListFilter } from '$lib/schema/helpers';
 import { getApiQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { type BaseSchema, type BaseIssue, parse } from 'valibot';
@@ -89,16 +89,18 @@ export const queryParamsOpenAPIDefinition = {
 	}
 };
 
-export function buildApiErrorResponse(err: unknown, alwaysReturn500: boolean = false): Response {
-	const valiError = renderValiError(err);
+export function buildApiErrorResponse(
+	responseError: unknown,
+	alwaysReturn500: boolean = false
+): Response {
+	const valiError = renderValiError(responseError);
 	if (valiError.isValiError && !alwaysReturn500) {
-		log.error({ valiError }, 'Error building API error response');
-		throw error(400, { message: valiError.message });
+		return error(400, { message: valiError.message });
 	} else if (valiError.isValiError && alwaysReturn500) {
 		log.error({ valiError }, 'Error building API error response');
-		throw error(500, { message: 'An unknown error occurred' });
+		return error(500, { message: 'An unknown error occurred' });
 	} else {
-		throw error(500, { message: 'An unknown error occurred' });
+		return error(500, { message: 'An unknown error occurred' });
 	}
 }
 
@@ -145,6 +147,6 @@ export function processOutgoingBody<T, U>(
 		const parsed = parse(schema, body);
 		return parsed;
 	} catch (err) {
-		throw buildApiErrorResponse(err);
+		throw buildApiErrorResponse(err, true); // always 500 — even validation errors on outgoing body is a server fault
 	}
 }

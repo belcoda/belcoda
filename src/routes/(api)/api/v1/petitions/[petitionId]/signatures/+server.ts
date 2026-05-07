@@ -44,7 +44,7 @@ export async function GET(event) {
 	});
 
 	const withoutPersonRows = result.junctionRows.map((row: { person?: unknown }) => {
-		// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { person: _omit, ...sig } = row as Record<string, unknown> & { person?: unknown };
 		return sig;
 	});
@@ -81,7 +81,7 @@ export async function POST(event) {
 			}
 		});
 	});
-	// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { organizationId: _org, ...data } = created;
 	return json(processOutgoingBody(data, petitionSignatureApiSchema));
 }

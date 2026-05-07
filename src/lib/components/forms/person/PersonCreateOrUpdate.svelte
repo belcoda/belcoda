@@ -119,7 +119,6 @@
 	}
 	function setDateOfBirth(dateString: string) {
 		const date = inputValueToDate(dateString);
-		console.log(date, 'date');
 		if (date) {
 			$data.dateOfBirth = date.getTime();
 		}

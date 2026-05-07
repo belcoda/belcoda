@@ -9,8 +9,8 @@ import {
 import { db } from '$lib/server/db';
 import {
 	listPersonNotes,
-	countPersonNotes,
-	createPersonNote
+	createPersonNote,
+	_countPersonNotesUnsafe
 } from '$lib/server/api/data/person/note';
 import { array } from 'valibot';
 import { createPersonNoteApi, personNoteApiSchema } from '$lib/schema/person-note';
@@ -21,9 +21,9 @@ export async function GET(event) {
 	const input = buildApiListFilter({ organizationId, url: event.url });
 	const result = await db.transaction(async (tx) => {
 		const notes = await listPersonNotes({ ctx, input, tx, personId: event.params.personId });
-		const count = await countPersonNotes({
-			_ctx: ctx,
+		const count = await _countPersonNotesUnsafe({
 			input,
+			organizationId,
 			tx,
 			personId: event.params.personId
 		});

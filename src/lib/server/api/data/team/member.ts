@@ -14,6 +14,7 @@ import { and, eq } from 'drizzle-orm';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
+import { getTeam } from '$lib/server/api/data/team/team';
 
 export async function addUserToTeam({
 	tx,
@@ -95,6 +96,11 @@ export async function removeUserFromTeam({
 		ctx,
 		tx
 	});
+
+	const teamRecord = await getTeam({ tx, ctx, args: { teamId: parsed.metadata.teamId } });
+	if (!teamRecord) {
+		throw new Error('Team not found');
+	}
 
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.delete(teamMember)

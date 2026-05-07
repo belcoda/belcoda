@@ -226,21 +226,20 @@ export async function listPersonNotes({
 	return result;
 }
 
-export async function countPersonNotes({
+export async function _countPersonNotesUnsafe({
 	tx,
-	// ctx is intentionally unused — only called in API context where org is already scoped
-	_ctx,
 	input,
+	organizationId,
 	personId
 }: {
 	tx: ServerTransaction;
-	_ctx: QueryContext;
 	input: ListFilter;
+	organizationId: string; //derived from ctx as opposed to provided by user
 	personId: string;
 }) {
 	const filterArr = [
 		eq(personNote.personId, personId),
-		eq(personNote.organizationId, input.organizationId),
+		eq(personNote.organizationId, organizationId),
 		isNull(personNote.deletedAt)
 	];
 	if (input.searchString) {

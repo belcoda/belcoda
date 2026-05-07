@@ -26,7 +26,7 @@ function buildPetitionsListInput(organizationId: string, url: URL) {
 		teamId: teamId ?? null,
 		status:
 			status === 'draft' || status === 'published' || status === 'archived'
-				? (status as 'draft' | 'published' | 'archived')
+				? (status as 'draft' | 'published' | 'archived') // needed so that the return signature isn't string
 				: null
 	};
 }
@@ -62,7 +62,7 @@ export async function POST(event) {
 			}
 		});
 	});
-	// eslint-disable-next-line `@typescript-eslint/no-unused-vars`
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { organizationId: _orgId, ...data } = created;
 	return json(processOutgoingBody(data, petitionApiSchema));
 }
