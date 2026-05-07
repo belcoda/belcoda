@@ -6,7 +6,6 @@
 	import { watch } from 'runed';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template/index';
 
 	let {
 		value = $bindable(),
@@ -14,7 +13,7 @@
 		type = 'body'
 	}: {
 		type?: 'header' | 'body';
-		value: string;
+		value: string | null | undefined;
 		items: string[];
 	} = $props();
 
@@ -55,7 +54,6 @@
 			return; // Don't add more variables for header type
 		}
 		value = (value ?? '') + `{{${(items?.length ?? 0) + 1}}}`;
-		items.push('');
 	}
 
 	function deleteVariable(index: number) {
@@ -67,7 +65,7 @@
 	}
 
 	function getValue() {
-		return value;
+		return value ?? '';
 	}
 	function setValue(incomingValue: string) {
 		value = incomingValue;
