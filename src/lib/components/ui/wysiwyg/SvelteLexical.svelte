@@ -29,15 +29,18 @@
 	} from 'svelte-lexical';
 	import InsertImageCombinedDialog from './InsertImageCombinedDialog.svelte';
 	import { theme } from 'svelte-lexical/dist/themes/default';
-	import type { EditorState } from 'lexical';
+	import { CONTROLLED_TEXT_INSERTION_COMMAND, type EditorState, type LexicalEditor } from 'lexical';
 	import { structuredClone } from '$lib/utils/structuredClone';
+	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
 	let {
 		value = $bindable(null),
 		onChange,
-		disabled = false
+		disabled = false,
+		enableTemplateVariables = false
 	}: {
 		value?: any;
 		disabled?: boolean;
+		enableTemplateVariables?: boolean;
 		onChange?: (state: any) => void;
 	} = $props();
 
@@ -83,6 +86,11 @@
 		value = state;
 		onChange?.(state);
 	}
+
+	function insertTemplateVariable(editor: LexicalEditor, token: string) {
+		editor.focus();
+		editor.dispatchCommand(CONTROLLED_TEXT_INSERTION_COMMAND, token);
+	}
 </script>
 
 <Composer {initialConfig}>
@@ -111,6 +119,12 @@
 					<InsertDropDown>
 						<InsertImageDropDownItem onclick={() => imageDialog?.show()} />
 					</InsertDropDown>
+					{#if enableTemplateVariables}
+						<Divider />
+						<TemplateVariablePicker
+							onSelect={(token) => insertTemplateVariable(activeEditor, token)}
+						/>
+					{/if}
 					<Divider />
 					<DropDownAlign />
 					<InsertImageCombinedDialog bind:this={imageDialog} />
