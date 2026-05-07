@@ -20,6 +20,16 @@ export async function getQueryContext(userId: string): Promise<QueryContext> {
 	};
 }
 
+export function getApiQueryContext(organizationId: string): QueryContext {
+	return {
+		userId: null,
+		authTeams: [],
+		adminOrgs: [],
+		ownerOrgs: [organizationId],
+		otherOrgs: []
+	};
+}
+
 export async function getAuthedTeams(userId: string) {
 	const result = await drizzle.execute(sql`
    WITH RECURSIVE auth_teams AS (

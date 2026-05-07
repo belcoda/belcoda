@@ -13,11 +13,13 @@ export function invitationReadPermissions(
 ) {
 	const { and, or, cmp, exists } = builder;
 	const filterArr = [
-		cmp('inviterId', '=', ctx.userId),
 		cmp('teamId', 'IN', ctx.authTeams),
 		cmp('organizationId', 'IN', ctx.adminOrgs),
 		cmp('organizationId', 'IN', ctx.ownerOrgs)
 	];
+	if (ctx.userId) {
+		filterArr.push(cmp('inviterId', '=', ctx.userId!));
+	}
 
 	return or(...filterArr);
 }

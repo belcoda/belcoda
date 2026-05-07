@@ -38,5 +38,10 @@
 			<RecipientBox bind:filter />
 		</div>
 	</div>
-	<Handle type="source" position={Position.Bottom} class="h-3! w-3!" />
+	<Handle
+		type="source"
+		position={Position.Bottom}
+		class="h-3! w-3!"
+		data-testid="flow-handle-source"
+	/>
 </div>

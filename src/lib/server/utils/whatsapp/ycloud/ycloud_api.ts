@@ -25,6 +25,33 @@ export const whatsAppTemplateResponseSchema = v.object({
 	reason: v.optional(v.string())
 });
 
+function isMockExternalServicesEnabled() {
+	return env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production';
+}
+
+function mockYCloudResponseForEndpoint(endpoint: `/${string}`) {
+	if (endpoint === '/whatsapp/messages') {
+		return { id: `mock-msg-${Date.now()}` };
+	}
+	if (endpoint === '/whatsapp/flows') {
+		return { id: `mock-flow-${Date.now()}`, success: true };
+	}
+	if (endpoint.endsWith('/publish') || endpoint.endsWith('/deprecate')) {
+		return { id: `mock-flow-${Date.now()}`, success: true };
+	}
+	if (endpoint === '/whatsapp/templates') {
+		return {
+			wabaId: 'mock-waba',
+			name: 'mock-template',
+			language: 'en',
+			category: 'MARKETING',
+			status: 'PENDING',
+			qualityRating: 'UNKNOWN'
+		};
+	}
+	return {};
+}
+
 async function sendToYCloud({
 	endpoint,
 	body,
@@ -34,6 +61,12 @@ async function sendToYCloud({
 	body?: any;
 	method: 'POST' | 'PUT' | 'DELETE' | 'GET' | 'PATCH';
 }) {
+	if (isMockExternalServicesEnabled()) {
+		const mocked = mockYCloudResponseForEndpoint(endpoint);
+		log.info({ endpoint, method, isMock: true }, 'Mocking YCloud request');
+		return mocked;
+	}
+
 	try {
 		log.debug({ endpoint: `${env.YCLOUD_API_URL}${endpoint}`, body, method }, 'Sending to YCloud');
 		const response = await fetch(`${env.YCLOUD_API_URL}${endpoint}`, {
@@ -62,6 +95,14 @@ async function sendToYCloud({
 export async function sendWhatsappMessage(
 	message: ReturnType<typeof convertWhatsappMessageToApiFormat>
 ) {
+	if (isMockExternalServicesEnabled()) {
+		log.info(
+			{ isMock: true, externalId: message.externalId },
+			'Mocking YCloud WhatsApp message send'
+		);
+		return message.externalId ?? `mock-${Date.now()}`;
+	}
+
 	const response = await sendToYCloud({
 		endpoint: '/whatsapp/messages',
 		body: message,
@@ -88,6 +129,11 @@ export async function sendFlowMessage({
 	bodyText?: string;
 	footerText?: string;
 }) {
+	if (isMockExternalServicesEnabled()) {
+		log.info({ isMock: true, flowId }, 'Mocking YCloud WhatsApp flow message send');
+		return `mock-flow-${flowId}`;
+	}
+
 	const message: any = {
 		from,
 		to,
@@ -133,6 +179,11 @@ export async function sendEmojiReaction({
 	from: string;
 	to: string;
 }) {
+	if (isMockExternalServicesEnabled()) {
+		log.info({ isMock: true, emoji, messageWamid }, 'Mocking YCloud WhatsApp emoji reaction send');
+		return;
+	}
+
 	const response = await sendToYCloud({
 		endpoint: '/whatsapp/messages',
 		method: 'POST',
@@ -183,7 +234,7 @@ export async function deployFlow({
 	publish?: boolean;
 	endpointUri?: string;
 }): Promise<{ flowId: string; success: boolean }> {
-	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+	if (isMockExternalServicesEnabled()) {
 		const flowId = flow.metadata.ycloudFlowId?.trim() || `mock-${flow.metadata.id}`;
 		log.info(
 			{
@@ -243,6 +294,14 @@ export async function updateFlow({
 	publish?: boolean;
 	endpointUri?: string;
 }): Promise<{ flowId: string; success: boolean }> {
+	if (isMockExternalServicesEnabled()) {
+		log.info(
+			{ ycloudFlowId, internalId: flow.metadata.id, isMock: true },
+			'Mocking YCloud flow update'
+		);
+		return { flowId: ycloudFlowId, success: true };
+	}
+
 	const requestBody = convertInternalToYCloudRequest(flow, {
 		wabaId,
 		publish,
@@ -382,7 +441,7 @@ export async function createWhatsappTemplate({
 	language: string;
 	category?: 'MARKETING' | 'UTILITY' | 'AUTHENTICATION';
 }) {
-	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+	if (isMockExternalServicesEnabled()) {
 		const synthetic = mockWhatsappTemplateResponse({ wabaId, name, language, category });
 		log.info(
 			{ wabaId, name, language, isMock: true },
@@ -472,7 +531,7 @@ export async function checkWhatsappTemplateExists({
 	templateName: string;
 	locale: string;
 }) {
-	if (env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production') {
+	if (isMockExternalServicesEnabled()) {
 		log.debug(
 			{ wabaId, templateName, locale, isMock: true },
 			'Mocking YCloud template existence check — treating as not on provider'

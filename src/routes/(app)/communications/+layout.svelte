@@ -13,7 +13,16 @@
 	{#snippet sidebar()}
 		<CommunicationsSidebar />
 	{/snippet}
-	<UniversalLayout rootNav="/communications/email/drafts" {sidebar}>
+	<UniversalLayout
+		rootNav="/communications/email/drafts"
+		mobileShellPathnames={[
+			'/communications/email/drafts',
+			'/communications/email/sent',
+			'/communications/whatsapp/drafts',
+			'/communications/whatsapp/sent'
+		]}
+		{sidebar}
+	>
 		{@render children?.()}
 	</UniversalLayout>
 {:else}

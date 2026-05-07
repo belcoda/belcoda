@@ -16,6 +16,15 @@ async function loginAsOwner(page: Page) {
 	await communityPage.expectLoaded();
 }
 
+async function loginAsMember(page: Page) {
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+	await loginPage.goto();
+	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await expect(page).toHaveURL('/community');
+	await communityPage.expectLoaded();
+}
+
 function randomTemplateName(): string {
 	const letters = 'abcdefghijklmnopqrstuvwxyz';
 	let suffix = '';
@@ -94,7 +103,32 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 		await expect(submitBtn).toBeVisible({ timeout: 10_000 });
 		await submitBtn.click();
 
-		await expect(listPage.statusCellForRow(row)).toContainText('Pending', { timeout: 25_000 });
-		await expect(submitBtn).toHaveCount(0);
+		await listPage.goto();
+		const refreshedRow = listPage.rowForTemplateId(ids.templateId);
+		await expect(refreshedRow).toBeVisible({ timeout: 20_000 });
+		await expect(listPage.statusCellForRow(refreshedRow)).toContainText('Pending', {
+			timeout: 25_000
+		});
+		await expect(listPage.submitButtonForRow(refreshedRow)).toHaveCount(0);
+	});
+
+	test('member cannot access WhatsApp template management', async ({ page }) => {
+		await loginAsMember(page);
+
+		const listPage = new WhatsAppTemplatesListPage(page);
+		await page.goto('/settings/whatsapp/templates');
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(listPage.createTemplateLink()).toHaveCount(0);
+		await expect(listPage.rowForTemplateId(ids.templateId)).toHaveCount(0);
+	});
+
+	test('member cannot access WhatsApp template edit form', async ({ page }) => {
+		await loginAsMember(page);
+
+		await page.goto(`/settings/whatsapp/templates/${ids.templateId}`);
+
+		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expect(page.getByTestId('whatsapp-template-form')).toHaveCount(0);
 	});
 });

@@ -14,7 +14,10 @@ export const createPersonNote = defineMutator(
 		if (tx.location !== 'server') {
 			throw new Error('createPersonNote can only be called from the server');
 		}
-		await dataFunctions.createPersonNote({ tx, ctx, args });
+		if (!ctx.userId) {
+			throw new Error('createPersonNote can only be called by a user');
+		}
+		await dataFunctions.createPersonNote({ tx, ctx: { ...ctx, userId: ctx.userId }, args });
 	}
 );
 
