@@ -66,6 +66,7 @@
 			if (data.type !== 'WA_EMBEDDED_SIGNUP') return;
 
 			if (data.event === 'FINISH') {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				const { phone_number_id, waba_id, business_id } = data.data;
 				if (appState.organizationId && appState.activeOrganization.data) {
 					const result = z.mutate(
