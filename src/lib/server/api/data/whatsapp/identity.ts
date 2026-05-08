@@ -1,4 +1,4 @@
-import { and, eq, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -23,6 +23,11 @@ export type ResolvedIncomingWhatsappIdentity = {
 	displayName: string;
 	bsuid?: string;
 	parentUserId?: string;
+};
+
+export type ResolvedOutboundWhatsappRecipient = {
+	to?: string;
+	recipient?: string;
 };
 
 export async function getOrganizationByWabaIdUnsafe({
@@ -249,4 +254,59 @@ export async function resolveIncomingWhatsappIdentity({
 		bsuid,
 		parentUserId
 	};
+}
+
+export async function resolveOutboundWhatsappRecipient({
+	organizationId,
+	wabaId,
+	personId,
+	phoneNumber,
+	tx
+}: {
+	organizationId: string;
+	wabaId?: string | null;
+	personId: string;
+	phoneNumber?: string | null;
+	tx: ServerTransaction;
+}): Promise<ResolvedOutboundWhatsappRecipient> {
+	const recipient = wabaId
+		? await findActiveWhatsappIdentityByPersonUnsafe({ organizationId, wabaId, personId, tx })
+		: undefined;
+
+	if (recipient?.bsuid) {
+		return { recipient: recipient.bsuid };
+	}
+
+	const to = phoneNumber?.trim() || undefined;
+	if (to) {
+		return { to };
+	}
+
+	throw new Error('Person does not have a WhatsApp recipient or phone number');
+}
+
+async function findActiveWhatsappIdentityByPersonUnsafe({
+	organizationId,
+	wabaId,
+	personId,
+	tx
+}: {
+	organizationId: string;
+	wabaId: string;
+	personId: string;
+	tx: ServerTransaction;
+}) {
+	const [identity] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(personWhatsappIdentity)
+		.where(
+			and(
+				isNull(personWhatsappIdentity.deletedAt),
+				eq(personWhatsappIdentity.organizationId, organizationId),
+				eq(personWhatsappIdentity.wabaId, wabaId),
+				eq(personWhatsappIdentity.personId, personId)
+			)
+		)
+		.orderBy(desc(personWhatsappIdentity.lastSeenAt));
+	return identity;
 }

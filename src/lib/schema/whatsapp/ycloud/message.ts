@@ -262,7 +262,8 @@ const templateSchema = v.object({
 const whatsappMessageSchemaBase = v.object({
 	from: helpers.shortString,
 	externalId: helpers.uuid,
-	to: helpers.e164PhoneNumber,
+	to: v.optional(helpers.e164PhoneNumber),
+	recipient: v.optional(helpers.mediumString), // BSUID or parent BSUID
 	context: v.optional(contextSchema)
 });
 
