@@ -3,8 +3,10 @@ import { db } from '$lib/server/db';
 import { renderValiError } from '$lib/schema/helpers';
 import {
 	incomingMessageSchema,
-	type IncomingMessage
+	type IncomingMessage,
+	type IncomingMessageObject
 } from '$lib/schema/whatsapp/ycloud/incoming_message';
+import type { ServerTransaction } from '@rocicorp/zero';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { getPersonIdFromButtonAction } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/get_details_from_message';
 import pino from '$lib/pino';
@@ -34,8 +36,11 @@ import {
 	getPetitionByIdUnsafe,
 	createIncompletePetitionSignatureHelper
 } from '$lib/server/api/data/petition/signature';
-import { getDetailsFromMessageByWabaId } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/get_details_from_message';
 import { handleFlowResponse } from '$lib/server/queue/handlers/whatsapp/handlers/flow';
+import {
+	resolveIncomingWhatsappIdentity,
+	upsertWhatsappIdentityForPerson
+} from '$lib/server/api/data/whatsapp/identity';
 
 import { convertIncomingWhatsAppMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/convert_incoming';
 
@@ -51,6 +56,11 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 		let logActivity: boolean = true; //whether to log the activity to the timeline. Some messages (eg: emoji reactions, action code signups, flow responses, etc) are not meant to be logged to the timeline. A message and webhook record will still be stored.
 		let insertedWhatsAppMessageId: string = uuidv7();
 		await db.transaction(async (tx) => {
+			const senderPhone = parsed.whatsappInboundMessage.from;
+			const senderDisplayName =
+				parsed.whatsappInboundMessage.customerProfile?.name ??
+				parsed.whatsappInboundMessage.customerProfile?.username ??
+				senderPhone;
 			switch (parsed.whatsappInboundMessage.type) {
 				case 'text': {
 					const actionCode = extractActionCode(parsed.whatsappInboundMessage.text.body);
@@ -74,17 +84,14 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									tx
 								});
 								const countryCode =
-									safeGetCountryCodeFromPhoneNumber(parsed.whatsappInboundMessage.from) ||
-									organization.country;
+									safeGetCountryCodeFromPhoneNumber(senderPhone) || organization.country;
 								const eventSignup = await createIncompleteEventSignupHelper({
 									eventId: event.id,
 									personAction: {
 										subscribed: true,
 										country: countryCode,
-										phoneNumber: parsed.whatsappInboundMessage.from,
-										givenName:
-											parsed.whatsappInboundMessage.customerProfile?.name ??
-											parsed.whatsappInboundMessage.from
+										phoneNumber: senderPhone,
+										givenName: senderDisplayName
 									},
 									signupDetails: {
 										channel: { type: 'whatsapp' },
@@ -99,7 +106,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									try {
 										await sendFlowMessage({
 											from: parsed.whatsappInboundMessage.to,
-											to: parsed.whatsappInboundMessage.from,
+											to: senderPhone,
 											flowId: flowId,
 											flowCta: 'Register',
 											headerText: event.title,
@@ -110,7 +117,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											{
 												eventId: event.id,
 												flowId,
-												personPhone: parsed.whatsappInboundMessage.from,
+												personPhone: senderPhone,
 												eventSignupId: eventSignup.id
 											},
 											'Sent flow message for event registration'
@@ -124,10 +131,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											personAction: {
 												subscribed: true,
 												country: countryCode,
-												phoneNumber: parsed.whatsappInboundMessage.from,
-												givenName:
-													parsed.whatsappInboundMessage.customerProfile?.name ??
-													parsed.whatsappInboundMessage.from
+												phoneNumber: senderPhone,
+												givenName: senderDisplayName
 											},
 											signupDetails: {
 												channel: { type: 'whatsapp' },
@@ -151,10 +156,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 										personAction: {
 											subscribed: true,
 											country: countryCode,
-											phoneNumber: parsed.whatsappInboundMessage.from,
-											givenName:
-												parsed.whatsappInboundMessage.customerProfile?.name ??
-												parsed.whatsappInboundMessage.from
+											phoneNumber: senderPhone,
+											givenName: senderDisplayName
 										},
 										signupDetails: {
 											channel: { type: 'whatsapp' },
@@ -180,17 +183,14 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									tx
 								});
 								const countryCode =
-									safeGetCountryCodeFromPhoneNumber(parsed.whatsappInboundMessage.from) ||
-									organization.country;
+									safeGetCountryCodeFromPhoneNumber(senderPhone) || organization.country;
 								const eventSignup = await attendedEventHelper({
 									eventId: event.id,
 									personAction: {
 										subscribed: true,
 										country: countryCode,
-										phoneNumber: parsed.whatsappInboundMessage.from,
-										givenName:
-											parsed.whatsappInboundMessage.customerProfile?.name ??
-											parsed.whatsappInboundMessage.from
+										phoneNumber: senderPhone,
+										givenName: senderDisplayName
 									},
 									signupDetails: {
 										channel: { type: 'whatsapp' },
@@ -214,8 +214,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									tx
 								});
 								const countryCode =
-									safeGetCountryCodeFromPhoneNumber(parsed.whatsappInboundMessage.from) ||
-									organization.country;
+									safeGetCountryCodeFromPhoneNumber(senderPhone) || organization.country;
 								const outcome = await createIncompletePetitionSignatureHelper({
 									petitionId: petitionRecord.id,
 									organizationId: petitionRecord.organizationId,
@@ -223,17 +222,15 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									personAction: {
 										subscribed: true,
 										country: countryCode,
-										phoneNumber: parsed.whatsappInboundMessage.from,
-										givenName:
-											parsed.whatsappInboundMessage.customerProfile?.name ??
-											parsed.whatsappInboundMessage.from
+										phoneNumber: senderPhone,
+										givenName: senderDisplayName
 									},
 									signatureDetails: {
 										channel: { type: 'whatsapp' }
 									},
 									teamId: petitionRecord.teamId ?? undefined,
 									flowMessageFrom: parsed.whatsappInboundMessage.to,
-									flowMessageTo: parsed.whatsappInboundMessage.from
+									flowMessageTo: senderPhone
 								});
 								personId = outcome.personId;
 								organizationId = petitionRecord.organizationId;
@@ -278,10 +275,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							tx
 						});
 						const personId = await getPersonIdFromButtonAction({
-							personPhoneNumber: parsed.whatsappInboundMessage.from,
-							personName:
-								parsed.whatsappInboundMessage.customerProfile?.name ??
-								parsed.whatsappInboundMessage.from,
+							personPhoneNumber: senderPhone,
+							personName: senderDisplayName,
 							organizationId: threadObject.organizationId,
 							organizationCountry: organization.country,
 							messageId: insertedWhatsAppMessageId,
@@ -316,10 +311,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							tx
 						});
 						const personId = await getPersonIdFromButtonAction({
-							personPhoneNumber: parsed.whatsappInboundMessage.from,
-							personName:
-								parsed.whatsappInboundMessage.customerProfile?.name ??
-								parsed.whatsappInboundMessage.from,
+							personPhoneNumber: senderPhone,
+							personName: senderDisplayName,
 							organizationId: threadObject.organizationId,
 							organizationCountry: organization.country,
 							messageId: insertedWhatsAppMessageId,
@@ -341,7 +334,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							flowName: parsed.whatsappInboundMessage.interactive.nfm_reply.name,
 							body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
 							response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
-							from: parsed.whatsappInboundMessage.from,
+							from: senderPhone,
 							tx
 						});
 						personId = flowResult.personId;
@@ -364,7 +357,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							tx,
 							messageId: messageActivity.id,
 							personId: messageActivity.personId,
-							phoneNumber: parsed.whatsappInboundMessage.from,
+							phoneNumber: senderPhone,
 							emoji: parsed.whatsappInboundMessage.reaction.emoji || null
 						});
 					}
@@ -376,18 +369,13 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 			}
 
 			if (!organizationId || !personId) {
-				// get organization from wabaId if possible...
-				const { organization, person } = await getDetailsFromMessageByWabaId({
-					wabaId: parsed.whatsappInboundMessage.wabaId,
+				const sender = await resolveIncomingWhatsappIdentity({
+					inboundMessage: parsed.whatsappInboundMessage,
 					messageId: insertedWhatsAppMessageId,
-					personPhoneNumber: parsed.whatsappInboundMessage.from,
-					personName:
-						parsed.whatsappInboundMessage.customerProfile?.name ??
-						parsed.whatsappInboundMessage.from,
 					tx
 				});
-				organizationId = organization.id;
-				personId = person.id;
+				organizationId = sender.organization.id;
+				personId = sender.person.id;
 			}
 			if (!organizationId) {
 				throw new Error(
@@ -399,6 +387,14 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 					'Reached the end of incoming message processing and was unable to determine person'
 				);
 			}
+			await linkIncomingWhatsappIdentities({
+				organizationId,
+				personId,
+				inboundMessage: parsed.whatsappInboundMessage,
+				senderPhone,
+				senderDisplayName,
+				tx
+			});
 			const whatsappMessage = await createWhatsAppMessage({
 				message: await convertIncomingWhatsAppMessage({
 					inboundMessage: parsed as IncomingMessage,
@@ -451,4 +447,46 @@ function extractNextNodeFromButtonAction(
 		throw new Error(`Edge target not found for buttonId ${buttonId}`);
 	}
 	return target; // once we have nodes that have more than one input, we will need to update this to handle targetHandle
+}
+
+async function linkIncomingWhatsappIdentities({
+	organizationId,
+	personId,
+	inboundMessage,
+	senderPhone,
+	senderDisplayName,
+	tx
+}: {
+	organizationId: string;
+	personId: string;
+	inboundMessage: IncomingMessageObject;
+	senderPhone: string;
+	senderDisplayName: string;
+	tx: ServerTransaction;
+}) {
+	if (inboundMessage.fromUserId) {
+		await upsertWhatsappIdentityForPerson({
+			organizationId,
+			personId,
+			wabaId: inboundMessage.wabaId,
+			bsuid: inboundMessage.fromUserId,
+			parentUserId: inboundMessage.fromParentUserId ?? null,
+			waPhone: senderPhone,
+			displayName: senderDisplayName,
+			tx
+		});
+	}
+
+	if (inboundMessage.type === 'system' && inboundMessage.system.user_id) {
+		await upsertWhatsappIdentityForPerson({
+			organizationId,
+			personId,
+			wabaId: inboundMessage.wabaId,
+			bsuid: inboundMessage.system.user_id,
+			parentUserId: inboundMessage.system.parent_user_id ?? null,
+			waPhone: inboundMessage.system.wa_id,
+			displayName: senderDisplayName,
+			tx
+		});
+	}
 }
