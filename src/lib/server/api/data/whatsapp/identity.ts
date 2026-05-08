@@ -81,7 +81,7 @@ export async function findWhatsappIdentityByBsuidUnsafe({
 	return identity;
 }
 
-export async function upsertWhatsappIdentityForPerson({
+export async function upsertWhatsappIdentityForPersonUnsafe({
 	organizationId,
 	personId,
 	wabaId,
@@ -235,7 +235,7 @@ export async function resolveIncomingWhatsappIdentity({
 	}
 
 	const linkedIdentity = bsuid
-		? await upsertWhatsappIdentityForPerson({
+		? await upsertWhatsappIdentityForPersonUnsafe({
 				organizationId: organizationRecord.id,
 				personId: personRecord.id,
 				wabaId: inboundMessage.wabaId,
@@ -249,7 +249,7 @@ export async function resolveIncomingWhatsappIdentity({
 
 	const linkedSystemIdentity =
 		inboundMessage.type === 'system' && inboundMessage.system.user_id
-			? await upsertWhatsappIdentityForPerson({
+			? await upsertWhatsappIdentityForPersonUnsafe({
 					organizationId: organizationRecord.id,
 					personId: personRecord.id,
 					wabaId: inboundMessage.wabaId,

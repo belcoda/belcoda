@@ -39,7 +39,7 @@ import {
 import { handleFlowResponse } from '$lib/server/queue/handlers/whatsapp/handlers/flow';
 import {
 	resolveIncomingWhatsappIdentity,
-	upsertWhatsappIdentityForPerson
+	upsertWhatsappIdentityForPersonUnsafe
 } from '$lib/server/api/data/whatsapp/identity';
 
 import { convertIncomingWhatsAppMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/convert_incoming';
@@ -465,7 +465,7 @@ async function linkIncomingWhatsappIdentities({
 	tx: ServerTransaction;
 }) {
 	if (inboundMessage.fromUserId) {
-		await upsertWhatsappIdentityForPerson({
+		await upsertWhatsappIdentityForPersonUnsafe({
 			organizationId,
 			personId,
 			wabaId: inboundMessage.wabaId,
@@ -478,7 +478,7 @@ async function linkIncomingWhatsappIdentities({
 	}
 
 	if (inboundMessage.type === 'system' && inboundMessage.system.user_id) {
-		await upsertWhatsappIdentityForPerson({
+		await upsertWhatsappIdentityForPersonUnsafe({
 			organizationId,
 			personId,
 			wabaId: inboundMessage.wabaId,
