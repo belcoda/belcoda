@@ -1268,7 +1268,7 @@ export function getPhoneNumberExample(
 }
 
 export function normalizePhoneNumber(phoneNumber: string): string {
-	return phoneNumber.replace(/[^0-9]/g, '');
+	return phoneNumber.replace(/[^0-9+]/g, '');
 }
 
 export function getInternationalPhoneNumber(
