@@ -4969,3 +4969,7 @@ msgstr "No variables found."
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
+
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Name unknown]"

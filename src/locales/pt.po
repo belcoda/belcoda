@@ -4953,3 +4953,7 @@ msgstr ""
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
 msgstr ""
+
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Nome desconhecido]"
