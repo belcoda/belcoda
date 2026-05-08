@@ -100,43 +100,9 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 	displayName?: string | null;
 	tx: ServerTransaction;
 }) {
-	const existing = await findWhatsappIdentityByBsuidUnsafe({ organizationId, wabaId, bsuid, tx });
 	const now = new Date();
 
-	if (existing) {
-		if (existing.personId !== personId) {
-			log.warn(
-				{
-					organizationId,
-					wabaId,
-					bsuid,
-					oldPersonId: existing.personId,
-					newPersonId: personId
-				},
-				'Relinking WhatsApp BSUID identity to resolved person'
-			);
-		}
-
-		const [updated] = await tx.dbTransaction.wrappedTransaction
-			.update(personWhatsappIdentity)
-			.set({
-				personId,
-				parentUserId: parentUserId ?? existing.parentUserId,
-				waPhone: waPhone ?? existing.waPhone,
-				displayName: displayName ?? existing.displayName,
-				lastSeenAt: now,
-				updatedAt: now
-			})
-			.where(eq(personWhatsappIdentity.id, existing.id))
-			.returning();
-
-		if (!updated) {
-			throw new Error('Failed to update WhatsApp identity');
-		}
-		return updated;
-	}
-
-	const [inserted] = await tx.dbTransaction.wrappedTransaction
+	const [upserted] = await tx.dbTransaction.wrappedTransaction
 		.insert(personWhatsappIdentity)
 		.values({
 			id: uuidv7(),
@@ -153,14 +119,42 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 			updatedAt: now,
 			deletedAt: null
 		})
+		.onConflictDoUpdate({
+			target: [
+				personWhatsappIdentity.organizationId,
+				personWhatsappIdentity.wabaId,
+				personWhatsappIdentity.bsuid
+			],
+			targetWhere: isNull(personWhatsappIdentity.deletedAt),
+			set: {
+				personId,
+				parentUserId: sql`coalesce(excluded.parent_user_id, ${personWhatsappIdentity.parentUserId})`,
+				waPhone: sql`coalesce(excluded.wa_phone, ${personWhatsappIdentity.waPhone})`,
+				displayName: sql`coalesce(excluded.display_name, ${personWhatsappIdentity.displayName})`,
+				lastSeenAt: now,
+				updatedAt: now
+			}
+		})
 		.returning();
 
-	if (!inserted) {
-		throw new Error('Failed to create WhatsApp identity');
+	if (!upserted) {
+		throw new Error('Failed to upsert WhatsApp identity');
 	}
 
-	log.info({ organizationId, personId, wabaId, bsuid }, 'Created WhatsApp BSUID identity');
-	return inserted;
+	if (upserted.personId !== personId) {
+		log.warn(
+			{
+				organizationId,
+				wabaId,
+				bsuid,
+				oldPersonId: upserted.personId,
+				newPersonId: personId
+			},
+			'Relinking WhatsApp BSUID identity to resolved person'
+		);
+	}
+
+	return upserted;
 }
 
 export async function resolveIncomingWhatsappIdentity({
