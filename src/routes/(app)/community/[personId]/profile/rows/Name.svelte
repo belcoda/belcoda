@@ -6,6 +6,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import NameForm from './form/Name.svelte';
 	import { t } from '$lib/index.svelte';
+	import { renderName } from '$lib/utils/name';
 </script>
 
 <div class="my-8">
@@ -13,8 +14,11 @@
 		<NameForm bind:edit {person} />
 	{:else}
 		<div class="text-center text-xl font-medium" data-testid="person-profile-name-display">
-			{person.givenName}
-			{person.familyName}
+			{renderName({
+				givenName: person.givenName,
+				familyName: person.familyName,
+				country: person.country
+			})}
 		</div>
 	{/if}
 

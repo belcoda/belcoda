@@ -17,6 +17,7 @@
 	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import { page } from '$app/state';
+	import { renderName } from '$lib/utils/name';
 
 	const teamId = $derived(page.params.teamId ?? '');
 
@@ -136,8 +137,11 @@
 													name1={person.givenName || person.familyName || person.emailAddress || ''}
 													name2={person.familyName}
 												/>
-												{person.givenName}
-												{person.familyName}
+												{renderName({
+													givenName: person.givenName,
+													familyName: person.familyName,
+													country: person.country
+												})}
 											</div>
 										</Table.Cell>
 										<Table.Cell class="text-muted-foreground"

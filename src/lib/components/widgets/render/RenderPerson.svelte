@@ -32,6 +32,7 @@
 	});
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { t } from '$lib/index.svelte';
+	import { renderName } from '$lib/utils/name';
 </script>
 
 {#if person.details.type === 'unknown'}
@@ -59,8 +60,11 @@
 		</div>
 		<div>
 			<div class={cn('text-sm font-medium', textClass)} data-testid={testId}>
-				{person.data.givenName}
-				{person.data.familyName}
+				{renderName({
+					givenName: person.data.givenName,
+					familyName: person.data.familyName,
+					country: person.data.country
+				})}
 			</div>
 		</div>
 	</div>
