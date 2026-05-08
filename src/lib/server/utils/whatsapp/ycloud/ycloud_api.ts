@@ -554,3 +554,46 @@ export async function checkWhatsappTemplateExists({
 		throw error;
 	}
 }
+
+export async function bindPhoneNumberToWaba({
+	wabaId,
+	phoneNumberId,
+	businessCoexistence = false
+}: {
+	wabaId: string;
+	phoneNumberId: string;
+	businessCoexistence?: boolean;
+}) {
+	if (businessCoexistence) {
+		log.debug('Binding phone number to waba with business coexistence');
+		const ycloudResponse = await sendToYCloud({
+			endpoint: `/whatsapp/businessAccounts/${wabaId}/smb/bind`,
+			method: 'POST'
+		});
+		log.debug({ ycloudResponse }, 'Response from smbBind operation');
+		if ('phoneNumber' in ycloudResponse) {
+			return ycloudResponse.phoneNumber;
+		}
+		throw new Error('Phone number not registered');
+	} else {
+		log.debug('Binding phone number to waba without business coexistence');
+		const ycloudResponse = await sendToYCloud({
+			endpoint: `/whatsapp/businessAccounts/${wabaId}/tp/bind`,
+			method: 'POST'
+		});
+		log.debug({ ycloudResponse }, 'Response from wabaBind operation');
+		if (!ycloudResponse.paymentMethodAttached) {
+			throw new Error('Payment method not attached');
+		}
+		const phoneNumberResponse = await sendToYCloud({
+			endpoint: `/whatsapp/phoneNumbers/${wabaId}/${phoneNumberId}/register`,
+			method: 'POST'
+		});
+		log.debug({ phoneNumberResponse }, 'Phone number registered');
+
+		if ('phoneNumber' in phoneNumberResponse) {
+			return phoneNumberResponse.phoneNumber;
+		}
+		throw new Error('Phone number not registered');
+	}
+}
