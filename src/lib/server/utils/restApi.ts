@@ -97,9 +97,9 @@ export function buildApiErrorResponse(
 	if (valiError.isValiError && !alwaysReturn500) {
 		return error(400, { message: valiError.message });
 	} else if (valiError.isValiError && alwaysReturn500) {
-		log.error({ valiError }, 'Error building API error response');
 		return error(500, { message: 'An unknown error occurred' });
 	} else {
+		log.error({ responseError }, 'Error building API error response');
 		return error(500, { message: 'An unknown error occurred' });
 	}
 }
@@ -134,7 +134,6 @@ export async function processIncomingBody<T>(
 		const parsed = parse(schema, body);
 		return parsed;
 	} catch (err) {
-		log.error({ err }, 'Error parsing incoming body');
 		throw buildApiErrorResponse(err);
 	}
 }
