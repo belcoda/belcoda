@@ -76,6 +76,28 @@
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
 	import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
+	import TriangleAlertIcon from '@lucide/svelte/icons/triangle-alert';
+	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+
+	const templateNode = $derived(nodes.find((n) => n.type === 'templateMessage'));
+	const templateIdForRead = $derived(
+		(templateNode?.data as { templateId?: string } | undefined)?.templateId
+	);
+	const templateReadQuery = $derived.by(() => {
+		const id = templateIdForRead;
+		if (!id) return null;
+		return z.createQuery(queries.whatsappTemplate.read({ templateId: id }));
+	});
+	const templateLoaded = $derived(templateReadQuery?.details?.type === 'complete');
+	const templateStatus = $derived(templateReadQuery?.data?.status ?? null);
+	const isTemplateApproved = $derived(templateLoaded && templateStatus === 'APPROVED');
+	const canSend = $derived(!disabled && !!templateNode && templateLoaded && isTemplateApproved);
+	const showApprovalBanner = $derived(
+		!disabled && !!templateIdForRead && templateLoaded && !isTemplateApproved
+	);
 
 	const activeWhatsAppOnboarded = $derived(
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
@@ -105,6 +127,36 @@
 				{edgeTypes}
 				defaultEdgeOptions={{ type: 'edge' }}
 			>
+				{#if showApprovalBanner}
+					<Panel position="top-center" class="pointer-events-auto z-10 max-w-xl px-4">
+						<Alert.Root>
+							<TriangleAlertIcon />
+							<Alert.Title>{t`Template not approved`}</Alert.Title>
+							<Alert.Description class="space-y-2">
+								{#if templateReadQuery?.data}
+									<p>
+										{t`The selected template (${templateReadQuery.data.name}) is currently ${String(templateStatus)}. You can edit this draft, but it cannot be sent until the template is approved.`}
+									</p>
+								{:else}
+									<p>
+										{t`This template is not available or is not approved. Select an approved template before sending.`}
+									</p>
+								{/if}
+								{#if templateIdForRead}
+									<div>
+										<Button
+											variant="outline"
+											size="sm"
+											href="/settings/whatsapp/templates/{templateIdForRead}"
+										>
+											{t`View template settings`}
+										</Button>
+									</div>
+								{/if}
+							</Alert.Description>
+						</Alert.Root>
+					</Panel>
+				{/if}
 				{#if backButtonUrl}
 					<Panel position="top-left">
 						<div class="flex flex-col gap-2">
@@ -158,16 +210,37 @@
 										edges: $state.snapshot(edges) as Flow['edges']
 									})}>{t`Save`}</Button
 							>
-							<Button
-								variant="default"
-								size="sm"
-								data-testid="flow-send-button"
-								onclick={() =>
-									onSend({
-										nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
-										edges: $state.snapshot(edges) as Flow['edges']
-									})}>{t`Send`}</Button
-							>
+							{#if !canSend}
+								<Tooltip.Root>
+									<Tooltip.Trigger>
+										{#snippet child({ props })}
+											<span {...props} class="inline-flex">
+												<Button
+													variant="default"
+													size="sm"
+													data-testid="flow-send-button"
+													disabled
+													type="button">{t`Send`}</Button
+												>
+											</span>
+										{/snippet}
+									</Tooltip.Trigger>
+									<Tooltip.Content class="max-w-xs" side="top">
+										{t`Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template.`}
+									</Tooltip.Content>
+								</Tooltip.Root>
+							{:else}
+								<Button
+									variant="default"
+									size="sm"
+									data-testid="flow-send-button"
+									onclick={() =>
+										onSend({
+											nodes: $state.snapshot(nodes) as unknown as Flow['nodes'],
+											edges: $state.snapshot(edges) as unknown as Flow['edges']
+										})}>{t`Send`}</Button
+								>
+							{/if}
 						</div>
 					</Panel>
 				{/if}
