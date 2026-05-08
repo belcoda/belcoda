@@ -139,7 +139,7 @@ export async function createPetitionSignature({
 		.onConflictDoUpdate({
 			target: [petitionSignature.petitionId, petitionSignature.personId],
 			set: {
-				teamId: petitionSignatureRecord.teamId ?? undefined,
+				teamId: petitionSignatureRecord.teamId,
 				details: petitionSignatureRecord.details,
 				responses: petitionSignatureRecord.responses,
 				deletedAt: null,
