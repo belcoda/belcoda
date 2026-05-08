@@ -1,0 +1,252 @@
+import { and, eq, isNull, sql } from 'drizzle-orm';
+import type { ServerTransaction } from '@rocicorp/zero';
+import { v7 as uuidv7 } from 'uuid';
+
+import pino from '$lib/pino';
+import { organization, person, personWhatsappIdentity } from '$lib/schema/drizzle';
+import type { IncomingMessageObject } from '$lib/schema/whatsapp/ycloud/incoming_message';
+import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import {
+	_findPersonByPhoneNumberUnsafe,
+	_getPersonByIdUnsafe
+} from '$lib/server/api/data/person/person';
+import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
+
+const log = pino(import.meta.url);
+
+export type ResolvedIncomingWhatsappIdentity = {
+	organization: typeof organization.$inferSelect;
+	person: typeof person.$inferSelect;
+	identity?: typeof personWhatsappIdentity.$inferSelect;
+	linkedSystemIdentity?: typeof personWhatsappIdentity.$inferSelect;
+	waPhone: string;
+	displayName: string;
+	bsuid?: string;
+	parentUserId?: string;
+};
+
+export async function getOrganizationByWabaIdUnsafe({
+	wabaId,
+	tx
+}: {
+	wabaId: string;
+	tx: ServerTransaction;
+}) {
+	const orgResult = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(organization)
+		.where(sql`${organization.settings}->'whatsApp'->>'wabaId' = ${wabaId}`);
+
+	if (orgResult.length === 0) {
+		throw new Error('No organization found for wabaId: ' + wabaId);
+	}
+	if (orgResult.length !== 1) {
+		throw new Error('Multiple organizations found for wabaId: ' + wabaId);
+	}
+	return orgResult[0];
+}
+
+export async function findWhatsappIdentityByBsuidUnsafe({
+	organizationId,
+	wabaId,
+	bsuid,
+	tx
+}: {
+	organizationId: string;
+	wabaId: string;
+	bsuid: string;
+	tx: ServerTransaction;
+}) {
+	const [identity] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(personWhatsappIdentity)
+		.where(
+			and(
+				isNull(personWhatsappIdentity.deletedAt),
+				eq(personWhatsappIdentity.organizationId, organizationId),
+				eq(personWhatsappIdentity.wabaId, wabaId),
+				eq(personWhatsappIdentity.bsuid, bsuid)
+			)
+		);
+	return identity;
+}
+
+export async function upsertWhatsappIdentityForPerson({
+	organizationId,
+	personId,
+	wabaId,
+	bsuid,
+	parentUserId,
+	waPhone,
+	displayName,
+	tx
+}: {
+	organizationId: string;
+	personId: string;
+	wabaId: string;
+	bsuid: string;
+	parentUserId?: string | null;
+	waPhone?: string | null;
+	displayName?: string | null;
+	tx: ServerTransaction;
+}) {
+	const existing = await findWhatsappIdentityByBsuidUnsafe({ organizationId, wabaId, bsuid, tx });
+	const now = new Date();
+
+	if (existing) {
+		if (existing.personId !== personId) {
+			log.warn(
+				{
+					organizationId,
+					wabaId,
+					bsuid,
+					oldPersonId: existing.personId,
+					newPersonId: personId
+				},
+				'Relinking WhatsApp BSUID identity to resolved person'
+			);
+		}
+
+		const [updated] = await tx.dbTransaction.wrappedTransaction
+			.update(personWhatsappIdentity)
+			.set({
+				personId,
+				parentUserId: parentUserId ?? existing.parentUserId,
+				waPhone: waPhone ?? existing.waPhone,
+				displayName: displayName ?? existing.displayName,
+				lastSeenAt: now,
+				updatedAt: now
+			})
+			.where(eq(personWhatsappIdentity.id, existing.id))
+			.returning();
+
+		if (!updated) {
+			throw new Error('Failed to update WhatsApp identity');
+		}
+		return updated;
+	}
+
+	const [inserted] = await tx.dbTransaction.wrappedTransaction
+		.insert(personWhatsappIdentity)
+		.values({
+			id: uuidv7(),
+			organizationId,
+			personId,
+			wabaId,
+			bsuid,
+			parentUserId: parentUserId ?? null,
+			waPhone: waPhone ?? null,
+			displayName: displayName ?? null,
+			firstSeenAt: now,
+			lastSeenAt: now,
+			createdAt: now,
+			updatedAt: now,
+			deletedAt: null
+		})
+		.returning();
+
+	if (!inserted) {
+		throw new Error('Failed to create WhatsApp identity');
+	}
+
+	log.info({ organizationId, personId, wabaId, bsuid }, 'Created WhatsApp BSUID identity');
+	return inserted;
+}
+
+export async function resolveIncomingWhatsappIdentity({
+	inboundMessage,
+	messageId,
+	teamId,
+	tx
+}: {
+	inboundMessage: IncomingMessageObject;
+	messageId: string;
+	teamId?: string;
+	tx: ServerTransaction;
+}): Promise<ResolvedIncomingWhatsappIdentity> {
+	const organizationRecord = await getOrganizationByWabaIdUnsafe({
+		wabaId: inboundMessage.wabaId,
+		tx
+	});
+	const waPhone = inboundMessage.from;
+	const displayName =
+		inboundMessage.customerProfile?.name ??
+		inboundMessage.customerProfile?.username ??
+		inboundMessage.from;
+	const bsuid = inboundMessage.fromUserId ?? undefined;
+	const parentUserId = inboundMessage.fromParentUserId ?? undefined;
+
+	const identity = bsuid
+		? await findWhatsappIdentityByBsuidUnsafe({
+				organizationId: organizationRecord.id,
+				wabaId: inboundMessage.wabaId,
+				bsuid,
+				tx
+			})
+		: undefined;
+
+	let personRecord = identity
+		? await _getPersonByIdUnsafe({
+				personId: identity.personId,
+				organizationId: organizationRecord.id,
+				tx
+			})
+		: await _findPersonByPhoneNumberUnsafe({
+				organizationId: organizationRecord.id,
+				phoneNumber: waPhone,
+				tx
+			});
+
+	if (!personRecord) {
+		personRecord = await findOrCreatePerson({
+			personAction: {
+				phoneNumber: waPhone,
+				givenName: displayName,
+				country: safeGetCountryCodeFromPhoneNumber(waPhone) || organizationRecord.country,
+				subscribed: false
+			},
+			teamId,
+			addedFrom: { type: 'incoming_whatsapp_message', messageId },
+			organizationId: organizationRecord.id,
+			tx
+		});
+	}
+
+	const linkedIdentity = bsuid
+		? await upsertWhatsappIdentityForPerson({
+				organizationId: organizationRecord.id,
+				personId: personRecord.id,
+				wabaId: inboundMessage.wabaId,
+				bsuid,
+				parentUserId,
+				waPhone,
+				displayName,
+				tx
+			})
+		: undefined;
+
+	const linkedSystemIdentity =
+		inboundMessage.type === 'system' && inboundMessage.system.user_id
+			? await upsertWhatsappIdentityForPerson({
+					organizationId: organizationRecord.id,
+					personId: personRecord.id,
+					wabaId: inboundMessage.wabaId,
+					bsuid: inboundMessage.system.user_id,
+					parentUserId: inboundMessage.system.parent_user_id ?? null,
+					waPhone: inboundMessage.system.wa_id,
+					displayName,
+					tx
+				})
+			: undefined;
+
+	return {
+		organization: organizationRecord,
+		person: personRecord,
+		identity: linkedIdentity,
+		linkedSystemIdentity,
+		waPhone,
+		displayName,
+		bsuid,
+		parentUserId
+	};
+}
