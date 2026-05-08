@@ -18,9 +18,6 @@ type EventApi = {
 	published: boolean;
 };
 
-// `createEventRest` validates dates with valibot's `isoDateTime`, which expects
-// a strict `YYYY-MM-DDTHH:MM` (no seconds, no timezone suffix). `Date.toISOString()`
-// is not accepted.
 function toApiDateTime(d: Date): string {
 	return d.toISOString();
 }

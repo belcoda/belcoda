@@ -15,9 +15,6 @@ type EventSignupApi = {
 	details: { channel: { type: string } };
 };
 
-// `createEventRest` validates dates with valibot's `isoDateTime`, which expects
-// `YYYY-MM-DDTHH:MM` (no seconds/timezone). Strip the milliseconds + Z that
-// `Date.toISOString()` emits.
 function toApiDateTime(d: Date): string {
 	return d.toISOString();
 }
