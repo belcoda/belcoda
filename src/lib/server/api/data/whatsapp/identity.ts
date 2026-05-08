@@ -43,9 +43,14 @@ export async function getOrganizationByWabaIdUnsafe({
 		.where(sql`${organization.settings}->'whatsApp'->>'wabaId' = ${wabaId}`);
 
 	if (orgResult.length === 0) {
+		log.warn({ wabaId }, 'Unable to resolve WhatsApp organization by WABA ID');
 		throw new Error('No organization found for wabaId: ' + wabaId);
 	}
 	if (orgResult.length !== 1) {
+		log.error(
+			{ wabaId, organizationIds: orgResult.map((org) => org.id) },
+			'Multiple organizations found for WABA ID'
+		);
 		throw new Error('Multiple organizations found for wabaId: ' + wabaId);
 	}
 	return orgResult[0];
@@ -181,6 +186,18 @@ export async function resolveIncomingWhatsappIdentity({
 	const bsuid = inboundMessage.fromUserId ?? undefined;
 	const parentUserId = inboundMessage.fromParentUserId ?? undefined;
 
+	if (!bsuid) {
+		log.info(
+			{
+				organizationId: organizationRecord.id,
+				wabaId: inboundMessage.wabaId,
+				messageId,
+				waPhone
+			},
+			'Inbound WhatsApp message has no BSUID; falling back to phone resolution'
+		);
+	}
+
 	const identity = bsuid
 		? await findWhatsappIdentityByBsuidUnsafe({
 				organizationId: organizationRecord.id,
@@ -282,6 +299,7 @@ export async function resolveOutboundWhatsappRecipient({
 		return { to };
 	}
 
+	log.warn({ organizationId, wabaId, personId }, 'Unable to resolve outbound WhatsApp recipient');
 	throw new Error('Person does not have a WhatsApp recipient or phone number');
 }
 
