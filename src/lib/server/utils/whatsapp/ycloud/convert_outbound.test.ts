@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import * as v from 'valibot';
 import {
 	convertWhatsappMessageToApiFormat,
 	convertWhatsAppTemplateMessageToApiFormat
 } from './convert_outbound';
+import { ycloudWhatsappMessageSchema } from '$lib/schema/whatsapp/ycloud/message';
 
 const threadId = '00000000-0000-4000-8000-000000000001';
 const nodeId = '00000000-0000-4000-8000-000000000002';
@@ -81,5 +83,17 @@ describe('YCloud outbound WhatsApp conversion', () => {
 			text: { body: 'Hello' }
 		});
 		expect('recipient' in converted).toBe(false);
+	});
+
+	it('requires either to or recipient on outbound messages', () => {
+		const result = v.safeParse(ycloudWhatsappMessageSchema, {
+			from: '+15550000000',
+			externalId: messageId,
+			type: 'text',
+			text: { body: 'Hello' }
+		});
+
+		expect(result.success).toBe(false);
+		expect(result.issues?.[0]?.message).toBe('Either to or recipient is required');
 	});
 });
