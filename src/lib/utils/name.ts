@@ -1,3 +1,6 @@
+import { type CountryCode } from '$lib/utils/country';
+import { t } from '$lib/index.svelte';
+
 const DISALLOWED_NAMES = [
 	'about',
 	'account',
@@ -346,4 +349,30 @@ export function checkDisallowedNames(name: string): void {
 	}
 
 	return;
+}
+
+export function renderName({
+	givenName,
+	familyName,
+	country
+}: {
+	givenName: string | null | undefined;
+	familyName: string | null | undefined;
+	country?: CountryCode;
+}) {
+	let renderedGiveName = givenName || '';
+	let renderedFamilyName = familyName || '';
+	if (renderedGiveName.length > 0 && renderedFamilyName.length > 0) {
+		if (country === 'JP') {
+			return `${renderedFamilyName} ${renderedGiveName}`;
+		} else {
+			return `${renderedGiveName} ${renderedFamilyName}`;
+		}
+	} else if (renderedGiveName.length > 0) {
+		return renderedGiveName;
+	} else if (renderedFamilyName.length > 0) {
+		return renderedFamilyName;
+	} else {
+		return t`[Name unknown]`;
+	}
 }
