@@ -118,9 +118,34 @@ export async function createPetitionSignature({
 		updatedAt: new Date()
 	};
 
+	// A previous (soft-deleted) signature may exist for this (petitionId, personId)
+	// pair. The unique constraint `petition_signature_unique` does not consider
+	// `deletedAt`, so a bare insert would fail. Use upsert: if an existing row is
+	// found, re-activate it by clearing `deletedAt` and refreshing mutable fields.
+	const [existingSignature] = await tx.dbTransaction.wrappedTransaction
+		.select({ id: petitionSignature.id, deletedAt: petitionSignature.deletedAt })
+		.from(petitionSignature)
+		.where(
+			and(
+				eq(petitionSignature.petitionId, parsed.metadata.petitionId),
+				eq(petitionSignature.personId, parsed.metadata.personId)
+			)
+		)
+		.limit(1);
+
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.insert(petitionSignature)
 		.values(petitionSignatureRecord)
+		.onConflictDoUpdate({
+			target: [petitionSignature.petitionId, petitionSignature.personId],
+			set: {
+				teamId: petitionSignatureRecord.teamId,
+				details: petitionSignatureRecord.details,
+				responses: petitionSignatureRecord.responses,
+				deletedAt: null,
+				updatedAt: new Date()
+			}
+		})
 		.returning();
 	if (!result) {
 		throw new Error('Unable to create petition signature');
@@ -132,7 +157,7 @@ export async function createPetitionSignature({
 		personId: parsed.metadata.personId,
 		userId: ctx.userId || undefined,
 		type: 'petition_signed',
-		referenceId: parsed.metadata.petitionSignatureId,
+		referenceId: result.id,
 		unread: false
 	});
 
@@ -144,11 +169,21 @@ export async function createPetitionSignature({
 	});
 
 	const { organizationId, ...sigWebhookData } = result;
+
+	const reactivatingDeletedSignature = existingSignature && existingSignature.deletedAt != null;
+	let webhookType: 'petition.signature.created' | 'petition.signature.updated' =
+		'petition.signature.created';
+	if (existingSignature) {
+		webhookType = 'petition.signature.updated';
+	}
+	if (reactivatingDeletedSignature) {
+		webhookType = 'petition.signature.created'; // we consider reactivating a deleted signature as a new signature
+	}
 	await queue.triggerWebhook(
 		{
 			organizationId,
 			payload: {
-				type: 'petition.signature.created',
+				type: webhookType,
 				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		},

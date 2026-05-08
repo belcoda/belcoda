@@ -162,6 +162,10 @@ export async function updateEvent({
 	args: UpdateEventZeroMutatorSchemaOutput;
 }) {
 	const parsed = parse(updateEventZeroMutatorSchema, args);
+	//throw an error if parsed returns empty
+	if (Object.keys(parsed).length === 0) {
+		throw new Error('Invalid input: empty object');
+	}
 	const eventRecord = await tx.run(
 		builder.event
 			.where('id', '=', parsed.metadata.eventId)

@@ -137,11 +137,13 @@ export const updateEventZero = v.object({
 });
 export type UpdateEventZero = v.InferOutput<typeof updateEventZero>;
 
-export const updateEventRest = v.object({
-	...updateEventZero.entries,
-	startsAt: helpers.dateStringToDate,
-	endsAt: helpers.dateStringToDate
-});
+export const updateEventRest = v.partial(
+	v.object({
+		...updateEventZero.entries,
+		startsAt: helpers.dateStringToDate,
+		endsAt: helpers.dateStringToDate
+	})
+);
 export type UpdateEventRest = v.InferOutput<typeof updateEventRest>;
 
 export const mutatorMetadata = v.object({

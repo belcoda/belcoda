@@ -19,9 +19,13 @@
 	bind:edit
 >
 	{#if person.teams.length > 0}
-		<div class="space-y-2">
+		<div class="space-y-2" data-testid="person-profile-team-list">
 			{#each person.teams as team (team.id)}
-				<div class="flex items-center gap-2">
+				<div
+					class="flex items-center gap-2"
+					data-testid="person-profile-team-chip"
+					data-team-id={team.id}
+				>
 					<DismissableAvatarBadge
 						hideRemove={!appState.isAdminOrOwner}
 						color="blue"
