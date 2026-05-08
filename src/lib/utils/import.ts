@@ -8,6 +8,7 @@ import { type CountryCode, isValidCountryCode } from '$lib/utils/country';
 import { isSupportedLanguage, type LanguageCode } from '$lib/utils/language';
 import { getCode } from 'country-list';
 import type { SocialMedia, PersonAddedFrom } from '$lib/schema/person/meta';
+import { getInternationalPhoneNumber } from '$lib/utils/phone';
 import type { GenderOption } from '$lib/utils/person';
 import { t } from '$lib/index.svelte';
 import Papa from 'papaparse';
@@ -238,6 +239,13 @@ function mapCsvRowToPerson(
 		importId
 	};
 
+	const phoneNumber = csvRow['phone_number'] || csvRow['phone'] || csvRow['phoneNumber'] || null;
+	// We don't want to throw an error if the phone number is invalid.
+	// Country code is definitely valid because we checked it above.
+	const normalizedPhoneNumber = phoneNumber
+		? getInternationalPhoneNumber(phoneNumber, country as CountryCode, false)
+		: null;
+
 	return {
 		organizationId,
 		givenName:
@@ -253,7 +261,7 @@ function mapCsvRowToPerson(
 			csvRow['lastName'] ||
 			null,
 		emailAddress: csvRow['email_address'] || csvRow['email'] || csvRow['emailAddress'] || null,
-		phoneNumber: csvRow['phone_number'] || csvRow['phone'] || csvRow['phoneNumber'] || null,
+		phoneNumber: normalizedPhoneNumber,
 		whatsAppUsername:
 			csvRow['whatsapp_username'] || csvRow['whatsapp'] || csvRow['whatsAppUsername'] || null,
 		workplace:
