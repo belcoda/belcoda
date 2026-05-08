@@ -33,6 +33,7 @@ import type {
 } from '$lib/schema/webhook';
 import type { WebhookLogSchema } from '$lib/schema/webhook-log';
 import type { PersonSchema, Gender } from '$lib/schema/person';
+import type { PersonWhatsappIdentitySchema } from '$lib/schema/person-whatsapp-identity';
 import type { PersonImportSchema, PersonImportStatus } from '$lib/schema/person-import';
 import type { ActivitySchema } from '$lib/schema/activity';
 import type { WhatsappGroupSchema } from '$lib/schema/whatsapp-group';
@@ -428,6 +429,13 @@ export const personWhatsappIdentity = pgTable(
 		index('person_whatsapp_identity_org_waba').on(table.organizationId, table.wabaId)
 	]
 );
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type PersonWhatsappIdentityValibotMatchesDrizzle = IsTrue<
+	PersonWhatsappIdentitySchema extends typeof personWhatsappIdentity.$inferSelect ? true : false
+>;
+type PersonWhatsappIdentityDrizzleMatchesValibot = IsTrue<
+	typeof personWhatsappIdentity.$inferSelect extends PersonWhatsappIdentitySchema ? true : false
+>;
 
 export const personTeam = pgTable(
 	'person_team',
