@@ -108,6 +108,15 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 
 		if (event.url.pathname.startsWith('/login') || event.url.pathname.startsWith('/signup')) {
 			if (event.locals.session) {
+				// this is an invitation email, but there is already an existing session, so the user has an account
+				if (
+					event.url.pathname.startsWith('/signup') &&
+					event.url.searchParams.get('invitationEmail')
+				) {
+					// redirect to the organization page, where you can view and accept/reject invitations
+					return redirect(302, '/organization');
+				}
+
 				log.debug('Redirecting to home because user is already logged in');
 				return redirect(302, '/');
 			}
