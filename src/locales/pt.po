@@ -286,10 +286,12 @@ msgstr "Crie uma nova assinatura de e-mail que será verificada com Postmark."
 msgid "Display name"
 msgstr "Nome de exibição"
 
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
@@ -880,16 +882,20 @@ msgstr "Copiado!"
 msgid "Copy "
 msgstr "Copiar"
 
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
 msgid "Given name"
 msgstr "Nome"
 
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
 msgid "Family name"
 msgstr "Sobrenome"
@@ -927,9 +933,11 @@ msgstr "Cargo"
 msgid "Add"
 msgstr "Adicionar"
 
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
@@ -2621,6 +2629,7 @@ msgid "Discard"
 msgstr "Descartar"
 
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Enviar"
@@ -3208,6 +3217,7 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Organization"
 msgstr "Organização"
 
@@ -3330,6 +3340,8 @@ msgstr "Esta ação não pode ser desfeita. A assinatura será removida permanen
 msgid "Are you sure you want to delete this signature?"
 msgstr "Tem certeza de que deseja excluir esta assinatura?"
 
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Organization name"
 msgstr "Nome da organização"
@@ -3718,9 +3730,8 @@ msgstr "Pesquisar tag..."
 msgid "Search templates..."
 msgstr "Pesquisar modelos..."
 
-#: src/lib/components/flow/nodes/template/Combobox.svelte
-msgid "No templates found."
-msgstr "Nenhum modelo encontrado."
+#~ msgid "No templates found."
+#~ msgstr "Nenhum modelo encontrado."
 
 #: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 msgid "Select an event..."
@@ -4836,6 +4847,7 @@ msgstr "Ainda não há registos de entregas"
 msgid "Time"
 msgstr "Hora"
 
+#: src/lib/components/templates/TemplateVariablePicker.svelte
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Event"
 msgstr "Evento"
@@ -4860,3 +4872,121 @@ msgstr "Resposta"
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Delivery logs"
 msgstr "Registos de entregas"
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+msgid "Text"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+msgid "Variable"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+msgid "Fallback text"
+msgstr ""
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Insert variable"
+msgstr ""
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Person"
+msgstr ""
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Sender"
+msgstr ""
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Petition"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Organization slug"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Sender name"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Sender email"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Event name"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Event start date"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Event location"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Petition name"
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Petition goal"
+msgstr ""
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Search variables..."
+msgstr ""
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "No variables found."
+msgstr ""
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+msgid "Add fallback text for recipients without this value."
+msgstr ""
+
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Nome desconhecido]"
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "No approved templates found."
+msgstr ""
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "Manage templates"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Template not approved"
+msgstr ""
+
+#. 0: templateReadQuery.data.name; 1: String(templateStatus)
+#: src/lib/components/flow/Flow.svelte
+msgid "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "This template is not available or is not approved. Select an approved template before sending."
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "View template settings"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
+msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Failed to send WhatsApp draft"
+msgstr ""

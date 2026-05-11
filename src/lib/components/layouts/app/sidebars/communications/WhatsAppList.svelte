@@ -48,24 +48,35 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 </script>
 
-<div class="flex w-full flex-col bg-background md:w-[300px] md:shrink-0">
+<div class="flex min-h-0 w-full flex-1 flex-col bg-background md:w-[300px] md:shrink-0">
 	<div class="flex flex-col gap-3 border-b p-4">
 		<div class="flex w-full items-center justify-between">
 			<div class="text-xl font-semibold text-foreground">
 				{activeItem.title}
 			</div>
 		</div>
-		<Input placeholder={t`Type to search...`} bind:value={search} />
+		<Input
+			placeholder={t`Type to search...`}
+			data-testid="communications-whatsapp-search-input"
+			bind:value={search}
+		/>
 	</div>
-	<div class="flex-1 overflow-auto">
+	<div class="min-h-0 flex-1 overflow-y-auto overscroll-contain">
 		<div class="flex flex-col">
 			{#each whatsappThreads as whatsappThread (whatsappThread.id)}
 				<a
 					href="/communications/whatsapp/{folder}/{whatsappThread.id}"
+					data-testid="communications-whatsapp-thread-row"
+					data-thread-id={whatsappThread.id}
 					class="flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-muted"
 				>
 					<div class="flex w-full items-center justify-between gap-2">
-						<div class="line-clamp-1 font-medium">{whatsappThread.title || t`(No title)`}</div>
+						<div
+							class="line-clamp-1 font-medium"
+							data-testid="communications-whatsapp-thread-title"
+						>
+							{whatsappThread.title || t`(No title)`}
+						</div>
 						<div class="text-xs text-nowrap text-muted-foreground">
 							{formatShortTimestamp(whatsappThread.updatedAt)}
 						</div>

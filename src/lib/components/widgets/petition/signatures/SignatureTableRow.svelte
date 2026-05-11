@@ -21,6 +21,7 @@
 	import { handleDeleteSignature } from './signatureActions';
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
 	import { t } from '$lib/index.svelte';
+	import { renderName } from '$lib/utils/name';
 
 	let confirmDeleteOpen = $state(false);
 </script>
@@ -96,8 +97,11 @@
 				/>
 				<div class="flex flex-col">
 					<div class="text-sm font-medium">
-						{signature.person?.givenName || ''}
-						{signature.person?.familyName || ''}
+						{renderName({
+							givenName: signature.person?.givenName,
+							familyName: signature.person?.familyName,
+							country: signature.person?.country
+						})}
 					</div>
 					<div class="line-clamp-1 max-w-full text-xs text-muted-foreground">
 						{#if signature.person?.emailAddress}

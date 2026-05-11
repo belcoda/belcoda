@@ -12,8 +12,13 @@ import {
 import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { env as publicEnv } from '$env/dynamic/public';
 import type { Flow, MessageNodeData, TemplateMessageNode } from '$lib/schema/flow';
+import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import pino from '$lib/pino';
 import { getWhatsappTemplateById } from '$lib/server/api/data/whatsapp/template.js';
+import {
+	resolveTemplateParamSources,
+	type TemplateVariableValueMap
+} from '$lib/utils/template-variables';
 
 const log = pino(import.meta.url);
 
@@ -31,6 +36,45 @@ function getFirstOutboundNode(flow: Flow): TemplateMessageNode | MessageNodeData
 		return messageNode;
 	}
 	throw new Error('No outbound WhatsApp message node found');
+}
+
+function resolveTemplateMessageForTestSend({
+	message,
+	template,
+	values
+}: {
+	message: TemplateMessageNode['data'];
+	template: TemplateMessageComponents;
+	values: TemplateVariableValueMap;
+}): TemplateMessageNode['data'] {
+	const templateHeader = template.find((component) => component.type === 'HEADER');
+	const templateBody = template.find((component) => component.type === 'BODY');
+
+	return {
+		...message,
+		header:
+			templateHeader && message.header
+				? {
+						...message.header,
+						templateStrings: resolveTemplateParamSources({
+							templateParams: message.header.templateParams,
+							templateStrings: message.header.templateStrings,
+							values
+						})
+					}
+				: undefined,
+		body:
+			templateBody && message.body
+				? {
+						...message.body,
+						templateStrings: resolveTemplateParamSources({
+							templateParams: message.body.templateParams,
+							templateStrings: message.body.templateStrings,
+							values
+						})
+					}
+				: undefined
+	};
 }
 
 export async function POST(event) {
@@ -85,9 +129,19 @@ export async function POST(event) {
 			if (!template) {
 				return error(404, 'WhatsApp template not found');
 			}
+			const resolvedMessage = resolveTemplateMessageForTestSend({
+				message: outboundNode.data,
+				template: template.components,
+				values: {
+					'organization.name': org.name,
+					'organization.slug': org.slug,
+					'sender.name': event.locals.session.user.name,
+					'sender.email': event.locals.session.user.email
+				}
+			});
 
 			const payload = convertWhatsAppTemplateMessageToApiFormat({
-				templateMessage: outboundNode.data,
+				templateMessage: resolvedMessage,
 				nodeId: outboundNode.id,
 				whatsappThreadId: thread.id,
 				whatsappMessageId,

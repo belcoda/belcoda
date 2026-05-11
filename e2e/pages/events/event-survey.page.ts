@@ -10,9 +10,17 @@ export class EventSurveyPage {
 		this.addQuestionTrigger = page.getByTestId('survey-add-question-trigger');
 	}
 
+	standardFieldCheckbox(field: 'address' | 'gender' | 'dob' | 'workplace' | 'position') {
+		return this.page.locator(`#standard-information-${field}`);
+	}
+
 	async checkStandardField(field: 'address' | 'gender' | 'dob' | 'workplace' | 'position') {
-		const checkbox = this.page.locator(`#standard-information-${field}`);
-		const isChecked = await checkbox.isChecked();
+		const checkbox = this.standardFieldCheckbox(field);
+		await checkbox.waitFor({ state: 'visible', timeout: 10_000 });
+		await checkbox.scrollIntoViewIfNeeded();
+		const isChecked = await checkbox.isChecked().catch(async () => {
+			return (await checkbox.getAttribute('aria-checked')) === 'true';
+		});
 		if (!isChecked) {
 			await checkbox.click();
 		}

@@ -8,14 +8,14 @@
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
-	import { date } from '$lib/schema/helpers';
+	import { unixTimestamp } from '$lib/schema/helpers';
 
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
 	import { t } from '$lib/index.svelte';
 
 	const schema = objectAsync({
 		gender: personSchema.entries.gender,
-		dateOfBirth: date
+		dateOfBirth: unixTimestamp
 	});
 
 	const { form, data, errors, Errors, Debug } = createForm({
@@ -24,7 +24,7 @@
 			/* svelte-ignore state_referenced_locally */
 			gender: person.gender,
 			/* svelte-ignore state_referenced_locally */
-			dateOfBirth: person.dateOfBirth ? new Date(person.dateOfBirth) : null
+			dateOfBirth: person.dateOfBirth ?? null
 		},
 		onSubmit: async (data) => {
 			const response = z.mutate(
@@ -35,7 +35,7 @@
 					},
 					input: {
 						gender: data.gender,
-						dateOfBirth: data.dateOfBirth ? data.dateOfBirth.getTime() : null
+						dateOfBirth: data.dateOfBirth ?? null
 					}
 				})
 			);
@@ -47,26 +47,9 @@
 			}
 		}
 	});
-	import { Input } from '$lib/components/ui/input/index.js';
+	import InputDate from '$lib/components/ui/custom-input/date.svelte';
 	import Gender from '$lib/components/ui/custom-select/gender/gender.svelte';
 	import type { GenderOption } from '$lib/utils/person';
-	import { dateToInputValue, inputValueToDate } from '$lib/utils/date';
-
-	let dateOfBirth = $state(
-		/* svelte-ignore state_referenced_locally */
-		person.dateOfBirth ? dateToInputValue(new Date(person.dateOfBirth)) : null
-	);
-
-	function getDateOfBirth() {
-		return dateOfBirth ?? '';
-	}
-	function setDateOfBirth(dateString: string) {
-		dateOfBirth = dateString;
-		const parsedDate = inputValueToDate(dateString);
-		if (parsedDate) {
-			$data.dateOfBirth = parsedDate;
-		}
-	}
 </script>
 
 <form use:form.enhance>
@@ -81,7 +64,7 @@
 	<Form.Field {form} name="dateOfBirth">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Input type="date" {...props} bind:value={getDateOfBirth, setDateOfBirth} />
+				<InputDate {...props} bind:value={$data.dateOfBirth} />
 			{/snippet}
 		</Form.Control>
 		<Form.FieldErrors />

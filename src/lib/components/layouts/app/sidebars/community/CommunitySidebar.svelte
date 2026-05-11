@@ -15,6 +15,7 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { type ActivityPreviewPayload } from '$lib/schema/activity/types';
 	import { t } from '$lib/index.svelte';
+	import { renderName } from '$lib/utils/name';
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		tagId: null,
@@ -75,8 +76,11 @@
 			</div>
 			<div class="min-w-0 flex-1">
 				<div class="truncate text-sm font-medium">
-					{person.givenName}
-					{person.familyName}
+					{renderName({
+						givenName: person.givenName,
+						familyName: person.familyName,
+						country: person.country
+					})}
 				</div>
 				<div class="truncate text-xs text-muted-foreground">
 					{@render renderActivityPreview(person.mostRecentActivityPreview, person.addedFrom)}

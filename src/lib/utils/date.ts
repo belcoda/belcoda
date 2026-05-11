@@ -210,6 +210,15 @@ export function formatDate(timestamp: number): string {
 	return date.toLocaleDateString();
 }
 
+export function formatTextDate(timestamp: number): string {
+	const date = new Date(timestamp);
+	return date.toLocaleDateString(undefined, {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	});
+}
+
 import { t } from '$lib/index.svelte';
 
 /**
@@ -252,7 +261,13 @@ export function inputValueToDate(value: DateInputValue): Date | null {
 	const d = Number(parts[2]);
 	if (!Number.isInteger(d) || d < 1 || d > 31) return null;
 
-	const date = new Date(y, m - 1, d);
+	const numberYear = Number(y);
+	const numberMonth = Number(m);
+	const numberDay = Number(d);
+
+	const zonedDate = new ZonedDateTime(numberYear, numberMonth, numberDay, 'UTC', 0, 12, 0, 0);
+
+	const date = zonedDate.toDate();
 
 	// Guard against invalid dates like 2025-02-31
 	if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {

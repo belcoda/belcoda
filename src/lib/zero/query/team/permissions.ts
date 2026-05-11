@@ -9,12 +9,17 @@ import type { Schema, QueryContext } from '$lib/zero/schema';
 export function teamReadPermissions(builder: ExpressionBuilder<'team', Schema>, ctx: QueryContext) {
 	const { and, or, cmp, exists } = builder;
 	const filterArr = [
-		exists('user', (m) => {
-			return m.where('userId', '=', ctx.userId);
-		}),
 		cmp('organizationId', 'IN', ctx.adminOrgs),
 		cmp('organizationId', 'IN', ctx.ownerOrgs)
 	];
+
+	if (ctx.userId) {
+		filterArr.push(
+			exists('user', (m) => {
+				return m.where('userId', '=', ctx.userId!);
+			})
+		);
+	}
 
 	return or(...filterArr);
 }

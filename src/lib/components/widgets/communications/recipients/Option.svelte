@@ -9,10 +9,11 @@
 	import { renderLocalizedCountryName } from '$lib/utils/country';
 	import { getLocalizedLanguageName, type LanguageCode } from '$lib/utils/language';
 	import { renderGender } from '$lib/utils/person/gender/render';
+	import { renderName } from '$lib/utils/name';
 </script>
 
 {#snippet renderFilter(text: string, image: Snippet)}
-	<div class="flex items-center gap-1">
+	<div class="flex items-center gap-1" data-testid="communications-recipient-option">
 		<div class="size-5">
 			{@render image()}
 		</div>
@@ -39,7 +40,10 @@
 			name2={filter.familyName}
 		/>
 	{/snippet}
-	{@render renderFilter(filter.givenName + ' ' + filter.familyName, personIdImage)}
+	{@render renderFilter(
+		renderName({ givenName: filter.givenName, familyName: filter.familyName }),
+		personIdImage
+	)}
 {/if}
 
 {#if filter.type === 'country'}
