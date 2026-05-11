@@ -11,7 +11,7 @@ export default defineConfig({
 	fullyParallel: false,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	workers: 1,
+	workers: process.env.CI ? 6 : 3,
 	reporter: process.env.CI
 		? [
 				['html'],
@@ -33,7 +33,43 @@ export default defineConfig({
 	globalSetup: './e2e/setup/global-setup.ts',
 	projects: [
 		{
-			name: 'chromium',
+			name: 'auth',
+			testMatch: ['**/auth/**/*.spec.ts'],
+			use: { ...devices['Desktop Chrome'] }
+		},
+		{
+			name: 'community',
+			testMatch: [
+				'**/community/**/*.spec.ts',
+				'**/settings/tags.spec.ts',
+				'**/settings/teams.spec.ts',
+				'**/settings/community-settings.spec.ts'
+			],
+			use: { ...devices['Desktop Chrome'] }
+		},
+		{
+			name: 'events',
+			testMatch: ['**/events/**/*.spec.ts'],
+			use: { ...devices['Desktop Chrome'] }
+		},
+		{
+			name: 'petitions',
+			testMatch: ['**/petitions/**/*.spec.ts'],
+			use: { ...devices['Desktop Chrome'] }
+		},
+		{
+			name: 'communications',
+			testMatch: ['**/communications/**/*.spec.ts'],
+			use: { ...devices['Desktop Chrome'] }
+		},
+		{
+			name: 'settings',
+			testMatch: [
+				'**/settings/api-keys.spec.ts',
+				'**/settings/webhooks.spec.ts',
+				'**/settings/send-signatures.spec.ts',
+				'**/settings/whatsapp-templates.spec.ts'
+			],
 			use: { ...devices['Desktop Chrome'] }
 		}
 	]
