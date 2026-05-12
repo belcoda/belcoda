@@ -11,7 +11,8 @@ const USERS = getTestUsers(PROJECT);
 const ORG_SLUG = getOrgSlug(PROJECT);
 
 async function signOut(page: Page) {
-	await page.request.post('/api/auth/sign-out');
+	await page.goto('/logout');
+	await page.waitForURL('**/login', { timeout: 10_000 });
 }
 
 async function loginAs(page: Page, email: string, password: string) {
@@ -97,7 +98,9 @@ test.describe.serial('Settings: User Invitations', () => {
 		await loginAs(page, USERS.member.email, USERS.member.password);
 		await usersPage.goto();
 
-		await expect(page.getByText(/don't have permission/i)).toBeVisible({ timeout: 15_000 });
+		await expect(page.getByText(/not authorized to access this page/i)).toBeVisible({
+			timeout: 15_000
+		});
 		await expect(usersPage.inviteButton).toHaveCount(0);
 	});
 });
