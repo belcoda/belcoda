@@ -162,21 +162,25 @@ export function buildBetterAuth(localeInput: string) {
 		plugins: [
 			organization({
 				async sendInvitationEmail(data) {
-					const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
-					const email = organizationInvitation({
-						url: inviteLink,
-						inviterName: data.inviter.user.name,
-						organizationName: data.organization.name,
-						locale,
-						orgIcon: data.organization.logo
-					});
-					await sendTemplateEmail({
-						to: data.email,
-						from: 'Belcoda <noreply@belcoda.com>',
-						template: 'transactional',
-						stream: 'outbound',
-						context: email
-					});
+					try {
+						const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
+						const emailContext = organizationInvitation({
+							url: inviteLink,
+							inviterName: data.inviter.user.name,
+							organizationName: data.organization.name,
+							locale,
+							orgIcon: data.organization.logo
+						});
+						await sendTemplateEmail({
+							to: data.email,
+							from: 'Belcoda <noreply@belcoda.com>',
+							template: 'transactional',
+							stream: 'outbound',
+							context: emailContext
+						});
+					} catch (e) {
+						log.error({ error: e, email: data.email }, 'Failed to send invitation email');
+					}
 				},
 				organizationHooks: {
 					afterAddMember: async ({ member, user, organization }) => {
