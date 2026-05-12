@@ -25,7 +25,7 @@
 </script>
 
 <ContentLayout rootLink="/preferences" {header}>
-	<Card.Root>
+	<Card.Root data-testid="preferences-language-page">
 		<Card.Content>
 			<Label class="ms-0.5 mb-3">{t`Update your preferred language:`}</Label>
 			<Select.Root
@@ -37,14 +37,18 @@
 					}
 				}}
 			>
-				<Select.Trigger class="w-[180px]">
+				<Select.Trigger class="w-[180px]" data-testid="preferences-language-select">
 					{getLocaleName(value)}
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Group>
 						<Select.Label>{t`Languages`}</Select.Label>
 						{#each LOCALES as locale (locale)}
-							<Select.Item value={locale} label={getLocaleName(locale)}>
+							<Select.Item
+								value={locale}
+								label={getLocaleName(locale)}
+								data-testid={'preferences-language-option-' + locale}
+							>
 								{getLocaleName(locale)}
 							</Select.Item>
 						{/each}
