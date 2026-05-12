@@ -142,8 +142,8 @@ test.describe.serial('Settings: Invitation acceptance', () => {
 		const orgPage = new OrganizationPage(page);
 		await orgPage.acceptInvitation();
 
-		// Acceptance redirects to the app root
-		await expect(page).toHaveURL('/', { timeout: 15_000 });
+		// Acceptance calls goto('/') which the app redirects to /community
+		await expect(page).toHaveURL('/community', { timeout: 15_000 });
 	});
 });
 
@@ -184,8 +184,9 @@ test.describe.serial('Settings: Invitation decline', () => {
 		const orgPage = new OrganizationPage(page);
 		await orgPage.declineInvitation();
 
-		// After decline, stays on /organization with no pending invitations
+		// After decline, stays on /organization — reload to get fresh invitation list
 		await expect(page).toHaveURL('/organization', { timeout: 15_000 });
+		await page.reload();
 		await expect(page.getByTestId('invitation-accept')).toHaveCount(0, { timeout: 10_000 });
 	});
 });
