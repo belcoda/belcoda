@@ -7,6 +7,7 @@ import { v7 as uuidv7 } from 'uuid';
 
 import { env } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
+import { dev } from '$app/environment';
 
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
@@ -180,6 +181,7 @@ export function buildBetterAuth(localeInput: string) {
 						});
 					} catch (e) {
 						log.error({ error: e, email: data.email }, 'Failed to send invitation email');
+						if (!dev) throw e;
 					}
 				},
 				organizationHooks: {
