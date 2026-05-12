@@ -42,9 +42,14 @@
 	});
 </script>
 
-<Card.Root>
+<Card.Root data-testid="org-config-card">
 	<Card.Content>
-		<form use:form.enhance id="org-config-form" class="grid grid-cols-1 gap-4">
+		<form
+			use:form.enhance
+			id="org-config-form"
+			data-testid="org-config-form"
+			class="grid grid-cols-1 gap-4"
+		>
 			<Form.Field {form} name="country">
 				<Form.Control>
 					{#snippet children({ props })}
