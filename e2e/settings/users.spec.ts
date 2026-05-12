@@ -10,6 +10,10 @@ const PROJECT = 'settings' as const;
 const USERS = getTestUsers(PROJECT);
 const ORG_SLUG = getOrgSlug(PROJECT);
 
+async function signOut(page: Page) {
+	await page.request.post('/api/auth/sign-out');
+}
+
 async function loginAs(page: Page, email: string, password: string) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
@@ -122,6 +126,9 @@ test.describe.serial('Settings: Invitation acceptance', () => {
 		});
 		await verifyUserEmail(inviteeEmail);
 
+		// Sign out the owner before logging in as the invitee
+		await signOut(page);
+
 		// Log in as invitee — no active org yet, lands on /organization
 		const loginPage = new LoginPage(page);
 		await loginPage.goto();
@@ -160,6 +167,9 @@ test.describe.serial('Settings: Invitation decline', () => {
 			role: 'member'
 		});
 		await verifyUserEmail(inviteeEmail);
+
+		// Sign out the owner before logging in as the invitee
+		await signOut(page);
 
 		// Log in as invitee — lands on /organization
 		const loginPage = new LoginPage(page);
