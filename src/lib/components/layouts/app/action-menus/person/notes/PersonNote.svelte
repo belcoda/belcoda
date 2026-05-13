@@ -39,7 +39,7 @@
 	}
 </script>
 
-<Item.Root variant="outline">
+<Item.Root variant="outline" data-testid="person-note-item">
 	<Item.Media variant="image">
 		<Avatar
 			src={note.user?.image}
@@ -80,7 +80,7 @@
 		{#if editOpen}
 			<EditNote {note} bind:editOpen />
 		{:else}
-			<div class="prose prose-sm">{note.note}</div>
+			<div class="prose prose-sm" data-testid="person-note-content">{note.note}</div>
 		{/if}
 	</Item.Content>
 </Item.Root>
