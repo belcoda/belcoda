@@ -34,7 +34,7 @@ export default defineConfig({
 	plugins: [
 		sentrySvelteKit({
 			org: 'belcoda',
-			project: 'belcoda-belcoda-prod',
+			project: 'belcoda',
 			authToken: process.env.SENTRY_AUTH_TOKEN
 		}),
 		sveltekit(),
