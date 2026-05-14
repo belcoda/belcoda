@@ -6,29 +6,13 @@ import {
 } from '$lib/schema/whatsapp/ycloud/incoming_message';
 import type { WhatsappMessage } from '$lib/schema/whatsapp/message';
 
-type Output = {
-	id: string;
-	message: WhatsappMessage;
-	from: string;
-	to: string;
-	wamid: string;
-	waba: string;
-	emojiReactions: {
-		emoji: string;
-		personId: string;
-		phoneNumber: string;
-		viaBelcoda: boolean;
-		reactedAt: number;
-	}[];
-};
-
 export async function convertIncomingWhatsAppMessage({
 	inboundMessage,
 	organizationId
 }: {
 	inboundMessage: IncomingMessage;
 	organizationId: string;
-}): Promise<Output> {
+}): Promise<WhatsappMessage> {
 	// Combine text and caption if both exist, otherwise use whichever is available
 	let text =
 		inboundMessage.whatsappInboundMessage.type === 'text'
@@ -92,13 +76,11 @@ export async function convertIncomingWhatsAppMessage({
 	};
 
 	return {
-		id: inboundMessage.whatsappInboundMessage.id,
 		from: inboundMessage.whatsappInboundMessage.from,
 		to: inboundMessage.whatsappInboundMessage.to,
 		wamid: inboundMessage.whatsappInboundMessage.wamid,
 		waba: inboundMessage.whatsappInboundMessage.wabaId,
-		message: message,
-		emojiReactions: []
+		...message
 	};
 }
 
