@@ -31,6 +31,39 @@ export class WhatsappAccountsPage {
 		return this.page.getByTestId('whatsapp-accounts-launch-signup');
 	}
 
+	async completeEmbeddedSignup({
+		phoneNumberId,
+		wabaId
+	}: {
+		phoneNumberId: string;
+		wabaId: string;
+	}) {
+		await this.page.evaluate(
+			({ phoneNumberId, wabaId }) => {
+				const completeSignup = (window as any).__belcodaCompleteWhatsAppSignup;
+				if (typeof completeSignup === 'function') {
+					completeSignup(phoneNumberId, wabaId);
+					return;
+				}
+
+				window.dispatchEvent(
+					new MessageEvent('message', {
+						origin: 'https://www.facebook.com',
+						data: JSON.stringify({
+							type: 'WA_EMBEDDED_SIGNUP',
+							event: 'FINISH',
+							data: {
+								phone_number_id: phoneNumberId,
+								waba_id: wabaId
+							}
+						})
+					})
+				);
+			},
+			{ phoneNumberId, wabaId }
+		);
+	}
+
 	sidebarLink(): Locator {
 		return this.page.getByTestId('settings-sidebar-whatsapp-accounts');
 	}
