@@ -1,9 +1,5 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
-	import * as Empty from '$lib/components/ui/empty/index.js';
-	import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
-	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
-	import UserSearchIcon from '@lucide/svelte/icons/user-search';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	const { params } = $props();
