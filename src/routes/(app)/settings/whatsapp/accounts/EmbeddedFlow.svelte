@@ -7,56 +7,54 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { appState } from '$lib/state.svelte';
+	import { MOCK_PHONE_NUMBER_ID, MOCK_WABA_ID } from '$lib/constants/whatsapp-embedded-mock';
+
+	let { mockExternalServices = false }: { mockExternalServices?: boolean } = $props();
+
 	let FB: any;
-	let error: string | null = null;
-	let cancelled = false;
+	let error: string | null = $state(null);
+	let cancelled = $state(false);
 
 	onMount(() => {
-		if (
-			!env.PUBLIC_WHATSAPP_APP_ID ||
-			!env.PUBLIC_WHATSAPP_CONFIG_ID ||
-			!env.PUBLIC_WHATSAPP_SOLUTION_ID
-		) {
-			error = 'WhatsApp configuration invalid';
-			console.error(
-				'WhatsApp configuration invalid',
-				env.PUBLIC_WHATSAPP_APP_ID,
-				env.PUBLIC_WHATSAPP_CONFIG_ID,
-				env.PUBLIC_WHATSAPP_SOLUTION_ID
-			);
-			return;
-		} else {
-			console.log(
-				'WhatsApp configuration valid',
-				env.PUBLIC_WHATSAPP_APP_ID,
-				env.PUBLIC_WHATSAPP_CONFIG_ID,
-				env.PUBLIC_WHATSAPP_SOLUTION_ID
-			);
+		if (!mockExternalServices) {
+			if (
+				!env.PUBLIC_WHATSAPP_APP_ID ||
+				!env.PUBLIC_WHATSAPP_CONFIG_ID ||
+				!env.PUBLIC_WHATSAPP_SOLUTION_ID
+			) {
+				error = 'WhatsApp configuration invalid';
+				console.error(
+					'WhatsApp configuration invalid',
+					env.PUBLIC_WHATSAPP_APP_ID,
+					env.PUBLIC_WHATSAPP_CONFIG_ID,
+					env.PUBLIC_WHATSAPP_SOLUTION_ID
+				);
+				return;
+			}
+
+			(window as any).fbAsyncInit = function () {
+				(window as any).FB.init({
+					appId: env.PUBLIC_WHATSAPP_APP_ID,
+					cookie: true,
+					xfbml: true,
+					version: 'v22.0'
+				});
+			};
+			(function (d, s, id) {
+				var js,
+					fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) return;
+				js = d.createElement(s) as HTMLScriptElement;
+				js.id = id;
+				js.setAttribute('defer', 'true');
+				js.src = 'https://connect.facebook.net/en_US/sdk.js';
+				fjs?.parentNode?.insertBefore(js, fjs);
+			})(document, 'script', 'facebook-jssdk');
 		}
-		(window as any).fbAsyncInit = function () {
-			console.log('fbAsyncInit');
-			(window as any).FB.init({
-				appId: env.PUBLIC_WHATSAPP_APP_ID, // Facebook App ID
-				cookie: true,
-				xfbml: true,
-				version: 'v22.0' // Graph API version
-			});
-			console.log('FB', (window as any).FB);
-		};
-		(function (d, s, id) {
-			var js,
-				fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s) as HTMLScriptElement;
-			js.id = id;
-			js.setAttribute('defer', 'true');
-			js.src = 'https://connect.facebook.net/en_US/sdk.js';
-			fjs?.parentNode?.insertBefore(js, fjs);
-		})(document, 'script', 'facebook-jssdk');
 
 		window.addEventListener('message', sessionInfoListener);
 	});
-	import { appState } from '$lib/state.svelte';
 
 	const sessionInfoListener = async (event: MessageEvent) => {
 		error = null;
@@ -68,7 +66,7 @@
 			if (data.event === 'FINISH') {
 				const { phone_number_id, waba_id } = data.data;
 				if (appState.organizationId && appState.activeOrganization.data) {
-					const result = z.mutate(
+					z.mutate(
 						mutators.organization.updateWhatsappSettings({
 							metadata: {
 								organizationId: appState.organizationId,
@@ -93,6 +91,24 @@
 
 	// --- Launch signup ---
 	async function launchWhatsAppSignup() {
+		if (mockExternalServices) {
+			if (appState.organizationId && appState.activeOrganization.data) {
+				z.mutate(
+					mutators.organization.updateWhatsappSettings({
+						metadata: {
+							organizationId: appState.organizationId,
+							existingSettings: appState.activeOrganization.data.settings
+						},
+						input: {
+							number: MOCK_PHONE_NUMBER_ID,
+							wabaId: MOCK_WABA_ID
+						}
+					})
+				);
+			}
+			return;
+		}
+
 		try {
 			(window as any).FB.login(
 				function (response: any) {
@@ -116,20 +132,10 @@
 </script>
 
 {#if error}
-	<Alert
-		title="Error"
-		variant="destructive"
-		class="mb-4"
-		data-testid="whatsapp-accounts-error-alert">{error}</Alert
-	>
+	<Alert title="Error" variant="destructive" class="mb-4">{error}</Alert>
 {/if}
 {#if cancelled}
-	<Alert
-		title="Cancelled"
-		variant="default"
-		class="mb-4"
-		data-testid="whatsapp-accounts-cancelled-alert"
-	>
+	<Alert title="Cancelled" variant="default" class="mb-4">
 		{t`The WhatsApp signup was cancelled. If you want to try again, click the button below.`}
 	</Alert>
 {/if}

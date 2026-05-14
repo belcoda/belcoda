@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
-	import * as Empty from '$lib/components/ui/empty/index.js';
-	import DownloadIcon from '@lucide/svelte/icons/download';
 	import EmbeddedFlow from './EmbeddedFlow.svelte';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 </script>
 
 <ContentLayout rootLink="/settings">
@@ -14,5 +15,5 @@
 			</h1>
 		</div>
 	{/snippet}
-	<EmbeddedFlow />
+	<EmbeddedFlow mockExternalServices={data.mockExternalServices} />
 </ContentLayout>
