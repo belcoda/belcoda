@@ -71,6 +71,11 @@ export default defineConfig({
 				'**/settings/whatsapp-templates.spec.ts'
 			],
 			use: { ...devices['Desktop Chrome'] }
+		},
+		{
+			name: 'whatsapp-accounts',
+			testMatch: ['**/settings/whatsapp-accounts.spec.ts'],
+			use: { ...devices['Desktop Chrome'] }
 		}
 	]
 });

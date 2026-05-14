@@ -9,7 +9,8 @@ export type E2EProject =
 	| 'events'
 	| 'petitions'
 	| 'communications'
-	| 'settings';
+	| 'settings'
+	| 'whatsapp-accounts';
 
 export const E2E_PROJECTS: E2EProject[] = [
 	'auth',
@@ -17,14 +18,21 @@ export const E2E_PROJECTS: E2EProject[] = [
 	'events',
 	'petitions',
 	'communications',
-	'settings'
+	'settings',
+	'whatsapp-accounts'
 ];
 
 export function getOrgSlug(project: E2EProject): string {
+	if (project === 'whatsapp-accounts') {
+		return 'fixture-messaging-org';
+	}
 	return `e2e-${project}-org`;
 }
 
 export function getOrgName(project: E2EProject): string {
+	if (project === 'whatsapp-accounts') {
+		return 'Fixture Messaging Org';
+	}
 	return `E2E ${project.charAt(0).toUpperCase() + project.slice(1)} Org`;
 }
 
