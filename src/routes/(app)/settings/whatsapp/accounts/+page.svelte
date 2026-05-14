@@ -9,7 +9,9 @@
 <ContentLayout rootLink="/settings">
 	{#snippet header()}
 		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-bold">{t`WhatsApp Business Account`}</h1>
+			<h1 class="text-2xl font-bold" data-testid="whatsapp-accounts-heading">
+				{t`WhatsApp Business Account`}
+			</h1>
 		</div>
 	{/snippet}
 	<EmbeddedFlow />

@@ -116,16 +116,26 @@
 </script>
 
 {#if error}
-	<Alert title="Error" variant="destructive" class="mb-4">{error}</Alert>
+	<Alert
+		title="Error"
+		variant="destructive"
+		class="mb-4"
+		data-testid="whatsapp-accounts-error-alert">{error}</Alert
+	>
 {/if}
 {#if cancelled}
-	<Alert title="Cancelled" variant="default" class="mb-4">
+	<Alert
+		title="Cancelled"
+		variant="default"
+		class="mb-4"
+		data-testid="whatsapp-accounts-cancelled-alert"
+	>
 		{t`The WhatsApp signup was cancelled. If you want to try again, click the button below.`}
 	</Alert>
 {/if}
 
 {#if appState.activeOrganization?.data?.settings.whatsApp.wabaId && appState.activeOrganization?.data?.settings.whatsApp.number}
-	<Card.Root>
+	<Card.Root data-testid="whatsapp-accounts-activated-card">
 		<Card.Header>
 			<Card.Title>{t`WhatsApp Business Account Activated`}</Card.Title>
 		</Card.Header>
@@ -134,12 +144,12 @@
 				{t`Your WhatsApp Business Account has been created successfully. You can now use WhatsApp
 				messaging features.`}
 			</p>
-			<p>
+			<p data-testid="whatsapp-accounts-phone-line">
 				{t`Your WhatsApp Business Account number is ${
 					appState.activeOrganization?.data?.settings.whatsApp.number
 				}`}.
 			</p>
-			<p>
+			<p data-testid="whatsapp-accounts-waba-line">
 				{t`Your WhatsApp Business Account ID is ${
 					appState.activeOrganization?.data?.settings.whatsApp.wabaId
 				}`}.
@@ -147,7 +157,7 @@
 		</Card.Content>
 	</Card.Root>
 {:else}
-	<Card.Root>
+	<Card.Root data-testid="whatsapp-accounts-activate-card">
 		<Card.Header>
 			<Card.Title>{t`Activate WhatsApp Business Account`}</Card.Title>
 		</Card.Header>
@@ -168,8 +178,11 @@
 			</p>
 		</Card.Content>
 		<Card.Footer>
-			<Button onclick={launchWhatsAppSignup} variant="default" size="sm"
-				>{t`Launch WhatsApp signup`}</Button
+			<Button
+				onclick={launchWhatsAppSignup}
+				variant="default"
+				size="sm"
+				data-testid="whatsapp-accounts-launch-signup">{t`Launch WhatsApp signup`}</Button
 			>
 		</Card.Footer>
 	</Card.Root>
