@@ -2,13 +2,17 @@
 	import { t } from '$lib/index.svelte';
 	import { env } from '$env/dynamic/public';
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
 	import { Alert } from '$lib/components/ui/alert/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
-	import { MOCK_PHONE_NUMBER_ID, MOCK_WABA_ID } from '$lib/constants/whatsapp-embedded-mock';
+	import {
+		E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
+		E2E_EMBEDDED_SIGNUP_WABA_ID
+	} from '../../../../../../e2e/helpers/config';
 
 	let { mockExternalServices = false }: { mockExternalServices?: boolean } = $props();
 
@@ -54,7 +58,37 @@
 		}
 
 		window.addEventListener('message', sessionInfoListener);
+		if (dev) {
+			(window as any).__belcodaCompleteWhatsAppSignup = persistWhatsappSettingsFromEmbedded;
+		}
+
+		return () => {
+			window.removeEventListener('message', sessionInfoListener);
+			if (
+				dev &&
+				(window as any).__belcodaCompleteWhatsAppSignup === persistWhatsappSettingsFromEmbedded
+			) {
+				delete (window as any).__belcodaCompleteWhatsAppSignup;
+			}
+		};
 	});
+
+	function persistWhatsappSettingsFromEmbedded(number: string, wabaId: string) {
+		if (appState.organizationId && appState.activeOrganization.data) {
+			z.mutate(
+				mutators.organization.updateWhatsappSettings({
+					metadata: {
+						organizationId: appState.organizationId,
+						existingSettings: appState.activeOrganization.data.settings
+					},
+					input: {
+						number,
+						wabaId
+					}
+				})
+			);
+		}
+	}
 
 	const sessionInfoListener = async (event: MessageEvent) => {
 		error = null;
@@ -65,20 +99,7 @@
 
 			if (data.event === 'FINISH') {
 				const { phone_number_id, waba_id } = data.data;
-				if (appState.organizationId && appState.activeOrganization.data) {
-					z.mutate(
-						mutators.organization.updateWhatsappSettings({
-							metadata: {
-								organizationId: appState.organizationId,
-								existingSettings: appState.activeOrganization.data.settings
-							},
-							input: {
-								number: phone_number_id,
-								wabaId: waba_id
-							}
-						})
-					);
-				}
+				persistWhatsappSettingsFromEmbedded(phone_number_id, waba_id);
 			} else if (data.event === 'ERROR') {
 				error = data.data.error_message;
 			} else {
@@ -92,20 +113,10 @@
 	// --- Launch signup ---
 	async function launchWhatsAppSignup() {
 		if (mockExternalServices) {
-			if (appState.organizationId && appState.activeOrganization.data) {
-				z.mutate(
-					mutators.organization.updateWhatsappSettings({
-						metadata: {
-							organizationId: appState.organizationId,
-							existingSettings: appState.activeOrganization.data.settings
-						},
-						input: {
-							number: MOCK_PHONE_NUMBER_ID,
-							wabaId: MOCK_WABA_ID
-						}
-					})
-				);
-			}
+			persistWhatsappSettingsFromEmbedded(
+				E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
+				E2E_EMBEDDED_SIGNUP_WABA_ID
+			);
 			return;
 		}
 
