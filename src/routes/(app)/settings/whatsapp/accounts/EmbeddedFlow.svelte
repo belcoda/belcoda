@@ -9,10 +9,9 @@
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
-	import {
-		E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
-		E2E_EMBEDDED_SIGNUP_WABA_ID
-	} from '../../../../../../e2e/helpers/config';
+
+	const MOCK_PHONE_NUMBER_ID = '15551234567';
+	const MOCK_WABA_ID = 'mock-waba-embedded-signup';
 
 	let { mockExternalServices = false }: { mockExternalServices?: boolean } = $props();
 
@@ -113,10 +112,7 @@
 	// --- Launch signup ---
 	async function launchWhatsAppSignup() {
 		if (mockExternalServices) {
-			persistWhatsappSettingsFromEmbedded(
-				E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
-				E2E_EMBEDDED_SIGNUP_WABA_ID
-			);
+			persistWhatsappSettingsFromEmbedded(MOCK_PHONE_NUMBER_ID, MOCK_WABA_ID);
 			return;
 		}
 
