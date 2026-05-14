@@ -8,11 +8,23 @@ export class WhatsappAccountsPage {
 	}
 
 	async goto() {
-		await this.page.goto('/settings/whatsapp/accounts');
-		await this.page.getByTestId('whatsapp-accounts-heading').waitFor({
-			state: 'visible',
-			timeout: 15_000
-		});
+		const heading = this.page.getByTestId('whatsapp-accounts-heading');
+		let lastError: unknown;
+
+		for (let attempt = 0; attempt < 3; attempt += 1) {
+			await this.page.goto('/settings/whatsapp/accounts');
+			try {
+				await heading.waitFor({
+					state: 'visible',
+					timeout: 5_000
+				});
+				return;
+			} catch (error) {
+				lastError = error;
+			}
+		}
+
+		throw lastError;
 	}
 
 	heading(): Locator {

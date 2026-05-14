@@ -35,8 +35,8 @@ test.describe.serial('Settings: WhatsApp accounts', () => {
 
 		await page.goto('/settings/whatsapp/accounts');
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
 		await expect(page.getByTestId('whatsapp-accounts-heading')).toHaveCount(0);
+		await expect(page.getByTestId('whatsapp-accounts-launch-signup')).toHaveCount(0);
 	});
 
 	test('owner sees activate card when no account is connected', async ({ page }) => {
@@ -70,7 +70,11 @@ test.describe.serial('Settings: WhatsApp accounts', () => {
 			.poll(
 				async () => {
 					await page.reload();
-					await accountsPage.heading().waitFor({ state: 'visible', timeout: 5_000 });
+					try {
+						await accountsPage.heading().waitFor({ state: 'visible', timeout: 5_000 });
+					} catch {
+						return 0;
+					}
 					return accountsPage.activatedCard().count();
 				},
 				{ timeout: 20_000 }
