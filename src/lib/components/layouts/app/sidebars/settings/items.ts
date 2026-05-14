@@ -105,7 +105,8 @@ export const settingsItems: {
 		group: () => t`WhatsApp`,
 		url: '/settings/whatsapp/accounts',
 		keywords: ['whatsapp', 'accounts', 'onboarding', 'meta', 'embedded', 'wa'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-whatsapp-accounts'
 	}
 ];
 
