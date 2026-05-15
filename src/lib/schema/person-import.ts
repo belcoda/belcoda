@@ -19,7 +19,7 @@ export const personImportSchema = v.object({
 });
 export type PersonImportSchema = v.InferOutput<typeof personImportSchema>;
 
-export const personImportWebhook = v.object({
+export const personImportApiSchema = v.object({
 	...v.omit(personImportSchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString,
 	completedAt: v.nullable(helpers.dateToString)

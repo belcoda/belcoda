@@ -13,15 +13,20 @@ export const tagSchema = v.object({
 
 export type TagSchema = v.InferOutput<typeof tagSchema>;
 
-export const tagWebhook = v.object({
+export const tagApiSchema = v.object({
 	...v.omit(tagSchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString,
 	deletedAt: v.nullable(helpers.dateToString)
 });
 
-export const personTagWebhook = v.object({
+export const personTagApiSchema = v.object({
 	personId: helpers.uuid,
+	tagId: helpers.uuid
+});
+
+/** Body for REST `POST /api/v1/person/:personId/tags` */
+export const addPersonTagApiBody = v.object({
 	tagId: helpers.uuid
 });
 

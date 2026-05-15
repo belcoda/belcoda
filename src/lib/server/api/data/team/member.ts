@@ -6,7 +6,7 @@ import {
 	type AddUserToTeamMutatorSchema,
 	removeUserFromTeamMutatorSchema,
 	type RemoveUserFromTeamMutatorSchema,
-	teamUserWebhook
+	teamUserApiSchema
 } from '$lib/schema/team';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { teamMember, member } from '$lib/schema/drizzle';
@@ -14,6 +14,7 @@ import { and, eq } from 'drizzle-orm';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
+import { getTeam } from '$lib/server/api/data/team/team';
 
 export async function addUserToTeam({
 	tx,
@@ -69,7 +70,7 @@ export async function addUserToTeam({
 			organizationId: parsed.metadata.organizationId,
 			payload: {
 				type: 'team.user.added',
-				data: parse(teamUserWebhook, {
+				data: parse(teamUserApiSchema, {
 					teamId: parsed.metadata.teamId,
 					userId: parsed.metadata.userId
 				})
@@ -96,6 +97,11 @@ export async function removeUserFromTeam({
 		tx
 	});
 
+	const teamRecord = await getTeam({ tx, ctx, args: { teamId: parsed.metadata.teamId } });
+	if (!teamRecord) {
+		throw new Error('Team not found');
+	}
+
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.delete(teamMember)
 		.where(
@@ -112,7 +118,7 @@ export async function removeUserFromTeam({
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'team.user.removed',
-					data: parse(teamUserWebhook, {
+					data: parse(teamUserApiSchema, {
 						teamId: parsed.metadata.teamId,
 						userId: parsed.metadata.userId
 					})

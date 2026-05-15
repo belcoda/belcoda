@@ -12,15 +12,15 @@ import {
 } from '$lib/schema/whatsapp/message';
 import {
 	emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema,
-	type EmojiReactionMutatorSchemaZero as EmojiReactionMutatorSchema
+	type EmojiReactionMutatorSchemaZero as EmojiReactionMutatorSchema,
+	isReactionSupportedMessageType,
+	whatsappMessageApiSchema
 } from '$lib/schema/whatsapp-message';
 import { v7 as uuidv7 } from 'uuid';
 
 import { parse } from 'valibot';
-import { isReactionSupportedMessageType } from '$lib/schema/whatsapp-message';
 import { structuredClone } from '$lib/utils/structuredClone';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
-import { whatsappMessageWebhook } from '$lib/schema/whatsapp-message';
 import type { QueryContext } from '$lib/zero/schema';
 import { getPerson } from '$lib/server/api/data/person/person';
 import { getOrganizationByIdUnsafe } from '../organization';
@@ -128,7 +128,7 @@ export async function handleIncomingReaction({
 						organizationId,
 						payload: {
 							type: 'whatsapp.message.updated',
-							data: parse(whatsappMessageWebhook, rest)
+							data: parse(whatsappMessageApiSchema, rest)
 						}
 					},
 					queueSendOptionsFromTransaction(tx)
@@ -272,7 +272,7 @@ export async function createWhatsAppMessage({
 			organizationId: orgId,
 			payload: {
 				type: 'whatsapp.message.created',
-				data: parse(whatsappMessageWebhook, rest)
+				data: parse(whatsappMessageApiSchema, rest)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)

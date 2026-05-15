@@ -26,7 +26,7 @@ export const emailMessageSchema = v.object({
 });
 export type EmailMessageSchema = v.InferOutput<typeof emailMessageSchema>;
 
-export const emailMessageWebhook = v.object({
+export const emailMessageApiSchema = v.object({
 	...v.omit(emailMessageSchema, ['organizationId']).entries,
 	startedAt: v.nullable(helpers.dateToString),
 	completedAt: v.nullable(helpers.dateToString),
