@@ -271,6 +271,16 @@ export function buildBetterAuth(localeInput: string) {
 								type: 'number',
 								input: true,
 								required: true
+							},
+							freeWhatsAppMessageCredits: {
+								type: 'number',
+								input: false,
+								required: false
+							},
+							freeEmailMessageCredits: {
+								type: 'number',
+								input: false,
+								required: false
 							}
 						}
 					}
