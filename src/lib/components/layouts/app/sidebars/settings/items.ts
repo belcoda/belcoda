@@ -58,14 +58,16 @@ export const settingsItems: {
 		group: () => t`Community`,
 		url: '/settings/people/imports',
 		keywords: ['imports', 'people', 'import', 'csv'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-imports'
 	},
 	{
 		title: () => t`Exports`,
 		group: () => t`Community`,
 		url: '/settings/people/exports',
 		keywords: ['exports', 'people', 'export', 'csv'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-exports'
 	},
 	{
 		title: () => t`Subscription`,
