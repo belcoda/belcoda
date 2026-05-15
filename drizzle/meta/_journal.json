@@ -71,6 +71,13 @@
       "when": 1775748161078,
       "tag": "0009_sour_young_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1778854823497,
+      "tag": "0010_ancient_slapstick",
+      "breakpoints": true
     }
   ]
 }
