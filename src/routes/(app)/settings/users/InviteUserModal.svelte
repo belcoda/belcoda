@@ -69,7 +69,7 @@
 	bind:open={isOpen}
 >
 	{#snippet trigger()}
-		<Button variant="outline"><PlusIcon /> {t`Invite`}</Button>
+		<Button variant="outline" data-testid="invite-user-trigger"><PlusIcon /> {t`Invite`}</Button>
 	{/snippet}
 	{#snippet children()}
 		<div class="space-y-4">
@@ -107,7 +107,11 @@
 			<Button variant="outline" onclick={() => (isOpen = false)} disabled={submitting}>
 				{t`Cancel`}
 			</Button>
-			<Button onclick={handleInvite} disabled={submitting || !email.trim()}>
+			<Button
+				onclick={handleInvite}
+				disabled={submitting || !email.trim()}
+				data-testid="invite-user-submit"
+			>
 				{#if submitting}
 					<Spinner class="mr-2 h-4 w-4" />
 					{t`Sending...`}

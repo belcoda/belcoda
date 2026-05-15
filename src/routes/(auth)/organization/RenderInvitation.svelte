@@ -86,6 +86,7 @@
 							size="sm"
 							disabled={accepting || declining}
 							onclick={handleAccept}
+							data-testid="invitation-accept"
 						>
 							{#if accepting}
 								<Spinner class="size-4" />
@@ -100,6 +101,7 @@
 							class="text-xs text-muted-foreground"
 							disabled={accepting || declining}
 							onclick={handleDecline}
+							data-testid="invitation-decline"
 						>
 							{#if declining}
 								<Spinner class="size-3" />
