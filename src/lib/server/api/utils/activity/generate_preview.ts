@@ -197,6 +197,32 @@ export async function generatePreview({
 				emailMessageId: emailResult.id
 			};
 		}
+		case 'whatsapp_message_incoming': {
+			const whatsappMessageResult = await drizzle.query.whatsappMessage.findFirst({
+				where: (row, { eq }) => eq(row.id, referenceId)
+			});
+			if (!whatsappMessageResult) {
+				throw new Error('Whatsapp message not found');
+			}
+			return {
+				type: 'whatsapp_message_incoming',
+				message: whatsappMessageResult.message,
+				whatsappMessageId: whatsappMessageResult.id
+			};
+		}
+		case 'whatsapp_message_outgoing': {
+			const whatsappMessageResult = await drizzle.query.whatsappMessage.findFirst({
+				where: (row, { eq }) => eq(row.id, referenceId)
+			});
+			if (!whatsappMessageResult) {
+				throw new Error('Whatsapp message not found');
+			}
+			return {
+				type: 'whatsapp_message_outgoing',
+				message: whatsappMessageResult.message,
+				whatsappMessageId: whatsappMessageResult.id
+			};
+		}
 		default: {
 			throw new Error(`Unsupported activity type: ${type}`);
 		}
