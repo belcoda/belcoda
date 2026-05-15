@@ -68,7 +68,9 @@ export default defineConfig({
 				'**/settings/api-keys.spec.ts',
 				'**/settings/webhooks.spec.ts',
 				'**/settings/send-signatures.spec.ts',
-				'**/settings/whatsapp-templates.spec.ts'
+				'**/settings/whatsapp-templates.spec.ts',
+				'**/settings/imports.spec.ts',
+				'**/settings/exports.spec.ts'
 			],
 			use: { ...devices['Desktop Chrome'] }
 		}
