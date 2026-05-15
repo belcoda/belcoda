@@ -69,6 +69,7 @@ export default defineConfig({
 				'**/settings/webhooks.spec.ts',
 				'**/settings/send-signatures.spec.ts',
 				'**/settings/whatsapp-templates.spec.ts',
+				'**/settings/organization-settings.spec.ts',
 				'**/settings/imports.spec.ts',
 				'**/settings/exports.spec.ts'
 			],

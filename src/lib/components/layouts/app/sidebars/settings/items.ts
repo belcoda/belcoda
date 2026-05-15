@@ -12,14 +12,16 @@ export const settingsItems: {
 		group: () => t`Organization`,
 		url: '/settings/organization/configuration',
 		keywords: ['organization', 'settings', 'preferences', 'config'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-configuration'
 	},
 	{
 		title: () => t`Themes & colors`,
 		group: () => t`Organization`,
 		url: '/settings/organization/themes',
 		keywords: ['themes', 'colors', 'icon', 'logo', 'branding'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-themes'
 	},
 	{
 		title: () => t`Users`,
