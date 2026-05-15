@@ -17,6 +17,9 @@
 	const { personId }: { personId: string } = $props();
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: createPersonNoteZero,
+		initialData: {
+			note: ''
+		},
 		onSubmit: async (data) => {
 			const parsed = parse(createMutatorSchemaZero, {
 				input: {
@@ -33,6 +36,8 @@
 			form.reset();
 		}
 	});
+
+	const noteLength = $derived(($data.note ?? '').length);
 </script>
 
 <form use:form.enhance>
@@ -53,8 +58,8 @@
 					/>
 					<InputGroup.Addon align="block-end">
 						<InputGroup.Text class="ms-auto"
-							><span class:text-destructive={$data.note.length > MEDIUM_STRING_MAX_LENGTH}
-								>{$data.note.length}/{MEDIUM_STRING_MAX_LENGTH}</span
+							><span class:text-destructive={noteLength > MEDIUM_STRING_MAX_LENGTH}
+								>{noteLength}/{MEDIUM_STRING_MAX_LENGTH}</span
 							></InputGroup.Text
 						>
 						<Separator orientation="vertical" class="h-4!" />
