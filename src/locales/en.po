@@ -867,8 +867,8 @@ msgstr "Copied \"{0}\" to clipboard"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied! "
-msgstr "Copied! "
+msgid "Copied!"
+msgstr "Copied!"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -879,8 +879,8 @@ msgstr "Copied! "
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy "
-msgstr "Copy "
+msgid "Copy"
+msgstr "Copy"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -2215,6 +2215,7 @@ msgstr "Attachment thumbnail"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "This is a preview of the event. Publish the event before sharing it with others."
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Join this event"
