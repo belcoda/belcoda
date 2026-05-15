@@ -18,7 +18,9 @@ export const organizationSchema = v.object({
 	defaultLanguage: helpers.languageCode,
 	defaultTimezone: helpers.shortString,
 	settings: organizationSettingsSchema,
-	balance: helpers.count,
+	balance: helpers.count, //cached balance in usd hundreths of cents (real balance is calculated from the ledger)
+	freeWhatsAppMessageCredits: v.nullable(helpers.count, 0), //monthly allowance of free whatsapp messages
+	freeEmailMessageCredits: v.nullable(helpers.count, 0), //monthly allowance of free email messages
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });
