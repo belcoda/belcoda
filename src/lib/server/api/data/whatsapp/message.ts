@@ -27,6 +27,8 @@ import { getOrganizationByIdUnsafe } from '../organization';
 
 import { env as publicEnv } from '$env/dynamic/public';
 import { sendEmojiReaction } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
+import { extractExternalId } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
+import { drizzle } from '$lib/server/db';
 
 export async function _findWhatsAppMessageByWamidIdUnsafe({
 	wamidId,
@@ -66,6 +68,60 @@ export async function _findWhatsAppMessageByIdUnsafe({
 		throw new Error('Multiple WhatsApp messages found for the same id');
 	}
 	return result[0];
+}
+
+/**
+ * Resolves a `whatsapp_message` row from a YCloud `whatsapp.message.updated` payload.
+ *
+ * YCloud and our schema both use the name "externalId" for different things:
+ *
+ * - **YCloud `whatsappMessage.id`** (e.g. `6a06cffd21183230f75efb3c`): YCloud's message resource id,
+ *   returned from `sendWhatsappMessageToYCloud()` and stored in our `whatsapp_message.external_id`
+ *   (see `send_message.ts`).
+ *
+ * - **YCloud `whatsappMessage.externalId`** (e.g. `threadId:nodeId:messageId`): Belcoda composite we
+ *   attach when sending via `createExternalId()` — `[whatsapp_thread.id]:[flow_node.id]:[whatsapp_message.id]`.
+ *
+ * Lookup order:
+ * 1. `ycloudMessageId` → `whatsapp_message.external_id`
+ * 2. If not found, parse `belcodaCompositeExternalId` and match `whatsapp_message.id` (third segment)
+ */
+export async function _findWhatsAppMessageForYCloudStatusUpdate({
+	ycloudMessageId,
+	belcodaCompositeExternalId
+}: {
+	ycloudMessageId: string;
+	belcodaCompositeExternalId?: string;
+}) {
+	const byYcloudId = await drizzle
+		.select()
+		.from(whatsappMessage)
+		.where(eq(whatsappMessage.externalId, ycloudMessageId));
+
+	if (byYcloudId.length === 1) {
+		return byYcloudId[0];
+	}
+	if (byYcloudId.length > 1) {
+		throw new Error('Multiple WhatsApp messages found for the same YCloud message id');
+	}
+
+	if (belcodaCompositeExternalId) {
+		const { whatsappMessageId } = extractExternalId(belcodaCompositeExternalId);
+		if (whatsappMessageId !== 'UNKNOWN') {
+			const byPrimaryKey = await drizzle
+				.select()
+				.from(whatsappMessage)
+				.where(eq(whatsappMessage.id, whatsappMessageId));
+			if (byPrimaryKey.length === 1) {
+				return byPrimaryKey[0];
+			}
+			if (byPrimaryKey.length > 1) {
+				throw new Error('Multiple WhatsApp messages found for the same id');
+			}
+		}
+	}
+
+	throw new Error('WhatsApp message not found');
 }
 
 export async function handleIncomingReaction({
