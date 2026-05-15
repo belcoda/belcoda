@@ -19,8 +19,9 @@ export const organizationSchema = v.object({
 	defaultTimezone: helpers.shortString,
 	settings: organizationSettingsSchema,
 	balance: helpers.count, //cached balance in usd hundreths of cents (real balance is calculated from the ledger)
-	freeWhatsAppMessageCredits: v.nullable(helpers.count, 0), //monthly allowance of free whatsapp messages
-	freeEmailMessageCredits: v.nullable(helpers.count, 0), //monthly allowance of free email messages
+	freeWhatsAppMessageCredits: v.nullable(helpers.count), //monthly allowance of free whatsapp messages
+	freeEmailMessageCredits: v.nullable(helpers.count), //monthly allowance of free email messages
+	resetFreeQuotasAfter: v.nullable(helpers.date), //date and time when the free quotas will be reset
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });
