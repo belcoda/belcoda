@@ -4991,3 +4991,11 @@ msgstr ""
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Failed to send WhatsApp draft"
 msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "No default template"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
+msgstr ""

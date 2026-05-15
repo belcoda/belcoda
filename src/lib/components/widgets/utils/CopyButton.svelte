@@ -30,7 +30,7 @@
 			}, 1000);
 		}
 	}}
-	>{#if copied}{#if showText}{t`Copied! `}{/if}<CheckIcon
+	>{#if copied}{#if showText}{t`Copied!`}{/if}<CheckIcon
 			class="size-3.5"
-		/>{:else}{#if showText}{t`Copy `}{/if}<CopyIcon class="size-3.5" />{/if}</Button
+		/>{:else}{#if showText}{t`Copy`}{/if}<CopyIcon class="size-3.5" />{/if}</Button
 >
