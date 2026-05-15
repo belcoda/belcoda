@@ -84,8 +84,9 @@ export const organization = pgTable('organization', {
 	defaultTimezone: text('default_timezone').notNull(),
 	settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
 	balance: integer('balance').notNull().default(0),
-	freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits').default(0),
-	freeEmailMessageCredits: integer('free_email_message_credits').default(0),
+	freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
+	freeEmailMessageCredits: integer('free_email_message_credits'),
+	resetFreeQuotasAfter: timestamp('reset_free_quotas_after', { withTimezone: true, mode: 'date' }),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
 		.notNull()
 		.default(sql`now()`),
