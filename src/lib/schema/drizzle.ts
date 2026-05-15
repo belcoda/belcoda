@@ -54,6 +54,7 @@ import { type OrganizationSettingsSchema } from '$lib/schema/organization/settin
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import { type FilterGroupType } from '$lib/schema/person/filter';
+import type { LedgerEntryMetadataSchema, LedgerSchema } from '$lib/schema/ledger';
 import {
 	type WhatsappMessage,
 	type WhatsappTemplateMessage,
@@ -83,6 +84,8 @@ export const organization = pgTable('organization', {
 	defaultTimezone: text('default_timezone').notNull(),
 	settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
 	balance: integer('balance').notNull().default(0),
+	freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits').default(0),
+	freeEmailMessageCredits: integer('free_email_message_credits').default(0),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
 		.notNull()
 		.default(sql`now()`),
@@ -907,6 +910,25 @@ type ActionCodeValibotMatchesDrizzle = IsTrue<
 type ActionCodeDrizzleMatchesValibot = IsTrue<
 	typeof actionCode.$inferSelect extends ActionCodeSchema ? true : false
 >;
+
+export const ledger = pgTable('ledger', {
+	id: uuid('id').primaryKey(),
+	organizationId: uuid('organization_id')
+		.notNull()
+		.references(() => organization.id),
+	deltaInUsdHundrethsOfCents: integer('delta_in_usd_hundreths_of_cents').notNull(),
+	idempotencyKey: text('idempotency_key').notNull().unique(),
+	metadata: jsonb('metadata').$type<LedgerEntryMetadataSchema>().notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
+});
+
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type LedgerValibotMatchesDrizzle = IsTrue<
+	LedgerSchema extends typeof ledger.$inferSelect ? true : false
+>;
+type LedgerDrizzleMatchesValibot = IsTrue<
+	typeof ledger.$inferSelect extends LedgerSchema ? true : false
+>;
 export const account = pgTable('account', {
 	id: uuid('id').primaryKey(),
 	userId: uuid('user_id')
@@ -1260,5 +1282,12 @@ export const personImportRelations = relations(personImport, ({ one }) => ({
 	importedByPerson: one(user, {
 		fields: [personImport.importedBy],
 		references: [user.id]
+	})
+}));
+
+export const ledgerRelations = relations(ledger, ({ one }) => ({
+	organization: one(organization, {
+		fields: [ledger.organizationId],
+		references: [organization.id]
 	})
 }));
