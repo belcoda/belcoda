@@ -2630,6 +2630,7 @@ msgid "Discard"
 msgstr "Discard"
 
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Send"
@@ -3730,9 +3731,8 @@ msgstr "Search tag..."
 msgid "Search templates..."
 msgstr "Search templates..."
 
-#: src/lib/components/flow/nodes/template/Combobox.svelte
-msgid "No templates found."
-msgstr "No templates found."
+#~ msgid "No templates found."
+#~ msgstr "No templates found."
 
 #: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 msgid "Select an event..."
@@ -4971,30 +4971,42 @@ msgstr "No variables found."
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
 
-#~ msgid "No approved templates found."
-#~ msgstr "No approved templates found."
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Name unknown]"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "No approved templates found."
+msgstr "No approved templates found."
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "Manage templates"
 msgstr "Manage templates"
 
-#~ msgid "Template not approved"
-#~ msgstr "Template not approved"
+#: src/lib/components/flow/Flow.svelte
+msgid "Template not approved"
+msgstr "Template not approved"
 
-#~ msgid "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
-#~ msgstr "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
+#. 0: templateReadQuery.data.name; 1: String(templateStatus)
+#: src/lib/components/flow/Flow.svelte
+msgid "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
+msgstr "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
 
-#~ msgid "This template is not available or is not approved. Select an approved template before sending."
-#~ msgstr "This template is not available or is not approved. Select an approved template before sending."
+#: src/lib/components/flow/Flow.svelte
+msgid "This template is not available or is not approved. Select an approved template before sending."
+msgstr "This template is not available or is not approved. Select an approved template before sending."
 
-#~ msgid "View template settings"
-#~ msgstr "View template settings"
+#: src/lib/components/flow/Flow.svelte
+msgid "View template settings"
+msgstr "View template settings"
 
-#~ msgid "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
-#~ msgstr "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
+#: src/lib/components/flow/Flow.svelte
+msgid "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
+msgstr "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
 
-#~ msgid "Failed to send WhatsApp draft"
-#~ msgstr "Failed to send WhatsApp draft"
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Failed to send WhatsApp draft"
+msgstr "Failed to send WhatsApp draft"
 
 #: src/lib/components/flow/Flow.svelte
 msgid "No default template"
@@ -5003,6 +5015,3 @@ msgstr "No default template"
 #: src/lib/components/flow/Flow.svelte
 msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
 msgstr "You must create WhatsApp templates and select a default for your organization before creating a flow"
-
-#~ msgid "Select a template"
-#~ msgstr "Select a template"

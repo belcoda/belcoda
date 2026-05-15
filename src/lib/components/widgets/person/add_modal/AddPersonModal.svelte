@@ -6,6 +6,7 @@
 	import NewPersonForm from '$lib/components/widgets/person/add_modal/NewPersonForm.svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { renderName } from '$lib/utils/name';
 	type Props = {
 		trigger: Snippet;
 		personIdsToExclude: string[];
@@ -180,7 +181,13 @@
 			name2={person.familyName}
 		/>
 		<div class="flex flex-col">
-			<div class="text-sm font-medium">{person.givenName} {person.familyName}</div>
+			<div class="text-sm font-medium">
+				{renderName({
+					givenName: person.givenName,
+					familyName: person.familyName,
+					country: person.country
+				})}
+			</div>
 			{#if person.emailAddress || person.phoneNumber}
 				<div class="line-clamp-1 max-w-full text-xs text-muted-foreground">
 					{person.emailAddress}

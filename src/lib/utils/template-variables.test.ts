@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	formatTemplateVariable,
 	insertTemplateVariable,
-	resolveTemplateParamSources
+	resolveTemplateParamSources,
+	resolveTemplateVariables
 } from './template-variables';
 
 describe('template variable utilities', () => {
@@ -117,6 +118,33 @@ describe('template variable utilities', () => {
 					values: { 'person.given_name': 'Ada' }
 				})
 			).toEqual(['Ada']);
+		});
+	});
+
+	describe('resolveTemplateVariables', () => {
+		it('replaces known inline variable tokens', () => {
+			expect(
+				resolveTemplateVariables('Hi {{person.given_name}} from {{organization.name}}', {
+					'person.given_name': 'Ada',
+					'organization.name': 'Belcoda'
+				})
+			).toBe('Hi Ada from Belcoda');
+		});
+
+		it('allows whitespace inside variable tokens', () => {
+			expect(
+				resolveTemplateVariables('Hi {{ person.given_name }}', {
+					'person.given_name': 'Ada'
+				})
+			).toBe('Hi Ada');
+		});
+
+		it('uses an empty string when a known variable has no value', () => {
+			expect(resolveTemplateVariables('Hi {{person.given_name}}', {})).toBe('Hi ');
+		});
+
+		it('preserves unknown tokens', () => {
+			expect(resolveTemplateVariables('Hi {{custom.value}}', {})).toBe('Hi {{custom.value}}');
 		});
 	});
 });
