@@ -2,61 +2,92 @@
 	import { t } from '$lib/index.svelte';
 	import { env } from '$env/dynamic/public';
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
 	import { Alert } from '$lib/components/ui/alert/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { appState } from '$lib/state.svelte';
+
+	const MOCK_PHONE_NUMBER_ID = '15551234567';
+	const MOCK_WABA_ID = 'mock-waba-embedded-signup';
+
+	let { mockExternalServices = false }: { mockExternalServices?: boolean } = $props();
+
 	let FB: any;
-	let error: string | null = null;
-	let cancelled = false;
+	let error: string | null = $state(null);
+	let cancelled = $state(false);
 
 	onMount(() => {
-		if (
-			!env.PUBLIC_WHATSAPP_APP_ID ||
-			!env.PUBLIC_WHATSAPP_CONFIG_ID ||
-			!env.PUBLIC_WHATSAPP_SOLUTION_ID
-		) {
-			error = 'WhatsApp configuration invalid';
-			console.error(
-				'WhatsApp configuration invalid',
-				env.PUBLIC_WHATSAPP_APP_ID,
-				env.PUBLIC_WHATSAPP_CONFIG_ID,
-				env.PUBLIC_WHATSAPP_SOLUTION_ID
-			);
-			return;
-		} else {
-			console.log(
-				'WhatsApp configuration valid',
-				env.PUBLIC_WHATSAPP_APP_ID,
-				env.PUBLIC_WHATSAPP_CONFIG_ID,
-				env.PUBLIC_WHATSAPP_SOLUTION_ID
-			);
+		if (!mockExternalServices) {
+			if (
+				!env.PUBLIC_WHATSAPP_APP_ID ||
+				!env.PUBLIC_WHATSAPP_CONFIG_ID ||
+				!env.PUBLIC_WHATSAPP_SOLUTION_ID
+			) {
+				error = 'WhatsApp configuration invalid';
+				console.error(
+					'WhatsApp configuration invalid',
+					env.PUBLIC_WHATSAPP_APP_ID,
+					env.PUBLIC_WHATSAPP_CONFIG_ID,
+					env.PUBLIC_WHATSAPP_SOLUTION_ID
+				);
+				return;
+			}
+
+			(window as any).fbAsyncInit = function () {
+				(window as any).FB.init({
+					appId: env.PUBLIC_WHATSAPP_APP_ID,
+					cookie: true,
+					xfbml: true,
+					version: 'v22.0'
+				});
+			};
+			(function (d, s, id) {
+				var js,
+					fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) return;
+				js = d.createElement(s) as HTMLScriptElement;
+				js.id = id;
+				js.setAttribute('defer', 'true');
+				js.src = 'https://connect.facebook.net/en_US/sdk.js';
+				fjs?.parentNode?.insertBefore(js, fjs);
+			})(document, 'script', 'facebook-jssdk');
 		}
-		(window as any).fbAsyncInit = function () {
-			console.log('fbAsyncInit');
-			(window as any).FB.init({
-				appId: env.PUBLIC_WHATSAPP_APP_ID, // Facebook App ID
-				cookie: true,
-				xfbml: true,
-				version: 'v22.0' // Graph API version
-			});
-			console.log('FB', (window as any).FB);
-		};
-		(function (d, s, id) {
-			var js,
-				fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s) as HTMLScriptElement;
-			js.id = id;
-			js.setAttribute('defer', 'true');
-			js.src = 'https://connect.facebook.net/en_US/sdk.js';
-			fjs?.parentNode?.insertBefore(js, fjs);
-		})(document, 'script', 'facebook-jssdk');
 
 		window.addEventListener('message', sessionInfoListener);
+		if (dev) {
+			(window as any).__belcodaCompleteWhatsAppSignup = persistWhatsappSettingsFromEmbedded;
+		}
+
+		return () => {
+			window.removeEventListener('message', sessionInfoListener);
+			if (
+				dev &&
+				(window as any).__belcodaCompleteWhatsAppSignup === persistWhatsappSettingsFromEmbedded
+			) {
+				delete (window as any).__belcodaCompleteWhatsAppSignup;
+			}
+		};
 	});
-	import { appState } from '$lib/state.svelte';
+
+	function persistWhatsappSettingsFromEmbedded(number: string, wabaId: string) {
+		if (appState.organizationId && appState.activeOrganization.data) {
+			z.mutate(
+				mutators.organization.updateWhatsappSettings({
+					metadata: {
+						organizationId: appState.organizationId,
+						existingSettings: appState.activeOrganization.data.settings
+					},
+					input: {
+						number,
+						wabaId
+					}
+				})
+			);
+		}
+	}
 
 	const sessionInfoListener = async (event: MessageEvent) => {
 		error = null;
@@ -67,20 +98,7 @@
 
 			if (data.event === 'FINISH') {
 				const { phone_number_id, waba_id } = data.data;
-				if (appState.organizationId && appState.activeOrganization.data) {
-					const result = z.mutate(
-						mutators.organization.updateWhatsappSettings({
-							metadata: {
-								organizationId: appState.organizationId,
-								existingSettings: appState.activeOrganization.data.settings
-							},
-							input: {
-								number: phone_number_id,
-								wabaId: waba_id
-							}
-						})
-					);
-				}
+				persistWhatsappSettingsFromEmbedded(phone_number_id, waba_id);
 			} else if (data.event === 'ERROR') {
 				error = data.data.error_message;
 			} else {
@@ -93,6 +111,11 @@
 
 	// --- Launch signup ---
 	async function launchWhatsAppSignup() {
+		if (mockExternalServices) {
+			persistWhatsappSettingsFromEmbedded(MOCK_PHONE_NUMBER_ID, MOCK_WABA_ID);
+			return;
+		}
+
 		try {
 			(window as any).FB.login(
 				function (response: any) {
@@ -125,7 +148,7 @@
 {/if}
 
 {#if appState.activeOrganization?.data?.settings.whatsApp.wabaId && appState.activeOrganization?.data?.settings.whatsApp.number}
-	<Card.Root>
+	<Card.Root data-testid="whatsapp-accounts-activated-card">
 		<Card.Header>
 			<Card.Title>{t`WhatsApp Business Account Activated`}</Card.Title>
 		</Card.Header>
@@ -134,12 +157,12 @@
 				{t`Your WhatsApp Business Account has been created successfully. You can now use WhatsApp
 				messaging features.`}
 			</p>
-			<p>
+			<p data-testid="whatsapp-accounts-phone-line">
 				{t`Your WhatsApp Business Account number is ${
 					appState.activeOrganization?.data?.settings.whatsApp.number
 				}`}.
 			</p>
-			<p>
+			<p data-testid="whatsapp-accounts-waba-line">
 				{t`Your WhatsApp Business Account ID is ${
 					appState.activeOrganization?.data?.settings.whatsApp.wabaId
 				}`}.
@@ -147,7 +170,7 @@
 		</Card.Content>
 	</Card.Root>
 {:else}
-	<Card.Root>
+	<Card.Root data-testid="whatsapp-accounts-activate-card">
 		<Card.Header>
 			<Card.Title>{t`Activate WhatsApp Business Account`}</Card.Title>
 		</Card.Header>
@@ -168,8 +191,11 @@
 			</p>
 		</Card.Content>
 		<Card.Footer>
-			<Button onclick={launchWhatsAppSignup} variant="default" size="sm"
-				>{t`Launch WhatsApp signup`}</Button
+			<Button
+				onclick={launchWhatsAppSignup}
+				variant="default"
+				size="sm"
+				data-testid="whatsapp-accounts-launch-signup">{t`Launch WhatsApp signup`}</Button
 			>
 		</Card.Footer>
 	</Card.Root>

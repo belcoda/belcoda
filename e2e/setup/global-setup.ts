@@ -21,7 +21,7 @@ async function createOrganization(
 	ownerEmail: string,
 	orgName: string,
 	members: Array<{ email: string; role: string }>,
-	wabaId: string
+	wabaId: string | null
 ) {
 	console.log(`  Creating organization "${orgName}"...`);
 	const response = await fetch(`${BASE_URL}/api/e2e/create-organization`, {
@@ -86,6 +86,7 @@ export default async function globalSetup(_config: FullConfig) {
 			console.log(`  ✓ ${user.email} (${role})`);
 		}
 
+		const wabaId = project === 'whatsapp-accounts' ? null : E2E_MOCK_WABA_ID;
 		const org = await createOrganization(
 			users.owner.email,
 			orgName,
@@ -93,7 +94,7 @@ export default async function globalSetup(_config: FullConfig) {
 				{ email: users.admin.email, role: 'admin' },
 				{ email: users.member.email, role: 'member' }
 			],
-			E2E_MOCK_WABA_ID
+			wabaId
 		);
 		console.log(`  ✓ Organization created: ${org.id} (${orgName})`);
 	}
