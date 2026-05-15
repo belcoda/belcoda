@@ -44,6 +44,7 @@
 						{...props}
 						placeholder={t`Add a note or comment...`}
 						bind:value={$data.note}
+						data-testid="note-form-textarea"
 						onkeydown={(e) => {
 							if (e.key === 'Enter' && !e.shiftKey && (e.metaKey || e.ctrlKey)) {
 								e.preventDefault();
@@ -58,7 +59,7 @@
 							></InputGroup.Text
 						>
 						<Separator orientation="vertical" class="h-4!" />
-						<InputGroup.Button variant="default" type="submit"
+						<InputGroup.Button variant="default" type="submit" data-testid="note-form-submit"
 							><ArrowUpIcon /> Add note</InputGroup.Button
 						>
 					</InputGroup.Addon>

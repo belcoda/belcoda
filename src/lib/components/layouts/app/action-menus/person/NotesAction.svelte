@@ -21,9 +21,7 @@
 	// Teams and Tags
 	import queries from '$lib/zero/query/index';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
-	const teamList = $derived.by(() =>
-		z.createQuery(queries.team.list(teamsListFilter))
-	);
+	const teamList = $derived.by(() => z.createQuery(queries.team.list(teamsListFilter)));
 	const personTeamList = $derived.by(() =>
 		z.createQuery(
 			queries.team.list({
@@ -34,9 +32,7 @@
 	);
 
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
-	const tagList = $derived.by(() =>
-		z.createQuery(queries.tag.list({ ...tagListFilter }))
-	);
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list({ ...tagListFilter })));
 	const personTagList = $derived.by(() =>
 		z.createQuery(
 			queries.tag.list({
@@ -65,7 +61,7 @@
 <ButtonGroup.Root ref={triggerRef}>
 	<NotesDrawer bind:open {person}>
 		{#snippet children({ props })}
-			<Button {...props} variant="outline">
+			<Button {...props} variant="outline" data-testid="notes-action-notes-btn">
 				{#if person.notes.length > 0}
 					<span class="icon-[ph--chat-centered-text-bold]"></span>
 				{:else}
@@ -78,7 +74,12 @@
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
-				<Button {...props} variant="outline" class="ps-2!">
+				<Button
+					{...props}
+					variant="outline"
+					class="ps-2!"
+					data-testid="notes-action-dropdown-trigger"
+				>
 					<ChevronDown />
 				</Button>
 			{/snippet}
@@ -136,7 +137,9 @@
 			{/if}
 			<DropdownMenu.Group>
 				<DropdownMenu.Sub>
-					<DropdownMenu.SubTrigger>{t`Add tag`}</DropdownMenu.SubTrigger>
+					<DropdownMenu.SubTrigger data-testid="notes-action-add-tag"
+						>{t`Add tag`}</DropdownMenu.SubTrigger
+					>
 					<DropdownMenu.SubContent>
 						<Command.Root value={filter.tagId ?? ''}>
 							<Command.Input autofocus placeholder={t`Filter tags...`} />
@@ -151,15 +154,15 @@
 												keywords={[tag.name]}
 												value={tag.id}
 												onSelect={() => {
-z.mutate(
-													mutators.person.addTag({
-														metadata: {
-															organizationId: appState.organizationId,
-															personId: person.id,
-															tagId: tag.id
-														}
-													})
-												);
+													z.mutate(
+														mutators.person.addTag({
+															metadata: {
+																organizationId: appState.organizationId,
+																personId: person.id,
+																tagId: tag.id
+															}
+														})
+													);
 													closeAndFocusTrigger();
 													toast.success(t`Added tag`, { duration: 1000 });
 												}}
@@ -179,7 +182,9 @@ z.mutate(
 					</DropdownMenu.SubContent>
 				</DropdownMenu.Sub>
 				<DropdownMenu.Sub>
-					<DropdownMenu.SubTrigger>{t`Add to team`}</DropdownMenu.SubTrigger>
+					<DropdownMenu.SubTrigger data-testid="notes-action-add-team"
+						>{t`Add to team`}</DropdownMenu.SubTrigger
+					>
 					<DropdownMenu.SubContent>
 						<Command.Root value={filter.teamId ?? ''}>
 							<Command.Input autofocus placeholder={t`Filter teams...`} />
@@ -194,15 +199,15 @@ z.mutate(
 												keywords={[team.name]}
 												value={team.id}
 												onSelect={() => {
-z.mutate(
-													mutators.person.addToTeam({
-														metadata: {
-															organizationId: appState.organizationId,
-															personId: person.id,
-															teamId: team.id
-														}
-													})
-												);
+													z.mutate(
+														mutators.person.addToTeam({
+															metadata: {
+																organizationId: appState.organizationId,
+																personId: person.id,
+																teamId: team.id
+															}
+														})
+													);
 													closeAndFocusTrigger();
 													toast.success(t`Person added to team`);
 												}}

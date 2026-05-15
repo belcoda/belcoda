@@ -12,14 +12,16 @@ export const settingsItems: {
 		group: () => t`Organization`,
 		url: '/settings/organization/configuration',
 		keywords: ['organization', 'settings', 'preferences', 'config'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-configuration'
 	},
 	{
 		title: () => t`Themes & colors`,
 		group: () => t`Organization`,
 		url: '/settings/organization/themes',
 		keywords: ['themes', 'colors', 'icon', 'logo', 'branding'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-themes'
 	},
 	{
 		title: () => t`Users`,
@@ -56,14 +58,16 @@ export const settingsItems: {
 		group: () => t`Community`,
 		url: '/settings/people/imports',
 		keywords: ['imports', 'people', 'import', 'csv'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-imports'
 	},
 	{
 		title: () => t`Exports`,
 		group: () => t`Community`,
 		url: '/settings/people/exports',
 		keywords: ['exports', 'people', 'export', 'csv'],
-		permissions: 'admin'
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-exports'
 	},
 	{
 		title: () => t`Subscription`,
