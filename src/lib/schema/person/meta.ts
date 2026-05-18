@@ -58,6 +58,9 @@ export const personAddedFrom = variant('type', [
 	}),
 	object({
 		type: literal('migration')
+	}),
+	object({
+		type: literal('rest_api')
 	})
 ]);
 export type PersonAddedFrom = InferOutput<typeof personAddedFrom>;

@@ -3,7 +3,7 @@ import { type QueryContext, builder } from '$lib/zero/schema';
 
 import { personNote } from '$lib/schema/drizzle';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
-import { eq, and, isNull } from 'drizzle-orm';
+import { eq, and, isNull, count, ilike } from 'drizzle-orm';
 
 import { parse } from 'valibot';
 import {
@@ -13,11 +13,17 @@ import {
 	type UpdateMutatorSchemaZero,
 	deleteMutatorSchemaZero,
 	type DeleteMutatorSchemaZero,
-	personNoteWebhook
+	personNoteApiSchema
 } from '$lib/schema/person-note';
 
 import { getPerson } from '$lib/server/api/data/person/person';
+import { getOrganizationMember } from '$lib/server/api/data/organization/member';
+import type { ListFilter } from '$lib/schema/helpers';
+import { listPersonNotesQuery } from '$lib/zero/query/person_note/list';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
+
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function createPersonNote({
 	tx,
@@ -29,6 +35,12 @@ export async function createPersonNote({
 	args: CreateMutatorSchemaZero;
 }) {
 	const parsed = parse(createMutatorSchemaZero, args);
+
+	//throws an error if the user is not a member of the organization
+	await getOrganizationMember({
+		tx,
+		args: { organizationId: parsed.metadata.organizationId, userId: ctx.userId }
+	});
 
 	//make sure the person exists and has permissions
 	await getPerson({
@@ -67,7 +79,7 @@ export async function createPersonNote({
 			organizationId: args.metadata.organizationId,
 			payload: {
 				type: 'person.note.created',
-				data: parse(personNoteWebhook, result)
+				data: parse(personNoteApiSchema, result)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -96,13 +108,43 @@ export async function updatePersonNote({
 	if (!personNoteRecord) {
 		throw new Error('Person note not found');
 	}
+	const result = await _updatePersonNoteNoPermissionsCheckUnsafe({
+		tx,
+		personId: personNoteRecord.personId,
+		noteId: parsed.metadata.personNoteId,
+		organizationId: parsed.metadata.organizationId,
+		note: parsed.input.note
+	});
+	return result;
+}
+
+export async function _updatePersonNoteNoPermissionsCheckUnsafe({
+	tx,
+	noteId,
+	organizationId,
+	personId,
+	note
+}: {
+	tx: ServerTransaction;
+	noteId: string;
+	personId: string;
+	organizationId: string;
+	note: string;
+}) {
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(personNote)
 		.set({
-			note: parsed.input.note,
+			note: note,
 			updatedAt: new Date()
 		})
-		.where(eq(personNote.id, parsed.metadata.personNoteId))
+		.where(
+			and(
+				eq(personNote.personId, personId),
+				eq(personNote.id, noteId),
+				eq(personNote.organizationId, organizationId),
+				isNull(personNote.deletedAt)
+			)
+		)
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update person note');
@@ -110,10 +152,10 @@ export async function updatePersonNote({
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: parsed.metadata.organizationId,
+			organizationId: organizationId,
 			payload: {
 				type: 'person.note.updated',
-				data: parse(personNoteWebhook, result)
+				data: parse(personNoteApiSchema, result)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -167,4 +209,45 @@ export async function deletePersonNote({
 		queueSendOptionsFromTransaction(tx)
 	);
 	return;
+}
+
+export async function listPersonNotes({
+	tx,
+	ctx,
+	input,
+	personId
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	input: ListFilter;
+	personId: string;
+}) {
+	const result = await tx.run(listPersonNotesQuery({ ctx, input: { ...input, personId } }));
+	return result;
+}
+
+export async function _countPersonNotesUnsafe({
+	tx,
+	input,
+	organizationId,
+	personId
+}: {
+	tx: ServerTransaction;
+	input: ListFilter;
+	organizationId: string; //derived from ctx as opposed to provided by user
+	personId: string;
+}) {
+	const filterArr = [
+		eq(personNote.personId, personId),
+		eq(personNote.organizationId, organizationId),
+		isNull(personNote.deletedAt)
+	];
+	if (input.searchString) {
+		filterArr.push(ilike(personNote.note, `%${input.searchString}%`));
+	}
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: count() })
+		.from(personNote)
+		.where(and(...filterArr));
+	return result.count;
 }

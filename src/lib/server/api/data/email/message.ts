@@ -14,7 +14,7 @@ import {
 	createMutatorSchema,
 	updateMutatorSchema,
 	sendMutatorSchema,
-	emailMessageWebhook
+	emailMessageApiSchema
 } from '$lib/schema/email-message';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { countPersonsFromFilter } from '$lib/server/utils/person/filter';
@@ -82,7 +82,7 @@ export async function createEmailMessage({
 			organizationId,
 			payload: {
 				type: 'email.message.created',
-				data: parse(emailMessageWebhook, msgData)
+				data: parse(emailMessageApiSchema, msgData)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -133,7 +133,7 @@ export async function updateEmailMessage({
 				organizationId,
 				payload: {
 					type: 'email.message.updated',
-					data: parse(emailMessageWebhook, msgData)
+					data: parse(emailMessageApiSchema, msgData)
 				}
 			},
 			queueSendOptionsFromTransaction(tx)
@@ -250,7 +250,7 @@ export async function sendEmailMessage({
 				organizationId,
 				payload: {
 					type: 'email.message.updated',
-					data: parse(emailMessageWebhook, msgData)
+					data: parse(emailMessageApiSchema, msgData)
 				}
 			},
 			queueSendOptionsFromTransaction(tx)

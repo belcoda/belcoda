@@ -39,7 +39,7 @@
 	}
 </script>
 
-<Item.Root variant="outline" data-testid="person-note-item">
+<Item.Root variant="outline" data-testid="person-note-item" data-note-id={note.id}>
 	<Item.Media variant="image">
 		<Avatar
 			src={note.user?.image}

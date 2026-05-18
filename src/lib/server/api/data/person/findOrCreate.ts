@@ -14,8 +14,8 @@ import { parse } from 'valibot';
 
 import pino from '$lib/pino';
 import type { ServerTransaction } from '@rocicorp/zero';
+import { personApiSchema } from '$lib/schema/person';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
-import { personWebhook } from '$lib/schema/person';
 const log = pino(import.meta.url);
 
 export async function findOrCreatePerson({
@@ -76,7 +76,7 @@ export async function findOrCreatePerson({
 						organizationId,
 						payload: {
 							type: 'person.updated',
-							data: parse(personWebhook, updatedPerson)
+							data: parse(personApiSchema, updatedPerson)
 						}
 					},
 					queueSendOptionsFromTransaction(tx)
@@ -128,7 +128,7 @@ export async function findOrCreatePerson({
 			organizationId,
 			payload: {
 				type: 'person.created',
-				data: parse(personWebhook, insertedPerson)
+				data: parse(personApiSchema, insertedPerson)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)

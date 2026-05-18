@@ -101,12 +101,15 @@
 
 	const activeWhatsAppOnboarded = $derived(
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
-			appState.activeOrganization?.data?.settings.whatsApp.number &&
-			appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
+			appState.activeOrganization?.data?.settings.whatsApp.number
 	);
+	const hasTemplateId = $derived(
+		appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
+	);
+	const canEditFlow = $derived(activeWhatsAppOnboarded && hasTemplateId);
 </script>
 
-{#if activeWhatsAppOnboarded}
+{#if canEditFlow}
 	<div class="h-full w-full">
 		<SvelteFlowProvider>
 			<SvelteFlow
@@ -343,7 +346,7 @@
 			</SvelteFlow>
 		</SvelteFlowProvider>
 	</div>
-{:else}
+{:else if !activeWhatsAppOnboarded}
 	<div class="flex h-full w-full items-center justify-center">
 		<Empty.Root>
 			<Empty.Header>
@@ -357,6 +360,23 @@
 			</Empty.Header>
 			<Empty.Content>
 				<Button href="/settings/whatsapp/accounts">{t`Activate WhatsApp`}</Button>
+			</Empty.Content>
+		</Empty.Root>
+	</div>
+{:else if !hasTemplateId}
+	<div class="flex h-full w-full items-center justify-center">
+		<Empty.Root>
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<FolderCodeIcon />
+				</Empty.Media>
+				<Empty.Title>{t`No default template`}</Empty.Title>
+				<Empty.Description
+					>{t`You must create WhatsApp templates and select a default for your organization before creating a flow`}</Empty.Description
+				>
+			</Empty.Header>
+			<Empty.Content>
+				<Button href="/settings/whatsapp/templates">{t`Manage templates`}</Button>
 			</Empty.Content>
 		</Empty.Root>
 	</div>
