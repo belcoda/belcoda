@@ -14,9 +14,10 @@ const optionalWorkplaceQuestion: SurveyQuestion = {
 	required: false
 };
 
-function buildSurvey(questions: SurveyQuestion[]) {
+function buildSurvey(questions: SurveyQuestion[], phoneNumberRequired = false) {
 	return {
 		settings: {
+			phoneNumberRequired,
 			survey: {
 				schemaVersion: '1.0.0' as const,
 				collections: [
@@ -63,5 +64,20 @@ describe('getSurveySchema', () => {
 		const schema = getSurveySchema(buildSurvey([optionalWorkplaceQuestion]));
 
 		expect(v.safeParse(schema, validSignup).success).toBe(true);
+	});
+
+	it('requires the default phone number field when configured', () => {
+		const schema = getSurveySchema(buildSurvey([], true));
+
+		expect(v.safeParse(schema, validSignup).success).toBe(false);
+		expect(
+			v.safeParse(schema, {
+				...validSignup,
+				person: {
+					...validSignup.person,
+					phoneNumber: '+1 555 123 4567'
+				}
+			}).success
+		).toBe(true);
 	});
 });
