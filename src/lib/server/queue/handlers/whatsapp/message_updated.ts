@@ -11,7 +11,7 @@ import {
 	messageUpdatedSchema,
 	type WhatsappMessageUpdatedObject
 } from '$lib/schema/whatsapp/ycloud/message_updated';
-import { whatsappMessageWebhook, type WhatsappMessageStatus } from '$lib/schema/whatsapp-message';
+import { whatsappMessageApiSchema, type WhatsappMessageStatus } from '$lib/schema/whatsapp-message';
 import { _findWhatsAppMessageForYCloudStatusUpdate } from '$lib/server/api/data/whatsapp/message';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 
@@ -118,7 +118,7 @@ export async function handleWhatsappMessageUpdated(body: unknown) {
 					organizationId,
 					payload: {
 						type: 'whatsapp.message.updated',
-						data: parse(whatsappMessageWebhook, rest)
+						data: parse(whatsappMessageApiSchema, rest)
 					}
 				},
 				queueSendOptionsFromTransaction(tx)
