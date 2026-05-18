@@ -15,12 +15,7 @@
 		type EdgeTypes,
 		type NodeTypes
 	} from '@xyflow/svelte';
-	import {
-		startingNodes,
-		addNode,
-		createDefaultEdge,
-		parentAllowsDefaultAutoEdge
-	} from './nodes/addNode.js';
+	import { startingNodes, addNode } from './nodes/addNode.js';
 	import type { Flow } from '$lib/schema/flow';
 	const {
 		backButtonUrl,
@@ -109,18 +104,9 @@
 			appState.activeOrganization?.data?.settings.whatsApp.number
 	);
 
-	function appendNodeWithDefaultEdge(newNode: Node | null, parentNode: Node) {
+	function appendNode(newNode: Node | null) {
 		if (!newNode) return;
-
 		nodes = [...nodes, newNode];
-
-		if (
-			parentAllowsDefaultAutoEdge(parentNode, {
-				templateComponents: templateReadQuery?.data?.components
-			})
-		) {
-			edges = [...edges, createDefaultEdge(parentNode.id, newNode.id)];
-		}
 	}
 	const hasTemplateId = $derived(
 		appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
@@ -282,10 +268,7 @@
 										const nodesSnapshot = nodes as Node[];
 										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
 										if (!parentNode) return;
-										appendNodeWithDefaultEdge(
-											addNode('message', parentNode, nodesSnapshot) as Node | null,
-											parentNode
-										);
+										appendNode(addNode('message', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Message`}
@@ -295,10 +278,7 @@
 										const nodesSnapshot = nodes as Node[];
 										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
 										if (!parentNode) return;
-										appendNodeWithDefaultEdge(
-											addNode('eventSignup', parentNode, nodesSnapshot) as Node | null,
-											parentNode
-										);
+										appendNode(addNode('eventSignup', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Event Signup`}
@@ -308,10 +288,7 @@
 										const nodesSnapshot = nodes as Node[];
 										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
 										if (!parentNode) return;
-										appendNodeWithDefaultEdge(
-											addNode('petitionSignup', parentNode, nodesSnapshot) as Node | null,
-											parentNode
-										);
+										appendNode(addNode('petitionSignup', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Petition Signup`}
@@ -321,10 +298,7 @@
 										const nodesSnapshot = nodes as Node[];
 										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
 										if (!parentNode) return;
-										appendNodeWithDefaultEdge(
-											addNode('tagAdd', parentNode, nodesSnapshot) as Node | null,
-											parentNode
-										);
+										appendNode(addNode('tagAdd', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Tag Add`}
@@ -334,10 +308,7 @@
 										const nodesSnapshot = nodes as Node[];
 										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
 										if (!parentNode) return;
-										appendNodeWithDefaultEdge(
-											addNode('teamAdd', parentNode, nodesSnapshot) as Node | null,
-											parentNode
-										);
+										appendNode(addNode('teamAdd', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Team Add`}
