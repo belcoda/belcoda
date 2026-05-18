@@ -69,7 +69,7 @@
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				const { phone_number_id, waba_id, business_id } = data.data;
 				if (appState.organizationId && appState.activeOrganization.data) {
-					const result = z.mutate(
+					z.mutate(
 						mutators.organization.updateWhatsappSettings({
 							metadata: {
 								organizationId: appState.organizationId,
