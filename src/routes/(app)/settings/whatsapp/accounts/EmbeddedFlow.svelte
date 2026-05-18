@@ -97,7 +97,22 @@
 			if (data.type !== 'WA_EMBEDDED_SIGNUP') return;
 
 			if (data.event === 'FINISH') {
-				const { phone_number_id, waba_id } = data.data;
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const { phone_number_id, waba_id, business_id } = data.data;
+				if (appState.organizationId && appState.activeOrganization.data) {
+					z.mutate(
+						mutators.organization.updateWhatsappSettings({
+							metadata: {
+								organizationId: appState.organizationId,
+								existingSettings: appState.activeOrganization.data.settings
+							},
+							input: {
+								number: phone_number_id,
+								wabaId: waba_id
+							}
+						})
+					);
+				}
 				persistWhatsappSettingsFromEmbedded(phone_number_id, waba_id);
 			} else if (data.event === 'ERROR') {
 				error = data.data.error_message;

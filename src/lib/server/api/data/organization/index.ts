@@ -19,6 +19,10 @@ import {
 } from '$lib/schema/organization/settings';
 
 import { parse } from 'valibot';
+import { bindPhoneNumberToWaba } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
+
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function updateOrganization({
 	tx,
@@ -75,6 +79,8 @@ export async function updateOrganizationWhatsappSettings({
 	const organizationId = parsed.metadata.organizationId;
 
 	const currentOrg = await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	//number is actually a phone_number_id that needs to be exchanged for a phone number using ycloud api
+
 	const updatedSettings = {
 		...currentOrg.settings,
 		whatsApp: {
@@ -82,6 +88,17 @@ export async function updateOrganizationWhatsappSettings({
 			...parsed.input
 		}
 	};
+	const { number, wabaId } = parsed.input;
+	if (number && wabaId) {
+		// calling this function (which calls an external API) during the transaction is far from ideal, but refactoring it would be a pain right now...
+		// it's not a function which is called very often at all, so we can leave it as it is for now.
+		const phoneNumber = await bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
+			wabaId,
+			phoneNumberId: number
+		});
+		updatedSettings.whatsApp.number = phoneNumber;
+	}
+
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({
@@ -244,4 +261,32 @@ export async function getOrganizationByIdForAdminOrOwner({
 		throw new Error('Organization not found');
 	}
 	return result;
+}
+
+async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
+	wabaId,
+	phoneNumberId
+}: {
+	wabaId: string;
+	phoneNumberId: string;
+}) {
+	try {
+		return await bindPhoneNumberToWaba({
+			wabaId,
+			phoneNumberId,
+			businessCoexistence: false
+		});
+	} catch (error) {
+		log.error(error, 'Error binding phone number to waba without business coexistence');
+		try {
+			return await bindPhoneNumberToWaba({
+				wabaId,
+				phoneNumberId,
+				businessCoexistence: true
+			});
+		} catch (innerError) {
+			log.error(innerError, 'Error binding phone number to waba with business coexistence');
+			throw innerError;
+		}
+	}
 }

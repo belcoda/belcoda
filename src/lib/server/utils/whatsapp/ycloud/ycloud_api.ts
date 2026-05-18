@@ -49,6 +49,15 @@ function mockYCloudResponseForEndpoint(endpoint: `/${string}`) {
 			qualityRating: 'UNKNOWN'
 		};
 	}
+	if (endpoint.endsWith('/smb/bind')) {
+		return { phoneNumber: '+15550000000' };
+	}
+	if (endpoint.endsWith('/tp/bind')) {
+		return { paymentMethodAttached: true };
+	}
+	if (endpoint.includes('/phoneNumbers/') && endpoint.endsWith('/register')) {
+		return { phoneNumber: '+15550000000' };
+	}
 	return {};
 }
 
@@ -552,5 +561,48 @@ export async function checkWhatsappTemplateExists({
 		}
 		log.warn({ error }, 'Unexpected error checking template existence');
 		throw error;
+	}
+}
+
+export async function bindPhoneNumberToWaba({
+	wabaId,
+	phoneNumberId,
+	businessCoexistence = false
+}: {
+	wabaId: string;
+	phoneNumberId: string;
+	businessCoexistence?: boolean;
+}) {
+	if (businessCoexistence) {
+		log.debug('Binding phone number to waba with business coexistence');
+		const ycloudResponse = await sendToYCloud({
+			endpoint: `/whatsapp/businessAccounts/${wabaId}/smb/bind`,
+			method: 'POST'
+		});
+		log.debug({ ycloudResponse }, 'Response from smbBind operation');
+		if ('phoneNumber' in ycloudResponse) {
+			return ycloudResponse.phoneNumber;
+		}
+		throw new Error('Phone number not registered');
+	} else {
+		log.debug('Binding phone number to waba without business coexistence');
+		const ycloudResponse = await sendToYCloud({
+			endpoint: `/whatsapp/businessAccounts/${wabaId}/tp/bind`,
+			method: 'POST'
+		});
+		log.debug({ ycloudResponse }, 'Response from wabaBind operation');
+		if (!ycloudResponse.paymentMethodAttached) {
+			throw new Error('Payment method not attached');
+		}
+		const phoneNumberResponse = await sendToYCloud({
+			endpoint: `/whatsapp/phoneNumbers/${wabaId}/${phoneNumberId}/register`,
+			method: 'POST'
+		});
+		log.debug({ phoneNumberResponse }, 'Phone number registered');
+
+		if ('phoneNumber' in phoneNumberResponse) {
+			return phoneNumberResponse.phoneNumber;
+		}
+		throw new Error('Phone number not registered');
 	}
 }
