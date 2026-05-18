@@ -8,7 +8,7 @@ import {
 	type UpdateMutatorSchemaOutput,
 	deleteMutatorSchema,
 	type DeleteMutatorSchemaOutput,
-	petitionSignatureWebhook
+	petitionSignatureApiSchema
 } from '$lib/schema/petition/petition-signature';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -27,7 +27,7 @@ import { parse, nullable } from 'valibot';
 
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and, isNull } from 'drizzle-orm';
+import { eq, and, isNull, not, inArray, count as countRows } from 'drizzle-orm';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
@@ -37,6 +37,13 @@ import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 import { clampLocale } from '$lib/utils/language';
+
+import {
+	inputSchema as listPetitionSignaturesInputSchema,
+	listPetitionSignaturesQuery
+} from '$lib/zero/query/petition_signature/list';
+import { readPetitionSignatureQuery } from '$lib/zero/query/petition_signature/read';
+import type { InferOutput } from 'valibot';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 
 async function applyPetitionTagsToPersonUnsafe({
@@ -111,9 +118,34 @@ export async function createPetitionSignature({
 		updatedAt: new Date()
 	};
 
+	// A previous (soft-deleted) signature may exist for this (petitionId, personId)
+	// pair. The unique constraint `petition_signature_unique` does not consider
+	// `deletedAt`, so a bare insert would fail. Use upsert: if an existing row is
+	// found, re-activate it by clearing `deletedAt` and refreshing mutable fields.
+	const [existingSignature] = await tx.dbTransaction.wrappedTransaction
+		.select({ id: petitionSignature.id, deletedAt: petitionSignature.deletedAt })
+		.from(petitionSignature)
+		.where(
+			and(
+				eq(petitionSignature.petitionId, parsed.metadata.petitionId),
+				eq(petitionSignature.personId, parsed.metadata.personId)
+			)
+		)
+		.limit(1);
+
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.insert(petitionSignature)
 		.values(petitionSignatureRecord)
+		.onConflictDoUpdate({
+			target: [petitionSignature.petitionId, petitionSignature.personId],
+			set: {
+				teamId: petitionSignatureRecord.teamId,
+				details: petitionSignatureRecord.details,
+				responses: petitionSignatureRecord.responses,
+				deletedAt: null,
+				updatedAt: new Date()
+			}
+		})
 		.returning();
 	if (!result) {
 		throw new Error('Unable to create petition signature');
@@ -125,7 +157,7 @@ export async function createPetitionSignature({
 		personId: parsed.metadata.personId,
 		userId: ctx.userId || undefined,
 		type: 'petition_signed',
-		referenceId: parsed.metadata.petitionSignatureId,
+		referenceId: result.id,
 		unread: false
 	});
 
@@ -137,12 +169,22 @@ export async function createPetitionSignature({
 	});
 
 	const { organizationId, ...sigWebhookData } = result;
+
+	const reactivatingDeletedSignature = existingSignature && existingSignature.deletedAt != null;
+	let webhookType: 'petition.signature.created' | 'petition.signature.updated' =
+		'petition.signature.created';
+	if (existingSignature) {
+		webhookType = 'petition.signature.updated';
+	}
+	if (reactivatingDeletedSignature) {
+		webhookType = 'petition.signature.created'; // we consider reactivating a deleted signature as a new signature
+	}
 	await queue.triggerWebhook(
 		{
 			organizationId,
 			payload: {
-				type: 'petition.signature.created',
-				data: parse(petitionSignatureWebhook, sigWebhookData)
+				type: webhookType,
+				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -189,7 +231,7 @@ export async function updatePetitionSignature({
 			organizationId,
 			payload: {
 				type: 'petition.signature.updated',
-				data: parse(petitionSignatureWebhook, sigWebhookData)
+				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -435,7 +477,7 @@ export async function signPetitionUnsafe({
 				type: existingPetitionSignature
 					? 'petition.signature.updated'
 					: 'petition.signature.created',
-				data: parse(petitionSignatureWebhook, sigWebhookData)
+				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -613,4 +655,64 @@ export async function deletePetitionSignature({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+}
+
+export async function listPetitionSignaturesForOrg({
+	tx,
+	ctx,
+	input
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	input: InferOutput<typeof listPetitionSignaturesInputSchema>;
+}) {
+	return await tx.run(listPetitionSignaturesQuery({ ctx, input }));
+}
+
+export async function countPetitionSignaturesForOrg({
+	tx,
+	input
+}: {
+	tx: ServerTransaction;
+	input: InferOutput<typeof listPetitionSignaturesInputSchema>;
+}) {
+	if (!input.petitionId) {
+		throw new Error('petitionId is required');
+	}
+	const whereParts = [
+		eq(petitionSignature.organizationId, input.organizationId),
+		eq(petitionSignature.petitionId, input.petitionId),
+		isNull(petitionSignature.deletedAt)
+	];
+	if (input.teamId) {
+		whereParts.push(eq(petitionSignature.teamId, input.teamId));
+	}
+	if (input.personId) {
+		whereParts.push(eq(petitionSignature.personId, input.personId));
+	}
+	if (input.excludedIds.length > 0) {
+		whereParts.push(not(inArray(petitionSignature.id, input.excludedIds)));
+	}
+	const whereClause = and(...whereParts);
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: countRows() })
+		.from(petitionSignature)
+		.where(whereClause);
+	return result!.count;
+}
+
+export async function getPetitionSignatureForApi({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: { petitionSignatureId: string };
+}) {
+	const row = await tx.run(readPetitionSignatureQuery({ ctx, input: args }));
+	if (!row) {
+		throw new Error('Petition signature not found');
+	}
+	return row;
 }

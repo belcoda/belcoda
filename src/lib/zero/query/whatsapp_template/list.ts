@@ -1,13 +1,15 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput, object, optional, nullable } from 'valibot';
-import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
+import { array, type InferOutput, object, optional } from 'valibot';
+import { listFilter } from '$lib/schema/helpers';
 import { whatsappTemplateReadPermissions } from '$lib/zero/query/whatsapp_template/permissions';
 import { readWhatsappTemplateZero } from '$lib/schema/whatsapp-template';
+import { whatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 
 export const inputSchema = object({
-	...listFilter.entries
+	...listFilter.entries,
+	statusIn: optional(array(whatsappTemplateStatus))
 });
 export type ListWhatsappTemplatesInput = InferOutput<typeof inputSchema>;
 
@@ -46,6 +48,9 @@ function whereClause(
 	];
 	if (filter.searchString && filter.searchString.length > 0) {
 		filterArr.push(cmp('name', 'ILIKE', `%${filter.searchString}%`));
+	}
+	if (filter.statusIn && filter.statusIn.length > 0) {
+		filterArr.push(cmp('status', 'IN', filter.statusIn));
 	}
 	return and(...filterArr);
 }

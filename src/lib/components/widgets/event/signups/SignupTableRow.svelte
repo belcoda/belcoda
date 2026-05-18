@@ -19,6 +19,7 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
+	import { renderName } from '$lib/utils/name';
 </script>
 
 <Table.Row>
@@ -70,8 +71,11 @@
 				/>
 				<div class="flex flex-col">
 					<div class="text-sm font-medium">
-						{signup.person.givenName}
-						{signup.person.familyName}
+						{renderName({
+							givenName: signup.person.givenName,
+							familyName: signup.person.familyName,
+							country: signup.person.country
+						})}
 					</div>
 					<div class="line-clamp-1 max-w-full text-xs text-muted-foreground">
 						{renderSignupChannel({

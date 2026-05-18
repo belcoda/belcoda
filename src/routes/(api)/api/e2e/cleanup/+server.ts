@@ -1,12 +1,13 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { drizzle } from '$lib/server/db';
-import { eq, like, inArray, sql } from 'drizzle-orm';
+import { eq, like, inArray, or, sql } from 'drizzle-orm';
 import * as schema from '$lib/schema/drizzle';
 import { env } from '$env/dynamic/private';
 import { error, json } from '@sveltejs/kit';
 
 const TEST_USER_EMAIL_PATTERN = 'e2e-%@belcoda.test';
 const TEST_ORG_SLUG_PATTERN = 'e2e-%';
+const TEST_SAFE_ORG_SLUG_PATTERN = 'fixture-%';
 
 async function deleteTestOrganizationScopedRows(orgId: string) {
 	const people = await drizzle
@@ -152,7 +153,10 @@ export const POST: RequestHandler = async () => {
 		const testUserIds = testUsers.map((u) => u.id);
 
 		const testOrgs = await drizzle.query.organization.findMany({
-			where: like(schema.organization.slug, TEST_ORG_SLUG_PATTERN)
+			where: or(
+				like(schema.organization.slug, TEST_ORG_SLUG_PATTERN),
+				like(schema.organization.slug, TEST_SAFE_ORG_SLUG_PATTERN)
+			)
 		});
 
 		if (testUserIds.length > 0) {

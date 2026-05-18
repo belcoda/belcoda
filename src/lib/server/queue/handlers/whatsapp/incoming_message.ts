@@ -395,11 +395,12 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				senderDisplayName,
 				tx
 			});
+			const convertedMessage = await convertIncomingWhatsAppMessage({
+				inboundMessage: parsed as IncomingMessage,
+				organizationId
+			});
 			const whatsappMessage = await createWhatsAppMessage({
-				message: await convertIncomingWhatsAppMessage({
-					inboundMessage: parsed as IncomingMessage,
-					organizationId
-				}),
+				message: convertedMessage,
 				personId,
 				id: insertedWhatsAppMessageId,
 				type: 'incoming_api_message',

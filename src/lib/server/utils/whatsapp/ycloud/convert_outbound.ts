@@ -236,7 +236,7 @@ export function convertWhatsappMessageToApiFormat({
 		whatsappThreadId: whatsappThreadId,
 		nodeId: nodeId
 	});
-	if (whatsappMessage.buttons) {
+	if (whatsappMessage.buttons && whatsappMessage.buttons.length > 0) {
 		return generateInteractiveMessage({
 			buttons: whatsappMessage.buttons,
 			text: whatsappMessage.text,
