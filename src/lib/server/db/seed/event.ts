@@ -50,6 +50,7 @@ export function generateEvents(
 			sendReminderHoursBefore: 24,
 			settings: {
 				displayTimezone: false,
+				phoneNumberRequired: false,
 				survey: {
 					schemaVersion: '1.0.0',
 					collections: [
