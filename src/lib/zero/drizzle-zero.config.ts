@@ -171,6 +171,21 @@ export default drizzleZeroConfig(drizzleSchema, {
 			updatedAt: true,
 			deletedAt: true
 		},
+		personWhatsappIdentity: {
+			id: true,
+			organizationId: true,
+			personId: true,
+			wabaId: true,
+			bsuid: true,
+			parentUserId: true,
+			waPhone: true,
+			displayName: true,
+			firstSeenAt: true,
+			lastSeenAt: true,
+			createdAt: true,
+			updatedAt: true,
+			deletedAt: true
+		},
 		personTag: {
 			organizationId: true,
 			personId: true,
