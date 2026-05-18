@@ -19,9 +19,13 @@
 	bind:edit
 >
 	{#if person.tags.length > 0}
-		<div class="flex flex-wrap gap-2">
+		<div class="flex flex-wrap gap-2" data-testid="person-profile-tag-list">
 			{#each person.tags as tag (tag.id)}
-				<div class="flex items-center gap-2">
+				<div
+					class="flex items-center gap-2"
+					data-testid="person-profile-tag-chip"
+					data-tag-id={tag.id}
+				>
 					<DismissableAvatarBadge
 						color="yellow"
 						src={null}

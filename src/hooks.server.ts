@@ -198,7 +198,8 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	if (event.request.headers.get('x-api-key')) {
+	// check better-api auth routes
+	if (event.request.headers.get('x-api-key') && event.url.pathname.startsWith('/api/v1/')) {
 		const key = await auth.api.verifyApiKey({
 			body: {
 				key: event.request.headers.get('x-api-key')!
@@ -206,6 +207,26 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 		});
 		if (key.valid) {
 			event.locals.authorizedApiOrganization = key.key?.referenceId || null; //organizationId by default
+		} else {
+			switch (key.error?.code) {
+				case 'RATE_LIMITED': {
+					let tryAgainText = 'Try again later';
+					//@ts-expect-error (typing on this seems wrong, it thinks that it shouldn't have details  but does in practice)
+					if (key.error?.details?.tryAgainIn) {
+						//@ts-expect-error (typing on this seems wrong, it thinks that it shouldn't have details  but does in practice)
+						tryAgainText = `Try again in ${Math.ceil(key.error?.details?.tryAgainIn / 1000)} seconds`;
+					}
+					return json(
+						{
+							error: `${key.error?.code}: ${key.error?.message || 'Rate limit exceeded'} (${tryAgainText})`
+						},
+						{ status: 429 }
+					);
+				}
+				default: {
+					return json({ error: key.error?.message || 'Invalid API key' }, { status: 401 }); // this is actually the default case if the error is in checking the API key
+				}
+			}
 		}
 	}
 

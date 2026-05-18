@@ -1,4 +1,6 @@
 <script lang="ts">
+	import '@xyflow/svelte/dist/base.css';
+
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
 	import MultiSelect from 'svelte-multiselect'; //the component that handles the dropdown and the selected items (see https://multiselect.janosh.dev/)\
@@ -157,7 +159,7 @@
 		--sms-remove-btn-hover-bg="#cccccc"
 		--sms-li-active-bg="#f1f5f9"
 		outerDivClass="shadow-sm w-full focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]"
-		ulOptionsClass="shadow-sm"
+		ulOptionsClass="shadow-sm nowheel"
 		inputClass="placeholder:text-muted-foreground"
 		liSelectedClass="border border-gray-200"
 	>

@@ -7,6 +7,7 @@ import { env } from '$env/dynamic/private';
 import { v7 as uuidv7 } from 'uuid';
 import { handleIncomingMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message';
 import { handleWhatsappTemplateReviewed } from '$lib/server/queue/handlers/whatsapp/template_reviewed';
+import { handleWhatsappMessageUpdated } from '$lib/server/queue/handlers/whatsapp/message_updated';
 const webhookSecret = env.YCLOUD_WEBHOOK_VERIFY_TOKEN;
 const isMockMode = env.MOCK_EXTERNAL_SERVICES === 'true' && env.NODE_ENV !== 'production';
 
@@ -26,7 +27,7 @@ export async function POST({ request, url }) {
 					await handleIncomingMessage(body);
 					break;
 				case 'whatsapp.message.updated':
-					//TODO: implement message updated logic when needed
+					await handleWhatsappMessageUpdated(body);
 					break;
 				default:
 					log.warn({ type: body.type }, 'Unknown whatsapp webhook type');
@@ -41,8 +42,7 @@ export async function POST({ request, url }) {
 					await queue.handleIncomingMessage(body);
 					break;
 				case 'whatsapp.message.updated':
-					//TODO: implement message updated logic when needed
-					//await queue.handleWhatsappMessageUpdated(body);
+					await queue.handleWhatsappMessageUpdated(body);
 					break;
 				default:
 					log.warn({ type: body.type }, 'Unknown whatsapp webhook type');
