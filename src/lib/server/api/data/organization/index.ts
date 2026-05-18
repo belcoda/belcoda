@@ -90,6 +90,8 @@ export async function updateOrganizationWhatsappSettings({
 	};
 	const { number, wabaId } = parsed.input;
 	if (number && wabaId) {
+		// calling this function (which calls an external API) during the transaction is far from ideal, but refactoring it would be a pain right now...
+		// it's not a function which is called very often at all, so we can leave it as it is for now.
 		const phoneNumber = await bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
 			wabaId,
 			phoneNumberId: number
