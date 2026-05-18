@@ -68,7 +68,7 @@ export const whatsappMessage = v.object({
 					v.minLength(1, 'Button text must be at least 1 character'),
 					v.maxLength(20, 'Button text must be less than 20 characters')
 				),
-				action: uuid
+				action: mediumString
 			})
 		)
 	),
