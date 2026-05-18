@@ -7,8 +7,12 @@ import { PetitionEditPage } from '../pages/petitions/petition-edit.page';
 import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page';
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
-import { TEST_USERS } from '../helpers/auth';
-import { E2E_ORG_SLUG, slugifyTitle } from '../helpers/config';
+import { getTestUsers } from '../helpers/auth';
+import { getOrgSlug, slugifyTitle } from '../helpers/config';
+
+const PROJECT = 'petitions' as const;
+const USERS = getTestUsers(PROJECT);
+const ORG_SLUG = getOrgSlug(PROJECT);
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
 	getE2EDefaultWhatsAppNumber,
@@ -19,7 +23,7 @@ async function loginAsOwner(page: Page) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
-	await loginPage.login(TEST_USERS.owner.email, TEST_USERS.owner.password);
+	await loginPage.login(USERS.owner.email, USERS.owner.password);
 	await expect(page).toHaveURL('/community');
 	await communityPage.expectLoaded();
 }
@@ -204,7 +208,7 @@ test.describe.serial('Petitions: public page', () => {
 		const href = await previewLink.getAttribute('href');
 		expect(href).toBeTruthy();
 		await page.goto(href!);
-		await expect(page).toHaveURL(new RegExp(`https?:\\/\\/${E2E_ORG_SLUG}\\.`), {
+		await expect(page).toHaveURL(new RegExp(`https?:\\/\\/${ORG_SLUG}\\.`), {
 			timeout: 15_000
 		});
 		await expect(page).toHaveURL(new RegExp(`\\/petitions\\/${ids.petitionSlug}(\\?|$)`), {
@@ -221,7 +225,7 @@ test.describe.serial('Petitions: public page', () => {
 		page
 	}) => {
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(E2E_ORG_SLUG, ids.petitionSlug);
+		await publicPage.goto(ORG_SLUG, ids.petitionSlug);
 
 		await expect(page.getByTestId('public-page-navbar')).toHaveCount(0);
 		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
@@ -230,7 +234,7 @@ test.describe.serial('Petitions: public page', () => {
 
 	test('public petition page shows WhatsApp signup when configured', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(E2E_ORG_SLUG, ids.petitionSlug);
+		await publicPage.goto(ORG_SLUG, ids.petitionSlug);
 
 		await expect(publicPage.submitButton).toBeVisible({ timeout: 10_000 });
 		await expect(publicPage.whatsappSignupBtn).toBeVisible({ timeout: 10_000 });
@@ -240,7 +244,7 @@ test.describe.serial('Petitions: public page', () => {
 		const suffix = Date.now();
 
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(E2E_ORG_SLUG, ids.petitionSlug);
+		await publicPage.goto(ORG_SLUG, ids.petitionSlug);
 
 		await publicPage.fillSignupForm({
 			givenName: 'E2E',
@@ -250,7 +254,7 @@ test.describe.serial('Petitions: public page', () => {
 		await publicPage.submitSignup();
 
 		await expect(page).toHaveURL(
-			new RegExp(`${E2E_ORG_SLUG}.*\\/petitions\\/${ids.petitionSlug}\\/signed`),
+			new RegExp(`${ORG_SLUG}.*\\/petitions\\/${ids.petitionSlug}\\/signed`),
 			{ timeout: 15_000 }
 		);
 	});
@@ -372,7 +376,7 @@ test.describe.serial('Petitions: signup fields', () => {
 
 	test('public petition page shows standard address fields', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(E2E_ORG_SLUG, petitionSlug);
+		await publicPage.goto(ORG_SLUG, petitionSlug);
 
 		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
 		await expect(publicPage.addressLine1Input).toBeVisible();
@@ -383,7 +387,7 @@ test.describe.serial('Petitions: signup fields', () => {
 
 	test('public petition page shows the custom question field', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(E2E_ORG_SLUG, petitionSlug);
+		await publicPage.goto(ORG_SLUG, petitionSlug);
 
 		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
 		await expect(page.getByLabel(CUSTOM_QUESTION_LABEL)).toBeVisible();
@@ -392,7 +396,7 @@ test.describe.serial('Petitions: signup fields', () => {
 	test('visitor can submit petition signature with all extra fields', async ({ page }) => {
 		const suffix = Date.now();
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(E2E_ORG_SLUG, petitionSlug);
+		await publicPage.goto(ORG_SLUG, petitionSlug);
 
 		await publicPage.fillSignupForm({
 			givenName: 'Fields',
@@ -410,7 +414,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publicPage.submitSignup();
 
 		await expect(page).toHaveURL(
-			new RegExp(`${E2E_ORG_SLUG}.*\\/petitions\\/${petitionSlug}\\/signed`),
+			new RegExp(`${ORG_SLUG}.*\\/petitions\\/${petitionSlug}\\/signed`),
 			{
 				timeout: 15_000
 			}

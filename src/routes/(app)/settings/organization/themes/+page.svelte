@@ -59,7 +59,7 @@
 
 <ContentLayout rootLink="/settings">
 	{#if organization.details.type === 'complete' && organization.data}
-		<form use:form.enhance>
+		<form use:form.enhance data-testid="org-themes-form">
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>{t`Display Settings`}</Card.Title>
@@ -108,6 +108,7 @@
 					<Button
 						variant="outline"
 						type="button"
+						data-testid="org-themes-cancel"
 						onclick={() => {
 							helpers.warnBeforeDiscard(helpers.isTainted, () => {
 								form.reset();
@@ -116,7 +117,7 @@
 					>
 						{t`Cancel`}
 					</Button>
-					<Button type="submit">
+					<Button type="submit" data-testid="org-themes-save">
 						{t`Save Changes`}
 					</Button>
 				</Card.Footer>
