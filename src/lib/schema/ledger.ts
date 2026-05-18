@@ -28,7 +28,7 @@ export type LedgerEntryMetadataSchema = v.InferOutput<typeof ledgerEntryMetadata
 export const ledgerSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
-	deltaInUsdHundrethsOfCents: v.pipe(v.number(), v.integer()),
+	deltaInUsdHundredthsOfCents: v.pipe(v.number(), v.integer()),
 	idempotencyKey: helpers.mediumStringEmpty,
 	metadata: ledgerEntryMetadataSchema,
 	createdAt: helpers.date

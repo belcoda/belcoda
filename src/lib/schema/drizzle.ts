@@ -917,10 +917,12 @@ export const ledger = pgTable('ledger', {
 	organizationId: uuid('organization_id')
 		.notNull()
 		.references(() => organization.id),
-	deltaInUsdHundrethsOfCents: integer('delta_in_usd_hundreths_of_cents').notNull(),
+	deltaInUsdHundredthsOfCents: integer('delta_in_usd_hundredths_of_cents').notNull(),
 	idempotencyKey: text('idempotency_key').notNull().unique(),
 	metadata: jsonb('metadata').$type<LedgerEntryMetadataSchema>().notNull(),
-	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+		.notNull()
+		.default(sql`now()`)
 });
 
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
