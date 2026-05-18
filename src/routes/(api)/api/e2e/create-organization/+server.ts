@@ -32,8 +32,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		throw error(400, 'name and ownerEmail are required');
 	}
 
-	if (wabaId != null && typeof wabaId !== 'string') {
-		throw error(400, 'wabaId must be a string');
+	if (wabaId !== undefined && wabaId !== null && typeof wabaId !== 'string') {
+		throw error(400, 'wabaId must be a string or null');
 	}
 
 	try {
@@ -49,16 +49,19 @@ export const POST: RequestHandler = async ({ request }) => {
 		const slug = name.toLowerCase().replace(/\s+/g, '-');
 		const now = new Date();
 		const orgId = crypto.randomUUID();
-		const effectiveWabaId = wabaId?.trim() || E2E_MOCK_WABA_ID;
-		const defaultWhatsappTemplateId = crypto.randomUUID();
-		const dummyWhatsappNumber = E2E_DUMMY_WHATSAPP_NUMBER;
+		// Passing wabaId: null explicitly means "no WhatsApp configured"; omitting it defaults to the mock WABA.
+		const effectiveWabaId = wabaId === null ? null : wabaId?.trim() || E2E_MOCK_WABA_ID;
 		const settings = defaultOrganizationSettings();
-		settings.whatsApp = {
-			...settings.whatsApp,
-			wabaId: effectiveWabaId,
-			number: dummyWhatsappNumber,
-			defaultTemplateId: defaultWhatsappTemplateId
-		};
+
+		if (effectiveWabaId) {
+			const defaultWhatsappTemplateId = crypto.randomUUID();
+			settings.whatsApp = {
+				...settings.whatsApp,
+				wabaId: effectiveWabaId,
+				number: E2E_DUMMY_WHATSAPP_NUMBER,
+				defaultTemplateId: defaultWhatsappTemplateId
+			};
+		}
 
 		// Check if org already exists
 		const existing = await drizzle.query.organization.findFirst({
@@ -86,14 +89,14 @@ export const POST: RequestHandler = async ({ request }) => {
 			updatedAt: now
 		});
 
-		// Create the default WhatsApp template referenced by `defaultTemplateId`.
-		// This ensures WhatsApp flows are considered "activated" in E2E.
-		await drizzle.insert(schema.whatsappTemplate).values(
-			createDefaultTemplate({
-				organizationId: orgId,
-				id: defaultWhatsappTemplateId
-			})
-		);
+		if (effectiveWabaId && settings.whatsApp.defaultTemplateId) {
+			await drizzle.insert(schema.whatsappTemplate).values(
+				createDefaultTemplate({
+					organizationId: orgId,
+					id: settings.whatsApp.defaultTemplateId
+				})
+			);
+		}
 
 		// Create owner member record
 		await drizzle.insert(schema.member).values({

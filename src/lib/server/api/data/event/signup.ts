@@ -13,7 +13,7 @@ import {
 	createMutatorSchema,
 	type UpdateMutatorSchemaOutput,
 	updateMutatorSchema,
-	eventSignupWebhook
+	eventSignupApiSchema
 } from '$lib/schema/event-signup';
 
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
@@ -25,7 +25,7 @@ import { parse } from 'valibot';
 
 import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, ne, count as countRows, isNull, or } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
@@ -39,6 +39,12 @@ import {
 	_getPersonByIdUnsafe
 } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
+import {
+	inputSchema as listEventSignupsInputSchema,
+	listEventSignupsQuery
+} from '$lib/zero/query/event_signup/list';
+import { readEventSignupQuery } from '$lib/zero/query/event_signup/read';
+import type { InferOutput } from 'valibot';
 
 type QueueT = Awaited<ReturnType<typeof getQueue>>;
 
@@ -54,7 +60,7 @@ async function queueEventSignupWebhook(
 			organizationId,
 			payload: {
 				type: kind,
-				data: parse(eventSignupWebhook, data)
+				data: parse(eventSignupApiSchema, data)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -1102,4 +1108,77 @@ export async function updateEventSignup({
 	});
 	const q = await getQueue();
 	await queueEventSignupWebhook(q, tx, 'event.signup.updated', result);
+}
+
+export async function listEventSignupsForOrg({
+	tx,
+	ctx,
+	input
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	input: InferOutput<typeof listEventSignupsInputSchema>;
+}) {
+	return await tx.run(listEventSignupsQuery({ ctx, input }));
+}
+
+export async function countEventSignupsForOrg({
+	tx,
+	input
+}: {
+	tx: ServerTransaction;
+	input: InferOutput<typeof listEventSignupsInputSchema>;
+}) {
+	const filters = [
+		eq(eventSignup.organizationId, input.organizationId),
+		eq(event.organizationId, input.organizationId),
+		isNull(event.deletedAt),
+		isNull(event.archivedAt),
+		isNull(event.cancelledAt)
+	];
+
+	if (input.eventId) {
+		filters.push(eq(eventSignup.eventId, input.eventId));
+	}
+	if (input.includeDeleted !== true) {
+		filters.push(ne(eventSignup.status, 'deleted'));
+	}
+	if (input.includeIncomplete !== true) {
+		filters.push(ne(eventSignup.status, 'incomplete'));
+	}
+	if (input.status) {
+		filters.push(eq(eventSignup.status, input.status));
+	}
+	if (input.tagId) {
+		const tagFilter = or(eq(event.signupTag, input.tagId), eq(event.attendanceTag, input.tagId));
+		if (tagFilter) {
+			filters.push(tagFilter);
+		}
+	}
+	if (input.teamId) {
+		filters.push(eq(event.teamId, input.teamId));
+	}
+
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: countRows() })
+		.from(eventSignup)
+		.innerJoin(event, eq(eventSignup.eventId, event.id))
+		.where(and(...filters));
+	return result.count;
+}
+
+export async function getEventSignupForApi({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: { eventSignupId: string };
+}) {
+	const row = await tx.run(readEventSignupQuery({ ctx, input: args }));
+	if (!row) {
+		throw new Error('Event signup not found');
+	}
+	return row;
 }

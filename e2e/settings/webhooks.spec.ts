@@ -2,13 +2,16 @@ import { expect, test, type Page } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { WebhooksPage } from '../pages/settings/webhooks.page';
-import { TEST_USERS } from '../helpers/auth';
+import { getTestUsers } from '../helpers/auth';
+
+const PROJECT = 'settings' as const;
+const USERS = getTestUsers(PROJECT);
 
 async function loginAsOwner(page: Page) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
-	await loginPage.login(TEST_USERS.owner.email, TEST_USERS.owner.password);
+	await loginPage.login(USERS.owner.email, USERS.owner.password);
 	await expect(page).toHaveURL('/community');
 	await communityPage.expectLoaded();
 }
@@ -17,7 +20,7 @@ async function loginAsAdmin(page: Page) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
-	await loginPage.login(TEST_USERS.admin.email, TEST_USERS.admin.password);
+	await loginPage.login(USERS.admin.email, USERS.admin.password);
 	await expect(page).toHaveURL('/community');
 	await communityPage.expectLoaded();
 }
@@ -26,7 +29,7 @@ async function loginAsMember(page: Page) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
-	await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+	await loginPage.login(USERS.member.email, USERS.member.password);
 	await expect(page).toHaveURL('/community');
 	await communityPage.expectLoaded();
 }

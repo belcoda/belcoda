@@ -11,16 +11,70 @@ import {
 	type RemovePersonFromTeamMutatorSchemaZero
 } from '$lib/schema/person';
 import { activity, person, personTeam, team } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, count, ilike } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 
 import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
+import { teamPersonApiSchema } from '$lib/schema/team';
+import { activityApiSchema } from '$lib/schema/activity';
+import type { ListFilter } from '$lib/schema/helpers';
+import { listPersonTeamsQuery } from '$lib/zero/query/person_team/list';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
-import { teamPersonWebhook } from '$lib/schema/team';
-import { activityWebhook } from '$lib/schema/activity';
+
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
+
+export async function listPersonTeams({
+	tx,
+	ctx,
+	input,
+	personId
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	input: ListFilter;
+	personId: string;
+}) {
+	return await tx.run(
+		listPersonTeamsQuery({
+			ctx,
+			input: {
+				organizationId: input.organizationId,
+				searchString: input.searchString,
+				startAfter: input.startAfter,
+				pageSize: input.pageSize,
+				personId
+			}
+		})
+	);
+}
+
+export async function countPersonTeams({
+	tx,
+	input,
+	personId
+}: {
+	tx: ServerTransaction;
+	input: ListFilter;
+	personId: string;
+}) {
+	const whereParts = [
+		eq(personTeam.personId, personId),
+		eq(personTeam.organizationId, input.organizationId)
+	];
+	if (input.searchString && input.searchString.length > 0) {
+		whereParts.push(ilike(team.name, `%${input.searchString}%`));
+	}
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.select({ count: count() })
+		.from(personTeam)
+		.innerJoin(team, eq(personTeam.teamId, team.id))
+		.where(and(...whereParts));
+	return result.count;
+}
 
 export async function addPersonToTeam({
 	tx,
@@ -138,7 +192,7 @@ export async function _addPersonTeamDataUnsafe({
 				organizationId: actOrg,
 				payload: {
 					type: 'activity.created',
-					data: parse(activityWebhook, actData)
+					data: parse(activityApiSchema, actData)
 				}
 			},
 			queueSendOptionsFromTransaction(tx)
@@ -150,7 +204,7 @@ export async function _addPersonTeamDataUnsafe({
 			organizationId: args.organizationId,
 			payload: {
 				type: 'team.person.added',
-				data: parse(teamPersonWebhook, { teamId: args.teamId, personId: args.personId })
+				data: parse(teamPersonApiSchema, { teamId: args.teamId, personId: args.personId })
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -190,7 +244,7 @@ export async function removePersonFromTeam({
 				organizationId: parsed.metadata.organizationId,
 				payload: {
 					type: 'team.person.removed',
-					data: parse(teamPersonWebhook, {
+					data: parse(teamPersonApiSchema, {
 						teamId: parsed.metadata.teamId,
 						personId: parsed.metadata.personId
 					})

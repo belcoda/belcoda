@@ -47,7 +47,7 @@
 </script>
 
 {#key params.id}
-	{#if whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data}
+	{#if whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data && whatsappThreadQuery.data.flow}
 		{@const currentFlow = latestDraftFlow ?? whatsappThreadQuery.data.flow}
 		<Flow
 			backButtonUrl="/communications/whatsapp"
@@ -58,12 +58,13 @@
 				showTestWhatsApp = true;
 			}}
 			onSave={async ({ nodes, edges }) => {
-				console.log('Saving thread', nodes, edges);
 				await persistDraftFlow({ nodes, edges });
 			}}
 			onSend={async ({ nodes, edges }) => {
-				// First che
-				if (window.confirm(t`Are you sure you want to send this WhatsApp draft?`)) {
+				if (!window.confirm(t`Are you sure you want to send this WhatsApp draft?`)) {
+					return;
+				}
+				try {
 					await persistDraftFlow({ nodes, edges });
 					const result = z.mutate(
 						mutators.whatsappThread.send({
@@ -73,10 +74,12 @@
 						})
 					);
 
-					await result.client;
+					await result.server;
 					await tick();
 					await goto(`/communications/whatsapp/sent/${params.id}`);
 					toast.success(t`WhatsApp draft sent successfully`);
+				} catch (err) {
+					toast.error(err instanceof Error ? err.message : t`Failed to send WhatsApp draft`);
 				}
 			}}
 			onDiscard={async () => {

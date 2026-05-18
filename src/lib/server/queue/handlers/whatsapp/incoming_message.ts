@@ -399,11 +399,12 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 					'Reached the end of incoming message processing and was unable to determine person'
 				);
 			}
+			const convertedMessage = await convertIncomingWhatsAppMessage({
+				inboundMessage: parsed as IncomingMessage,
+				organizationId
+			});
 			const whatsappMessage = await createWhatsAppMessage({
-				message: await convertIncomingWhatsAppMessage({
-					inboundMessage: parsed as IncomingMessage,
-					organizationId
-				}),
+				message: convertedMessage,
 				personId,
 				id: insertedWhatsAppMessageId,
 				type: 'incoming_api_message',

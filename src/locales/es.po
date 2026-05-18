@@ -867,7 +867,7 @@ msgstr ""
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied! "
+msgid "Copied!"
 msgstr ""
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -879,7 +879,7 @@ msgstr ""
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy "
+msgid "Copy"
 msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
@@ -2215,6 +2215,7 @@ msgstr ""
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr ""
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr ""
@@ -2628,6 +2629,7 @@ msgstr ""
 msgid "Discard"
 msgstr ""
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/flow/Flow.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
@@ -3729,9 +3731,8 @@ msgstr ""
 msgid "Search templates..."
 msgstr ""
 
-#: src/lib/components/flow/nodes/template/Combobox.svelte
-msgid "No templates found."
-msgstr ""
+#~ msgid "No templates found."
+#~ msgstr ""
 
 #: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 msgid "Select an event..."
@@ -4944,4 +4945,49 @@ msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
+msgstr ""
+
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Nombre desconocido]"
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "No approved templates found."
+msgstr ""
+
+#: src/lib/components/flow/nodes/template/Combobox.svelte
+msgid "Manage templates"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Template not approved"
+msgstr ""
+
+#. 0: templateReadQuery.data.name; 1: String(templateStatus)
+#: src/lib/components/flow/Flow.svelte
+msgid "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "This template is not available or is not approved. Select an approved template before sending."
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "View template settings"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
+msgstr ""
+
+#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+msgid "Failed to send WhatsApp draft"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "No default template"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
 msgstr ""

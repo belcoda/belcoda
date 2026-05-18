@@ -8,7 +8,7 @@ import {
 	updateOrganizationWhatsappSettingsMutatorSchema,
 	type UpdateOrganizationMutatorSchema,
 	type UpdateOrganizationWhatsappSettingsMutatorSchema,
-	organizationWebhook
+	organizationApiSchema
 } from '$lib/schema/organization';
 
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
@@ -57,7 +57,7 @@ export async function updateOrganization({
 			organizationId: updated.id,
 			payload: {
 				type: 'organization.updated',
-				data: parse(organizationWebhook, orgWebhookData)
+				data: parse(organizationApiSchema, orgWebhookData)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -118,7 +118,7 @@ export async function updateOrganizationWhatsappSettings({
 			organizationId: updated.id,
 			payload: {
 				type: 'organization.updated',
-				data: parse(organizationWebhook, orgWebhookData)
+				data: parse(organizationApiSchema, orgWebhookData)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)
@@ -168,7 +168,7 @@ export async function updateTheme({
 			organizationId: updated.id,
 			payload: {
 				type: 'organization.updated',
-				data: parse(organizationWebhook, orgWebhookData)
+				data: parse(organizationApiSchema, orgWebhookData)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)

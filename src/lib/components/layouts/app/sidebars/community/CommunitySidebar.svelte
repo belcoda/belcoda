@@ -15,6 +15,8 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { type ActivityPreviewPayload } from '$lib/schema/activity/types';
 	import { t } from '$lib/index.svelte';
+	import { renderName } from '$lib/utils/name';
+	import { renderWhatsAppMessagePreview } from '$lib/components/widgets/activity/preview/whatsapp_message';
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		tagId: null,
@@ -75,8 +77,11 @@
 			</div>
 			<div class="min-w-0 flex-1">
 				<div class="truncate text-sm font-medium">
-					{person.givenName}
-					{person.familyName}
+					{renderName({
+						givenName: person.givenName,
+						familyName: person.familyName,
+						country: person.country
+					})}
 				</div>
 				<div class="truncate text-xs text-muted-foreground">
 					{@render renderActivityPreview(person.mostRecentActivityPreview, person.addedFrom)}
@@ -152,6 +157,14 @@
 			<div>
 				{t`${activityPreview.userName} added note: `}
 				<span class="italic">{activityPreview.notePreview}</span>
+			</div>
+		{:else if activityPreview.type === 'whatsapp_message_incoming'}
+			<div>
+				{renderWhatsAppMessagePreview(activityPreview.message)}
+			</div>
+		{:else if activityPreview.type === 'whatsapp_message_outgoing'}
+			<div>
+				{renderWhatsAppMessagePreview(activityPreview.message)}
 			</div>
 		{:else}
 			{t`Unknown activity ${activityPreview.type}`}

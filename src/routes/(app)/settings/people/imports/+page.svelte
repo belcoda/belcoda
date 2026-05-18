@@ -162,14 +162,19 @@
 <ContentLayout rootLink="/settings" {header}>
 	<div class="space-y-4">
 		{#if imports.length === 0}
-			<div class="flex flex-col items-center justify-center py-12 text-center">
+			<div
+				data-testid="imports-empty-state"
+				class="flex flex-col items-center justify-center py-12 text-center"
+			>
 				<p class="mb-4 text-muted-foreground">{t`No imports yet`}</p>
 				{#if appState.isAdminOrOwner}
-					<Button onclick={() => (uploadModalOpen = true)}>{t`New Import`}</Button>
+					<Button data-testid="imports-new-import-trigger" onclick={() => (uploadModalOpen = true)}
+						>{t`New Import`}</Button
+					>
 				{/if}
 			</div>
 		{:else}
-			<Table.Root>
+			<Table.Root data-testid="imports-table">
 				<Table.Header>
 					<Table.Row>
 						<Table.Head>{t`Date`}</Table.Head>
@@ -180,10 +185,13 @@
 				</Table.Header>
 				<Table.Body>
 					{#each imports as imp (imp.id)}
-						<Table.Row>
+						<Table.Row data-testid="imports-table-row" data-import-id={imp.id}>
 							<Table.Cell>{formatDate(imp.createdAt)}</Table.Cell>
 							<Table.Cell>
-								<Badge variant={getStatusBadgeVariant(imp.status)}>
+								<Badge
+									data-testid="imports-row-status"
+									variant={getStatusBadgeVariant(imp.status)}
+								>
 									{getStatusLabel(imp.status)}
 								</Badge>
 							</Table.Cell>
@@ -191,7 +199,7 @@
 							<Table.Cell>
 								{#if imp.status === 'completed' || imp.status === 'failed'}
 									<div class="flex items-center gap-2">
-										<span class="text-sm text-muted-foreground">
+										<span data-testid="imports-row-details" class="text-sm text-muted-foreground">
 											{imp.processedRows || 0}
 											{t`imported`}
 											{#if (imp.failedRows || 0) > 0}
@@ -200,6 +208,7 @@
 										</span>
 										{#if (imp.failedRows || 0) > 0 && imp.failedEntries}
 											<Button
+												data-testid="imports-view-failures"
 												variant="outline"
 												size="sm"
 												onclick={() => {
@@ -227,65 +236,70 @@
 	<div class="flex items-center justify-between">
 		<H2>{t`People Imports`}</H2>
 		{#if appState.isAdminOrOwner}
-			<ResponsiveModal
-				title={t`New People Import`}
-				description={t`Upload a CSV file to import people`}
-				bind:open={uploadModalOpen}
-			>
-				{#snippet trigger()}
-					<Button>{t`New Import`}</Button>
-				{/snippet}
-				{#snippet children()}
-					<div class="space-y-4">
-						<div class="space-y-2">
-							<div class="flex items-center justify-between">
-								<Label for="csvFile">{t`CSV file`}</Label>
-								<button
-									type="button"
-									class="flex items-center gap-1 text-sm text-primary underline hover:no-underline"
-									onclick={() => downloadSampleCsv()}
-								>
-									<DownloadIcon class="size-3" />
-									{t`Download sample`}
-								</button>
-							</div>
-							<input
-								id="csvFile"
-								type="file"
-								accept=".csv,text/csv"
-								class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-								onchange={(e: Event) => {
-									const input = e.target as HTMLInputElement;
-									selectedFile = input.files?.[0] ?? null;
-								}}
-							/>
-							{#if selectedFile}
-								<p class="text-xs text-muted-foreground">{t`Selected:`} {selectedFile.name}</p>
-							{/if}
+		<ResponsiveModal
+			title={t`New People Import`}
+			description={t`Upload a CSV file to import people`}
+			bind:open={uploadModalOpen}
+		>
+			{#snippet trigger()}
+				<Button data-testid="imports-new-import-trigger">{t`New Import`}</Button>
+			{/snippet}
+			{#snippet children()}
+				<div class="space-y-4">
+					<div class="space-y-2">
+						<div class="flex items-center justify-between">
+							<Label for="csvFile">{t`CSV file`}</Label>
+							<button
+								type="button"
+								data-testid="imports-download-sample"
+								class="flex items-center gap-1 text-sm text-primary underline hover:no-underline"
+								onclick={() => downloadSampleCsv()}
+							>
+								<DownloadIcon class="size-3" />
+								{t`Download sample`}
+							</button>
 						</div>
+						<input
+							id="csvFile"
+							data-testid="imports-csv-file-input"
+							type="file"
+							accept=".csv,text/csv"
+							class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+							onchange={(e: Event) => {
+								const input = e.target as HTMLInputElement;
+								selectedFile = input.files?.[0] ?? null;
+							}}
+						/>
+						{#if selectedFile}
+							<p data-testid="imports-selected-file" class="text-xs text-muted-foreground">
+								{t`Selected:`} {selectedFile.name}
+							</p>
+						{/if}
 					</div>
-				{/snippet}
-				{#snippet footer()}
-					<div class="flex justify-end gap-2">
-						<Button
-							variant="outline"
-							onclick={() => (uploadModalOpen = false)}
-							disabled={uploading}
-						>
-							{t`Cancel`}
-						</Button>
-						<Button onclick={handleUpload} disabled={uploading}>
-							{#if uploading}
-								<LoaderIcon class="mr-2 size-4 animate-spin" />
-								{t`Uploading...`}
-							{:else}
-								<UploadIcon class="mr-2 size-4" />
-								{t`Upload`}
-							{/if}
-						</Button>
-					</div>
-				{/snippet}
-			</ResponsiveModal>
+				</div>
+			{/snippet}
+			{#snippet footer()}
+				<div class="flex justify-end gap-2">
+					<Button
+						data-testid="imports-upload-cancel"
+						variant="outline"
+						onclick={() => (uploadModalOpen = false)}
+						disabled={uploading}
+					>
+						{t`Cancel`}
+					</Button>
+					<Button data-testid="imports-upload-submit" onclick={handleUpload} disabled={uploading}>
+						{#if uploading}
+							<LoaderIcon class="mr-2 size-4 animate-spin" />
+							{t`Uploading...`}
+						{:else}
+							<UploadIcon class="mr-2 size-4" />
+							{t`Upload`}
+						{/if}
+					</Button>
+				</div>
+			{/snippet}
+		</ResponsiveModal>
 
 			<ResponsiveModal
 				title={t`Import Failures`}

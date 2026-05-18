@@ -7,6 +7,7 @@ import { v7 as uuidv7 } from 'uuid';
 
 import { env } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
+import { dev } from '$app/environment';
 
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
@@ -162,21 +163,26 @@ export function buildBetterAuth(localeInput: string) {
 		plugins: [
 			organization({
 				async sendInvitationEmail(data) {
-					const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
-					const email = organizationInvitation({
-						url: inviteLink,
-						inviterName: data.inviter.user.name,
-						organizationName: data.organization.name,
-						locale,
-						orgIcon: data.organization.logo
-					});
-					await sendTemplateEmail({
-						to: data.email,
-						from: 'Belcoda <noreply@belcoda.com>',
-						template: 'transactional',
-						stream: 'outbound',
-						context: email
-					});
+					try {
+						const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
+						const emailContext = organizationInvitation({
+							url: inviteLink,
+							inviterName: data.inviter.user.name,
+							organizationName: data.organization.name,
+							locale,
+							orgIcon: data.organization.logo
+						});
+						await sendTemplateEmail({
+							to: data.email,
+							from: 'Belcoda <noreply@belcoda.com>',
+							template: 'transactional',
+							stream: 'outbound',
+							context: emailContext
+						});
+					} catch (e) {
+						log.error({ error: e, email: data.email }, 'Failed to send invitation email');
+						if (!dev) throw e;
+					}
 				},
 				organizationHooks: {
 					afterAddMember: async ({ member, user, organization }) => {
@@ -281,7 +287,12 @@ export function buildBetterAuth(localeInput: string) {
 			apiKey({
 				storage: 'secondary-storage',
 				fallbackToDatabase: true,
-				references: 'organization'
+				references: 'organization',
+				rateLimit: {
+					enabled: true,
+					timeWindow: 60 * 1000, //1 minute
+					maxRequests: 1000 //1000 requests per minute
+				}
 			}),
 			stripe({
 				stripeClient,

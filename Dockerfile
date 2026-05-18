@@ -21,6 +21,10 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY .npmrc package-lock.json package.json ./
+
+# Upgrade npm
+RUN npm install -g npm@^11.10.0
+
 RUN npm ci --include=dev --ignore-scripts
 
 # Copy application code

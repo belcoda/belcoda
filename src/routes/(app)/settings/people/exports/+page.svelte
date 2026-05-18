@@ -6,7 +6,7 @@
 </script>
 
 <ContentLayout rootLink="/settings">
-	<Empty.Root>
+	<Empty.Root data-testid="exports-empty-state">
 		<Empty.Header>
 			<Empty.Media variant="icon">
 				<DownloadIcon />

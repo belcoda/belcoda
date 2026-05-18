@@ -13,8 +13,8 @@ import { object, boolean } from 'valibot';
 export async function getCurrentCountry(): Promise<CountryCode> {
 	try {
 		//get the country from the IP address of the user
-		const countryResponse = await fetch('https://ipwho.is/').then((res) => res.json());
-		const country = countryResponse.country_code.toUpperCase() as CountryCode;
+		const countryResponse = await fetch(`https://api.country.is/`).then((res) => res.json());
+		const country = countryResponse.country.toUpperCase() as CountryCode;
 		if (countryCodes.includes(country)) {
 			return country;
 		} else {

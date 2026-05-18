@@ -49,7 +49,7 @@
 			{@render children?.({ props: props as Record<string, unknown> })}
 		{/snippet}
 	</Drawer.Trigger>
-	<Drawer.Content>
+	<Drawer.Content data-testid="person-notes-drawer">
 		<Drawer.Header class="border-b">
 			<div class="mb-1 flex items-center justify-between">
 				<h2 class="text-xl font-medium">{t`Notes`}</h2>
@@ -59,7 +59,7 @@
 			</div>
 			<PersonNoteForm personId={person.id} />
 		</Drawer.Header>
-		<div class="space-y-4 overflow-y-auto p-4">
+		<div class="space-y-4 overflow-y-auto p-4" data-testid="person-notes-list">
 			{#if notes.data && notes.data.length > 0}
 				{#each notes.data as note (note.id)}
 					<PersonNote
