@@ -6,7 +6,7 @@ const ledgerEntryMetadataTypes = [
 		type: v.literal('added_from_stripe'),
 		addedByUserId: helpers.uuid,
 		stripeCheckoutSessionId: helpers.mediumStringEmpty,
-		stripeWebhookDetails: v.any()
+		stripeWebhookDetails: v.record(v.string(), v.unknown())
 	}),
 	v.object({
 		type: v.literal('whatsapp_message_outgoing'),
@@ -28,7 +28,7 @@ export type LedgerEntryMetadataSchema = v.InferOutput<typeof ledgerEntryMetadata
 export const ledgerSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
-	deltaInUsdHundrethsOfCents: helpers.count,
+	deltaInUsdHundrethsOfCents: v.pipe(v.number(), v.integer()),
 	idempotencyKey: helpers.mediumStringEmpty,
 	metadata: ledgerEntryMetadataSchema,
 	createdAt: helpers.date
