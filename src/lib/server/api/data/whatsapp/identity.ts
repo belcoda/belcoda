@@ -10,7 +10,7 @@ import {
 	_findPersonByPhoneNumberUnsafe,
 	_getPersonByIdUnsafe
 } from '$lib/server/api/data/person/person';
-import { safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
+import { normalizePhoneNumber, safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
 
 const log = pino(import.meta.url);
 
@@ -290,7 +290,10 @@ export async function resolveOutboundWhatsappRecipient({
 
 	const to = phoneNumber?.trim() || undefined;
 	if (to) {
-		return { to };
+		const normalizedPhone = normalizePhoneNumber(to);
+		if (normalizedPhone) {
+			return { to: normalizedPhone };
+		}
 	}
 
 	log.warn({ organizationId, wabaId, personId }, 'Unable to resolve outbound WhatsApp recipient');
