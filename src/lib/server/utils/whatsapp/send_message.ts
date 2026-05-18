@@ -144,7 +144,7 @@ export async function sendWhatsappMessage({
 			throw new Error('Failed to send message to YCloud');
 		}
 		const messageToInsert: typeof whatsappMessageTable.$inferInsert = {
-			id: messageId,
+			id: whatsappMessageId,
 			organizationId: organization.id,
 			personId: personId,
 			userId: sendingUserId,
@@ -161,7 +161,7 @@ export async function sendWhatsappMessage({
 		await createActivityWhatsAppMessageOutgoing({
 			organizationId: organization.id,
 			personId: personId,
-			referenceId: messageId,
+			referenceId: whatsappMessageId,
 			tx
 		});
 		await updateLatestActivity({
@@ -261,7 +261,7 @@ export async function sendWhatsappTemplateMessage({
 			threadId: threadId
 		});
 		const messageToInsert: typeof whatsappMessageTable.$inferInsert = {
-			id: messageId,
+			id: whatsappMessageId,
 			organizationId: organization.id,
 			personId: personId,
 			userId: sendingUserId,
@@ -281,7 +281,7 @@ export async function sendWhatsappTemplateMessage({
 		await createActivityWhatsAppMessageOutgoing({
 			organizationId: organization.id,
 			personId: personId,
-			referenceId: messageId,
+			referenceId: whatsappMessageId,
 			tx
 		});
 
