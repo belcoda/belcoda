@@ -119,6 +119,28 @@
 				{t`Select which standard information fields to collect from signers.`}
 			</p>
 		</div>
+		{#if $data.settings}
+			<div class="rounded-md border p-4">
+				<div class="flex items-start gap-3">
+					<Checkbox
+						id="petition-phone-number-required"
+						checked={$data.settings.phoneNumberRequired ?? false}
+						onCheckedChange={(checked) => {
+							if (!$data.settings) return;
+							$data.settings.phoneNumberRequired = checked === true;
+						}}
+					/>
+					<div class="space-y-1">
+						<Label for="petition-phone-number-required" class="cursor-pointer font-normal">
+							{t`Require phone number`}
+						</Label>
+						<p class="text-sm text-muted-foreground">
+							{t`Signers must provide a phone number before signing.`}
+						</p>
+					</div>
+				</div>
+			</div>
+		{/if}
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 			<div class="flex items-center gap-3">
 				<Checkbox

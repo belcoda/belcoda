@@ -5015,3 +5015,16 @@ msgstr "No default template"
 #: src/lib/components/flow/Flow.svelte
 msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
 msgstr "You must create WhatsApp templates and select a default for your organization before creating a flow"
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
+msgid "Require phone number"
+msgstr "Require phone number"
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Attendees must provide a phone number before registering."
+msgstr "Attendees must provide a phone number before registering."
+
+#: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
+msgid "Signers must provide a phone number before signing."
+msgstr "Signers must provide a phone number before signing."

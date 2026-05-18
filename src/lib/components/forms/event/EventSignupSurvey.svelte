@@ -116,6 +116,28 @@
 				{t`Select which standard information fields to collect from attendees.`}
 			</p>
 		</div>
+		{#if $data.settings}
+			<div class="rounded-md border p-4">
+				<div class="flex items-start gap-3">
+					<Checkbox
+						id="event-phone-number-required"
+						checked={$data.settings.phoneNumberRequired ?? false}
+						onCheckedChange={(checked) => {
+							if (!$data.settings) return;
+							$data.settings.phoneNumberRequired = checked === true;
+						}}
+					/>
+					<div class="space-y-1">
+						<Label for="event-phone-number-required" class="cursor-pointer font-normal">
+							{t`Require phone number`}
+						</Label>
+						<p class="text-sm text-muted-foreground">
+							{t`Attendees must provide a phone number before registering.`}
+						</p>
+					</div>
+				</div>
+			</div>
+		{/if}
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 			<div class="flex items-center gap-3">
 				<Checkbox
