@@ -8,7 +8,7 @@ import {
 } from '$lib/server/utils/restApi';
 import { db } from '$lib/server/db';
 import { listPersons, createPerson, _countPersons } from '$lib/server/api/data/person/person';
-import { array } from 'valibot';
+import { array, parse } from 'valibot';
 import { personApiSchema, createPersonRest as createPersonRestSchema } from '$lib/schema/person';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -21,9 +21,10 @@ export async function GET(event) {
 		return { persons, count };
 	});
 
+	const parsedPersons = parse(array(personApiSchema), result.persons);
 	return json(
 		buildApiListResponse({
-			data: processOutgoingBody(result.persons, array(personApiSchema)),
+			data: processOutgoingBody(parsedPersons, array(personApiSchema)),
 			count: result.count
 		})
 	);
