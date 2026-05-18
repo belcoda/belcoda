@@ -1,7 +1,7 @@
 CREATE TABLE "ledger" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"organization_id" uuid NOT NULL,
-	"delta_in_usd_hundreths_of_cents" integer NOT NULL,
+	"delta_in_usd_hundredths_of_cents" integer NOT NULL,
 	"idempotency_key" text NOT NULL,
 	"metadata" jsonb NOT NULL,
 	"created_at" timestamp with time zone NOT NULL,

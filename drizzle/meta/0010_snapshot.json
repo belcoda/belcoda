@@ -1381,8 +1381,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "delta_in_usd_hundreths_of_cents": {
-          "name": "delta_in_usd_hundreths_of_cents",
+        "delta_in_usd_hundredths_of_cents": {
+          "name": "delta_in_usd_hundredths_of_cents",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
