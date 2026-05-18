@@ -1,34 +1,8 @@
-import type { Node, Edge } from '@xyflow/svelte';
+import type { Node } from '@xyflow/svelte';
 import { v4 as uuidv4 } from 'uuid';
 import { findPositionRadial } from '../placeNode';
-import type { Flow, NodeType, WhatsappMessageData } from '$lib/schema/flow/index';
-import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+import type { Flow, NodeType } from '$lib/schema/flow/index';
 
-export function createDefaultEdge(sourceId: string, targetId: string): Edge {
-	return {
-		id: uuidv4(),
-		source: sourceId,
-		target: targetId,
-		type: 'edge'
-	};
-}
-
-export function parentAllowsDefaultAutoEdge(
-	parent: Node,
-	options?: { templateComponents: TemplateMessageComponents | null | undefined }
-): boolean {
-	if (parent.type === 'message') {
-		const buttons = (parent.data as WhatsappMessageData).buttons ?? [];
-		return buttons.length === 0;
-	}
-	if (parent.type === 'templateMessage') {
-		const components = options?.templateComponents;
-		if (components == null) return false;
-		const buttonsComponent = components.find((c) => c.type === 'BUTTONS');
-		return (buttonsComponent?.buttons?.length ?? 0) === 0;
-	}
-	return true;
-}
 export function startingNodes({
 	defaultTemplateId
 }: {

@@ -230,6 +230,28 @@ export async function _getPersonByPhoneNumberUnsafe({
 	return personRecord;
 }
 
+export async function _findPersonByPhoneNumberUnsafe({
+	phoneNumber,
+	organizationId,
+	tx
+}: {
+	phoneNumber: string;
+	organizationId: string;
+	tx: ServerTransaction;
+}) {
+	const [personRecord] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(person)
+		.where(
+			and(
+				isNull(person.deletedAt),
+				eq(person.organizationId, organizationId),
+				eq(person.phoneNumber, phoneNumber)
+			)
+		);
+	return personRecord;
+}
+
 export async function getPerson({
 	tx,
 	ctx,

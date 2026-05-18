@@ -1,7 +1,8 @@
-import { whatsappThread } from '$lib/schema/drizzle';
+import { personWhatsappIdentity, whatsappThread } from '$lib/schema/drizzle';
 import { getPersonRecordsFromFilter } from '$lib/server/api/data/person/filter';
 import { getQueue } from '$lib/server/queue/index';
 import { db } from '$lib/server/db';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 export async function buildWhatsappThreadSendQueue({
 	thread,
 	sentByUserId
@@ -29,9 +30,31 @@ export async function buildWhatsappThreadSendQueue({
 		});
 	});
 
+	const recipientIdsWithWhatsappIdentity = new Set(
+		await db.transaction(async (tx) => {
+			if (recipients.length === 0 || !thread.organizationId) {
+				return [];
+			}
+			const rows = await tx.dbTransaction.wrappedTransaction
+				.select({ personId: personWhatsappIdentity.personId })
+				.from(personWhatsappIdentity)
+				.where(
+					and(
+						isNull(personWhatsappIdentity.deletedAt),
+						eq(personWhatsappIdentity.organizationId, thread.organizationId),
+						inArray(
+							personWhatsappIdentity.personId,
+							recipients.map((recipient) => recipient.id)
+						)
+					)
+				);
+			return rows.map((row) => row.personId);
+		})
+	);
+
 	const queue = await getQueue();
 	for (const recipient of recipients) {
-		if (recipient.phoneNumber || recipient.whatsAppUsername) {
+		if (recipient.phoneNumber || recipientIdsWithWhatsappIdentity.has(recipient.id)) {
 			await queue.processFlowNodeAction({
 				nodeId: templateMessageNode.id,
 				personId: recipient.id,

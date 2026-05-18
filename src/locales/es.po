@@ -4955,6 +4955,7 @@ msgstr "[Nombre desconocido]"
 msgid "No approved templates found."
 msgstr ""
 
+#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "Manage templates"
 msgstr ""
@@ -4990,4 +4991,31 @@ msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
 msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
+msgstr ""
+
+#: src/lib/components/widgets/activity/preview/whatsapp_message.ts
+msgid "📷 Photo"
+msgstr ""
+
+#: src/lib/components/widgets/activity/preview/whatsapp_message.ts
+msgid "🎥 Video"
+msgstr ""
+
+#: src/lib/components/widgets/activity/preview/whatsapp_message.ts
+msgid "🎧 Audio message"
+msgstr ""
+
+#: src/lib/components/widgets/activity/preview/whatsapp_message.ts
+msgid "🎨 Sticker"
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
+msgid "Require phone number"
+msgstr ""
+
+#~ msgid "Attendees must provide a phone number before registering."
+#~ msgstr ""
+
+#: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
+msgid "Signers must provide a phone number before signing."
 msgstr ""
