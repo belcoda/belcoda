@@ -49,6 +49,15 @@ function mockYCloudResponseForEndpoint(endpoint: `/${string}`) {
 			qualityRating: 'UNKNOWN'
 		};
 	}
+	if (endpoint.endsWith('/smb/bind')) {
+		return { phoneNumber: '+15550000000' };
+	}
+	if (endpoint.endsWith('/tp/bind')) {
+		return { paymentMethodAttached: true };
+	}
+	if (endpoint.includes('/phoneNumbers/') && endpoint.endsWith('/register')) {
+		return { phoneNumber: '+15550000000' };
+	}
 	return {};
 }
 
