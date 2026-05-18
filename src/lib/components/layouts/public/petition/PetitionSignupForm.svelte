@@ -210,7 +210,13 @@
 				<Form.Field form={petitionForm} name="person.phoneNumber">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>{t`Phone number`}</Form.Label>
+							<Form.Label>
+								{#if petition.settings.phoneNumberRequired}
+									{t`Phone number (required)`}
+								{:else}
+									{t`Phone number`}
+								{/if}
+							</Form.Label>
 							<PhoneNumberInput
 								{...props}
 								country={$dataForm.person.country}

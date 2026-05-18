@@ -205,7 +205,13 @@
 			<Form.Field {form} name="person.phoneNumber">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>{t`Phone number`}</Form.Label>
+						<Form.Label>
+							{#if event.settings.phoneNumberRequired}
+								{t`Phone number (required)`}
+							{:else}
+								{t`Phone number`}
+							{/if}
+						</Form.Label>
 						<PhoneNumber
 							{...props}
 							country={$data.person.country}

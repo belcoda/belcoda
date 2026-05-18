@@ -944,6 +944,11 @@ msgstr "Add"
 msgid "Phone number"
 msgstr "Phone number"
 
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+#: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+msgid "Phone number (required)"
+msgstr "Phone number (required)"
+
 #: src/lib/components/ui/custom-select/country/country.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
