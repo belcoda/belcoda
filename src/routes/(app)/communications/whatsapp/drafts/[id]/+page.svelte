@@ -47,7 +47,7 @@
 </script>
 
 {#key params.id}
-	{#if whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data}
+	{#if whatsappThreadQuery?.details.type === 'complete' && whatsappThreadQuery?.data && whatsappThreadQuery.data.flow}
 		{@const currentFlow = latestDraftFlow ?? whatsappThreadQuery.data.flow}
 		<Flow
 			backButtonUrl="/communications/whatsapp"
@@ -58,7 +58,6 @@
 				showTestWhatsApp = true;
 			}}
 			onSave={async ({ nodes, edges }) => {
-				console.log('Saving thread', nodes, edges);
 				await persistDraftFlow({ nodes, edges });
 			}}
 			onSend={async ({ nodes, edges }) => {

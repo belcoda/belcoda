@@ -3,13 +3,18 @@ import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { PersonCreatePage } from '../pages/community/person-create.page';
 import { PersonProfilePage } from '../pages/community/person-profile.page';
-import { TEST_USERS } from '../helpers/auth';
+import { TagsPage } from '../pages/settings/tags.page';
+import { TeamsPage } from '../pages/settings/teams.page';
+import { getTestUsers } from '../helpers/auth';
+
+const PROJECT = 'community' as const;
+const USERS = getTestUsers(PROJECT);
 
 async function loginAsOwner(page: Page) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
-	await loginPage.login(TEST_USERS.owner.email, TEST_USERS.owner.password);
+	await loginPage.login(USERS.owner.email, USERS.owner.password);
 	await expect(page).toHaveURL('/community');
 	await communityPage.expectLoaded();
 }
@@ -19,7 +24,11 @@ test.describe.serial('Community and person pages', () => {
 		personId: '',
 		personPath: '',
 		givenName: '',
-		familyName: ''
+		familyName: '',
+		tagId: '',
+		tagName: '',
+		teamId: '',
+		teamName: ''
 	};
 
 	test('owner can create a person and land on their timeline', async ({ page }) => {
@@ -109,6 +118,90 @@ test.describe.serial('Community and person pages', () => {
 		await profilePage.editEmail(newEmail);
 
 		await expect(page.getByTestId('person-profile-email-display')).toHaveText(newEmail);
+	});
+
+	test('owner can create a tag and add it to a person from the timeline dropdown', async ({
+		page
+	}) => {
+		const tagsPage = new TagsPage(page);
+		const suffix = `${Date.now()}`;
+		ids.tagName = `E2E Tag ${suffix}`;
+
+		await loginAsOwner(page);
+
+		await tagsPage.goto();
+		await tagsPage.createTag(ids.tagName);
+		const tagRow = tagsPage.tagRowByName(ids.tagName);
+		await expect(tagRow).toBeVisible({ timeout: 15_000 });
+		ids.tagId = (await tagRow.getAttribute('data-tag-id')) ?? '';
+		expect(ids.tagId).not.toBe('');
+
+		await page.goto(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+
+		await page.getByTestId('notes-action-dropdown-trigger').click();
+		await page.getByTestId('notes-action-add-tag').waitFor({ state: 'visible', timeout: 5_000 });
+		await page.getByTestId('notes-action-add-tag').click();
+		const tagFilter = page.getByPlaceholder('Filter tags...');
+		await expect(tagFilter).toBeVisible({ timeout: 5_000 });
+		await tagFilter.fill(ids.tagName);
+		await page.getByRole('option', { name: ids.tagName }).click();
+
+		await page.goto(`${ids.personPath}/profile`);
+		const profileLoaded = page.getByTestId('person-profile-loaded');
+		await profileLoaded.waitFor({ state: 'visible', timeout: 15_000 });
+		await expect(profileLoaded.getByText(ids.tagName)).toBeVisible({ timeout: 10_000 });
+	});
+
+	test('owner can create a team and add the person to it from the timeline dropdown', async ({
+		page
+	}) => {
+		const teamsPage = new TeamsPage(page);
+		const suffix = `${Date.now()}`;
+		ids.teamName = `E2E Team ${suffix}`;
+
+		await loginAsOwner(page);
+
+		await teamsPage.goto();
+		await teamsPage.createTeam(ids.teamName);
+		const teamRow = teamsPage.teamRowByName(ids.teamName);
+		await expect(teamRow).toBeVisible({ timeout: 15_000 });
+		ids.teamId = (await teamRow.getAttribute('data-team-id')) ?? '';
+		expect(ids.teamId).not.toBe('');
+
+		await page.goto(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+
+		await page.getByTestId('notes-action-dropdown-trigger').click();
+		await page.getByTestId('notes-action-add-team').waitFor({ state: 'visible', timeout: 5_000 });
+		await page.getByTestId('notes-action-add-team').click();
+		const teamFilter = page.getByPlaceholder('Filter teams...');
+		await expect(teamFilter).toBeVisible({ timeout: 5_000 });
+		await teamFilter.fill(ids.teamName);
+		await page.getByRole('option', { name: ids.teamName }).click();
+
+		await page.goto(`${ids.personPath}/profile`);
+		const profileLoaded = page.getByTestId('person-profile-loaded');
+		await profileLoaded.waitFor({ state: 'visible', timeout: 15_000 });
+		await expect(profileLoaded.getByText(ids.teamName)).toBeVisible({ timeout: 10_000 });
+	});
+
+	test('owner can add a note from the notes drawer on the timeline', async ({ page }) => {
+		const noteText = `E2E test note ${Date.now()}`;
+
+		await loginAsOwner(page);
+		await page.goto(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+
+		await page.getByTestId('notes-action-notes-btn').click();
+
+		const textarea = page.getByTestId('note-form-textarea');
+		await expect(textarea).toBeVisible({ timeout: 10_000 });
+		await textarea.fill(noteText);
+		await page.getByTestId('note-form-submit').click();
+
+		await expect(page.getByTestId('person-note-item').first()).toBeVisible({ timeout: 10_000 });
+		await expect(page.getByTestId('person-note-content').first()).toHaveText(noteText);
 	});
 
 	test('owner can delete the person from the person profile page', async ({ page }) => {

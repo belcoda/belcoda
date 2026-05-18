@@ -20,13 +20,14 @@
 		<div class="flex w-full items-center justify-end gap-2">
 			<Button
 				variant="outline"
+				data-testid="org-config-cancel"
 				onclick={() => {
 					if (window.confirm(t`Are you sure you want to cancel?`)) {
 						window.history.back();
 					}
 				}}>{t`Cancel`}</Button
 			>
-			<Button form="org-config-form" type="submit">{t`Save`}</Button>
+			<Button form="org-config-form" type="submit" data-testid="org-config-save">{t`Save`}</Button>
 		</div>
 	{/snippet}
 </ContentLayout>

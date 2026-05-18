@@ -15,7 +15,12 @@
 		type EdgeTypes,
 		type NodeTypes
 	} from '@xyflow/svelte';
-	import { startingNodes, addNode } from './nodes/addNode.js';
+	import {
+		startingNodes,
+		addNode,
+		createDefaultEdge,
+		parentAllowsDefaultAutoEdge
+	} from './nodes/addNode.js';
 	import type { Flow } from '$lib/schema/flow';
 	const {
 		backButtonUrl,
@@ -101,12 +106,29 @@
 
 	const activeWhatsAppOnboarded = $derived(
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
-			appState.activeOrganization?.data?.settings.whatsApp.number &&
-			appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
+			appState.activeOrganization?.data?.settings.whatsApp.number
 	);
+
+	function appendNodeWithDefaultEdge(newNode: Node | null, parentNode: Node) {
+		if (!newNode) return;
+
+		nodes = [...nodes, newNode];
+
+		if (
+			parentAllowsDefaultAutoEdge(parentNode, {
+				templateComponents: templateReadQuery?.data?.components
+			})
+		) {
+			edges = [...edges, createDefaultEdge(parentNode.id, newNode.id)];
+		}
+	}
+	const hasTemplateId = $derived(
+		appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
+	);
+	const canEditFlow = $derived(activeWhatsAppOnboarded && hasTemplateId);
 </script>
 
-{#if activeWhatsAppOnboarded}
+{#if canEditFlow}
 	<div class="h-full w-full">
 		<SvelteFlowProvider>
 			<SvelteFlow
@@ -257,80 +279,65 @@
 								<DropdownMenu.Item
 									data-testid="flow-add-node-message"
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const lastNodeIndex = nodesSnapshot.length - 1;
-										const parentNode = nodesSnapshot[lastNodeIndex];
-										if (nodesSnapshot[lastNodeIndex]) {
-											const newNode = addNode(
-												'message',
-												//@ts-ignore
-												parentNode as Node,
-												nodesSnapshot as Node[]
-											);
-											if (newNode) {
-												nodes = [...nodes, newNode];
-											}
-										}
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNodeWithDefaultEdge(
+											addNode('message', parentNode, nodesSnapshot) as Node | null,
+											parentNode
+										);
 									}}
 								>
 									{t`Message`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const newNode = addNode(
-											'eventSignup',
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNodeWithDefaultEdge(
+											addNode('eventSignup', parentNode, nodesSnapshot) as Node | null,
+											parentNode
 										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
-										}
 									}}
 								>
 									{t`Event Signup`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const newNode = addNode(
-											'petitionSignup',
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNodeWithDefaultEdge(
+											addNode('petitionSignup', parentNode, nodesSnapshot) as Node | null,
+											parentNode
 										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
-										}
 									}}
 								>
 									{t`Petition Signup`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const newNode = addNode(
-											'tagAdd',
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNodeWithDefaultEdge(
+											addNode('tagAdd', parentNode, nodesSnapshot) as Node | null,
+											parentNode
 										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
-										}
 									}}
 								>
 									{t`Tag Add`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const newNode = addNode(
-											'teamAdd',
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNodeWithDefaultEdge(
+											addNode('teamAdd', parentNode, nodesSnapshot) as Node | null,
+											parentNode
 										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
-										}
 									}}
 								>
 									{t`Team Add`}
@@ -343,7 +350,7 @@
 			</SvelteFlow>
 		</SvelteFlowProvider>
 	</div>
-{:else}
+{:else if !activeWhatsAppOnboarded}
 	<div class="flex h-full w-full items-center justify-center">
 		<Empty.Root>
 			<Empty.Header>
@@ -357,6 +364,23 @@
 			</Empty.Header>
 			<Empty.Content>
 				<Button href="/settings/whatsapp/accounts">{t`Activate WhatsApp`}</Button>
+			</Empty.Content>
+		</Empty.Root>
+	</div>
+{:else if !hasTemplateId}
+	<div class="flex h-full w-full items-center justify-center">
+		<Empty.Root>
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<FolderCodeIcon />
+				</Empty.Media>
+				<Empty.Title>{t`No default template`}</Empty.Title>
+				<Empty.Description
+					>{t`You must create WhatsApp templates and select a default for your organization before creating a flow`}</Empty.Description
+				>
+			</Empty.Header>
+			<Empty.Content>
+				<Button href="/settings/whatsapp/templates">{t`Manage templates`}</Button>
 			</Empty.Content>
 		</Empty.Root>
 	</div>

@@ -867,7 +867,7 @@ msgstr "Copiado \"{0}\" para a área de transferência"
 
 #: src/lib/components/widgets/event/share/CheckIn.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copied! "
+msgid "Copied!"
 msgstr "Copiado!"
 
 #: src/lib/components/widgets/event/share/ShareEvent.svelte
@@ -879,7 +879,7 @@ msgstr "Copiado!"
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 #: src/lib/components/widgets/utils/CopyButton.svelte
-msgid "Copy "
+msgid "Copy"
 msgstr "Copiar"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
@@ -2215,6 +2215,7 @@ msgstr "Miniatura do anexo"
 msgid "This is a preview of the event. Publish the event before sharing it with others."
 msgstr "Esta é uma visualização do evento. Publique o evento antes de compartilhá-lo com outros."
 
+#: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 msgid "Join this event"
 msgstr "Participar deste evento"
@@ -4989,4 +4990,12 @@ msgstr ""
 
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Failed to send WhatsApp draft"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "No default template"
+msgstr ""
+
+#: src/lib/components/flow/Flow.svelte
+msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
 msgstr ""

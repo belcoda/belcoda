@@ -10,8 +10,9 @@ This document provides AI agents and developers with a comprehensive overview of
 2. [Project Structure](#project-structure)
 3. [Frontend Layout Architecture](#frontend-layout-architecture)
 4. [Data Layer: Queries, Mutators, and Data Functions](#data-layer-queries-mutators-and-data-functions)
-5. [Authentication & Authorization](#authentication--authorization)
-6. [Key Conventions](#key-conventions)
+5. [Zero Schema Migrations](#zero-schema-migrations)
+6. [Authentication & Authorization](#authentication--authorization)
+7. [Key Conventions](#key-conventions)
 
 ---
 
@@ -225,6 +226,86 @@ z.createQuery(queries.person.list(listFilter));
 
 ---
 
+## Zero Schema Migrations
+
+Belcoda has two related schemas:
+
+1. **Postgres / Drizzle** — `src/lib/schema/drizzle.ts` + SQL in `drizzle/`
+2. **Zero** — `src/lib/zero/drizzle-zero.config.ts` → generated `zero-schema.gen.ts`, plus queries, mutators, and UI
+
+Zero replication and clients must stay compatible across deploys. Rocicorp documents this as **expand → migrate → contract** ([Zero schema changes](https://zero.rocicorp.dev/docs/schema#schema-changes)). In Belcoda we split that work across **standalone migration PRs** (database only) and **follow-up PRs** (Zero and app).
+
+### Expand → migrate → contract
+
+| Phase        | What you do                                                                                        | Belcoda deploy order                                                                                             |
+| ------------ | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Expand**   | Add column/table (nullable or with default); do not remove old shapes yet                          | Migration PR: Drizzle schema + `drizzle/*.sql` only                                                              |
+| **Migrate**  | Backfill data, dual-write, or run SQL in the migration; wait for `zero-cache` replication/backfill | Same PR; deploy DB before any Zero/client change                                                                 |
+| **Contract** | Stop using old column; remove from Zero schema and app                                             | Later PR: set columns to `false` in config, remove queries/mutators/UI, then drop column in a final migration PR |
+
+**Expand** (add things): DB → (wait for replication) → API/Zero → client.
+
+**Contract** (remove things): client → API/Zero → DB.
+
+Renames and type changes are **expand + contract**: add the new column, migrate data, switch readers/writers, then remove the old column.
+
+### Standalone migration PRs (required)
+
+Any PR that adds or changes Postgres schema via Drizzle migrations must be **database-only** and safe to merge/deploy without touching Zero or the app.
+
+**Include only:**
+
+- `src/lib/schema/drizzle.ts` (table/column definitions)
+- `drizzle/` migration files (and journal/meta if generated)
+
+**Do not include in the same PR:**
+
+- `src/lib/zero/drizzle-zero.config.ts`
+- `src/lib/zero/zero-schema.gen.ts` (regenerated output)
+- Zero queries (`src/lib/zero/query/`), mutators, or data functions
+- Valibot/UI changes that read or write the new column
+- `npm run generate` driven by exposing the column in Zero
+
+New columns must exist in Drizzle so migrations are accurate, but they stay **out of the Zero sync surface** until a dedicated integration PR. In `drizzle-zero.config.ts`, new columns are added with `false` until replication has caught up and you are ready to expose them (see comments at the top of that file).
+
+**Why:** Deploying API/client/Zero before the column exists in Postgres (or before backfill finishes) breaks queries and mutators. Deploying Zero before the DB migration is applied has the same effect. A migration-only PR lets DB → replicate → integrate in a controlled second step.
+
+### Follow-up PR: integrate into Zero
+
+After the migration PR is merged and deployed (and backfill/replication is done if applicable), open a **separate** PR that:
+
+1. Sets the column (or table) to `true` in `src/lib/zero/drizzle-zero.config.ts` (or adds the table block).
+2. Runs `npm run generate` to refresh `zero-schema.gen.ts`.
+3. Updates queries, mutators, data functions, Valibot schemas, and UI as needed.
+
+Deploy that PR in Zero’s **expand** order: API (query/push) before or with the client; the DB change is already live from the migration PR.
+
+### Contracting (removing columns)
+
+Use the reverse order in **two PRs** when possible:
+
+1. **Integration PR (contract consumers):** Remove usage from UI, Valibot, queries, mutators, and data functions; set the column to `false` in `drizzle-zero.config.ts`; run `npm run generate`. Deploy client + API.
+2. **Migration PR:** Drop the column in Drizzle + `drizzle/` SQL. Deploy DB last.
+
+### Quick checklist
+
+| Step                           | Migration-only PR | Zero integration PR                                            |
+| ------------------------------ | ----------------- | -------------------------------------------------------------- |
+| Change `drizzle.ts`            | Yes               | Only if still needed for defaults/constraints                  |
+| Add `drizzle/*.sql`            | Yes               | Drop column only when contracting DB                           |
+| Touch `drizzle-zero.config.ts` | **No**            | Yes (`false` → `true` on expand; `true` → `false` on contract) |
+| Run `npm run generate`         | **No**            | Yes                                                            |
+| Queries / mutators / UI        | **No**            | Yes                                                            |
+
+### References
+
+- [Zero schema changes](https://zero.rocicorp.dev/docs/schema#schema-changes) — expand/contract deploy order, backfill, `onUpdateNeeded`
+- `src/lib/zero/drizzle-zero.config.ts` — per-table/column inclusion for the expand/contract pattern
+- `drizzle/` — SQL migrations
+- README — `npm run db:migrate`, `npm run generate`
+
+---
+
 ## Authentication & Authorization
 
 ### better-auth
@@ -312,11 +393,13 @@ Belcoda serves organizations across multiple locales (en, es, pt, etc), so featu
 
 ## Quick Reference
 
-| Task                       | Location / Pattern                                                                         |
-| -------------------------- | ------------------------------------------------------------------------------------------ |
-| Add a Zero query           | `lib/zero/query/<entity>/` + register in `query/index.ts`                                  |
-| Add a mutator              | Client: `lib/zero/mutate/`, Server: `lib/server/api/mutate/`, Data: `lib/server/api/data/` |
-| Add permission logic       | `lib/zero/query/<entity>/permissions.ts`                                                   |
-| Add a layout/sidebar       | `(app)/<section>/+layout.svelte` + `UniversalLayout` + sidebar component                   |
-| Add a schema field to Zero | Update `drizzle-zero.config.ts` tables, run `npm run generate`                             |
-| Add i18n string            | Use Wuchale `t` in Svelte; add to locale files                                             |
+| Task                       | Location / Pattern                                                                                    |
+| -------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Add a Zero query           | `lib/zero/query/<entity>/` + register in `query/index.ts`                                             |
+| Add a mutator              | Client: `lib/zero/mutate/`, Server: `lib/server/api/mutate/`, Data: `lib/server/api/data/`            |
+| Add permission logic       | `lib/zero/query/<entity>/permissions.ts`                                                              |
+| Add a layout/sidebar       | `(app)/<section>/+layout.svelte` + `UniversalLayout` + sidebar component                              |
+| Postgres schema change     | Standalone PR: `drizzle.ts` + `drizzle/` only — see [Zero Schema Migrations](#zero-schema-migrations) |
+| Expose column to Zero      | Follow-up PR: `drizzle-zero.config.ts` → `npm run generate` → queries/mutators/UI                     |
+| Add a schema field to Zero | Update `drizzle-zero.config.ts` tables, run `npm run generate` (after DB migration is live)           |
+| Add i18n string            | Use Wuchale `t` in Svelte; add to locale files                                                        |

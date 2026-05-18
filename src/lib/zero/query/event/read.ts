@@ -4,7 +4,7 @@ import type { QueryContext } from '$lib/zero/schema';
 import { object, type InferOutput } from 'valibot';
 import { uuid, parseSchema } from '$lib/schema/helpers';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
-import { readEventRest } from '$lib/schema/event';
+import { readEventZero } from '$lib/schema/event';
 
 export const inputSchema = object({
 	eventId: uuid
@@ -29,4 +29,4 @@ export const readEvent = defineQuery(inputSchema, ({ ctx, args }) => {
 	return readEventQuery({ ctx, input: { eventId: args.eventId } });
 });
 
-export const outputSchema = readEventRest;
+export const outputSchema = readEventZero;

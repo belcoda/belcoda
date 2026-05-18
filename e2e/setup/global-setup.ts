@@ -1,7 +1,7 @@
 import type { FullConfig } from '@playwright/test';
 import { chromium } from '@playwright/test';
-import { TEST_USERS, signUpUser, verifyUserEmail } from '../helpers/auth';
-import { BASE_URL, E2E_MOCK_WABA_ID } from '../helpers/config';
+import { getTestUsers, signUpUser, verifyUserEmail } from '../helpers/auth';
+import { BASE_URL, E2E_MOCK_WABA_ID, E2E_PROJECTS, getOrgName } from '../helpers/config';
 import path from 'path';
 import fs from 'fs';
 
@@ -21,7 +21,7 @@ async function createOrganization(
 	ownerEmail: string,
 	orgName: string,
 	members: Array<{ email: string; role: string }>,
-	wabaId: string
+	wabaId: string | null
 ) {
 	console.log(`  Creating organization "${orgName}"...`);
 	const response = await fetch(`${BASE_URL}/api/e2e/create-organization`, {
@@ -74,24 +74,30 @@ export default async function globalSetup(_config: FullConfig) {
 
 	await cleanup();
 
-	console.log('Creating test users...');
-	for (const [role, user] of Object.entries(TEST_USERS)) {
-		await signUpUser(user);
-		await verifyUserEmail(user.email);
-		console.log(`  ✓ ${user.email} (${role})`);
-	}
+	for (const project of E2E_PROJECTS) {
+		const users = getTestUsers(project);
+		const orgName = getOrgName(project);
 
-	console.log('\nCreating organization...');
-	const org = await createOrganization(
-		TEST_USERS.owner.email,
-		'E2E Event Org',
-		[
-			{ email: TEST_USERS.admin.email, role: 'admin' },
-			{ email: TEST_USERS.member.email, role: 'member' }
-		],
-		E2E_MOCK_WABA_ID
-	);
-	console.log(`  ✓ Organization created: ${org.id}`);
+		console.log(`\nSetting up project: ${project}`);
+
+		for (const [role, user] of Object.entries(users)) {
+			await signUpUser(user);
+			await verifyUserEmail(user.email);
+			console.log(`  ✓ ${user.email} (${role})`);
+		}
+
+		const wabaId = project === 'whatsapp-accounts' ? null : E2E_MOCK_WABA_ID;
+		const org = await createOrganization(
+			users.owner.email,
+			orgName,
+			[
+				{ email: users.admin.email, role: 'admin' },
+				{ email: users.member.email, role: 'member' }
+			],
+			wabaId
+		);
+		console.log(`  ✓ Organization created: ${org.id} (${orgName})`);
+	}
 
 	await saveCookieConsentState();
 

@@ -9,7 +9,7 @@ import {
 	type CreateMutatorSchemaZeroOutput,
 	triggerImportQueueMutatorSchema,
 	type TriggerImportQueueMutatorSchemaOutput,
-	personImportWebhook
+	personImportApiSchema
 } from '$lib/schema/person-import';
 
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
@@ -52,7 +52,7 @@ export async function insertPersonImport({
 			organizationId,
 			payload: {
 				type: 'person.import.created',
-				data: parse(personImportWebhook, importWebhookData)
+				data: parse(personImportApiSchema, importWebhookData)
 			}
 		},
 		queueSendOptionsFromTransaction(tx)

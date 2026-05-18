@@ -4,13 +4,16 @@ import { CommunityPage } from '../pages/community/community.page';
 import { EmailNavigationPage } from '../pages/communications/email-navigation.page';
 import { EmailDraftPage } from '../pages/communications/email-draft.page';
 import { EmailSentPage } from '../pages/communications/email-sent.page';
-import { TEST_USERS } from '../helpers/auth';
+import { getTestUsers } from '../helpers/auth';
+
+const PROJECT = 'communications' as const;
+const USERS = getTestUsers(PROJECT);
 
 async function loginAsOwner(page: Page) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
-	await loginPage.login(TEST_USERS.owner.email, TEST_USERS.owner.password);
+	await loginPage.login(USERS.owner.email, USERS.owner.password);
 	await expect(page).toHaveURL('/community');
 	await communityPage.expectLoaded();
 }

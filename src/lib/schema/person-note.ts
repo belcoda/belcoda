@@ -14,7 +14,7 @@ export const personNoteSchema = v.object({
 });
 export type PersonNoteSchema = v.InferOutput<typeof personNoteSchema>;
 
-export const personNoteWebhook = v.object({
+export const personNoteApiSchema = v.object({
 	...v.omit(personNoteSchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString,
@@ -50,6 +50,12 @@ export const createPersonNoteZero = v.object({
 });
 export type CreatePersonNoteZero = v.InferOutput<typeof createPersonNoteZero>;
 
+export const createPersonNoteApi = v.object({
+	note: personNoteSchema.entries.note,
+	userId: helpers.uuid //needed because we don't have a logged in user ID when creating a note via the API
+});
+export type CreatePersonNoteApi = v.InferOutput<typeof createPersonNoteApi>;
+
 export const updatePersonNoteZero = v.object({
 	note: personNoteSchema.entries.note
 });
@@ -76,6 +82,6 @@ export const updateMutatorSchemaZero = v.object({
 export type UpdateMutatorSchemaZero = v.InferOutput<typeof updateMutatorSchemaZero>;
 
 export const deleteMutatorSchemaZero = v.object({
-	metadata: mutatorMetadata
+	metadata: v.omit(mutatorMetadata, ['userId'])
 });
 export type DeleteMutatorSchemaZero = v.InferOutput<typeof deleteMutatorSchemaZero>;

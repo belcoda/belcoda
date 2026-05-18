@@ -41,7 +41,9 @@ export function listPersonsQuery({
 		.orderBy('mostRecentActivityAt', 'desc')
 		.limit(input.pageSize || 50);
 	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
+		q = q.start({
+			id: input.startAfter
+		});
 	}
 	return q;
 }
