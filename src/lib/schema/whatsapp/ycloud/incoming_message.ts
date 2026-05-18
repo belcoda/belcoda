@@ -2,6 +2,13 @@ import * as v from 'valibot';
 import * as messageTypes from '$lib/schema/whatsapp/ycloud/message_types';
 import { mediumString, isoTimestamp } from '$lib/schema/helpers';
 
+const optionalNullableMediumString = v.optional(v.nullable(mediumString));
+
+const customerProfile = v.object({
+	name: optionalNullableMediumString,
+	username: optionalNullableMediumString
+});
+
 const baseIncomingMessage = v.object({
 	id: mediumString, //63f87878509703399f3fd3d0...
 	wabaId: mediumString,
@@ -9,11 +16,9 @@ const baseIncomingMessage = v.object({
 	from: mediumString,
 	to: mediumString,
 	sendTime: isoTimestamp,
-	customerProfile: v.optional(
-		v.object({
-			name: v.optional(mediumString)
-		})
-	),
+	fromUserId: optionalNullableMediumString,
+	fromParentUserId: optionalNullableMediumString,
+	customerProfile: v.optional(customerProfile),
 	context: v.optional(messageTypes.context)
 });
 

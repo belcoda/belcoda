@@ -115,6 +115,8 @@ export const systemMessage = v.object({
 	system: v.object({
 		body: v.string(),
 		wa_id: v.string(),
+		user_id: v.optional(v.nullable(v.string())),
+		parent_user_id: v.optional(v.nullable(v.string())),
 		type: v.string() // e.g. 'user_changed_number'
 	})
 });

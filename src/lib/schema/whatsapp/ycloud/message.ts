@@ -262,78 +262,85 @@ const templateSchema = v.object({
 const whatsappMessageSchemaBase = v.object({
 	from: helpers.shortString,
 	externalId: helpers.uuid,
-	to: helpers.e164PhoneNumber,
+	to: v.optional(helpers.e164PhoneNumber),
+	recipient: v.optional(helpers.mediumString), // BSUID or parent BSUID
 	context: v.optional(contextSchema)
 });
 
 // --- Main Variant Schema ---
-export const ycloudWhatsappMessageSchema = v.variant('type', [
-	// Text
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('text'),
-		text: textSchema
-	}),
-	// Image
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('image'),
-		image: imageSchema
-	}),
-	// Video
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('video'),
-		video: videoSchema
-	}),
-	// Audio
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('audio'),
-		audio: audioSchema
-	}),
-	// Document
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('document'),
-		document: documentSchema
-	}),
-	// Sticker
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('sticker'),
-		sticker: stickerSchema
-	}),
-	// Contacts
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('contacts'),
-		contacts: v.pipe(v.array(contactSchema), v.minLength(1))
-	}),
-	// Location
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('location'),
-		location: locationSchema
-	}),
-	// Reaction
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('reaction'),
-		reaction: reactionSchema
-	}),
-	// Interactive
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('interactive'),
-		interactive: interactiveSchema
-	}),
-	// Template
-	v.object({
-		...whatsappMessageSchemaBase.entries,
-		type: v.literal('template'),
-		template: templateSchema
-	})
-]);
+export const ycloudWhatsappMessageSchema = v.pipe(
+	v.variant('type', [
+		// Text
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('text'),
+			text: textSchema
+		}),
+		// Image
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('image'),
+			image: imageSchema
+		}),
+		// Video
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('video'),
+			video: videoSchema
+		}),
+		// Audio
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('audio'),
+			audio: audioSchema
+		}),
+		// Document
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('document'),
+			document: documentSchema
+		}),
+		// Sticker
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('sticker'),
+			sticker: stickerSchema
+		}),
+		// Contacts
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('contacts'),
+			contacts: v.pipe(v.array(contactSchema), v.minLength(1))
+		}),
+		// Location
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('location'),
+			location: locationSchema
+		}),
+		// Reaction
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('reaction'),
+			reaction: reactionSchema
+		}),
+		// Interactive
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('interactive'),
+			interactive: interactiveSchema
+		}),
+		// Template
+		v.object({
+			...whatsappMessageSchemaBase.entries,
+			type: v.literal('template'),
+			template: templateSchema
+		})
+	]),
+	v.check(
+		(input) => !!input.to?.trim() || !!input.recipient?.trim(),
+		'Either to or recipient is required'
+	)
+);
 
 export type YCloudWhatsappMessage = v.InferOutput<typeof ycloudWhatsappMessageSchema>;
