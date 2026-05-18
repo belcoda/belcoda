@@ -68,7 +68,7 @@
 	const personActionHelperSchema = $derived(
 		setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
 			personActionHelper,
-			customSurveyQuestions
+			personSurveyQuestionsRaw
 		)
 	);
 	let submissionError: string | null = $state(null);

@@ -226,7 +226,7 @@ export function getSurveySchema(eventObj: SurveySchemaSource) {
 	);
 	const personActionHelperSchema = setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
 		personActionHelper,
-		customSurveyQuestions
+		survey.filter((question) => question.type.startsWith('person.'))
 	);
 	return v.object({
 		theme: v.optional(v.picklist(['default', 'embed'])),
