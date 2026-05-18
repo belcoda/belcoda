@@ -102,6 +102,13 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 }) {
 	const now = new Date();
 
+	const existingIdentity = await findWhatsappIdentityByBsuidUnsafe({
+		organizationId,
+		wabaId,
+		bsuid,
+		tx
+	});
+
 	const [upserted] = await tx.dbTransaction.wrappedTransaction
 		.insert(personWhatsappIdentity)
 		.values({
@@ -141,13 +148,13 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 		throw new Error('Failed to upsert WhatsApp identity');
 	}
 
-	if (upserted.personId !== personId) {
+	if (existingIdentity && existingIdentity.personId !== personId) {
 		log.warn(
 			{
 				organizationId,
 				wabaId,
 				bsuid,
-				oldPersonId: upserted.personId,
+				oldPersonId: existingIdentity.personId,
 				newPersonId: personId
 			},
 			'Relinking WhatsApp BSUID identity to resolved person'
