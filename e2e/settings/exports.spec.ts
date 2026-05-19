@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { ExportsPage } from '../pages/settings/exports.page';
 import { getTestUsers } from '../helpers/auth';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
 const USERS = getTestUsers(PROJECT);
@@ -70,7 +71,7 @@ test.describe.serial('Settings: People Exports', () => {
 		await loginAsMember(page);
 		await exportsPage.goto();
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(exportsPage.emptyState).toHaveCount(0);
 	});
 });

@@ -5,6 +5,7 @@ import { UsersPage } from '../pages/settings/users.page';
 import { OrganizationPage } from '../pages/organization.page';
 import { getTestUsers, signUpUser, verifyUserEmail } from '../helpers/auth';
 import { BASE_URL, getOrgSlug } from '../helpers/config';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
 const USERS = getTestUsers(PROJECT);
@@ -98,9 +99,7 @@ test.describe.serial('Settings: User Invitations', () => {
 		await loginAs(page, USERS.member.email, USERS.member.password);
 		await usersPage.goto();
 
-		await expect(page.getByText(/not authorized to access this page/i)).toBeVisible({
-			timeout: 15_000
-		});
+		await expectMemberCannotAccessSettings(page);
 		await expect(usersPage.inviteButton).toHaveCount(0);
 	});
 });

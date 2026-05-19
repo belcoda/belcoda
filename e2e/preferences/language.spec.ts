@@ -76,4 +76,19 @@ test.describe.serial('Preferences: Language', () => {
 
 		await expect(languagePage.selectTrigger).toContainText('English', { timeout: 10_000 });
 	});
+
+	test.afterAll(async ({ browser }) => {
+		const page = await browser.newPage();
+		const loginPage = new LoginPage(page);
+		const communityPage = new CommunityPage(page);
+		const languagePage = new PreferencesLanguagePage(page);
+
+		await loginPage.goto();
+		await loginPage.login(USERS.member.email, USERS.member.password);
+		await expect(page).toHaveURL('/community');
+		await communityPage.expectLoaded();
+		await languagePage.goto();
+		await languagePage.selectLanguage('en');
+		await page.close();
+	});
 });

@@ -18,7 +18,7 @@
 	</UniversalLayout>
 {:else}
 	<div class="flex h-screen w-full items-center justify-center">
-		<Empty.Root>
+		<Empty.Root data-testid="settings-unauthorized">
 			<Empty.Header>
 				<Empty.Media variant="icon">
 					<CogIcon />

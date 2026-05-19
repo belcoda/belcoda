@@ -1,4 +1,13 @@
-import type { Page, Locator } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
+
+function localeLabel(locale: string): string {
+	const labels: Record<string, string> = {
+		en: 'English',
+		es: 'Español',
+		pt: 'Português'
+	};
+	return labels[locale] ?? locale;
+}
 
 export class PreferencesLanguagePage {
 	readonly page: Page;
@@ -26,6 +35,7 @@ export class PreferencesLanguagePage {
 	async selectLanguage(locale: string) {
 		await this.selectTrigger.click();
 		await this.option(locale).click();
+		await expect(this.selectTrigger).toContainText(localeLabel(locale), { timeout: 10_000 });
 	}
 
 	async currentLanguage(): Promise<string> {

@@ -6,6 +6,7 @@ import {
 	WhatsAppTemplatesListPage
 } from '../pages/settings/whatsapp-templates.page';
 import { getTestUsers } from '../helpers/auth';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
 const USERS = getTestUsers(PROJECT);
@@ -121,7 +122,7 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 		const listPage = new WhatsAppTemplatesListPage(page);
 		await page.goto('/settings/whatsapp/templates');
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(listPage.createTemplateLink()).toHaveCount(0);
 		await expect(listPage.rowForTemplateId(ids.templateId)).toHaveCount(0);
 	});
@@ -131,7 +132,7 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 
 		await page.goto(`/settings/whatsapp/templates/${ids.templateId}`);
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(page.getByTestId('whatsapp-template-form')).toHaveCount(0);
 	});
 });

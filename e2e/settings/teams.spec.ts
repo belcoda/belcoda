@@ -4,6 +4,7 @@ import { CommunityPage } from '../pages/community/community.page';
 import { PersonCreatePage } from '../pages/community/person-create.page';
 import { TeamsPage, TeamDetailPage } from '../pages/settings/teams.page';
 import { getTestUsers } from '../helpers/auth';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'community' as const;
 const USERS = getTestUsers(PROJECT);
@@ -136,7 +137,7 @@ test.describe.serial('Settings: Teams', () => {
 		await loginAsMember(page);
 		await teamsPage.goto();
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(teamsPage.newTeamTrigger).toHaveCount(0);
 		await expect(teamsPage.teamRow(ids.teamId)).toHaveCount(0);
 	});
@@ -147,7 +148,7 @@ test.describe.serial('Settings: Teams', () => {
 		await loginAsMember(page);
 		await teamDetail.goto(ids.teamId);
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(teamDetail.addPersonTrigger).toHaveCount(0);
 		await expect(teamDetail.removePersonButton(ids.personId)).toHaveCount(0);
 	});

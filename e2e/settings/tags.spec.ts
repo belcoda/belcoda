@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { TagsPage } from '../pages/settings/tags.page';
 import { getTestUsers } from '../helpers/auth';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'community' as const;
 const USERS = getTestUsers(PROJECT);
@@ -110,7 +111,7 @@ test.describe.serial('Settings: Tags', () => {
 		await loginAsMember(page);
 		await tagsPage.goto();
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(tagsPage.newTagTrigger).toHaveCount(0);
 		await expect(tagsPage.tagRow(ids.tagId)).toHaveCount(0);
 	});

@@ -6,6 +6,7 @@ import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { ImportsPage } from '../pages/settings/imports.page';
 import { getTestUsers } from '../helpers/auth';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
 const USERS = getTestUsers(PROJECT);
@@ -197,7 +198,7 @@ test.describe.serial('Settings: People Imports', () => {
 		await loginAsMember(page);
 		await importsPage.goto();
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(importsPage.newImportTrigger).toHaveCount(0);
 	});
 });

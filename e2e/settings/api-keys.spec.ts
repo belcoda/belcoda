@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { ApiKeysPage } from '../pages/settings/api-keys.page';
 import { getTestUsers } from '../helpers/auth';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
 const USERS = getTestUsers(PROJECT);
@@ -50,7 +51,7 @@ test.describe.serial('Settings: API Keys', () => {
 		await loginAsMember(page);
 		await apiKeysPage.goto();
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(apiKeysPage.newApiKeyTrigger).toHaveCount(0);
 		await expect(apiKeysPage.apiKeyRow(state.name)).toHaveCount(0);
 	});

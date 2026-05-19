@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { SendSignaturesPage } from '../pages/settings/send-signatures.page';
 import { getTestUsers } from '../helpers/auth';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
 const USERS = getTestUsers(PROJECT);
@@ -133,7 +134,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 		await loginAsMember(page);
 		await sendSignaturesPage.goto();
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(sendSignaturesPage.newSignatureTrigger).toHaveCount(0);
 		await expect(sendSignaturesPage.signatureRowByEmail(state.emailAddress)).toHaveCount(0, {
 			timeout: 5_000
