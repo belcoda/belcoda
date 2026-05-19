@@ -64,8 +64,8 @@
 					/>
 					<InputGroup.Addon align="block-end">
 						<InputGroup.Text class="ms-auto"
-							><span class:text-destructive={$data.note.length > MEDIUM_STRING_MAX_LENGTH}
-								>{$data.note.length}/{MEDIUM_STRING_MAX_LENGTH}</span
+							><span class:text-destructive={($data.note?.length ?? 0) > MEDIUM_STRING_MAX_LENGTH}
+								>{$data.note?.length ?? 0}/{MEDIUM_STRING_MAX_LENGTH}</span
 							></InputGroup.Text
 						>
 					</InputGroup.Addon>
