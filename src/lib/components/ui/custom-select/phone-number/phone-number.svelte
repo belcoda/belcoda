@@ -70,13 +70,13 @@
 	function getValue() {
 		return phoneNumber as string;
 	}
-	function setValue(newValue: string) {
+	function setValue(newValue: string | null | undefined) {
 		const internationalPhoneNumber = getInternationalPhoneNumber(
 			newValue,
 			selectedCountry || defaultCountryCode
 		);
 		phoneNumber = newValue;
-		value = internationalPhoneNumber;
+		value = internationalPhoneNumber || undefined;
 		valid = validInternationalPhoneNumber;
 	}
 
