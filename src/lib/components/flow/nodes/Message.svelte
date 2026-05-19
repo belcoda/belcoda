@@ -37,7 +37,7 @@
 
 	// Sync changes back to the Flow state
 	$effect(() => {
-		updateNodeData(id, { text, buttons, imageUrl });
+		updateNodeData(id, $state.snapshot({ text, buttons, imageUrl }));
 		updateNodeInternals(id);
 	});
 
