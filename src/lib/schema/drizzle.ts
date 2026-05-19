@@ -375,6 +375,10 @@ export const person = pgTable(
 		mostRecentActivityPreview: jsonb(
 			'most_recent_activity_preview'
 		).$type<ActivityPreviewPayload>(),
+		mostRecentWhatsappMessageReceivedAt: timestamp('most_recent_whatsapp_message_received_at', {
+			withTimezone: true,
+			mode: 'date'
+		}),
 
 		profilePicture: text('profile_picture'),
 		addedFrom: jsonb('added_from').notNull().$type<PersonAddedFrom>(),

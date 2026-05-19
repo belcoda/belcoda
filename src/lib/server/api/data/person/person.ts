@@ -17,6 +17,10 @@ import {
 import { parse } from 'valibot';
 import { type ListFilter } from '$lib/schema/helpers';
 import { addPersonToTeam } from '$lib/server/api/data/person/team';
+import { listPersonsQuery } from '$lib/zero/query/person/list';
+
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 export async function createPerson({
 	tx,
@@ -313,7 +317,6 @@ export async function _getPersonByIdUnsafeNoTenantCheck({
 	return row?.organizationId ?? null;
 }
 
-import { listPersonsQuery } from '$lib/zero/query/person/list';
 export async function listPersons({
 	ctx,
 	input,
@@ -355,4 +358,39 @@ export async function _countPersons({
 		.from(person)
 		.where(whereClause);
 	return result.count;
+}
+
+export async function _updateMostRecentWhatsappMessageReceivedAtUnsafe({
+	tx,
+	args
+}: {
+	tx: ServerTransaction;
+	args: {
+		personId: string;
+		organizationId: string;
+		mostRecentWhatsappMessageReceivedAt: Date;
+	};
+}) {
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(person)
+		.set({
+			mostRecentWhatsappMessageReceivedAt: args.mostRecentWhatsappMessageReceivedAt
+		})
+		.where(
+			and(
+				eq(person.id, args.personId),
+				eq(person.organizationId, args.organizationId),
+				isNull(person.deletedAt)
+			)
+		)
+		.returning();
+
+	if (!updated) {
+		// let's not fail because ultimately this is not critical, it's just a helper for determining if the customer service window is open
+		// but good to know if it fails because it's probably an indicator of some other problem
+		log.warn(
+			{ personId: args.personId, organizationId: args.organizationId },
+			'Unable to update most recent whatsapp message received at'
+		);
+	}
 }

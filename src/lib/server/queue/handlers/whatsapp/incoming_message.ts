@@ -13,6 +13,7 @@ import pino from '$lib/pino';
 import { and, eq } from 'drizzle-orm';
 import { whatsappThread } from '$lib/schema/drizzle';
 import { extractButtonActionString } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
+import { _updateMostRecentWhatsappMessageReceivedAtUnsafe } from '$lib/server/api/data/person/person';
 const log = pino(import.meta.url);
 import { _getActionCodeUnsafe } from '$lib/server/api/data/action/check';
 import { extractActionCode } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/action_code';
@@ -399,7 +400,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				inboundMessage: parsed as IncomingMessage,
 				organizationId
 			});
-			const whatsappMessage = await createWhatsAppMessage({
+			await createWhatsAppMessage({
 				message: convertedMessage,
 				personId,
 				id: insertedWhatsAppMessageId,
@@ -407,6 +408,19 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				organizationId,
 				tx
 			});
+
+			// even if we don't create an activity, we want to update the most recent whatsapp message received at because it is used for determining if the customer service window is open
+			await _updateMostRecentWhatsappMessageReceivedAtUnsafe({
+				tx,
+				args: {
+					personId,
+					organizationId,
+					mostRecentWhatsappMessageReceivedAt: parsed.whatsappInboundMessage.sendTime
+						? new Date(parsed.whatsappInboundMessage.sendTime)
+						: new Date()
+				}
+			});
+
 			// Don't create an activity for reaction messages (we'll add it to existing activity)
 			if (logActivity) {
 				if (!insertedWhatsAppMessageId) {
