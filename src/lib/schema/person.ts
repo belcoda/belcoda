@@ -37,6 +37,7 @@ export const personSchema = v.object({
 
 	mostRecentActivityAt: helpers.date,
 	mostRecentActivityPreview: v.nullable(activityPreviewPayloads),
+	mostRecentWhatsappMessageReceivedAt: v.nullable(helpers.date),
 
 	profilePicture: v.nullable(helpers.url),
 	addedFrom: personAddedFrom,
