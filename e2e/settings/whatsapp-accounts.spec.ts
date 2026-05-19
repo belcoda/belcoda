@@ -4,6 +4,7 @@ import { CommunityPage } from '../pages/community/community.page';
 import { WhatsappAccountsPage } from '../pages/settings/whatsapp-accounts.page';
 import { getTestUsers } from '../helpers/auth';
 import {
+	E2E_EMBEDDED_SIGNUP_PHONE_NUMBER,
 	E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
 	E2E_EMBEDDED_SIGNUP_WABA_ID
 } from '../helpers/config';
@@ -64,7 +65,7 @@ test.describe.serial('Settings: WhatsApp accounts', () => {
 		});
 
 		await expect(accountsPage.activatedCard()).toBeVisible({ timeout: 20_000 });
-		await expect(accountsPage.phoneLine()).toContainText(E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID);
+		await expect(accountsPage.phoneLine()).toContainText(E2E_EMBEDDED_SIGNUP_PHONE_NUMBER);
 		await expect(accountsPage.wabaLine()).toContainText(E2E_EMBEDDED_SIGNUP_WABA_ID);
 		await expect
 			.poll(
