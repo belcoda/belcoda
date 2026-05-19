@@ -21,6 +21,8 @@
 		value: string | null | undefined,
 		variables: string[]
 	): string[] {
+		// Guard against null/undefined to prevent TypeError when calling matchAll
+		// WhatsApp templates can have null text values when first created
 		const safeValue = value ?? '';
 		// Extract all unique {{param_name}} patterns from the string
 		const matches = Array.from(new Set([...safeValue.matchAll(/{{([1-9])}}/g)].map((m) => m[1])));
