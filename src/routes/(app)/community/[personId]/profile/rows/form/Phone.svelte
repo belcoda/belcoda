@@ -24,6 +24,7 @@
 			/* svelte-ignore state_referenced_locally */
 			phoneNumber: person.phoneNumber || undefined
 		},
+		validateOnLoad: false,
 		onSubmit: async (data) => {
 			const response = z.mutate(
 				mutators.person.update({
