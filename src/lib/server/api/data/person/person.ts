@@ -356,3 +356,22 @@ export async function _countPersons({
 		.where(whereClause);
 	return result.count;
 }
+
+export async function updateMostRecentWhatsappMessageReceivedAt({
+	tx,
+	args
+}: {
+	tx: ServerTransaction;
+	args: {
+		personId: string;
+		organizationId: string;
+		mostRecentWhatsappMessageReceivedAt: Date;
+	};
+}) {
+	await tx.dbTransaction.wrappedTransaction
+		.update(person)
+		.set({
+			mostRecentWhatsappMessageReceivedAt: args.mostRecentWhatsappMessageReceivedAt
+		})
+		.where(and(eq(person.id, args.personId), eq(person.organizationId, args.organizationId)));
+}
