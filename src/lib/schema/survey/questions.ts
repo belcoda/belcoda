@@ -207,6 +207,7 @@ export type SurveyQuestionResponse = v.InferOutput<typeof surveyQuestionResponse
 
 type SurveySchemaSource = {
 	settings?: {
+		phoneNumberRequired?: boolean;
 		survey?: {
 			collections?: {
 				questions?: SurveyQuestion[];
@@ -224,10 +225,16 @@ export function getSurveySchema(eventObj: SurveySchemaSource) {
 	const customQuestionSurveySchema = v.object(
 		convertQuestionsToValibotSchema(customSurveyQuestions)
 	);
-	const personActionHelperSchema = setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
+	const basePersonActionHelperSchema = setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
 		personActionHelper,
-		customSurveyQuestions
+		survey.filter((question) => question.type.startsWith('person.'))
 	);
+	const personActionHelperSchema = eventObj.settings?.phoneNumberRequired
+		? v.object({
+				...basePersonActionHelperSchema.entries,
+				phoneNumber: helpers.phoneNumber
+			})
+		: basePersonActionHelperSchema;
 	return v.object({
 		theme: v.optional(v.picklist(['default', 'embed'])),
 		person: personActionHelperSchema,
