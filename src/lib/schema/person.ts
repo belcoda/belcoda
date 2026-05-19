@@ -49,7 +49,7 @@ export const personSchema = v.object({
 export type PersonSchema = v.InferOutput<typeof personSchema>;
 
 export const personApiSchema = v.object({
-	...v.omit(personSchema, ['organizationId']).entries,
+	...v.omit(personSchema, ['organizationId', 'mostRecentWhatsappMessageReceivedAt']).entries,
 	dateOfBirth: v.nullable(helpers.dateToString),
 	mostRecentActivityAt: helpers.dateToString,
 	createdAt: helpers.dateToString,
