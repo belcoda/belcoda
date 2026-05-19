@@ -50,25 +50,9 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium
 
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-
       - name: Run e2e global setup once
-        run: |
-          flyctl proxy 5432 -a belcodadb-staging &
-          PROXY_PID=$!
-          sleep 5
-
-          npm run test:e2e:setup
-          SETUP_EXIT=$?
-
-          kill $PROXY_PID 2>/dev/null || true
-
-          exit $SETUP_EXIT
+        run: npm run test:e2e:setup
         env:
-          DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          ZERO_UPSTREAM_DB: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          ZERO_REPLICA_FILE: /tmp/sync-replica.db
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           E2E_BASE_URL: 'https://staging.belcoda.com'
 
       - name: Upload e2e auth state
@@ -135,25 +119,9 @@ jobs:
           name: e2e-auth-state
           path: e2e/.auth
 
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-
       - name: Run e2e tests against staging
-        run: |
-          flyctl proxy 5432 -a belcodadb-staging &
-          PROXY_PID=$!
-          sleep 5
-
-          npx playwright test --project="${{ matrix.project }}"
-          TEST_EXIT=$?
-
-          kill $PROXY_PID 2>/dev/null || true
-
-          exit $TEST_EXIT
+        run: npx playwright test --project="${{ matrix.project }}"
         env:
-          DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          ZERO_UPSTREAM_DB: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          ZERO_REPLICA_FILE: /tmp/sync-replica.db
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           E2E_BASE_URL: 'https://staging.belcoda.com'
           E2E_PROJECT: ${{ matrix.project }}
           SKIP_E2E_GLOBAL_SETUP: '1'
