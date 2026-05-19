@@ -1,1 +1,0 @@
-ALTER TABLE "organization" ADD COLUMN "reset_free_quotas_after" timestamp with time zone;

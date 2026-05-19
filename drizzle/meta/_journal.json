@@ -78,6 +78,13 @@
       "when": 1778224676161,
       "tag": "0010_fresh_may_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1779170391297,
+      "tag": "0011_previous_nova",
+      "breakpoints": true
     }
   ]
 }
