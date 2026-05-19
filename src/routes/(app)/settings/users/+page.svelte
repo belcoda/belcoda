@@ -243,7 +243,10 @@
 							</Table.Header>
 							<Table.Body>
 								{#each invitations as invitation (invitation.id)}
-									<Table.Row>
+									<Table.Row
+										data-testid="settings-users-invitation-row"
+										data-invitation-email={invitation.email}
+									>
 										<Table.Cell class="font-medium">{invitation.email}</Table.Cell>
 										<Table.Cell>
 											<Badge variant={getRoleBadgeVariant(invitation.role)}>
@@ -259,6 +262,7 @@
 												size="icon-sm"
 												onclick={() => handleCancelInvitation(invitation.id)}
 												class="text-destructive hover:text-destructive"
+												data-testid="settings-users-cancel-invitation"
 											>
 												<XIcon class="size-4" />
 											</Button>

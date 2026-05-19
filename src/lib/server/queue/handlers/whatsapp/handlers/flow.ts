@@ -276,13 +276,14 @@ export async function handleFlowResponse({
 					organizationId: event.organizationId,
 					tx
 				});
-				const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
 				const { phoneNumber: userProvidedPhone, ...responseJsonWithoutPhoneNumber } = responseJson;
 				const resolvedPhoneNumber = resolveFlowResponsePhoneNumber({
 					userProvidedPhone: typeof userProvidedPhone === 'string' ? userProvidedPhone : undefined,
 					from,
 					organizationCountry: organization.country
 				});
+				const countryCode =
+					safeGetCountryCodeFromPhoneNumber(resolvedPhoneNumber) || organization.country;
 				const parsedPersonAction = parse(
 					intersect([personActionHelperWhatsAppFlow, personActionHelperCustomFieldsOnly]),
 					{
@@ -334,14 +335,21 @@ export async function handleFlowResponse({
 					organizationId: petition.organizationId,
 					tx
 				});
-				const countryCode = safeGetCountryCodeFromPhoneNumber(from) || organization.country;
+				const { phoneNumber: userProvidedPhone, ...responseJsonWithoutPhoneNumber } = responseJson;
+				const resolvedPhoneNumber = resolveFlowResponsePhoneNumber({
+					userProvidedPhone: typeof userProvidedPhone === 'string' ? userProvidedPhone : undefined,
+					from,
+					organizationCountry: organization.country
+				});
+				const countryCode =
+					safeGetCountryCodeFromPhoneNumber(resolvedPhoneNumber) || organization.country;
 				const parsedPersonAction = parse(
 					intersect([personActionHelperWhatsAppFlow, personActionHelperCustomFieldsOnly]),
 					{
 						subscribed: true,
 						country: countryCode,
-						phoneNumber: from,
-						...responseJson
+						...responseJsonWithoutPhoneNumber,
+						phoneNumber: resolvedPhoneNumber
 					}
 				);
 				const parsedCustomFields = safeParse(personActionHelperCustomFieldsOnly, responseJson);

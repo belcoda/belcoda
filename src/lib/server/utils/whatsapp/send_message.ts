@@ -27,6 +27,7 @@ import {
 	resolveTemplateParamSources,
 	type TemplateVariableValueMap
 } from '$lib/utils/template-variables';
+import { resolveOutboundWhatsappRecipient } from '$lib/server/api/data/whatsapp/identity';
 
 type WhatsappMessage =
 	| ReturnType<typeof convertWhatsappMessageToApiFormat>
@@ -127,24 +128,27 @@ export async function sendWhatsappMessage({
 		if (!personObject) {
 			throw new Error('Person not found');
 		}
-		const to = personObject.whatsAppUsername || personObject.phoneNumber;
-		if (!to) {
-			throw new Error('Person does not have a WhatsApp username or phone number');
-		}
+		const recipient = await resolveOutboundWhatsappRecipient({
+			organizationId: organization.id,
+			wabaId: organization.settings.whatsApp.wabaId,
+			personId: personObject.id,
+			phoneNumber: personObject.phoneNumber,
+			tx
+		});
 		const messageToSend = await convertWhatsappMessageToApiFormat({
 			whatsappMessage: whatsappMessage,
 			nodeId: nodeId,
 			whatsappThreadId: threadId,
 			whatsappMessageId: whatsappMessageId,
 			from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
-			to: to
+			...recipient
 		});
 		const ycloudResponseId = await sendWhatsappMessageToYCloud(messageToSend);
 		if (!ycloudResponseId) {
 			throw new Error('Failed to send message to YCloud');
 		}
 		const messageToInsert: typeof whatsappMessageTable.$inferInsert = {
-			id: messageId,
+			id: whatsappMessageId,
 			organizationId: organization.id,
 			personId: personId,
 			userId: sendingUserId,
@@ -161,7 +165,7 @@ export async function sendWhatsappMessage({
 		await createActivityWhatsAppMessageOutgoing({
 			organizationId: organization.id,
 			personId: personId,
-			referenceId: messageId,
+			referenceId: whatsappMessageId,
 			tx
 		});
 		await updateLatestActivity({
@@ -225,10 +229,13 @@ export async function sendWhatsappTemplateMessage({
 					where: eq(userTable.id, sendingUserId)
 				})
 			: null;
-		const to = personObject.whatsAppUsername || personObject.phoneNumber;
-		if (!to) {
-			throw new Error('Person does not have a WhatsApp username or phone number');
-		}
+		const recipient = await resolveOutboundWhatsappRecipient({
+			organizationId: organization.id,
+			wabaId: organization.settings.whatsApp.wabaId,
+			personId: personObject.id,
+			phoneNumber: personObject.phoneNumber,
+			tx
+		});
 		const whatsappMessageId = uuidv7();
 		const resolvedMessage = resolveWhatsappTemplateMessageData({
 			message,
@@ -245,7 +252,7 @@ export async function sendWhatsappTemplateMessage({
 			whatsappThreadId: threadId,
 			whatsappMessageId: whatsappMessageId,
 			from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
-			to: to,
+			...recipient,
 			name: template.name,
 			language: template.locale
 		});
@@ -261,7 +268,7 @@ export async function sendWhatsappTemplateMessage({
 			threadId: threadId
 		});
 		const messageToInsert: typeof whatsappMessageTable.$inferInsert = {
-			id: messageId,
+			id: whatsappMessageId,
 			organizationId: organization.id,
 			personId: personId,
 			userId: sendingUserId,
@@ -281,7 +288,7 @@ export async function sendWhatsappTemplateMessage({
 		await createActivityWhatsAppMessageOutgoing({
 			organizationId: organization.id,
 			personId: personId,
-			referenceId: messageId,
+			referenceId: whatsappMessageId,
 			tx
 		});
 

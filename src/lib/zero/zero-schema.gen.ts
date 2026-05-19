@@ -2067,6 +2067,89 @@ const personTeamTable = {
 	primaryKey: ['personId', 'teamId'],
 	serverName: 'person_team'
 } as const;
+const personWhatsappIdentityTable = {
+	name: 'personWhatsappIdentity',
+	columns: {
+		id: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string
+		},
+		organizationId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'organization_id'
+		},
+		personId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'person_id'
+		},
+		wabaId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'waba_id'
+		},
+		bsuid: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string
+		},
+		parentUserId: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string,
+			serverName: 'parent_user_id'
+		},
+		waPhone: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string,
+			serverName: 'wa_phone'
+		},
+		displayName: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as string,
+			serverName: 'display_name'
+		},
+		firstSeenAt: {
+			type: 'number',
+			optional: false,
+			customType: null as unknown as number,
+			serverName: 'first_seen_at'
+		},
+		lastSeenAt: {
+			type: 'number',
+			optional: false,
+			customType: null as unknown as number,
+			serverName: 'last_seen_at'
+		},
+		createdAt: {
+			type: 'number',
+			optional: false,
+			customType: null as unknown as number,
+			serverName: 'created_at'
+		},
+		updatedAt: {
+			type: 'number',
+			optional: false,
+			customType: null as unknown as number,
+			serverName: 'updated_at'
+		},
+		deletedAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'deleted_at'
+		}
+	},
+	primaryKey: ['id'],
+	serverName: 'person_whatsapp_identity'
+} as const;
 const petitionTable = {
 	name: 'petition',
 	columns: {
@@ -3091,6 +3174,14 @@ const personRelationships = {
 			cardinality: 'one'
 		}
 	],
+	whatsappIdentities: [
+		{
+			sourceField: ['id'],
+			destField: ['personId'],
+			destSchema: 'personWhatsappIdentity',
+			cardinality: 'many'
+		}
+	],
 	teamMemberships: [
 		{ sourceField: ['id'], destField: ['personId'], destSchema: 'personTeam', cardinality: 'many' }
 	],
@@ -3359,6 +3450,19 @@ const personTagRelationships = {
 	],
 	tag: [{ sourceField: ['tagId'], destField: ['id'], destSchema: 'tag', cardinality: 'one' }]
 } as const;
+const personWhatsappIdentityRelationships = {
+	organization: [
+		{
+			sourceField: ['organizationId'],
+			destField: ['id'],
+			destSchema: 'organization',
+			cardinality: 'one'
+		}
+	],
+	person: [
+		{ sourceField: ['personId'], destField: ['id'], destSchema: 'person', cardinality: 'one' }
+	]
+} as const;
 const petitionSignatureRelationships = {
 	organization: [
 		{
@@ -3476,6 +3580,7 @@ export const schema = {
 		personNote: personNoteTable,
 		personTag: personTagTable,
 		personTeam: personTeamTable,
+		personWhatsappIdentity: personWhatsappIdentityTable,
 		petition: petitionTable,
 		petitionSignature: petitionSignatureTable,
 		subscription: subscriptionTable,
@@ -3510,6 +3615,7 @@ export const schema = {
 		personNote: personNoteRelationships,
 		personTeam: personTeamRelationships,
 		personTag: personTagRelationships,
+		personWhatsappIdentity: personWhatsappIdentityRelationships,
 		petitionSignature: petitionSignatureRelationships,
 		subscription: subscriptionRelationships,
 		teamMember: teamMemberRelationships,
@@ -3604,6 +3710,11 @@ export type PersonTag = Row<(typeof schema)['tables']['personTag']>;
  * This type is auto-generated from your Drizzle schema definition.
  */
 export type PersonTeam = Row<(typeof schema)['tables']['personTeam']>;
+/**
+ * Represents a row from the "personWhatsappIdentity" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type PersonWhatsappIdentity = Row<(typeof schema)['tables']['personWhatsappIdentity']>;
 /**
  * Represents a row from the "petition" table.
  * This type is auto-generated from your Drizzle schema definition.

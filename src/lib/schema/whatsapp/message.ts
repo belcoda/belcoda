@@ -55,6 +55,10 @@ export const whatsappMessage = v.object({
 	image_url: v.optional(url),
 	sticker_url: v.optional(url),
 	video_url: v.optional(url),
+	wamid: v.optional(v.nullable(shortString)),
+	waba: v.optional(v.nullable(shortString)),
+	from: v.optional(v.nullable(shortString)),
+	to: v.optional(v.nullable(shortString)),
 	audio_url: v.optional(url),
 	buttons: v.optional(
 		v.array(
@@ -64,7 +68,7 @@ export const whatsappMessage = v.object({
 					v.minLength(1, 'Button text must be at least 1 character'),
 					v.maxLength(20, 'Button text must be less than 20 characters')
 				),
-				action: uuid
+				action: mediumString
 			})
 		)
 	),

@@ -9,6 +9,8 @@ import { getPerson, updatePerson, deletePerson } from '$lib/server/api/data/pers
 import { personApiSchema, updatePersonRest as updatePersonRestSchema } from '$lib/schema/person';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
+import { parse } from 'valibot';
+
 export async function GET(event) {
 	const { organizationId, ctx } = safeApiRouteQueryContext(event.locals.authorizedApiOrganization);
 	const personId = event.params.personId;
@@ -19,7 +21,8 @@ export async function GET(event) {
 		});
 		return person;
 	});
-	return json(processOutgoingBody(result, personApiSchema));
+	const parsedPerson = parse(personApiSchema, result);
+	return json(processOutgoingBody(parsedPerson, personApiSchema));
 }
 
 export async function PUT(event) {

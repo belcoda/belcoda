@@ -1,4 +1,5 @@
-import { BASE_URL } from './config';
+import { BASE_URL, getUserEmails } from './config';
+import type { E2EProject } from './config';
 
 export type UserRole = 'owner' | 'admin' | 'member';
 
@@ -9,26 +10,32 @@ export interface TestUser {
 	role: string;
 }
 
-export const TEST_USERS: Record<UserRole, TestUser> = {
-	owner: {
-		email: 'e2e-owner@belcoda.test',
-		password: 'TestPass123!',
-		name: 'E2E Owner',
-		role: 'owner'
-	},
-	admin: {
-		email: 'e2e-admin@belcoda.test',
-		password: 'TestPass123!',
-		name: 'E2E Admin',
-		role: 'admin'
-	},
-	member: {
-		email: 'e2e-member@belcoda.test',
-		password: 'TestPass123!',
-		name: 'E2E Member',
-		role: 'member'
-	}
-};
+const E2E_PASSWORD = 'TestPass123!';
+
+export function getTestUsers(project: E2EProject): Record<UserRole, TestUser> {
+	const emails = getUserEmails(project);
+	const projectLabel = project.charAt(0).toUpperCase() + project.slice(1);
+	return {
+		owner: {
+			email: emails.owner,
+			password: E2E_PASSWORD,
+			name: `E2E ${projectLabel} Owner`,
+			role: 'owner'
+		},
+		admin: {
+			email: emails.admin,
+			password: E2E_PASSWORD,
+			name: `E2E ${projectLabel} Admin`,
+			role: 'admin'
+		},
+		member: {
+			email: emails.member,
+			password: E2E_PASSWORD,
+			name: `E2E ${projectLabel} Member`,
+			role: 'member'
+		}
+	};
+}
 
 export async function verifyUserEmail(email: string): Promise<void> {
 	const response = await fetch(`${BASE_URL}/api/e2e/verify-email`, {

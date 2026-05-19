@@ -45,6 +45,7 @@ export function generatePetitions(
 						}
 					]
 				},
+				phoneNumberRequired: false,
 				tags: [],
 				whatsappFlowId: null,
 				whatsappFlowYCloudId: null,

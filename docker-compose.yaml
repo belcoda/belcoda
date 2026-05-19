@@ -1,0 +1,10 @@
+# setup script (only used for agent cloud environments (eg: codex etc))
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: belcoda
+    ports:
+      - '5432:5432'

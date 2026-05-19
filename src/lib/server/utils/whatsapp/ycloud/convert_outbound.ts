@@ -36,6 +36,7 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	whatsappMessageId,
 	from,
 	to,
+	recipient,
 	name,
 	language
 }: {
@@ -44,7 +45,8 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	whatsappThreadId: string;
 	whatsappMessageId: string;
 	from: string;
-	to: string;
+	to?: string;
+	recipient?: string;
 	name: string;
 	language: LanguageCode;
 }): YCloudWhatsappMessage {
@@ -114,7 +116,8 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	}
 	return {
 		from: from,
-		to: to,
+		...(to ? { to } : {}),
+		...(recipient ? { recipient } : {}),
 		type: 'template',
 		externalId: createExternalId({
 			whatsappMessageId: whatsappMessageId,
@@ -217,21 +220,23 @@ export function convertWhatsappMessageToApiFormat({
 	whatsappThreadId,
 	whatsappMessageId,
 	from,
-	to
+	to,
+	recipient
 }: {
 	whatsappMessage: WhatsappMessage;
 	nodeId: string | null;
 	whatsappThreadId: string;
 	whatsappMessageId: string | null;
 	from: string;
-	to: string;
+	to?: string;
+	recipient?: string;
 }): YCloudWhatsappMessage {
 	const externalId = createExternalId({
 		whatsappMessageId: whatsappMessageId,
 		whatsappThreadId: whatsappThreadId,
 		nodeId: nodeId
 	});
-	if (whatsappMessage.buttons) {
+	if (whatsappMessage.buttons && whatsappMessage.buttons.length > 0) {
 		return generateInteractiveMessage({
 			buttons: whatsappMessage.buttons,
 			text: whatsappMessage.text,
@@ -239,6 +244,7 @@ export function convertWhatsappMessageToApiFormat({
 			threadId: whatsappThreadId,
 			messageId: whatsappMessageId,
 			to: to,
+			recipient,
 			from: from,
 			externalId: externalId
 		});
@@ -247,6 +253,7 @@ export function convertWhatsappMessageToApiFormat({
 			imageUrl: whatsappMessage.image_url,
 			text: whatsappMessage.text,
 			to: to,
+			recipient,
 			from: from,
 			externalId: externalId
 		});
@@ -254,6 +261,7 @@ export function convertWhatsappMessageToApiFormat({
 		return generateTextMessage({
 			text: whatsappMessage.text || '[Error: Unknown message]',
 			to: to,
+			recipient,
 			from: from,
 			externalId: externalId
 		});
@@ -264,12 +272,14 @@ function generateImageMessage({
 	imageUrl,
 	text,
 	to,
+	recipient,
 	from,
 	externalId
 }: {
 	imageUrl: string;
 	text?: string;
-	to: string;
+	to?: string;
+	recipient?: string;
 	from: string;
 	externalId: string;
 }): YCloudWhatsappMessage {
@@ -283,7 +293,8 @@ function generateImageMessage({
 			};
 	return {
 		from: from,
-		to: to,
+		...(to ? { to } : {}),
+		...(recipient ? { recipient } : {}),
 		type: 'image',
 		externalId: externalId,
 		image: image
@@ -295,6 +306,7 @@ function generateInteractiveMessage({
 	text,
 	imageUrl,
 	to,
+	recipient,
 	from,
 	externalId,
 	threadId,
@@ -303,7 +315,8 @@ function generateInteractiveMessage({
 	buttons: { text: string; action: string }[];
 	text?: string;
 	imageUrl?: string;
-	to: string;
+	to?: string;
+	recipient?: string;
 	from: string;
 	externalId: string;
 	threadId: string;
@@ -319,7 +332,8 @@ function generateInteractiveMessage({
 		: undefined;
 	return {
 		from: from,
-		to: to,
+		...(to ? { to } : {}),
+		...(recipient ? { recipient } : {}),
 		type: 'interactive',
 		externalId: externalId,
 		interactive: {
@@ -348,17 +362,20 @@ function generateInteractiveMessage({
 function generateTextMessage({
 	text,
 	to,
+	recipient,
 	from,
 	externalId
 }: {
 	text: string;
-	to: string;
+	to?: string;
+	recipient?: string;
 	from: string;
 	externalId: string;
 }): YCloudWhatsappMessage {
 	return {
 		from: from,
-		to: to,
+		...(to ? { to } : {}),
+		...(recipient ? { recipient } : {}),
 		type: 'text',
 		externalId: externalId,
 		text: {

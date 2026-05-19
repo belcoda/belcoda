@@ -103,6 +103,11 @@
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
 			appState.activeOrganization?.data?.settings.whatsApp.number
 	);
+
+	function appendNode(newNode: Node | null) {
+		if (!newNode) return;
+		nodes = [...nodes, newNode];
+	}
 	const hasTemplateId = $derived(
 		appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
 	);
@@ -260,80 +265,50 @@
 								<DropdownMenu.Item
 									data-testid="flow-add-node-message"
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const lastNodeIndex = nodesSnapshot.length - 1;
-										const parentNode = nodesSnapshot[lastNodeIndex];
-										if (nodesSnapshot[lastNodeIndex]) {
-											const newNode = addNode(
-												'message',
-												//@ts-ignore
-												parentNode as Node,
-												nodesSnapshot as Node[]
-											);
-											if (newNode) {
-												nodes = [...nodes, newNode];
-											}
-										}
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNode(addNode('message', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Message`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const newNode = addNode(
-											'eventSignup',
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
-										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
-										}
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNode(addNode('eventSignup', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Event Signup`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const newNode = addNode(
-											'petitionSignup',
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
-										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
-										}
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNode(addNode('petitionSignup', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Petition Signup`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const newNode = addNode(
-											'tagAdd',
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
-										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
-										}
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNode(addNode('tagAdd', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Tag Add`}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item
 									onclick={() => {
-										const nodesSnapshot = $state.snapshot(nodes);
-										const newNode = addNode(
-											'teamAdd',
-											nodesSnapshot[nodesSnapshot.length - 1] as Node,
-											nodesSnapshot as Node[]
-										);
-										if (newNode) {
-											nodes = [...nodes, newNode];
-										}
+										const nodesSnapshot = nodes as Node[];
+										const parentNode = nodesSnapshot[nodesSnapshot.length - 1];
+										if (!parentNode) return;
+										appendNode(addNode('teamAdd', parentNode, nodesSnapshot) as Node | null);
 									}}
 								>
 									{t`Team Add`}

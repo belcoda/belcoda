@@ -1,7 +1,8 @@
-import type { Node, Edge } from '@xyflow/svelte';
+import type { Node } from '@xyflow/svelte';
 import { v4 as uuidv4 } from 'uuid';
 import { findPositionRadial } from '../placeNode';
-import { flowSchema, type Flow, type NodeType } from '$lib/schema/flow/index';
+import type { Flow, NodeType } from '$lib/schema/flow/index';
+
 export function startingNodes({
 	defaultTemplateId
 }: {

@@ -33,6 +33,7 @@ import type {
 } from '$lib/schema/webhook';
 import type { WebhookLogSchema } from '$lib/schema/webhook-log';
 import type { PersonSchema, Gender } from '$lib/schema/person';
+import type { PersonWhatsappIdentitySchema } from '$lib/schema/person-whatsapp-identity';
 import type { PersonImportSchema, PersonImportStatus } from '$lib/schema/person-import';
 import type { ActivitySchema } from '$lib/schema/activity';
 import type { WhatsappGroupSchema } from '$lib/schema/whatsapp-group';
@@ -403,6 +404,43 @@ type PersonDrizzleMatchesValibot = IsTrue<
 	typeof person.$inferSelect extends PersonSchema ? true : false
 >;
 
+export const personWhatsappIdentity = pgTable(
+	'person_whatsapp_identity',
+	{
+		id: uuid('id').notNull().primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		personId: uuid('person_id')
+			.notNull()
+			.references(() => person.id),
+		wabaId: text('waba_id').notNull(),
+		bsuid: text('bsuid').notNull(),
+		parentUserId: text('parent_user_id'),
+		waPhone: text('wa_phone'),
+		displayName: text('display_name'),
+		firstSeenAt: timestamp('first_seen_at', { withTimezone: true, mode: 'date' }).notNull(),
+		lastSeenAt: timestamp('last_seen_at', { withTimezone: true, mode: 'date' }).notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [
+		uniqueIndex('person_whatsapp_identity_active_unique')
+			.on(table.organizationId, table.wabaId, table.bsuid)
+			.where(sql`${table.deletedAt} is null`),
+		index('person_whatsapp_identity_person_id').on(table.personId),
+		index('person_whatsapp_identity_org_waba').on(table.organizationId, table.wabaId)
+	]
+);
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type PersonWhatsappIdentityValibotMatchesDrizzle = IsTrue<
+	PersonWhatsappIdentitySchema extends typeof personWhatsappIdentity.$inferSelect ? true : false
+>;
+type PersonWhatsappIdentityDrizzleMatchesValibot = IsTrue<
+	typeof personWhatsappIdentity.$inferSelect extends PersonWhatsappIdentitySchema ? true : false
+>;
+
 export const personTeam = pgTable(
 	'person_team',
 	{
@@ -604,7 +642,8 @@ export const whatsappMessage = pgTable('whatsapp_message', {
 		.notNull()
 		.references(() => organization.id),
 	whatsappThreadId: uuid('whatsapp_thread_id').references(() => whatsappThread.id), //onlu matters for analytics and stuff
-	externalId: text('external_id'), // WhatsApp message ID. Used for efficient duplicate checking
+	// YCloud API message id (send response / webhook `whatsappMessage.id`). Not the Belcoda composite we pass as YCloud `externalId` when sending.
+	externalId: text('external_id'),
 	wamidId: text('wamid_id'), // wamid id (used for tracking read status, replies, reactions, etc..)
 	type: text('type').$type<WhatsappMessageActivityType>().notNull(),
 	message: jsonb('message').$type<WhatsappMessage>().notNull(),
@@ -1081,12 +1120,24 @@ export const personRelations = relations(person, ({ one, many }) => ({
 		fields: [person.organizationId],
 		references: [organization.id]
 	}),
+	whatsappIdentities: many(personWhatsappIdentity),
 	teamMemberships: many(personTeam),
 	personTags: many(personTag),
 	eventSignups: many(eventSignup),
 	petitionSignatures: many(petitionSignature),
 	whatsappGroupMemberships: many(whatsappGroupMember),
 	notes: many(personNote)
+}));
+
+export const personWhatsappIdentityRelations = relations(personWhatsappIdentity, ({ one }) => ({
+	organization: one(organization, {
+		fields: [personWhatsappIdentity.organizationId],
+		references: [organization.id]
+	}),
+	person: one(person, {
+		fields: [personWhatsappIdentity.personId],
+		references: [person.id]
+	})
 }));
 
 export const personTeamRelation = relations(personTeam, ({ one }) => ({

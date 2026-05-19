@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
-import { TEST_USERS } from '../helpers/auth';
+import { getTestUsers } from '../helpers/auth';
+
+const PROJECT = 'auth' as const;
+const USERS = getTestUsers(PROJECT);
 
 test.describe('Unauthenticated Access', () => {
 	test('visiting /community redirects to /signup', async ({ page }) => {
@@ -35,7 +38,7 @@ test.describe('Login Form', () => {
 	test('invalid credentials show an error', async ({ page }) => {
 		const loginPage = new LoginPage(page);
 		await loginPage.goto();
-		await loginPage.login(TEST_USERS.owner.email, 'wrong-password');
+		await loginPage.login(USERS.owner.email, 'wrong-password');
 
 		await expect(page).toHaveURL('/login');
 		await loginPage.expectErrorMessage();
@@ -48,7 +51,7 @@ test.describe('Successful Login', () => {
 		const communityPage = new CommunityPage(page);
 
 		await loginPage.goto();
-		await loginPage.login(TEST_USERS.owner.email, TEST_USERS.owner.password);
+		await loginPage.login(USERS.owner.email, USERS.owner.password);
 
 		await expect(page).toHaveURL('/community');
 		await communityPage.expectLoaded();
@@ -61,7 +64,7 @@ test.describe('Logout', () => {
 		const communityPage = new CommunityPage(page);
 
 		await loginPage.goto();
-		await loginPage.login(TEST_USERS.member.email, TEST_USERS.member.password);
+		await loginPage.login(USERS.member.email, USERS.member.password);
 		await expect(page).toHaveURL('/community');
 		await communityPage.expectLoaded();
 

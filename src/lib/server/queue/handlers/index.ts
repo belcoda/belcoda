@@ -6,6 +6,7 @@ export { deployEventWhatsAppFlow } from '$lib/server/queue/handlers/event/deploy
 export { deployPetitionWhatsAppFlow } from '$lib/server/queue/handlers/petition/deployFlow';
 export { handleIncomingMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message';
 export { handleWhatsappTemplateReviewed } from '$lib/server/queue/handlers/whatsapp/template_reviewed';
+export { handleWhatsappMessageUpdated } from '$lib/server/queue/handlers/whatsapp/message_updated';
 export { processFlowNodeAction } from '$lib/server/queue/handlers/whatsapp/process_flow_node';
 export { sendEmailMessage } from '$lib/server/queue/handlers/email/send_email_message';
 export { buildEmailMessageSendQueue } from '$lib/server/queue/handlers/email/build_send_queue';
