@@ -1,0 +1,1 @@
+ALTER TABLE "person" ADD COLUMN "most_recent_whatsapp_message_received_at" timestamp with time zone;
