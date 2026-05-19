@@ -68,8 +68,7 @@ async function saveCookieConsentState() {
 	await browser.close();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default async function globalSetup(_config: FullConfig) {
+export async function runE2eGlobalSetup() {
 	console.log('\n🔧 E2E Setup: Preparing test data...\n');
 
 	await cleanup();
@@ -102,4 +101,13 @@ export default async function globalSetup(_config: FullConfig) {
 	await saveCookieConsentState();
 
 	console.log('\n✅ Setup complete!\n');
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default async function globalSetup(_config: FullConfig) {
+	if (process.env.SKIP_E2E_GLOBAL_SETUP === '1') {
+		console.log('Skipping global setup (SKIP_E2E_GLOBAL_SETUP=1)\n');
+		return;
+	}
+	await runE2eGlobalSetup();
 }
