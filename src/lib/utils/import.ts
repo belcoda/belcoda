@@ -186,10 +186,7 @@ function mapCsvRowToPerson(
 	csvRow: CsvRow,
 	organizationId: string,
 	importId: string
-): Omit<
-	PersonSchema,
-	'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'mostRecentWhatsappMessageReceivedAt'
-> {
+): Omit<PersonSchema, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
 	let country = csvRow['country']?.trim() || null;
 	if (country) {
 		const lowercased = country.toLowerCase();
@@ -286,6 +283,7 @@ function mapCsvRowToPerson(
 		profilePicture: csvRow['profile_picture'] || csvRow['profilePicture'] || null,
 		addedFrom,
 		mostRecentActivityAt: new Date(),
-		mostRecentActivityPreview: null
+		mostRecentActivityPreview: null,
+		mostRecentWhatsappMessageReceivedAt: null
 	};
 }
