@@ -186,7 +186,10 @@ function mapCsvRowToPerson(
 	csvRow: CsvRow,
 	organizationId: string,
 	importId: string
-): Omit<PersonSchema, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
+): Omit<
+	PersonSchema,
+	'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'mostRecentWhatsappMessageReceivedAt'
+> {
 	let country = csvRow['country']?.trim() || null;
 	if (country) {
 		const lowercased = country.toLowerCase();

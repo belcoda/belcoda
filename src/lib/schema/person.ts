@@ -58,7 +58,7 @@ export const personApiSchema = v.object({
 });
 
 export const readPersonRest = v.object({
-	...v.omit(personSchema, ['organizationId']).entries,
+	...v.omit(personSchema, ['organizationId', 'mostRecentWhatsappMessageReceivedAt']).entries,
 	dateOfBirth: v.nullable(helpers.timestampToDate),
 	mostRecentActivityAt: helpers.timestampToDate,
 	createdAt: helpers.timestampToDate,
@@ -68,7 +68,7 @@ export const readPersonRest = v.object({
 export type ReadPersonRest = v.InferOutput<typeof readPersonRest>;
 
 export const readPersonZero = v.object({
-	...personSchema.entries,
+	...v.omit(personSchema, ['mostRecentWhatsappMessageReceivedAt']).entries,
 	dateOfBirth: v.nullable(helpers.dateToTimestamp),
 	mostRecentActivityAt: helpers.dateToTimestamp,
 	createdAt: helpers.dateToTimestamp,
