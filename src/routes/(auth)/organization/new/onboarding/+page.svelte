@@ -16,11 +16,13 @@
 <head>
 	<!-- Event snippet for Submit lead form conversion page -->
 	<script>
-		gtag('event', 'conversion', {
-			send_to: 'AW-17963790839/zEgdCIevp_sbEPfj5vVC',
-			value: 1.0,
-			currency: 'JPY'
-		});
+		if (typeof gtag !== 'undefined') {
+			gtag('event', 'conversion', {
+				send_to: 'AW-17963790839/zEgdCIevp_sbEPfj5vVC',
+				value: 1.0,
+				currency: 'JPY'
+			});
+		}
 	</script>
 </head>
 <AuthLayout
