@@ -376,7 +376,13 @@ export async function _updateMostRecentWhatsappMessageReceivedAtUnsafe({
 		.set({
 			mostRecentWhatsappMessageReceivedAt: args.mostRecentWhatsappMessageReceivedAt
 		})
-		.where(and(eq(person.id, args.personId), eq(person.organizationId, args.organizationId)))
+		.where(
+			and(
+				eq(person.id, args.personId),
+				eq(person.organizationId, args.organizationId),
+				isNull(person.deletedAt)
+			)
+		)
 		.returning();
 
 	if (!updated) {
