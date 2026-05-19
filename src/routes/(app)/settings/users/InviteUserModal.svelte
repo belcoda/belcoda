@@ -32,7 +32,7 @@
 	}
 
 	async function handleInvite() {
-		if (!email.trim()) {
+		if (!(email || '').trim()) {
 			toast.error(t`Please enter an email address`);
 			return;
 		}
@@ -40,7 +40,7 @@
 		try {
 			submitting = true;
 			const result = await authClient.organization.inviteMember({
-				email: email.trim(),
+				email: (email || '').trim(),
 				role: role,
 				organizationId: appState.organizationId
 			});
@@ -49,7 +49,7 @@
 				throw new Error(result.error.message || t`Failed to send invitation`);
 			}
 
-			toast.success(t`Invitation sent to ${email.trim()}`);
+			toast.success(t`Invitation sent to ${(email || '').trim()}`);
 			email = '';
 			role = 'member';
 			isOpen = false;
@@ -109,7 +109,7 @@
 			</Button>
 			<Button
 				onclick={handleInvite}
-				disabled={submitting || !email.trim()}
+				disabled={submitting || !(email || '').trim()}
 				data-testid="invite-user-submit"
 			>
 				{#if submitting}
