@@ -292,7 +292,8 @@ export async function resolveOutboundWhatsappRecipient({
 		: undefined;
 
 	if (recipient?.bsuid) {
-		return { recipient: recipient.bsuid };
+		const toPhone = phoneNumber?.trim() || recipient.waPhone?.trim() || undefined;
+		return { recipient: recipient.bsuid, ...(toPhone ? { to: toPhone } : {}) };
 	}
 
 	const to = phoneNumber?.trim() || undefined;

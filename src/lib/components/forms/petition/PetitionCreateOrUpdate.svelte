@@ -73,6 +73,9 @@
 	if (!$data.settings) {
 		$data.settings = defaultPetitionSettings();
 	}
+	if ($data.settings.phoneNumberRequired === undefined) {
+		$data.settings.phoneNumberRequired = false;
+	}
 	if ($data.settings.survey === undefined) {
 		$data.settings.survey = defaultPetitionSettings().survey;
 	}

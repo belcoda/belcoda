@@ -942,7 +942,12 @@ msgstr ""
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 msgid "Phone number"
-msgstr ""
+msgstr "Número de teléfono"
+
+#: src/lib/components/layouts/public/event/EventSignupForm.svelte
+#: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+msgid "Phone number (required)"
+msgstr "Número de teléfono (obligatorio)"
 
 #: src/lib/components/ui/custom-select/country/country.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
@@ -4993,6 +4998,19 @@ msgstr ""
 msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
 msgstr ""
 
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+#: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
+msgid "Require phone number"
+msgstr ""
+
+#: src/lib/components/forms/event/EventSignupSurvey.svelte
+msgid "Attendees must provide a phone number before registering."
+msgstr ""
+
+#: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
+msgid "Signers must provide a phone number before signing."
+msgstr ""
+
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "📷 Photo"
 msgstr ""
@@ -5007,15 +5025,4 @@ msgstr ""
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
-msgstr ""
-
-#: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
-msgid "Require phone number"
-msgstr ""
-
-#~ msgid "Attendees must provide a phone number before registering."
-#~ msgstr ""
-
-#: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
-msgid "Signers must provide a phone number before signing."
 msgstr ""

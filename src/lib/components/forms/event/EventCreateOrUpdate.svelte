@@ -76,6 +76,9 @@
 	// set defaults if required
 	if (!$data.timezone) $data.timezone = getLocalTimeZone();
 	if (!$data.settings) $data.settings = defaultEventSettings();
+	if ($data.settings.phoneNumberRequired === undefined) {
+		$data.settings.phoneNumberRequired = false;
+	}
 	if ($data.settings.survey === undefined) {
 		$data.settings.survey = defaultEventSettings().survey;
 	}
