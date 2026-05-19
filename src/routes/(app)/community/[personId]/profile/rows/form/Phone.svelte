@@ -4,7 +4,7 @@
 	import { appState } from '$lib/state.svelte';
 	import type { ReadPersonZero } from '$lib/schema/person';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { objectAsync, optional, nullable, safeParse } from 'valibot';
+	import { objectAsync, optional, nullable } from 'valibot';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
