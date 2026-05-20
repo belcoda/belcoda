@@ -338,6 +338,10 @@ test.describe.serial('Petitions: signup fields', () => {
 
 		const surveyPage = new PetitionSurveyPage(page);
 		await surveyPage.addShortTextQuestion(CUSTOM_QUESTION_LABEL);
+		await expect(page.locator('[data-testid^="survey-custom-question-label-"]').last()).toHaveValue(
+			CUSTOM_QUESTION_LABEL,
+			{ timeout: 10_000 }
+		);
 		await surveyPage.checkStandardField('address');
 		await expect(surveyPage.standardFieldCheckbox('address')).toBeChecked();
 
@@ -380,9 +384,10 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publicPage.goto(ORG_SLUG, petitionSlug);
 
 		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 15_000 });
-		await expect(async () => {
-			await expect(publicPage.customQuestionInput(CUSTOM_QUESTION_LABEL)).toBeVisible();
-		}).toPass({ timeout: 20_000 });
+		await expect(page.getByText(CUSTOM_QUESTION_LABEL, { exact: true })).toBeVisible({
+			timeout: 15_000
+		});
+		await expect(publicPage.customQuestionField).toBeVisible({ timeout: 15_000 });
 	});
 
 	test('visitor can submit petition signature with all extra fields', async ({ page }) => {
@@ -401,7 +406,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publicPage.addressRegionInput.fill('Petition State');
 		await publicPage.addressPostcodeInput.fill('77777');
 
-		await publicPage.customQuestionInput(CUSTOM_QUESTION_LABEL).fill('Housing affordability');
+		await publicPage.customQuestionField.fill('Housing affordability');
 
 		await publicPage.submitSignup();
 
