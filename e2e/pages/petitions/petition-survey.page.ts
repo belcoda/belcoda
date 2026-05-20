@@ -26,14 +26,11 @@ export class PetitionSurveyPage {
 	}
 
 	async addShortTextQuestion(label: string) {
-		await this.addQuestionTrigger.scrollIntoViewIfNeeded();
 		await this.addQuestionTrigger.click();
 		await this.page.getByTestId('survey-add-short-text').click();
-
-		const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
-		await labelInput.waitFor({ state: 'attached', timeout: 15_000 });
-		await labelInput.scrollIntoViewIfNeeded();
-		await labelInput.waitFor({ state: 'visible', timeout: 15_000 });
-		await labelInput.fill(label);
+		await this.page
+			.locator('[data-testid^="survey-custom-question-label-"]')
+			.last()
+			.fill(label, { timeout: 15_000 });
 	}
 }
