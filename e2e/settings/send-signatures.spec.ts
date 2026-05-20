@@ -20,6 +20,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 		const sendSignaturesPage = new SendSignaturesPage(page);
 		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
+		await sendSignaturesPage.waitForOwnerPageLoaded();
 	});
 
 	test('owner can create a custom send signature', async ({ page }) => {
@@ -32,6 +33,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 
 		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
+		await sendSignaturesPage.waitForOwnerPageLoaded();
 		await sendSignaturesPage.createSignature({
 			displayName: state.displayName,
 			emailAddress: state.emailAddress,
@@ -43,6 +45,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 			timeout: 15_000
 		});
 		await sendSignaturesPage.goto();
+		await sendSignaturesPage.waitForOwnerPageLoaded();
 		await expect(sendSignaturesPage.signatureRowByEmail(state.emailAddress)).toBeVisible({
 			timeout: 15_000
 		});
@@ -57,6 +60,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 
 		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
+		await sendSignaturesPage.waitForOwnerPageLoaded();
 		await sendSignaturesPage.editSignature(state.emailAddress, {
 			displayName: state.updatedDisplayName,
 			replyTo: state.updatedReplyTo,
@@ -84,6 +88,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 
 		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
+		await sendSignaturesPage.waitForOwnerPageLoaded();
 		await sendSignaturesPage.verifySignature(state.emailAddress);
 
 		await expect(page.getByText('Email signature verification status updated')).toBeVisible({
@@ -99,6 +104,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 
 		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
+		await sendSignaturesPage.waitForOwnerPageLoaded();
 		await sendSignaturesPage.selectDefaultSignature(optionLabel);
 
 		await expect(page.getByText('Default send signature updated successfully')).toBeVisible({
@@ -124,6 +130,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 
 		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
+		await sendSignaturesPage.waitForOwnerPageLoaded();
 		await sendSignaturesPage.deleteSignature(state.emailAddress);
 
 		await expect(page.getByText('Email signature deleted successfully')).toBeVisible({

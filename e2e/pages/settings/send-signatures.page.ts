@@ -9,6 +9,9 @@ export class SendSignaturesPage {
 
 	async goto() {
 		await this.page.goto('/settings/email/send_signatures');
+	}
+
+	async waitForOwnerPageLoaded() {
 		await this.systemSignatureCard.waitFor({ state: 'visible', timeout: 30_000 });
 	}
 
