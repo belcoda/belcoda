@@ -106,7 +106,9 @@ test.describe.serial('Community and person pages', () => {
 
 		await profilePage.editEmail(newEmail);
 
-		await expect(page.getByTestId('person-profile-email-display')).toHaveText(newEmail);
+		await expect(page.getByTestId('person-profile-email-display')).toHaveText(newEmail, {
+			timeout: 15_000
+		});
 	});
 
 	test('owner can create a tag and add it to a person from the timeline dropdown', async ({

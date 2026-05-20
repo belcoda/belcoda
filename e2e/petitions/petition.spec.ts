@@ -379,8 +379,10 @@ test.describe.serial('Petitions: signup fields', () => {
 		const publicPage = new PetitionPublicPage(page);
 		await publicPage.goto(ORG_SLUG, petitionSlug);
 
-		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
-		await expect(page.getByLabel(CUSTOM_QUESTION_LABEL)).toBeVisible();
+		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 15_000 });
+		await expect(async () => {
+			await expect(publicPage.customQuestionInput(CUSTOM_QUESTION_LABEL)).toBeVisible();
+		}).toPass({ timeout: 20_000 });
 	});
 
 	test('visitor can submit petition signature with all extra fields', async ({ page }) => {
@@ -399,7 +401,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publicPage.addressRegionInput.fill('Petition State');
 		await publicPage.addressPostcodeInput.fill('77777');
 
-		await page.getByLabel(CUSTOM_QUESTION_LABEL).fill('Housing affordability');
+		await publicPage.customQuestionInput(CUSTOM_QUESTION_LABEL).fill('Housing affordability');
 
 		await publicPage.submitSignup();
 

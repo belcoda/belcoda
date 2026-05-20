@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { WhatsappAccountsPage } from '../pages/settings/whatsapp-accounts.page';
 import { loginAsOwner, loginAsMember } from '../helpers/login';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 import {
 	E2E_EMBEDDED_SIGNUP_PHONE_NUMBER,
 	E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
@@ -14,9 +15,7 @@ test.describe.serial('Settings: WhatsApp accounts', () => {
 		await loginAsMember(page, PROJECT);
 
 		await page.goto('/settings/whatsapp/accounts');
-
-		await expect(page.getByTestId('whatsapp-accounts-heading')).toHaveCount(0);
-		await expect(page.getByTestId('whatsapp-accounts-launch-signup')).toHaveCount(0);
+		await expectMemberCannotAccessSettings(page);
 	});
 
 	test('owner sees activate card when no account is connected', async ({ page }) => {

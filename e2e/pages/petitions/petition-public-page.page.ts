@@ -40,6 +40,10 @@ export class PetitionPublicPage {
 		return this.page.getByTestId(`signup-custom-field-${fieldId}`);
 	}
 
+	customQuestionInput(label: string): Locator {
+		return this.page.getByRole('textbox', { name: label });
+	}
+
 	async fillSignupForm({
 		givenName,
 		familyName,

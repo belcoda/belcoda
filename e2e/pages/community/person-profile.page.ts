@@ -50,7 +50,6 @@ export class PersonProfilePage {
 		await this.emailEditButton.click();
 		await this.emailInput.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.emailInput.fill(email);
-		await this.emailSaveButton.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.emailSaveButton.click();
 	}
 
