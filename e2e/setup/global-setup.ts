@@ -1,4 +1,3 @@
-import type { FullConfig } from '@playwright/test';
 import { chromium } from '@playwright/test';
 import { getTestUsers, signUpUser, verifyUserEmail } from '../helpers/auth';
 import { BASE_URL, E2E_MOCK_WABA_ID, E2E_PROJECTS, getOrgName } from '../helpers/config';
@@ -68,7 +67,7 @@ async function saveCookieConsentState() {
 	await browser.close();
 }
 
-export async function runE2eGlobalSetup() {
+async function runE2eGlobalSetup() {
 	console.log('\n🔧 E2E Setup: Preparing test data...\n');
 
 	await cleanup();
@@ -103,11 +102,6 @@ export async function runE2eGlobalSetup() {
 	console.log('\n✅ Setup complete!\n');
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default async function globalSetup(_config: FullConfig) {
-	if (process.env.SKIP_E2E_GLOBAL_SETUP === '1') {
-		console.log('Skipping global setup (SKIP_E2E_GLOBAL_SETUP=1)\n');
-		return;
-	}
+export default async function globalSetup() {
 	await runE2eGlobalSetup();
 }

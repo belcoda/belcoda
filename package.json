@@ -19,7 +19,6 @@
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
-		"test:e2e:setup": "npx vite-node e2e/setup/run-global-setup.ts",
 		"db:push": "drizzle-kit push",
 		"db:deleteall": "npx vite-node --options.transformMode.ssr='/.*/' src/lib/server/db/seed/reset.ts",
 		"db:generate": "drizzle-kit generate",

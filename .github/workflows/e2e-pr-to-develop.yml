@@ -11,10 +11,13 @@ on:
       - ready_for_review
 
 jobs:
-  setup:
+  e2e:
     if: ${{ github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -50,87 +53,16 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium
 
-      - name: Run e2e global setup once
-        run: npm run test:e2e:setup
-        env:
-          E2E_BASE_URL: 'https://staging.belcoda.com'
-
-      - name: Upload e2e auth state
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-auth-state
-          path: e2e/.auth/
-          retention-days: 1
-
-  e2e:
-    if: ${{ github.event.pull_request.draft == false }}
-    needs: setup
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        project:
-          - auth
-          - community
-          - events
-          - petitions
-          - communications
-          - settings
-          - whatsapp-accounts
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: npm
-
-      - name: Update npm
-        run: |
-          npm install -g npm@^11.10.0
-          npm --version
-
-      - name: Install dependencies
-        run: npm ci --include=dev
-
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(npm list --json @playwright/test | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
-          restore-keys: playwright-${{ runner.os }}-
-
-      - name: Install Playwright system dependencies
-        run: npx playwright install-deps
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
-
-      - name: Download e2e auth state
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-auth-state
-          path: e2e/.auth
-
       - name: Run e2e tests against staging
-        run: npx playwright test --project="${{ matrix.project }}"
+        run: npm run test:e2e
         env:
           E2E_BASE_URL: 'https://staging.belcoda.com'
-          E2E_PROJECT: ${{ matrix.project }}
-          SKIP_E2E_GLOBAL_SETUP: '1'
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.project }}
+          name: playwright-report
           path: playwright-report/
           retention-days: 7
 
@@ -138,39 +70,12 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-ctrf-${{ matrix.project }}
-          path: ctrf/${{ matrix.project }}/
+          name: e2e-ctrf
+          path: ctrf/
           retention-days: 7
 
-  report:
-    needs: e2e
-    if: ${{ always() && !cancelled() && needs.e2e.result != 'skipped' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - name: Download CTRF reports
-        uses: actions/download-artifact@v4
-        with:
-          pattern: e2e-ctrf-*
-          path: ctrf-shards
-
-      - name: Merge CTRF reports
-        run: |
-          mkdir -p ctrf/merge-input
-          i=0
-          while IFS= read -r report; do
-            cp "$report" "ctrf/merge-input/report-${i}.json"
-            i=$((i + 1))
-          done < <(find ctrf-shards -name 'ctrf-report.json' | sort)
-          if [ "$i" -eq 0 ]; then
-            echo "No CTRF reports found to merge"
-            exit 1
-          fi
-          npx --yes ctrf-cli@latest merge ctrf/merge-input -o ctrf/ctrf-report.json
-
       - name: Post test report to PR
+        if: always()
         uses: ctrf-io/github-test-reporter@v1
         with:
           report-path: './ctrf/ctrf-report.json'
