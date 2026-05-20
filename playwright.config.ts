@@ -1,21 +1,57 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, type Project } from '@playwright/test';
 import { STORAGE_STATE_PATH } from './e2e/setup/global-setup';
 import { config as dotenvConfig } from 'dotenv';
 dotenvConfig();
 
 const BASE_URL = process.env.E2E_BASE_URL || process.env.PUBLIC_HOST || 'http://localhost:5173';
 const useLocalServer = !process.env.E2E_BASE_URL;
+const isCI = !!process.env.CI;
 
 // One Playwright invocation runs global setup once, then schedules projects across this worker pool.
-const workers = process.env.CI ? 6 : 3;
+const workers = isCI ? 6 : 3;
+
+const chrome = { ...devices['Desktop Chrome'] };
+
+/**
+ * Each spec file gets its own Playwright project; projects run one-after-another via `dependencies`.
+ * Different orgs (community vs settings) can still run in parallel with other top-level projects.
+ */
+function chainProjects(prefix: string, testMatches: string[]): Project[] {
+	return testMatches.map((testMatch, index) => ({
+		name: index === 0 ? prefix : `${prefix}-${index}`,
+		testMatch: [testMatch],
+		dependencies: index === 0 ? [] : [index === 1 ? prefix : `${prefix}-${index - 1}`],
+		use: chrome
+	}));
+}
+
+const COMMUNITY_SPEC_FILES = [
+	'**/community/person.spec.ts',
+	'**/settings/tags.spec.ts',
+	'**/settings/teams.spec.ts',
+	'**/settings/community-settings.spec.ts'
+];
+
+const SETTINGS_SPEC_FILES = [
+	'**/settings/organization-settings.spec.ts',
+	'**/settings/exports.spec.ts',
+	'**/settings/imports.spec.ts',
+	'**/settings/api-keys.spec.ts',
+	'**/settings/webhooks.spec.ts',
+	'**/settings/send-signatures.spec.ts',
+	'**/settings/users.spec.ts',
+	'**/settings/whatsapp-templates.spec.ts',
+	'**/preferences/language.spec.ts'
+];
 
 export default defineConfig({
 	testDir: 'e2e',
 	fullyParallel: false,
-	forbidOnly: !!process.env.CI,
-	retries: process.env.CI ? 2 : 0,
+	forbidOnly: isCI,
+	retries: isCI ? 2 : 0,
 	workers,
-	reporter: process.env.CI
+	timeout: isCI ? 60_000 : 30_000,
+	reporter: isCI
 		? [
 				['html'],
 				[
@@ -30,66 +66,45 @@ export default defineConfig({
 	use: {
 		baseURL: BASE_URL,
 		trace: 'on-first-retry',
-		storageState: STORAGE_STATE_PATH
+		storageState: STORAGE_STATE_PATH,
+		actionTimeout: 15_000,
+		navigationTimeout: 30_000
 	},
 	webServer: useLocalServer
 		? {
 				command: 'npm run dev',
 				url: BASE_URL,
-				reuseExistingServer: !process.env.CI
+				reuseExistingServer: !isCI
 			}
 		: undefined,
 	globalSetup: './e2e/setup/global-setup.ts',
 	projects: [
+		...chainProjects('community', COMMUNITY_SPEC_FILES),
+		...chainProjects('settings', SETTINGS_SPEC_FILES),
 		{
 			name: 'auth',
 			testMatch: ['**/auth/**/*.spec.ts'],
-			use: { ...devices['Desktop Chrome'] }
-		},
-		{
-			name: 'community',
-			testMatch: [
-				'**/community/**/*.spec.ts',
-				'**/settings/tags.spec.ts',
-				'**/settings/teams.spec.ts',
-				'**/settings/community-settings.spec.ts'
-			],
-			use: { ...devices['Desktop Chrome'] }
+			use: chrome
 		},
 		{
 			name: 'events',
 			testMatch: ['**/events/**/*.spec.ts'],
-			use: { ...devices['Desktop Chrome'] }
+			use: chrome
 		},
 		{
 			name: 'petitions',
 			testMatch: ['**/petitions/**/*.spec.ts'],
-			use: { ...devices['Desktop Chrome'] }
+			use: chrome
 		},
 		{
 			name: 'communications',
 			testMatch: ['**/communications/**/*.spec.ts'],
-			use: { ...devices['Desktop Chrome'] }
-		},
-		{
-			name: 'settings',
-			testMatch: [
-				'**/settings/api-keys.spec.ts',
-				'**/settings/webhooks.spec.ts',
-				'**/settings/send-signatures.spec.ts',
-				'**/settings/whatsapp-templates.spec.ts',
-				'**/settings/users.spec.ts',
-				'**/settings/organization-settings.spec.ts',
-				'**/settings/imports.spec.ts',
-				'**/settings/exports.spec.ts',
-				'**/preferences/**/*.spec.ts'
-			],
-			use: { ...devices['Desktop Chrome'] }
+			use: chrome
 		},
 		{
 			name: 'whatsapp-accounts',
 			testMatch: ['**/settings/whatsapp-accounts.spec.ts'],
-			use: { ...devices['Desktop Chrome'] }
+			use: chrome
 		}
 	]
 });
