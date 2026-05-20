@@ -1,30 +1,9 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { SendSignaturesPage } from '../pages/settings/send-signatures.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner, loginAsMember } from '../helpers/login';
 import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 test.describe.serial('Settings: Send Signatures', () => {
 	const state = {
@@ -39,9 +18,8 @@ test.describe.serial('Settings: Send Signatures', () => {
 
 	test('owner can view send signature settings page', async ({ page }) => {
 		const sendSignaturesPage = new SendSignaturesPage(page);
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
-		await expect(sendSignaturesPage.systemSignatureCard).toBeVisible({ timeout: 15_000 });
 	});
 
 	test('owner can create a custom send signature', async ({ page }) => {
@@ -52,7 +30,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 		state.replyTo = `e2e-reply-${suffix}@example.com`;
 		state.returnPathDomain = 'bounce.example.com';
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
 		await sendSignaturesPage.createSignature({
 			displayName: state.displayName,
@@ -77,7 +55,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 		state.updatedReplyTo = `e2e-reply-updated-${suffix}@example.com`;
 		state.updatedReturnPathDomain = 'mail.bounce.example.com';
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
 		await sendSignaturesPage.editSignature(state.emailAddress, {
 			displayName: state.updatedDisplayName,
@@ -104,7 +82,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 	test('owner can verify a custom send signature', async ({ page }) => {
 		const sendSignaturesPage = new SendSignaturesPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
 		await sendSignaturesPage.verifySignature(state.emailAddress);
 
@@ -119,7 +97,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 		const sendSignaturesPage = new SendSignaturesPage(page);
 		const optionLabel = `${state.updatedDisplayName} <${state.emailAddress}>`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
 		await sendSignaturesPage.selectDefaultSignature(optionLabel);
 
@@ -131,7 +109,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 	test('member cannot access send signature management', async ({ page }) => {
 		const sendSignaturesPage = new SendSignaturesPage(page);
 
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 		await sendSignaturesPage.goto();
 
 		await expectMemberCannotAccessSettings(page);
@@ -144,7 +122,7 @@ test.describe.serial('Settings: Send Signatures', () => {
 	test('owner can delete custom send signature', async ({ page }) => {
 		const sendSignaturesPage = new SendSignaturesPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await sendSignaturesPage.goto();
 		await sendSignaturesPage.deleteSignature(state.emailAddress);
 

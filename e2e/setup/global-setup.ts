@@ -1,8 +1,26 @@
 import { chromium } from '@playwright/test';
-import { getTestUsers, signUpUser, verifyUserEmail } from '../helpers/auth';
-import { BASE_URL, E2E_MOCK_WABA_ID, E2E_PROJECTS, getOrgName } from '../helpers/config';
+import { getTestUsers, signUpUser, verifyUserEmail, type UserRole } from '../helpers/auth';
+import { AUTH_DIR, authStoragePath } from '../helpers/auth-storage';
+import {
+	BASE_URL,
+	E2E_MOCK_WABA_ID,
+	E2E_PROJECTS,
+	getOrgName,
+	type E2EProject
+} from '../helpers/config';
+import { LoginPage } from '../pages/login.page';
+import { CommunityPage } from '../pages/community/community.page';
 import path from 'path';
 import fs from 'fs';
+
+const PROJECTS_WITH_AUTH_STORAGE: E2EProject[] = [
+	'community',
+	'events',
+	'petitions',
+	'communications',
+	'settings',
+	'whatsapp-accounts'
+];
 
 export const STORAGE_STATE_PATH = path.join(import.meta.dirname, '../.auth/cookie-consent.json');
 
@@ -58,13 +76,46 @@ async function saveCookieConsentState() {
 			sameSite: 'Lax'
 		}
 	]);
-	// Ensure the .auth directory exists before writing storage state
-	const authDir = path.dirname(STORAGE_STATE_PATH);
-	if (!fs.existsSync(authDir)) {
-		fs.mkdirSync(authDir, { recursive: true });
-	}
+	ensureAuthDir();
 	await context.storageState({ path: STORAGE_STATE_PATH });
 	await browser.close();
+}
+
+function ensureAuthDir() {
+	if (!fs.existsSync(AUTH_DIR)) {
+		fs.mkdirSync(AUTH_DIR, { recursive: true });
+	}
+}
+
+async function saveRoleStorageState(project: E2EProject, role: UserRole) {
+	const user = getTestUsers(project)[role];
+	const browser = await chromium.launch();
+	const context = await browser.newContext({
+		baseURL: BASE_URL,
+		storageState: STORAGE_STATE_PATH
+	});
+	const page = await context.newPage();
+	const loginPage = new LoginPage(page);
+	const communityPage = new CommunityPage(page);
+
+	await loginPage.goto();
+	await loginPage.login(user.email, user.password);
+	await page.waitForURL(/\/community/, { timeout: 60_000 });
+	await communityPage.expectLoaded();
+
+	await context.storageState({ path: authStoragePath(project, role) });
+	await browser.close();
+	console.log(`  ✓ Storage state: ${project}-${role}`);
+}
+
+async function saveAuthStorageStates() {
+	console.log('\n  Saving authenticated storage states...');
+	ensureAuthDir();
+	for (const project of PROJECTS_WITH_AUTH_STORAGE) {
+		for (const role of ['owner', 'admin', 'member'] as const) {
+			await saveRoleStorageState(project, role);
+		}
+	}
 }
 
 async function runE2eGlobalSetup() {
@@ -98,6 +149,7 @@ async function runE2eGlobalSetup() {
 	}
 
 	await saveCookieConsentState();
+	await saveAuthStorageStates();
 
 	console.log('\n✅ Setup complete!\n');
 }

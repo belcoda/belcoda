@@ -1,39 +1,9 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { WebhooksPage } from '../pages/settings/webhooks.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner, loginAsAdmin, loginAsMember } from '../helpers/login';
 import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsAdmin(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.admin.email, USERS.admin.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 test.describe.serial('Settings: Webhooks', () => {
 	const state = {
@@ -48,7 +18,7 @@ test.describe.serial('Settings: Webhooks', () => {
 		state.name = `E2E Webhook ${suffix}`;
 		state.targetUrl = `https://example.com/e2e/webhook/${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await webhooksPage.goto();
 		await webhooksPage.createWebhook(state.name, state.targetUrl);
 
@@ -71,7 +41,7 @@ test.describe.serial('Settings: Webhooks', () => {
 		const updatedUrl = `https://example.com/e2e/webhook/updated/${Date.now()}`;
 		const updatedName = `${state.name} updated`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await webhooksPage.goto();
 		await webhooksPage.editWebhookById(state.webhookId, {
 			name: updatedName,
@@ -90,7 +60,7 @@ test.describe.serial('Settings: Webhooks', () => {
 	test('admin can view webhooks but cannot manage them', async ({ page }) => {
 		const webhooksPage = new WebhooksPage(page);
 
-		await loginAsAdmin(page);
+		await loginAsAdmin(page, PROJECT);
 		await webhooksPage.goto();
 
 		const row = webhooksPage.webhookRow(state.name, state.targetUrl);
@@ -104,7 +74,7 @@ test.describe.serial('Settings: Webhooks', () => {
 	test('member cannot access webhook management', async ({ page }) => {
 		const webhooksPage = new WebhooksPage(page);
 
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 		await webhooksPage.goto();
 
 		await expectMemberCannotAccessSettings(page);
@@ -115,7 +85,7 @@ test.describe.serial('Settings: Webhooks', () => {
 	test('owner can delete a webhook', async ({ page }) => {
 		const webhooksPage = new WebhooksPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await webhooksPage.goto();
 
 		await webhooksPage.deleteWebhookById(state.webhookId);

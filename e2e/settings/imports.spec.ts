@@ -1,42 +1,12 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
 import { ImportsPage } from '../pages/settings/imports.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner, loginAsAdmin, loginAsMember } from '../helpers/login';
 import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsAdmin(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.admin.email, USERS.admin.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 function createSampleCsvFile(): string {
 	const ts = Date.now();
@@ -65,7 +35,7 @@ test.describe.serial('Settings: People Imports', () => {
 	test('owner can navigate to imports page via sidebar', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await page.goto('/settings');
 
 		await importsPage.settingsSidebarImportsLink.click();
@@ -78,7 +48,7 @@ test.describe.serial('Settings: People Imports', () => {
 	test('imports page shows empty state when no imports exist', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await importsPage.goto();
 
 		await expect(importsPage.emptyState).toBeVisible({ timeout: 15_000 });
@@ -88,7 +58,7 @@ test.describe.serial('Settings: People Imports', () => {
 	test('owner can open the new import modal', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await importsPage.goto();
 
 		await importsPage.newImportTrigger.click();
@@ -102,7 +72,7 @@ test.describe.serial('Settings: People Imports', () => {
 	test('owner can cancel the import modal', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await importsPage.goto();
 
 		await importsPage.newImportTrigger.click();
@@ -116,7 +86,7 @@ test.describe.serial('Settings: People Imports', () => {
 		const importsPage = new ImportsPage(page);
 		const csvFile = createSampleCsvFile();
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await importsPage.goto();
 
 		await importsPage.newImportTrigger.click();
@@ -150,7 +120,7 @@ test.describe.serial('Settings: People Imports', () => {
 			});
 		});
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await importsPage.goto();
 
 		await importsPage.newImportTrigger.click();
@@ -167,7 +137,7 @@ test.describe.serial('Settings: People Imports', () => {
 	test('imports table row appears after upload', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await importsPage.goto();
 
 		const rowCount = await importsPage.importRows.count();
@@ -183,7 +153,7 @@ test.describe.serial('Settings: People Imports', () => {
 	test('admin can access imports page', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 
-		await loginAsAdmin(page);
+		await loginAsAdmin(page, PROJECT);
 		await importsPage.goto();
 
 		await expect(page.getByRole('heading', { name: /people imports/i })).toBeVisible({
@@ -195,7 +165,7 @@ test.describe.serial('Settings: People Imports', () => {
 	test('member cannot access imports page', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 		await importsPage.goto();
 
 		await expectMemberCannotAccessSettings(page);

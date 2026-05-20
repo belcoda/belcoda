@@ -1,30 +1,9 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { ApiKeysPage } from '../pages/settings/api-keys.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner, loginAsMember } from '../helpers/login';
 import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 test.describe.serial('Settings: API Keys', () => {
 	const state = {
@@ -35,7 +14,7 @@ test.describe.serial('Settings: API Keys', () => {
 		const apiKeysPage = new ApiKeysPage(page);
 		state.name = `E2E API Key ${Date.now()}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await apiKeysPage.goto();
 		await apiKeysPage.createApiKey(state.name);
 
@@ -48,7 +27,7 @@ test.describe.serial('Settings: API Keys', () => {
 	test('member cannot access API key management', async ({ page }) => {
 		const apiKeysPage = new ApiKeysPage(page);
 
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 		await apiKeysPage.goto();
 
 		await expectMemberCannotAccessSettings(page);
@@ -59,7 +38,7 @@ test.describe.serial('Settings: API Keys', () => {
 	test('owner can delete an API key', async ({ page }) => {
 		const apiKeysPage = new ApiKeysPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await apiKeysPage.goto();
 		await apiKeysPage.deleteApiKey(state.name);
 

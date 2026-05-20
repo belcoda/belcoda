@@ -1,23 +1,12 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { PersonCreatePage } from '../pages/community/person-create.page';
 import { PersonProfilePage } from '../pages/community/person-profile.page';
 import { TagsPage } from '../pages/settings/tags.page';
 import { TeamsPage } from '../pages/settings/teams.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner } from '../helpers/login';
+import { CommunityPage } from '../pages/community/community.page';
 
 const PROJECT = 'community' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 test.describe.serial('Community and person pages', () => {
 	const ids = {
@@ -39,7 +28,7 @@ test.describe.serial('Community and person pages', () => {
 
 		const personCreate = new PersonCreatePage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		await personCreate.goto();
 		await expect(page.getByTestId('person-create-heading')).toBeVisible();
@@ -59,7 +48,7 @@ test.describe.serial('Community and person pages', () => {
 	test('owner can find the person using the community list search', async ({ page }) => {
 		const communityPage = new CommunityPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await communityPage.goto();
 		await communityPage.searchCommunityList(ids.familyName);
 
@@ -70,7 +59,7 @@ test.describe.serial('Community and person pages', () => {
 	});
 
 	test('owner can navigate from the timeline to the profile page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
 		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
 
@@ -85,7 +74,7 @@ test.describe.serial('Community and person pages', () => {
 		const newGivenName = 'E2EEdited';
 		const newFamilyName = `Person ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await profilePage.goto(ids.personPath);
 
 		await expect(profilePage.nameDisplay).toContainText(ids.givenName);
@@ -99,7 +88,7 @@ test.describe.serial('Community and person pages', () => {
 	});
 
 	test('updated name is reflected on the timeline', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
 
 		await expect(page.getByTestId('person-timeline-display-name')).toHaveText(
@@ -112,7 +101,7 @@ test.describe.serial('Community and person pages', () => {
 		const suffix = `${Date.now()}`;
 		const newEmail = `e2e-edited-${suffix}@belcoda.test`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await profilePage.goto(ids.personPath);
 
 		await profilePage.editEmail(newEmail);
@@ -127,7 +116,7 @@ test.describe.serial('Community and person pages', () => {
 		const suffix = `${Date.now()}`;
 		ids.tagName = `E2E Tag ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		await tagsPage.goto();
 		await tagsPage.createTag(ids.tagName);
@@ -160,7 +149,7 @@ test.describe.serial('Community and person pages', () => {
 		const suffix = `${Date.now()}`;
 		ids.teamName = `E2E Team ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		await teamsPage.goto();
 		await teamsPage.createTeam(ids.teamName);
@@ -189,7 +178,7 @@ test.describe.serial('Community and person pages', () => {
 	test('owner can add a note from the notes drawer on the timeline', async ({ page }) => {
 		const noteText = `E2E test note ${Date.now()}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
 		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
 
@@ -207,7 +196,7 @@ test.describe.serial('Community and person pages', () => {
 	test('owner can delete the person from the person profile page', async ({ page }) => {
 		const communityPage = new CommunityPage(page);
 		const profilePage = new PersonProfilePage(page);
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await profilePage.goto(ids.personPath);
 		await profilePage.waitForLoaded();
 		await expect(profilePage.deleteButton).toBeVisible({ timeout: 10_000 });

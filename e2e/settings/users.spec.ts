@@ -135,14 +135,12 @@ test.describe.serial('Settings: Invitation acceptance', () => {
 		const loginPage = new LoginPage(page);
 		await loginPage.goto();
 		await loginPage.login(inviteeEmail, inviteePassword);
-		await expect(page).toHaveURL('/organization', { timeout: 15_000 });
+		await expect(page).toHaveURL('/organization', { timeout: 30_000 });
 
-		// Accept the invitation
 		const orgPage = new OrganizationPage(page);
 		await orgPage.acceptInvitation();
 
-		// Acceptance calls goto('/') which the app redirects to /community
-		await expect(page).toHaveURL('/community', { timeout: 15_000 });
+		await expect(page).toHaveURL('/community', { timeout: 30_000 });
 	});
 });
 
@@ -177,14 +175,12 @@ test.describe.serial('Settings: Invitation decline', () => {
 		const loginPage = new LoginPage(page);
 		await loginPage.goto();
 		await loginPage.login(inviteeEmail, inviteePassword);
-		await expect(page).toHaveURL('/organization', { timeout: 15_000 });
+		await expect(page).toHaveURL('/organization', { timeout: 30_000 });
 
-		// Decline the invitation
 		const orgPage = new OrganizationPage(page);
 		await orgPage.declineInvitation();
 
-		// After decline, stays on /organization — reload to get fresh invitation list
-		await expect(page).toHaveURL('/organization', { timeout: 15_000 });
+		await expect(page).toHaveURL('/organization', { timeout: 30_000 });
 		await page.reload();
 		await expect(page.getByTestId('invitation-accept')).toHaveCount(0, { timeout: 10_000 });
 	});

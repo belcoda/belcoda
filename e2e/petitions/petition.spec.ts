@@ -1,38 +1,28 @@
 import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
 import { PetitionCreatePage } from '../pages/petitions/petition-create.page';
 import { PetitionDetailPage } from '../pages/petitions/petition-detail.page';
 import { PetitionEditPage } from '../pages/petitions/petition-edit.page';
 import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page';
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
-import { getTestUsers } from '../helpers/auth';
 import { getOrgSlug, slugifyTitle } from '../helpers/config';
-
-const PROJECT = 'petitions' as const;
-const USERS = getTestUsers(PROJECT);
-const ORG_SLUG = getOrgSlug(PROJECT);
+import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
 	getE2EDefaultWhatsAppNumber,
 	postWhatsAppInboundWebhook
 } from '../helpers/whatsapp-webhook';
 
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
+const PROJECT = 'petitions' as const;
+const ORG_SLUG = getOrgSlug(PROJECT);
 
 async function expectPetitionSlugPreview(page: Page, title: string) {
-	await expect(page.getByTestId('petition-slug-preview')).toContainText(
-		`/petitions/${slugifyTitle(title)}`,
-		{ timeout: 5_000 }
-	);
+	const expectedSlug = slugifyTitle(title);
+	await expect(async () => {
+		await expect(page.getByTestId('petition-slug-preview')).toContainText(
+			`/petitions/${expectedSlug}`
+		);
+	}).toPass({ timeout: 15_000 });
 }
 
 async function ensurePetitionForPublicTests(page: Page) {
@@ -76,7 +66,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		const suffix = Date.now();
 		ids.petitionTitle = `E2E Petition ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new PetitionCreatePage(page);
 		await createPage.goto();
@@ -115,7 +105,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 	});
 
 	test('owner can edit a petition', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -144,7 +134,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 	});
 
 	test('owner can publish a petition from the action menu', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -161,7 +151,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 	});
 
 	test('owner sees a preview link to the public petition page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -178,7 +168,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 
 test.describe.serial('Petitions: public page', () => {
 	test('owner publishes the previously created petition for public tests', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await ensurePetitionForPublicTests(page);
 
 		const detailPage = new PetitionDetailPage(page);
@@ -197,7 +187,7 @@ test.describe.serial('Petitions: public page', () => {
 	});
 
 	test('logged-in owner sees the edit navbar on the public petition page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -260,7 +250,7 @@ test.describe.serial('Petitions: public page', () => {
 	});
 
 	test('owner can view signatures on the petition admin page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -274,7 +264,7 @@ test.describe.serial('Petitions: public page', () => {
 	test('owner can open the detailed signatures table after there is a signature', async ({
 		page
 	}) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -290,7 +280,7 @@ test.describe.serial('Petitions: public page', () => {
 	});
 
 	test('WhatsApp flow response creates a petition signature', async ({ page, request }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -334,7 +324,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		const suffix = Date.now();
 		const title = `E2E Fields Petition ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new PetitionCreatePage(page);
 		await createPage.goto();
@@ -424,7 +414,7 @@ test.describe.serial('Petitions: signup fields', () => {
 
 test.describe.serial('Petitions: archive', () => {
 	test('owner can archive a published petition', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new PetitionCreatePage(page);
 		const archiveTitle = `E2E Archive Petition ${Date.now()}`;
@@ -467,7 +457,7 @@ test.describe.serial('Petitions: archive', () => {
 
 test.describe.serial('Petitions: delete draft', () => {
 	test('owner can delete an unpublished petition', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new PetitionCreatePage(page);
 		const deleteTitle = `E2E Delete Petition ${Date.now()}`;

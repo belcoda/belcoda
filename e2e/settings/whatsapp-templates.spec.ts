@@ -1,33 +1,12 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import {
 	WhatsAppTemplateFormPage,
 	WhatsAppTemplatesListPage
 } from '../pages/settings/whatsapp-templates.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner, loginAsMember } from '../helpers/login';
 import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'settings' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 function randomTemplateName(): string {
 	const letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -47,7 +26,7 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 	test('owner can create a WhatsApp template', async ({ page }) => {
 		ids.templateName = randomTemplateName();
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const listPage = new WhatsAppTemplatesListPage(page);
 		await listPage.goto();
@@ -77,7 +56,7 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 	});
 
 	test('owner can edit a WhatsApp template', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const formPage = new WhatsAppTemplateFormPage(page);
 		await formPage.gotoEdit(ids.templateId);
@@ -95,7 +74,7 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 	});
 
 	test('owner can submit a WhatsApp template for review', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const listPage = new WhatsAppTemplatesListPage(page);
 		await listPage.goto();
@@ -117,7 +96,7 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 	});
 
 	test('member cannot access WhatsApp template management', async ({ page }) => {
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 
 		const listPage = new WhatsAppTemplatesListPage(page);
 		await page.goto('/settings/whatsapp/templates');
@@ -128,7 +107,7 @@ test.describe.serial('Settings: WhatsApp templates', () => {
 	});
 
 	test('member cannot access WhatsApp template edit form', async ({ page }) => {
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 
 		await page.goto(`/settings/whatsapp/templates/${ids.templateId}`);
 

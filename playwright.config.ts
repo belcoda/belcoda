@@ -1,4 +1,6 @@
 import { defineConfig, devices, type Project } from '@playwright/test';
+import { ownerStorageState } from './e2e/helpers/auth-storage';
+import type { E2EProject } from './e2e/helpers/config';
 import { STORAGE_STATE_PATH } from './e2e/setup/global-setup';
 import { config as dotenvConfig } from 'dotenv';
 dotenvConfig();
@@ -16,12 +18,13 @@ const chrome = { ...devices['Desktop Chrome'] };
  * Each spec file gets its own Playwright project; projects run one-after-another via `dependencies`.
  * Different orgs (community vs settings) can still run in parallel with other top-level projects.
  */
-function chainProjects(prefix: string, testMatches: string[]): Project[] {
+function chainProjects(prefix: E2EProject, testMatches: string[]): Project[] {
+	const ownerState = ownerStorageState(prefix);
 	return testMatches.map((testMatch, index) => ({
 		name: index === 0 ? prefix : `${prefix}-${index}`,
 		testMatch: [testMatch],
 		dependencies: index === 0 ? [] : [index === 1 ? prefix : `${prefix}-${index - 1}`],
-		use: chrome
+		use: { ...chrome, storageState: ownerState }
 	}));
 }
 
@@ -84,27 +87,27 @@ export default defineConfig({
 		{
 			name: 'auth',
 			testMatch: ['**/auth/**/*.spec.ts'],
-			use: chrome
+			use: { ...chrome, storageState: STORAGE_STATE_PATH }
 		},
 		{
 			name: 'events',
 			testMatch: ['**/events/**/*.spec.ts'],
-			use: chrome
+			use: { ...chrome, storageState: ownerStorageState('events') }
 		},
 		{
 			name: 'petitions',
 			testMatch: ['**/petitions/**/*.spec.ts'],
-			use: chrome
+			use: { ...chrome, storageState: ownerStorageState('petitions') }
 		},
 		{
 			name: 'communications',
 			testMatch: ['**/communications/**/*.spec.ts'],
-			use: chrome
+			use: { ...chrome, storageState: ownerStorageState('communications') }
 		},
 		{
 			name: 'whatsapp-accounts',
 			testMatch: ['**/settings/whatsapp-accounts.spec.ts'],
-			use: chrome
+			use: { ...chrome, storageState: ownerStorageState('whatsapp-accounts') }
 		}
 	]
 });

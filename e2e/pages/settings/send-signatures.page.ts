@@ -9,6 +9,7 @@ export class SendSignaturesPage {
 
 	async goto() {
 		await this.page.goto('/settings/email/send_signatures');
+		await this.systemSignatureCard.waitFor({ state: 'visible', timeout: 30_000 });
 	}
 
 	get newSignatureTrigger(): Locator {
