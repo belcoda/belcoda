@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 export class PetitionSurveyPage {
 	readonly page: Page;
@@ -26,19 +26,12 @@ export class PetitionSurveyPage {
 	}
 
 	async addShortTextQuestion(label: string) {
-		const menuItem = this.page.getByRole('menuitem', { name: 'Short text' });
-		const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
-
 		await this.addQuestionTrigger.scrollIntoViewIfNeeded();
+		await this.addQuestionTrigger.click();
+		await this.page.getByTestId('survey-add-short-text').click();
 
-		await expect(async () => {
-			await this.page.keyboard.press('Escape');
-			await this.addQuestionTrigger.click();
-			await menuItem.waitFor({ state: 'visible', timeout: 3_000 });
-			await menuItem.click();
-			await expect(labelInput).toBeVisible({ timeout: 3_000 });
-		}).toPass({ timeout: 20_000 });
-
+		const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
+		await labelInput.waitFor({ state: 'visible', timeout: 15_000 });
 		await labelInput.fill(label);
 	}
 }
