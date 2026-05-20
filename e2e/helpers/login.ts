@@ -4,6 +4,11 @@ import { CommunityPage } from '../pages/community/community.page';
 import { getTestUsers, type UserRole } from './auth';
 import type { E2EProject } from './config';
 
+export async function signOut(page: Page) {
+	await page.goto('/logout');
+	await page.waitForURL(/\/(login|signup)/, { timeout: 30_000 });
+}
+
 async function loginViaForm(page: Page, email: string, password: string) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
@@ -36,11 +41,13 @@ export async function loginAsOwner(page: Page, project: E2EProject) {
 
 export async function loginAsAdmin(page: Page, project: E2EProject) {
 	const { admin } = getTestUsers(project);
+	await signOut(page);
 	await loginViaForm(page, admin.email, admin.password);
 }
 
 export async function loginAsMember(page: Page, project: E2EProject) {
 	const { member } = getTestUsers(project);
+	await signOut(page);
 	await loginViaForm(page, member.email, member.password);
 }
 
