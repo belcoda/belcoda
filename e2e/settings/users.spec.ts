@@ -1,41 +1,20 @@
 import { expect, test, type Page } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
 import { UsersPage } from '../pages/settings/users.page';
 import { OrganizationPage } from '../pages/organization.page';
-import { getTestUsers, signUpUser, verifyUserEmail } from '../helpers/auth';
-import { BASE_URL, getOrgSlug } from '../helpers/config';
+import { signUpUser, verifyUserEmail } from '../helpers/auth';
 import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
+import { loginAsOwner, loginAsMember, signOut } from '../helpers/login';
 
 const PROJECT = 'settings' as const;
-const USERS = getTestUsers(PROJECT);
-const ORG_SLUG = getOrgSlug(PROJECT);
 
-async function signOut(page: Page) {
-	await page.goto('/logout');
-	await page.waitForURL('**/login', { timeout: 10_000 });
-}
-
-async function loginAs(page: Page, email: string, password: string) {
+async function loginAsInvitee(page: Page, email: string, password: string) {
+	await signOut(page);
 	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
+	await expect(loginPage.emailInput).toBeVisible({ timeout: 15_000 });
 	await loginPage.login(email, password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function getInvitationId(email: string): Promise<string> {
-	const response = await fetch(`${BASE_URL}/api/e2e/get-invitation`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
-		body: JSON.stringify({ email, orgSlug: ORG_SLUG })
-	});
-	if (!response.ok) {
-		throw new Error(`get-invitation failed: ${response.status} ${await response.text()}`);
-	}
-	const data = await response.json();
-	return data.invitationId as string;
+	await expect(page).toHaveURL('/organization', { timeout: 30_000 });
 }
 
 test.describe.serial('Settings: User Invitations', () => {
@@ -47,7 +26,7 @@ test.describe.serial('Settings: User Invitations', () => {
 		const suffix = Date.now();
 		state.invitedEmail = `e2e-invite-${suffix}@belcoda.test`;
 
-		await loginAs(page, USERS.owner.email, USERS.owner.password);
+		await loginAsOwner(page, PROJECT);
 
 		const usersPage = new UsersPage(page);
 		await usersPage.goto();
@@ -64,7 +43,7 @@ test.describe.serial('Settings: User Invitations', () => {
 	});
 
 	test('pending invitation is still visible after page reload', async ({ page }) => {
-		await loginAs(page, USERS.owner.email, USERS.owner.password);
+		await loginAsOwner(page, PROJECT);
 
 		const usersPage = new UsersPage(page);
 		await usersPage.goto();
@@ -78,7 +57,7 @@ test.describe.serial('Settings: User Invitations', () => {
 		const suffix = Date.now();
 		const cancelEmail = `e2e-invite-cancel-${suffix}@belcoda.test`;
 
-		await loginAs(page, USERS.owner.email, USERS.owner.password);
+		await loginAsOwner(page, PROJECT);
 
 		const usersPage = new UsersPage(page);
 		await usersPage.goto();
@@ -96,7 +75,7 @@ test.describe.serial('Settings: User Invitations', () => {
 	test('member cannot access user management', async ({ page }) => {
 		const usersPage = new UsersPage(page);
 
-		await loginAs(page, USERS.member.email, USERS.member.password);
+		await loginAsMember(page, PROJECT);
 		await usersPage.goto();
 
 		await expectMemberCannotAccessSettings(page);
@@ -111,7 +90,7 @@ test.describe.serial('Settings: Invitation acceptance', () => {
 		const inviteePassword = 'TestPass123!';
 
 		// Owner sends invite
-		await loginAs(page, USERS.owner.email, USERS.owner.password);
+		await loginAsOwner(page, PROJECT);
 		const usersPage = new UsersPage(page);
 		await usersPage.goto();
 		await usersPage.openInviteModal();
@@ -128,14 +107,7 @@ test.describe.serial('Settings: Invitation acceptance', () => {
 		});
 		await verifyUserEmail(inviteeEmail);
 
-		// Sign out the owner before logging in as the invitee
-		await signOut(page);
-
-		// Log in as invitee — no active org yet, lands on /organization
-		const loginPage = new LoginPage(page);
-		await loginPage.goto();
-		await loginPage.login(inviteeEmail, inviteePassword);
-		await expect(page).toHaveURL('/organization', { timeout: 30_000 });
+		await loginAsInvitee(page, inviteeEmail, inviteePassword);
 
 		const orgPage = new OrganizationPage(page);
 		await orgPage.acceptInvitation();
@@ -151,7 +123,7 @@ test.describe.serial('Settings: Invitation decline', () => {
 		const inviteePassword = 'TestPass123!';
 
 		// Owner sends invite
-		await loginAs(page, USERS.owner.email, USERS.owner.password);
+		await loginAsOwner(page, PROJECT);
 		const usersPage = new UsersPage(page);
 		await usersPage.goto();
 		await usersPage.openInviteModal();
@@ -168,14 +140,7 @@ test.describe.serial('Settings: Invitation decline', () => {
 		});
 		await verifyUserEmail(inviteeEmail);
 
-		// Sign out the owner before logging in as the invitee
-		await signOut(page);
-
-		// Log in as invitee — lands on /organization
-		const loginPage = new LoginPage(page);
-		await loginPage.goto();
-		await loginPage.login(inviteeEmail, inviteePassword);
-		await expect(page).toHaveURL('/organization', { timeout: 30_000 });
+		await loginAsInvitee(page, inviteeEmail, inviteePassword);
 
 		const orgPage = new OrganizationPage(page);
 		await orgPage.declineInvitation();
