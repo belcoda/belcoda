@@ -15,10 +15,10 @@
 	const updateNodeInternals = useUpdateNodeInternals();
 	/*svelte-ignore state_referenced_locally */
 	let filter = $state(JSON.parse(JSON.stringify((() => data.filter)() || defaultFilterGroup)));
-	$effect(() => {
+	/* $effect(() => {
 		updateNodeData(id, { filter });
 		updateNodeInternals(id);
-	});
+	}); */
 
 	import RecipientBox from '$lib/components/widgets/communications/recipients/RecipientBox.svelte';
 	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
@@ -35,7 +35,13 @@
 			Recipients:
 		</div>
 		<div class=" p-2">
-			<RecipientBox bind:filter />
+			<RecipientBox
+				bind:filter
+				onChange={(filter) => {
+					updateNodeData(id, { filter: $state.snapshot(filter) });
+					updateNodeInternals(id);
+				}}
+			/>
 		</div>
 	</div>
 	<Handle
