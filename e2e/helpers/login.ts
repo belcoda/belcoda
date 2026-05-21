@@ -5,8 +5,8 @@ import { getTestUsers, type UserRole } from './auth';
 import type { E2EProject } from './config';
 
 export async function signOut(page: Page) {
-	await page.goto('/logout');
-	await page.waitForURL(/\/(login|signup)/, { timeout: 30_000 });
+	await page.goto('/logout', { waitUntil: 'commit' });
+	await page.waitForURL(/\/(login|signup)/, { timeout: 30_000, waitUntil: 'commit' });
 }
 
 async function loginViaForm(page: Page, email: string, password: string) {
@@ -14,7 +14,7 @@ async function loginViaForm(page: Page, email: string, password: string) {
 	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
 	await loginPage.login(email, password);
-	await expect(page).toHaveURL('/community', { timeout: 30_000 });
+	await expect(page).toHaveURL(/\/community/, { timeout: 30_000 });
 	await communityPage.expectLoaded();
 }
 
@@ -24,14 +24,19 @@ export async function ensureAuthenticated(
 	role: UserRole = 'owner'
 ): Promise<CommunityPage> {
 	const communityPage = new CommunityPage(page);
-	await page.goto('/community');
-	const onAuthPage = /\/(login|signup)/.test(page.url());
-	if (onAuthPage) {
+	await page.goto('/community', { waitUntil: 'commit' });
+
+	if (/\/(login|signup)/.test(page.url())) {
 		const user = getTestUsers(project)[role];
 		await loginViaForm(page, user.email, user.password);
-	} else {
-		await communityPage.expectLoaded();
+		return communityPage;
 	}
+
+	if (!page.url().includes('/community')) {
+		await expect(page).toHaveURL(/\/community/, { timeout: 30_000 });
+	}
+
+	await communityPage.expectLoaded();
 	return communityPage;
 }
 

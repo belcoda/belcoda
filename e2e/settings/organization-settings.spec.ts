@@ -67,9 +67,7 @@ test.describe('Settings: Organization Themes', () => {
 		await loginAsOwner(page, PROJECT);
 		await themesPage.goto();
 		await expect(themesPage.themesForm).toBeVisible({ timeout: 15_000 });
-		await Promise.all([
-			page.waitForURL('/settings', { timeout: 30_000 }),
-			themesPage.saveButton.click()
-		]);
+		await themesPage.saveButton.click();
+		await expect(page).toHaveURL('/settings', { timeout: 30_000 });
 	});
 });

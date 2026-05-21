@@ -1,13 +1,5 @@
-import { chromium } from '@playwright/test';
-import {
-	buildSessionCookiesForBaseUrl,
-	extractSessionCookie,
-	getTestUsers,
-	signInUser,
-	signUpUser,
-	verifyUserEmail,
-	type UserRole
-} from '../helpers/auth';
+import { chromium, request } from '@playwright/test';
+import { getTestUsers, signUpUser, verifyUserEmail, type UserRole } from '../helpers/auth';
 import { AUTH_DIR, authStoragePath } from '../helpers/auth-storage';
 import {
 	BASE_URL,
@@ -65,23 +57,20 @@ async function saveCookieConsentState() {
 	const browser = await chromium.launch();
 	const context = await browser.newContext();
 	const url = new URL(BASE_URL);
-	const hostname = url.hostname;
-	await context.addCookies([
-		{
+	const useBelcodaDomain =
+		url.hostname.endsWith('belcoda.com') && !url.hostname.includes('localhost');
+	const consentDomains = useBelcodaDomain ? ['.belcoda.com'] : [url.hostname, `.${url.hostname}`];
+	await context.addCookies(
+		consentDomains.map((domain) => ({
 			name: 'belcoda_cookie_consent',
 			value: 'accepted',
-			domain: hostname,
+			domain,
 			path: '/',
-			sameSite: 'Lax'
-		},
-		{
-			name: 'belcoda_cookie_consent',
-			value: 'accepted',
-			domain: `.${hostname}`,
-			path: '/',
-			sameSite: 'Lax'
-		}
-	]);
+			sameSite: 'Lax' as const,
+			secure: url.protocol === 'https:',
+			httpOnly: false
+		}))
+	);
 	ensureAuthDir();
 	await context.storageState({ path: STORAGE_STATE_PATH });
 	await browser.close();
@@ -95,23 +84,33 @@ function ensureAuthDir() {
 
 async function saveRoleStorageState(project: E2EProject, role: UserRole) {
 	const user = getTestUsers(project)[role];
-	const signInResponse = await signInUser(user);
-	const sessionToken = extractSessionCookie(signInResponse);
-	if (!sessionToken) {
-		throw new Error(`No session cookie returned for ${user.email}`);
+	const apiContext = await request.newContext({
+		baseURL: BASE_URL,
+		storageState: STORAGE_STATE_PATH
+	});
+
+	const signInResponse = await apiContext.post('/api/auth/sign-in/email', {
+		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
+		data: JSON.stringify({ email: user.email, password: user.password })
+	});
+
+	if (!signInResponse.ok()) {
+		throw new Error(
+			`Failed to sign in ${user.email}: ${signInResponse.status()} ${await signInResponse.text()}`
+		);
 	}
 
-	const consentState = JSON.parse(fs.readFileSync(STORAGE_STATE_PATH, 'utf-8')) as {
-		cookies: Array<Record<string, unknown>>;
-		origins: unknown[];
-	};
+	await apiContext.storageState({ path: authStoragePath(project, role) });
+	await apiContext.dispose();
 
-	const storageState = {
-		cookies: [...consentState.cookies, ...buildSessionCookiesForBaseUrl(sessionToken, BASE_URL)],
-		origins: consentState.origins ?? []
+	const saved = JSON.parse(fs.readFileSync(authStoragePath(project, role), 'utf-8')) as {
+		cookies: Array<{ name: string }>;
 	};
+	const hasSession = saved.cookies.some((c) => c.name.includes('session_token'));
+	if (!hasSession) {
+		throw new Error(`Storage state for ${project}-${role} is missing a session_token cookie`);
+	}
 
-	fs.writeFileSync(authStoragePath(project, role), JSON.stringify(storageState, null, 2));
 	console.log(`  ✓ Storage state: ${project}-${role}`);
 }
 

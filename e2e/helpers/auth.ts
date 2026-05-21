@@ -98,7 +98,7 @@ export function extractSessionCookie(response: Response): string | null {
 			: [response.headers.get('set-cookie')].filter((h): h is string => !!h);
 
 	for (const header of setCookieHeaders) {
-		const match = header.match(/belcoda\.session_token=([^;]+)/);
+		const match = header.match(/(?:__Secure-)?belcoda\.session_token=([^;]+)/);
 		if (match) return match[1];
 	}
 
@@ -110,10 +110,11 @@ export function buildSessionCookiesForBaseUrl(token: string, baseUrl: string = B
 	const secure = url.protocol === 'https:';
 	const useBelcodaDomain =
 		url.hostname.endsWith('belcoda.com') && !url.hostname.includes('localhost');
+	const cookieName = secure ? '__Secure-belcoda.session_token' : 'belcoda.session_token';
 
 	return [
 		{
-			name: 'belcoda.session_token',
+			name: cookieName,
 			value: token,
 			domain: useBelcodaDomain ? '.belcoda.com' : url.hostname,
 			path: '/',
