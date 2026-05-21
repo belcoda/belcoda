@@ -92,21 +92,34 @@ export async function signInUser(user: TestUser): Promise<Response> {
 }
 
 export function extractSessionCookie(response: Response): string | null {
-	const setCookie = response.headers.get('set-cookie');
-	if (!setCookie) return null;
+	const setCookieHeaders =
+		typeof response.headers.getSetCookie === 'function'
+			? response.headers.getSetCookie()
+			: [response.headers.get('set-cookie')].filter((h): h is string => !!h);
 
-	const match = setCookie.match(/belcoda\.session_token=([^;]+)/);
-	return match ? match[1] : null;
+	for (const header of setCookieHeaders) {
+		const match = header.match(/belcoda\.session_token=([^;]+)/);
+		if (match) return match[1];
+	}
+
+	return null;
 }
 
-export function buildSessionCookie(token: string) {
-	return {
-		name: 'belcoda.session_token',
-		value: token,
-		domain: 'localhost',
-		path: '/',
-		httpOnly: true,
-		secure: false,
-		sameSite: 'Lax' as const
-	};
+export function buildSessionCookiesForBaseUrl(token: string, baseUrl: string = BASE_URL) {
+	const url = new URL(baseUrl);
+	const secure = url.protocol === 'https:';
+	const useBelcodaDomain =
+		url.hostname.endsWith('belcoda.com') && !url.hostname.includes('localhost');
+
+	return [
+		{
+			name: 'belcoda.session_token',
+			value: token,
+			domain: useBelcodaDomain ? '.belcoda.com' : url.hostname,
+			path: '/',
+			httpOnly: true,
+			secure,
+			sameSite: 'Lax' as const
+		}
+	];
 }

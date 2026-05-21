@@ -1,5 +1,13 @@
 import { chromium } from '@playwright/test';
-import { getTestUsers, signUpUser, verifyUserEmail, type UserRole } from '../helpers/auth';
+import {
+	buildSessionCookiesForBaseUrl,
+	extractSessionCookie,
+	getTestUsers,
+	signInUser,
+	signUpUser,
+	verifyUserEmail,
+	type UserRole
+} from '../helpers/auth';
 import { AUTH_DIR, authStoragePath } from '../helpers/auth-storage';
 import {
 	BASE_URL,
@@ -8,8 +16,6 @@ import {
 	getOrgName,
 	type E2EProject
 } from '../helpers/config';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
 import path from 'path';
 import fs from 'fs';
 
@@ -89,22 +95,23 @@ function ensureAuthDir() {
 
 async function saveRoleStorageState(project: E2EProject, role: UserRole) {
 	const user = getTestUsers(project)[role];
-	const browser = await chromium.launch();
-	const context = await browser.newContext({
-		baseURL: BASE_URL,
-		storageState: STORAGE_STATE_PATH
-	});
-	const page = await context.newPage();
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
+	const signInResponse = await signInUser(user);
+	const sessionToken = extractSessionCookie(signInResponse);
+	if (!sessionToken) {
+		throw new Error(`No session cookie returned for ${user.email}`);
+	}
 
-	await loginPage.goto();
-	await loginPage.login(user.email, user.password);
-	await page.waitForURL(/\/community/, { timeout: 60_000 });
-	await communityPage.expectLoaded();
+	const consentState = JSON.parse(fs.readFileSync(STORAGE_STATE_PATH, 'utf-8')) as {
+		cookies: Array<Record<string, unknown>>;
+		origins: unknown[];
+	};
 
-	await context.storageState({ path: authStoragePath(project, role) });
-	await browser.close();
+	const storageState = {
+		cookies: [...consentState.cookies, ...buildSessionCookiesForBaseUrl(sessionToken, BASE_URL)],
+		origins: consentState.origins ?? []
+	};
+
+	fs.writeFileSync(authStoragePath(project, role), JSON.stringify(storageState, null, 2));
 	console.log(`  ✓ Storage state: ${project}-${role}`);
 }
 
