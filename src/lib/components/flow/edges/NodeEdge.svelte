@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { BaseEdge, EdgeToolbar, getBezierPath, useEdges, type EdgeProps } from '@xyflow/svelte';
-	let { id, sourceX, sourceY, targetX, targetY }: EdgeProps = $props();
-	import CogIcon from '@lucide/svelte/icons/cog';
+	import {
+		BaseEdge,
+		EdgeToolbar,
+		getBezierPath,
+		useEdges,
+		type EdgeProps,
+		useStore
+	} from '@xyflow/svelte';
+	let { id, sourceX, sourceY, targetX, targetY, selected }: EdgeProps = $props();
 	import UnlinkIcon from '@lucide/svelte/icons/unlink';
 	let [edgePath, centerX, centerY] = $derived(
 		getBezierPath({
@@ -13,24 +19,19 @@
 	);
 
 	const edges = useEdges();
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
+	const isDisabled = $derived(
+		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
+	);
 </script>
 
 <BaseEdge {id} path={edgePath} />
-<EdgeToolbar x={centerX} y={centerY} selectEdgeOnClick={true}>
-	<DropdownMenu.Root>
-		<DropdownMenu.Trigger class=" bg-transparent">
-			<button class="rounded-full bg-transparent opacity-50 transition-opacity hover:opacity-100">
-				<CogIcon class="size-5" />
-			</button>
-		</DropdownMenu.Trigger>
-		<DropdownMenu.Content>
-			<DropdownMenu.Item
-				onclick={() => edges.update((eds) => eds.filter((edge) => edge.id !== id))}
-			>
-				<UnlinkIcon />
-				Unlink
-			</DropdownMenu.Item>
-		</DropdownMenu.Content>
-	</DropdownMenu.Root>
+<EdgeToolbar x={centerX} y={centerY + 2} isVisible={selected} selectEdgeOnClick={true}>
+	<button
+		class:pointer-events-none={isDisabled}
+		onclick={() => edges.update((eds) => eds.filter((edge) => edge.id !== id))}
+		class="text-muted-foreground opacity-70 hover:text-foreground hover:opacity-100"
+	>
+		<UnlinkIcon class="size-3" />
+	</button>
 </EdgeToolbar>
