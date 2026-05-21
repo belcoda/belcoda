@@ -41,7 +41,7 @@
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 
-	const initial = cloneTemplateMessageData(data);
+	const initial = cloneTemplateMessageData((() => data)());
 	let templateId = $state(initial.templateId);
 	let headerParams = $state(initial.headerParams);
 	let bodyParams = $state(initial.bodyParams);
@@ -51,9 +51,9 @@
 	/** Template id we last applied Meta defaults for (per mount). */
 	let hydratedForTemplateId = $state<string | null>(null);
 
-	const savedTemplateIdOnMount = data.templateId;
+	const savedTemplateIdOnMount = (() => data.templateId)();
 	const hasSavedParams = Boolean(
-		data.body?.templateParams?.length || data.header?.templateParams?.length
+		(() => data.body?.templateParams?.length || data.header?.templateParams?.length)()
 	);
 
 	function commit() {
