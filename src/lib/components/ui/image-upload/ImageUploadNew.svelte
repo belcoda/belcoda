@@ -30,6 +30,7 @@
 
 	type TriggerSnippetArgs = {
 		triggerProps: FileUploadTriggerProps;
+		openFilePicker: (e?: MouseEvent) => void;
 		loading: boolean;
 		fileUrl: string | null | undefined;
 		errorState: string | null;
@@ -43,6 +44,7 @@
 
 	type Props = {
 		fileUrl?: string | null | undefined;
+		loading?: boolean;
 		class?: string;
 		onUpload?: (url: string) => Promise<void> | void;
 		crop?: boolean | CropConfig;
@@ -57,7 +59,8 @@
 	};
 
 	let {
-		fileUrl = undefined,
+		fileUrl = $bindable<string | null | undefined>(undefined),
+		loading = $bindable(false),
 		class: className,
 		onUpload = async () => {},
 		crop = undefined,
@@ -81,7 +84,6 @@
 	const humanReadableMaxFileSize = $derived(effectiveMaxSize >= 10 * 1024 * 1024 ? '10MB' : '2MB');
 	const showDropzone = $derived(showDropzoneProp ?? !trigger);
 
-	let loading = $state(false);
 	let modalOpen = $state(false);
 	let errorState: string | null = $state(null);
 	let oldFileUrl = $state<string | null | undefined>(undefined);
@@ -195,6 +197,21 @@
 		loading = false;
 		cropResults = null;
 	}
+
+	/** Opens the native file picker. Safe to call from menus (e.g. DropdownMenu.Item). */
+	export function openFilePicker(e?: MouseEvent) {
+		e?.stopPropagation();
+		if (disabled) return;
+		const input = document.getElementById(fileUpload.ids.input);
+		if (input instanceof HTMLInputElement) {
+			input.click();
+		}
+	}
+
+	const triggerProps = $derived({
+		'data-disabled': fileUpload.trigger['data-disabled'],
+		onclick: () => openFilePicker()
+	} satisfies FileUploadTriggerProps);
 </script>
 
 {#if cropEnabled}
@@ -228,7 +245,8 @@
 
 {#if trigger}
 	{@render trigger({
-		triggerProps: fileUpload.trigger,
+		triggerProps,
+		openFilePicker,
 		loading,
 		fileUrl,
 		errorState
