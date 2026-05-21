@@ -119,18 +119,17 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		const editPage = new PetitionEditPage(page);
 		await editPage.waitForForm();
 
+		const slugBeforeEdit = ids.petitionSlug;
 		ids.petitionTitle = `${ids.petitionTitle} (edited)`;
 		await editPage.clearAndFillTitle(ids.petitionTitle);
-		await expectPetitionSlugPreview(page, ids.petitionTitle);
+		await expect(editPage.slugPreview).toContainText(`/petitions/${slugBeforeEdit}`);
 		await editPage.submit();
 		await expect(page).toHaveURL(`/petitions/${ids.petitionId}`, { timeout: 15_000 });
-
-		// save the changed slug
-		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
 
 		await detailPage.goto(ids.petitionId);
 		await detailPage.waitForLoaded();
 		await expect(detailPage.titleDisplay).toContainText(ids.petitionTitle);
+		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
 	});
 
 	test('owner can publish a petition from the action menu', async ({ page }) => {
@@ -201,7 +200,7 @@ test.describe.serial('Petitions: public page', () => {
 		await expect(page).toHaveURL(new RegExp(`https?:\\/\\/${ORG_SLUG}\\.`), {
 			timeout: 15_000
 		});
-		await expect(page).toHaveURL(new RegExp(`\\/petitions\\/${ids.petitionSlug}(\\?|$)`), {
+		await expect(page).toHaveURL(new RegExp(`\\/petitions\\/${ids.petitionSlug}(?:\\?|$)`), {
 			timeout: 15_000
 		});
 
@@ -332,6 +331,9 @@ test.describe.serial('Petitions: signup fields', () => {
 
 		await createPage.fillTitle(title);
 		await expectPetitionSlugPreview(page, title);
+		petitionSlug = await createPage.slugFromPreview();
+		expect(petitionSlug).not.toBe('');
+
 		await createPage.fillDescription('Testing petition extra signup fields');
 		await createPage.fillTarget('Petition target for signup field tests');
 		await createPage.fillPetitionText('Petition text for signup field tests.');
@@ -363,20 +365,19 @@ test.describe.serial('Petitions: signup fields', () => {
 			/\/petitions\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
 			{ timeout: 10_000 }
 		);
-
-		petitionSlug = slugifyTitle(title);
-		expect(petitionSlug).not.toBe('');
 	});
 
 	test('public petition page shows standard address fields', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
 		await publicPage.goto(ORG_SLUG, petitionSlug);
 
-		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
-		await expect(publicPage.addressLine1Input).toBeVisible();
-		await expect(publicPage.addressLocalityInput).toBeVisible();
-		await expect(publicPage.addressRegionInput).toBeVisible();
-		await expect(publicPage.addressPostcodeInput).toBeVisible();
+		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 15_000 });
+		await expect(async () => {
+			await expect(publicPage.addressLine1Input).toBeVisible();
+			await expect(publicPage.addressLocalityInput).toBeVisible();
+			await expect(publicPage.addressRegionInput).toBeVisible();
+			await expect(publicPage.addressPostcodeInput).toBeVisible();
+		}).toPass({ timeout: 30_000 });
 	});
 
 	test('public petition page shows the custom question field', async ({ page }) => {

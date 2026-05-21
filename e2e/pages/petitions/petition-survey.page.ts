@@ -26,15 +26,18 @@ export class PetitionSurveyPage {
 	}
 
 	async addShortTextQuestion(label: string) {
-		const triggers = this.page.locator('[data-testid^="survey-question-trigger-"]');
-		const countBefore = await triggers.count();
+		const labelInputs = this.page.locator('[data-testid^="survey-custom-question-label-"]');
+		const countBefore = await labelInputs.count();
 
+		await this.addQuestionTrigger.scrollIntoViewIfNeeded();
 		await this.addQuestionTrigger.click();
-		await this.page.getByTestId('survey-add-short-text').click();
-		await triggers.nth(countBefore).waitFor({ state: 'visible', timeout: 15_000 });
+		const shortTextOption = this.page.getByTestId('survey-add-short-text');
+		await shortTextOption.waitFor({ state: 'visible', timeout: 10_000 });
+		await shortTextOption.click();
 
-		const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
-		await labelInput.fill(label, { timeout: 15_000 });
-		await labelInput.blur();
+		const newLabelInput = labelInputs.nth(countBefore);
+		await newLabelInput.waitFor({ state: 'visible', timeout: 15_000 });
+		await newLabelInput.fill(label, { timeout: 15_000 });
+		await newLabelInput.blur();
 	}
 }

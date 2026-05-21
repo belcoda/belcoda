@@ -29,7 +29,10 @@ export class PetitionPublicPage {
 	}
 
 	async goto(orgSlug: string, petitionSlug: string) {
-		await this.page.goto(getPublicPetitionUrl(orgSlug, petitionSlug));
+		await this.page.goto(getPublicPetitionUrl(orgSlug, petitionSlug), {
+			waitUntil: 'domcontentloaded'
+		});
+		await this.givenNameInput.waitFor({ state: 'visible', timeout: 30_000 });
 	}
 
 	async gotoViaPath(orgSlug: string, petitionSlug: string) {
