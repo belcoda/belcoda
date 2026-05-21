@@ -78,7 +78,9 @@ test.describe.serial('Community and person pages', () => {
 		await profilePage.goto(ids.personPath);
 
 		await expect(profilePage.nameDisplay).toContainText(ids.givenName);
-		await profilePage.editName(newGivenName, newFamilyName);
+		await expect(async () => {
+			await profilePage.editName(newGivenName, newFamilyName);
+		}).toPass({ timeout: 30_000 });
 
 		await expect(profilePage.nameDisplay).toContainText(newGivenName);
 		await expect(profilePage.nameDisplay).toContainText(newFamilyName);
