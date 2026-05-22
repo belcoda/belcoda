@@ -4,6 +4,11 @@ import { slugifyUnderscore } from '$lib/utils/slug';
 import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { faker } from '@faker-js/faker';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
+import {
+	DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
+	DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
+	MONTH_IN_MILLISECONDS
+} from '$lib/schema/helpers';
 
 const {
 	OWNER_EMAIL_ADDRESS,
@@ -123,6 +128,10 @@ export function generateOrganization({
 		createdAt: faker.date.recent({ days: 30 }),
 		updatedAt: faker.date.recent({ days: 20 }),
 		balance: 10000,
+		freeWhatsAppMessageCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
+		freeEmailMessageCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
+		//Javascript date representation of now() + interval '1 month'
+		resetFreeQuotasAfter: new Date(new Date().getTime() + MONTH_IN_MILLISECONDS),
 		settings: {
 			...defaultOrganizationSettings(),
 			whatsApp: {
