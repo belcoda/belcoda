@@ -106,7 +106,7 @@ export async function sendWhatsappMessage({
 	organizationId: string;
 	threadId: string;
 	nodeId: string;
-	messageId: string;
+	messageId?: string;
 	personId: string;
 	sendingUserId?: string;
 }) {
@@ -199,7 +199,7 @@ export async function sendWhatsappTemplateMessage({
 	threadId: string;
 	personId: string;
 	nodeId: string;
-	messageId: string;
+	messageId?: string;
 	sendingUserId?: string;
 }) {
 	await db.transaction(async (tx) => {
@@ -236,7 +236,7 @@ export async function sendWhatsappTemplateMessage({
 			phoneNumber: personObject.phoneNumber,
 			tx
 		});
-		const whatsappMessageId = uuidv7();
+		const whatsappMessageId = messageId || uuidv7();
 		const resolvedMessage = resolveWhatsappTemplateMessageData({
 			message,
 			template: template.components,
