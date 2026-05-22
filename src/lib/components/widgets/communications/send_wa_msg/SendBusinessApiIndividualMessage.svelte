@@ -11,23 +11,48 @@
 	import { t } from '$lib/index.svelte';
 	import { cn } from '$lib/utils.js';
 	import { v7 as uuidv7 } from 'uuid';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { z } from '$lib/zero.svelte';
+	import { appState } from '$lib/state.svelte';
 
 	const { personId }: { personId: string } = $props();
 
 	let imageUpload = $state<{ openFilePicker: (e?: MouseEvent) => void } | undefined>(undefined);
 	let imageLoading = $state(false);
 
-	let messageState: WhatsappMessage = $state({
-		id: uuidv7(),
-		text: '',
-		image_url: undefined,
-		emojiReactions: []
-	});
+	function returnDefaultMessageState(): WhatsappMessage {
+		return {
+			id: uuidv7(),
+			text: '',
+			image_url: undefined,
+			emojiReactions: []
+		};
+	}
+
+	let messageState: WhatsappMessage = $state(returnDefaultMessageState());
 
 	const showImagePreview = $derived(imageLoading || !!messageState.image_url);
 
 	function removeImage() {
 		messageState.image_url = undefined;
+	}
+
+	async function sendMessage() {
+		await z.mutate(
+			mutators.whatsappMessage.sendIndividualMessage({
+				input: {
+					whatsappMessage: $state.snapshot(messageState)
+				},
+				metadata: {
+					organizationId: appState.organizationId,
+					personId: personId,
+					activityId: uuidv7(),
+					sentByUserId: appState.userId,
+					whatsappMessageId: $state.snapshot(messageState.id)
+				}
+			})
+		);
+		messageState = returnDefaultMessageState();
 	}
 </script>
 
@@ -108,6 +133,7 @@
 			class="ml-auto rounded-full"
 			size="icon-xs"
 			disabled={messageState.text?.length === 0 && !messageState.image_url}
+			onclick={sendMessage}
 		>
 			<ArrowUpIcon />
 			<span class="sr-only">{t`Send`}</span>
