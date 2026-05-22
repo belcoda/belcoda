@@ -1,7 +1,8 @@
 import { defineMutator } from '@rocicorp/zero';
 import {
 	emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema,
-	isReactionSupportedMessageType
+	isReactionSupportedMessageType,
+	createWhatsAppMessageMutatorSchema
 } from '$lib/schema/whatsapp-message';
 import { env as publicEnv } from '$env/dynamic/public';
 export const emojiReaction = defineMutator(
@@ -48,5 +49,38 @@ export const emojiReaction = defineMutator(
 			message: message,
 			updatedAt: Date.now()
 		});
+	}
+);
+
+export const sendIndividualMessage = defineMutator(
+	createWhatsAppMessageMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		console.log('sendIndividualMessage', args);
+		tx.mutate.whatsappMessage.insert({
+			id: args.metadata.whatsappMessageId,
+			organizationId: args.metadata.organizationId,
+			personId: args.metadata.personId,
+			message: args.input.whatsappMessage,
+			type: 'outgoing_api_message',
+			status: 'pending',
+			userId: args.metadata.sentByUserId,
+			createdAt: Date.now(),
+			updatedAt: Date.now(),
+			deliveredAt: null,
+			readAt: null
+		});
+		//if we have an activity id, we should create the activity immediately...
+		if (args.metadata.activityId) {
+			tx.mutate.activity.insert({
+				id: args.metadata.activityId,
+				organizationId: args.metadata.organizationId,
+				personId: args.metadata.personId,
+				userId: args.metadata.sentByUserId,
+				type: 'whatsapp_message_outgoing',
+				referenceId: args.metadata.whatsappMessageId,
+				unread: true,
+				createdAt: Date.now()
+			});
+		}
 	}
 );
