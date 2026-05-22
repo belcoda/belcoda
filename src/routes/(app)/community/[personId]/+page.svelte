@@ -11,8 +11,8 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import ActivityTimeline from '$lib/components/widgets/activity/ActivityTimeline.svelte';
 	import SendBusinessApiIndividualMessage from '$lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte';
-	const lastReceivedAt = $derived(0);
-	const lastReceivedAtDate = new Date((() => lastReceivedAt)());
+	const lastReceivedAt = $derived(person.data?.mostRecentWhatsappMessageReceivedAt || 0);
+	const lastReceivedAtDate = $derived(new Date((() => lastReceivedAt)()));
 	const isLastReceivedAtLessThan24HoursAgo = $derived(
 		lastReceivedAtDate > new Date(Date.now() - 24 * 60 * 60 * 1000)
 	);
@@ -28,7 +28,7 @@
 	rootLink="/community"
 	{header}
 	bodyPadding="p-0"
-	hideFooter={isLastReceivedAtLessThan24HoursAgo || !whatsappOnboarded}
+	hideFooter={!isLastReceivedAtLessThan24HoursAgo || !whatsappOnboarded}
 >
 	<ActivityTimeline personId={params.personId} />
 	{#snippet footer()}
