@@ -17,6 +17,7 @@ import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { sendWhatsappMessage as sendWhatsappMessageToYCloud } from './ycloud/ycloud_api';
 import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
 import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+import type { WhatsappMessage as WhatsappMessageType } from '$lib/schema/whatsapp/message';
 
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
@@ -102,10 +103,10 @@ export async function sendWhatsappMessage({
 	messageId,
 	organizationId
 }: {
-	message: WhatsappMessageData;
+	message: WhatsappMessageType;
 	organizationId: string;
-	threadId: string;
-	nodeId: string;
+	threadId?: string;
+	nodeId?: string;
 	messageId?: string;
 	personId: string;
 	sendingUserId?: string;
@@ -116,10 +117,7 @@ export async function sendWhatsappMessage({
 			organizationId,
 			tx
 		});
-		const whatsappMessage = convertNodeToFullMessage({
-			messageNode: message,
-			messageId: whatsappMessageId
-		});
+		const whatsappMessage = message;
 		const personObject = await _getPersonByIdUnsafe({
 			personId: personId,
 			organizationId: organizationId,

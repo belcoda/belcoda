@@ -10,6 +10,8 @@ import {
 	sendWhatsappMessage,
 	sendWhatsappTemplateMessage
 } from '$lib/server/utils/whatsapp/send_message';
+import { convertNodeToFullMessage } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
+
 import { v7 as uuidv7 } from 'uuid';
 
 export async function processFlowNodeAction({
@@ -38,11 +40,17 @@ export async function processFlowNodeAction({
 	await db.transaction(async (tx) => {
 		switch (node.type) {
 			case 'message': {
+				const messageId = uuidv7();
+				const msgOutput = convertNodeToFullMessage({
+					messageNode: node.data,
+					messageId: messageId
+				});
 				await sendWhatsappMessage({
-					message: node.data,
+					message: msgOutput,
 					personId,
 					organizationId,
 					threadId,
+					messageId: messageId,
 					nodeId: node.id
 				});
 				break;
