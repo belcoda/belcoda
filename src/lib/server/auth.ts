@@ -28,6 +28,11 @@ import {
 import { parse } from 'valibot';
 import { userRole } from '$lib/schema/user';
 import pino from '$lib/pino';
+import {
+	DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
+	DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
+	MONTH_IN_MILLISECONDS
+} from '$lib/schema/helpers';
 const log = pino(import.meta.url);
 
 import { LRUCache } from 'lru-cache';
@@ -185,6 +190,17 @@ export function buildBetterAuth(localeInput: string) {
 					}
 				},
 				organizationHooks: {
+					beforeCreateOrganization: async ({ organization }) => {
+						return {
+							data: {
+								...organization,
+								balance: 0,
+								freeWhatsAppMessageCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
+								freeEmailMessageCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
+								resetFreeQuotasAfter: new Date(new Date().getTime() + MONTH_IN_MILLISECONDS)
+							}
+						};
+					},
 					afterAddMember: async ({ member, user, organization }) => {
 						//trigger webhook
 						try {
@@ -275,7 +291,7 @@ export function buildBetterAuth(localeInput: string) {
 							},
 							balance: {
 								type: 'number',
-								input: true,
+								input: false,
 								required: true
 							},
 							freeWhatsAppMessageCredits: {
@@ -285,6 +301,11 @@ export function buildBetterAuth(localeInput: string) {
 							},
 							freeEmailMessageCredits: {
 								type: 'number',
+								input: false,
+								required: false
+							},
+							resetFreeQuotasAfter: {
+								type: 'date',
 								input: false,
 								required: false
 							}
