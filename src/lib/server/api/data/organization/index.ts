@@ -1,7 +1,7 @@
 import { organization, member } from '$lib/schema/drizzle';
 import { drizzle } from '$lib/server/db';
 import type { ServerTransaction } from '@rocicorp/zero';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { type QueryContext, builder } from '$lib/zero/schema';
 import {
 	updateOrganizationZeroMutatorSchema,
@@ -289,4 +289,30 @@ async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
 			throw innerError;
 		}
 	}
+}
+
+export async function _reduceFreeWhatsAppMessageCredits({
+	organizationId
+}: {
+	organizationId: string;
+}) {
+	await drizzle
+		.update(organization)
+		.set({
+			freeWhatsAppMessageCredits: sql`${organization.freeWhatsAppMessageCredits} - 1`
+		})
+		.where(eq(organization.id, organizationId));
+}
+
+export async function _reduceFreeEmailMessageCredits({
+	organizationId
+}: {
+	organizationId: string;
+}) {
+	await drizzle
+		.update(organization)
+		.set({
+			freeEmailMessageCredits: sql`${organization.freeEmailMessageCredits} - 1`
+		})
+		.where(eq(organization.id, organizationId));
 }
