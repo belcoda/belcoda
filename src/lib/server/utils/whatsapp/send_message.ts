@@ -110,7 +110,7 @@ export async function sendWhatsappMessage({
 	personId: string;
 	sendingUserId?: string;
 }) {
-	const whatsappMessageId = uuidv7();
+	const whatsappMessageId = messageId || uuidv7();
 	await db.transaction(async (tx) => {
 		const organization = await getOrganizationByIdUnsafe({
 			organizationId,
