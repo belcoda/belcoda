@@ -41,6 +41,12 @@ export async function sendEmailMessage({
 				throw new Error('Organization not found');
 			}
 
+			if ((org.freeEmailMessageCredits || 0) <= 0 || org.balance <= 0) {
+				throw new Error(
+					'No free email message credits or insufficient balance to send email message'
+				);
+			}
+
 			const emailMessageObject =
 				await tx.dbTransaction.wrappedTransaction.query.emailMessage.findFirst({
 					where: and(
