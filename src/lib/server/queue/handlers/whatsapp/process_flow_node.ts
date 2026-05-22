@@ -43,8 +43,7 @@ export async function processFlowNodeAction({
 					personId,
 					organizationId,
 					threadId,
-					nodeId: node.id,
-					messageId: node.id
+					nodeId: node.id
 				});
 				break;
 			}
@@ -56,8 +55,7 @@ export async function processFlowNodeAction({
 					organizationId,
 					threadId,
 					nodeId: node.id,
-					templateId: node.data.templateId,
-					messageId: node.id
+					templateId: node.data.templateId
 				});
 				break;
 			}
