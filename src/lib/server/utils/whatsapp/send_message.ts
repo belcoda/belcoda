@@ -202,65 +202,83 @@ export async function sendWhatsappTemplateMessage({
 	messageId: string;
 	sendingUserId?: string;
 }) {
-	await db.transaction(async (tx) => {
-		const template = await tx.dbTransaction.wrappedTransaction.query.whatsappTemplate.findFirst({
-			where: and(
-				eq(whatsappTemplateTable.id, templateId),
-				eq(whatsappTemplateTable.organizationId, organizationId)
-			)
-		});
-		if (!template) {
-			throw new Error('Template not found');
-		}
-		const organization = await getOrganizationByIdUnsafe({
-			organizationId,
-			tx
-		});
-		const personObject = await _getPersonByIdUnsafe({
-			personId: personId,
-			organizationId: organizationId,
-			tx
-		});
-		if (!personObject) {
-			throw new Error('Person not found');
-		}
-		const senderObject = sendingUserId
-			? await tx.dbTransaction.wrappedTransaction.query.user.findFirst({
-					where: eq(userTable.id, sendingUserId)
-				})
-			: null;
-		const recipient = await resolveOutboundWhatsappRecipient({
-			organizationId: organization.id,
-			wabaId: organization.settings.whatsApp.wabaId,
-			personId: personObject.id,
-			phoneNumber: personObject.phoneNumber,
-			tx
-		});
-		const whatsappMessageId = uuidv7();
-		const resolvedMessage = resolveWhatsappTemplateMessageData({
-			message,
-			template: template.components,
-			values: buildTemplateVariableValues({
-				personObject,
-				organization,
-				sender: senderObject
-			})
-		});
-		const messageToSend = await convertWhatsAppTemplateMessageToApiFormat({
-			templateMessage: resolvedMessage,
-			nodeId: nodeId,
-			whatsappThreadId: threadId,
-			whatsappMessageId: whatsappMessageId,
-			from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
-			...recipient,
-			name: template.name,
-			language: template.locale
-		});
+	const whatsappMessageId = uuidv7();
+	const { resolvedMessage, template, messageToSend, organization } = await db.transaction(
+		async (tx) => {
+			const template = await tx.dbTransaction.wrappedTransaction.query.whatsappTemplate.findFirst({
+				where: and(
+					eq(whatsappTemplateTable.id, templateId),
+					eq(whatsappTemplateTable.organizationId, organizationId)
+				)
+			});
+			if (!template) {
+				throw new Error('Template not found');
+			}
+			const organization = await getOrganizationByIdUnsafe({
+				organizationId,
+				tx
+			});
+			if ((organization.freeWhatsAppMessageCredits || 0) <= 0 || organization.balance <= 0) {
+				throw new Error(
+					'No free whatsapp message credits or insufficient balance to send template message'
+				);
+			}
+			const personObject = await _getPersonByIdUnsafe({
+				personId: personId,
+				organizationId: organizationId,
+				tx
+			});
+			if (!personObject) {
+				throw new Error('Person not found');
+			}
+			const senderObject = sendingUserId
+				? await tx.dbTransaction.wrappedTransaction.query.user.findFirst({
+						where: eq(userTable.id, sendingUserId)
+					})
+				: null;
+			const recipient = await resolveOutboundWhatsappRecipient({
+				organizationId: organization.id,
+				wabaId: organization.settings.whatsApp.wabaId,
+				personId: personObject.id,
+				phoneNumber: personObject.phoneNumber,
+				tx
+			});
 
-		const ycloudResponseId = await sendWhatsappMessageToYCloud(messageToSend);
-		if (!ycloudResponseId) {
-			throw new Error('Failed to send message to YCloud');
+			const resolvedMessage = resolveWhatsappTemplateMessageData({
+				message,
+				template: template.components,
+				values: buildTemplateVariableValues({
+					personObject,
+					organization,
+					sender: senderObject
+				})
+			});
+			const messageToSend = await convertWhatsAppTemplateMessageToApiFormat({
+				templateMessage: resolvedMessage,
+				nodeId: nodeId,
+				whatsappThreadId: threadId,
+				whatsappMessageId: whatsappMessageId,
+				from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
+				...recipient,
+				name: template.name,
+				language: template.locale
+			});
+			return {
+				resolvedMessage,
+				messageToSend,
+				organization,
+				template,
+				personObject
+			};
 		}
+	);
+
+	const ycloudResponseId = await sendWhatsappMessageToYCloud(messageToSend);
+	if (!ycloudResponseId) {
+		throw new Error('Failed to send message to YCloud');
+	}
+	await db.transaction(async (tx) => {
+		//after sending, let's first do the balance update
 		const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
 			templateMessage: resolvedMessage,
 			template: template.components,
