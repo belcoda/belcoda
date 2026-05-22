@@ -5025,3 +5025,33 @@ msgstr ""
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
 msgstr ""
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Not scheduled"
+msgstr ""
+
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Free WhatsApp messages"
+msgstr ""
+
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Remaining free messages this month for your organization."
+msgstr ""
+
+#. 0: formattedResetDate
+#. 0: formattedResetDate
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Resets on {0}"
+msgstr ""
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+msgid "Free emails"
+msgstr ""
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+msgid "Remaining free emails this month for your organization."
+msgstr ""
