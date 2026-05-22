@@ -28,6 +28,7 @@ import {
 	type TemplateVariableValueMap
 } from '$lib/utils/template-variables';
 import { resolveOutboundWhatsappRecipient } from '$lib/server/api/data/whatsapp/identity';
+import { _createLedgerEntry } from '$lib/server/api/data/ledger';
 
 type WhatsappMessage =
 	| ReturnType<typeof convertWhatsappMessageToApiFormat>
@@ -143,8 +144,8 @@ export async function sendWhatsappMessage({
 			from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
 			...recipient
 		});
-		const ycloudResponseId = await sendWhatsappMessageToYCloud(messageToSend);
-		if (!ycloudResponseId) {
+		const ycloudResponse = await sendWhatsappMessageToYCloud(messageToSend);
+		if (!ycloudResponse.id) {
 			throw new Error('Failed to send message to YCloud');
 		}
 		const messageToInsert: typeof whatsappMessageTable.$inferInsert = {
@@ -154,7 +155,7 @@ export async function sendWhatsappMessage({
 			userId: sendingUserId,
 			type: 'outgoing_api_message',
 			message: whatsappMessage,
-			externalId: ycloudResponseId,
+			externalId: ycloudResponse.id,
 			status: 'pending',
 			wamidId: null,
 			createdAt: new Date(),
@@ -273,12 +274,28 @@ export async function sendWhatsappTemplateMessage({
 		}
 	);
 
-	const ycloudResponseId = await sendWhatsappMessageToYCloud(messageToSend);
-	if (!ycloudResponseId) {
+	const ycloudResponse = await sendWhatsappMessageToYCloud(messageToSend);
+	if (!ycloudResponse.id) {
 		throw new Error('Failed to send message to YCloud');
 	}
 	await db.transaction(async (tx) => {
 		//after sending, let's first do the balance update
+		const delta = (ycloudResponse.totalPrice ?? 0) * 100; //concert to cents
+		const deltaInHundredthsOfCents = Math.ceil(delta);
+		await _createLedgerEntry({
+			tx,
+			args: {
+				organizationId: organization.id,
+				deltaInUsdHundredthsOfCents: deltaInHundredthsOfCents,
+				metadata: {
+					type: 'whatsapp_message_outgoing',
+					whatsappMessageId: whatsappMessageId,
+					whatsappThreadId: threadId,
+					sentByUserId: sendingUserId ?? null,
+					teamId: null //for now, always null -- we don't currently support team messaging
+				}
+			}
+		});
 		const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
 			templateMessage: resolvedMessage,
 			template: template.components,
@@ -293,7 +310,7 @@ export async function sendWhatsappTemplateMessage({
 			type: 'outgoing_api_message',
 			status: 'pending',
 			message: combinedTemplateMessage,
-			externalId: ycloudResponseId,
+			externalId: ycloudResponse.id,
 			wamidId: null,
 			createdAt: new Date(),
 			updatedAt: new Date(),
