@@ -16,13 +16,19 @@
 	const isLastReceivedAtLessThan24HoursAgo = $derived(
 		lastReceivedAtDate > new Date(Date.now() - 24 * 60 * 60 * 1000)
 	);
+	import { appState } from '$lib/state.svelte';
+	const whatsappOnboarded = $derived(
+		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
+			appState.activeOrganization?.data?.settings.whatsApp.number &&
+			appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
+	);
 </script>
 
 <ContentLayout
 	rootLink="/community"
 	{header}
 	bodyPadding="p-0"
-	hideFooter={isLastReceivedAtLessThan24HoursAgo}
+	hideFooter={isLastReceivedAtLessThan24HoursAgo || !whatsappOnboarded}
 >
 	<ActivityTimeline personId={params.personId} />
 	{#snippet footer()}
