@@ -10,6 +10,8 @@ import { eq, sql } from 'drizzle-orm';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
+export const DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS = 18; // $0.0018 in USD
+
 /**
  * Internal function to create a ledger entry.
  * @param tx - The transaction object.
