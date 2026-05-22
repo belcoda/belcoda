@@ -29,6 +29,7 @@ import {
 } from '$lib/utils/template-variables';
 import { resolveOutboundWhatsappRecipient } from '$lib/server/api/data/whatsapp/identity';
 import { _createLedgerEntry } from '$lib/server/api/data/ledger';
+import { _reduceFreeWhatsAppMessageCredits } from '$lib/server/api/data/organization';
 
 type WhatsappMessage =
 	| ReturnType<typeof convertWhatsappMessageToApiFormat>
@@ -279,23 +280,31 @@ export async function sendWhatsappTemplateMessage({
 		throw new Error('Failed to send message to YCloud');
 	}
 	await db.transaction(async (tx) => {
-		//after sending, let's first do the balance update
-		const delta = (ycloudResponse.totalPrice ?? 0) * 100; //concert to cents
-		const deltaInHundredthsOfCents = Math.ceil(delta);
-		await _createLedgerEntry({
-			tx,
-			args: {
-				organizationId: organization.id,
-				deltaInUsdHundredthsOfCents: deltaInHundredthsOfCents,
-				metadata: {
-					type: 'whatsapp_message_outgoing',
-					whatsappMessageId: whatsappMessageId,
-					whatsappThreadId: threadId,
-					sentByUserId: sendingUserId ?? null,
-					teamId: null //for now, always null -- we don't currently support team messaging
+		if ((organization.freeWhatsAppMessageCredits || 0) > 0) {
+			// reduce wqhatsapp messaegs
+			await _reduceFreeWhatsAppMessageCredits({
+				organizationId: organization.id
+			});
+		} else {
+			// issue a charge for the whatsapp message
+			const delta = (ycloudResponse.totalPrice ?? 0) * 100; //concert to cents
+			const deltaInHundredthsOfCents = Math.ceil(delta);
+			await _createLedgerEntry({
+				tx,
+				args: {
+					organizationId: organization.id,
+					deltaInUsdHundredthsOfCents: deltaInHundredthsOfCents,
+					metadata: {
+						type: 'whatsapp_message_outgoing',
+						whatsappMessageId: whatsappMessageId,
+						whatsappThreadId: threadId,
+						sentByUserId: sendingUserId ?? null,
+						teamId: null //for now, always null -- we don't currently support team messaging
+					}
 				}
-			}
-		});
+			});
+		}
+
 		const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
 			templateMessage: resolvedMessage,
 			template: template.components,

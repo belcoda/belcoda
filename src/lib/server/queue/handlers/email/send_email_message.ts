@@ -20,6 +20,7 @@ import {
 	_createLedgerEntry,
 	DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS
 } from '$lib/server/api/data/ledger';
+import { _reduceFreeEmailMessageCredits } from '$lib/server/api/data/organization';
 
 export async function sendEmailMessage({
 	emailMessageId,
@@ -129,20 +130,28 @@ export async function sendEmailMessage({
 
 			//do this in its own transaction to avoid rolling back if the things down the road fail..
 			await db.transaction(async (tx) => {
-				const delta = DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS;
-				await _createLedgerEntry({
-					tx,
-					args: {
-						organizationId: organizationId,
-						deltaInUsdHundredthsOfCents: delta,
-						metadata: {
-							type: 'email_message_outgoing',
-							emailMessageId: emailMessageId,
-							sentByUserId: sentByUserId ?? null,
-							teamId: null //for now, always null -- we don't currently support team email
+				if ((output.organization.freeEmailMessageCredits || 0) > 0) {
+					// reduce email messages
+					await _reduceFreeEmailMessageCredits({
+						organizationId: organizationId
+					});
+				} else {
+					// issue a charge for the email message
+					const delta = DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS;
+					await _createLedgerEntry({
+						tx,
+						args: {
+							organizationId: organizationId,
+							deltaInUsdHundredthsOfCents: delta,
+							metadata: {
+								type: 'email_message_outgoing',
+								emailMessageId: emailMessageId,
+								sentByUserId: sentByUserId ?? null,
+								teamId: null //for now, always null -- we don't currently support team email
+							}
 						}
-					}
-				});
+					});
+				}
 			});
 
 			const [updatedEmailMessage] = await db.transaction(async (tx) => {
