@@ -4976,9 +4976,8 @@ msgstr "No variables found."
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
 
-#: src/lib/utils/name.ts
-msgid "[Name unknown]"
-msgstr "[Name unknown]"
+#~ msgid "[Name unknown]"
+#~ msgstr "[Name unknown]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
