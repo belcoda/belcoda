@@ -1267,15 +1267,21 @@ export function getPhoneNumberExample(
 	}
 }
 
-export function normalizePhoneNumber(phoneNumber: string): string {
+export function normalizePhoneNumber(phoneNumber: string | null | undefined): string | null {
+	if (!phoneNumber || phoneNumber === '') {
+		return null;
+	}
 	return phoneNumber.replace(/[^0-9+]/g, '');
 }
 
 export function getInternationalPhoneNumber(
-	phoneNumber: string,
+	phoneNumber: string | null | undefined,
 	countryCode: CountryCode,
 	strict: boolean = false
-): string {
+): string | null {
+	if (!phoneNumber || phoneNumber === '') {
+		return null;
+	}
 	const phone = parsePhoneNumber(phoneNumber, { regionCode: countryCode });
 	if (!phone.valid && phone.possibility !== 'is-possible' && strict) {
 		throw new Error(`Country code not found for phone number: ${phoneNumber}`);

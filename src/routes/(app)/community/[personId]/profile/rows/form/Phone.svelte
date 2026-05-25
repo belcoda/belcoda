@@ -4,7 +4,7 @@
 	import { appState } from '$lib/state.svelte';
 	import type { ReadPersonZero } from '$lib/schema/person';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { objectAsync, optional } from 'valibot';
+	import { objectAsync, optional, nullable } from 'valibot';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
@@ -13,10 +13,10 @@
 
 	let { person, edit = $bindable(true) }: { person: ReadPersonZero; edit: boolean } = $props();
 	import { t } from '$lib/index.svelte';
-	let valid = $state(false);
 	const schema = objectAsync({
-		phoneNumber: optional(phoneNumber)
+		phoneNumber: optional(nullable(phoneNumber))
 	});
+	let valid = $state(false);
 
 	const { form, data, errors, Errors, Debug } = createForm({
 		schema,
@@ -56,6 +56,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<PhoneNumberSelect
+					nullable={true}
 					bind:valid
 					country={person.country as CountryCode}
 					bind:value={$data.phoneNumber}
