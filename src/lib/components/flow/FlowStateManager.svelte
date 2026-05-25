@@ -12,10 +12,17 @@
 	onMount(() => {
 		let cancelled = false;
 		(async () => {
-			const { nodes, edges } = await loadFlowFunction();
-			if (cancelled) return;
-			setNodes(nodes);
-			setEdges(edges);
+			try {
+				const { nodes, edges } = await loadFlowFunction();
+				if (cancelled) return;
+				setNodes(nodes);
+				setEdges(edges);
+			} catch (error) {
+				if (cancelled) return;
+				console.error(error);
+				setNodes([]);
+				setEdges([]);
+			}
 		})();
 		return () => {
 			cancelled = true;
