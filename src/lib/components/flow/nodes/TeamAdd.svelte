@@ -56,9 +56,10 @@
 			<TeamAddCombobox
 				value={teamId}
 				class="w-full"
-				onSelectChange={(teamId) => {
+				onSelectChange={(newTeamId) => {
+					teamId = $state.snapshot(newTeamId);
 					taint();
-					updateNodeData(id, { teamId });
+					updateNodeData(id, { teamId: $state.snapshot(newTeamId) });
 					updateNodeInternals(id);
 				}}
 			/>

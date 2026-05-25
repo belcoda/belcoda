@@ -10,6 +10,8 @@
 	} from '@xyflow/svelte';
 	import { defaultFilterGroup } from '$lib/schema/person/filter';
 	import type { TargetingData } from '$lib/schema/flow/index';
+	import { t } from '$lib/index.svelte';
+	import { taint } from '$lib/components/flow/flow_state.svelte';
 	let { id, data }: NodeProps<Node<TargetingData, 'targeting'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
@@ -32,12 +34,13 @@
 		<div
 			class="hover:bg-white/50m -mb-1 w-full border-b border-[#b7e4ac] bg-[#f8f9fa]/50 p-2 px-2 pt-2 text-[11px] font-medium text-[#008069] uppercase transition-colors"
 		>
-			Recipients:
+			{t`Recipients:`}
 		</div>
 		<div class=" p-2">
 			<RecipientBox
 				bind:filter
 				onChange={(filter) => {
+					taint();
 					updateNodeData(id, { filter: $state.snapshot(filter) });
 					updateNodeInternals(id);
 				}}

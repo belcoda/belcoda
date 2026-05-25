@@ -57,9 +57,10 @@
 			<EventSignupCombobox
 				value={eventId}
 				class="w-full"
-				onSelectChange={(eventId) => {
+				onSelectChange={(newEventId) => {
+					eventId = $state.snapshot(newEventId);
 					taint();
-					updateNodeData(id, { eventId });
+					updateNodeData(id, { eventId: $state.snapshot(newEventId) });
 					updateNodeInternals(id);
 				}}
 			/>

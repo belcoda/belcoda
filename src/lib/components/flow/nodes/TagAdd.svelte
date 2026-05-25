@@ -56,9 +56,10 @@
 			<TagAddCombobox
 				value={tagId}
 				class="w-full"
-				onSelectChange={(tagId) => {
+				onSelectChange={(newTagId) => {
+					tagId = $state.snapshot(newTagId);
 					taint();
-					updateNodeData(id, { tagId });
+					updateNodeData(id, { tagId: $state.snapshot(newTagId) });
 					updateNodeInternals(id);
 				}}
 			/>

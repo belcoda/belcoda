@@ -22,6 +22,7 @@
 	import queries from '$lib/zero/query/index';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import TrashIcon from '@lucide/svelte/icons/trash';
+	import { t } from '$lib/index.svelte';
 
 	const petitionRead = $derived.by(() =>
 		petitionId ? z.createQuery(queries.petition.read({ petitionId })) : null
@@ -57,7 +58,7 @@
 		<div
 			class="hover:bg-white/50m -mb-1 w-full border-b border-[#b7e4ac] bg-[#f8f9fa]/50 p-2 px-2 pt-2 text-[11px] font-medium text-[#008069] uppercase transition-colors"
 		>
-			Add to petition:
+			{t`Add to petition:`}
 		</div>
 		<div class=" p-2">
 			<PetitionSignupCombobox
@@ -65,8 +66,8 @@
 				class="w-full"
 				onSelectChange={(nextId) => {
 					taint();
-					petitionId = nextId;
-					updateNodeData(id, { petitionId: nextId });
+					petitionId = $state.snapshot(nextId);
+					updateNodeData(id, { petitionId: $state.snapshot(nextId) });
 					updateNodeInternals(id);
 				}}
 			/>

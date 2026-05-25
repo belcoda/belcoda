@@ -27,7 +27,7 @@
 	// --- State Management ---
 	let text = $state((() => data.text)() ?? 'Hello! Choose an option:');
 	function getText() {
-		return data.text ?? 'Hello! Choose an option:';
+		return text ?? 'Hello! Choose an option:';
 	}
 	function setText(newText: string) {
 		taint();
@@ -101,6 +101,7 @@
 					title="Remove image"
 					onclick={() => {
 						imageUrl = null;
+						updateNodeData(id, { imageUrl: null });
 					}}><ImageMinusIcon size={14} /></Button
 				>
 			{/if}
