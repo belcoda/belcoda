@@ -1,5 +1,5 @@
 // things to trigger daily:
-import { _resetOrganizationFreeQuotas } from '$lib/server/api/data/organization';
+import { _resetOrganizationFreeQuotasUnsafe } from '$lib/server/api/data/organization';
 import { json } from '@sveltejs/kit';
 import pino from '$lib/pino';
 import {
@@ -10,7 +10,7 @@ const log = pino(import.meta.url);
 export async function POST() {
 	try {
 		//reset organization free quotas
-		await _resetOrganizationFreeQuotas({
+		await _resetOrganizationFreeQuotasUnsafe({
 			freeWhatsAppCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
 			freeEmailCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS
 		});

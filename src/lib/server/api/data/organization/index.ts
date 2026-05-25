@@ -297,7 +297,7 @@ async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
  * @param freeWhatsAppCredits - The number of free WhatsApp credits to reset to
  * @param freeEmailCredits - The number of free email credits to reset to
  */
-export async function _resetOrganizationFreeQuotas({
+export async function _resetOrganizationFreeQuotasUnsafe({
 	freeWhatsAppCredits,
 	freeEmailCredits
 }: {
