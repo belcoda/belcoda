@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { v4 as uuidv4 } from 'uuid';
 
 // --- Loose helpers ---
 const optStr = v.optional(v.string());
@@ -92,9 +93,9 @@ export type SendWhatsappTemplateResponse = v.InferOutput<typeof sendWhatsappTemp
 
 export function mockSendWhatsappTemplateResponse(externalId: string): SendWhatsappTemplateResponse {
 	return {
-		id: 'msg_mock_001',
-		wamid: 'wamid.mock001',
-		wabaId: 'waba_mock_001',
+		id: `${uuidv4()}-mock-message`,
+		wamid: `wamid.mock-${uuidv4()}`,
+		wabaId: `waba_mock-${uuidv4()}`,
 		from: '+10000000000',
 		to: '+10000000001',
 		type: 'template',
