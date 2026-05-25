@@ -3002,7 +3002,6 @@ msgid "Edit role"
 msgstr ""
 
 #: src/lib/components/flow/DisplaySavedState.svelte
-#: src/lib/components/flow/StateProvider.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Saving..."
 msgstr ""
@@ -3958,7 +3957,6 @@ msgid "New WhatsApp template"
 msgstr ""
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Are you sure you want to send this WhatsApp draft?"
 msgstr ""
 
@@ -4002,7 +4000,6 @@ msgid "Manage your user preferences, including language"
 msgstr ""
 
 #: src/lib/components/flow/DisplaySavedState.svelte
-#: src/lib/components/flow/StateProvider.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
@@ -4331,7 +4328,6 @@ msgid "Could not update personal information. Please try again."
 msgstr ""
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "WhatsApp draft sent successfully"
 msgstr ""
 
@@ -4800,12 +4796,10 @@ msgid "Signing secret for \"{0}\""
 msgstr "Secreto de firma para \"{0}\""
 
 #: src/lib/components/flow/whatsapp/TestMessageModal.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Test WhatsApp"
 msgstr ""
 
 #: src/lib/components/flow/whatsapp/TestMessageModal.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Send a test message before sending this draft."
 msgstr ""
 
@@ -4878,19 +4872,15 @@ msgid "Delivery logs"
 msgstr "Registros de entregas"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
-#: src/lib/components/flow/nodes/TemplateMessage2.svelte
 msgid "Text"
 msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
-#: src/lib/components/flow/nodes/TemplateMessage2.svelte
-#: src/lib/components/flow/nodes/TemplateMessage2.svelte
 msgid "Variable"
 msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
-#: src/lib/components/flow/nodes/TemplateMessage2.svelte
 msgid "Fallback text"
 msgstr ""
 
@@ -4959,7 +4949,6 @@ msgid "No variables found."
 msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
-#: src/lib/components/flow/nodes/TemplateMessage2.svelte
 msgid "Add fallback text for recipients without this value."
 msgstr ""
 
@@ -4997,7 +4986,6 @@ msgid "Only approved WhatsApp templates can be sent. Select an approved template
 msgstr ""
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Failed to send WhatsApp draft"
 msgstr ""
 
@@ -5049,14 +5037,11 @@ msgstr ""
 #~ msgid "Failed to save draft"
 #~ msgstr ""
 
-#: src/lib/components/flow/flow_state.svelte.ts
-msgid "Failed to persist draft flow"
-msgstr ""
+#~ msgid "Failed to persist draft flow"
+#~ msgstr ""
 
-#. 0: timeAgo.format(lastSavedAt())
-#. 0: timeAgo.format(lastSavedAt())
+#. 0: derivedTimeAgoFormatter.format(lastSavedAt())
 #: src/lib/components/flow/DisplaySavedState.svelte
-#: src/lib/components/flow/StateProvider.svelte
 msgid "Saved {0}"
 msgstr ""
 
@@ -5070,4 +5055,12 @@ msgstr ""
 
 #: src/lib/components/flow/nodes/TagAdd.svelte
 msgid "Add to tag:"
+msgstr ""
+
+#: src/lib/components/flow/nodes/PetitionSignup.svelte
+msgid "Add to petition:"
+msgstr ""
+
+#: src/lib/components/flow/nodes/Targeting.svelte
+msgid "Recipients:"
 msgstr ""
