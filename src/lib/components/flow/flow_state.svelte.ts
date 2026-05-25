@@ -78,7 +78,8 @@ async function persistFlow(newFlow: { nodes: Node[]; edges: Edge[] }) {
 				organizationId: appState.organizationId
 			},
 			input: {
-				//@ts-ignore
+			// `@ts-expect-error` - flow payload typing between node schema and mutator input is not yet aligned
+			flow: toUpdate
 				flow: toUpdate
 			}
 		})
