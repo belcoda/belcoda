@@ -9,13 +9,18 @@
 	const {
 		loadFlowFunction
 	}: { loadFlowFunction: () => Promise<{ nodes: Node[]; edges: Edge[] }> } = $props();
-	onMount(async () => {
-		const { nodes, edges } = await loadFlowFunction();
-		setNodes(nodes);
-		setEdges(edges);
-	});
-	onDestroy(() => {
-		setNodes([]);
-		setEdges([]);
+	onMount(() => {
+		let cancelled = false;
+		(async () => {
+			const { nodes, edges } = await loadFlowFunction();
+			if (cancelled) return;
+			setNodes(nodes);
+			setEdges(edges);
+		})();
+		return () => {
+			cancelled = true;
+			setNodes([]);
+			setEdges([]);
+		};
 	});
 </script>
