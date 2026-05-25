@@ -3954,15 +3954,15 @@ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/templates/new/+page.svelte
 msgid "New WhatsApp template"
-msgstr ""
+msgstr "Nueva plantilla de WhatsApp"
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Are you sure you want to send this WhatsApp draft?"
-msgstr ""
+msgstr "¿Está seguro de que desea enviar este borrador de WhatsApp?"
 
 #: src/routes/(app)/settings/whatsapp/templates/[id]/+page.svelte
 msgid "Edit WhatsApp template"
-msgstr ""
+msgstr "Editar plantilla de WhatsApp"
 
 #: src/routes/(app)/settings/tags/EditTag.svelte
 msgid "Delete tag"
@@ -4656,23 +4656,23 @@ msgstr ""
 
 #: src/lib/components/flow/AppendNode.svelte
 msgid "Add Node"
-msgstr ""
+msgstr "Añadir nodo"
 
 #: src/lib/components/flow/AppendNode.svelte
 msgid "Petition Signup"
-msgstr ""
+msgstr "Registro en petición"
 
 #: src/lib/components/flow/AppendNode.svelte
 msgid "Tag Add"
-msgstr ""
+msgstr "Añadir etiqueta"
 
 #: src/lib/components/flow/AppendNode.svelte
 msgid "Team Add"
-msgstr ""
+msgstr "Añadir equipo"
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "This event has been archived."
-msgstr ""
+msgstr "Este evento ha sido archivado."
 
 #: src/routes/(app)/events/[eventId]/+page.svelte
 msgid "You can view this event, but new signups are closed."
@@ -4688,19 +4688,19 @@ msgstr ""
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Select a petition..."
-msgstr ""
+msgstr "Seleccione una petición..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "Search petition..."
-msgstr ""
+msgstr "Buscar petición..."
 
 #: src/lib/components/flow/nodes/petition_signup/Combobox.svelte
 msgid "No petitions found."
-msgstr ""
+msgstr "No se encontraron peticiones."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 msgid "Show archived"
-msgstr ""
+msgstr "Mostrar archivados"
 
 #: src/lib/components/layouts/public/event/EventSignupClosed.svelte
 msgid "Sign-up has closed"
@@ -4873,166 +4873,166 @@ msgstr "Registros de entregas"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Text"
-msgstr ""
+msgstr "Texto"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Variable"
-msgstr ""
+msgstr "Variable"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback text"
-msgstr ""
+msgstr "Texto alternativo"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Insert variable"
-msgstr ""
+msgstr "Insertar variable"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Person"
-msgstr ""
+msgstr "Persona"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Sender"
-msgstr ""
+msgstr "Remitente"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Petition"
-msgstr ""
+msgstr "Petición"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Organization slug"
-msgstr ""
+msgstr "Slug de la organización"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Sender name"
-msgstr ""
+msgstr "Nombre del remitente"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Sender email"
-msgstr ""
+msgstr "Correo del remitente"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Event name"
-msgstr ""
+msgstr "Nombre del evento"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Event start date"
-msgstr ""
+msgstr "Fecha de inicio del evento"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Event location"
-msgstr ""
+msgstr "Ubicación del evento"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Petition name"
-msgstr ""
+msgstr "Nombre de la petición"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Petition goal"
-msgstr ""
+msgstr "Objetivo de la petición"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search variables..."
-msgstr ""
+msgstr "Buscar variables..."
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "No variables found."
-msgstr ""
+msgstr "No se encontraron variables."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
-msgstr ""
+msgstr "Añada texto alternativo para destinatarios sin este valor."
 
 #~ msgid "[Name unknown]"
 #~ msgstr "[Nombre desconocido]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
-msgstr ""
+msgstr "No se encontraron plantillas aprobadas."
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 #: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "Manage templates"
-msgstr ""
+msgstr "Gestionar plantillas"
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Template not approved"
-msgstr ""
+msgstr "Plantilla no aprobada"
 
 #. 0: templateReadQuery.data.name; 1: String(templateStatus)
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
-msgstr ""
+msgstr "La plantilla seleccionada ({0}) está actualmente {1}. Puede editar este borrador, pero no se puede enviar hasta que la plantilla sea aprobada."
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "This template is not available or is not approved. Select an approved template before sending."
-msgstr ""
+msgstr "Esta plantilla no está disponible o no está aprobada. Seleccione una plantilla aprobada antes de enviar."
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "View template settings"
-msgstr ""
+msgstr "Ver configuración de plantillas"
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
-msgstr ""
+msgstr "Solo se pueden enviar plantillas de WhatsApp aprobadas. Seleccione una plantilla aprobada o espere a que Meta apruebe su plantilla."
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Failed to send WhatsApp draft"
-msgstr ""
+msgstr "Error al enviar el borrador de WhatsApp"
 
 #: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "No default template"
-msgstr ""
+msgstr "Sin plantilla predeterminada"
 
 #: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
-msgstr ""
+msgstr "Debe crear plantillas de WhatsApp y seleccionar una predeterminada para su organización antes de crear un flujo"
 
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
 msgid "Require phone number"
-msgstr ""
+msgstr "Requerir número de teléfono"
 
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 msgid "Attendees must provide a phone number before registering."
-msgstr ""
+msgstr "Los asistentes deben proporcionar un número de teléfono antes de registrarse."
 
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
 msgid "Signers must provide a phone number before signing."
-msgstr ""
+msgstr "Los firmantes deben proporcionar un número de teléfono antes de firmar."
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "📷 Photo"
-msgstr ""
+msgstr "📷 Foto"
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎥 Video"
-msgstr ""
+msgstr "🎥 Vídeo"
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎧 Audio message"
-msgstr ""
+msgstr "🎧 Mensaje de audio"
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
-msgstr ""
+msgstr "🎨 Pegatina"
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Are you sure you want to discard this WhatsApp draft?"
-msgstr ""
+msgstr "¿Está seguro de que desea descartar este borrador de WhatsApp?"
 
 #: src/lib/components/flow/flow_state.svelte.ts
 msgid "Changes not saved"
-msgstr ""
+msgstr "Cambios no guardados"
 
 #~ msgid "Failed to save draft"
 #~ msgstr ""
@@ -5043,24 +5043,24 @@ msgstr ""
 #. 0: derivedTimeAgoFormatter.format(lastSavedAt())
 #: src/lib/components/flow/DisplaySavedState.svelte
 msgid "Saved {0}"
-msgstr ""
+msgstr "Guardado {0}"
 
 #: src/lib/components/flow/nodes/EventSignup.svelte
 msgid "Add to event:"
-msgstr ""
+msgstr "Añadir al evento:"
 
 #: src/lib/components/flow/nodes/TeamAdd.svelte
 msgid "Add to team:"
-msgstr ""
+msgstr "Añadir al equipo:"
 
 #: src/lib/components/flow/nodes/TagAdd.svelte
 msgid "Add to tag:"
-msgstr ""
+msgstr "Añadir a la etiqueta:"
 
 #: src/lib/components/flow/nodes/PetitionSignup.svelte
 msgid "Add to petition:"
-msgstr ""
+msgstr "Añadir a la petición:"
 
 #: src/lib/components/flow/nodes/Targeting.svelte
 msgid "Recipients:"
-msgstr ""
+msgstr "Destinatarios:"
