@@ -130,28 +130,35 @@ export async function sendEmailMessage({
 				}
 			});
 
-			//do this in its own transaction to avoid rolling back if the things down the road fail..
-			await db.transaction(async (tx) => {
-				const claimedFreeCredit = await _reduceFreeEmailMessageCredits({
-					organizationId: organizationId,
-					tx
-				});
-				if (!claimedFreeCredit) {
-					await _createLedgerEntry({
-						tx,
-						args: {
-							organizationId: organizationId,
-							deltaInUsdHundredthsOfCents: DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS,
-							metadata: {
-								type: 'email_message_outgoing',
-								emailMessageId: emailMessageId,
-								sentByUserId: sentByUserId ?? null,
-								teamId: null //for now, always null -- we don't currently support team email
-							}
-						}
+			// Billing after delivery must not fail the send path (successfulRecipientCount).
+			try {
+				await db.transaction(async (tx) => {
+					const claimedFreeCredit = await _reduceFreeEmailMessageCredits({
+						organizationId: organizationId,
+						tx
 					});
-				}
-			});
+					if (!claimedFreeCredit) {
+						await _createLedgerEntry({
+							tx,
+							args: {
+								organizationId: organizationId,
+								deltaInUsdHundredthsOfCents: DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS,
+								metadata: {
+									type: 'email_message_outgoing',
+									emailMessageId: emailMessageId,
+									sentByUserId: sentByUserId ?? null,
+									teamId: null //for now, always null -- we don't currently support team email
+								}
+							}
+						});
+					}
+				});
+			} catch (err) {
+				log.error(
+					{ err, personId, emailMessageId, organizationId, sentByUserId },
+					'Failed to bill email message after delivery'
+				);
+			}
 
 			const [updatedEmailMessage] = await db.transaction(async (tx) => {
 				return await tx.dbTransaction.wrappedTransaction
