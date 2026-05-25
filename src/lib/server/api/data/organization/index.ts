@@ -292,11 +292,13 @@ async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
 }
 
 export async function _reduceFreeWhatsAppMessageCredits({
-	organizationId
+	organizationId,
+	tx
 }: {
 	organizationId: string;
+	tx: ServerTransaction;
 }) {
-	await drizzle
+	await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({
 			freeWhatsAppMessageCredits: sql`${organization.freeWhatsAppMessageCredits} - 1`
@@ -305,11 +307,13 @@ export async function _reduceFreeWhatsAppMessageCredits({
 }
 
 export async function _reduceFreeEmailMessageCredits({
-	organizationId
+	organizationId,
+	tx
 }: {
 	organizationId: string;
+	tx: ServerTransaction;
 }) {
-	await drizzle
+	await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({
 			freeEmailMessageCredits: sql`${organization.freeEmailMessageCredits} - 1`

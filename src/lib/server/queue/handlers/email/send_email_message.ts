@@ -133,7 +133,8 @@ export async function sendEmailMessage({
 				if ((output.organization.freeEmailMessageCredits || 0) > 0) {
 					// reduce email messages
 					await _reduceFreeEmailMessageCredits({
-						organizationId: organizationId
+						organizationId: organizationId,
+						tx
 					});
 				} else {
 					// issue a charge for the email message

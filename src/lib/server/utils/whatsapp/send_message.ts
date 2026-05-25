@@ -283,7 +283,8 @@ export async function sendWhatsappTemplateMessage({
 		if ((organization.freeWhatsAppMessageCredits || 0) > 0) {
 			// reduce wqhatsapp messaegs
 			await _reduceFreeWhatsAppMessageCredits({
-				organizationId: organization.id
+				organizationId: organization.id,
+				tx
 			});
 		} else {
 			// issue a charge for the whatsapp message
