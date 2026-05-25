@@ -220,7 +220,7 @@ export async function sendWhatsappTemplateMessage({
 				organizationId,
 				tx
 			});
-			if ((organization.freeWhatsAppMessageCredits || 0) <= 0 || organization.balance <= 0) {
+			if ((organization.freeWhatsAppMessageCredits ?? 0) <= 0 && organization.balance <= 0) {
 				throw new Error(
 					'No free whatsapp message credits or insufficient balance to send template message'
 				);
@@ -280,15 +280,12 @@ export async function sendWhatsappTemplateMessage({
 		throw new Error('Failed to send message to YCloud');
 	}
 	await db.transaction(async (tx) => {
-		if ((organization.freeWhatsAppMessageCredits || 0) > 0) {
-			// reduce wqhatsapp messaegs
-			await _reduceFreeWhatsAppMessageCredits({
-				organizationId: organization.id,
-				tx
-			});
-		} else {
-			// issue a charge for the whatsapp message
-			const delta = (ycloudResponse.totalPrice ?? 0) * 100; //concert to cents
+		const claimedFreeCredit = await _reduceFreeWhatsAppMessageCredits({
+			organizationId: organization.id,
+			tx
+		});
+		if (!claimedFreeCredit) {
+			const delta = (ycloudResponse.totalPrice ?? 0) * 100; //convert to cents
 			const deltaInHundredthsOfCents = Math.ceil(delta * 100); //convert to hundredths of cents
 			await _createLedgerEntry({
 				tx,

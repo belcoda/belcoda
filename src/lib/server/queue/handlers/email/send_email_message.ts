@@ -132,20 +132,16 @@ export async function sendEmailMessage({
 
 			//do this in its own transaction to avoid rolling back if the things down the road fail..
 			await db.transaction(async (tx) => {
-				if ((output.organization.freeEmailMessageCredits || 0) > 0) {
-					// reduce email messages
-					await _reduceFreeEmailMessageCredits({
-						organizationId: organizationId,
-						tx
-					});
-				} else {
-					// issue a charge for the email message
-					const delta = DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS;
+				const claimedFreeCredit = await _reduceFreeEmailMessageCredits({
+					organizationId: organizationId,
+					tx
+				});
+				if (!claimedFreeCredit) {
 					await _createLedgerEntry({
 						tx,
 						args: {
 							organizationId: organizationId,
-							deltaInUsdHundredthsOfCents: delta,
+							deltaInUsdHundredthsOfCents: DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS,
 							metadata: {
 								type: 'email_message_outgoing',
 								emailMessageId: emailMessageId,

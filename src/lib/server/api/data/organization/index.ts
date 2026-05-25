@@ -1,7 +1,7 @@
 import { organization, member } from '$lib/schema/drizzle';
 import { drizzle } from '$lib/server/db';
 import type { ServerTransaction } from '@rocicorp/zero';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { type QueryContext, builder } from '$lib/zero/schema';
 import {
 	updateOrganizationZeroMutatorSchema,
@@ -291,32 +291,48 @@ async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
 	}
 }
 
+/** Atomically decrements free WhatsApp credits when credits remain. Returns whether a credit was claimed. */
 export async function _reduceFreeWhatsAppMessageCredits({
 	organizationId,
 	tx
 }: {
 	organizationId: string;
 	tx: ServerTransaction;
-}) {
-	await tx.dbTransaction.wrappedTransaction
+}): Promise<boolean> {
+	const result = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({
-			freeWhatsAppMessageCredits: sql`${organization.freeWhatsAppMessageCredits} - 1`
+			freeWhatsAppMessageCredits: sql`COALESCE(${organization.freeWhatsAppMessageCredits}, 0) - 1`
 		})
-		.where(eq(organization.id, organizationId));
+		.where(
+			and(
+				eq(organization.id, organizationId),
+				sql`COALESCE(${organization.freeWhatsAppMessageCredits}, 0) > 0`
+			)
+		)
+		.returning({ id: organization.id });
+	return result.length > 0;
 }
 
+/** Atomically decrements free email credits when credits remain. Returns whether a credit was claimed. */
 export async function _reduceFreeEmailMessageCredits({
 	organizationId,
 	tx
 }: {
 	organizationId: string;
 	tx: ServerTransaction;
-}) {
-	await tx.dbTransaction.wrappedTransaction
+}): Promise<boolean> {
+	const result = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({
-			freeEmailMessageCredits: sql`${organization.freeEmailMessageCredits} - 1`
+			freeEmailMessageCredits: sql`COALESCE(${organization.freeEmailMessageCredits}, 0) - 1`
 		})
-		.where(eq(organization.id, organizationId));
+		.where(
+			and(
+				eq(organization.id, organizationId),
+				sql`COALESCE(${organization.freeEmailMessageCredits}, 0) > 0`
+			)
+		)
+		.returning({ id: organization.id });
+	return result.length > 0;
 }
