@@ -66,28 +66,23 @@ const updateFlow = useDebounce(
 );
 
 async function persistFlow(newFlow: { nodes: Node[]; edges: Edge[] }) {
-	try {
-		const whatsappThreadId = page.params?.whatsappThreadId;
-		if (!whatsappThreadId) {
-			throw new Error('Whatsapp thread ID is required');
-		}
-		const toUpdate = $state.snapshot(newFlow);
-		const result = z.mutate(
-			mutators.whatsappThread.upsert({
-				metadata: {
-					whatsappThreadId: whatsappThreadId,
-					organizationId: appState.organizationId
-				},
-				input: {
-					//@ts-ignore
-					flow: toUpdate
-				}
-			})
-		);
-		await result.server;
-		return result.client;
-	} catch (error) {
-		console.error(error);
-		toast.error(t`Failed to persist draft flow`);
+	const whatsappThreadId = page.params?.whatsappThreadId;
+	if (!whatsappThreadId) {
+		throw new Error('Whatsapp thread ID is required');
 	}
+	const toUpdate = $state.snapshot(newFlow);
+	const result = z.mutate(
+		mutators.whatsappThread.upsert({
+			metadata: {
+				whatsappThreadId: whatsappThreadId,
+				organizationId: appState.organizationId
+			},
+			input: {
+				//@ts-ignore
+				flow: toUpdate
+			}
+		})
+	);
+	await result.server;
+	return result.client;
 }
