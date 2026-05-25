@@ -5031,27 +5031,27 @@ msgstr ""
 #: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
 msgid "Not scheduled"
-msgstr ""
+msgstr "Sin programar"
 
 #: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
 msgid "Free WhatsApp messages"
-msgstr ""
+msgstr "Mensajes gratuitos de WhatsApp"
 
 #: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
 msgid "Remaining free messages this month for your organization."
-msgstr ""
+msgstr "Mensajes gratuitos restantes este mes para tu organización."
 
 #. 0: formattedResetDate
 #. 0: formattedResetDate
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
 msgid "Resets on {0}"
-msgstr ""
+msgstr "Se restablece el {0}"
 
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 msgid "Free emails"
-msgstr ""
+msgstr "Correos gratuitos"
 
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 msgid "Remaining free emails this month for your organization."
-msgstr ""
+msgstr "Correos gratuitos restantes este mes para tu organización."
