@@ -289,7 +289,7 @@ export async function sendWhatsappTemplateMessage({
 		} else {
 			// issue a charge for the whatsapp message
 			const delta = (ycloudResponse.totalPrice ?? 0) * 100; //concert to cents
-			const deltaInHundredthsOfCents = Math.ceil(delta);
+			const deltaInHundredthsOfCents = Math.ceil(delta * 100); //convert to hundredths of cents
 			await _createLedgerEntry({
 				tx,
 				args: {
