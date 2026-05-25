@@ -5074,20 +5074,20 @@ msgstr ""
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Uploading image…"
-msgstr ""
+msgstr "Subiendo imagen…"
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Image attachment preview"
-msgstr ""
+msgstr "Vista previa del adjunto de imagen"
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Remove image"
-msgstr ""
+msgstr "Eliminar imagen"
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Write your message..."
-msgstr ""
+msgstr "Escribe tu mensaje..."
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Add image"
-msgstr ""
+msgstr "Agregar imagen"
