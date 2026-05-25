@@ -371,6 +371,16 @@ export async function upsertWhatsappThread({
 	if (parsed.input.flow === undefined) {
 		throw new Error('No fields to update');
 	}
+	const permissionCheck = await tx.run(
+		builder.whatsappThread
+			.where('id', '=', args.metadata.whatsappThreadId)
+			.where('organizationId', '=', args.metadata.organizationId)
+			.where((expr) => whatsappThreadReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!permissionCheck) {
+		throw new Error('No access to send WhatsApp thread');
+	}
 
 	const { title, description } = await buildThreadMetadata({
 		threadId: args.metadata.whatsappThreadId,
