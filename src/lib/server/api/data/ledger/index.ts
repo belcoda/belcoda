@@ -2,13 +2,9 @@ import { ledger, organization } from '$lib/schema/drizzle';
 import { parse } from 'valibot';
 import { ledgerSchema } from '$lib/schema/ledger';
 import type { ServerTransaction } from '@rocicorp/zero';
-import type { QueryContext } from '$lib/zero/schema';
 import type { CreateLedgerEntrySchema, LedgerEntryMetadataSchema } from '$lib/schema/ledger';
 import { v7 as uuidv7 } from 'uuid';
 import { eq, sql } from 'drizzle-orm';
-
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 
 export const DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS = 18; // $0.0018 in USD
 
@@ -38,6 +34,8 @@ export async function _createLedgerEntry({
 		.insert(ledger)
 		.values(toInsert)
 		.returning();
+	// we want to fail if it didn't insert (eg: due to a unique constraint violation on the idempotency key)
+	// if we didn't fail, we would end up updating the organization balance twice for the same delta
 	if (result.length === 0) {
 		throw new Error('Failed to create ledger entry');
 	}
@@ -58,6 +56,6 @@ const createLedgerEntryIdempotencyKey = (metadata: LedgerEntryMetadataSchema) =>
 		case 'email_message_outgoing':
 			return `${metadata.type}-${metadata.emailMessageId}`;
 		default:
-			return `unknown-${JSON.stringify(metadata)}-${uuidv7()}`;
+			throw new Error(`Unknown ledger entry metadata type: ${JSON.stringify(metadata)}`);
 	}
 };
