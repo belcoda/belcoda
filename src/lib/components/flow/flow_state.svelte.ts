@@ -37,14 +37,18 @@ export function getEdges(): Edge[] {
 	return _edges;
 }
 
-export function setNodes(nodes: Node[]) {
+export function setNodes(nodes: Node[], persistState: boolean = true) {
 	_nodes = nodes;
-	updateFlow();
+	if (persistState) {
+		updateFlow();
+	}
 }
 
-export function setEdges(edges: Edge[]) {
+export function setEdges(edges: Edge[], persistState: boolean = true) {
 	_edges = edges;
-	updateFlow();
+	if (persistState) {
+		updateFlow();
+	}
 }
 
 const updateFlow = useDebounce(

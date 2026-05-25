@@ -4,7 +4,7 @@
 	// For example, if the Flow is being used in a page, and the user navigates to the same page with different params, the FlowStateManager should update the flow state with the new context, even though the component itself doesn't get remounted.
 	// */
 	import { setNodes, setEdges } from '$lib/components/flow/flow_state.svelte';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import type { Node, Edge } from '@xyflow/svelte';
 	const {
 		loadFlowFunction
@@ -15,19 +15,19 @@
 			try {
 				const { nodes, edges } = await loadFlowFunction();
 				if (cancelled) return;
-				setNodes(nodes);
-				setEdges(edges);
+				setNodes(nodes, false);
+				setEdges(edges, false);
 			} catch (error) {
 				if (cancelled) return;
 				console.error(error);
-				setNodes([]);
-				setEdges([]);
+				setNodes([], false);
+				setEdges([], false);
 			}
 		})();
 		return () => {
 			cancelled = true;
-			setNodes([]);
-			setEdges([]);
+			setNodes([], false);
+			setEdges([], false);
 		};
 	});
 </script>
