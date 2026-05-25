@@ -9,8 +9,14 @@ export const LONG_STRING_MAX_LENGTH = 100000;
 export const SLUG_REGEXP = new RegExp('^[a-z0-9-]+(?:-[a-z0-9]+)*$');
 export const UNDERSCORE_SLUG_REGEXP = new RegExp('^[a-z0-9_]+$');
 export const CURRENT_API_VERSION = '2026-04-16';
-export const MONTH_IN_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 export const DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS = 80;
+
+/** Matches PostgreSQL `timestamp + interval '1 month'` (calendar month, not a fixed duration). */
+export function addOneCalendarMonth(date: Date): Date {
+	const result = new Date(date.getTime());
+	result.setMonth(result.getMonth() + 1);
+	return result;
+}
 export const DEFAULT_FREE_EMAIL_MESSAGE_CREDITS = 1000;
 
 import { parsePhoneNumber } from 'awesome-phonenumber';

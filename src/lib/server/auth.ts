@@ -31,7 +31,7 @@ import pino from '$lib/pino';
 import {
 	DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
 	DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
-	MONTH_IN_MILLISECONDS
+	addOneCalendarMonth
 } from '$lib/schema/helpers';
 const log = pino(import.meta.url);
 
@@ -197,7 +197,7 @@ export function buildBetterAuth(localeInput: string) {
 								balance: 0,
 								freeWhatsAppMessageCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
 								freeEmailMessageCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
-								resetFreeQuotasAfter: new Date(new Date().getTime() + MONTH_IN_MILLISECONDS)
+								resetFreeQuotasAfter: addOneCalendarMonth(new Date())
 							}
 						};
 					},

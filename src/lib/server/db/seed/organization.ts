@@ -7,7 +7,7 @@ import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 import {
 	DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
 	DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
-	MONTH_IN_MILLISECONDS
+	addOneCalendarMonth
 } from '$lib/schema/helpers';
 
 const {
@@ -130,8 +130,7 @@ export function generateOrganization({
 		balance: 10000,
 		freeWhatsAppMessageCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
 		freeEmailMessageCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
-		//Javascript date representation of now() + interval '1 month'
-		resetFreeQuotasAfter: new Date(new Date().getTime() + MONTH_IN_MILLISECONDS),
+		resetFreeQuotasAfter: addOneCalendarMonth(new Date()),
 		settings: {
 			...defaultOrganizationSettings(),
 			whatsApp: {
