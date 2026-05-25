@@ -43,7 +43,7 @@ export const updateWhatsappThread = defineMutator(updateMutatorSchema, async ({ 
 
 export const upsertWhatsappThread = defineMutator(createMutatorSchema, async ({ tx, args }) => {
 	if (!args.input.flow) {
-		throw new Error('updateWhatsappThread requires flow');
+		throw new Error('upsertWhatsappThread requires flow');
 	}
 	tx.mutate.whatsappThread.upsert({
 		id: args.metadata.whatsappThreadId,
