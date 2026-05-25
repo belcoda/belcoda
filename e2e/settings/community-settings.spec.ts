@@ -1,25 +1,9 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { TagsPage } from '../pages/settings/tags.page';
 import { TeamsPage } from '../pages/settings/teams.page';
-import { getTestUsers } from '../helpers/auth';
+import { gotoCommunitySettings } from '../helpers/login';
 
 const PROJECT = 'community' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginToCommunitySettings(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-	await communityPage.openOrgMenu();
-	await communityPage.clickSettings();
-	await expect(page).toHaveURL('/settings');
-}
 
 test.describe.serial('Community Settings: Tags and Teams', () => {
 	const ids = {
@@ -33,7 +17,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		const tagsPage = new TagsPage(page);
 		ids.tagName = `E2E Community Tag ${Date.now()}`;
 
-		await loginToCommunitySettings(page);
+		await gotoCommunitySettings(page, PROJECT);
 		await tagsPage.settingsSidebarTagsLink.click();
 		await expect(page).toHaveURL('/settings/tags');
 
@@ -48,7 +32,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		const tagsPage = new TagsPage(page);
 		const updatedTagName = `${ids.tagName} Edited`;
 
-		await loginToCommunitySettings(page);
+		await gotoCommunitySettings(page, PROJECT);
 		await tagsPage.settingsSidebarTagsLink.click();
 		await expect(page).toHaveURL('/settings/tags');
 
@@ -66,7 +50,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 	test('owner can delete a tag from Community Settings', async ({ page }) => {
 		const tagsPage = new TagsPage(page);
 
-		await loginToCommunitySettings(page);
+		await gotoCommunitySettings(page, PROJECT);
 		await tagsPage.settingsSidebarTagsLink.click();
 		await expect(page).toHaveURL('/settings/tags');
 
@@ -78,7 +62,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		const teamsPage = new TeamsPage(page);
 		ids.teamName = `E2E Community Team ${Date.now()}`;
 
-		await loginToCommunitySettings(page);
+		await gotoCommunitySettings(page, PROJECT);
 		await teamsPage.settingsSidebarTeamsLink.click();
 		await expect(page).toHaveURL('/settings/teams');
 
@@ -93,7 +77,7 @@ test.describe.serial('Community Settings: Tags and Teams', () => {
 		const teamsPage = new TeamsPage(page);
 		const updatedTeamName = `${ids.teamName} Edited`;
 
-		await loginToCommunitySettings(page);
+		await gotoCommunitySettings(page, PROJECT);
 		await teamsPage.settingsSidebarTeamsLink.click();
 		await expect(page).toHaveURL('/settings/teams');
 
