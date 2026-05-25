@@ -42,7 +42,9 @@ export async function sendEmailMessage({
 				throw new Error('Organization not found');
 			}
 
-			if ((org.freeEmailMessageCredits || 0) <= 0 || org.balance <= 0) {
+			const hasFreeCredit = (org.freeEmailMessageCredits ?? 0) > 0;
+			const hasPaidCapacity = org.balance >= DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS;
+			if (!hasFreeCredit && !hasPaidCapacity) {
 				throw new Error(
 					'No free email message credits or insufficient balance to send email message'
 				);
