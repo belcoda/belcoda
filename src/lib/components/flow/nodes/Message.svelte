@@ -100,6 +100,7 @@
 					size="icon"
 					title="Remove image"
 					onclick={() => {
+						taint();
 						imageUrl = null;
 						updateNodeData(id, { imageUrl: null });
 					}}><ImageMinusIcon size={14} /></Button
