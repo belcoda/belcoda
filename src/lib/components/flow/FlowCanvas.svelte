@@ -54,7 +54,6 @@
 	import { addNode } from '$lib/components/flow/nodes/addNode.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
-	import WhatsAppTemplateApprovalBanner from '$lib/components/flow/WhatsAppFlowStatePanels.svelte';
 	import WhatsAppFlowStatePanels from '$lib/components/flow/WhatsAppFlowStatePanels.svelte';
 	import StateProvider from '$lib/components/flow/DisplaySavedState.svelte';
 	import { v4 as uuidv4 } from 'uuid';
@@ -169,7 +168,6 @@
 	{edgeTypes}
 	defaultEdgeOptions={{ type: 'edge' }}
 >
-	<WhatsAppTemplateApprovalBanner />
 	{#if backButtonUrl}
 		<Panel position="top-left">
 			<div class="flex flex-col gap-2">
