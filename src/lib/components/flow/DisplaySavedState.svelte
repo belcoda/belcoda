@@ -7,7 +7,6 @@
 	import { isLoading, isTainted, lastSavedAt } from '$lib/components/flow/flow_state.svelte';
 	import { getTimeAgo } from '$lib/utils/time';
 	import { locale } from '$lib/index.svelte';
-	const timeAgo = getTimeAgo(locale.current);
 	beforeNavigate((nav) => {
 		if (!isTainted()) return;
 		if (!window.confirm(t`Your changes might not be saved. Leave this page?`)) {
@@ -15,7 +14,8 @@
 		}
 	});
 
-	const derivedTimeAgo = $derived(t`Saved ${timeAgo.format(lastSavedAt())}`);
+	const derivedTimeAgoFormatter = $derived(getTimeAgo(locale.current));
+	const derivedTimeAgo = $derived(t`Saved ${derivedTimeAgoFormatter.format(lastSavedAt())}`);
 </script>
 
 <Panel position="bottom-left">
