@@ -24,8 +24,7 @@
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: updatePersonNoteZero,
 		initialData: {
-			/* svelte-ignore state_referenced_locally */
-			note: note.note
+			note: (() => note.note ?? '')()
 		},
 		onSubmit: async (data) => {
 			const parsed = parse(updateMutatorSchemaZero, {
