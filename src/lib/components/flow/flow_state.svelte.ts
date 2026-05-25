@@ -40,23 +40,29 @@ export function getEdges(): Edge[] {
 export function setNodes(nodes: Node[], persistState: boolean = true) {
 	_nodes = nodes;
 	if (persistState) {
-		updateFlow();
+		const threadId = page.params?.whatsappThreadId;
+		if (threadId) {
+			updateFlow(threadId);
+		}
 	}
 }
 
 export function setEdges(edges: Edge[], persistState: boolean = true) {
 	_edges = edges;
 	if (persistState) {
-		updateFlow();
+		const threadId = page.params?.whatsappThreadId;
+		if (threadId) {
+			updateFlow(threadId);
+		}
 	}
 }
 
 const updateFlow = useDebounce(
-	async () => {
+	async (threadId: string) => {
 		try {
 			_tainted = true;
 			_loading = true;
-			await persistFlow({ nodes: _nodes, edges: _edges });
+			await persistFlow(threadId, { nodes: _nodes, edges: _edges });
 			_tainted = false;
 			_lastSavedAt = Date.now();
 		} catch (error) {
@@ -69,8 +75,8 @@ const updateFlow = useDebounce(
 	() => 1000
 );
 
-async function persistFlow(newFlow: { nodes: Node[]; edges: Edge[] }) {
-	const whatsappThreadId = page.params?.whatsappThreadId;
+async function persistFlow(threadId: string, newFlow: { nodes: Node[]; edges: Edge[] }) {
+	const whatsappThreadId = threadId;
 	if (!whatsappThreadId) {
 		throw new Error('Whatsapp thread ID is required');
 	}
