@@ -132,7 +132,8 @@ export function applyTemplateDefaults(
 	}
 
 	if (templateBody?.type === 'BODY' && templateBody.example) {
-		const examples = templateBody.example.body_text[0] ?? [];
+		const bodyTextExamples = templateBody.example.body_text;
+		const examples = Array.isArray(bodyTextExamples?.[0]) ? bodyTextExamples[0] : [];
 		if (options.mergeExisting) {
 			bodyParams = [...bodyParams];
 			for (let i = 0; i < examples.length; i++) {
@@ -148,13 +149,23 @@ export function applyTemplateDefaults(
 	if (!templateHeader) {
 		headerParams = [];
 		headerImageUrl = null;
-	} else if (templateHeader.format === 'IMAGE' && 'header_url' in templateHeader.example) {
+	} else if (
+		templateHeader.format === 'IMAGE' &&
+		templateHeader.example &&
+		'header_url' in templateHeader.example &&
+		Array.isArray(templateHeader.example.header_url)
+	) {
 		const exampleUrl = templateHeader.example.header_url[0];
-		headerImageUrl = options.mergeExisting ? headerImageUrl || exampleUrl : exampleUrl;
+		headerImageUrl = options.mergeExisting
+			? headerImageUrl || exampleUrl || null
+			: (exampleUrl ?? null);
 		headerParams = [];
 	} else if (templateHeader.format === 'TEXT') {
+		const headerExample = templateHeader.example;
 		const exampleText =
-			'header_text' in templateHeader.example ? templateHeader.example.header_text[0] || '' : '';
+			headerExample && 'header_text' in headerExample && Array.isArray(headerExample.header_text)
+				? headerExample.header_text[0] || ''
+				: '';
 		if (options.mergeExisting) {
 			headerParams = [...headerParams];
 			if (!headerParams[0]) {
