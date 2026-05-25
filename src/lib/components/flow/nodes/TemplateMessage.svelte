@@ -51,9 +51,13 @@
 	/** Template id we last applied Meta defaults for (per mount). */
 	let hydratedForTemplateId = $state<string | null>(null);
 
-	const savedTemplateIdOnMount = (() => data.templateId)();
+	const savedDataOnMount = (() => data)();
+	const savedTemplateIdOnMount = savedDataOnMount.templateId;
 	const hasSavedParams = Boolean(
-		(() => data.body?.templateParams?.length || data.header?.templateParams?.length)()
+		(savedDataOnMount.body?.templateParams?.length ?? 0) > 0 ||
+			(savedDataOnMount.header?.templateParams?.length ?? 0) > 0 ||
+			(savedDataOnMount.body?.templateStrings?.length ?? 0) > 0 ||
+			(savedDataOnMount.header?.templateStrings?.length ?? 0) > 0
 	);
 
 	function commit() {
@@ -124,8 +128,12 @@
 	}
 
 	function onTemplateSelect(newTemplateId: string) {
-		templateId = newTemplateId;
 		hydratedForTemplateId = null;
+		headerParams = [];
+		bodyParams = [];
+		buttons = [];
+		headerImageUrl = null;
+		templateId = newTemplateId;
 		commit();
 	}
 	const nodes = useNodes();
