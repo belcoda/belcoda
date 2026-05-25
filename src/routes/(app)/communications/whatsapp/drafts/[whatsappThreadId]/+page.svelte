@@ -7,7 +7,6 @@
 	import { appState } from '$lib/state.svelte';
 	import { startingNodes } from '$lib/components/flow/nodes/addNode';
 	import { page } from '$app/state';
-	import { getNodes } from '$lib/components/flow/flow_state.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import FolderCodeIcon from '@lucide/svelte/icons/folder-code';
 	import { replaceState } from '$app/navigation';
