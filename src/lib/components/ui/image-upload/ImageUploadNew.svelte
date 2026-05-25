@@ -81,7 +81,11 @@
 	const effectiveMaxSize = $derived(
 		maxSizeProp ?? (cropEnabled ? 2 * 1024 * 1024 : 10 * 1024 * 1024)
 	);
-	const humanReadableMaxFileSize = $derived(effectiveMaxSize >= 10 * 1024 * 1024 ? '10MB' : '2MB');
+	const humanReadableMaxFileSize = $derived.by(() => {
+		const mb = effectiveMaxSize / (1024 * 1024);
+		const formatted = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(mb);
+		return `${formatted}MB`;
+	});
 	const showDropzone = $derived(showDropzoneProp ?? !trigger);
 
 	let modalOpen = $state(false);
@@ -126,7 +130,10 @@
 
 	async function uploadWithoutCrop(file: File) {
 		const element = await loadImageToElement(file);
-		const processedFile = await resizeImageFile(element, { maxDimension });
+		const processedFile = await resizeImageFile(element, {
+			maxDimension,
+			outputMimeType: file.type === 'image/png' ? 'image/png' : 'image/jpeg'
+		});
 		await uploadProcessedFile(processedFile);
 	}
 
@@ -176,7 +183,12 @@
 
 		try {
 			const croppedFile = await createCroppedFile(imageElement, cropResults);
-			await uploadProcessedFile(croppedFile);
+			const croppedElement = await loadImageToElement(croppedFile);
+			const processedFile = await resizeImageFile(croppedElement, {
+				maxDimension,
+				outputMimeType: croppedFile.type === 'image/png' ? 'image/png' : 'image/jpeg'
+			});
+			await uploadProcessedFile(processedFile);
 		} catch (error) {
 			console.error(error);
 			fileUrl = oldFileUrl;

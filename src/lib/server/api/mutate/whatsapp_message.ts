@@ -27,7 +27,6 @@ export const sendIndividualMessage = defineMutator(
 			throw new Error('sendIndividualMessage can only be called from the server');
 		}
 		await dataFunctions.sendIndividualMessage({
-			tx,
 			ctx,
 			args: args
 		});

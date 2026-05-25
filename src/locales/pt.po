@@ -4981,8 +4981,9 @@ msgstr ""
 msgid "Add fallback text for recipients without this value."
 msgstr ""
 
-#~ msgid "[Name unknown]"
-#~ msgstr "[Nome desconhecido]"
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Nome desconhecido]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
@@ -5055,27 +5056,20 @@ msgstr ""
 msgid "🎨 Sticker"
 msgstr ""
 
-#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
-msgid "Are you sure you want to discard this WhatsApp draft?"
-msgstr ""
+#~ msgid "Are you sure you want to discard this WhatsApp draft?"
+#~ msgstr "Tem certeza de que deseja descartar este rascunho do WhatsApp?"
 
-#: src/lib/components/flow/flow_state.svelte.ts
-msgid "Changes not saved"
-msgstr ""
+#~ msgid "Changes not saved"
+#~ msgstr "Alterações não salvas"
 
 #~ msgid "Failed to save draft"
 #~ msgstr ""
 
-#: src/lib/components/flow/flow_state.svelte.ts
-msgid "Failed to persist draft flow"
-msgstr ""
+#~ msgid "Failed to persist draft flow"
+#~ msgstr "Falha ao salvar o fluxo em rascunho"
 
-#. 0: timeAgo.format(lastSavedAt())
-#. 0: timeAgo.format(lastSavedAt())
-#: src/lib/components/flow/DisplaySavedState.svelte
-#: src/lib/components/flow/StateProvider.svelte
-msgid "Saved {0}"
-msgstr ""
+#~ msgid "Saved {0}"
+#~ msgstr "Salvo {0}"
 
 #~ msgid "Add to event:"
 #~ msgstr ""
@@ -5088,20 +5082,20 @@ msgstr ""
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Uploading image…"
-msgstr ""
+msgstr "Enviando imagem…"
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Image attachment preview"
-msgstr ""
+msgstr "Pré-visualização da imagem anexada"
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Remove image"
-msgstr ""
+msgstr "Remover imagem"
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Write your message..."
-msgstr ""
+msgstr "Escreva sua mensagem..."
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Add image"
-msgstr ""
+msgstr "Adicionar imagem"

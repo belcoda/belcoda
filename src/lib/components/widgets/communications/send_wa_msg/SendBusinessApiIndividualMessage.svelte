@@ -30,6 +30,7 @@
 	}
 
 	let messageState: WhatsappMessage = $state(returnDefaultMessageState());
+	let sending = $state(false);
 
 	const showImagePreview = $derived(imageLoading || !!messageState.image_url);
 
@@ -38,21 +39,27 @@
 	}
 
 	async function sendMessage() {
-		await z.mutate(
-			mutators.whatsappMessage.sendIndividualMessage({
-				input: {
-					whatsappMessage: $state.snapshot(messageState)
-				},
-				metadata: {
-					organizationId: appState.organizationId,
-					personId: personId,
-					activityId: uuidv7(),
-					sentByUserId: appState.userId,
-					whatsappMessageId: $state.snapshot(messageState.id)
-				}
-			})
-		);
-		messageState = returnDefaultMessageState();
+		if (sending) return;
+		sending = true;
+		try {
+			await z.mutate(
+				mutators.whatsappMessage.sendIndividualMessage({
+					input: {
+						whatsappMessage: $state.snapshot(messageState)
+					},
+					metadata: {
+						organizationId: appState.organizationId,
+						personId: personId,
+						activityId: uuidv7(),
+						sentByUserId: appState.userId,
+						whatsappMessageId: $state.snapshot(messageState.id)
+					}
+				})
+			);
+			messageState = returnDefaultMessageState();
+		} finally {
+			sending = false;
+		}
 	}
 </script>
 
@@ -132,7 +139,7 @@
 			variant="default"
 			class="ml-auto rounded-full"
 			size="icon-xs"
-			disabled={messageState.text?.length === 0 && !messageState.image_url}
+			disabled={sending || (messageState.text?.length === 0 && !messageState.image_url)}
 			onclick={sendMessage}
 		>
 			<ArrowUpIcon />

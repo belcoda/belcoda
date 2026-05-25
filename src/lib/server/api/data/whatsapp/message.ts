@@ -341,12 +341,10 @@ export async function createWhatsAppMessage({
 
 export async function sendIndividualMessage({
 	ctx,
-	args: argsInput,
-	tx
+	args: argsInput
 }: {
 	args: CreateWhatsAppMessageMutatorSchema;
 	ctx: QueryContext;
-	tx: ServerTransaction;
 }) {
 	const args = parse(createWhatsAppMessageMutatorSchema, argsInput);
 	if (
@@ -357,7 +355,7 @@ export async function sendIndividualMessage({
 			message: args.input.whatsappMessage,
 			organizationId: args.metadata.organizationId,
 			personId: args.metadata.personId,
-			sendingUserId: args.metadata.sentByUserId || undefined,
+			sendingUserId: ctx.userId || args.metadata.sentByUserId || undefined,
 			messageId: args.metadata.whatsappMessageId
 		});
 	} else {

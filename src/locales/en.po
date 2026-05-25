@@ -4997,8 +4997,9 @@ msgstr "No variables found."
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
 
-#~ msgid "[Name unknown]"
-#~ msgstr "[Name unknown]"
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Name unknown]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
@@ -5071,27 +5072,20 @@ msgstr "🎧 Audio message"
 msgid "🎨 Sticker"
 msgstr "🎨 Sticker"
 
-#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
-msgid "Are you sure you want to discard this WhatsApp draft?"
-msgstr "Are you sure you want to discard this WhatsApp draft?"
+#~ msgid "Are you sure you want to discard this WhatsApp draft?"
+#~ msgstr "Are you sure you want to discard this WhatsApp draft?"
 
-#: src/lib/components/flow/flow_state.svelte.ts
-msgid "Changes not saved"
-msgstr "Changes not saved"
+#~ msgid "Changes not saved"
+#~ msgstr "Changes not saved"
 
 #~ msgid "Failed to save draft"
 #~ msgstr "Failed to save draft"
 
-#: src/lib/components/flow/flow_state.svelte.ts
-msgid "Failed to persist draft flow"
-msgstr "Failed to persist draft flow"
+#~ msgid "Failed to persist draft flow"
+#~ msgstr "Failed to persist draft flow"
 
-#. 0: timeAgo.format(lastSavedAt())
-#. 0: timeAgo.format(lastSavedAt())
-#: src/lib/components/flow/DisplaySavedState.svelte
-#: src/lib/components/flow/StateProvider.svelte
-msgid "Saved {0}"
-msgstr "Saved {0}"
+#~ msgid "Saved {0}"
+#~ msgstr "Saved {0}"
 
 #~ msgid "Add to event:"
 #~ msgstr "Add to event:"
