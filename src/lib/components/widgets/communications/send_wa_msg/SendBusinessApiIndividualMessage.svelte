@@ -23,7 +23,7 @@
 	function returnDefaultMessageState(): WhatsappMessage {
 		return {
 			id: uuidv7(),
-			text: '',
+			text: undefined,
 			image_url: undefined,
 			emojiReactions: []
 		};
