@@ -57,7 +57,13 @@ export const readOrganizationZero = v.omit(
 		createdAt: helpers.dateToTimestamp,
 		updatedAt: helpers.dateToTimestamp
 	}),
-	['freeWhatsAppMessageCredits', 'freeEmailMessageCredits', 'resetFreeQuotasAfter'] //TODO: Remove these omits once in a future PR once we add them to the zero schema
+	[
+		'freeWhatsAppMessageCredits',
+		'freeEmailMessageCredits',
+		'resetFreeQuotasAfter',
+		'stripeCustomerId',
+		'billingEmail'
+	] //TODO: Remove these omits once in a future PR once we add them to the zero schema
 );
 export type ReadOrganizationZero = v.InferOutput<typeof readOrganizationZero>;
 
