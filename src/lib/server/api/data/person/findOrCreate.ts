@@ -32,7 +32,7 @@ async function findPersonByWhatsappIdentityUnsafe({
 	whatsappIdentity?: WhatsappIdentityLookup;
 	tx: ServerTransaction;
 }) {
-	if (!whatsappIdentity?.bsuid) {
+	if (!whatsappIdentity?.wabaId || !whatsappIdentity.bsuid) {
 		return undefined;
 	}
 
