@@ -54,7 +54,7 @@ const createLedgerEntryIdempotencyKey = (metadata: LedgerEntryMetadataSchema) =>
 		case 'whatsapp_message_outgoing':
 			return `${metadata.type}-${metadata.whatsappMessageId}`;
 		case 'email_message_outgoing':
-			return `${metadata.type}-${metadata.emailMessageId}`;
+			return `${metadata.type}-${metadata.emailMessageId}-${metadata.toPersonId}`;
 		default:
 			throw new Error(`Unknown ledger entry metadata type: ${JSON.stringify(metadata)}`);
 	}

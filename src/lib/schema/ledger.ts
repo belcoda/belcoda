@@ -18,6 +18,7 @@ const ledgerEntryMetadataTypes = [
 	v.object({
 		type: v.literal('email_message_outgoing'),
 		emailMessageId: helpers.uuid,
+		toPersonId: helpers.uuid,
 		sentByUserId: v.nullable(helpers.uuid),
 		teamId: v.nullable(helpers.uuid)
 	})
