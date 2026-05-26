@@ -7,10 +7,10 @@
 		Handle,
 		type Node,
 		NodeToolbar,
-		useNodes,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import { deleteFlowNode } from '$lib/components/flow/deleteFlowNode';
 	import type { WhatsappMessageData } from '$lib/schema/flow/index';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import ImagePlusIcon from '@lucide/svelte/icons/image-plus';
@@ -22,7 +22,7 @@
 	import { cn } from '$lib/utils.js';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 	let { id, data }: NodeProps<Node<WhatsappMessageData, 'message'>> = $props();
-	const { updateNodeData } = useSvelteFlow();
+	const { updateNodeData, deleteElements } = useSvelteFlow();
 
 	// --- State Management ---
 	let text = $state((() => data.text)() ?? 'Hello! Choose an option:');
@@ -75,8 +75,6 @@
 		buttons = buttons.filter((_, i) => i !== index);
 		updateNodeData(id, { buttons: $state.snapshot(buttons) });
 	};
-
-	const nodes = useNodes();
 </script>
 
 <div class:pointer-events-none={isDisabled}>
@@ -119,12 +117,7 @@
 				variant="outline"
 				size="icon-sm"
 				class="rounded-full"
-				onclick={() => {
-					//delete the node
-					if (window.confirm('Are you sure you want to delete this node?')) {
-						nodes.update((nodes) => nodes.filter((node) => node.id !== id));
-					}
-				}}
+				onclick={() => deleteFlowNode(deleteElements, id)}
 			>
 				<TrashIcon />
 			</Button>

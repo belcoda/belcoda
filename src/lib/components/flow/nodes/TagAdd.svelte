@@ -7,7 +7,6 @@
 		type Node,
 		NodeToolbar,
 		useStore,
-		useNodes,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import type { TagAddData } from '$lib/schema/flow/index';
@@ -15,13 +14,13 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import { deleteFlowNode } from '$lib/components/flow/deleteFlowNode';
 	let { id, data }: NodeProps<Node<TagAddData, 'tagAdd'>> = $props();
-	const { updateNodeData } = useSvelteFlow();
+	const { updateNodeData, deleteElements } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	let tagId = $state((() => data.tagId)() ?? null);
 	import TagAddCombobox from './tag_add/Combobox.svelte';
 	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
-	const nodes = useNodes();
 	const isDisabled = $derived(
 		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
 	);
@@ -33,12 +32,7 @@
 			variant="outline"
 			size="icon-sm"
 			class="rounded-full"
-			onclick={() => {
-				//delete the node
-				if (window.confirm('Are you sure you want to delete this node?')) {
-					nodes.update((nodes) => nodes.filter((node) => node.id !== id));
-				}
-			}}
+			onclick={() => deleteFlowNode(deleteElements, id)}
 		>
 			<TrashIcon />
 		</Button>

@@ -7,20 +7,19 @@
 		type Node,
 		useStore,
 		useUpdateNodeInternals,
-		NodeToolbar,
-		useNodes
+		NodeToolbar
 	} from '@xyflow/svelte';
 	import type { TeamAddData } from '$lib/schema/flow/index';
 	import { t } from '$lib/index.svelte';
 	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import { deleteFlowNode } from '$lib/components/flow/deleteFlowNode';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 	let { id, data }: NodeProps<Node<TeamAddData, 'teamAdd'>> = $props();
-	const { updateNodeData } = useSvelteFlow();
+	const { updateNodeData, deleteElements } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	let teamId = $state((() => data.teamId)() ?? null);
 	import TeamAddCombobox from './team_add/Combobox.svelte';
-	const nodes = useNodes();
 	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
 	const isDisabled = $derived(
 		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
@@ -33,12 +32,7 @@
 			variant="outline"
 			size="icon-sm"
 			class="rounded-full"
-			onclick={() => {
-				//delete the node
-				if (window.confirm('Are you sure you want to delete this node?')) {
-					nodes.update((nodes) => nodes.filter((node) => node.id !== id));
-				}
-			}}
+			onclick={() => deleteFlowNode(deleteElements, id)}
 		>
 			<TrashIcon />
 		</Button>

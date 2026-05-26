@@ -6,18 +6,18 @@
 		Handle,
 		type Node,
 		NodeToolbar,
-		useNodes,
 		useStore,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import type { PetitionSignupData } from '$lib/schema/flow/index';
 	let { id, data }: NodeProps<Node<PetitionSignupData, 'petitionSignup'>> = $props();
-	const { updateNodeData } = useSvelteFlow();
+	const { updateNodeData, deleteElements } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 	let petitionId = $state((() => data.petitionId)() ?? null);
 
 	import PetitionSignupCombobox from './petition_signup/Combobox.svelte';
 	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import { deleteFlowNode } from '$lib/components/flow/deleteFlowNode';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -33,7 +33,6 @@
 	const isDisabled = $derived(
 		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
 	);
-	const nodes = useNodes();
 </script>
 
 <div class="relative w-[260px] font-sans drop-shadow-md" class:pointer-events-none={isDisabled}>
@@ -42,12 +41,7 @@
 			variant="outline"
 			size="icon-sm"
 			class="rounded-full"
-			onclick={() => {
-				//delete the node
-				if (window.confirm('Are you sure you want to delete this node?')) {
-					nodes.update((nodes) => nodes.filter((node) => node.id !== id));
-				}
-			}}
+			onclick={() => deleteFlowNode(deleteElements, id)}
 		>
 			<TrashIcon />
 		</Button>
