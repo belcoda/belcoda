@@ -1,11 +1,14 @@
 import { json } from '@sveltejs/kit';
-import { drizzle } from '$lib/server/db';
+import { db, drizzle } from '$lib/server/db';
 import { stripeClient } from '$lib/server/stripe';
+import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import {
 	BALANCE_TOP_UP_STRIPE_AMOUNT_METADATA_KEY,
 	BALANCE_TOP_UP_STRIPE_METADATA_TYPE,
 	isValidBalanceTopUpAmountUsd
 } from '$lib/utils/billing/balance';
+import { organization as organizationTable } from '$lib/schema/drizzle';
+import { eq } from 'drizzle-orm';
 
 type CheckoutRequestBody = {
 	amount?: number;
@@ -31,6 +34,43 @@ export async function POST(event) {
 		return json({ error: 'Invalid balance top-up request' }, { status: 400 });
 	}
 
+	let customerId: string | null = null;
+
+	const organization = await db.transaction(async (tx) => {
+		const organization = await getOrganizationByIdUnsafe({
+			organizationId,
+			tx
+		});
+		return organization;
+	});
+	if (!organization) {
+		return json({ error: 'Organization not found' }, { status: 404 });
+	}
+
+	if (!organization.stripeCustomerId) {
+		//create a stripe customer ID desho?
+		const stripeCustomer = await stripeClient.customers.create({
+			email: organization.billingEmail ?? session.user.email,
+			name: organization.name,
+			metadata: {
+				organizationId
+			}
+		});
+		await drizzle
+			.update(organizationTable)
+			.set({
+				stripeCustomerId: stripeCustomer.id
+			})
+			.where(eq(organizationTable.id, organizationId));
+		customerId = stripeCustomer.id;
+	} else {
+		customerId = organization.stripeCustomerId;
+	}
+
+	if (!customerId) {
+		return json({ error: 'Unable to create or find a Stripe customer ID' }, { status: 500 });
+	}
+
 	const membership = await drizzle.query.member.findFirst({
 		where: (row, { and, eq }) =>
 			and(
@@ -43,18 +83,11 @@ export async function POST(event) {
 		return json({ error: 'Only organization owners can add funds' }, { status: 403 });
 	}
 
-	const user = session.user as typeof session.user & { stripeCustomerId?: string | null };
 	const checkoutSession = await stripeClient.checkout.sessions.create({
 		mode: 'payment',
 		success_url: `${event.url.origin}/settings/billing/credit?balance_purchase=success`,
 		cancel_url: `${event.url.origin}/settings/billing/credit?balance_purchase=cancelled`,
-		...(user.stripeCustomerId
-			? {
-					customer: user.stripeCustomerId
-				}
-			: {
-					customer_email: session.user.email
-				}),
+		customer: customerId,
 		line_items: [
 			{
 				quantity: 1,
@@ -63,7 +96,7 @@ export async function POST(event) {
 					unit_amount: amount * 100,
 					product_data: {
 						name: `Belcoda balance top-up ($${amount})`,
-						description: `Organization balance top-up (${organizationId})`
+						description: `Organization balance top-up (${organization.name})`
 					}
 				}
 			}
