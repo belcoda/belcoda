@@ -35,13 +35,14 @@ export function listPersonsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
+	const pageSize = (input.pageSize || 50) + 1;
 	let q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
 		.orderBy('id', 'desc')
-		.limit(input.pageSize || 50);
+		.limit(pageSize);
 	if (input.cursor) {
 		const cursor = decodePersonListCursor(input.cursor);
 		if (cursor) {
@@ -62,13 +63,14 @@ export function listFilteredPersonsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
+	const pageSize = (input.pageSize || 50) + 1;
 	const q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
 		.orderBy('id', 'desc')
-		.limit(input.pageSize || 50);
+		.limit(pageSize);
 	if (input.cursor) {
 		const cursor = decodePersonListCursor(input.cursor);
 		if (cursor) {
