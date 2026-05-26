@@ -3,7 +3,13 @@ import { mutators } from '$lib/zero/mutate/client_mutators';
 import { page } from '$app/state';
 import { appState } from '$lib/state.svelte';
 import { t } from '$lib/index.svelte';
-import { type Node, type Edge } from '@xyflow/svelte';
+import {
+	type Node,
+	type Edge,
+	type OnBeforeDelete,
+	addEdge,
+	getConnectedEdges
+} from '@xyflow/svelte';
 import { useDebounce } from 'runed';
 import { toast } from 'svelte-sonner';
 
@@ -67,7 +73,7 @@ const updateFlow = useDebounce(
 			_lastSavedAt = Date.now();
 		} catch (error) {
 			console.error(error);
-			toast.error(t`Changes not saved`);
+			toast.error(error instanceof Error ? error.message : t`Changes not saved`);
 		} finally {
 			_loading = false;
 		}
@@ -93,6 +99,47 @@ async function persistFlow(threadId: string, newFlow: { nodes: Node[]; edges: Ed
 			}
 		})
 	);
-	await result.server;
-	return result.client;
+	const updated = await result.server;
+	if (updated.type === 'error') {
+		throw new Error(`Unable to save changes: ${updated.error.message} [${updated.error.type}] `);
+	}
 }
+
+function bridgeEdge(inEdge: Edge, outEdge: Edge): Edge {
+	const { source, sourceHandle } = inEdge;
+	const { target, targetHandle } = outEdge;
+	return {
+		id: `xy-edge__${sourceHandle ?? source}--${target}`,
+		source,
+		target,
+		...(sourceHandle ? { sourceHandle } : {}),
+		...(targetHandle ? { targetHandle } : {})
+	};
+}
+
+export const onbeforedelete: OnBeforeDelete = async ({ nodes: deletedNodes }) => {
+	const currentNodes = getNodes();
+	const currentEdges = getEdges();
+	let remainingNodes = [...currentNodes];
+
+	const remainingEdges = deletedNodes.reduce((acc, node) => {
+		const incomingEdges = acc.filter((edge) => edge.target === node.id);
+		const outgoingEdges = acc.filter((edge) => edge.source === node.id);
+		const connectedEdges = getConnectedEdges([node], acc);
+
+		let nextEdges = acc.filter((edge) => !connectedEdges.includes(edge));
+
+		for (const inEdge of incomingEdges) {
+			for (const outEdge of outgoingEdges) {
+				nextEdges = addEdge(bridgeEdge(inEdge, outEdge), nextEdges);
+			}
+		}
+
+		remainingNodes = remainingNodes.filter((rn) => rn.id !== node.id);
+
+		return nextEdges;
+	}, currentEdges);
+	setNodes(remainingNodes, false);
+	setEdges(remainingEdges, false);
+	return true;
+};

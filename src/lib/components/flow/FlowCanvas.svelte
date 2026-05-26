@@ -145,9 +145,12 @@
 			window.removeEventListener('pointerdown', dismissMenu);
 		};
 	});
+
+	import { onbeforedelete } from '$lib/components/flow/flow_state.svelte';
 </script>
 
 <SvelteFlow
+	{onbeforedelete}
 	elementsSelectable={!disabled}
 	nodesDraggable={!disabled}
 	nodesConnectable={!disabled}
