@@ -10,6 +10,7 @@ import {
 	_findPersonByPhoneNumberUnsafe,
 	_getPersonByIdUnsafe
 } from '$lib/server/api/data/person/person';
+import { _findWhatsAppMessageByWamidIdUnsafe } from '$lib/server/api/data/whatsapp/message';
 import { normalizePhoneNumber, safeGetCountryCodeFromPhoneNumber } from '$lib/utils/phone';
 
 const log = pino(import.meta.url);
@@ -214,11 +215,42 @@ export async function resolveIncomingWhatsappIdentity({
 				organizationId: organizationRecord.id,
 				tx
 			})
-		: await _findPersonByPhoneNumberUnsafe({
-				organizationId: organizationRecord.id,
-				phoneNumber: waPhone,
+		: undefined;
+
+	if (!personRecord && inboundMessage.context?.id) {
+		try {
+			const contextMessage = await _findWhatsAppMessageByWamidIdUnsafe({
+				wamidId: inboundMessage.context.id,
 				tx
 			});
+			if (contextMessage.organizationId === organizationRecord.id) {
+				personRecord = await _getPersonByIdUnsafe({
+					personId: contextMessage.personId,
+					organizationId: organizationRecord.id,
+					tx
+				});
+			}
+		} catch (error) {
+			log.debug(
+				{
+					error,
+					organizationId: organizationRecord.id,
+					wabaId: inboundMessage.wabaId,
+					contextWamidId: inboundMessage.context.id,
+					messageId
+				},
+				'Unable to resolve inbound WhatsApp sender from context message'
+			);
+		}
+	}
+
+	if (!personRecord) {
+		personRecord = await _findPersonByPhoneNumberUnsafe({
+			organizationId: organizationRecord.id,
+			phoneNumber: waPhone,
+			tx
+		});
+	}
 
 	if (!personRecord) {
 		personRecord = await findOrCreatePerson({
