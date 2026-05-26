@@ -38,7 +38,7 @@ export type LedgerSchema = v.InferOutput<typeof ledgerSchema>;
 
 export const createLedgerEntrySchema = v.object({
 	organizationId: helpers.uuid,
-	deltaInUsdHundredthsOfCents: v.pipe(v.number(), v.integer()), //positive for credits, negative for debits
+	deltaInUsdHundredthsOfCents: v.pipe(v.number(), v.integer()), //positive for deposits, negative for debits
 	metadata: ledgerEntryMetadataSchema
 });
 export type CreateLedgerEntrySchema = v.InferOutput<typeof createLedgerEntrySchema>;
