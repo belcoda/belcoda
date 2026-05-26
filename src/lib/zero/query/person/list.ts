@@ -4,6 +4,7 @@ import { array, type InferOutput, optional, object, nullable, picklist } from 'v
 import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { readPersonZero } from '$lib/schema/person';
+import { decodePersonListCursor } from '$lib/utils/person/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -39,11 +40,13 @@ export function listPersonsQuery({
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
+		.orderBy('id', 'desc')
 		.limit(input.pageSize || 50);
 	if (input.cursor) {
-		q = q.start({
-			id: input.cursor
-		});
+		const cursor = decodePersonListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
 	}
 	return q;
 }
@@ -64,7 +67,14 @@ export function listFilteredPersonsQuery({
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
+		.orderBy('id', 'desc')
 		.limit(input.pageSize || 50);
+	if (input.cursor) {
+		const cursor = decodePersonListCursor(input.cursor);
+		if (cursor) {
+			return q.start(cursor);
+		}
+	}
 	return q;
 }
 
