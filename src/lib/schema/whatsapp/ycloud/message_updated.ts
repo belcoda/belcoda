@@ -22,7 +22,8 @@ export const whatsappMessageUpdatedObject = v.object({
 	deliverTime: v.optional(isoTimestamp),
 	readTime: v.optional(isoTimestamp),
 	errorCode: v.optional(v.string()),
-	errorMessage: v.optional(v.string())
+	errorMessage: v.optional(v.string()),
+	totalPrice: v.optional(v.number())
 });
 
 export type WhatsappMessageUpdatedObject = v.InferOutput<typeof whatsappMessageUpdatedObject>;
