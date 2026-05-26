@@ -1,29 +1,9 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { TagsPage } from '../pages/settings/tags.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner, loginAsMember } from '../helpers/login';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'community' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 test.describe.serial('Settings: Tags', () => {
 	const ids = {
@@ -36,7 +16,7 @@ test.describe.serial('Settings: Tags', () => {
 		const suffix = `${Date.now()}`;
 		ids.tagName = `E2E Tag ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await tagsPage.goto();
 
 		await tagsPage.createTag(ids.tagName);
@@ -51,7 +31,7 @@ test.describe.serial('Settings: Tags', () => {
 	test('new tag is active by default', async ({ page }) => {
 		const tagsPage = new TagsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await tagsPage.goto();
 
 		const row = tagsPage.tagRow(ids.tagId);
@@ -63,7 +43,7 @@ test.describe.serial('Settings: Tags', () => {
 		const tagsPage = new TagsPage(page);
 		const newName = `${ids.tagName} Renamed`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await tagsPage.goto();
 
 		await tagsPage.editTag(ids.tagId, newName);
@@ -77,7 +57,7 @@ test.describe.serial('Settings: Tags', () => {
 	test('owner can deactivate a tag', async ({ page }) => {
 		const tagsPage = new TagsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await tagsPage.goto();
 
 		await tagsPage.deactivateTag(ids.tagId);
@@ -89,7 +69,7 @@ test.describe.serial('Settings: Tags', () => {
 	test('owner can reactivate a tag', async ({ page }) => {
 		const tagsPage = new TagsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await tagsPage.goto();
 
 		await tagsPage.editTriggerForTag(ids.tagId).click();
@@ -107,10 +87,10 @@ test.describe.serial('Settings: Tags', () => {
 	test('member cannot access tag management', async ({ page }) => {
 		const tagsPage = new TagsPage(page);
 
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 		await tagsPage.goto();
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(tagsPage.newTagTrigger).toHaveCount(0);
 		await expect(tagsPage.tagRow(ids.tagId)).toHaveCount(0);
 	});
@@ -118,7 +98,7 @@ test.describe.serial('Settings: Tags', () => {
 	test('owner can delete a tag', async ({ page }) => {
 		const tagsPage = new TagsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await tagsPage.goto();
 
 		await tagsPage.deleteTag(ids.tagId);

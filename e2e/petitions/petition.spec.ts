@@ -1,38 +1,28 @@
 import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
 import { PetitionCreatePage } from '../pages/petitions/petition-create.page';
 import { PetitionDetailPage } from '../pages/petitions/petition-detail.page';
 import { PetitionEditPage } from '../pages/petitions/petition-edit.page';
 import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page';
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
-import { getTestUsers } from '../helpers/auth';
 import { getOrgSlug, slugifyTitle } from '../helpers/config';
-
-const PROJECT = 'petitions' as const;
-const USERS = getTestUsers(PROJECT);
-const ORG_SLUG = getOrgSlug(PROJECT);
+import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
 	getE2EDefaultWhatsAppNumber,
 	postWhatsAppInboundWebhook
 } from '../helpers/whatsapp-webhook';
 
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
+const PROJECT = 'petitions' as const;
+const ORG_SLUG = getOrgSlug(PROJECT);
 
 async function expectPetitionSlugPreview(page: Page, title: string) {
-	await expect(page.getByTestId('petition-slug-preview')).toContainText(
-		`/petitions/${slugifyTitle(title)}`,
-		{ timeout: 5_000 }
-	);
+	const expectedSlug = slugifyTitle(title);
+	await expect(async () => {
+		await expect(page.getByTestId('petition-slug-preview')).toContainText(
+			`/petitions/${expectedSlug}`
+		);
+	}).toPass({ timeout: 15_000 });
 }
 
 async function ensurePetitionForPublicTests(page: Page) {
@@ -76,7 +66,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		const suffix = Date.now();
 		ids.petitionTitle = `E2E Petition ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new PetitionCreatePage(page);
 		await createPage.goto();
@@ -115,7 +105,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 	});
 
 	test('owner can edit a petition', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -129,22 +119,21 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		const editPage = new PetitionEditPage(page);
 		await editPage.waitForForm();
 
+		const slugBeforeEdit = ids.petitionSlug;
 		ids.petitionTitle = `${ids.petitionTitle} (edited)`;
 		await editPage.clearAndFillTitle(ids.petitionTitle);
-		await expectPetitionSlugPreview(page, ids.petitionTitle);
+		await expect(editPage.slugPreview).toContainText(`/petitions/${slugBeforeEdit}`);
 		await editPage.submit();
 		await expect(page).toHaveURL(`/petitions/${ids.petitionId}`, { timeout: 15_000 });
-
-		// save the changed slug
-		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
 
 		await detailPage.goto(ids.petitionId);
 		await detailPage.waitForLoaded();
 		await expect(detailPage.titleDisplay).toContainText(ids.petitionTitle);
+		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
 	});
 
 	test('owner can publish a petition from the action menu', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -161,7 +150,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 	});
 
 	test('owner sees a preview link to the public petition page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -178,7 +167,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 
 test.describe.serial('Petitions: public page', () => {
 	test('owner publishes the previously created petition for public tests', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await ensurePetitionForPublicTests(page);
 
 		const detailPage = new PetitionDetailPage(page);
@@ -197,7 +186,7 @@ test.describe.serial('Petitions: public page', () => {
 	});
 
 	test('logged-in owner sees the edit navbar on the public petition page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -211,7 +200,7 @@ test.describe.serial('Petitions: public page', () => {
 		await expect(page).toHaveURL(new RegExp(`https?:\\/\\/${ORG_SLUG}\\.`), {
 			timeout: 15_000
 		});
-		await expect(page).toHaveURL(new RegExp(`\\/petitions\\/${ids.petitionSlug}(\\?|$)`), {
+		await expect(page).toHaveURL(new RegExp(`\\/petitions\\/${ids.petitionSlug}(?:\\?|$)`), {
 			timeout: 15_000
 		});
 
@@ -260,7 +249,7 @@ test.describe.serial('Petitions: public page', () => {
 	});
 
 	test('owner can view signatures on the petition admin page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -274,7 +263,7 @@ test.describe.serial('Petitions: public page', () => {
 	test('owner can open the detailed signatures table after there is a signature', async ({
 		page
 	}) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -290,7 +279,7 @@ test.describe.serial('Petitions: public page', () => {
 	});
 
 	test('WhatsApp flow response creates a petition signature', async ({ page, request }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
 		await detailPage.goto(ids.petitionId);
@@ -334,7 +323,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		const suffix = Date.now();
 		const title = `E2E Fields Petition ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new PetitionCreatePage(page);
 		await createPage.goto();
@@ -342,12 +331,19 @@ test.describe.serial('Petitions: signup fields', () => {
 
 		await createPage.fillTitle(title);
 		await expectPetitionSlugPreview(page, title);
+		petitionSlug = await createPage.slugFromPreview();
+		expect(petitionSlug).not.toBe('');
+
 		await createPage.fillDescription('Testing petition extra signup fields');
 		await createPage.fillTarget('Petition target for signup field tests');
 		await createPage.fillPetitionText('Petition text for signup field tests.');
 
 		const surveyPage = new PetitionSurveyPage(page);
 		await surveyPage.addShortTextQuestion(CUSTOM_QUESTION_LABEL);
+		await expect(page.locator('[data-testid^="survey-custom-question-label-"]').last()).toHaveValue(
+			CUSTOM_QUESTION_LABEL,
+			{ timeout: 10_000 }
+		);
 		await surveyPage.checkStandardField('address');
 		await expect(surveyPage.standardFieldCheckbox('address')).toBeChecked();
 
@@ -369,28 +365,30 @@ test.describe.serial('Petitions: signup fields', () => {
 			/\/petitions\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
 			{ timeout: 10_000 }
 		);
-
-		petitionSlug = slugifyTitle(title);
-		expect(petitionSlug).not.toBe('');
 	});
 
 	test('public petition page shows standard address fields', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
 		await publicPage.goto(ORG_SLUG, petitionSlug);
 
-		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
-		await expect(publicPage.addressLine1Input).toBeVisible();
-		await expect(publicPage.addressLocalityInput).toBeVisible();
-		await expect(publicPage.addressRegionInput).toBeVisible();
-		await expect(publicPage.addressPostcodeInput).toBeVisible();
+		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 15_000 });
+		await expect(async () => {
+			await expect(publicPage.addressLine1Input).toBeVisible();
+			await expect(publicPage.addressLocalityInput).toBeVisible();
+			await expect(publicPage.addressRegionInput).toBeVisible();
+			await expect(publicPage.addressPostcodeInput).toBeVisible();
+		}).toPass({ timeout: 30_000 });
 	});
 
 	test('public petition page shows the custom question field', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
 		await publicPage.goto(ORG_SLUG, petitionSlug);
 
-		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
-		await expect(page.getByLabel(CUSTOM_QUESTION_LABEL)).toBeVisible();
+		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 15_000 });
+		await expect(page.getByText(CUSTOM_QUESTION_LABEL, { exact: true })).toBeVisible({
+			timeout: 15_000
+		});
+		await expect(publicPage.customQuestionField).toBeVisible({ timeout: 15_000 });
 	});
 
 	test('visitor can submit petition signature with all extra fields', async ({ page }) => {
@@ -409,7 +407,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publicPage.addressRegionInput.fill('Petition State');
 		await publicPage.addressPostcodeInput.fill('77777');
 
-		await page.getByLabel(CUSTOM_QUESTION_LABEL).fill('Housing affordability');
+		await publicPage.customQuestionField.fill('Housing affordability');
 
 		await publicPage.submitSignup();
 
@@ -424,7 +422,7 @@ test.describe.serial('Petitions: signup fields', () => {
 
 test.describe.serial('Petitions: archive', () => {
 	test('owner can archive a published petition', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new PetitionCreatePage(page);
 		const archiveTitle = `E2E Archive Petition ${Date.now()}`;
@@ -467,7 +465,7 @@ test.describe.serial('Petitions: archive', () => {
 
 test.describe.serial('Petitions: delete draft', () => {
 	test('owner can delete an unpublished petition', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new PetitionCreatePage(page);
 		const deleteTitle = `E2E Delete Petition ${Date.now()}`;

@@ -18,7 +18,10 @@ export const organizationSchema = v.object({
 	defaultLanguage: helpers.languageCode,
 	defaultTimezone: helpers.shortString,
 	settings: organizationSettingsSchema,
-	balance: helpers.count,
+	balance: helpers.count, //cached balance in usd hundreths of cents (real balance is calculated from the ledger)
+	freeWhatsAppMessageCredits: v.nullable(helpers.count), //monthly allowance of free whatsapp messages
+	freeEmailMessageCredits: v.nullable(helpers.count), //monthly allowance of free email messages
+	resetFreeQuotasAfter: v.nullable(helpers.date), //date and time when the free quotas will be reset
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });
@@ -36,18 +39,24 @@ export const organizationMemberApiSchema = v.object({
 	role: userRole
 });
 
-export const readOrganizationRest = v.object({
-	...organizationSchema.entries,
-	createdAt: helpers.dateToString,
-	updatedAt: helpers.dateToString
-});
+export const readOrganizationRest = v.omit(
+	v.object({
+		...organizationSchema.entries,
+		createdAt: helpers.dateToString,
+		updatedAt: helpers.dateToString
+	}),
+	['freeWhatsAppMessageCredits', 'freeEmailMessageCredits', 'resetFreeQuotasAfter'] //TODO: Remove these omits once in a future PR once we add them to the zero schema
+);
 export type ReadOrganizationRest = v.InferOutput<typeof readOrganizationRest>;
 
-export const readOrganizationZero = v.object({
-	...organizationSchema.entries,
-	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp
-});
+export const readOrganizationZero = v.omit(
+	v.object({
+		...organizationSchema.entries,
+		createdAt: helpers.dateToTimestamp,
+		updatedAt: helpers.dateToTimestamp
+	}),
+	['freeWhatsAppMessageCredits', 'freeEmailMessageCredits', 'resetFreeQuotasAfter'] //TODO: Remove these omits once in a future PR once we add them to the zero schema
+);
 export type ReadOrganizationZero = v.InferOutput<typeof readOrganizationZero>;
 
 export const createOrganization = v.object({
