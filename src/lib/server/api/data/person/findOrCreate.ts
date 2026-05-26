@@ -153,7 +153,7 @@ export async function findOrCreatePerson({
 	whatsappIdentity,
 	whatsappContextWamidId
 }: {
-	personAction: PersonActionHelper | Record<string, unknown>;
+	personAction: PersonActionHelper;
 	addedFrom: PersonAddedFrom;
 	organizationId: string;
 	updateExistingPerson?: boolean;
