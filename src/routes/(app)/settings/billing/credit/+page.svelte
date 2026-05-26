@@ -5,10 +5,20 @@
 	import { appState } from '$lib/state.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from 'svelte-sonner';
-	import { CREDIT_PURCHASE_AMOUNTS_USD } from '$lib/utils/billing/credit';
+	import { locale } from '$lib/index.svelte';
+	import {
+		BALANCE_TOP_UP_PRESET_AMOUNTS_USD,
+		BALANCE_TOP_UP_MIN_USD,
+		BALANCE_TOP_UP_MAX_USD,
+		formatUsdAmount,
+		formatUsdBalanceFromHundredthsOfCents,
+		isValidBalanceTopUpAmountUsd
+	} from '$lib/utils/billing/balance';
 
 	type CheckoutResponse = {
 		url?: string;
@@ -20,27 +30,41 @@
 
 	let purchasingAmount = $state<number | null>(null);
 	let lastPurchaseStatus = $state<string | null>(null);
+	let purchaseAmountInput = $state('50');
 
-	const formattedCreditBalance = $derived.by(() => {
-		const balance = organization.data?.balance ?? 0;
-		return new Intl.NumberFormat('en-US').format(balance);
+	const parsedPurchaseAmount = $derived.by(() => {
+		const parsed = Number.parseInt(purchaseAmountInput, 10);
+		if (!Number.isFinite(parsed)) {
+			return null;
+		}
+		return parsed;
+	});
+
+	const isPurchaseAmountValid = $derived(
+		parsedPurchaseAmount !== null && isValidBalanceTopUpAmountUsd(parsedPurchaseAmount)
+	);
+
+	const formattedBalance = $derived.by(() => {
+		const balanceInHundredthsOfCents = organization.data?.balance ?? 0;
+		return formatUsdBalanceFromHundredthsOfCents(balanceInHundredthsOfCents, locale.current);
 	});
 
 	$effect(() => {
-		const purchaseStatus = page.url.searchParams.get('credit_purchase');
+		const purchaseStatus =
+			page.url.searchParams.get('balance_purchase') ?? page.url.searchParams.get('credit_purchase');
 		if (!purchaseStatus || purchaseStatus === lastPurchaseStatus) {
 			return;
 		}
 		lastPurchaseStatus = purchaseStatus;
 		if (purchaseStatus === 'success') {
-			toast.success(t`Credit purchase completed. Your balance will update shortly.`);
+			toast.success(t`Payment completed. Your balance will update shortly.`);
 		}
 		if (purchaseStatus === 'cancelled') {
-			toast.info(t`Credit purchase was cancelled.`);
+			toast.info(t`Payment was cancelled.`);
 		}
 	});
 
-	async function purchaseCredits(amount: number) {
+	async function addBalance(amount: number) {
 		if (!canManageBilling || purchasingAmount !== null) {
 			return;
 		}
@@ -69,6 +93,16 @@
 			purchasingAmount = null;
 		}
 	}
+
+	function purchaseCustomAmount() {
+		if (!isPurchaseAmountValid || parsedPurchaseAmount === null) {
+			toast.error(
+				t`Enter a valid amount. Minimum purchase is US$${String(BALANCE_TOP_UP_MIN_USD)}.`
+			);
+			return;
+		}
+		void addBalance(parsedPurchaseAmount);
+	}
 </script>
 
 {#if !canManageBilling}
@@ -76,7 +110,7 @@
 		<Card.Root>
 			<Card.Content class="pt-6">
 				<p>
-					{t`You don't have permission to manage credit purchases. Only organization owners can access this page.`}
+					{t`You don't have permission to add funds. Only organization owners can access this page.`}
 				</p>
 			</Card.Content>
 		</Card.Root>
@@ -86,41 +120,77 @@
 		<div class="space-y-6">
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>{t`Credit balance`}</Card.Title>
+					<Card.Title>{t`Account balance`}</Card.Title>
 					<Card.Description>
 						{t`This balance belongs to your organization and is shared across your workspace.`}
 					</Card.Description>
 				</Card.Header>
 				<Card.Content>
-					<p class="text-3xl font-semibold">{formattedCreditBalance}</p>
+					<p class="text-3xl font-semibold">{formattedBalance}</p>
 					<p class="mt-2 text-sm text-muted-foreground">
-						{t`Purchase additional credit with Stripe using one of the preset amounts below.`}
+						{t`Add funds to your balance with Stripe.`}
 					</p>
 				</Card.Content>
 			</Card.Root>
 
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>{t`Buy more credit`}</Card.Title>
+					<Card.Title>{t`Add funds`}</Card.Title>
 					<Card.Description
-						>{t`Select a preset amount to continue in Stripe checkout.`}</Card.Description
+						>{t`Enter an amount in USD to continue in Stripe checkout.`}</Card.Description
 					>
 				</Card.Header>
-				<Card.Content class="grid gap-3 sm:grid-cols-3">
-					{#each CREDIT_PURCHASE_AMOUNTS_USD as amount}
+				<Card.Content class="space-y-6">
+					<div class="flex max-w-sm flex-col gap-4">
+						<div class="space-y-2">
+							<Label for="balance-purchase-amount">{t`Amount (USD)`}</Label>
+							<Input
+								id="balance-purchase-amount"
+								type="number"
+								min={BALANCE_TOP_UP_MIN_USD}
+								max={BALANCE_TOP_UP_MAX_USD}
+								step="1"
+								bind:value={purchaseAmountInput}
+								disabled={purchasingAmount !== null}
+							/>
+							<p class="text-sm text-muted-foreground">
+								{t`Minimum purchase: US$${String(BALANCE_TOP_UP_MIN_USD)}`}
+							</p>
+						</div>
 						<Button
-							variant="outline"
-							disabled={purchasingAmount !== null}
-							onclick={() => purchaseCredits(amount)}
+							disabled={!isPurchaseAmountValid || purchasingAmount !== null}
+							onclick={purchaseCustomAmount}
 						>
-							{#if purchasingAmount === amount}
+							{#if purchasingAmount !== null && parsedPurchaseAmount !== null && purchasingAmount === parsedPurchaseAmount}
 								<Spinner class="mr-2 h-4 w-4" />
 								{t`Redirecting...`}
+							{:else if parsedPurchaseAmount !== null && isPurchaseAmountValid}
+								{t`Add ${formatUsdAmount(parsedPurchaseAmount, locale.current)}`}
 							{:else}
-								{`Buy ${(amount * 100).toLocaleString()} credits (US$${amount})`}
+								{t`Continue to checkout`}
 							{/if}
 						</Button>
-					{/each}
+					</div>
+
+					<div class="space-y-3">
+						<p class="text-sm text-muted-foreground">{t`Or choose a preset amount:`}</p>
+						<div class="grid gap-3 sm:grid-cols-3">
+							{#each BALANCE_TOP_UP_PRESET_AMOUNTS_USD as amount (amount)}
+								<Button
+									variant="outline"
+									disabled={purchasingAmount !== null}
+									onclick={() => addBalance(amount)}
+								>
+									{#if purchasingAmount === amount}
+										<Spinner class="mr-2 h-4 w-4" />
+										{t`Redirecting...`}
+									{:else}
+										{formatUsdAmount(amount, locale.current)}
+									{/if}
+								</Button>
+							{/each}
+						</div>
+					</div>
 				</Card.Content>
 			</Card.Root>
 		</div>
@@ -129,6 +199,6 @@
 
 {#snippet header()}
 	<div class="flex items-center justify-between">
-		<H2>{t`Credit balance`}</H2>
+		<H2>{t`Account balance`}</H2>
 	</div>
 {/snippet}
