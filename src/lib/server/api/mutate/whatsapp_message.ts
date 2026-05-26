@@ -28,6 +28,7 @@ export const sendIndividualMessage = defineMutator(
 		}
 		await dataFunctions.sendIndividualMessage({
 			ctx,
+			tx,
 			args: args
 		});
 	}
