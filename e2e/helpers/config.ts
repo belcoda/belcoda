@@ -3,6 +3,7 @@ export const BASE_URL =
 export const E2E_MOCK_WABA_ID = 'e2e-mock-waba-id';
 export const E2E_DUMMY_WHATSAPP_NUMBER = '+15555555555';
 export const E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID = '15551234567';
+export const E2E_EMBEDDED_SIGNUP_PHONE_NUMBER = '+15550000000';
 export const E2E_EMBEDDED_SIGNUP_WABA_ID = 'mock-waba-embedded-signup';
 
 export type E2EProject =
