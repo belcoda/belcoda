@@ -167,11 +167,13 @@ function mergeSignupDetails(
 
 export async function signUpForEventWithId({
 	eventId,
+	teamId,
 	tx,
 	personId,
 	organizationId,
 	signupDetails,
 	skipMaxSignupsCheck = false,
+	skipNotifications = false,
 	defaultEventSignupId
 }: {
 	eventId: string;
@@ -184,6 +186,8 @@ export async function signUpForEventWithId({
 	skipNotifications?: boolean;
 	defaultEventSignupId?: string;
 }) {
+	void teamId;
+	void skipNotifications;
 	const parsedSignupDetails = parse(eventSignupDetails, signupDetails);
 
 	const eventResult = await getEventByIdUnsafe({ eventId, organizationId, tx });
