@@ -2734,11 +2734,8 @@ msgstr "Imports"
 msgid "Exports"
 msgstr "Exports"
 
-#: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit balance"
-msgstr "Credit balance"
+#~ msgid "Credit balance"
+#~ msgstr "Credit balance"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "API keys"
@@ -2827,34 +2824,29 @@ msgstr "Contact us for Supported tier"
 msgid "Contact us for Enterprise tier"
 msgstr "Contact us for Enterprise tier"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit purchase completed. Your balance will update shortly."
-msgstr "Credit purchase completed. Your balance will update shortly."
+#~ msgid "Credit purchase completed. Your balance will update shortly."
+#~ msgstr "Credit purchase completed. Your balance will update shortly."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit purchase was cancelled."
-msgstr "Credit purchase was cancelled."
+#~ msgid "Credit purchase was cancelled."
+#~ msgstr "Credit purchase was cancelled."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
-msgstr "You don't have permission to manage credit purchases. Only organization owners can access this page."
+#~ msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
+#~ msgstr "You don't have permission to manage credit purchases. Only organization owners can access this page."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "This balance belongs to your organization and is shared across your workspace."
 msgstr "This balance belongs to your organization and is shared across your workspace."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Purchase additional credit with Stripe using one of the preset amounts below."
-msgstr "Purchase additional credit with Stripe using one of the preset amounts below."
+#~ msgid "Purchase additional credit with Stripe using one of the preset amounts below."
+#~ msgstr "Purchase additional credit with Stripe using one of the preset amounts below."
+
+#~ msgid "Buy more credit"
+#~ msgstr "Buy more credit"
+
+#~ msgid "Select a preset amount to continue in Stripe checkout."
+#~ msgstr "Select a preset amount to continue in Stripe checkout."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Buy more credit"
-msgstr "Buy more credit"
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Select a preset amount to continue in Stripe checkout."
-msgstr "Select a preset amount to continue in Stripe checkout."
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Redirecting..."
 msgstr "Redirecting..."
@@ -4976,9 +4968,8 @@ msgstr "No variables found."
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
 
-#: src/lib/utils/name.ts
-msgid "[Name unknown]"
-msgstr "[Name unknown]"
+#~ msgid "[Name unknown]"
+#~ msgstr "[Name unknown]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
@@ -5050,3 +5041,63 @@ msgstr "🎧 Audio message"
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
 msgstr "🎨 Sticker"
+
+#. 0: String(BALANCE_TOP_UP_MIN_USD)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter a valid amount. Minimum purchase is US${0}."
+msgstr "Enter a valid amount. Minimum purchase is US${0}."
+
+#~ msgid "Purchase additional credit with Stripe."
+#~ msgstr "Purchase additional credit with Stripe."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter an amount in USD to continue in Stripe checkout."
+msgstr "Enter an amount in USD to continue in Stripe checkout."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Amount (USD)"
+msgstr "Amount (USD)"
+
+#. 0: String(BALANCE_TOP_UP_MIN_USD)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Minimum purchase: US${0}"
+msgstr "Minimum purchase: US${0}"
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Continue to checkout"
+msgstr "Continue to checkout"
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Or choose a preset amount:"
+msgstr "Or choose a preset amount:"
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Payment completed. Your balance will update shortly."
+msgstr "Payment completed. Your balance will update shortly."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Payment was cancelled."
+msgstr "Payment was cancelled."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "You don't have permission to add funds. Only organization owners can access this page."
+msgstr "You don't have permission to add funds. Only organization owners can access this page."
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Account balance"
+msgstr "Account balance"
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add funds to your balance with Stripe."
+msgstr "Add funds to your balance with Stripe."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add funds"
+msgstr "Add funds"
+
+#. 0: formatUsdAmount(parsedPurchaseAmount, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add {0}"
+msgstr "Add {0}"
