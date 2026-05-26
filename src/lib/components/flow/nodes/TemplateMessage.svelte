@@ -143,20 +143,6 @@
 	<NodeToolbar position={Position.Right}>
 		<div class="flex flex-col gap-2">
 			<Combobox value={templateId} onSelectChange={onTemplateSelect} />
-
-			<Button
-				variant="outline"
-				size="icon-sm"
-				class="rounded-full"
-				onclick={() => {
-					//delete the node
-					if (window.confirm('Are you sure you want to delete this node?')) {
-						nodes.update((nodes) => nodes.filter((node) => node.id !== id));
-					}
-				}}
-			>
-				<TrashIcon />
-			</Button>
 		</div>
 	</NodeToolbar>
 	<div class="relative w-[260px] font-sans drop-shadow-md">
