@@ -19,8 +19,7 @@
 	import { appState } from '$lib/state.svelte';
 	const whatsappOnboarded = $derived(
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
-			appState.activeOrganization?.data?.settings.whatsApp.number &&
-			appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId
+			appState.activeOrganization?.data?.settings.whatsApp.number
 	);
 </script>
 
