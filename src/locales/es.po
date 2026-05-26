@@ -5026,3 +5026,12 @@ msgstr ""
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
 msgstr ""
+
+#. 0: String(paginatedPersonList.items.length)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} shown"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Load more"
+msgstr ""
