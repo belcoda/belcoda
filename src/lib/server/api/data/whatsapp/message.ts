@@ -33,6 +33,9 @@ import { extractExternalId } from '$lib/server/utils/whatsapp/ycloud/convert_out
 import { drizzle } from '$lib/server/db';
 import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/send_message';
 
+import { personReadPermissions } from '$lib/zero/query/person/permissions';
+import { builder } from '$lib/zero/schema';
+
 export async function _findWhatsAppMessageByWamidIdUnsafe({
 	wamidId,
 	tx
@@ -341,16 +344,37 @@ export async function createWhatsAppMessage({
 
 export async function sendIndividualMessage({
 	ctx,
-	args: argsInput
+	args: argsInput,
+	tx
 }: {
 	args: CreateWhatsAppMessageMutatorSchema;
 	ctx: QueryContext;
+	tx: ServerTransaction;
 }) {
 	const args = parse(createWhatsAppMessageMutatorSchema, argsInput);
 	if (
 		ctx.adminOrgs.includes(args.metadata.organizationId) ||
 		ctx.ownerOrgs.includes(args.metadata.organizationId)
 	) {
+		const person = await tx.run(
+			builder.person
+				.where('id', '=', args.metadata.personId)
+				.where('organizationId', '=', args.metadata.organizationId)
+				.where((expr) => personReadPermissions(expr, ctx))
+				.one()
+		);
+		if (!person) {
+			throw new Error('Person not found');
+		}
+		if (
+			!person.mostRecentWhatsappMessageReceivedAt ||
+			new Date(person.mostRecentWhatsappMessageReceivedAt) <
+				new Date(Date.now() - 1000 * 60 * 60 * 24)
+		) {
+			throw new Error(
+				'Person has not received a WhatsApp message in the last 24 hours. Customer service window is closed. Please send a template message instead.'
+			);
+		}
 		await sendWhatsappMessage({
 			message: args.input.whatsappMessage,
 			organizationId: args.metadata.organizationId,
