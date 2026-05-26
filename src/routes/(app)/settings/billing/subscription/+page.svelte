@@ -80,26 +80,6 @@
 		}
 	}
 
-	async function openStripeBillingPortal() {
-		if (openingPortal) {
-			return;
-		}
-		try {
-			openingPortal = true;
-			const result = await authClient.subscription.billingPortal({
-				referenceId: appState.organizationId,
-				returnUrl: '/settings/billing/subscription'
-			});
-			if (result.error || !result.data?.url) {
-				throw new Error(result.error?.message || t`Unable to open Stripe billing portal`);
-			}
-			window.location.href = result.data.url;
-		} catch (err) {
-			toast.error(err instanceof Error ? err.message : t`Unable to open Stripe billing portal`);
-			openingPortal = false;
-		}
-	}
-
 	function openContactForm(url: string | undefined) {
 		if (!url) {
 			toast.error(t`Contact form URL is not configured.`);
@@ -164,20 +144,6 @@
 						</div>
 					{/if}
 				</Card.Content>
-				<Card.Footer class="justify-end">
-					<Button
-						variant="outline"
-						onclick={openStripeBillingPortal}
-						disabled={openingPortal || loading}
-					>
-						{#if openingPortal}
-							<Spinner class="mr-2 h-4 w-4" />
-							{t`Opening Stripe...`}
-						{:else}
-							{t`Manage in Stripe`}
-						{/if}
-					</Button>
-				</Card.Footer>
 			</Card.Root>
 
 			<Card.Root>
