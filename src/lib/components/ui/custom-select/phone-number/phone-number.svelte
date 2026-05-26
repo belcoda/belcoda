@@ -84,7 +84,7 @@
 			selectedCountry || defaultCountryCode
 		);
 		phoneNumber = newValue;
-		value = internationalPhoneNumber;
+		value = internationalPhoneNumber || undefined;
 		valid = validInternationalPhoneNumber;
 	}
 

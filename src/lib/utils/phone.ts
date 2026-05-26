@@ -1267,10 +1267,8 @@ export function getPhoneNumberExample(
 	}
 }
 
-export function normalizePhoneNumber(phoneNumber: string | null | undefined): string | null {
-	if (!phoneNumber || phoneNumber === '') {
-		return null;
-	}
+export function normalizePhoneNumber(phoneNumber: string | null | undefined): string {
+	if (!phoneNumber) return '';
 	return phoneNumber.replace(/[^0-9+]/g, '');
 }
 
@@ -1278,10 +1276,8 @@ export function getInternationalPhoneNumber(
 	phoneNumber: string | null | undefined,
 	countryCode: CountryCode,
 	strict: boolean = false
-): string | null {
-	if (!phoneNumber || phoneNumber === '') {
-		return null;
-	}
+): string {
+	if (!phoneNumber) return '';
 	const phone = parsePhoneNumber(phoneNumber, { regionCode: countryCode });
 	if (!phone.valid && phone.possibility !== 'is-possible' && strict) {
 		throw new Error(`Country code not found for phone number: ${phoneNumber}`);
@@ -1296,15 +1292,19 @@ export function getInternationalPhoneNumber(
 }
 
 export function isValidInternationalPhoneNumber(
-	phoneNumber: string,
+	phoneNumber: string | null | undefined,
 	countryCode: CountryCode,
 	strict: boolean = false
 ): boolean {
+	if (!phoneNumber) return false;
 	const phone = parsePhoneNumber(phoneNumber, { regionCode: countryCode });
 	return phone.valid || (phone.possibility === 'is-possible' && !strict);
 }
 
-export function getCountryCodeFromPhoneNumber(phoneNumber: string): CountryCode {
+export function getCountryCodeFromPhoneNumber(phoneNumber: string | null | undefined): CountryCode {
+	if (!phoneNumber) {
+		throw new Error(`Country code not found for phone number: ${phoneNumber}`);
+	}
 	const phone = parsePhoneNumber(phoneNumber);
 	if (!phone.regionCode) {
 		throw new Error(`Country code not found for phone number: ${phoneNumber}`);
@@ -1315,7 +1315,9 @@ export function getCountryCodeFromPhoneNumber(phoneNumber: string): CountryCode 
 	return phone.regionCode as CountryCode; //needs to be typecast because toLocaleLowerCase always returns a string
 }
 
-export function safeGetCountryCodeFromPhoneNumber(phoneNumber: string): CountryCode | null {
+export function safeGetCountryCodeFromPhoneNumber(
+	phoneNumber: string | null | undefined
+): CountryCode | null {
 	try {
 		return getCountryCodeFromPhoneNumber(phoneNumber);
 	} catch (error) {
@@ -1324,10 +1326,11 @@ export function safeGetCountryCodeFromPhoneNumber(phoneNumber: string): CountryC
 }
 
 export function renderLocalPhoneNumber(
-	phoneNumber: string,
+	phoneNumber: string | null | undefined,
 	countryCode?: CountryCode,
 	strict: boolean = false
 ): string {
+	if (!phoneNumber) return '';
 	const phone = parsePhoneNumber(phoneNumber, { regionCode: countryCode });
 	if (!phone.valid && strict) {
 		throw new Error(`Country code not found for phone number: ${phoneNumber}`);
