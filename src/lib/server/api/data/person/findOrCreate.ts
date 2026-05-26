@@ -162,6 +162,9 @@ export async function findOrCreatePerson({
 	whatsappContextWamidId?: string;
 	tx: ServerTransaction;
 }) {
+	const parsedActionHelper = parse(personActionHelper, personAction);
+	const parsedAddedFrom = parse(personAddedFrom, addedFrom);
+
 	const identityPerson = await findPersonByWhatsappIdentityUnsafe({
 		organizationId,
 		whatsappIdentity,
@@ -180,8 +183,6 @@ export async function findOrCreatePerson({
 		return contextPerson;
 	}
 
-	const parsedActionHelper = parse(personActionHelper, personAction);
-	const parsedAddedFrom = parse(personAddedFrom, addedFrom);
 	const whereConditions = [];
 	if (parsedActionHelper.emailAddress) {
 		whereConditions.push(eq(person.emailAddress, parsedActionHelper.emailAddress));
