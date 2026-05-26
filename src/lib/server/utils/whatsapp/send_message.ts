@@ -291,7 +291,7 @@ export async function sendWhatsappTemplateMessage({
 				tx,
 				args: {
 					organizationId: organization.id,
-					deltaInUsdHundredthsOfCents: deltaInHundredthsOfCents,
+					deltaInUsdHundredthsOfCents: -deltaInHundredthsOfCents,
 					metadata: {
 						type: 'whatsapp_message_outgoing',
 						whatsappMessageId: whatsappMessageId,

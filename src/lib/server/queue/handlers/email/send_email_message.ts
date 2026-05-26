@@ -142,7 +142,7 @@ export async function sendEmailMessage({
 							tx,
 							args: {
 								organizationId: organizationId,
-								deltaInUsdHundredthsOfCents: DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS,
+								deltaInUsdHundredthsOfCents: -DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS,
 								metadata: {
 									toPersonId: personId,
 									type: 'email_message_outgoing',
