@@ -2800,13 +2800,11 @@ msgstr "Nenhuma assinatura paga ativa"
 msgid "Current period ends"
 msgstr "O período atual termina em"
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Opening Stripe..."
-msgstr "Abrindo o Stripe..."
+#~ msgid "Opening Stripe..."
+#~ msgstr "Abrindo o Stripe..."
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Manage in Stripe"
-msgstr "Gerenciar no Stripe"
+#~ msgid "Manage in Stripe"
+#~ msgstr "Gerenciar no Stripe"
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Need a different plan?"
@@ -4220,9 +4218,8 @@ msgstr "Falha ao salvar configurações de tema"
 msgid "Failed to load subscription"
 msgstr "Falha ao carregar a assinatura"
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Unable to open Stripe billing portal"
-msgstr "Não foi possível abrir o portal de faturamento da Stripe"
+#~ msgid "Unable to open Stripe billing portal"
+#~ msgstr "Não foi possível abrir o portal de faturamento da Stripe"
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Unable to start Stripe checkout"

@@ -2800,13 +2800,11 @@ msgstr "No active paid subscription"
 msgid "Current period ends"
 msgstr "Current period ends"
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Opening Stripe..."
-msgstr "Opening Stripe..."
+#~ msgid "Opening Stripe..."
+#~ msgstr "Opening Stripe..."
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Manage in Stripe"
-msgstr "Manage in Stripe"
+#~ msgid "Manage in Stripe"
+#~ msgstr "Manage in Stripe"
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Need a different plan?"
@@ -4227,9 +4225,8 @@ msgstr "Failed to save theme settings"
 msgid "Failed to load subscription"
 msgstr "Failed to load subscription"
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Unable to open Stripe billing portal"
-msgstr "Unable to open Stripe billing portal"
+#~ msgid "Unable to open Stripe billing portal"
+#~ msgstr "Unable to open Stripe billing portal"
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Unable to start Stripe checkout"
