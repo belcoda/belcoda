@@ -23,6 +23,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			defaultTimezone: true,
 			balance: true,
 			settings: true,
+			stripeCustomerId: false,
+			billingEmail: false,
 			createdAt: true,
 			updatedAt: true
 		},

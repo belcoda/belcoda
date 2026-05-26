@@ -1764,6 +1764,10 @@ const personTable = {
 							image_url?: string | undefined;
 							sticker_url?: string | undefined;
 							video_url?: string | undefined;
+							wamid?: string | null | undefined;
+							waba?: string | null | undefined;
+							from?: string | null | undefined;
+							to?: string | null | undefined;
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
@@ -1786,6 +1790,10 @@ const personTable = {
 							image_url?: string | undefined;
 							sticker_url?: string | undefined;
 							video_url?: string | undefined;
+							wamid?: string | null | undefined;
+							waba?: string | null | undefined;
+							from?: string | null | undefined;
+							to?: string | null | undefined;
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
@@ -1808,6 +1816,10 @@ const personTable = {
 							image_url?: string | undefined;
 							sticker_url?: string | undefined;
 							video_url?: string | undefined;
+							wamid?: string | null | undefined;
+							waba?: string | null | undefined;
+							from?: string | null | undefined;
+							to?: string | null | undefined;
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
@@ -2855,6 +2867,10 @@ const whatsappMessageTable = {
 				image_url?: string | undefined;
 				sticker_url?: string | undefined;
 				video_url?: string | undefined;
+				wamid?: string | null | undefined;
+				waba?: string | null | undefined;
+				from?: string | null | undefined;
+				to?: string | null | undefined;
 				audio_url?: string | undefined;
 				buttons?: { text: string; action: string }[] | undefined;
 				emojiReactions: {
@@ -2882,7 +2898,7 @@ const whatsappMessageTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'failed' | 'pending' | 'delivered' | 'read'
+			customType: null as unknown as 'failed' | 'pending' | 'sent' | 'delivered' | 'read'
 		},
 		statusMessage: {
 			type: 'string',

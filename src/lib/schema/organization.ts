@@ -22,6 +22,8 @@ export const organizationSchema = v.object({
 	freeWhatsAppMessageCredits: v.nullable(helpers.count), //monthly allowance of free whatsapp messages
 	freeEmailMessageCredits: v.nullable(helpers.count), //monthly allowance of free email messages
 	resetFreeQuotasAfter: v.nullable(helpers.date), //date and time when the free quotas will be reset
+	stripeCustomerId: v.nullable(helpers.shortString), //stripe customer id for the organization
+	billingEmail: v.nullable(helpers.email), //email address for the organization's billing
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });

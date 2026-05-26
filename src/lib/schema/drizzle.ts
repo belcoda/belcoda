@@ -88,6 +88,8 @@ export const organization = pgTable('organization', {
 	freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
 	freeEmailMessageCredits: integer('free_email_message_credits'),
 	resetFreeQuotasAfter: timestamp('reset_free_quotas_after', { withTimezone: true, mode: 'date' }),
+	stripeCustomerId: text('stripe_customer_id'),
+	billingEmail: text('billing_email'),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
 		.notNull()
 		.default(sql`now()`),
