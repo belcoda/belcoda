@@ -17,7 +17,7 @@ import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
 import { surveyResponsesSchema } from '$lib/schema/survey/responses';
 
-import type { PersonActionHelper } from '$lib/schema/person';
+import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
 import {
 	type PetitionSignatureDetails,
 	petitionSignatureDetails
@@ -297,7 +297,7 @@ export async function signPetitionHelper({
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
-	personAction: PersonActionHelper | Record<string, unknown>;
+	personAction: PersonActionHelper;
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
@@ -307,6 +307,7 @@ export async function signPetitionHelper({
 	whatsappContextWamidId?: string;
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
+	const parsedActionHelper = parse(personActionHelper, personAction);
 	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult) {
@@ -323,7 +324,7 @@ export async function signPetitionHelper({
 
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction,
+		personAction: parsedActionHelper,
 		addedFrom: {
 			type: 'added_from_petition',
 			petitionSignatureId
@@ -509,7 +510,7 @@ export async function completePetitionSignatureHelper({
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
-	personAction: PersonActionHelper | Record<string, unknown>;
+	personAction: PersonActionHelper;
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
@@ -557,7 +558,7 @@ export async function createIncompletePetitionSignatureHelper({
 	tx: ServerTransaction;
 	petitionId: string;
 	organizationId: string;
-	personAction: PersonActionHelper | Record<string, unknown>;
+	personAction: PersonActionHelper;
 	signatureDetails: PetitionSignatureDetails;
 	teamId?: string;
 	flowMessageFrom: string;
@@ -574,11 +575,12 @@ export async function createIncompletePetitionSignatureHelper({
 	}
 
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
+	const parsedActionHelper = parse(personActionHelper, personAction);
 	const petitionSignatureId = uuidv7();
 
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction,
+		personAction: parsedActionHelper,
 		addedFrom: {
 			type: 'added_from_petition',
 			petitionSignatureId

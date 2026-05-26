@@ -240,7 +240,7 @@ export async function signUpForEventHelper({
 }: {
 	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper | Record<string, unknown>;
+	personAction: PersonActionHelper;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
@@ -250,10 +250,11 @@ export async function signUpForEventHelper({
 	whatsappIdentity?: WhatsappIdentityLookup;
 	whatsappContextWamidId?: string;
 }) {
+	const parsedActionHelper = parse(personActionHelper, personAction);
 	const eventSignupId = defaultEventSignupId || uuidv7();
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction,
+		personAction: parsedActionHelper,
 		addedFrom: {
 			type: 'added_from_event',
 			eventSignupId
@@ -290,7 +291,7 @@ export async function createIncompleteEventSignupHelper({
 }: {
 	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper | Record<string, unknown>;
+	personAction: PersonActionHelper;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
@@ -298,10 +299,11 @@ export async function createIncompleteEventSignupHelper({
 	whatsappIdentity?: WhatsappIdentityLookup;
 	whatsappContextWamidId?: string;
 }) {
+	const parsedActionHelper = parse(personActionHelper, personAction);
 	const eventSignupId = defaultEventSignupId || uuidv7();
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction,
+		personAction: parsedActionHelper,
 		addedFrom: {
 			type: 'added_from_event',
 			eventSignupId
@@ -414,7 +416,7 @@ export async function completeEventSignupHelper({
 }: {
 	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper | Record<string, unknown>;
+	personAction: PersonActionHelper;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
@@ -422,10 +424,11 @@ export async function completeEventSignupHelper({
 	whatsappIdentity?: WhatsappIdentityLookup;
 	whatsappContextWamidId?: string;
 }) {
+	const parsedActionHelper = parse(personActionHelper, personAction);
 	const eventSignupId = defaultEventSignupId || uuidv7();
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction,
+		personAction: parsedActionHelper,
 		addedFrom: {
 			type: 'added_from_event',
 			eventSignupId
@@ -669,13 +672,14 @@ export async function attendedEventHelper({
 }: {
 	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper | Record<string, unknown>;
+	personAction: PersonActionHelper;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
 	whatsappIdentity?: WhatsappIdentityLookup;
 	whatsappContextWamidId?: string;
 }) {
+	const parsedActionHelper = parse(personActionHelper, personAction);
 	const eventRecord = await getEventByIdUnsafe({ eventId, organizationId, tx });
 	if (!eventRecord) {
 		throw new Error('Event not found');
@@ -689,7 +693,7 @@ export async function attendedEventHelper({
 	//find or create the person
 	const eventSignupIdIfNeeded = uuidv7();
 	const personRecord = await findOrCreatePerson({
-		personAction: personAction,
+		personAction: parsedActionHelper,
 		teamId,
 		addedFrom: {
 			type: 'added_from_event',
