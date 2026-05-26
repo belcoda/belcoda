@@ -1,6 +1,6 @@
 const pageSize = { $ref: '#/components/parameters/PageSize' };
 const search = { $ref: '#/components/parameters/Search' };
-const startAfter = { $ref: '#/components/parameters/StartAfter' };
+const cursor = { $ref: '#/components/parameters/Cursor' };
 
 const personId = { $ref: '#/components/parameters/PersonId' };
 const noteId = { $ref: '#/components/parameters/NoteId' };
@@ -12,7 +12,7 @@ const petitionId = { $ref: '#/components/parameters/PetitionId' };
 const signatureId = { $ref: '#/components/parameters/SignatureId' };
 
 export const params = {
-	list: [pageSize, search, startAfter],
+	list: [pageSize, search, cursor],
 	personId: [personId],
 	personAndNoteId: [personId, noteId],
 	personAndTagId: [personId, tagId],

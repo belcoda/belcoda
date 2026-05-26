@@ -8,7 +8,7 @@ import { personTagReadPermissions } from '$lib/zero/query/person_tag/permissions
 export const inputSchema = object({
 	organizationId: listFilter.entries.organizationId,
 	searchString: listFilter.entries.searchString,
-	startAfter: listFilter.entries.startAfter,
+	cursor: listFilter.entries.cursor,
 	pageSize: listFilter.entries.pageSize,
 	personId: uuid
 });
@@ -28,8 +28,8 @@ export function listPersonTagsQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		const [tagId, personId] = input.startAfter.split('.'); //startAfter is a string of the form tagId.personId
+	if (input.cursor) {
+		const [tagId, personId] = input.cursor.split('.'); //cursor is a string of the form tagId.personId
 		q = q.start({ tagId, personId });
 	}
 	return q;

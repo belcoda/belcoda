@@ -44,7 +44,7 @@ export async function listPersonTeams({
 			input: {
 				organizationId: input.organizationId,
 				searchString: input.searchString,
-				startAfter: input.startAfter,
+				cursor: input.cursor,
 				pageSize: input.pageSize,
 				personId
 			}

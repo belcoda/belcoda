@@ -40,9 +40,9 @@ export function listPersonsQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
 		.limit(input.pageSize || 50);
-	if (input.startAfter) {
+	if (input.cursor) {
 		q = q.start({
-			id: input.startAfter
+			id: input.cursor
 		});
 	}
 	return q;

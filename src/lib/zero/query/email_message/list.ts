@@ -26,8 +26,8 @@ export function listEmailMessagesQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('updatedAt', input.reverseCron ? 'desc' : 'asc')
 		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
+	if (input.cursor) {
+		q = q.start({ id: input.cursor });
 	}
 	return q;
 }

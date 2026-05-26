@@ -51,7 +51,7 @@ export function buildApiListFilter({
 		searchString: url.searchParams.get('search') || null,
 		teamId: null,
 		isDeleted: null,
-		startAfter: url.searchParams.get('startAfter') || null, //Note: Currently ignored due to potential bug in Z2S compiler not yet supporting pagination
+		cursor: url.searchParams.get('cursor') || null, //Note: Currently ignored due to potential bug in Z2S compiler not yet supporting pagination
 		excludedIds: []
 	};
 }
@@ -77,15 +77,14 @@ export const queryParamsOpenAPIDefinition = {
 		},
 		description: 'A string to search for. Searching is by the name of the resource.'
 	},
-	startAfter: {
-		name: 'startAfter',
+	cursor: {
+		name: 'cursor',
 		in: 'query',
 		required: false,
 		schema: {
 			type: 'string'
 		},
-		description:
-			'The ID of the last item in the previous page. Used for pagination. The value of this parameter should be the value of the `id` field of the last item in the previous page.'
+		description: 'An opaque cursor returned by the previous page. Used for pagination.'
 	}
 };
 
