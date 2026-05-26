@@ -10,7 +10,7 @@ import type { ServerTransaction } from '@rocicorp/zero';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { getPersonIdFromButtonAction } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/get_details_from_message';
 import pino from '$lib/pino';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { whatsappThread } from '$lib/schema/drizzle';
 import { extractButtonActionString } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
 import { _updateMostRecentWhatsappMessageReceivedAtUnsafe } from '$lib/server/api/data/person/person';
@@ -55,13 +55,20 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 		let personId: string | undefined = undefined;
 		let organizationId: string | undefined = undefined;
 		let logActivity: boolean = true; //whether to log the activity to the timeline. Some messages (eg: emoji reactions, action code signups, flow responses, etc) are not meant to be logged to the timeline. A message and webhook record will still be stored.
-		let insertedWhatsAppMessageId: string = uuidv7();
+		const insertedWhatsAppMessageId: string = uuidv7();
 		await db.transaction(async (tx) => {
 			const senderPhone = parsed.whatsappInboundMessage.from;
 			const senderDisplayName =
 				parsed.whatsappInboundMessage.customerProfile?.name ??
 				parsed.whatsappInboundMessage.customerProfile?.username ??
 				senderPhone;
+			const whatsappIdentity = parsed.whatsappInboundMessage.fromUserId
+				? {
+						wabaId: parsed.whatsappInboundMessage.wabaId,
+						bsuid: parsed.whatsappInboundMessage.fromUserId
+					}
+				: undefined;
+			const whatsappContextWamidId = parsed.whatsappInboundMessage.context?.id;
 			switch (parsed.whatsappInboundMessage.type) {
 				case 'text': {
 					const actionCode = extractActionCode(parsed.whatsappInboundMessage.text.body);
@@ -99,6 +106,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 										customFields: {}
 									},
 									organizationId: event.organizationId,
+									whatsappIdentity,
+									whatsappContextWamidId,
 									tx
 								});
 								personId = eventSignup.personId;
@@ -141,7 +150,9 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											},
 											organizationId: event.organizationId,
 											tx,
-											defaultEventSignupId: eventSignup.id
+											defaultEventSignupId: eventSignup.id,
+											whatsappIdentity,
+											whatsappContextWamidId
 										});
 										personId = completedSignup.personId;
 										logActivity = false;
@@ -166,7 +177,9 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 										},
 										organizationId: event.organizationId,
 										tx,
-										defaultEventSignupId: eventSignup.id
+										defaultEventSignupId: eventSignup.id,
+										whatsappIdentity,
+										whatsappContextWamidId
 									});
 									personId = completedSignup.personId;
 									logActivity = false;
@@ -198,6 +211,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 										customFields: {}
 									},
 									organizationId: event.organizationId,
+									whatsappIdentity,
+									whatsappContextWamidId,
 									tx
 								});
 								personId = eventSignup.personId;
@@ -231,7 +246,9 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 									},
 									teamId: petitionRecord.teamId ?? undefined,
 									flowMessageFrom: parsed.whatsappInboundMessage.to,
-									flowMessageTo: senderPhone
+									flowMessageTo: senderPhone,
+									whatsappIdentity,
+									whatsappContextWamidId
 								});
 								personId = outcome.personId;
 								organizationId = petitionRecord.organizationId;
@@ -262,7 +279,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 					// TODO: handle button messages
 					if (parsed.whatsappInboundMessage.type === 'button') {
 						const buttonActionString = parsed.whatsappInboundMessage.button.payload;
-						const { threadId, nodeId, buttonId } = extractButtonActionString(buttonActionString);
+						const { threadId, buttonId } = extractButtonActionString(buttonActionString);
 						const threadObject =
 							await tx.dbTransaction.wrappedTransaction.query.whatsappThread.findFirst({
 								where: eq(whatsappThread.id, threadId)
@@ -281,6 +298,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							organizationId: threadObject.organizationId,
 							organizationCountry: organization.country,
 							messageId: insertedWhatsAppMessageId,
+							whatsappIdentity,
+							whatsappContextWamidId,
 							tx
 						});
 						const queue = await getQueue();
@@ -298,7 +317,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 					if (parsed.whatsappInboundMessage.interactive.type === 'button_reply') {
 						// get the button id, which should give me the thread Id and node Id...
 						const buttonActionString = parsed.whatsappInboundMessage.interactive.button_reply.id;
-						const { threadId, nodeId, buttonId } = extractButtonActionString(buttonActionString);
+						const { threadId, buttonId } = extractButtonActionString(buttonActionString);
 						const threadObject =
 							await tx.dbTransaction.wrappedTransaction.query.whatsappThread.findFirst({
 								where: eq(whatsappThread.id, threadId)
@@ -317,6 +336,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							organizationId: threadObject.organizationId,
 							organizationCountry: organization.country,
 							messageId: insertedWhatsAppMessageId,
+							whatsappIdentity,
+							whatsappContextWamidId,
 							tx
 						});
 						const queue = await getQueue();
@@ -336,6 +357,8 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 							body: parsed.whatsappInboundMessage.interactive.nfm_reply.body,
 							response: parsed.whatsappInboundMessage.interactive.nfm_reply.response_json,
 							from: senderPhone,
+							whatsappIdentity,
+							whatsappContextWamidId,
 							tx
 						});
 						personId = flowResult.personId;

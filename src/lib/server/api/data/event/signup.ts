@@ -27,17 +27,15 @@ import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and, sql, ne, count as countRows, isNull, or } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
-import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import {
+	findOrCreatePerson,
+	type WhatsappIdentityLookup
+} from '$lib/server/api/data/person/findOrCreate';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 import { clampLocale } from '$lib/utils/language';
 
-import {
-	_getPersonByPhoneNumberUnsafe,
-	_getPersonByIdUnsafe
-} from '$lib/server/api/data/person/person';
+import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import {
 	inputSchema as listEventSignupsInputSchema,
@@ -169,13 +167,11 @@ function mergeSignupDetails(
 
 export async function signUpForEventWithId({
 	eventId,
-	teamId,
 	tx,
 	personId,
 	organizationId,
 	signupDetails,
 	skipMaxSignupsCheck = false,
-	skipNotifications = false,
 	defaultEventSignupId
 }: {
 	eventId: string;
@@ -238,30 +234,34 @@ export async function signUpForEventHelper({
 	organizationId,
 	skipMaxSignupsCheck = false,
 	skipNotifications = false,
-	defaultEventSignupId
+	defaultEventSignupId,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper;
+	personAction: PersonActionHelper | Record<string, unknown>;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
 	skipMaxSignupsCheck?: boolean;
 	skipNotifications?: boolean;
 	defaultEventSignupId?: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
-	const parsedActionHelper = parse(personActionHelper, personAction);
-
 	const eventSignupId = defaultEventSignupId || uuidv7();
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction: parsedActionHelper,
+		personAction,
 		addedFrom: {
 			type: 'added_from_event',
 			eventSignupId
 		},
 		organizationId,
-		teamId
+		teamId,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	return await signUpForEventWithId({
@@ -284,28 +284,33 @@ export async function createIncompleteEventSignupHelper({
 	personAction,
 	signupDetails,
 	organizationId,
-	defaultEventSignupId
+	defaultEventSignupId,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper;
+	personAction: PersonActionHelper | Record<string, unknown>;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
 	defaultEventSignupId?: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
-	const parsedActionHelper = parse(personActionHelper, personAction);
 	const eventSignupId = defaultEventSignupId || uuidv7();
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction: parsedActionHelper,
+		personAction,
 		addedFrom: {
 			type: 'added_from_event',
 			eventSignupId
 		},
 		organizationId,
 		teamId,
-		updateExistingPerson: true
+		updateExistingPerson: true,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	return await createIncompleteEventSignupByPersonId({
@@ -403,28 +408,33 @@ export async function completeEventSignupHelper({
 	personAction,
 	signupDetails,
 	organizationId,
-	defaultEventSignupId
+	defaultEventSignupId,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper;
+	personAction: PersonActionHelper | Record<string, unknown>;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
 	defaultEventSignupId?: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
-	const parsedActionHelper = parse(personActionHelper, personAction);
 	const eventSignupId = defaultEventSignupId || uuidv7();
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction: parsedActionHelper,
+		personAction,
 		addedFrom: {
 			type: 'added_from_event',
 			eventSignupId
 		},
 		organizationId,
 		teamId,
-		updateExistingPerson: true
+		updateExistingPerson: true,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	return await completeEventSignupByPersonId({
@@ -653,14 +663,18 @@ export async function attendedEventHelper({
 	tx,
 	personAction,
 	signupDetails,
-	organizationId
+	organizationId,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	eventId: string;
-	personAction: PersonActionHelper;
+	personAction: PersonActionHelper | Record<string, unknown>;
 	signupDetails: EventSignupDetails;
 	organizationId: string;
 	teamId?: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
 	const eventRecord = await getEventByIdUnsafe({ eventId, organizationId, tx });
 	if (!eventRecord) {
@@ -682,7 +696,9 @@ export async function attendedEventHelper({
 			eventSignupId: eventSignupIdIfNeeded
 		},
 		organizationId,
-		tx
+		tx,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	//either get the existing signup or create a new one

@@ -17,7 +17,7 @@ import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
 import { surveyResponsesSchema } from '$lib/schema/survey/responses';
 
-import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
+import type { PersonActionHelper } from '$lib/schema/person';
 import {
 	type PetitionSignatureDetails,
 	petitionSignatureDetails
@@ -28,14 +28,15 @@ import { parse, nullable } from 'valibot';
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and, isNull, not, inArray, count as countRows } from 'drizzle-orm';
-import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import {
+	findOrCreatePerson,
+	type WhatsappIdentityLookup
+} from '$lib/server/api/data/person/findOrCreate';
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 import { clampLocale } from '$lib/utils/language';
 
 import {
@@ -208,6 +209,9 @@ export async function updatePetitionSignature({
 			.where('id', parsed.metadata.petitionSignatureId)
 			.one()
 	);
+	if (!petitionSignatureRecord) {
+		throw new Error('Petition signature not found');
+	}
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(petitionSignature)
 		.set({
@@ -287,19 +291,22 @@ export async function signPetitionHelper({
 	signatureDetails,
 	organizationId,
 	skipNotifications = false,
-	responses = null
+	responses = null,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
-	personAction: PersonActionHelper;
+	personAction: PersonActionHelper | Record<string, unknown>;
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
 	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
-	const parsedActionHelper = parse(personActionHelper, personAction);
 	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult) {
@@ -316,13 +323,15 @@ export async function signPetitionHelper({
 
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction: parsedActionHelper,
+		personAction,
 		addedFrom: {
 			type: 'added_from_petition',
 			petitionSignatureId
 		},
 		organizationId,
-		teamId
+		teamId,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
@@ -494,16 +503,20 @@ export async function completePetitionSignatureHelper({
 	signatureDetails,
 	organizationId,
 	responses = null,
-	skipNotifications = true
+	skipNotifications = true,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
-	personAction: PersonActionHelper;
+	personAction: PersonActionHelper | Record<string, unknown>;
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
 	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
 	const result = await signPetitionHelper({
 		petitionId,
@@ -513,7 +526,9 @@ export async function completePetitionSignatureHelper({
 		signatureDetails,
 		organizationId,
 		skipNotifications,
-		responses
+		responses,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 	const queue = await getQueue();
 	await queue.insertActivity({
@@ -535,16 +550,20 @@ export async function createIncompletePetitionSignatureHelper({
 	signatureDetails,
 	teamId,
 	flowMessageFrom,
-	flowMessageTo
+	flowMessageTo,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
 	organizationId: string;
-	personAction: PersonActionHelper;
+	personAction: PersonActionHelper | Record<string, unknown>;
 	signatureDetails: PetitionSignatureDetails;
 	teamId?: string;
 	flowMessageFrom: string;
 	flowMessageTo: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult.published) {
@@ -555,19 +574,20 @@ export async function createIncompletePetitionSignatureHelper({
 	}
 
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
-	const parsedActionHelper = parse(personActionHelper, personAction);
 	const petitionSignatureId = uuidv7();
 
 	const personRecord = await findOrCreatePerson({
 		tx,
-		personAction: parsedActionHelper,
+		personAction,
 		addedFrom: {
 			type: 'added_from_petition',
 			petitionSignatureId
 		},
 		organizationId,
 		teamId: teamId ?? petitionResult.teamId ?? undefined,
-		updateExistingPerson: true
+		updateExistingPerson: true,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	const settings = parse(petitionSettingsSchema, petitionResult.settings ?? {});
@@ -585,7 +605,7 @@ export async function createIncompletePetitionSignatureHelper({
 				footerText: 'Tap to sign the petition'
 			});
 			return { flowSent: true as const, personId: personRecord.id };
-		} catch (error) {
+		} catch {
 			return await completePetitionSignatureHelper({
 				petitionId,
 				teamId,
@@ -594,7 +614,9 @@ export async function createIncompletePetitionSignatureHelper({
 				signatureDetails: parsedSignatureDetails,
 				organizationId,
 				responses: null,
-				skipNotifications: true
+				skipNotifications: true,
+				whatsappIdentity,
+				whatsappContextWamidId
 			});
 		}
 	}
@@ -607,7 +629,9 @@ export async function createIncompletePetitionSignatureHelper({
 		signatureDetails: parsedSignatureDetails,
 		organizationId,
 		responses: null,
-		skipNotifications: true
+		skipNotifications: true,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 }
 
