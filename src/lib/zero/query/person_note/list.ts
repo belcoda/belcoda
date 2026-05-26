@@ -10,7 +10,7 @@ export const inputSchema = object({
 	organizationId: listFilter.entries.organizationId,
 	isDeleted: listFilter.entries.isDeleted,
 	searchString: listFilter.entries.searchString,
-	startAfter: listFilter.entries.startAfter,
+	cursor: listFilter.entries.cursor,
 	pageSize: listFilter.entries.pageSize,
 	personId: uuid
 });
@@ -30,8 +30,8 @@ export function listPersonNotesQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
+	if (input.cursor) {
+		q = q.start({ id: input.cursor });
 	}
 	return q;
 }

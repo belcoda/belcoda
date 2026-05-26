@@ -17,14 +17,51 @@
 	import { t } from '$lib/index.svelte';
 	import { renderName } from '$lib/utils/name';
 	import { renderWhatsAppMessagePreview } from '$lib/components/widgets/activity/preview/whatsapp_message';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodePersonListCursor } from '$lib/utils/person/cursor';
+	import { IsInViewport, watch } from 'runed';
+	import { Button } from '$lib/components/ui/button';
+	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
+	import { COMMUNITY_PAGINATION_MODE } from '$lib/utils/pagination';
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		tagId: null,
 		signupEventId: null,
 		mostRecentActivity: null
 	});
-	const personList = $derived.by(() => z.createQuery(queries.person.list(personListFilter)));
-	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
+	const pageSize = 25;
+	let sentinel: HTMLElement | null = $state(null);
+	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
+	const paginatedPersonList = new PaginatedZeroList({
+		getBaseFilter: () => personListFilter,
+		encodeCursor: encodePersonCursor,
+		pageSize
+	});
+	const personList = $derived.by(() =>
+		z.createQuery(queries.person.list(paginatedPersonList.pageFilter))
+	);
+
+	watch(
+		() => personList.data,
+		(data) => {
+			paginatedPersonList.handlePage(data);
+		}
+	);
+	watch(
+		() => sentinelIsInViewport.current,
+		(isInViewport) => {
+			if (COMMUNITY_PAGINATION_MODE === 'infinite' && isInViewport) {
+				paginatedPersonList.loadMore();
+			}
+		}
+	);
+
+	function encodePersonCursor(person: ReadPersonZero) {
+		return encodePersonListCursor({
+			id: person.id,
+			mostRecentActivityAt: person.mostRecentActivityAt
+		});
+	}
 </script>
 
 <Sidebar.Root
@@ -48,11 +85,32 @@
 					{#if personList.details.type === 'error'}
 						<div class="px-2"><ErrorAlert>{t`Error loading persons`}</ErrorAlert></div>
 					{/if}
-					{#each personList.data as person (person.id)}
+					{#each paginatedPersonList.items as person (person.id)}
 						{@render personItem(person)}
 					{/each}
 				</Sidebar.GroupContent>
 			</Sidebar.Group>
+			{#if paginatedPersonList.items.length > 0}
+				<div class="border-t p-2">
+					<div class="mb-2 text-center text-xs text-muted-foreground">
+						{t`${String(paginatedPersonList.items.length)} shown`}
+					</div>
+					{#if COMMUNITY_PAGINATION_MODE === 'button' && paginatedPersonList.hasMore}
+						<Button
+							variant="ghost"
+							class="w-full"
+							data-testid="community-load-more"
+							disabled={paginatedPersonList.loadingMore}
+							onclick={() => paginatedPersonList.loadMore()}
+						>
+							{t`Load more`}
+						</Button>
+					{/if}
+					{#if COMMUNITY_PAGINATION_MODE === 'infinite' && paginatedPersonList.hasMore}
+						<div bind:this={sentinel} class="h-1" data-testid="community-scroll-sentinel"></div>
+					{/if}
+				</div>
+			{/if}
 		</Sidebar.Content>
 	</Sidebar.Root>
 </Sidebar.Root>

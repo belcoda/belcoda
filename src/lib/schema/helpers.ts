@@ -419,7 +419,7 @@ export const listFilter = v.object({
 	teamId: v.fallback(v.nullable(uuid), null),
 	isDeleted: v.fallback(v.nullable(v.boolean()), null),
 	organizationId: uuid,
-	startAfter: v.fallback(v.nullable(uuid), null),
+	cursor: v.fallback(v.nullable(v.string()), null),
 	pageSize: v.fallback(integer, 50),
 	excludedIds: v.fallback(v.array(uuid), [])
 });

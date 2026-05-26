@@ -25,8 +25,8 @@ export function listPetitionsQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
+	if (input.cursor) {
+		q = q.start({ id: input.cursor });
 	}
 	return q;
 }

@@ -33,8 +33,8 @@ export function listPetitionSignaturesQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.limit(pageSize);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
+	if (input.cursor) {
+		q = q.start({ id: input.cursor });
 	}
 	return q;
 }

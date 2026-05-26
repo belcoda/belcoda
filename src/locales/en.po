@@ -5050,3 +5050,12 @@ msgstr "🎧 Audio message"
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
 msgstr "🎨 Sticker"
+
+#. 0: String(paginatedPersonList.items.length)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} shown"
+msgstr "{0} shown"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Load more"
+msgstr "Load more"

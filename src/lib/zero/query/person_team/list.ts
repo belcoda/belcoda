@@ -8,7 +8,7 @@ import { personTeamReadPermissions } from '$lib/zero/query/person_team/permissio
 export const inputSchema = object({
 	organizationId: listFilter.entries.organizationId,
 	searchString: listFilter.entries.searchString,
-	startAfter: listFilter.entries.startAfter,
+	cursor: listFilter.entries.cursor,
 	pageSize: listFilter.entries.pageSize,
 	personId: uuid
 });
@@ -28,8 +28,8 @@ export function listPersonTeamsQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		const [teamId, personId] = input.startAfter.split('.'); //startAfter is a string of the form teamId.personId
+	if (input.cursor) {
+		const [teamId, personId] = input.cursor.split('.'); //cursor is a string of the form teamId.personId
 		q = q.start({ teamId, personId });
 	}
 	return q;
