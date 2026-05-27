@@ -1,24 +1,12 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import {
 	WhatsAppDraftPage,
 	WhatsAppListPage,
 	WhatsAppNavigationPage
 } from '../pages/communications/whatsapp.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner } from '../helpers/login';
 
 const PROJECT = 'communications' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 test.describe.serial('Communications: WhatsApp', () => {
 	const state = {
@@ -26,7 +14,7 @@ test.describe.serial('Communications: WhatsApp', () => {
 	};
 
 	test('owner can compose a WhatsApp draft and land on detail page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const navigationPage = new WhatsAppNavigationPage(page);
 		await navigationPage.gotoDrafts();
@@ -44,7 +32,7 @@ test.describe.serial('Communications: WhatsApp', () => {
 	});
 
 	test('owner can save a WhatsApp draft and find it in drafts list', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const draftPage = new WhatsAppDraftPage(page);
 		await draftPage.gotoDraftById(state.threadId);
@@ -57,7 +45,7 @@ test.describe.serial('Communications: WhatsApp', () => {
 	});
 
 	test('owner can send a WhatsApp draft and gets sent detail page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const draftPage = new WhatsAppDraftPage(page);
 		await draftPage.gotoDraftById(state.threadId);
@@ -73,7 +61,7 @@ test.describe.serial('Communications: WhatsApp', () => {
 	});
 
 	test('owner can open sent WhatsApp thread from sent list', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const navigationPage = new WhatsAppNavigationPage(page);
 		await navigationPage.gotoSent();

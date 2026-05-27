@@ -32,12 +32,14 @@
 		valid = $bindable(false),
 		country = $bindable(),
 		class: className,
+		nullable = false,
 		...rest
 	}: {
 		value: string | null | undefined;
 		valid?: boolean;
 		country: CountryCode;
 		class?: string;
+		nullable?: boolean;
 	} = $props();
 
 	import * as Popover from '$lib/components/ui/popover/index.js';
@@ -68,15 +70,21 @@
 	let triggerRef = $state<HTMLButtonElement | null>(null!);
 
 	function getValue() {
-		return phoneNumber as string;
+		return phoneNumber as string | null | undefined;
 	}
-	function setValue(newValue: string) {
+	function setValue(newValue: string | null | undefined) {
+		if (nullable && !newValue) {
+			phoneNumber = null;
+			value = null;
+			valid = true;
+			return;
+		}
 		const internationalPhoneNumber = getInternationalPhoneNumber(
 			newValue,
 			selectedCountry || defaultCountryCode
 		);
 		phoneNumber = newValue;
-		value = internationalPhoneNumber;
+		value = internationalPhoneNumber || undefined;
 		valid = validInternationalPhoneNumber;
 	}
 

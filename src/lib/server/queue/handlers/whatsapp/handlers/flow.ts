@@ -45,11 +45,11 @@ function resolveFlowResponsePhoneNumber({
 
 	const senderCountry = safeGetCountryCodeFromPhoneNumber(from);
 	if (senderCountry && isValidInternationalPhoneNumber(normalizedPhone, senderCountry)) {
-		return getInternationalPhoneNumber(normalizedPhone, senderCountry);
+		return getInternationalPhoneNumber(normalizedPhone, senderCountry) ?? from;
 	}
 
 	if (isValidInternationalPhoneNumber(normalizedPhone, organizationCountry)) {
-		return getInternationalPhoneNumber(normalizedPhone, organizationCountry);
+		return getInternationalPhoneNumber(normalizedPhone, organizationCountry) ?? from;
 	}
 
 	return from;

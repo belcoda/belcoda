@@ -47,34 +47,15 @@ jobs:
           restore-keys: playwright-${{ runner.os }}-
 
       - name: Install Playwright system dependencies
-        run: npx playwright install-deps
+        run: npx playwright install-deps chromium
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
-
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+        run: npx playwright install chromium
 
       - name: Run e2e tests against staging
-        run: |
-          # Start proxy to staging database
-          flyctl proxy 5432 -a belcodadb-staging &
-          PROXY_PID=$!
-          sleep 5
-
-          # Run tests
-          npm run test:e2e
-          TEST_EXIT=$?
-
-          # Cleanup proxy
-          kill $PROXY_PID 2>/dev/null || true
-
-          exit $TEST_EXIT
+        run: npm run test:e2e
         env:
-          DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          ZERO_UPSTREAM_DB: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
-          ZERO_REPLICA_FILE: /tmp/sync-replica.db
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           E2E_BASE_URL: 'https://staging.belcoda.com'
 
       - name: Upload Playwright report
@@ -83,6 +64,14 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+          retention-days: 7
+
+      - name: Upload CTRF report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ctrf
+          path: ctrf/
           retention-days: 7
 
       - name: Post test report to PR

@@ -1,26 +1,17 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { PreferencesLanguagePage } from '../pages/preferences/language.page';
-import { getTestUsers } from '../helpers/auth';
+import { authStoragePath } from '../helpers/auth-storage';
+import { ensureAuthenticated } from '../helpers/login';
 
 const PROJECT = 'settings' as const;
-const USERS = getTestUsers(PROJECT);
 
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
+test.use({ storageState: authStoragePath(PROJECT, 'member') });
 
 test.describe.serial('Preferences: Language', () => {
 	test('language page loads with a language selector', async ({ page }) => {
 		const languagePage = new PreferencesLanguagePage(page);
 
-		await loginAsMember(page);
+		await ensureAuthenticated(page, PROJECT, 'member');
 		await languagePage.goto();
 
 		await expect(languagePage.root).toBeVisible({ timeout: 15_000 });
@@ -30,7 +21,7 @@ test.describe.serial('Preferences: Language', () => {
 	test('language selector shows all supported locales', async ({ page }) => {
 		const languagePage = new PreferencesLanguagePage(page);
 
-		await loginAsMember(page);
+		await ensureAuthenticated(page, PROJECT, 'member');
 		await languagePage.goto();
 
 		await languagePage.selectTrigger.click();
@@ -45,7 +36,7 @@ test.describe.serial('Preferences: Language', () => {
 	test('can change language to Spanish', async ({ page }) => {
 		const languagePage = new PreferencesLanguagePage(page);
 
-		await loginAsMember(page);
+		await ensureAuthenticated(page, PROJECT, 'member');
 		await languagePage.goto();
 
 		await languagePage.selectLanguage('es');
@@ -56,7 +47,7 @@ test.describe.serial('Preferences: Language', () => {
 	test('language preference persists after page reload', async ({ page }) => {
 		const languagePage = new PreferencesLanguagePage(page);
 
-		await loginAsMember(page);
+		await ensureAuthenticated(page, PROJECT, 'member');
 		await languagePage.goto();
 
 		await languagePage.selectLanguage('pt');
@@ -69,11 +60,28 @@ test.describe.serial('Preferences: Language', () => {
 	test('can change language back to English', async ({ page }) => {
 		const languagePage = new PreferencesLanguagePage(page);
 
-		await loginAsMember(page);
+		await ensureAuthenticated(page, PROJECT, 'member');
 		await languagePage.goto();
 
 		await languagePage.selectLanguage('en');
 
 		await expect(languagePage.selectTrigger).toContainText('English', { timeout: 10_000 });
+	});
+
+	test.afterAll(async ({ browser }, testInfo) => {
+		const context = await browser.newContext({
+			baseURL: testInfo.project.use.baseURL,
+			storageState: authStoragePath(PROJECT, 'member')
+		});
+		const page = await context.newPage();
+		const languagePage = new PreferencesLanguagePage(page);
+
+		try {
+			await ensureAuthenticated(page, PROJECT, 'member');
+			await languagePage.goto();
+			await languagePage.selectLanguage('en');
+		} finally {
+			await context.close();
+		}
 	});
 });
