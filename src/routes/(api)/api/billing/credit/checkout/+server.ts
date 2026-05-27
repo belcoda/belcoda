@@ -47,6 +47,18 @@ export async function POST(event) {
 		return json({ error: 'Organization not found' }, { status: 404 });
 	}
 
+	const membership = await drizzle.query.member.findFirst({
+		where: (row, { and, eq }) =>
+			and(
+				eq(row.userId, session.user.id),
+				eq(row.organizationId, organizationId),
+				eq(row.role, 'owner')
+			)
+	});
+	if (!membership) {
+		return json({ error: 'Only organization owners can add funds' }, { status: 403 });
+	}
+
 	if (!organization.stripeCustomerId) {
 		//create a stripe customer ID desho?
 		const stripeCustomer = await stripeClient.customers.create({
@@ -69,18 +81,6 @@ export async function POST(event) {
 
 	if (!customerId) {
 		return json({ error: 'Unable to create or find a Stripe customer ID' }, { status: 500 });
-	}
-
-	const membership = await drizzle.query.member.findFirst({
-		where: (row, { and, eq }) =>
-			and(
-				eq(row.userId, session.user.id),
-				eq(row.organizationId, organizationId),
-				eq(row.role, 'owner')
-			)
-	});
-	if (!membership) {
-		return json({ error: 'Only organization owners can add funds' }, { status: 403 });
 	}
 
 	const checkoutSession = await stripeClient.checkout.sessions.create({
