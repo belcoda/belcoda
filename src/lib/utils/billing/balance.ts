@@ -45,10 +45,12 @@ export function isValidBalanceTopUpAmountUsd(amount: number): boolean {
 }
 
 export function parseBalanceTopUpAmountUsd(rawAmount: string | null | undefined): number | null {
-	const parsedAmount = Number.parseInt(rawAmount ?? '', 10);
-	if (!Number.isFinite(parsedAmount)) {
+	const normalized = (rawAmount ?? '').trim();
+	if (!/^\d+$/.test(normalized)) {
 		return null;
 	}
+	const parsedAmount = Number(normalized);
+	if (!Number.isSafeInteger(parsedAmount)) return null;
 	if (!isValidBalanceTopUpAmountUsd(parsedAmount)) {
 		return null;
 	}
