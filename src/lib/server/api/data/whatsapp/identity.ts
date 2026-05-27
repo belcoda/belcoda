@@ -209,14 +209,29 @@ export async function resolveIncomingWhatsappIdentity({
 			})
 		: undefined;
 
-	let personRecord = identity
-		? await _getPersonByIdUnsafe({
+	let personRecord: typeof person.$inferSelect | undefined = undefined;
+	if (identity) {
+		try {
+			personRecord = await _getPersonByIdUnsafe({
 				personId: identity.personId,
 				organizationId: organizationRecord.id,
 				includeDeleted: false,
 				tx
-			})
-		: undefined;
+			});
+		} catch (error) {
+			log.info(
+				{
+					error,
+					organizationId: organizationRecord.id,
+					wabaId: inboundMessage.wabaId,
+					bsuid,
+					personId: identity.personId,
+					messageId
+				},
+				'BSUID identity not found; falling back to phone/context resolution'
+			);
+		}
+	}
 
 	if (!personRecord && inboundMessage.context?.id) {
 		try {
