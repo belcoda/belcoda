@@ -167,7 +167,7 @@ function mergeSignupDetails(
 
 export async function signUpForEventWithId({
 	eventId,
-	teamId,
+	teamId: _teamId,
 	tx,
 	personId,
 	organizationId,
@@ -186,8 +186,7 @@ export async function signUpForEventWithId({
 	skipNotifications?: boolean;
 	defaultEventSignupId?: string;
 }) {
-	void teamId;
-	void skipNotifications;
+	void _teamId;
 	const parsedSignupDetails = parse(eventSignupDetails, signupDetails);
 
 	const eventResult = await getEventByIdUnsafe({ eventId, organizationId, tx });
@@ -224,7 +223,8 @@ export async function signUpForEventWithId({
 		eventRecord: eventResult,
 		personRecord: personRecord,
 		organizationRecord: organizationRecord,
-		details: parsedSignupDetails
+		details: parsedSignupDetails,
+		skipNotifications
 	});
 	return eventSignupResult;
 }
