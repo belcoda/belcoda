@@ -165,43 +165,41 @@ export async function findOrCreatePerson({
 	const parsedActionHelper = parse(personActionHelper, personAction);
 	const parsedAddedFrom = parse(personAddedFrom, addedFrom);
 
-	const identityPerson = await _findPersonByWhatsappIdentityUnsafe({
-		organizationId,
-		whatsappIdentity,
-		tx
-	});
-	if (identityPerson) {
-		return identityPerson;
-	}
+	let personRecord =
+		(await _findPersonByWhatsappIdentityUnsafe({
+			organizationId,
+			whatsappIdentity,
+			tx
+		})) ??
+		(await _findPersonByWhatsappContextMessageUnsafe({
+			organizationId,
+			whatsappContextWamidId,
+			tx
+		}));
 
-	const contextPerson = await _findPersonByWhatsappContextMessageUnsafe({
-		organizationId,
-		whatsappContextWamidId,
-		tx
-	});
-	if (contextPerson) {
-		return contextPerson;
-	}
+	if (!personRecord) {
+		const whereConditions = [];
+		if (parsedActionHelper.emailAddress) {
+			whereConditions.push(eq(person.emailAddress, parsedActionHelper.emailAddress));
+		}
+		if (parsedActionHelper.phoneNumber) {
+			whereConditions.push(eq(person.phoneNumber, parsedActionHelper.phoneNumber));
+		}
 
-	const whereConditions = [];
-	if (parsedActionHelper.emailAddress) {
-		whereConditions.push(eq(person.emailAddress, parsedActionHelper.emailAddress));
+		if (whereConditions.length > 0) {
+			// there should only ever be one because there is a unique index against organizationId and phoneNumber/emailAddress
+			[personRecord] = await tx.dbTransaction.wrappedTransaction
+				.select()
+				.from(person)
+				.where(
+					and(
+						isNull(person.deletedAt),
+						eq(person.organizationId, organizationId),
+						or(...whereConditions)
+					)
+				);
+		}
 	}
-	if (parsedActionHelper.phoneNumber) {
-		whereConditions.push(eq(person.phoneNumber, parsedActionHelper.phoneNumber));
-	}
-
-	// there should only ever be one because there is a unique index against organizationId and phoneNumber/emailAddress
-	const [personRecord] = await tx.dbTransaction.wrappedTransaction
-		.select()
-		.from(person)
-		.where(
-			and(
-				isNull(person.deletedAt),
-				eq(person.organizationId, organizationId),
-				or(...whereConditions)
-			)
-		);
 
 	if (personRecord) {
 		if (updateExistingPerson) {
