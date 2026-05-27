@@ -1347,6 +1347,24 @@ const organizationTable = {
 			optional: true,
 			customType: null as unknown as number
 		},
+		freeWhatsAppMessageCredits: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'free_whatsapp_message_credits'
+		},
+		freeEmailMessageCredits: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'free_email_message_credits'
+		},
+		resetFreeQuotasAfter: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'reset_free_quotas_after'
+		},
 		createdAt: {
 			type: 'number',
 			optional: true,

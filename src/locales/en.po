@@ -5072,6 +5072,36 @@ msgstr "🎧 Audio message"
 msgid "🎨 Sticker"
 msgstr "🎨 Sticker"
 
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Not scheduled"
+msgstr "Not scheduled"
+
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Free WhatsApp messages"
+msgstr "Free WhatsApp messages"
+
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Remaining free messages this month for your organization."
+msgstr "Remaining free messages this month for your organization."
+
+#. 0: formattedResetDate
+#. 0: formattedResetDate
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Resets on {0}"
+msgstr "Resets on {0}"
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+msgid "Free emails"
+msgstr "Free emails"
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+msgid "Remaining free emails this month for your organization."
+msgstr "Remaining free emails this month for your organization."
+
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Are you sure you want to discard this WhatsApp draft?"
 msgstr "Are you sure you want to discard this WhatsApp draft?"

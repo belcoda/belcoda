@@ -1,7 +1,7 @@
 import { organization, member } from '$lib/schema/drizzle';
 import { drizzle } from '$lib/server/db';
 import type { ServerTransaction } from '@rocicorp/zero';
-import { and, eq, sql } from 'drizzle-orm';
+import { eq, or, isNull, lte, sql, and } from 'drizzle-orm';
 import { type QueryContext, builder } from '$lib/zero/schema';
 import {
 	updateOrganizationZeroMutatorSchema,
@@ -291,6 +291,33 @@ async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
 	}
 }
 
+/**
+ * Private function to reset the free quotas for an organization. Called from a daily cron job.
+ * Sets the quota for a monthly period. Will only reset if the reset date is in the past.
+ * @param freeWhatsAppCredits - The number of free WhatsApp credits to reset to
+ * @param freeEmailCredits - The number of free email credits to reset to
+ */
+export async function _resetOrganizationFreeQuotasUnsafe({
+	freeWhatsAppCredits,
+	freeEmailCredits
+}: {
+	freeWhatsAppCredits: number;
+	freeEmailCredits: number;
+}) {
+	await drizzle
+		.update(organization)
+		.set({
+			freeWhatsAppMessageCredits: freeWhatsAppCredits,
+			freeEmailMessageCredits: freeEmailCredits,
+			resetFreeQuotasAfter: sql`now() + interval '1 month'`
+		})
+		.where(
+			or(
+				lte(organization.resetFreeQuotasAfter, new Date()),
+				isNull(organization.resetFreeQuotasAfter)
+			)
+		);
+}
 /** Atomically decrements free WhatsApp credits when credits remain. Returns whether a credit was claimed. */
 export async function _reduceFreeWhatsAppMessageCredits({
 	organizationId,
