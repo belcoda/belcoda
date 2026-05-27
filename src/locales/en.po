@@ -819,6 +819,7 @@ msgstr "Person deleted"
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 #: src/routes/(auth)/login/+page.svelte
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
@@ -848,6 +849,7 @@ msgstr "Not specified"
 #: src/lib/components/forms/event/render_survey_question.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Address.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Address"
 msgstr "Address"
 
@@ -1407,6 +1409,7 @@ msgstr "Slug"
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Description"
 msgstr "Description"
 
@@ -1855,6 +1858,9 @@ msgstr "Upload error!"
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Error"
 msgstr "Error"
 
@@ -3927,19 +3933,15 @@ msgstr "Activate business account"
 msgid "The WhatsApp signup was cancelled. If you want to try again, click the button below."
 msgstr "The WhatsApp signup was cancelled. If you want to try again, click the button below."
 
-#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "WhatsApp Business Account Activated"
 msgstr "WhatsApp Business Account Activated"
 
-#. 0: appState.activeOrganization?.data?.settings.whatsApp.number
-#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
-msgid "Your WhatsApp Business Account number is {0}"
-msgstr "Your WhatsApp Business Account number is {0}"
+#~ msgid "Your WhatsApp Business Account number is {0}"
+#~ msgstr "Your WhatsApp Business Account number is {0}"
 
-#. 0: appState.activeOrganization?.data?.settings.whatsApp.wabaId
-#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
-msgid "Your WhatsApp Business Account ID is {0}"
-msgstr "Your WhatsApp Business Account ID is {0}"
+#~ msgid "Your WhatsApp Business Account ID is {0}"
+#~ msgstr "Your WhatsApp Business Account ID is {0}"
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Activate WhatsApp Business Account"
@@ -4265,13 +4267,12 @@ msgstr "Unable to open Stripe billing portal"
 msgid "Unable to start Stripe checkout"
 msgstr "Unable to start Stripe checkout"
 
-#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
-msgid ""
-"Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-"\t\t\t\tmessaging features."
-msgstr ""
-"Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-"\t\t\t\tmessaging features."
+#~ msgid ""
+#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
+#~ "\t\t\t\tmessaging features."
+#~ msgstr ""
+#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
+#~ "\t\t\t\tmessaging features."
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
@@ -5160,3 +5161,139 @@ msgstr "Write your message..."
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Add image"
 msgstr "Add image"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "—"
+msgstr "—"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "No active organization"
+msgstr "No active organization"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Failed to load WhatsApp business profile"
+msgstr "Failed to load WhatsApp business profile"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "WhatsApp business profile saved"
+msgstr "WhatsApp business profile saved"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Failed to save WhatsApp business profile"
+msgstr "Failed to save WhatsApp business profile"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Business profile"
+msgstr "Business profile"
+
+#~ msgid "Manage how your business appears on WhatsApp. Some fields are set by Meta and cannot be edited here."
+#~ msgstr "Manage how your business appears on WhatsApp. Some fields are set by Meta and cannot be edited here."
+
+#~ msgid "Loading business profile…"
+#~ msgstr "Loading business profile…"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Verified name"
+msgstr "Verified name"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Name status"
+msgstr "Name status"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Profile picture"
+msgstr "Profile picture"
+
+#~ msgid "WhatsApp business profile"
+#~ msgstr "WhatsApp business profile"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "About"
+msgstr "About"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Industry"
+msgstr "Industry"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Website 1"
+msgstr "Website 1"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Website 2"
+msgstr "Website 2"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Save profile"
+msgstr "Save profile"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Manage how your business appears on WhatsApp. Verified name and name status are set by Meta."
+msgstr "Manage how your business appears on WhatsApp. Verified name and name status are set by Meta."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Upload a square image. Save the profile to apply changes on WhatsApp."
+msgstr "Upload a square image. Save the profile to apply changes on WhatsApp."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Heads up"
+msgstr "Heads up"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Updates to your WhatsApp Business profile can take time to propagate. After saving changes, wait at least 10 minutes before submitting another update, and confirm the latest values directly in WhatsApp first."
+msgstr "Updates to your WhatsApp Business profile can take time to propagate. After saving changes, wait at least 10 minutes before submitting another update, and confirm the latest values directly in WhatsApp first."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "WABA name"
+msgstr "WABA name"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Business legal name"
+msgstr "Business legal name"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Business status"
+msgstr "Business status"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Verification status"
+msgstr "Verification status"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Messaging limit"
+msgstr "Messaging limit"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Business ID"
+msgstr "Business ID"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Business verification required"
+msgstr "Business verification required"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Your organizational display name is hidden from message recipients until your business verification process is complete."
+msgstr "Your organizational display name is hidden from message recipients until your business verification process is complete."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Complete verification"
+msgstr "Complete verification"
+
+#~ msgid "Business account details and verification status are shown below."
+#~ msgstr "Business account details and verification status are shown below."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Failed to load WhatsApp business account details"
+msgstr "Failed to load WhatsApp business account details"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
+msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
