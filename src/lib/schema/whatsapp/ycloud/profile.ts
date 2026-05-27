@@ -77,6 +77,28 @@ export const whatsappBusinessProfileSchema = v.object({
 
 export type WhatsappBusinessProfile = v.InferOutput<typeof whatsappBusinessProfileSchema>;
 
+export const whatsappBusinessAccountSummarySchema = v.object({
+	businessStatus: v.optional(v.nullable(v.string())),
+	businessName: v.optional(v.nullable(v.string())),
+	businessVerificationStatus: v.optional(v.nullable(v.string())),
+	whatsappBusinessManagerMessagingLimit: v.optional(v.nullable(v.string())),
+	name: v.optional(v.nullable(v.string())),
+	businessId: v.optional(v.nullable(v.string()))
+});
+
+export type WhatsappBusinessAccountSummary = v.InferOutput<
+	typeof whatsappBusinessAccountSummarySchema
+>;
+
+export const whatsappProfileAndAccountResponseSchema = v.object({
+	profile: whatsappBusinessProfileSchema,
+	waba: whatsappBusinessAccountSummarySchema
+});
+
+export type WhatsappProfileAndAccountResponse = v.InferOutput<
+	typeof whatsappProfileAndAccountResponseSchema
+>;
+
 export const updateWhatsappBusinessProfileInput = v.object({
 	about: v.optional(v.pipe(v.string(), v.maxLength(139, 'Maximum length is 139 characters'))),
 	address: v.optional(v.pipe(v.string(), v.maxLength(256, 'Maximum length is 256 characters'))),
@@ -110,5 +132,16 @@ export function mockWhatsappBusinessProfile(): WhatsappBusinessProfile {
 		websites: ['https://belcoda.com'],
 		verifiedName: 'Mock Business',
 		nameStatus: 'APPROVED'
+	};
+}
+
+export function mockWhatsappBusinessAccountSummary(): WhatsappBusinessAccountSummary {
+	return {
+		businessStatus: 'APPROVED',
+		businessName: 'Mock Business LLC',
+		businessVerificationStatus: 'not_verified',
+		whatsappBusinessManagerMessagingLimit: 'TIER_250',
+		name: 'Mock Business',
+		businessId: 'mock-business-id'
 	};
 }
