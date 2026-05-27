@@ -5058,7 +5058,6 @@ msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/billing/credit/+page.svelte
-#: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Account balance"
 msgstr ""
 
