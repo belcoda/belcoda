@@ -213,6 +213,7 @@ export async function resolveIncomingWhatsappIdentity({
 		? await _getPersonByIdUnsafe({
 				personId: identity.personId,
 				organizationId: organizationRecord.id,
+				includeDeleted: false,
 				tx
 			})
 		: undefined;
@@ -227,6 +228,7 @@ export async function resolveIncomingWhatsappIdentity({
 				personRecord = await _getPersonByIdUnsafe({
 					personId: contextMessage.personId,
 					organizationId: organizationRecord.id,
+					includeDeleted: false,
 					tx
 				});
 			}
