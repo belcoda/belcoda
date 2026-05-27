@@ -82,6 +82,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
@@ -254,6 +255,7 @@ msgid "System"
 msgstr "System"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -598,56 +600,74 @@ msgid "Are you sure you want to discard your changes?"
 msgstr "Are you sure you want to discard your changes?"
 
 #. 0: HUMAN_READABLE_MAX_FILE_SIZE
+#. 0: humanReadableMaxFileSize
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File too large. Max size is {0}."
 msgstr "File too large. Max size is {0}."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File type not allowed. Allowed types are .png, .jpg, .jpeg."
 msgstr "File type not allowed. Allowed types are .png, .jpg, .jpeg."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File validation error. Please try again."
 msgstr "File validation error. Please try again."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File upload error. Please try again."
 msgstr "File upload error. Please try again."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Unknown error. Please try again."
 msgstr "Unknown error. Please try again."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload"
 msgstr "Upload"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Upload an image to your workspace"
 msgstr "Upload an image to your workspace"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Error: "
 msgstr "Error: "
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Replace image"
 msgstr "Replace image"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Allowed: .png, .jpg, .jpeg"
 msgstr "Allowed: .png, .jpg, .jpeg"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Max size: "
 msgstr "Max size: "
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Click or drag to upload image"
 msgstr "Click or drag to upload image"
 
@@ -2635,6 +2655,7 @@ msgstr "Discard"
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Send"
@@ -4976,8 +4997,9 @@ msgstr "No variables found."
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
 
-#~ msgid "[Name unknown]"
-#~ msgstr "[Name unknown]"
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Name unknown]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
@@ -5118,3 +5140,23 @@ msgstr "Add to petition:"
 #: src/lib/components/flow/nodes/Targeting.svelte
 msgid "Recipients:"
 msgstr "Recipients:"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Uploading image…"
+msgstr "Uploading image…"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Image attachment preview"
+msgstr "Image attachment preview"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Remove image"
+msgstr "Remove image"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Write your message..."
+msgstr "Write your message..."
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Add image"
+msgstr "Add image"

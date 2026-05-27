@@ -168,6 +168,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 
 			profilePicture: true,
 			mostRecentActivityPreview: true,
+			mostRecentWhatsappMessageReceivedAt: true,
 			addedFrom: true,
 
 			createdAt: true,

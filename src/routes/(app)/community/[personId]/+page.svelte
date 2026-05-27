@@ -7,19 +7,32 @@
 		return z.createQuery(queries.person.read({ personId: params.personId }));
 	});
 	import RenderPerson from '$lib/components/widgets/render/RenderPerson.svelte';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import PlusIcon from '@lucide/svelte/icons/plus';
-	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 	import NotesAction from '$lib/components/layouts/app/action-menus/person/NotesAction.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import ActivityTimeline from '$lib/components/widgets/activity/ActivityTimeline.svelte';
+	import SendBusinessApiIndividualMessage from '$lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte';
+	const lastReceivedAt = $derived(person.data?.mostRecentWhatsappMessageReceivedAt || 0);
+	const lastReceivedAtDate = $derived(new Date((() => lastReceivedAt)()));
+	const isLastReceivedAtLessThan24HoursAgo = $derived(
+		lastReceivedAtDate > new Date(Date.now() - 24 * 60 * 60 * 1000)
+	);
+	import { appState } from '$lib/state.svelte';
+	const whatsappOnboarded = $derived(
+		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
+			appState.activeOrganization?.data?.settings.whatsApp.number
+	);
 </script>
 
-<ContentLayout rootLink="/community" {header} {footer} bodyPadding="p-0">
+<ContentLayout
+	rootLink="/community"
+	{header}
+	bodyPadding="p-0"
+	hideFooter={!isLastReceivedAtLessThan24HoursAgo || !whatsappOnboarded}
+>
 	<ActivityTimeline personId={params.personId} />
+	{#snippet footer()}
+		<SendBusinessApiIndividualMessage personId={params.personId} />
+	{/snippet}
 </ContentLayout>
 
 {#snippet header()}
@@ -38,19 +51,4 @@
 			<Skeleton class="h-10 w-20 rounded-lg" />
 		{/if}
 	</div>
-{/snippet}
-
-{#snippet footer()}
-	<InputGroup.Root>
-		<InputGroup.Textarea placeholder="Write your message..." />
-		<InputGroup.Addon align="block-end">
-			<InputGroup.Button variant="outline" class="rounded-full" size="icon-xs">
-				<PlusIcon />
-			</InputGroup.Button>
-			<InputGroup.Button variant="default" class="ml-auto rounded-full" size="icon-xs" disabled>
-				<ArrowUpIcon />
-				<span class="sr-only">Send</span>
-			</InputGroup.Button>
-		</InputGroup.Addon>
-	</InputGroup.Root>
 {/snippet}
