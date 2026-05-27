@@ -91,24 +91,19 @@ async function applyBalanceTopUpFromStripeEvent(event: Stripe.Event) {
 	const deltaInUsdHundredthsOfCents = usdToHundredthsOfCents(amountUsd);
 
 	await db.transaction(async (tx) => {
-		try {
-			await _createLedgerEntry({
-				tx,
-				args: {
-					organizationId: organizationId,
-					deltaInUsdHundredthsOfCents,
-					metadata: {
-						type: 'added_from_stripe',
-						addedByUserId: event.data.object.metadata?.purchasedByUserId ?? 'UNKNOWN_USER_ID',
-						stripeCheckoutSessionId: checkoutSession.id,
-						stripeWebhookDetails: event.data as unknown as Record<string, unknown> //needs to be cast because Stripe's typing doesn't let itself be compatible with Record<string, unknown>
-					}
+		await _createLedgerEntry({
+			tx,
+			args: {
+				organizationId: organizationId,
+				deltaInUsdHundredthsOfCents,
+				metadata: {
+					type: 'added_from_stripe',
+					addedByUserId: event.data.object.metadata?.purchasedByUserId ?? 'UNKNOWN_USER_ID',
+					stripeCheckoutSessionId: checkoutSession.id,
+					stripeWebhookDetails: event.data as unknown as Record<string, unknown> //needs to be cast because Stripe's typing doesn't let itself be compatible with Record<string, unknown>
 				}
-			});
-		} catch (error) {
-			log.error({ error }, 'Failed to apply balance top-up from Stripe event');
-		} finally {
-		}
+			}
+		});
 	});
 	return true;
 }
