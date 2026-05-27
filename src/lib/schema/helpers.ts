@@ -14,7 +14,11 @@ export const DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS = 80;
 /** Matches PostgreSQL `timestamp + interval '1 month'` (calendar month, not a fixed duration). */
 export function addOneCalendarMonth(date: Date): Date {
 	const result = new Date(date.getTime());
+	const originalDay = result.getDate();
+	result.setDate(1);
 	result.setMonth(result.getMonth() + 1);
+	const lastDayOfTargetMonth = new Date(result.getFullYear(), result.getMonth() + 1, 0).getDate();
+	result.setDate(Math.min(originalDay, lastDayOfTargetMonth));
 	return result;
 }
 export const DEFAULT_FREE_EMAIL_MESSAGE_CREDITS = 1000;
