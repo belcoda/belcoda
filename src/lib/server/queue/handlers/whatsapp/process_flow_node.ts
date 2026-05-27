@@ -68,6 +68,9 @@ export async function processFlowNodeAction({
 				break;
 			}
 			case 'eventSignup': {
+				if (!node.data.eventId) {
+					throw new Error('Event ID is required');
+				}
 				await signUpForEventWithId({
 					tx,
 					eventId: node.data.eventId,
@@ -81,6 +84,9 @@ export async function processFlowNodeAction({
 				break;
 			}
 			case 'petitionSignup': {
+				if (!node.data.petitionId) {
+					throw new Error('Petition ID is required');
+				}
 				await signPetitionWithId({
 					tx,
 					petitionId: node.data.petitionId,
@@ -93,6 +99,9 @@ export async function processFlowNodeAction({
 				break;
 			}
 			case 'tagAdd': {
+				if (!node.data.tagId) {
+					throw new Error('Tag ID is required');
+				}
 				await _addPersonTagData({
 					tx,
 					args: {
@@ -104,6 +113,9 @@ export async function processFlowNodeAction({
 				break;
 			}
 			case 'teamAdd': {
+				if (!node.data.teamId) {
+					throw new Error('Team ID is required');
+				}
 				await _addPersonTeamDataUnsafe({
 					tx,
 					args: {

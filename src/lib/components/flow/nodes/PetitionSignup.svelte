@@ -5,23 +5,24 @@
 		type NodeProps,
 		Handle,
 		type Node,
+		NodeToolbar,
 		useStore,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import type { PetitionSignupData } from '$lib/schema/flow/index';
 	let { id, data }: NodeProps<Node<PetitionSignupData, 'petitionSignup'>> = $props();
-	const { updateNodeData } = useSvelteFlow();
+	const { updateNodeData, deleteElements } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
-	/*svelte-ignore state_referenced_locally */
-	let petitionId = $state(data.petitionId ? data.petitionId : null);
-	$effect(() => {
-		updateNodeData(id, { petitionId: petitionId ?? '' });
-		updateNodeInternals(id);
-	});
+	let petitionId = $state((() => data.petitionId)() ?? null);
 
 	import PetitionSignupCombobox from './petition_signup/Combobox.svelte';
+	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import { deleteFlowNode } from '$lib/components/flow/deleteFlowNode';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import TrashIcon from '@lucide/svelte/icons/trash';
+	import { t } from '$lib/index.svelte';
 
 	const petitionRead = $derived.by(() =>
 		petitionId ? z.createQuery(queries.petition.read({ petitionId })) : null
@@ -35,21 +36,32 @@
 </script>
 
 <div class="relative w-[260px] font-sans drop-shadow-md" class:pointer-events-none={isDisabled}>
+	<NodeToolbar position={Position.Right}>
+		<Button
+			variant="outline"
+			size="icon-sm"
+			class="rounded-full"
+			onclick={() => deleteFlowNode(deleteElements, id)}
+		>
+			<TrashIcon />
+		</Button>
+	</NodeToolbar>
 	<Handle type="target" position={Position.Top} class="z-20 h-3! w-3!" />
 
 	<div class="rounded-lg border border-[#b7e4ac] bg-[#d9fdd3]">
 		<div
 			class="hover:bg-white/50m -mb-1 w-full border-b border-[#b7e4ac] bg-[#f8f9fa]/50 p-2 px-2 pt-2 text-[11px] font-medium text-[#008069] uppercase transition-colors"
 		>
-			Add to petition:
+			{t`Add to petition:`}
 		</div>
 		<div class=" p-2">
 			<PetitionSignupCombobox
 				value={petitionId}
 				class="w-full"
 				onSelectChange={(nextId) => {
-					petitionId = nextId;
-					updateNodeData(id, { petitionId: nextId });
+					taint();
+					petitionId = $state.snapshot(nextId);
+					updateNodeData(id, { petitionId: $state.snapshot(nextId) });
 					updateNodeInternals(id);
 				}}
 			/>

@@ -101,6 +101,11 @@ async function sendToYCloud({
 	}
 }
 
+import {
+	mockSendWhatsappTemplateResponse,
+	sendWhatsappTemplateResponseSchema
+} from '$lib/schema/whatsapp/ycloud/message_outgoing';
+
 export async function sendWhatsappMessage(
 	message: ReturnType<typeof convertWhatsappMessageToApiFormat>
 ) {
@@ -109,7 +114,10 @@ export async function sendWhatsappMessage(
 			{ isMock: true, externalId: message.externalId },
 			'Mocking YCloud WhatsApp message send'
 		);
-		return message.externalId ?? `mock-${Date.now()}`;
+		const mockResponse = mockSendWhatsappTemplateResponse(
+			message.externalId ?? `mock-${Date.now()}`
+		);
+		return mockResponse;
 	}
 
 	const response = await sendToYCloud({
@@ -117,8 +125,12 @@ export async function sendWhatsappMessage(
 		body: message,
 		method: 'POST'
 	});
+	const parsed = await v.parseAsync(sendWhatsappTemplateResponseSchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing response from YCloud');
+		throw new Error('Invalid response from YCloud');
+	});
 	log.debug({ response }, 'Sent message to YCloud');
-	return response.id as string;
+	return parsed;
 }
 
 export async function sendFlowMessage({

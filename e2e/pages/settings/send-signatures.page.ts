@@ -11,6 +11,10 @@ export class SendSignaturesPage {
 		await this.page.goto('/settings/email/send_signatures');
 	}
 
+	async waitForOwnerPageLoaded() {
+		await this.systemSignatureCard.waitFor({ state: 'visible', timeout: 30_000 });
+	}
+
 	get newSignatureTrigger(): Locator {
 		return this.page.getByTestId('settings-send-signatures-new-button');
 	}

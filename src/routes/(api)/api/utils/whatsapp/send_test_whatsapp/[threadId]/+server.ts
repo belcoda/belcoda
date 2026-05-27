@@ -151,9 +151,9 @@ export async function POST(event) {
 				language: template.locale
 			});
 
-			const ycloudMessageId = await sendWhatsappMessage(payload);
+			const ycloudMessage = await sendWhatsappMessage(payload);
 			log.debug({ threadId, phoneNumber: parsed.phoneNumber }, 'Test WhatsApp template sent');
-			return json({ ycloudMessageId, phoneNumber: parsed.phoneNumber });
+			return json({ ycloudMessage: ycloudMessage.id, phoneNumber: parsed.phoneNumber });
 		}
 
 		const fullMessage = convertNodeToFullMessage({
@@ -170,9 +170,9 @@ export async function POST(event) {
 			to: parsed.phoneNumber
 		});
 
-		const ycloudMessageId = await sendWhatsappMessage(payload);
+		const ycloudMessage = await sendWhatsappMessage(payload);
 		log.debug({ threadId, phoneNumber: parsed.phoneNumber }, 'Test WhatsApp message sent');
-		return json({ ycloudMessageId, phoneNumber: parsed.phoneNumber });
+		return json({ ycloudMessage: ycloudMessage.id, phoneNumber: parsed.phoneNumber });
 	} catch (err) {
 		log.error({ err, threadId }, 'Failed to send test WhatsApp');
 		return error(500, 'Failed to send test WhatsApp');

@@ -7,6 +7,7 @@
 	import queries from '$lib/zero/query/index';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	const { folder }: { folder?: string } = $props();
+	import { page } from '$app/state';
 
 	const activeItem = $derived.by(() => {
 		switch (folder) {
@@ -43,6 +44,8 @@
 		z.createQuery(queries.whatsappThread.list(whatsappThreadFilter))
 	);
 
+	const whatsAppThreadId = $derived(page.params.whatsappThreadId);
+
 	const whatsappThreads = $derived(whatsappThreadsQuery.data ?? []);
 
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -68,6 +71,7 @@
 					href="/communications/whatsapp/{folder}/{whatsappThread.id}"
 					data-testid="communications-whatsapp-thread-row"
 					data-thread-id={whatsappThread.id}
+					class:bg-muted={whatsappThread.id === whatsAppThreadId}
 					class="flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-muted"
 				>
 					<div class="flex w-full items-center justify-between gap-2">

@@ -23,6 +23,7 @@ export class LoginPage {
 
 	async goto() {
 		await this.page.goto('/login');
+		await this.emailInput.waitFor({ state: 'visible', timeout: 30_000 });
 	}
 
 	async login(email: string, password: string) {
