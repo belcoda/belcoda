@@ -5039,10 +5039,8 @@ msgstr "🎧 Audio message"
 msgid "🎨 Sticker"
 msgstr "🎨 Sticker"
 
-#. 0: String(BALANCE_TOP_UP_MIN_USD)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Enter a valid amount. Minimum purchase is US${0}."
-msgstr "Enter a valid amount. Minimum purchase is US${0}."
+#~ msgid "Enter a valid amount. Minimum purchase is US${0}."
+#~ msgstr "Enter a valid amount. Minimum purchase is US${0}."
 
 #~ msgid "Purchase additional credit with Stripe."
 #~ msgstr "Purchase additional credit with Stripe."
@@ -5055,10 +5053,8 @@ msgstr "Enter an amount in USD to continue in Stripe checkout."
 msgid "Amount (USD)"
 msgstr "Amount (USD)"
 
-#. 0: String(BALANCE_TOP_UP_MIN_USD)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Minimum purchase: US${0}"
-msgstr "Minimum purchase: US${0}"
+#~ msgid "Minimum purchase: US${0}"
+#~ msgstr "Minimum purchase: US${0}"
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Continue to checkout"
@@ -5098,3 +5094,13 @@ msgstr "Add funds"
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Add {0}"
 msgstr "Add {0}"
+
+#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter a valid amount. Minimum purchase is {0}."
+msgstr "Enter a valid amount. Minimum purchase is {0}."
+
+#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Minimum purchase: {0}"
+msgstr "Minimum purchase: {0}"
