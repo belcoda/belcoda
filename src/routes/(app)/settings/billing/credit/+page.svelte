@@ -97,7 +97,7 @@
 	function purchaseCustomAmount() {
 		if (!isPurchaseAmountValid || parsedPurchaseAmount === null) {
 			toast.error(
-				t`Enter a valid amount. Minimum purchase is US$${String(BALANCE_TOP_UP_MIN_USD)}.`
+				t`Enter a valid amount. Minimum purchase is ${formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)}.`
 			);
 			return;
 		}
@@ -154,7 +154,7 @@
 								disabled={purchasingAmount !== null}
 							/>
 							<p class="text-sm text-muted-foreground">
-								{t`Minimum purchase: US$${String(BALANCE_TOP_UP_MIN_USD)}`}
+								{t`Minimum purchase: ${formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)}`}
 							</p>
 						</div>
 						<Button
