@@ -82,6 +82,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
@@ -254,6 +255,7 @@ msgid "System"
 msgstr "System"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -286,7 +288,7 @@ msgstr "Create a new email signature that will be verified with Postmark."
 msgid "Display name"
 msgstr "Display name"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
@@ -487,7 +489,7 @@ msgstr "Filter"
 msgid "Search..."
 msgstr "Search..."
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/FlowCanvas.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
@@ -598,56 +600,74 @@ msgid "Are you sure you want to discard your changes?"
 msgstr "Are you sure you want to discard your changes?"
 
 #. 0: HUMAN_READABLE_MAX_FILE_SIZE
+#. 0: humanReadableMaxFileSize
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File too large. Max size is {0}."
 msgstr "File too large. Max size is {0}."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File type not allowed. Allowed types are .png, .jpg, .jpeg."
 msgstr "File type not allowed. Allowed types are .png, .jpg, .jpeg."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File validation error. Please try again."
 msgstr "File validation error. Please try again."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File upload error. Please try again."
 msgstr "File upload error. Please try again."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Unknown error. Please try again."
 msgstr "Unknown error. Please try again."
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload"
 msgstr "Upload"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Upload an image to your workspace"
 msgstr "Upload an image to your workspace"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Error: "
 msgstr "Error: "
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Replace image"
 msgstr "Replace image"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Allowed: .png, .jpg, .jpeg"
 msgstr "Allowed: .png, .jpg, .jpeg"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Max size: "
 msgstr "Max size: "
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Click or drag to upload image"
 msgstr "Click or drag to upload image"
 
@@ -882,7 +902,7 @@ msgstr "Copied!"
 msgid "Copy"
 msgstr "Copy"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
@@ -891,7 +911,7 @@ msgstr "Copy"
 msgid "Given name"
 msgstr "Given name"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
@@ -900,7 +920,6 @@ msgstr "Given name"
 msgid "Family name"
 msgstr "Family name"
 
-#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
@@ -933,7 +952,7 @@ msgstr "Position"
 msgid "Add"
 msgstr "Add"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
@@ -1352,7 +1371,7 @@ msgstr "Subject"
 msgid "Enter email subject..."
 msgstr "Enter email subject..."
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/AppendNode.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
@@ -2271,7 +2290,7 @@ msgstr "We'll let the organiser know you can't attend."
 msgid "Age Group"
 msgstr "Age Group"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/AppendNode.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 msgid "Event Signup"
 msgstr "Event Signup"
@@ -2628,14 +2647,15 @@ msgstr "Are you sure you want to discard this email draft?"
 msgid "Email Draft"
 msgstr "Email Draft"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
 msgstr "Discard"
 
-#: src/lib/components/flow/Flow.svelte
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr "Send"
@@ -2992,6 +3012,7 @@ msgstr "Change the role for {0}."
 msgid "Edit role"
 msgstr "Edit role"
 
+#: src/lib/components/flow/DisplaySavedState.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Saving..."
 msgstr "Saving..."
@@ -3336,7 +3357,7 @@ msgstr "This action cannot be undone. The signature will be permanently removed.
 msgid "Are you sure you want to delete this signature?"
 msgstr "Are you sure you want to delete this signature?"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Organization name"
@@ -3643,15 +3664,15 @@ msgstr "No people found"
 msgid "Create new person?"
 msgstr "Create new person?"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "WhatsApp not activated"
 msgstr "WhatsApp not activated"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
 msgstr "In order to use WhatsApp messaging features, you need to activate your organization's WhatsApp Business account."
 
-#: src/lib/components/flow/Flow.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "Activate WhatsApp"
 msgstr "Activate WhatsApp"
 
@@ -3946,7 +3967,7 @@ msgstr "No WhatsApp threads found"
 msgid "New WhatsApp template"
 msgstr "New WhatsApp template"
 
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Are you sure you want to send this WhatsApp draft?"
 msgstr "Are you sure you want to send this WhatsApp draft?"
 
@@ -3989,6 +4010,7 @@ msgstr "User preferences"
 msgid "Manage your user preferences, including language"
 msgstr "Manage your user preferences, including language"
 
+#: src/lib/components/flow/DisplaySavedState.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
@@ -4339,7 +4361,7 @@ msgstr "Could not update workplace or position. Please try again."
 msgid "Could not update personal information. Please try again."
 msgstr "Could not update personal information. Please try again."
 
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "WhatsApp draft sent successfully"
 msgstr "WhatsApp draft sent successfully"
 
@@ -4663,23 +4685,22 @@ msgstr "Send test email"
 msgid "Everyone"
 msgstr "Everyone"
 
-#: src/lib/components/flow/Flow.svelte
-msgid "Snapshot"
-msgstr "Snapshot"
+#~ msgid "Snapshot"
+#~ msgstr "Snapshot"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/AppendNode.svelte
 msgid "Add Node"
 msgstr "Add Node"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/AppendNode.svelte
 msgid "Petition Signup"
 msgstr "Petition Signup"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/AppendNode.svelte
 msgid "Tag Add"
 msgstr "Tag Add"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/AppendNode.svelte
 msgid "Team Add"
 msgstr "Team Add"
 
@@ -4808,11 +4829,11 @@ msgstr "Webhook secret"
 msgid "Signing secret for \"{0}\""
 msgstr "Signing secret for \"{0}\""
 
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+#: src/lib/components/flow/whatsapp/TestMessageModal.svelte
 msgid "Test WhatsApp"
 msgstr "Test WhatsApp"
 
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+#: src/lib/components/flow/whatsapp/TestMessageModal.svelte
 msgid "Send a test message before sending this draft."
 msgstr "Send a test message before sending this draft."
 
@@ -4838,7 +4859,7 @@ msgstr "Include country code, e.g. +14101234567"
 msgid "Send test WhatsApp"
 msgstr "Send test WhatsApp"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/whatsapp/TestMessageModal.svelte
 msgid "Send test message"
 msgstr "Send test message"
 
@@ -4913,42 +4934,42 @@ msgstr "Sender"
 msgid "Petition"
 msgstr "Petition"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Organization slug"
 msgstr "Organization slug"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Sender name"
 msgstr "Sender name"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Sender email"
 msgstr "Sender email"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Event name"
 msgstr "Event name"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Event start date"
 msgstr "Event start date"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Event location"
 msgstr "Event location"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Petition name"
 msgstr "Petition name"
 
-#: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Petition goal"
 msgstr "Petition goal"
@@ -4972,41 +4993,41 @@ msgstr "Add fallback text for recipients without this value."
 msgid "No approved templates found."
 msgstr "No approved templates found."
 
-#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/flow/nodes/template/Combobox.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "Manage templates"
 msgstr "Manage templates"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Template not approved"
 msgstr "Template not approved"
 
 #. 0: templateReadQuery.data.name; 1: String(templateStatus)
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
 msgstr "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "This template is not available or is not approved. Select an approved template before sending."
 msgstr "This template is not available or is not approved. Select an approved template before sending."
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "View template settings"
 msgstr "View template settings"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
 msgstr "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
 
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Failed to send WhatsApp draft"
 msgstr "Failed to send WhatsApp draft"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "No default template"
 msgstr "No default template"
 
-#: src/lib/components/flow/Flow.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "You must create WhatsApp templates and select a default for your organization before creating a flow"
 msgstr "You must create WhatsApp templates and select a default for your organization before creating a flow"
 
@@ -5037,6 +5058,8 @@ msgstr "🎧 Audio message"
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
+msgstr "🎨 Sticker"
+
 msgstr "🎨 Sticker"
 
 #~ msgid "Enter a valid amount. Minimum purchase is US${0}."
@@ -5104,3 +5127,92 @@ msgstr "Enter a valid amount. Minimum purchase is {0}."
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Minimum purchase: {0}"
 msgstr "Minimum purchase: {0}"
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Not scheduled"
+msgstr "Not scheduled"
+
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Free WhatsApp messages"
+msgstr "Free WhatsApp messages"
+
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Remaining free messages this month for your organization."
+msgstr "Remaining free messages this month for your organization."
+
+#. 0: formattedResetDate
+#. 0: formattedResetDate
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Resets on {0}"
+msgstr "Resets on {0}"
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+msgid "Free emails"
+msgstr "Free emails"
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+msgid "Remaining free emails this month for your organization."
+msgstr "Remaining free emails this month for your organization."
+
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
+msgid "Are you sure you want to discard this WhatsApp draft?"
+msgstr "Are you sure you want to discard this WhatsApp draft?"
+
+#: src/lib/components/flow/flow_state.svelte.ts
+msgid "Changes not saved"
+msgstr "Changes not saved"
+
+#~ msgid "Failed to save draft"
+#~ msgstr "Failed to save draft"
+
+#~ msgid "Failed to persist draft flow"
+#~ msgstr "Failed to persist draft flow"
+
+#. 0: derivedTimeAgoFormatter.format(lastSavedAt())
+#: src/lib/components/flow/DisplaySavedState.svelte
+msgid "Saved {0}"
+msgstr "Saved {0}"
+
+#: src/lib/components/flow/nodes/EventSignup.svelte
+msgid "Add to event:"
+msgstr "Add to event:"
+
+#: src/lib/components/flow/nodes/TeamAdd.svelte
+msgid "Add to team:"
+msgstr "Add to team:"
+
+#: src/lib/components/flow/nodes/TagAdd.svelte
+msgid "Add to tag:"
+msgstr "Add to tag:"
+
+#: src/lib/components/flow/nodes/PetitionSignup.svelte
+msgid "Add to petition:"
+msgstr "Add to petition:"
+
+#: src/lib/components/flow/nodes/Targeting.svelte
+msgid "Recipients:"
+msgstr "Recipients:"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Uploading image…"
+msgstr "Uploading image…"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Image attachment preview"
+msgstr "Image attachment preview"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Remove image"
+msgstr "Remove image"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Write your message..."
+msgstr "Write your message..."
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Add image"
+msgstr "Add image"

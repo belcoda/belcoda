@@ -41,14 +41,11 @@ export const organizationMemberApiSchema = v.object({
 	role: userRole
 });
 
-export const readOrganizationRest = v.omit(
-	v.object({
-		...organizationSchema.entries,
-		createdAt: helpers.dateToString,
-		updatedAt: helpers.dateToString
-	}),
-	['freeWhatsAppMessageCredits', 'freeEmailMessageCredits', 'resetFreeQuotasAfter'] //TODO: Remove these omits once in a future PR once we add them to the zero schema
-);
+export const readOrganizationRest = v.object({
+	...organizationSchema.entries,
+	createdAt: helpers.dateToString,
+	updatedAt: helpers.dateToString
+});
 export type ReadOrganizationRest = v.InferOutput<typeof readOrganizationRest>;
 
 export const readOrganizationZero = v.omit(

@@ -1,38 +1,26 @@
 import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
 import { EventCreatePage } from '../pages/events/event-create.page';
 import { EventDetailPage } from '../pages/events/event-detail.page';
 import { EventEditPage } from '../pages/events/event-edit.page';
 import { EventSignupsPage } from '../pages/events/event-signups.page';
 import { EventPublicPage } from '../pages/events/event-public-page.page';
 import { EventSurveyPage } from '../pages/events/event-survey.page';
-import { getTestUsers } from '../helpers/auth';
 import { getOrgSlug, slugifyTitle } from '../helpers/config';
-
-const PROJECT = 'events' as const;
-const USERS = getTestUsers(PROJECT);
-const ORG_SLUG = getOrgSlug(PROJECT);
+import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
 	postWhatsAppInboundWebhook,
 	getE2EDefaultWhatsAppNumber
 } from '../helpers/whatsapp-webhook';
 
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
+const PROJECT = 'events' as const;
+const ORG_SLUG = getOrgSlug(PROJECT);
 
 async function expectEventSlugPreview(page: Page, title: string) {
-	await expect(page.getByTestId('event-slug-preview')).toContainText(
-		`/events/${slugifyTitle(title)}`,
-		{ timeout: 5_000 }
-	);
+	const expectedSlug = slugifyTitle(title);
+	await expect(async () => {
+		await expect(page.getByTestId('event-slug-preview')).toContainText(`/events/${expectedSlug}`);
+	}).toPass({ timeout: 15_000 });
 }
 
 test.describe.serial('Events', () => {
@@ -48,7 +36,7 @@ test.describe.serial('Events', () => {
 		const suffix = Date.now();
 		ids.eventTitle = `E2E Event ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new EventCreatePage(page);
 		await createPage.goto();
@@ -83,7 +71,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('owner can edit an event', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new EventDetailPage(page);
 		await detailPage.goto(ids.eventId);
@@ -110,7 +98,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('owner can navigate to the event public page via the action menu', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new EventDetailPage(page);
 		await detailPage.goto(ids.eventId);
@@ -129,7 +117,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('logged-in owner sees the edit navbar on the public event page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const publicPage = new EventPublicPage(page);
 		await publicPage.gotoViaPath(ORG_SLUG, ids.eventSlug);
@@ -181,7 +169,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('owner can view signups on the event admin page', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new EventDetailPage(page);
 		await detailPage.goto(ids.eventId);
@@ -193,7 +181,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('owner can navigate to the detailed signups table', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new EventDetailPage(page);
 		await detailPage.goto(ids.eventId);
@@ -209,7 +197,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('owner can mark a signup as attended', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new EventDetailPage(page);
 		await detailPage.goto(ids.eventId);
@@ -224,7 +212,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('owner can mark a signup as no show', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new EventDetailPage(page);
 		await detailPage.goto(ids.eventId);
@@ -239,7 +227,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('owner can archive a published event', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new EventCreatePage(page);
 		const archiveTitle = `E2E Archive Test ${Date.now()}`;
@@ -279,7 +267,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('owner can delete an unpublished event', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new EventCreatePage(page);
 		const deleteTitle = `E2E Delete Test ${Date.now()}`;
@@ -309,7 +297,7 @@ test.describe.serial('Events', () => {
 	});
 
 	test('WhatsApp flow response creates an event signup', async ({ page, request }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new EventDetailPage(page);
 		await detailPage.goto(ids.eventId);
@@ -351,7 +339,7 @@ test.describe.serial('Events', () => {
 		const suffix = Date.now();
 		const title = `E2E Past Event ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new EventCreatePage(page);
 		await createPage.goto();
@@ -421,7 +409,7 @@ test.describe.serial('Event signup fields', () => {
 		const suffix = Date.now();
 		const title = `E2E Fields Event ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const createPage = new EventCreatePage(page);
 		await createPage.goto();

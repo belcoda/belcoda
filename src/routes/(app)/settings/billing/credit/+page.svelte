@@ -19,6 +19,8 @@
 		formatUsdBalanceFromHundredthsOfCents,
 		isValidBalanceTopUpAmountUsd
 	} from '$lib/utils/billing/balance';
+	import FreeWhatsAppQuotaCard from '$lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte';
+	import FreeEmailQuotaCard from '$lib/components/widgets/billing/FreeEmailQuotaCard.svelte';
 
 	type CheckoutResponse = {
 		url?: string;
@@ -48,6 +50,10 @@
 		const balanceInHundredthsOfCents = organization.data?.balance ?? 0;
 		return formatUsdBalanceFromHundredthsOfCents(balanceInHundredthsOfCents, locale.current);
 	});
+
+	const freeWhatsAppMessageCredits = $derived(organization.data?.freeWhatsAppMessageCredits);
+	const freeEmailMessageCredits = $derived(organization.data?.freeEmailMessageCredits);
+	const resetFreeQuotasAfter = $derived(organization.data?.resetFreeQuotasAfter);
 
 	$effect(() => {
 		const purchaseStatus =
@@ -132,6 +138,16 @@
 					</p>
 				</Card.Content>
 			</Card.Root>
+
+			{#if organization.data}
+				<div class="grid gap-4 sm:grid-cols-2">
+					<FreeWhatsAppQuotaCard
+						remaining={freeWhatsAppMessageCredits}
+						resetsAt={resetFreeQuotasAfter}
+					/>
+					<FreeEmailQuotaCard remaining={freeEmailMessageCredits} resetsAt={resetFreeQuotasAfter} />
+				</div>
+			{/if}
 
 			<Card.Root>
 				<Card.Header>
