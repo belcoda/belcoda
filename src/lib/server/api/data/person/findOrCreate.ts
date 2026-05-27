@@ -23,7 +23,7 @@ export type WhatsappIdentityLookup = {
 	bsuid?: string | null;
 };
 
-async function findPersonByWhatsappIdentityUnsafe({
+async function _findPersonByWhatsappIdentityUnsafe({
 	organizationId,
 	whatsappIdentity,
 	tx
@@ -84,7 +84,7 @@ async function findPersonByWhatsappIdentityUnsafe({
 	return personRecord;
 }
 
-async function findPersonByWhatsappContextMessageUnsafe({
+async function _findPersonByWhatsappContextMessageUnsafe({
 	organizationId,
 	whatsappContextWamidId,
 	tx
@@ -165,7 +165,7 @@ export async function findOrCreatePerson({
 	const parsedActionHelper = parse(personActionHelper, personAction);
 	const parsedAddedFrom = parse(personAddedFrom, addedFrom);
 
-	const identityPerson = await findPersonByWhatsappIdentityUnsafe({
+	const identityPerson = await _findPersonByWhatsappIdentityUnsafe({
 		organizationId,
 		whatsappIdentity,
 		tx
@@ -174,7 +174,7 @@ export async function findOrCreatePerson({
 		return identityPerson;
 	}
 
-	const contextPerson = await findPersonByWhatsappContextMessageUnsafe({
+	const contextPerson = await _findPersonByWhatsappContextMessageUnsafe({
 		organizationId,
 		whatsappContextWamidId,
 		tx
