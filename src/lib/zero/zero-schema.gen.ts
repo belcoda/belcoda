@@ -1851,6 +1851,12 @@ const personTable = {
 				| { type: 'note_added'; notePreview: string; userName: string; noteId: string },
 			serverName: 'most_recent_activity_preview'
 		},
+		mostRecentWhatsappMessageReceivedAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'most_recent_whatsapp_message_received_at'
+		},
 		profilePicture: {
 			type: 'string',
 			optional: true,
