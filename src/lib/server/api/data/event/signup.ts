@@ -186,7 +186,6 @@ export async function signUpForEventWithId({
 	skipNotifications?: boolean;
 	defaultEventSignupId?: string;
 }) {
-	void _teamId;
 	const parsedSignupDetails = parse(eventSignupDetails, signupDetails);
 
 	const eventResult = await getEventByIdUnsafe({ eventId, organizationId, tx });
