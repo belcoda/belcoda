@@ -16,6 +16,11 @@ import {
 } from '$lib/schema/drizzle';
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
+import {
+	_createLedgerEntry,
+	DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS
+} from '$lib/server/api/data/ledger';
+import { _reduceFreeEmailMessageCredits } from '$lib/server/api/data/organization';
 
 export async function sendEmailMessage({
 	emailMessageId,
@@ -35,6 +40,14 @@ export async function sendEmailMessage({
 			});
 			if (!org) {
 				throw new Error('Organization not found');
+			}
+
+			const hasFreeCredit = (org.freeEmailMessageCredits ?? 0) > 0;
+			const hasPaidCapacity = org.balance >= DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS;
+			if (!hasFreeCredit && !hasPaidCapacity) {
+				throw new Error(
+					'No free email message credits or insufficient balance to send email message'
+				);
 			}
 
 			const emailMessageObject =
@@ -116,6 +129,38 @@ export async function sendEmailMessage({
 					organizationName: output.organization.name
 				}
 			});
+
+			// Billing after delivery must not fail the send path (successfulRecipientCount).
+			try {
+				await db.transaction(async (tx) => {
+					const claimedFreeCredit = await _reduceFreeEmailMessageCredits({
+						organizationId: organizationId,
+						tx
+					});
+					if (!claimedFreeCredit) {
+						await _createLedgerEntry({
+							tx,
+							args: {
+								organizationId: organizationId,
+								deltaInUsdHundredthsOfCents: -DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS,
+								metadata: {
+									toPersonId: personId,
+									type: 'email_message_outgoing',
+									emailMessageId: emailMessageId,
+									sentByUserId: sentByUserId ?? null,
+									teamId: null //for now, always null -- we don't currently support team email
+								}
+							}
+						});
+					}
+				});
+			} catch (err) {
+				log.error(
+					{ err, personId, emailMessageId, organizationId, sentByUserId },
+					'Failed to bill email message after delivery'
+				);
+			}
+
 			const [updatedEmailMessage] = await db.transaction(async (tx) => {
 				return await tx.dbTransaction.wrappedTransaction
 					.update(emailMessage)

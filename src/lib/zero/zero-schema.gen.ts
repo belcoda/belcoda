@@ -1347,6 +1347,24 @@ const organizationTable = {
 			optional: true,
 			customType: null as unknown as number
 		},
+		freeWhatsAppMessageCredits: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'free_whatsapp_message_credits'
+		},
+		freeEmailMessageCredits: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'free_email_message_credits'
+		},
+		resetFreeQuotasAfter: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'reset_free_quotas_after'
+		},
 		createdAt: {
 			type: 'number',
 			optional: true,
@@ -1764,6 +1782,10 @@ const personTable = {
 							image_url?: string | undefined;
 							sticker_url?: string | undefined;
 							video_url?: string | undefined;
+							wamid?: string | null | undefined;
+							waba?: string | null | undefined;
+							from?: string | null | undefined;
+							to?: string | null | undefined;
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
@@ -1786,6 +1808,10 @@ const personTable = {
 							image_url?: string | undefined;
 							sticker_url?: string | undefined;
 							video_url?: string | undefined;
+							wamid?: string | null | undefined;
+							waba?: string | null | undefined;
+							from?: string | null | undefined;
+							to?: string | null | undefined;
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
@@ -1808,6 +1834,10 @@ const personTable = {
 							image_url?: string | undefined;
 							sticker_url?: string | undefined;
 							video_url?: string | undefined;
+							wamid?: string | null | undefined;
+							waba?: string | null | undefined;
+							from?: string | null | undefined;
+							to?: string | null | undefined;
 							audio_url?: string | undefined;
 							buttons?: { text: string; action: string }[] | undefined;
 							emojiReactions: {
@@ -1838,6 +1868,12 @@ const personTable = {
 				| { type: 'petition_removed'; petitionName: string; petitionId: string }
 				| { type: 'note_added'; notePreview: string; userName: string; noteId: string },
 			serverName: 'most_recent_activity_preview'
+		},
+		mostRecentWhatsappMessageReceivedAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'most_recent_whatsapp_message_received_at'
 		},
 		profilePicture: {
 			type: 'string',
@@ -2855,6 +2891,10 @@ const whatsappMessageTable = {
 				image_url?: string | undefined;
 				sticker_url?: string | undefined;
 				video_url?: string | undefined;
+				wamid?: string | null | undefined;
+				waba?: string | null | undefined;
+				from?: string | null | undefined;
+				to?: string | null | undefined;
 				audio_url?: string | undefined;
 				buttons?: { text: string; action: string }[] | undefined;
 				emojiReactions: {
@@ -2882,7 +2922,7 @@ const whatsappMessageTable = {
 		status: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as 'failed' | 'pending' | 'delivered' | 'read'
+			customType: null as unknown as 'failed' | 'pending' | 'sent' | 'delivered' | 'read'
 		},
 		statusMessage: {
 			type: 'string',

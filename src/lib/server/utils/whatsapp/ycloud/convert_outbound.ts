@@ -224,8 +224,8 @@ export function convertWhatsappMessageToApiFormat({
 	recipient
 }: {
 	whatsappMessage: WhatsappMessage;
-	nodeId: string | null;
-	whatsappThreadId: string;
+	nodeId?: string | null;
+	whatsappThreadId?: string;
 	whatsappMessageId: string | null;
 	from: string;
 	to?: string;
@@ -233,8 +233,8 @@ export function convertWhatsappMessageToApiFormat({
 }): YCloudWhatsappMessage {
 	const externalId = createExternalId({
 		whatsappMessageId: whatsappMessageId,
-		whatsappThreadId: whatsappThreadId,
-		nodeId: nodeId
+		whatsappThreadId: whatsappThreadId || '[NO_THREAD]',
+		nodeId: nodeId || null
 	});
 	if (whatsappMessage.buttons && whatsappMessage.buttons.length > 0) {
 		return generateInteractiveMessage({
@@ -319,7 +319,7 @@ function generateInteractiveMessage({
 	recipient?: string;
 	from: string;
 	externalId: string;
-	threadId: string;
+	threadId?: string;
 	messageId: string | null;
 }): YCloudWhatsappMessage {
 	const header = imageUrl
@@ -347,8 +347,8 @@ function generateInteractiveMessage({
 						reply: {
 							title: button.text,
 							id: createButtonActionString({
-								threadId: threadId,
-								nodeId: messageId || '[UNKNWON_MESSAGE_ID]',
+								threadId: threadId || '[NO_THREAD]',
+								nodeId: messageId || '[UNKNOWN_MESSAGE_ID]',
 								buttonId: button.action
 							})
 						}
