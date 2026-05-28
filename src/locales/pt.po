@@ -5347,13 +5347,13 @@ msgid "Minimum purchase: {0}"
 msgstr ""
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
-msgid "Add image<<<<<<< HEAD"
-msgstr "Adicionar imagem<<<<<<< HEAD"
+msgid "Add image"
+msgstr "Adicionar imagem"
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Your WhatsApp Business Account is connected. Review verification and account details below.=======>>>>>>> develop"
-msgstr "Sua conta comercial do WhatsApp está conectada. Revise a verificação e os detalhes da conta abaixo.=======>>>>>>> develop"
+msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
+msgstr "Sua conta comercial do WhatsApp está conectada. Revise a verificação e os detalhes da conta abaixo."
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
-msgid "🎨 Sticker<<<<<<< HEAD"
-msgstr "🎨 Autocolante>>>>>>> develop"
+msgid "🎨 Sticker"
+msgstr "🎨 Autocolante"
