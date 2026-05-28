@@ -83,7 +83,7 @@ async function sendToYCloud({
 	skipBodyLog = false
 }: {
 	endpoint: `/${string}`;
-	body?: any;
+	body?: unknown;
 	method: 'POST' | 'PUT' | 'DELETE' | 'GET' | 'PATCH';
 	skipBodyLog?: boolean;
 }) {
