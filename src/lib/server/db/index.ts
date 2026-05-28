@@ -4,6 +4,7 @@ import * as schema from '$lib/schema/drizzle';
 import { env } from '$env/dynamic/private';
 import { zeroDrizzle } from '@rocicorp/zero/server/adapters/drizzle';
 import { schema as zeroSchema } from '$lib/zero/schema';
+import { DrizzleQueryError } from 'drizzle-orm';
 
 if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
 
@@ -19,3 +20,18 @@ declare module '@rocicorp/zero' {
 		dbProvider: typeof db;
 	}
 }
+
+//https://github.com/drizzle-team/drizzle-orm/discussions/916#discussioncomment-13488539
+export const isUniqueConstraintError = (error: unknown): boolean => {
+	/** https://github.com/porsager/postgres/pull/901 */
+	if (!(error instanceof DrizzleQueryError)) {
+		return false;
+	}
+
+	const cause = error.cause;
+	if (!cause || typeof cause !== 'object') {
+		return false;
+	}
+
+	return 'code' in cause && (cause as postgres.PostgresError).code === '23505';
+};
