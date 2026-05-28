@@ -27,7 +27,8 @@ export const whatsappPhoneNumberProfileVerticalSchema = v.picklist([
 	'PROF_SERVICES',
 	'RETAIL',
 	'TRAVEL',
-	'RESTAURANT'
+	'RESTAURANT',
+	'' //empty verticals should be supported.
 ]);
 
 export type WhatsappPhoneNumberProfileVertical = v.InferOutput<
@@ -102,9 +103,7 @@ export type WhatsappProfileAndAccountResponse = v.InferOutput<
 export const updateWhatsappBusinessProfileInput = v.object({
 	about: v.optional(v.pipe(v.string(), v.maxLength(139, 'Maximum length is 139 characters'))),
 	address: v.optional(v.pipe(v.string(), v.maxLength(256, 'Maximum length is 256 characters'))),
-	description: v.optional(
-		v.pipe(v.string(), v.maxLength(512, 'Maximum length is 512 characters'))
-	),
+	description: v.optional(v.pipe(v.string(), v.maxLength(512, 'Maximum length is 512 characters'))),
 	email: v.optional(
 		v.pipe(
 			v.string(),
@@ -114,7 +113,9 @@ export const updateWhatsappBusinessProfileInput = v.object({
 	),
 	profilePictureUrl: v.optional(helpers.url),
 	vertical: v.optional(whatsappPhoneNumberProfileVerticalSchema),
-	websites: v.optional(v.pipe(v.array(profileWebsiteSchema), v.maxLength(2, 'Maximum of 2 websites')))
+	websites: v.optional(
+		v.pipe(v.array(profileWebsiteSchema), v.maxLength(2, 'Maximum of 2 websites'))
+	)
 });
 
 export type UpdateWhatsappBusinessProfileInput = v.InferOutput<
