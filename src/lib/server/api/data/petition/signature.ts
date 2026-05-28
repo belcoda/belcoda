@@ -46,6 +46,7 @@ import {
 import { readPetitionSignatureQuery } from '$lib/zero/query/petition_signature/read';
 import type { InferOutput } from 'valibot';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
+import { createWhatsAppMessage } from '../whatsapp/message';
 
 async function applyPetitionTagsToPersonUnsafe({
 	tx,
@@ -597,7 +598,7 @@ export async function createIncompletePetitionSignatureHelper({
 
 	if (flowId) {
 		try {
-			await sendFlowMessage({
+			const responseId = await sendFlowMessage({
 				from: flowMessageFrom,
 				to: flowMessageTo,
 				flowId: flowId,
@@ -605,6 +606,16 @@ export async function createIncompletePetitionSignatureHelper({
 				headerText: petitionResult.title,
 				bodyText: `Complete the form to sign ${petitionResult.title}`,
 				footerText: 'Tap to sign the petition'
+			});
+			// create a whatsapp message record in the database because we want to be able to track the reply to this message to infer a personId
+			// note: in other message types, the createWhatsAppMessage function is called on the outbound message sending utility, but we don't want to add that to flows...
+			await createWhatsAppMessage({
+				id: uuidv7(),
+				organizationId: organizationId,
+				personId: personRecord.id,
+				message: { id: responseId, emojiReactions: [] },
+				type: 'outbound_api_message:system-flow',
+				tx
 			});
 			return { flowSent: true as const, personId: personRecord.id };
 		} catch {

@@ -114,7 +114,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 								const flowId = event.settings.whatsappFlowId;
 								if (flowId) {
 									try {
-										await sendFlowMessage({
+										const responseId = await sendFlowMessage({
 											from: parsed.whatsappInboundMessage.to,
 											to: senderPhone,
 											flowId: flowId,
@@ -123,6 +123,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											bodyText: `Complete the registration form to sign up for ${event.title}`,
 											footerText: 'Tap to start registration'
 										});
+
 										log.info(
 											{
 												eventId: event.id,
@@ -132,6 +133,17 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											},
 											'Sent flow message for event registration'
 										);
+										// create a whatsapp message record in the database because we want to be able to track the reply to this message to infer a personId
+										// note: in other message types, the createWhatsAppMessage function is called on the outbound message sending utility, but we don't want to add that to flows...
+										await createWhatsAppMessage({
+											id: uuidv7(),
+											organizationId: organizationId,
+											personId: personId,
+											message: { id: responseId, emojiReactions: [] },
+											type: 'outbound_api_message:system-flow',
+											tx
+										});
+										// we don't want to log this activity to the timeline because it is a system-generated message
 										logActivity = false;
 										break;
 									} catch (error) {
