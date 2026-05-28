@@ -108,9 +108,19 @@ async function applyBalanceTopUpFromStripeEvent(event: Stripe.Event) {
 					stripeWebhookDetails: event.data as unknown as Record<string, unknown> //needs to be cast because Stripe's typing doesn't let itself be compatible with Record<string, unknown>
 				}
 			}
+		}).catch((error) => {
+			// even if we fail to create the ledger entry, let's not block the stripe webhook from being processed. No need to retry.
+			log.error(
+				{
+					error,
+					organizationId,
+					deltaInUsdHundredthsOfCents,
+					stripeCheckoutSessionId: checkoutSession.id
+				},
+				'Failed to create stripe update ledger entry'
+			);
 		});
 	});
-	return true;
 }
 
 export function buildBetterAuth(localeInput: string) {
