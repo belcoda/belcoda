@@ -4,9 +4,10 @@ import { createLedgerEntrySchema } from '$lib/schema/ledger';
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { CreateLedgerEntrySchema, LedgerEntryMetadataSchema } from '$lib/schema/ledger';
 import { v7 as uuidv7 } from 'uuid';
-import { eq, sql } from 'drizzle-orm';
+import { DrizzleQueryError, eq, sql } from 'drizzle-orm';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
+import { isUniqueConstraintError } from '$lib/server/db';
 export const DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS = 18; // $0.0018 in USD
 
 /**
@@ -35,7 +36,15 @@ export async function _createLedgerEntry({
 		const result = await tx.dbTransaction.wrappedTransaction
 			.insert(ledger)
 			.values(toInsert)
-			.returning();
+			.returning()
+			.catch((error) => {
+				if (isUniqueConstraintError(error)) {
+					throw new Error(
+						'Failed to create ledger entry due to unique constraint violation on the idempotency key'
+					);
+				}
+				throw error;
+			});
 		// we want to fail if it didn't insert (eg: due to a unique constraint violation on the idempotency key)
 		// if we didn't fail, we would end up updating the organization balance twice for the same delta
 		if (result.length === 0) {

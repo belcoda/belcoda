@@ -119,6 +119,16 @@ async function applyBalanceTopUpFromStripeEvent(event: Stripe.Event) {
 				},
 				'Failed to create stripe update ledger entry'
 			);
+			if (
+				error instanceof Error &&
+				error.message.includes(
+					'Failed to create ledger entry due to unique constraint violation on the idempotency key'
+				)
+			) {
+				return;
+			} else {
+				throw error;
+			}
 		});
 	});
 }
