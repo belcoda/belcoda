@@ -292,6 +292,7 @@ export async function createWhatsAppMessage({
 	message,
 	type,
 	organizationId,
+	externalId,
 	personId,
 	tx
 }: {
@@ -301,6 +302,7 @@ export async function createWhatsAppMessage({
 	wamidId?: string | undefined;
 	type: WhatsappMessageActivityType;
 	personId: string;
+	externalId?: string | undefined;
 	tx: ServerTransaction;
 }) {
 	const parsed = await parse(whatsappMessageObjectSchema, message);
@@ -309,6 +311,7 @@ export async function createWhatsAppMessage({
 		id: insertedId,
 		message: parsed,
 		type,
+		externalId: externalId ?? null,
 		personId,
 		status: 'pending',
 		wamidId: wamidId ?? null,

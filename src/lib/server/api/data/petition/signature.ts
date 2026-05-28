@@ -612,6 +612,7 @@ export async function createIncompletePetitionSignatureHelper({
 			await createWhatsAppMessage({
 				id: uuidv7(),
 				organizationId: organizationId,
+				externalId: responseId,
 				personId: personRecord.id,
 				message: { id: responseId, emojiReactions: [] },
 				type: 'outbound_api_message:system-flow',

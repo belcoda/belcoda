@@ -139,6 +139,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 											id: uuidv7(),
 											organizationId: organizationId,
 											personId: personId,
+											externalId: responseId,
 											message: { id: responseId, emojiReactions: [] },
 											type: 'outbound_api_message:system-flow',
 											tx
