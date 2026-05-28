@@ -68,7 +68,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 						bsuid: parsed.whatsappInboundMessage.fromUserId
 					}
 				: undefined;
-			const whatsappContextWamidId = parsed.whatsappInboundMessage.wamid;
+			const whatsappContextWamidId = parsed.whatsappInboundMessage.context?.id; //wamid of replied to message if exists
 			switch (parsed.whatsappInboundMessage.type) {
 				case 'text': {
 					const actionCode = extractActionCode(parsed.whatsappInboundMessage.text.body);
