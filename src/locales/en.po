@@ -5060,8 +5060,6 @@ msgstr "🎧 Audio message"
 msgid "🎨 Sticker"
 msgstr "🎨 Sticker"
 
-msgstr "🎨 Sticker"
-
 #~ msgid "Enter a valid amount. Minimum purchase is US${0}."
 #~ msgstr "Enter a valid amount. Minimum purchase is US${0}."
 
