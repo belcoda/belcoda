@@ -5296,4 +5296,3 @@ msgstr "Failed to load WhatsApp business account details"
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
-unt details below."
