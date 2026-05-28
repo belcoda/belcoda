@@ -39,9 +39,14 @@ async function getAuthorizedWhatsappConfig(event: {
 		error(403, 'You are not authorized to manage this organization WhatsApp profile');
 	}
 
-	const org = await getOrganization({ userId, organizationId }).catch(() => undefined);
-	if (!org) {
-		error(404, 'Organization not found');
+	let org;
+	try {
+		org = await getOrganization({ userId, organizationId });
+	} catch (e) {
+		if (e instanceof Error && e.message === 'Organization not found') {
+			error(404, 'Organization not found');
+		}
+		throw e;
 	}
 
 	const wabaId = org.settings.whatsApp.wabaId;
