@@ -2754,11 +2754,8 @@ msgstr "Importações"
 msgid "Exports"
 msgstr "Exportações"
 
-#: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit balance"
-msgstr "Saldo de créditos"
+#~ msgid "Credit balance"
+#~ msgstr "Saldo de créditos"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "API keys"
@@ -2823,13 +2820,11 @@ msgstr "Nenhuma assinatura paga ativa"
 msgid "Current period ends"
 msgstr "O período atual termina em"
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Opening Stripe..."
-msgstr "Abrindo o Stripe..."
+#~ msgid "Opening Stripe..."
+#~ msgstr "Abrindo o Stripe..."
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Manage in Stripe"
-msgstr "Gerenciar no Stripe"
+#~ msgid "Manage in Stripe"
+#~ msgstr "Gerenciar no Stripe"
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Need a different plan?"
@@ -2847,34 +2842,29 @@ msgstr "Entre em contato conosco para o nível Supported"
 msgid "Contact us for Enterprise tier"
 msgstr "Entre em contato conosco para o nível Enterprise"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit purchase completed. Your balance will update shortly."
-msgstr "Compra de crédito concluída. Seu saldo será atualizado em breve."
+#~ msgid "Credit purchase completed. Your balance will update shortly."
+#~ msgstr "Compra de crédito concluída. Seu saldo será atualizado em breve."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit purchase was cancelled."
-msgstr "A compra de crédito foi cancelada."
+#~ msgid "Credit purchase was cancelled."
+#~ msgstr "A compra de crédito foi cancelada."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
-msgstr "Você não tem permissão para gerenciar compras de crédito. Apenas os proprietários da organização podem acessar esta página."
+#~ msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
+#~ msgstr "Você não tem permissão para gerenciar compras de crédito. Apenas os proprietários da organização podem acessar esta página."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "This balance belongs to your organization and is shared across your workspace."
 msgstr "Este saldo pertence à sua organização e é compartilhado em todo o seu workspace."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Purchase additional credit with Stripe using one of the preset amounts below."
-msgstr "Compre crédito adicional com o Stripe usando um dos valores predefinidos abaixo."
+#~ msgid "Purchase additional credit with Stripe using one of the preset amounts below."
+#~ msgstr "Compre crédito adicional com o Stripe usando um dos valores predefinidos abaixo."
+
+#~ msgid "Buy more credit"
+#~ msgstr "Comprar mais crédito"
+
+#~ msgid "Select a preset amount to continue in Stripe checkout."
+#~ msgstr "Selecione um valor predefinido para continuar no checkout do Stripe."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Buy more credit"
-msgstr "Comprar mais crédito"
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Select a preset amount to continue in Stripe checkout."
-msgstr "Selecione um valor predefinido para continuar no checkout do Stripe."
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Redirecting..."
 msgstr "Redirecionando..."
@@ -4250,9 +4240,8 @@ msgstr "Falha ao salvar configurações de tema"
 msgid "Failed to load subscription"
 msgstr "Falha ao carregar a assinatura"
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Unable to open Stripe billing portal"
-msgstr "Não foi possível abrir o portal de faturamento da Stripe"
+#~ msgid "Unable to open Stripe billing portal"
+#~ msgstr "Não foi possível abrir o portal de faturamento da Stripe"
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Unable to start Stripe checkout"
@@ -4981,9 +4970,8 @@ msgstr "Nenhuma variável encontrada."
 msgid "Add fallback text for recipients without this value."
 msgstr "Adicione texto de reserva para destinatários sem este valor."
 
-#: src/lib/utils/name.ts
-msgid "[Name unknown]"
-msgstr "[Nome desconhecido]"
+#~ msgid "[Name unknown]"
+#~ msgstr "[Nome desconhecido]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
@@ -5054,6 +5042,72 @@ msgstr "🎧 Mensagem de áudio"
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
+msgstr ""
+
+#~ msgid "Enter a valid amount. Minimum purchase is US${0}."
+#~ msgstr ""
+
+#~ msgid "Purchase additional credit with Stripe."
+#~ msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter an amount in USD to continue in Stripe checkout."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Amount (USD)"
+msgstr ""
+
+#~ msgid "Minimum purchase: US${0}"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Continue to checkout"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Or choose a preset amount:"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Payment completed. Your balance will update shortly."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Payment was cancelled."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "You don't have permission to add funds. Only organization owners can access this page."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Account balance"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add funds to your balance with Stripe."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add funds"
+msgstr ""
+
+#. 0: formatUsdAmount(parsedPurchaseAmount, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add {0}"
+msgstr ""
+
+#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter a valid amount. Minimum purchase is {0}."
+msgstr ""
+
+#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Minimum purchase: {0}"
 msgstr ""
 
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte

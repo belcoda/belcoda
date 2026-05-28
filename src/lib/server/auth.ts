@@ -1,8 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { drizzle } from '$lib/server/db';
+import { db, drizzle } from '$lib/server/db';
 import * as schema from '$lib/schema/drizzle';
-import { eq, sql } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
 
 import { env } from '$env/dynamic/private';
@@ -21,9 +20,11 @@ import type Stripe from 'stripe';
 import { getQueue } from '$lib/server/queue';
 import { stripeClient } from '$lib/server/stripe';
 import {
-	CREDIT_PURCHASE_METADATA_TYPE,
-	parseCreditPurchaseAmountUsd
-} from '$lib/utils/billing/credit';
+	BALANCE_TOP_UP_STRIPE_AMOUNT_METADATA_KEY,
+	BALANCE_TOP_UP_STRIPE_METADATA_TYPE,
+	parseBalanceTopUpAmountUsd,
+	usdToHundredthsOfCents
+} from '$lib/utils/billing/balance';
 
 import { parse } from 'valibot';
 import { userRole } from '$lib/schema/user';
@@ -52,6 +53,7 @@ import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
 import { passwordReset } from '$lib/server/utils/email/context/transactional/auth/password_reset';
 import { organizationInvitation } from '$lib/server/utils/email/context/transactional/auth/organization_invitation';
+import { _createLedgerEntry } from './api/data/ledger';
 
 async function canManageOrganizationBilling({
 	userId,
@@ -69,7 +71,7 @@ async function canManageOrganizationBilling({
 	return member.role === 'owner';
 }
 
-async function applyCreditTopUpFromStripeEvent(event: Stripe.Event) {
+async function applyBalanceTopUpFromStripeEvent(event: Stripe.Event) {
 	if (event.type !== 'checkout.session.completed') {
 		return;
 	}
@@ -79,23 +81,56 @@ async function applyCreditTopUpFromStripeEvent(event: Stripe.Event) {
 		return;
 	}
 
-	if (checkoutSession.metadata?.type !== CREDIT_PURCHASE_METADATA_TYPE) {
+	if (checkoutSession.metadata?.type !== BALANCE_TOP_UP_STRIPE_METADATA_TYPE) {
 		return;
 	}
 
 	const organizationId = checkoutSession.metadata.organizationId;
-	const creditAmount = parseCreditPurchaseAmountUsd(checkoutSession.metadata.creditAmount);
-	if (!organizationId || !creditAmount) {
+	const amountUsd = parseBalanceTopUpAmountUsd(
+		checkoutSession.metadata[BALANCE_TOP_UP_STRIPE_AMOUNT_METADATA_KEY]
+	);
+	if (!organizationId || !amountUsd) {
 		return;
 	}
 
-	await drizzle
-		.update(schema.organization)
-		.set({
-			balance: sql`${schema.organization.balance} + ${creditAmount}`,
-			updatedAt: new Date()
-		})
-		.where(eq(schema.organization.id, organizationId));
+	const deltaInUsdHundredthsOfCents = usdToHundredthsOfCents(amountUsd);
+
+	await db.transaction(async (tx) => {
+		await _createLedgerEntry({
+			tx,
+			args: {
+				organizationId: organizationId,
+				deltaInUsdHundredthsOfCents,
+				metadata: {
+					type: 'added_from_stripe',
+					addedByUserId: event.data.object.metadata?.purchasedByUserId ?? 'UNKNOWN_USER_ID',
+					stripeCheckoutSessionId: checkoutSession.id,
+					stripeWebhookDetails: event.data as unknown as Record<string, unknown> //needs to be cast because Stripe's typing doesn't let itself be compatible with Record<string, unknown>
+				}
+			}
+		}).catch((error) => {
+			// even if we fail to create the ledger entry, let's not block the stripe webhook from being processed. No need to retry.
+			log.error(
+				{
+					error,
+					organizationId,
+					deltaInUsdHundredthsOfCents,
+					stripeCheckoutSessionId: checkoutSession.id
+				},
+				'Failed to create stripe update ledger entry'
+			);
+			if (
+				error instanceof Error &&
+				error.message.includes(
+					'Failed to create ledger entry due to unique constraint violation on the idempotency key'
+				)
+			) {
+				return;
+			} else {
+				throw error;
+			}
+		});
+	});
 }
 
 export function buildBetterAuth(localeInput: string) {
@@ -329,6 +364,9 @@ export function buildBetterAuth(localeInput: string) {
 				stripeClient,
 				stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET as string,
 				createCustomerOnSignUp: true,
+				organization: {
+					enabled: true
+				},
 				subscription: {
 					enabled: true,
 					plans: [
@@ -349,7 +387,7 @@ export function buildBetterAuth(localeInput: string) {
 					}
 				},
 				onEvent: async (event) => {
-					await applyCreditTopUpFromStripeEvent(event);
+					await applyBalanceTopUpFromStripeEvent(event);
 				}
 			}),
 			oneTimeToken()
