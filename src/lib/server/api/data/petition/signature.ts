@@ -28,14 +28,15 @@ import { parse, nullable } from 'valibot';
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { eq, and, isNull, not, inArray, count as countRows } from 'drizzle-orm';
-import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import {
+	findOrCreatePerson,
+	type WhatsappIdentityLookup
+} from '$lib/server/api/data/person/findOrCreate';
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import { petitionSettingsSchema } from '$lib/schema/petition/settings';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
-import pino from '$lib/pino';
-const log = pino(import.meta.url);
 import { clampLocale } from '$lib/utils/language';
 
 import {
@@ -45,6 +46,7 @@ import {
 import { readPetitionSignatureQuery } from '$lib/zero/query/petition_signature/read';
 import type { InferOutput } from 'valibot';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
+import { createWhatsAppMessage } from '../whatsapp/message';
 
 async function applyPetitionTagsToPersonUnsafe({
 	tx,
@@ -208,6 +210,9 @@ export async function updatePetitionSignature({
 			.where('id', parsed.metadata.petitionSignatureId)
 			.one()
 	);
+	if (!petitionSignatureRecord) {
+		throw new Error('Petition signature not found');
+	}
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(petitionSignature)
 		.set({
@@ -287,7 +292,9 @@ export async function signPetitionHelper({
 	signatureDetails,
 	organizationId,
 	skipNotifications = false,
-	responses = null
+	responses = null,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
@@ -297,6 +304,8 @@ export async function signPetitionHelper({
 	teamId?: string;
 	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
 	const parsedActionHelper = parse(personActionHelper, personAction);
@@ -322,7 +331,9 @@ export async function signPetitionHelper({
 			petitionSignatureId
 		},
 		organizationId,
-		teamId
+		teamId,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
@@ -494,7 +505,9 @@ export async function completePetitionSignatureHelper({
 	signatureDetails,
 	organizationId,
 	responses = null,
-	skipNotifications = true
+	skipNotifications = true,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
@@ -504,6 +517,8 @@ export async function completePetitionSignatureHelper({
 	teamId?: string;
 	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
 	const result = await signPetitionHelper({
 		petitionId,
@@ -513,7 +528,9 @@ export async function completePetitionSignatureHelper({
 		signatureDetails,
 		organizationId,
 		skipNotifications,
-		responses
+		responses,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 	const queue = await getQueue();
 	await queue.insertActivity({
@@ -535,7 +552,9 @@ export async function createIncompletePetitionSignatureHelper({
 	signatureDetails,
 	teamId,
 	flowMessageFrom,
-	flowMessageTo
+	flowMessageTo,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
@@ -545,6 +564,8 @@ export async function createIncompletePetitionSignatureHelper({
 	teamId?: string;
 	flowMessageFrom: string;
 	flowMessageTo: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 }) {
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult.published) {
@@ -567,7 +588,9 @@ export async function createIncompletePetitionSignatureHelper({
 		},
 		organizationId,
 		teamId: teamId ?? petitionResult.teamId ?? undefined,
-		updateExistingPerson: true
+		updateExistingPerson: true,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	const settings = parse(petitionSettingsSchema, petitionResult.settings ?? {});
@@ -575,7 +598,7 @@ export async function createIncompletePetitionSignatureHelper({
 
 	if (flowId) {
 		try {
-			await sendFlowMessage({
+			const responseId = await sendFlowMessage({
 				from: flowMessageFrom,
 				to: flowMessageTo,
 				flowId: flowId,
@@ -584,8 +607,19 @@ export async function createIncompletePetitionSignatureHelper({
 				bodyText: `Complete the form to sign ${petitionResult.title}`,
 				footerText: 'Tap to sign the petition'
 			});
+			// create a whatsapp message record in the database because we want to be able to track the reply to this message to infer a personId
+			// note: in other message types, the createWhatsAppMessage function is called on the outbound message sending utility, but we don't want to add that to flows...
+			await createWhatsAppMessage({
+				id: uuidv7(),
+				organizationId: organizationId,
+				externalId: responseId,
+				personId: personRecord.id,
+				message: { id: responseId, emojiReactions: [] },
+				type: 'outbound_api_message:system-flow',
+				tx
+			});
 			return { flowSent: true as const, personId: personRecord.id };
-		} catch (error) {
+		} catch {
 			return await completePetitionSignatureHelper({
 				petitionId,
 				teamId,
@@ -594,7 +628,9 @@ export async function createIncompletePetitionSignatureHelper({
 				signatureDetails: parsedSignatureDetails,
 				organizationId,
 				responses: null,
-				skipNotifications: true
+				skipNotifications: true,
+				whatsappIdentity,
+				whatsappContextWamidId
 			});
 		}
 	}
@@ -607,7 +643,9 @@ export async function createIncompletePetitionSignatureHelper({
 		signatureDetails: parsedSignatureDetails,
 		organizationId,
 		responses: null,
-		skipNotifications: true
+		skipNotifications: true,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 }
 

@@ -294,17 +294,21 @@ export async function emojiReaction({
 
 export async function createWhatsAppMessage({
 	id,
+	wamidId,
 	message,
 	type,
 	organizationId,
+	externalId,
 	personId,
 	tx
 }: {
 	id: string;
 	message: WhatsappMessage;
 	organizationId: string;
+	wamidId?: string | undefined;
 	type: WhatsappMessageActivityType;
 	personId: string;
+	externalId?: string | undefined;
 	tx: ServerTransaction;
 }) {
 	const parsed = await parse(whatsappMessageObjectSchema, message);
@@ -313,8 +317,10 @@ export async function createWhatsAppMessage({
 		id: insertedId,
 		message: parsed,
 		type,
+		externalId: externalId ?? null,
 		personId,
 		status: 'pending',
+		wamidId: wamidId ?? null,
 		organizationId,
 		createdAt: new Date(),
 		updatedAt: new Date()
