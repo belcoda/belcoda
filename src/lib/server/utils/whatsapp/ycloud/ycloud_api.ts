@@ -79,11 +79,13 @@ function mockYCloudResponseForEndpoint(endpoint: `/${string}`) {
 async function sendToYCloud({
 	endpoint,
 	body,
-	method
+	method,
+	skipBodyLog = false
 }: {
 	endpoint: `/${string}`;
 	body?: any;
 	method: 'POST' | 'PUT' | 'DELETE' | 'GET' | 'PATCH';
+	skipBodyLog?: boolean;
 }) {
 	if (isMockExternalServicesEnabled()) {
 		const mocked = mockYCloudResponseForEndpoint(endpoint);
@@ -92,7 +94,12 @@ async function sendToYCloud({
 	}
 
 	try {
-		log.debug({ endpoint: `${env.YCLOUD_API_URL}${endpoint}`, body, method }, 'Sending to YCloud');
+		log.debug(
+			skipBodyLog
+				? { endpoint: `${env.YCLOUD_API_URL}${endpoint}`, method }
+				: { endpoint: `${env.YCLOUD_API_URL}${endpoint}`, body, method },
+			'Sending to YCloud'
+		);
 		const response = await fetch(`${env.YCLOUD_API_URL}${endpoint}`, {
 			method,
 			body: JSON.stringify(body),
@@ -633,7 +640,8 @@ export async function updateWhatsappPhoneNumberProfile({
 	const response = await sendToYCloud({
 		endpoint: `/whatsapp/phoneNumbers/${wabaId}/${encodeURIComponent(phoneNumber)}/profile`,
 		body: profile,
-		method: 'PATCH'
+		method: 'PATCH',
+		skipBodyLog: true
 	});
 
 	const parsed = await v.parseAsync(whatsappBusinessProfileSchema, response).catch((e) => {
