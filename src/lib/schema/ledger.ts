@@ -4,7 +4,7 @@ import * as helpers from '$lib/schema/helpers';
 const ledgerEntryMetadataTypes = [
 	v.object({
 		type: v.literal('added_from_stripe'),
-		addedByUserId: helpers.uuid,
+		addedByUserId: v.union([helpers.uuid, v.literal('UNKNOWN_USER_ID')]),
 		stripeCheckoutSessionId: helpers.mediumStringEmpty,
 		stripeWebhookDetails: v.record(v.string(), v.unknown())
 	}),
