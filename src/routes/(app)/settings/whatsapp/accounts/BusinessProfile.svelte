@@ -110,7 +110,7 @@
 						address: address.trim() || undefined,
 						email: email.trim() || undefined,
 						vertical,
-						websites: websites.length > 0 ? websites : undefined,
+						websites: websites.length > 0 ? websites : [],
 						profilePictureUrl: profilePictureUrl?.trim() || undefined
 					})
 				}
