@@ -427,6 +427,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 				message: convertedMessage,
 				personId,
 				id: insertedWhatsAppMessageId,
+				wamidId: parsed.whatsappInboundMessage.wamid,
 				type: 'incoming_api_message',
 				organizationId,
 				tx

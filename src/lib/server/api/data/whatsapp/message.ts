@@ -288,6 +288,7 @@ export async function emojiReaction({
 
 export async function createWhatsAppMessage({
 	id,
+	wamidId,
 	message,
 	type,
 	organizationId,
@@ -297,6 +298,7 @@ export async function createWhatsAppMessage({
 	id: string;
 	message: WhatsappMessage;
 	organizationId: string;
+	wamidId?: string | undefined;
 	type: WhatsappMessageActivityType;
 	personId: string;
 	tx: ServerTransaction;
@@ -309,6 +311,7 @@ export async function createWhatsAppMessage({
 		type,
 		personId,
 		status: 'pending',
+		wamidId: wamidId ?? null,
 		organizationId,
 		createdAt: new Date(),
 		updatedAt: new Date()
