@@ -376,7 +376,7 @@
 		{param.value || placeholder}
 	{:else}
 		{getVariableLabel(param.key)}{#if param.fallback?.trim()}
-			{' → '}{param.fallback}
+			 → {param.fallback}
 		{/if}
 	{/if}
 {/snippet}
