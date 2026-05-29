@@ -95,6 +95,12 @@
 			return;
 		}
 
+		const aboutTrimmed = about.trim();
+		if (!aboutTrimmed) {
+			toast.error(t`About is required and cannot be empty`);
+			return;
+		}
+
 		submitting = true;
 		error = null;
 		try {
@@ -105,13 +111,13 @@
 					method: 'PATCH',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
-						about: about.trim() || undefined,
-						description: description.trim() || undefined,
-						address: address.trim() || undefined,
-						email: email.trim() || undefined,
+						about: aboutTrimmed,
+						description: description.trim(),
+						address: address.trim(),
+						email: email.trim(),
 						vertical,
 						websites: websites.length > 0 ? websites : [],
-						profilePictureUrl: profilePictureUrl?.trim() || undefined
+						profilePictureUrl: profilePictureUrl?.trim() ?? ''
 					})
 				}
 			);
