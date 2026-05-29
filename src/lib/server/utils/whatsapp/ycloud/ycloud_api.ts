@@ -19,6 +19,7 @@ import {
 	mockWhatsappBusinessProfile,
 	whatsappBusinessAccountSummarySchema,
 	whatsappBusinessProfileSchema,
+	toYCloudProfileUpdatePayload,
 	type UpdateWhatsappBusinessProfileInput,
 	type WhatsappBusinessAccountSummary,
 	type WhatsappBusinessProfile
@@ -639,7 +640,7 @@ export async function updateWhatsappPhoneNumberProfile({
 
 	const response = await sendToYCloud({
 		endpoint: `/whatsapp/phoneNumbers/${wabaId}/${encodeURIComponent(phoneNumber)}/profile`,
-		body: profile,
+		body: toYCloudProfileUpdatePayload(profile),
 		method: 'PATCH',
 		skipBodyLog: true
 	});
