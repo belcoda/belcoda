@@ -5161,37 +5161,23 @@ msgstr "Write your message..."
 msgid "Add image"
 msgstr "Add image"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "—"
-msgstr "—"
+#~ msgid "—"
+#~ msgstr "—"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "No active organization"
-msgstr "No active organization"
+#~ msgid "No active organization"
+#~ msgstr "No active organization"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Failed to load WhatsApp business profile"
-msgstr "Failed to load WhatsApp business profile"
+#~ msgid "Failed to load WhatsApp business profile"
+#~ msgstr "Failed to load WhatsApp business profile"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "WhatsApp business profile saved"
-msgstr "WhatsApp business profile saved"
+#~ msgid "WhatsApp business profile saved"
+#~ msgstr "WhatsApp business profile saved"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Failed to save WhatsApp business profile"
-msgstr "Failed to save WhatsApp business profile"
+#~ msgid "Failed to save WhatsApp business profile"
+#~ msgstr "Failed to save WhatsApp business profile"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Business profile"
-msgstr "Business profile"
+#~ msgid "Business profile"
+#~ msgstr "Business profile"
 
 #~ msgid "Manage how your business appears on WhatsApp. Some fields are set by Meta and cannot be edited here."
 #~ msgstr "Manage how your business appears on WhatsApp. Some fields are set by Meta and cannot be edited here."
@@ -5199,103 +5185,80 @@ msgstr "Business profile"
 #~ msgid "Loading business profile…"
 #~ msgstr "Loading business profile…"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Verified name"
-msgstr "Verified name"
+#~ msgid "Verified name"
+#~ msgstr "Verified name"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Name status"
-msgstr "Name status"
+#~ msgid "Name status"
+#~ msgstr "Name status"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Profile picture"
-msgstr "Profile picture"
+#~ msgid "Profile picture"
+#~ msgstr "Profile picture"
 
 #~ msgid "WhatsApp business profile"
 #~ msgstr "WhatsApp business profile"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "About"
-msgstr "About"
+#~ msgid "About"
+#~ msgstr "About"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Industry"
-msgstr "Industry"
+#~ msgid "Industry"
+#~ msgstr "Industry"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Website 1"
-msgstr "Website 1"
+#~ msgid "Website 1"
+#~ msgstr "Website 1"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Website 2"
-msgstr "Website 2"
+#~ msgid "Website 2"
+#~ msgstr "Website 2"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Save profile"
-msgstr "Save profile"
+#~ msgid "Save profile"
+#~ msgstr "Save profile"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Manage how your business appears on WhatsApp. Verified name and name status are set by Meta."
-msgstr "Manage how your business appears on WhatsApp. Verified name and name status are set by Meta."
+#~ msgid "Manage how your business appears on WhatsApp. Verified name and name status are set by Meta."
+#~ msgstr "Manage how your business appears on WhatsApp. Verified name and name status are set by Meta."
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Upload a square image. Save the profile to apply changes on WhatsApp."
-msgstr "Upload a square image. Save the profile to apply changes on WhatsApp."
+#~ msgid "Upload a square image. Save the profile to apply changes on WhatsApp."
+#~ msgstr "Upload a square image. Save the profile to apply changes on WhatsApp."
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Heads up"
-msgstr "Heads up"
+#~ msgid "Heads up"
+#~ msgstr "Heads up"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
-msgid "Updates to your WhatsApp Business profile can take time to propagate. After saving changes, wait at least 10 minutes before submitting another update, and confirm the latest values directly in WhatsApp first."
-msgstr "Updates to your WhatsApp Business profile can take time to propagate. After saving changes, wait at least 10 minutes before submitting another update, and confirm the latest values directly in WhatsApp first."
+#~ msgid "Updates to your WhatsApp Business profile can take time to propagate. After saving changes, wait at least 10 minutes before submitting another update, and confirm the latest values directly in WhatsApp first."
+#~ msgstr "Updates to your WhatsApp Business profile can take time to propagate. After saving changes, wait at least 10 minutes before submitting another update, and confirm the latest values directly in WhatsApp first."
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "WABA name"
-msgstr "WABA name"
+#~ msgid "WABA name"
+#~ msgstr "WABA name"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Business legal name"
-msgstr "Business legal name"
+#~ msgid "Business legal name"
+#~ msgstr "Business legal name"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Business status"
-msgstr "Business status"
+#~ msgid "Business status"
+#~ msgstr "Business status"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Verification status"
-msgstr "Verification status"
+#~ msgid "Verification status"
+#~ msgstr "Verification status"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Messaging limit"
-msgstr "Messaging limit"
+#~ msgid "Messaging limit"
+#~ msgstr "Messaging limit"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Business ID"
-msgstr "Business ID"
+#~ msgid "Business ID"
+#~ msgstr "Business ID"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Business verification required"
-msgstr "Business verification required"
+#~ msgid "Business verification required"
+#~ msgstr "Business verification required"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Your organizational display name is hidden from message recipients until your business verification process is complete."
-msgstr "Your organizational display name is hidden from message recipients until your business verification process is complete."
+#~ msgid "Your organizational display name is hidden from message recipients until your business verification process is complete."
+#~ msgstr "Your organizational display name is hidden from message recipients until your business verification process is complete."
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Complete verification"
-msgstr "Complete verification"
+#~ msgid "Complete verification"
+#~ msgstr "Complete verification"
 
 #~ msgid "Business account details and verification status are shown below."
 #~ msgstr "Business account details and verification status are shown below."
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Failed to load WhatsApp business account details"
-msgstr "Failed to load WhatsApp business account details"
+#~ msgid "Failed to load WhatsApp business account details"
+#~ msgstr "Failed to load WhatsApp business account details"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
-msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
+#~ msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
+#~ msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
 
 #~ msgid "Enter a valid amount. Minimum purchase is US${0}."
 #~ msgstr "Enter a valid amount. Minimum purchase is US${0}."
@@ -5303,73 +5266,53 @@ msgstr "Your WhatsApp Business Account is connected. Review verification and acc
 #~ msgid "Purchase additional credit with Stripe."
 #~ msgstr "Purchase additional credit with Stripe."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Enter an amount in USD to continue in Stripe checkout."
-msgstr "Enter an amount in USD to continue in Stripe checkout."
+#~ msgid "Enter an amount in USD to continue in Stripe checkout."
+#~ msgstr "Enter an amount in USD to continue in Stripe checkout."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Amount (USD)"
-msgstr "Amount (USD)"
+#~ msgid "Amount (USD)"
+#~ msgstr "Amount (USD)"
 
 #~ msgid "Minimum purchase: US${0}"
 #~ msgstr "Minimum purchase: US${0}"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Continue to checkout"
-msgstr "Continue to checkout"
+#~ msgid "Continue to checkout"
+#~ msgstr "Continue to checkout"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Or choose a preset amount:"
-msgstr "Or choose a preset amount:"
+#~ msgid "Or choose a preset amount:"
+#~ msgstr "Or choose a preset amount:"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Payment completed. Your balance will update shortly."
-msgstr "Payment completed. Your balance will update shortly."
+#~ msgid "Payment completed. Your balance will update shortly."
+#~ msgstr "Payment completed. Your balance will update shortly."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Payment was cancelled."
-msgstr "Payment was cancelled."
+#~ msgid "Payment was cancelled."
+#~ msgstr "Payment was cancelled."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "You don't have permission to add funds. Only organization owners can access this page."
-msgstr "You don't have permission to add funds. Only organization owners can access this page."
+#~ msgid "You don't have permission to add funds. Only organization owners can access this page."
+#~ msgstr "You don't have permission to add funds. Only organization owners can access this page."
 
-#: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Account balance"
-msgstr "Account balance"
+#~ msgid "Account balance"
+#~ msgstr "Account balance"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add funds to your balance with Stripe."
-msgstr "Add funds to your balance with Stripe."
+#~ msgid "Add funds to your balance with Stripe."
+#~ msgstr "Add funds to your balance with Stripe."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add funds"
-msgstr "Add funds"
+#~ msgid "Add funds"
+#~ msgstr "Add funds"
 
-#. 0: formatUsdAmount(parsedPurchaseAmount, locale.current)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add {0}"
-msgstr "Add {0}"
+#~ msgid "Add {0}"
+#~ msgstr "Add {0}"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Enter a valid amount. Minimum purchase is {0}."
-msgstr "Enter a valid amount. Minimum purchase is {0}."
+#~ msgid "Enter a valid amount. Minimum purchase is {0}."
+#~ msgstr "Enter a valid amount. Minimum purchase is {0}."
 
-#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Minimum purchase: {0}"
-msgstr "Minimum purchase: {0}"
+#~ msgid "Minimum purchase: {0}"
+#~ msgstr "Minimum purchase: {0}"
 
-#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
-msgid "Add image"
-msgstr "Add image"
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+msgid "Fallback"
+msgstr "Fallback"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
-msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
-
-#: src/lib/components/widgets/activity/preview/whatsapp_message.ts
-msgid "🎨 Sticker"
-msgstr "🎨 Sticker"
+#. 0: getVariableLabel(source.key)
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+msgid "The fallback value will be used if we don't have the {0} on file."
+msgstr "The fallback value will be used if we don't have the {0} on file."
