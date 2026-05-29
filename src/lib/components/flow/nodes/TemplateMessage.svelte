@@ -15,6 +15,7 @@
 	import TrashIcon from '@lucide/svelte/icons/trash';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { WhatsappTemplateMessageData } from '$lib/schema/flow/index';
 	import type { TemplateParamSource } from '$lib/schema/template-variables';
@@ -26,11 +27,11 @@
 	import { parseTemplate } from './template/parseTemplate';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
+	import { cn } from '$lib/utils';
 	import {
 		applyTemplateDefaults,
 		buildNodeData,
 		cloneTemplateMessageData,
-		getParamDisplayValue,
 		getParamSource,
 		getVariableLabel,
 		patchParamSource,
@@ -173,13 +174,17 @@
 						{#if item.type === 'text'}
 							<span>{item.value}</span>
 						{:else}
+							{@const param = headerParams[0]}
 							<Popover.Root>
 								<Popover.Trigger class="inline-block">
 									{#snippet child({ props })}
 										<span
 											{...props}
-											class="rounded-sm bg-blue-600/90 px-2 py-0.5 text-sm font-medium text-white outline-none"
-											>{getParamDisplayValue(headerParams, 0, `{{${item.id}}}`)}</span
+											class={cn(
+												'rounded-sm px-2 py-0.5 text-sm font-medium text-white outline-none',
+												param?.type === 'variable' ? 'bg-violet-600/90' : 'bg-blue-600/90'
+											)}
+											>{@render paramBadgeContent(headerParams, 0, `{{${item.id}}}`)}</span
 										>
 									{/snippet}
 								</Popover.Trigger>
@@ -197,13 +202,17 @@
 						{#if item.type === 'text'}
 							<span>{item.value}</span>
 						{:else}
+							{@const param = bodyParams[getTokenArrayIndex(item.id)]}
 							<Popover.Root>
 								<Popover.Trigger class="inline-block">
 									{#snippet child({ props })}
 										<span
 											{...props}
-											class="rounded-sm bg-blue-600/90 px-2 py-0.5 text-sm font-medium text-white outline-none"
-											>{getParamDisplayValue(
+											class={cn(
+												'rounded-sm px-2 py-0.5 text-sm font-medium text-white outline-none',
+												param?.type === 'variable' ? 'bg-violet-600/90' : 'bg-blue-600/90'
+											)}
+											>{@render paramBadgeContent(
 												bodyParams,
 												getTokenArrayIndex(item.id),
 												`{{${item.id}}}`
@@ -272,6 +281,9 @@
 			<Button
 				size="sm"
 				variant={source.type === 'variable' ? 'default' : 'outline'}
+				class={source.type === 'variable'
+					? 'border-transparent bg-violet-600/90 text-white hover:bg-violet-600/80'
+					: undefined}
 				onclick={() => {
 					if (region === 'header') {
 						headerParams = patchParamSourceType(headerParams, index, 'variable');
@@ -319,23 +331,30 @@
 						{getVariableLabel(source.key)}
 					</span>
 				</div>
-				<Input
-					placeholder={t`Fallback text`}
-					value={source.fallback ?? ''}
-					oninput={(event) => {
-						const fallback = event.currentTarget.value;
-						const next = {
-							type: 'variable' as const,
-							key: source.type === 'variable' ? source.key : ('person.given_name' as const),
-							fallback
-						};
-						if (region === 'header') {
-							patchHeaderParam(index, next);
-						} else {
-							patchBodyParam(index, next);
-						}
-					}}
-				/>
+				<div class="space-y-1.5">
+					<Label for="fallback-{region}-{index}">{t`Fallback`}</Label>
+					<Input
+						id="fallback-{region}-{index}"
+						placeholder={t`Fallback text`}
+						value={source.fallback ?? ''}
+						oninput={(event) => {
+							const fallback = event.currentTarget.value;
+							const next = {
+								type: 'variable' as const,
+								key: source.type === 'variable' ? source.key : ('person.given_name' as const),
+								fallback
+							};
+							if (region === 'header') {
+								patchHeaderParam(index, next);
+							} else {
+								patchBodyParam(index, next);
+							}
+						}}
+					/>
+					<p class="text-xs text-muted-foreground">
+						{t`The fallback value will be used if we don't have the ${getVariableLabel(source.key)} on file.`}
+					</p>
+				</div>
 				{#if !source.fallback?.trim()}
 					<div
 						class="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900"
@@ -347,4 +366,17 @@
 			</div>
 		{/if}
 	</div>
+{/snippet}
+
+{#snippet paramBadgeContent(params: TemplateParamSource[], index: number, placeholder: string)}
+	{@const param = params[index]}
+	{#if !param}
+		{placeholder}
+	{:else if param.type === 'literal'}
+		{param.value || placeholder}
+	{:else}
+		{getVariableLabel(param.key)}{#if param.fallback?.trim()}
+			{' → '}{param.fallback}
+		{/if}
+	{/if}
 {/snippet}
