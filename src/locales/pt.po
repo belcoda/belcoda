@@ -5294,9 +5294,9 @@ msgstr "Adicionar imagem"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
-msgstr ""
+msgstr "Texto de reserva"
 
 #. 0: getVariableLabel(source.key)
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "The fallback value will be used if we don't have the {0} on file."
-msgstr ""
+msgstr "O valor de reserva será usado se não tivermos {0} registrado."
