@@ -48,7 +48,11 @@ export function getParamDisplayValue(
 	const param = params[index];
 	if (!param) return placeholder;
 	if (param.type === 'literal') return param.value || placeholder;
-	return param.fallback || getVariableLabel(param.key);
+	const label = getVariableLabel(param.key);
+	if (param.fallback?.trim()) {
+		return `${label} → ${param.fallback}`;
+	}
+	return label;
 }
 
 export function getVariableLabel(key: TemplateVariableKey) {
