@@ -100,23 +100,63 @@ export type WhatsappProfileAndAccountResponse = v.InferOutput<
 	typeof whatsappProfileAndAccountResponseSchema
 >;
 
-export const updateWhatsappBusinessProfileInput = v.object({
-	about: v.optional(v.pipe(v.string(), v.maxLength(139, 'Maximum length is 139 characters'))),
-	address: v.optional(v.pipe(v.string(), v.maxLength(256, 'Maximum length is 256 characters'))),
-	description: v.optional(v.pipe(v.string(), v.maxLength(512, 'Maximum length is 512 characters'))),
-	email: v.optional(
+/** Accepts empty string so cleared profile fields are sent explicitly to YCloud. */
+const clearableProfileString = (maxLength: number) =>
+	v.optional(
 		v.pipe(
 			v.string(),
+			v.trim(),
+			v.maxLength(maxLength, `Maximum length is ${maxLength} characters`)
+		)
+	);
+
+const clearableProfileEmail = v.optional(
+	v.union([
+		v.literal(''),
+		v.pipe(
+			v.string(),
+			v.trim(),
 			v.maxLength(128, 'Maximum length is 128 characters'),
 			v.email('Must be a valid email address')
 		)
+	])
+);
+
+const clearableProfilePictureUrl = v.optional(v.union([v.literal(''), helpers.url]));
+
+export const updateWhatsappBusinessProfileInput = v.object({
+	about: v.optional(
+		v.pipe(
+			v.string(),
+			v.trim(),
+			v.minLength(1, 'About cannot be empty'),
+			v.maxLength(139, 'Maximum length is 139 characters')
+		)
 	),
-	profilePictureUrl: v.optional(helpers.url),
+	address: clearableProfileString(256),
+	description: clearableProfileString(512),
+	email: clearableProfileEmail,
+	profilePictureUrl: clearableProfilePictureUrl,
 	vertical: v.optional(whatsappPhoneNumberProfileVerticalSchema),
 	websites: v.optional(
 		v.pipe(v.array(profileWebsiteSchema), v.maxLength(2, 'Maximum of 2 websites'))
 	)
 });
+
+/** Forwards only defined keys; empty strings are kept so YCloud clears those fields. */
+export function toYCloudProfileUpdatePayload(
+	profile: UpdateWhatsappBusinessProfileInput
+): UpdateWhatsappBusinessProfileInput {
+	const payload: UpdateWhatsappBusinessProfileInput = {};
+	if (profile.about !== undefined) payload.about = profile.about;
+	if (profile.address !== undefined) payload.address = profile.address;
+	if (profile.description !== undefined) payload.description = profile.description;
+	if (profile.email !== undefined) payload.email = profile.email;
+	if (profile.profilePictureUrl !== undefined) payload.profilePictureUrl = profile.profilePictureUrl;
+	if (profile.vertical !== undefined) payload.vertical = profile.vertical;
+	if (profile.websites !== undefined) payload.websites = profile.websites;
+	return payload;
+}
 
 export type UpdateWhatsappBusinessProfileInput = v.InferOutput<
 	typeof updateWhatsappBusinessProfileInput
