@@ -9,10 +9,19 @@
 	import { Tooltip as TooltipPrimitive } from 'bits-ui';
 	import { cookieConsent } from '$lib/state/cookieConsent.svelte.js';
 	import CookieBanner from '$lib/components/widgets/CookieBanner.svelte';
+	import { beforeNavigate } from '$app/navigation';
+	import { updated } from '$app/state';
+	import { clearDeploymentReloadFlag } from '$lib/utils/deployment-recovery';
 
 	const { data, children } = $props();
 	/* svelte-ignore state_referenced_locally */
 	locale.setLocale(data.locale);
+
+	beforeNavigate(({ to, willUnload }) => {
+		if (updated.current && !willUnload && to?.url) {
+			location.href = to.url.href;
+		}
+	});
 </script>
 
 <svelte:head>
@@ -41,6 +50,7 @@
 			<span class="icon-[lucide--loader] size-10 animate-spin"></span>
 		</div>
 	{:then}
+		{clearDeploymentReloadFlag()}
 		<TooltipPrimitive.Provider>
 			<Toaster position="top-center" />
 			{@render children?.()}
