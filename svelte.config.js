@@ -9,6 +9,10 @@ const config = {
 	kit: {
 		adapter: adapter(),
 
+		version: {
+			pollInterval: 60_000
+		},
+
 		experimental: {
 			tracing: {
 				server: true
