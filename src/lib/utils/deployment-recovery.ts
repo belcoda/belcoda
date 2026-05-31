@@ -15,7 +15,12 @@ export function clearDeploymentReloadFlag(): void {
 	}
 }
 
+let reloadAttempted = false;
+
 export function reloadForStaleDeployment(): boolean {
+	if (reloadAttempted) {
+		return false;
+	}
 	try {
 		if (sessionStorage.getItem(DEPLOYMENT_RELOAD_STORAGE_KEY)) {
 			return false;
@@ -25,6 +30,7 @@ export function reloadForStaleDeployment(): boolean {
 		// If sessionStorage fails, still attempt a single reload
 	}
 
+	reloadAttempted = true;
 	const url = new URL(globalThis.location.href);
 	url.searchParams.set('_r', String(Date.now()));
 	globalThis.location.replace(url.toString());
