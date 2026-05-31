@@ -265,6 +265,11 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	].join(', ');
 	response.headers.set('Permissions-Policy', permissionsPolicies);
 
+	const contentType = response.headers.get('content-type') ?? '';
+	if (contentType.includes('text/html')) {
+		response.headers.set('Cache-Control', 'no-cache');
+	}
+
 	return response;
 };
 
