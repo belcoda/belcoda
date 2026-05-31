@@ -20,7 +20,6 @@ Sentry.init({
 
 if (!dev) {
 	registerDeploymentRecoveryListeners();
-	clearDeploymentReloadFlag();
 }
 
 /**
