@@ -4997,9 +4997,8 @@ msgstr "No variables found."
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
 
-#: src/lib/utils/name.ts
-msgid "[Name unknown]"
-msgstr "[Name unknown]"
+#~ msgid "[Name unknown]"
+#~ msgstr "[Name unknown]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
@@ -5361,15 +5360,3 @@ msgstr "Enter a valid amount. Minimum purchase is {0}."
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Minimum purchase: {0}"
 msgstr "Minimum purchase: {0}"
-
-#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
-msgid "Add image"
-msgstr "Add image"
-
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
-msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
-
-#: src/lib/components/widgets/activity/preview/whatsapp_message.ts
-msgid "🎨 Sticker"
-msgstr "🎨 Sticker"

@@ -1,4 +1,3 @@
-import { t } from '$lib/index.svelte';
 import { type CountryCode } from '$lib/utils/country';
 
 const DISALLOWED_NAMES = [
@@ -373,6 +372,6 @@ export function renderName({
 	} else if (renderedFamilyName.length > 0) {
 		return renderedFamilyName;
 	} else {
-		return t`[Name unknown]`;
+		return `[Name unknown]`;
 	}
 }

@@ -406,6 +406,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 			}
 
 			if (!organizationId || !personId) {
+				// we've made it this far without an organization or person, so we need to resolve the identity by wabaId (which only works for organizations that have onboarded with a managed wabaId)
 				const sender = await resolveIncomingWhatsappIdentity({
 					inboundMessage: parsed.whatsappInboundMessage,
 					messageId: insertedWhatsAppMessageId,
