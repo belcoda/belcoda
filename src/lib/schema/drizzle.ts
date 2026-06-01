@@ -74,27 +74,35 @@ type Permissions = {
 };
 type IsTrue<T extends true> = T;
 
-export const organization = pgTable('organization', {
-	id: uuid('id').primaryKey(),
-	name: text('name').notNull().unique(),
-	slug: text('slug').notNull().unique(),
-	logo: text('logo'),
-	icon: text('icon'),
-	country: text('country').$type<CountryCode>().notNull(),
-	defaultLanguage: text('default_language').$type<LanguageCode>().notNull(),
-	defaultTimezone: text('default_timezone').notNull(),
-	settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
-	balance: integer('balance').notNull().default(0),
-	freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
-	freeEmailMessageCredits: integer('free_email_message_credits'),
-	resetFreeQuotasAfter: timestamp('reset_free_quotas_after', { withTimezone: true, mode: 'date' }),
-	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
-		.notNull()
-		.default(sql`now()`),
-	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
-		.notNull()
-		.default(sql`now()`)
-});
+export const organization = pgTable(
+	'organization',
+	{
+		id: uuid('id').primaryKey(),
+		name: text('name').notNull().unique(),
+		slug: text('slug').notNull().unique(),
+		logo: text('logo'),
+		icon: text('icon'),
+		country: text('country').$type<CountryCode>().notNull(),
+		defaultLanguage: text('default_language').$type<LanguageCode>().notNull(),
+		defaultTimezone: text('default_timezone').notNull(),
+		settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
+		balance: integer('balance').notNull().default(0),
+		freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
+		freeEmailMessageCredits: integer('free_email_message_credits'),
+		resetFreeQuotasAfter: timestamp('reset_free_quotas_after', { withTimezone: true, mode: 'date' }),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.default(sql`now()`),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.default(sql`now()`)
+	},
+	(table) => [
+		uniqueIndex('organization_waba_id_unique')
+			.on(sql`(${table.settings}->'whatsApp'->>'wabaId')`)
+			.where(sql`(${table.settings}->'whatsApp'->>'wabaId') IS NOT NULL`)
+	]
+);
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
 type OrganizationValibotMatchesDrizzle = IsTrue<
 	OrganizationSchema extends typeof organization.$inferSelect ? true : false

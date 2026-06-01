@@ -2873,13 +2873,7 @@ const whatsappMessageTable = {
 		type: {
 			type: 'string',
 			optional: false,
-			customType: null as unknown as
-				| 'incoming_api_message'
-				| 'outgoing_api_message'
-				| 'incoming_group_message'
-				| 'outgoing_group_message'
-				| 'incoming_direct_message'
-				| 'outgoing_direct_message'
+			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'whatsappMessage', 'type'>
 		},
 		message: {
 			type: 'json',
