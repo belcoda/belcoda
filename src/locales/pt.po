@@ -4981,9 +4981,8 @@ msgstr "Nenhuma variável encontrada."
 msgid "Add fallback text for recipients without this value."
 msgstr "Adicione texto de reserva para destinatários sem este valor."
 
-#: src/lib/utils/name.ts
-msgid "[Name unknown]"
-msgstr "[Nome desconhecido]"
+#~ msgid "[Name unknown]"
+#~ msgstr "[Nome desconhecido]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 msgid "No approved templates found."
@@ -5054,7 +5053,7 @@ msgstr "🎧 Mensagem de áudio"
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
-msgstr ""
+msgstr "🎨 Autocolante"
 
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
@@ -5345,15 +5344,3 @@ msgstr ""
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Minimum purchase: {0}"
 msgstr ""
-
-#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
-msgid "Add image"
-msgstr "Adicionar imagem"
-
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
-msgstr "Sua conta comercial do WhatsApp está conectada. Revise a verificação e os detalhes da conta abaixo."
-
-#: src/lib/components/widgets/activity/preview/whatsapp_message.ts
-msgid "🎨 Sticker"
-msgstr "🎨 Autocolante"
