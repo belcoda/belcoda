@@ -1,7 +1,7 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { object, type InferOutput } from 'valibot';
+import { object, safeParse, type InferOutput } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { personTeamReadPermissions } from '$lib/zero/query/person_team/permissions';
 
@@ -29,8 +29,18 @@ export function listPersonTeamsQuery({
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
 	if (input.cursor) {
-		const [teamId, personId] = input.cursor.split('.'); //cursor is a string of the form teamId.personId
-		q = q.start({ teamId, personId });
+		const parts = input.cursor.split('.');
+		if (parts.length === 2) {
+			const [teamId, personId] = parts;
+			if (
+				teamId &&
+				personId &&
+				safeParse(uuid, teamId).success &&
+				safeParse(uuid, personId).success
+			) {
+				q = q.start({ teamId, personId });
+			}
+		}
 	}
 	return q;
 }
