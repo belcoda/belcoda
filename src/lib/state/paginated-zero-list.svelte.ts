@@ -31,10 +31,14 @@ export class PaginatedZeroList<TFilter extends Record<string, unknown>, TItem ex
 		encodeCursor,
 		pageSize = 25
 	}: PaginatedZeroListOptions<TFilter, TItem>) {
+		if (!Number.isInteger(pageSize) || pageSize <= 0) {
+			throw new Error('PaginatedZeroList pageSize must be a positive integer');
+		}
 		this.#getBaseFilter = getBaseFilter;
 		this.#encodeCursor = encodeCursor;
 		this.#pageSize = pageSize;
 		this.#baseFilterKey = stableStringify(getBaseFilter());
+	}
 	}
 
 	get items() {
