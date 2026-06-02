@@ -5059,11 +5059,11 @@ msgstr ""
 #. 0: formatNumber(paginatedPersonList.items.length, locale.current)
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "{0} shown"
-msgstr ""
+msgstr "{0} exibidos"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Load more"
-msgstr ""
+msgstr "Carregar mais"
 
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
