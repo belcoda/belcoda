@@ -1,7 +1,7 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { object, type InferOutput } from 'valibot';
+import { object, safeParse, type InferOutput } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { personTagReadPermissions } from '$lib/zero/query/person_tag/permissions';
 
@@ -29,8 +29,18 @@ export function listPersonTagsQuery({
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
 	if (input.cursor) {
-		const [tagId, personId] = input.cursor.split('.'); //cursor is a string of the form tagId.personId
-		q = q.start({ tagId, personId });
+		const parts = input.cursor.split('.');
+		if (parts.length === 2) {
+			const [tagId, personId] = parts;
+			if (
+				tagId &&
+				personId &&
+				safeParse(uuid, tagId).success &&
+				safeParse(uuid, personId).success
+			) {
+				q = q.start({ tagId, personId });
+			}
+		}
 	}
 	return q;
 }
