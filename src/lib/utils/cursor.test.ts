@@ -8,6 +8,17 @@ describe('encodeCursor / decodeCursor', () => {
 		expect(decodeCursor(cursor)).toEqual(values);
 	});
 
+	it('roundtrips Unicode string values', () => {
+		const values = { name: 'José', emoji: '🎉' };
+		const cursor = encodeCursor(values);
+		expect(decodeCursor(cursor)).toEqual(values);
+	});
+
+	it('decodes legacy ASCII-only cursors', () => {
+		const values = { foo: 'bar', count: 42 };
+		expect(decodeCursor(btoa(JSON.stringify(values)))).toEqual(values);
+	});
+
 	it('returns null for invalid base64', () => {
 		expect(decodeCursorOrNull('not-valid-base64!!!')).toBeNull();
 	});
