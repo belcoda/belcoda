@@ -14,7 +14,8 @@
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { type ActivityPreviewPayload } from '$lib/schema/activity/types';
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
+	import { formatNumber } from '$lib/utils/number';
 	import { renderName } from '$lib/utils/name';
 	import { renderWhatsAppMessagePreview } from '$lib/components/widgets/activity/preview/whatsapp_message';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
@@ -98,7 +99,7 @@
 			{#if paginatedPersonList.items.length > 0}
 				<div class="border-t p-2">
 					<div class="mb-2 text-center text-xs text-muted-foreground">
-						{t`${String(paginatedPersonList.items.length)} shown`}
+						{t`${formatNumber(paginatedPersonList.items.length, locale.current)} shown`}
 					</div>
 					{#if COMMUNITY_PAGINATION_MODE === 'button' && paginatedPersonList.hasMore}
 						<Button

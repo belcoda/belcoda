@@ -5051,7 +5051,7 @@ msgstr "🎧 Audio message"
 msgid "🎨 Sticker"
 msgstr "🎨 Sticker"
 
-#. 0: String(paginatedPersonList.items.length)
+#. 0: formatNumber(paginatedPersonList.items.length, locale.current)
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "{0} shown"
 msgstr "{0} shown"
