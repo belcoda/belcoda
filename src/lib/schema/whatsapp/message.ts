@@ -16,7 +16,8 @@ export const whatsappMessageActivityType = [
 	'incoming_group_message',
 	'outgoing_group_message',
 	'incoming_direct_message',
-	'outgoing_direct_message'
+	'outgoing_direct_message',
+	'outbound_api_message:system-flow'
 ] as const;
 export const whatsappMessageActivityTypeSchema = v.picklist(whatsappMessageActivityType);
 export type WhatsappMessageActivityType = v.InferOutput<typeof whatsappMessageActivityTypeSchema>;

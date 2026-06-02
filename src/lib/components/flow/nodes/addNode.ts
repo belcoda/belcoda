@@ -49,50 +49,63 @@ export function startingNodes({
 	];
 	return { nodes, edges };
 }
-export function addNode(nodeType: NodeType, parentNode: Node, nodes: Node[]) {
-	const position = findPositionRadial(
-		parentNode.position.x,
-		parentNode.position.y,
-		400,
-		100,
-		nodes.map((node) => ({
-			position: node.position,
-			width: node.width || 260,
-			height: node.height || 100
-		}))
-	) || { x: 0, y: 0 };
+export function addNode({
+	id = uuidv4(),
+	nodeType,
+	parentNode,
+	nodes,
+	inputPosition
+}: {
+	nodeType: NodeType;
+	id?: string;
+	parentNode: Node;
+	nodes: Node[];
+	inputPosition?: { x: number; y: number };
+}) {
+	const position = inputPosition ||
+		findPositionRadial(
+			parentNode.position.x,
+			parentNode.position.y,
+			400,
+			100,
+			nodes.map((node) => ({
+				position: node.position,
+				width: node.width || 260,
+				height: node.height || 100
+			}))
+		) || { x: 0, y: 0 };
 	switch (nodeType) {
 		case 'message':
 			return {
-				id: uuidv4(),
+				id: id,
 				type: 'message' as const,
 				position: position,
 				data: { text: 'Your message here', buttons: [], imageUrl: null }
 			};
 		case 'eventSignup':
 			return {
-				id: uuidv4(),
+				id: id,
 				type: 'eventSignup' as const,
 				position: position,
 				data: { eventId: null }
 			};
 		case 'petitionSignup':
 			return {
-				id: uuidv4(),
+				id: id,
 				type: 'petitionSignup' as const,
 				position: position,
 				data: { petitionId: null }
 			};
 		case 'tagAdd':
 			return {
-				id: uuidv4(),
+				id: id,
 				type: 'tagAdd' as const,
 				position: position,
 				data: { tagId: null }
 			};
 		case 'teamAdd':
 			return {
-				id: uuidv4(),
+				id: id,
 				type: 'teamAdd' as const,
 				position: position,
 				data: { teamId: null }

@@ -24,9 +24,7 @@
 	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
-	const tagList = $derived.by(() =>
-		z.createQuery(queries.tag.list({ ...tagListFilter }))
-	);
+	const tagList = $derived.by(() => z.createQuery(queries.tag.list({ ...tagListFilter })));
 	const personTagList = $derived.by(() =>
 		z.createQuery(
 			queries.tag.list({
@@ -58,15 +56,15 @@
 								keywords={[tag.name]}
 								value={tag.id}
 								onSelect={() => {
-								z.mutate(
-									mutators.person.addTag({
-										metadata: {
-											organizationId: appState.organizationId,
-											personId: personId,
-											tagId: tag.id
-										}
-									})
-								);
+									z.mutate(
+										mutators.person.addTag({
+											metadata: {
+												organizationId: appState.organizationId,
+												personId: personId,
+												tagId: tag.id
+											}
+										})
+									);
 									closeAndFocusTrigger();
 								}}
 							>

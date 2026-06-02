@@ -22,6 +22,9 @@ export default drizzleZeroConfig(drizzleSchema, {
 			defaultLanguage: true,
 			defaultTimezone: true,
 			balance: true,
+			freeWhatsAppMessageCredits: true,
+			freeEmailMessageCredits: true,
+			resetFreeQuotasAfter: true,
 			settings: true,
 			createdAt: true,
 			updatedAt: true
@@ -165,6 +168,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 
 			profilePicture: true,
 			mostRecentActivityPreview: true,
+			mostRecentWhatsappMessageReceivedAt: true,
 			addedFrom: true,
 
 			createdAt: true,

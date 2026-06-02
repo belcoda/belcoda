@@ -5,13 +5,15 @@
 		footer,
 		children,
 		rootLink,
-		bodyPadding = 'p-4'
+		bodyPadding = 'p-4',
+		hideFooter = false
 	}: {
 		header?: Snippet;
 		footer?: Snippet;
 		children: Snippet;
 		rootLink: `/${string}`;
 		bodyPadding?: string;
+		hideFooter?: boolean;
 	} = $props();
 
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
@@ -33,7 +35,7 @@
 	<div class="flex w-full flex-1 flex-col gap-4 overflow-y-auto {bodyPadding}">
 		{@render children?.()}
 	</div>
-	{#if footer}
+	{#if footer && !hideFooter}
 		<footer class="flex shrink-0 items-center gap-2 border-t bg-background p-4">
 			{@render footer?.()}
 		</footer>

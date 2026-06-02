@@ -14,6 +14,8 @@ import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue/ind
 import {
 	updateWhatsappThread as updateWhatsappThreadSchema,
 	createWhatsappThread as createWhatsappThreadSchema,
+	createMutatorSchema,
+	type CreateMutatorSchema,
 	type CreateWhatsappThread as CreateWhatsappThreadSchema,
 	type UpdateWhatsappThread as UpdateWhatsappThreadSchema,
 	whatsappThreadApiSchema
@@ -99,8 +101,6 @@ export async function updateWhatsappThread({
 		tx,
 		flow: parsed.flow
 	});
-	console.log('title', title);
-	console.log('description', description);
 	const updated = await tx.dbTransaction.wrappedTransaction
 		.update(whatsappThreadTable)
 		.set({
@@ -356,4 +356,72 @@ export async function getWhatsappThreadById({
 			.where('deletedAt', 'IS', null)
 			.one()
 	);
+}
+
+export async function upsertWhatsappThread({
+	args,
+	ctx,
+	tx
+}: {
+	args: CreateMutatorSchema;
+	ctx: QueryContext; // not used yet
+	tx: ServerTransaction;
+}) {
+	const parsed = await parse(createMutatorSchema, args);
+	if (parsed.input.flow === undefined) {
+		throw new Error('No fields to update');
+	}
+
+	//organization permission check
+	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(args.metadata.organizationId)) {
+		throw new Error('You are not authorized to upsert a WhatsApp thread in this organization');
+	}
+
+	const { title, description } = await buildThreadMetadata({
+		threadId: args.metadata.whatsappThreadId,
+		organizationId: args.metadata.organizationId,
+		tx,
+		flow: parsed.input.flow
+	});
+	const now = new Date();
+	const toInsert: typeof whatsappThreadTable.$inferInsert = {
+		id: args.metadata.whatsappThreadId,
+		organizationId: args.metadata.organizationId,
+		teamId: null,
+		sentBy: null,
+		title: title,
+		description: description,
+		startedAt: null,
+		completedAt: null,
+		estimatedRecipientCount: 0,
+		successfulRecipientCount: 0,
+		failedRecipientCount: 0,
+		estimatedCost: 0,
+		totalCost: 0,
+		flow: parsed.input.flow,
+		updatedAt: now,
+		createdAt: now,
+		deletedAt: null
+	};
+	const result = await tx.dbTransaction.wrappedTransaction
+		.insert(whatsappThreadTable)
+		.values(toInsert)
+		.onConflictDoUpdate({
+			target: [whatsappThreadTable.id],
+			set: {
+				flow: parsed.input.flow,
+				updatedAt: now,
+				title: title,
+				description: description
+			},
+			setWhere: and(
+				eq(whatsappThreadTable.organizationId, args.metadata.organizationId),
+				isNull(whatsappThreadTable.deletedAt)
+			)
+		})
+		.returning();
+	if (result.length === 0) {
+		throw new Error('Failed to upsert WhatsApp thread');
+	}
+	return result[0];
 }

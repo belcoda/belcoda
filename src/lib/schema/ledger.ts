@@ -18,6 +18,7 @@ const ledgerEntryMetadataTypes = [
 	v.object({
 		type: v.literal('email_message_outgoing'),
 		emailMessageId: helpers.uuid,
+		toPersonId: helpers.uuid,
 		sentByUserId: v.nullable(helpers.uuid),
 		teamId: v.nullable(helpers.uuid)
 	})
@@ -34,3 +35,10 @@ export const ledgerSchema = v.object({
 	createdAt: helpers.date
 });
 export type LedgerSchema = v.InferOutput<typeof ledgerSchema>;
+
+export const createLedgerEntrySchema = v.object({
+	organizationId: helpers.uuid,
+	deltaInUsdHundredthsOfCents: v.pipe(v.number(), v.integer()), //positive for credits, negative for debits
+	metadata: ledgerEntryMetadataSchema
+});
+export type CreateLedgerEntrySchema = v.InferOutput<typeof createLedgerEntrySchema>;

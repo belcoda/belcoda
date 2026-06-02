@@ -17,6 +17,7 @@ import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { sendWhatsappMessage as sendWhatsappMessageToYCloud } from './ycloud/ycloud_api';
 import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
 import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+import type { WhatsappMessage as WhatsappMessageType } from '$lib/schema/whatsapp/message';
 
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
@@ -28,6 +29,8 @@ import {
 	type TemplateVariableValueMap
 } from '$lib/utils/template-variables';
 import { resolveOutboundWhatsappRecipient } from '$lib/server/api/data/whatsapp/identity';
+import { _createLedgerEntry } from '$lib/server/api/data/ledger';
+import { _reduceFreeWhatsAppMessageCredits } from '$lib/server/api/data/organization';
 
 type WhatsappMessage =
 	| ReturnType<typeof convertWhatsappMessageToApiFormat>
@@ -102,24 +105,21 @@ export async function sendWhatsappMessage({
 	messageId,
 	organizationId
 }: {
-	message: WhatsappMessageData;
+	message: WhatsappMessageType;
 	organizationId: string;
-	threadId: string;
-	nodeId: string;
-	messageId: string;
+	threadId?: string;
+	nodeId?: string;
+	messageId?: string;
 	personId: string;
 	sendingUserId?: string;
 }) {
-	const whatsappMessageId = uuidv7();
+	const whatsappMessageId = messageId || uuidv7();
 	await db.transaction(async (tx) => {
 		const organization = await getOrganizationByIdUnsafe({
 			organizationId,
 			tx
 		});
-		const whatsappMessage = convertNodeToFullMessage({
-			messageNode: message,
-			messageId: whatsappMessageId
-		});
+		const whatsappMessage = message;
 		const personObject = await _getPersonByIdUnsafe({
 			personId: personId,
 			organizationId: organizationId,
@@ -143,8 +143,8 @@ export async function sendWhatsappMessage({
 			from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
 			...recipient
 		});
-		const ycloudResponseId = await sendWhatsappMessageToYCloud(messageToSend);
-		if (!ycloudResponseId) {
+		const ycloudResponse = await sendWhatsappMessageToYCloud(messageToSend);
+		if (!ycloudResponse.id) {
 			throw new Error('Failed to send message to YCloud');
 		}
 		const messageToInsert: typeof whatsappMessageTable.$inferInsert = {
@@ -154,7 +154,7 @@ export async function sendWhatsappMessage({
 			userId: sendingUserId,
 			type: 'outgoing_api_message',
 			message: whatsappMessage,
-			externalId: ycloudResponseId,
+			externalId: ycloudResponse.id,
 			status: 'pending',
 			wamidId: null,
 			createdAt: new Date(),
@@ -199,68 +199,108 @@ export async function sendWhatsappTemplateMessage({
 	threadId: string;
 	personId: string;
 	nodeId: string;
-	messageId: string;
+	messageId?: string;
 	sendingUserId?: string;
 }) {
-	await db.transaction(async (tx) => {
-		const template = await tx.dbTransaction.wrappedTransaction.query.whatsappTemplate.findFirst({
-			where: and(
-				eq(whatsappTemplateTable.id, templateId),
-				eq(whatsappTemplateTable.organizationId, organizationId)
-			)
-		});
-		if (!template) {
-			throw new Error('Template not found');
-		}
-		const organization = await getOrganizationByIdUnsafe({
-			organizationId,
-			tx
-		});
-		const personObject = await _getPersonByIdUnsafe({
-			personId: personId,
-			organizationId: organizationId,
-			tx
-		});
-		if (!personObject) {
-			throw new Error('Person not found');
-		}
-		const senderObject = sendingUserId
-			? await tx.dbTransaction.wrappedTransaction.query.user.findFirst({
-					where: eq(userTable.id, sendingUserId)
-				})
-			: null;
-		const recipient = await resolveOutboundWhatsappRecipient({
-			organizationId: organization.id,
-			wabaId: organization.settings.whatsApp.wabaId,
-			personId: personObject.id,
-			phoneNumber: personObject.phoneNumber,
-			tx
-		});
-		const whatsappMessageId = uuidv7();
-		const resolvedMessage = resolveWhatsappTemplateMessageData({
-			message,
-			template: template.components,
-			values: buildTemplateVariableValues({
-				personObject,
-				organization,
-				sender: senderObject
-			})
-		});
-		const messageToSend = await convertWhatsAppTemplateMessageToApiFormat({
-			templateMessage: resolvedMessage,
-			nodeId: nodeId,
-			whatsappThreadId: threadId,
-			whatsappMessageId: whatsappMessageId,
-			from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
-			...recipient,
-			name: template.name,
-			language: template.locale
-		});
+	const whatsappMessageId = messageId || uuidv7();
+	const { resolvedMessage, template, messageToSend, organization } = await db.transaction(
+		async (tx) => {
+			const template = await tx.dbTransaction.wrappedTransaction.query.whatsappTemplate.findFirst({
+				where: and(
+					eq(whatsappTemplateTable.id, templateId),
+					eq(whatsappTemplateTable.organizationId, organizationId)
+				)
+			});
+			if (!template) {
+				throw new Error('Template not found');
+			}
+			const organization = await getOrganizationByIdUnsafe({
+				organizationId,
+				tx
+			});
+			if ((organization.freeWhatsAppMessageCredits ?? 0) <= 0 && organization.balance <= 0) {
+				throw new Error(
+					'No free whatsapp message credits or insufficient balance to send template message'
+				);
+			}
+			const personObject = await _getPersonByIdUnsafe({
+				personId: personId,
+				organizationId: organizationId,
+				tx
+			});
+			if (!personObject) {
+				throw new Error('Person not found');
+			}
+			const senderObject = sendingUserId
+				? await tx.dbTransaction.wrappedTransaction.query.user.findFirst({
+						where: eq(userTable.id, sendingUserId)
+					})
+				: null;
+			const recipient = await resolveOutboundWhatsappRecipient({
+				organizationId: organization.id,
+				wabaId: organization.settings.whatsApp.wabaId,
+				personId: personObject.id,
+				phoneNumber: personObject.phoneNumber,
+				tx
+			});
 
-		const ycloudResponseId = await sendWhatsappMessageToYCloud(messageToSend);
-		if (!ycloudResponseId) {
-			throw new Error('Failed to send message to YCloud');
+			const resolvedMessage = resolveWhatsappTemplateMessageData({
+				message,
+				template: template.components,
+				values: buildTemplateVariableValues({
+					personObject,
+					organization,
+					sender: senderObject
+				})
+			});
+			const messageToSend = await convertWhatsAppTemplateMessageToApiFormat({
+				templateMessage: resolvedMessage,
+				nodeId: nodeId,
+				whatsappThreadId: threadId,
+				whatsappMessageId: whatsappMessageId,
+				from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
+				...recipient,
+				name: template.name,
+				language: template.locale
+			});
+			return {
+				resolvedMessage,
+				messageToSend,
+				organization,
+				template,
+				personObject
+			};
 		}
+	);
+
+	const ycloudResponse = await sendWhatsappMessageToYCloud(messageToSend);
+	if (!ycloudResponse.id) {
+		throw new Error('Failed to send message to YCloud');
+	}
+	await db.transaction(async (tx) => {
+		const claimedFreeCredit = await _reduceFreeWhatsAppMessageCredits({
+			organizationId: organization.id,
+			tx
+		});
+		if (!claimedFreeCredit) {
+			const delta = (ycloudResponse.totalPrice ?? 0) * 100; //convert to cents
+			const deltaInHundredthsOfCents = Math.ceil(delta * 100); //convert to hundredths of cents
+			await _createLedgerEntry({
+				tx,
+				args: {
+					organizationId: organization.id,
+					deltaInUsdHundredthsOfCents: -deltaInHundredthsOfCents,
+					metadata: {
+						type: 'whatsapp_message_outgoing',
+						whatsappMessageId: whatsappMessageId,
+						whatsappThreadId: threadId,
+						sentByUserId: sendingUserId ?? null,
+						teamId: null //for now, always null -- we don't currently support team messaging
+					}
+				}
+			});
+		}
+
 		const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
 			templateMessage: resolvedMessage,
 			template: template.components,
@@ -275,7 +315,7 @@ export async function sendWhatsappTemplateMessage({
 			type: 'outgoing_api_message',
 			status: 'pending',
 			message: combinedTemplateMessage,
-			externalId: ycloudResponseId,
+			externalId: ycloudResponse.id,
 			wamidId: null,
 			createdAt: new Date(),
 			updatedAt: new Date(),

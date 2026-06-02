@@ -7,236 +7,103 @@
 		type NodeProps,
 		useStore,
 		Handle,
+		useNodes,
 		type Node,
 		NodeToolbar,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
+	import TrashIcon from '@lucide/svelte/icons/trash';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { WhatsappTemplateMessageData } from '$lib/schema/flow/index';
-	import type { TemplateParamSource, TemplateVariableKey } from '$lib/schema/template-variables';
-
+	import type { TemplateParamSource } from '$lib/schema/template-variables';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
 	import { t } from '$lib/index.svelte';
+	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import Combobox from './template/Combobox.svelte';
+	import { parseTemplate } from './template/parseTemplate';
+	import { z } from '$lib/zero.svelte';
+	import queries from '$lib/zero/query/index';
+	import {
+		applyTemplateDefaults,
+		buildNodeData,
+		cloneTemplateMessageData,
+		getParamDisplayValue,
+		getParamSource,
+		getVariableLabel,
+		patchParamSource,
+		patchParamSourceType
+	} from './template-message-form';
+
 	let { id, data }: NodeProps<Node<WhatsappTemplateMessageData, 'templateMessage'>> = $props();
 	const { updateNodeData } = useSvelteFlow();
 	const updateNodeInternals = useUpdateNodeInternals();
 
-	import Combobox from './template/Combobox.svelte';
+	const initial = cloneTemplateMessageData((() => data)());
+	let templateId = $state(initial.templateId);
+	let headerParams = $state(initial.headerParams);
+	let bodyParams = $state(initial.bodyParams);
+	let buttons = $state(initial.buttons);
+	let headerImageUrl = $state(initial.headerImageUrl);
 
-	function getInitialParamSources(
-		templateParams: TemplateParamSource[] | undefined,
-		templateStrings: string[] | undefined
-	): TemplateParamSource[] {
-		if (templateParams) {
-			return templateParams.map((param) => ({ ...param }));
-		}
+	/** Template id we last applied Meta defaults for (per mount). */
+	let hydratedForTemplateId = $state<string | null>(null);
 
-		return templateStrings?.map((value) => ({ type: 'literal' as const, value })) ?? [];
-	}
-
-	function getParamTemplateString(param: TemplateParamSource | undefined) {
-		if (!param) return '';
-		if (param.type === 'literal') return param.value;
-		return param.fallback ?? '';
-	}
-
-	function getParamDisplayValue(params: TemplateParamSource[], index: number, placeholder: string) {
-		const param = params[index];
-		if (!param) return placeholder;
-		if (param.type === 'literal') return param.value || placeholder;
-		return param.fallback || getVariableLabel(param.key);
-	}
-
-	function getVariableLabel(key: TemplateVariableKey) {
-		switch (key) {
-			case 'person.given_name':
-				return t`Given name`;
-			case 'person.family_name':
-				return t`Family name`;
-			case 'person.email_address':
-				return t`Email address`;
-			case 'person.phone_number':
-				return t`Phone number`;
-			case 'organization.name':
-				return t`Organization name`;
-			case 'organization.slug':
-				return t`Organization slug`;
-			case 'sender.name':
-				return t`Sender name`;
-			case 'sender.email':
-				return t`Sender email`;
-			case 'event.name':
-				return t`Event name`;
-			case 'event.start_date':
-				return t`Event start date`;
-			case 'event.location':
-				return t`Event location`;
-			case 'petition.name':
-				return t`Petition name`;
-			case 'petition.goal_count':
-				return t`Petition goal`;
-			default:
-				return key;
-		}
-	}
-
-	function getParamSource(params: TemplateParamSource[], index: number): TemplateParamSource {
-		return params[index] ?? { type: 'literal', value: '' };
-	}
-
-	function setParamSource(
-		params: TemplateParamSource[],
-		index: number,
-		source: TemplateParamSource
-	) {
-		params[index] = source;
-	}
-
-	function setParamSourceType(
-		params: TemplateParamSource[],
-		index: number,
-		type: TemplateParamSource['type']
-	) {
-		const current = getParamSource(params, index);
-		if (type === 'literal') {
-			setParamSource(params, index, {
-				type: 'literal',
-				value: getParamTemplateString(current)
-			});
-			return;
-		}
-
-		setParamSource(params, index, {
-			type: 'variable',
-			key: current.type === 'variable' ? current.key : 'person.given_name',
-			fallback: getParamTemplateString(current)
-		});
-	}
-
-	function setLiteralParamValue(params: TemplateParamSource[], index: number, value: string) {
-		setParamSource(params, index, { type: 'literal', value });
-	}
-
-	function setVariableParamFallback(
-		params: TemplateParamSource[],
-		index: number,
-		fallback: string
-	) {
-		const current = getParamSource(params, index);
-		setParamSource(params, index, {
-			type: 'variable',
-			key: current.type === 'variable' ? current.key : 'person.given_name',
-			fallback
-		});
-	}
-
-	function ensureLiteralParam(params: TemplateParamSource[], index: number, value: string) {
-		if (!params[index]) {
-			params[index] = { type: 'literal', value };
-		}
-	}
-
-	// --- State Management ---
-	// svelte-ignore state_referenced_locally
-	let headerParams = $state(
-		getInitialParamSources(data.header?.templateParams, data.header?.templateStrings)
+	const savedDataOnMount = (() => data)();
+	const savedTemplateIdOnMount = savedDataOnMount.templateId;
+	const hasSavedParams = Boolean(
+		(savedDataOnMount.body?.templateParams?.length ?? 0) > 0 ||
+			(savedDataOnMount.header?.templateParams?.length ?? 0) > 0 ||
+			(savedDataOnMount.body?.templateStrings?.length ?? 0) > 0 ||
+			(savedDataOnMount.header?.templateStrings?.length ?? 0) > 0
 	);
-	// svelte-ignore state_referenced_locally
-	let bodyParams = $state(
-		getInitialParamSources(data.body?.templateParams, data.body?.templateStrings)
-	);
-	// svelte-ignore state_referenced_locally
-	let buttons = $state(data.buttons ?? []);
-	// svelte-ignore state_referenced_locally
-	let headerImageUrl = $state(data.header?.imageUrl ?? null);
-	// svelte-ignore state_referenced_locally
-	let templateId = $state(data.templateId);
+
+	function commit() {
+		taint();
+		const payload = buildNodeData({
+			templateId,
+			headerParams,
+			bodyParams,
+			buttons,
+			headerImageUrl
+		});
+		updateNodeData(id, payload);
+		updateNodeInternals(id);
+	}
+
+	const template = $derived.by(() => z.createQuery(queries.whatsappTemplate.read({ templateId })));
+	const templateHeader = $derived(template.data?.components?.find((c) => c.type === 'HEADER'));
+	const templateBody = $derived(template.data?.components?.find((c) => c.type === 'BODY'));
+	const templateButtons = $derived(template.data?.components?.find((c) => c.type === 'BUTTONS'));
+
+	$effect(() => {
+		if (template.details?.type !== 'complete' || !template.data?.components) return;
+		if (template.data.id !== templateId) return;
+		if (hydratedForTemplateId === templateId) return;
+
+		const mergeExisting =
+			hasSavedParams && savedTemplateIdOnMount === templateId && hydratedForTemplateId === null;
+
+		const next = applyTemplateDefaults(
+			{ templateId, headerParams, bodyParams, buttons, headerImageUrl },
+			template.data.components,
+			{ mergeExisting }
+		);
+		templateId = next.templateId;
+		headerParams = next.headerParams;
+		bodyParams = next.bodyParams;
+		buttons = next.buttons;
+		headerImageUrl = next.headerImageUrl;
+		hydratedForTemplateId = templateId;
+		commit();
+	});
 
 	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
 	const isDisabled = $derived(
 		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
 	);
-
-	// Sync changes back to the Flow state
-	$effect(() => {
-		updateNodeData(id, {
-			header: {
-				templateStrings: headerParams.map(getParamTemplateString),
-				templateParams: headerParams,
-				imageUrl: headerImageUrl
-			},
-			body: {
-				templateStrings: bodyParams.map(getParamTemplateString),
-				templateParams: bodyParams
-			},
-			buttons,
-			templateId
-		});
-		updateNodeInternals(id);
-	});
-	import { watch } from 'runed';
-	import { z } from '$lib/zero.svelte';
-	import queries from '$lib/zero/query/index';
-	const template = $derived.by(() => {
-		return z.createQuery(queries.whatsappTemplate.read({ templateId: data.templateId }));
-	});
-	const templateHeader = $derived(template.data?.components?.find((c) => c.type === 'HEADER'));
-	const templateBody = $derived(template.data?.components?.find((c) => c.type === 'BODY'));
-	$inspect(templateBody);
-	const templateButtons = $derived(template.data?.components?.find((c) => c.type === 'BUTTONS'));
-	// set the initial values for the componets based on the template
-	watch(
-		() => templateButtons,
-		(data) => {
-			if (templateButtons?.buttons) {
-				// if the template has fewer buttons than the current buttons, remove the extra buttons
-				if (buttons.length > templateButtons?.buttons.length) {
-					buttons = buttons.slice(0, templateButtons?.buttons.length);
-				}
-				// if the template has more buttons than the current buttons, add the extra buttons with random ids
-				if (buttons.length < templateButtons?.buttons.length) {
-					buttons = [
-						...buttons,
-						...templateButtons?.buttons.slice(buttons.length).map((b) => ({ id: uuidv4() }))
-					];
-				}
-			}
-		}
-	);
-	watch(
-		() => templateBody,
-		(data) => {
-			if (templateBody?.example) {
-				for (let i = 0; i < templateBody.example.body_text[0].length; i++) {
-					const value = templateBody.example.body_text[0][i];
-					ensureLiteralParam(bodyParams, i, value);
-				}
-			}
-		}
-	);
-
-	watch(
-		() => templateHeader,
-		(data) => {
-			if (!data) {
-				headerParams = [];
-				headerImageUrl = null;
-			} else if (data.format === 'IMAGE' && 'header_url' in data.example) {
-				headerImageUrl = headerImageUrl || data.example.header_url[0];
-			} else {
-				ensureLiteralParam(
-					headerParams,
-					0,
-					'header_text' in data.example ? data.example.header_text[0] || '' : ''
-				);
-			}
-		}
-	);
-
-	import { parseTemplate } from './template/parseTemplate';
 
 	const header = $derived.by(() => {
 		if (templateHeader?.format === 'TEXT') {
@@ -249,18 +116,33 @@
 	function getTokenArrayIndex(token: number) {
 		return bodyTokens.findIndex((t) => t.id === token);
 	}
-	const headerTokens = $derived(header?.filter((t) => t.type === 'var') || []);
-	const headerExampleImageUrl = $derived(
-		templateHeader?.example && 'header_url' in templateHeader?.example
-			? templateHeader?.example.header_url[0]
-			: null
-	);
+
+	function patchHeaderParam(index: number, source: TemplateParamSource) {
+		headerParams = patchParamSource(headerParams, index, source);
+		commit();
+	}
+
+	function patchBodyParam(index: number, source: TemplateParamSource) {
+		bodyParams = patchParamSource(bodyParams, index, source);
+		commit();
+	}
+
+	function onTemplateSelect(newTemplateId: string) {
+		hydratedForTemplateId = null;
+		headerParams = [];
+		bodyParams = [];
+		buttons = [];
+		headerImageUrl = null;
+		templateId = newTemplateId;
+		commit();
+	}
+	const nodes = useNodes();
 </script>
 
 <div class:pointer-events-none={isDisabled}>
 	<NodeToolbar position={Position.Right}>
 		<div class="flex flex-col gap-2">
-			<Combobox bind:value={templateId} onSelectChange={() => {}} />
+			<Combobox value={templateId} onSelectChange={onTemplateSelect} />
 		</div>
 	</NodeToolbar>
 	<div class="relative w-[260px] font-sans drop-shadow-md">
@@ -279,6 +161,7 @@
 						fileUrl={headerImageUrl}
 						onUpload={async (url) => {
 							headerImageUrl = url;
+							commit();
 						}}
 					/>
 				</div>
@@ -286,7 +169,7 @@
 
 			{#if templateHeader && templateHeader.format === 'TEXT'}
 				<div class="bg-white/50 p-2 pb-4 font-medium">
-					{#each header as item, i}
+					{#each header as item, i (i)}
 						{#if item.type === 'text'}
 							<span>{item.value}</span>
 						{:else}
@@ -301,7 +184,7 @@
 									{/snippet}
 								</Popover.Trigger>
 								<Popover.Content class="w-80 bg-none">
-									{@render paramSourceEditor(headerParams, 0)}
+									{@render paramSourceEditor('header', 0)}
 								</Popover.Content>
 							</Popover.Root>
 						{/if}
@@ -310,7 +193,7 @@
 			{/if}
 			{#if body && body.length > 0}
 				<div class="bg-white/50 p-2 whitespace-pre-wrap">
-					{#each body as item, i}
+					{#each body as item, i (i)}
 						{#if item.type === 'text'}
 							<span>{item.value}</span>
 						{:else}
@@ -329,7 +212,7 @@
 									{/snippet}
 								</Popover.Trigger>
 								<Popover.Content class="w-80 bg-none">
-									{@render paramSourceEditor(bodyParams, getTokenArrayIndex(item.id))}
+									{@render paramSourceEditor('body', getTokenArrayIndex(item.id))}
 								</Popover.Content>
 							</Popover.Root>
 						{/if}
@@ -338,7 +221,7 @@
 			{/if}
 			{#if templateButtons && templateButtons.buttons.length > 0}
 				<div class="flex flex-col bg-white/50">
-					{#each templateButtons.buttons as btn, i}
+					{#each templateButtons.buttons as btn, i (btn.text)}
 						<div class="group relative flex items-center border-t border-[#b7e4ac]">
 							<div
 								class="w-full bg-transparent p-2.5 text-center text-sm font-medium text-[#00a884] outline-none"
@@ -367,21 +250,36 @@
 	</div>
 </div>
 
-{#snippet paramSourceEditor(params: TemplateParamSource[], index: number)}
+{#snippet paramSourceEditor(region: 'header' | 'body', index: number)}
+	{@const params = region === 'header' ? headerParams : bodyParams}
 	{@const source = getParamSource(params, index)}
 	<div class="space-y-3">
 		<div class="flex gap-2">
 			<Button
 				size="sm"
 				variant={source.type === 'literal' ? 'default' : 'outline'}
-				onclick={() => setParamSourceType(params, index, 'literal')}
+				onclick={() => {
+					if (region === 'header') {
+						headerParams = patchParamSourceType(headerParams, index, 'literal');
+					} else {
+						bodyParams = patchParamSourceType(bodyParams, index, 'literal');
+					}
+					commit();
+				}}
 			>
 				{t`Text`}
 			</Button>
 			<Button
 				size="sm"
 				variant={source.type === 'variable' ? 'default' : 'outline'}
-				onclick={() => setParamSourceType(params, index, 'variable')}
+				onclick={() => {
+					if (region === 'header') {
+						headerParams = patchParamSourceType(headerParams, index, 'variable');
+					} else {
+						bodyParams = patchParamSourceType(bodyParams, index, 'variable');
+					}
+					commit();
+				}}
 			>
 				{t`Variable`}
 			</Button>
@@ -391,7 +289,12 @@
 			<Input
 				value={source.value}
 				oninput={(event) => {
-					setLiteralParamValue(params, index, event.currentTarget.value);
+					const value = event.currentTarget.value;
+					if (region === 'header') {
+						patchHeaderParam(index, { type: 'literal', value });
+					} else {
+						patchBodyParam(index, { type: 'literal', value });
+					}
 				}}
 			/>
 		{:else}
@@ -400,11 +303,16 @@
 					<TemplateVariablePicker
 						triggerLabel={t`Variable`}
 						onSelect={(_, variable) => {
-							setParamSource(params, index, {
-								type: 'variable',
+							const next = {
+								type: 'variable' as const,
 								key: variable.key,
 								fallback: source.fallback
-							});
+							};
+							if (region === 'header') {
+								patchHeaderParam(index, next);
+							} else {
+								patchBodyParam(index, next);
+							}
 						}}
 					/>
 					<span class="truncate text-sm text-muted-foreground">
@@ -415,7 +323,17 @@
 					placeholder={t`Fallback text`}
 					value={source.fallback ?? ''}
 					oninput={(event) => {
-						setVariableParamFallback(params, index, event.currentTarget.value);
+						const fallback = event.currentTarget.value;
+						const next = {
+							type: 'variable' as const,
+							key: source.type === 'variable' ? source.key : ('person.given_name' as const),
+							fallback
+						};
+						if (region === 'header') {
+							patchHeaderParam(index, next);
+						} else {
+							patchBodyParam(index, next);
+						}
 					}}
 				/>
 				{#if !source.fallback?.trim()}

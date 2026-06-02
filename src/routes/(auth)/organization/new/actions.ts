@@ -51,7 +51,6 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 		defaultLanguage: languageCode,
 		defaultTimezone: timezone,
 		settings,
-		balance,
 		logo,
 		icon
 	});

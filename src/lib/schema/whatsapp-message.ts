@@ -60,6 +60,28 @@ export const emojiReactionMutatorSchemaZero = v.object({
 });
 export type EmojiReactionMutatorSchemaZero = v.InferOutput<typeof emojiReactionMutatorSchemaZero>;
 
+export const createWhatsappMessageSchemaZero = v.object({
+	whatsappMessage: whatsappMessageObjectSchema
+});
+export type CreateWhatsappMessageSchemaZero = v.InferOutput<typeof createWhatsappMessageSchemaZero>;
+export const createWhatsAppMessageMutatorMetadata = v.object({
+	whatsappMessageId: helpers.uuid,
+	personId: helpers.uuid,
+	organizationId: helpers.uuid,
+	activityId: v.nullable(helpers.uuid),
+	sentByUserId: v.nullable(helpers.uuid)
+});
+export type CreateWhatsAppMessageMutatorMetadata = v.InferOutput<
+	typeof createWhatsAppMessageMutatorMetadata
+>;
+export const createWhatsAppMessageMutatorSchema = v.object({
+	input: createWhatsappMessageSchemaZero,
+	metadata: createWhatsAppMessageMutatorMetadata
+});
+export type CreateWhatsAppMessageMutatorSchema = v.InferOutput<
+	typeof createWhatsAppMessageMutatorSchema
+>;
+
 export function isReactionSupportedMessageType(type: WhatsappMessageActivityType): boolean {
 	return type === 'incoming_api_message' || type === 'outgoing_api_message';
 }

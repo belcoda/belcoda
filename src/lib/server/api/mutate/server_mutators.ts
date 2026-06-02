@@ -101,9 +101,11 @@ export const mutators = defineMutators({
 		create: whatsappThread.createWhatsappThread,
 		update: whatsappThread.updateWhatsappThread,
 		delete: whatsappThread.deleteWhatsappThread,
+		upsert: whatsappThread.upsertWhatsappThread,
 		send: whatsappThread.sendWhatsappThread
 	},
 	whatsappMessage: {
-		emojiReaction: whatsappMessage.emojiReaction
+		emojiReaction: whatsappMessage.emojiReaction,
+		sendIndividualMessage: whatsappMessage.sendIndividualMessage
 	}
 });
