@@ -48,9 +48,14 @@
 		}
 	);
 	watch(
-		() => sentinelIsInViewport.current,
-		(isInViewport) => {
-			if (COMMUNITY_PAGINATION_MODE === 'infinite' && isInViewport) {
+		() =>
+			[
+				sentinelIsInViewport.current,
+				paginatedPersonList.hasMore,
+				paginatedPersonList.items.length
+			] as const,
+		([isInViewport, hasMore]) => {
+			if (COMMUNITY_PAGINATION_MODE === 'infinite' && isInViewport && hasMore) {
 				paginatedPersonList.loadMore();
 			}
 		}
