@@ -39,7 +39,6 @@ export class PaginatedZeroList<TFilter extends Record<string, unknown>, TItem ex
 		this.#pageSize = pageSize;
 		this.#baseFilterKey = stableStringify(getBaseFilter());
 	}
-	}
 
 	get items() {
 		return this.#items;
