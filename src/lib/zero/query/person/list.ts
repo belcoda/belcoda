@@ -28,6 +28,13 @@ export const inputSchema = object({
 });
 
 export type ListPersonsInput = InferOutput<typeof inputSchema>;
+
+/**
+ * Paginated person list. Fetches one row past `input.pageSize` (default 50) so callers can
+ * detect a next page without a separate count query. Trim before display: keep at most
+ * `input.pageSize` rows and treat any extra as `hasMore` (see `processPage` in
+ * `$lib/state/paginated-zero-list.svelte.ts`, used by the community person list).
+ */
 export function listPersonsQuery({
 	ctx,
 	input
