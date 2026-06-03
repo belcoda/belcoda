@@ -1,10 +1,10 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput, object } from 'valibot';
-import { listFilter, parseSchema, uuid } from '$lib/schema/helpers';
+import { type InferOutput, object } from 'valibot';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
-import { readPersonNoteWithUserZero } from '$lib/schema/person-note';
+import { decodePersonNoteListCursor } from '$lib/utils/person-note/cursor';
 
 export const inputSchema = object({
 	organizationId: listFilter.entries.organizationId,
@@ -16,6 +16,12 @@ export const inputSchema = object({
 });
 export type ListPersonNotesInput = InferOutput<typeof inputSchema>;
 
+/**
+ * Paginated person note list. Fetches one row past `input.pageSize` (default 50) so callers can
+ * detect a next page without a separate count query. Trim before display: keep at most
+ * `input.pageSize` rows and treat any extra as `hasMore` (see `processPage` in
+ * `$lib/state/paginated-zero-list.svelte.ts`, used by the person notes drawer).
+ */
 export function listPersonNotesQuery({
 	ctx,
 	input
@@ -23,15 +29,20 @@ export function listPersonNotesQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
+	const pageSize = (input.pageSize || 50) + 1;
 	let q = builder.personNote
 		.where((expr) => personNoteReadPermissions(expr, ctx))
 		.related('user', (expr) => expr.one())
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
-		.limit(input.pageSize || 50);
+		.orderBy('id', 'desc')
+		.limit(pageSize);
 	if (input.cursor) {
-		q = q.start({ id: input.cursor });
+		const cursor = decodePersonNoteListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
 	}
 	return q;
 }
