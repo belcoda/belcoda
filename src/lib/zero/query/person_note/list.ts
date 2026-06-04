@@ -16,20 +16,15 @@ export const inputSchema = object({
 });
 export type ListPersonNotesInput = InferOutput<typeof inputSchema>;
 
-/**
- * Paginated person note list. Fetches one row past `input.pageSize` (default 50) so callers can
- * detect a next page without a separate count query. Trim before display: keep at most
- * `input.pageSize` rows and treat any extra as `hasMore` (see `processPage` in
- * `$lib/state/paginated-zero-list.svelte.ts`, used by the person notes drawer).
- */
-export function listPersonNotesQuery({
+function listPersonNotesQueryBase({
 	ctx,
-	input
+	input,
+	limit
 }: {
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
+	limit: number;
 }) {
-	const pageSize = (input.pageSize || 50) + 1;
 	let q = builder.personNote
 		.where((expr) => personNoteReadPermissions(expr, ctx))
 		.related('user', (expr) => expr.one())
@@ -37,7 +32,7 @@ export function listPersonNotesQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.orderBy('id', 'desc')
-		.limit(pageSize);
+		.limit(limit);
 	if (input.cursor) {
 		const cursor = decodePersonNoteListCursor(input.cursor);
 		if (cursor) {
@@ -47,8 +42,35 @@ export function listPersonNotesQuery({
 	return q;
 }
 
+/** Exact page size for REST and other non-UI callers. */
+export function listPersonNotesQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonNotesQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listPersonNotesPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonNotesQueryBase({ ctx, input, limit: pageSize + 1 });
+}
+
 export const listPersonNotes = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listPersonNotesQuery({ ctx, input: args });
+	return listPersonNotesPaginatedQuery({ ctx, input: args });
 });
 
 function whereClause(
