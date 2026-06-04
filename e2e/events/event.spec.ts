@@ -5,7 +5,7 @@ import { EventEditPage } from '../pages/events/event-edit.page';
 import { EventSignupsPage } from '../pages/events/event-signups.page';
 import { EventPublicPage } from '../pages/events/event-public-page.page';
 import { EventSurveyPage } from '../pages/events/event-survey.page';
-import { getOrgSlug, slugifyTitle } from '../helpers/config';
+import { BASE_URL, getOrgSlug, slugifyTitle } from '../helpers/config';
 import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
@@ -31,6 +31,30 @@ test.describe.serial('Events', () => {
 		originalEventSlug: '',
 		signupPersonName: ''
 	};
+
+	test('owner can load more events in the sidebar', async ({ page, request }) => {
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-events`, {
+			data: { count: 30 }
+		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedBody = (await seedResponse.json()) as { runId: string };
+		expect(seedBody.runId).toBeTruthy();
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto('/events');
+		await page.getByPlaceholder('Search...').fill(`E2E pagination event ${seedBody.runId}`);
+
+		await page.getByTestId('events-sidebar-list').waitFor({ state: 'visible', timeout: 10_000 });
+		const items = page.getByTestId('event-sidebar-item');
+		await expect(items).toHaveCount(25, { timeout: 15_000 });
+
+		const scrollArea = page.getByTestId('events-sidebar-scroll');
+		await scrollArea.evaluate((element) => {
+			element.scrollTop = element.scrollHeight;
+		});
+
+		await expect(items).toHaveCount(30, { timeout: 30_000 });
+	});
 
 	test('owner can create an event', async ({ page }) => {
 		const suffix = Date.now();
