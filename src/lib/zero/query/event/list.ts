@@ -5,6 +5,7 @@ import { array, type InferOutput, object, nullable, optional, picklist, boolean 
 import { listFilter, parseSchema, uuid, unixTimestamp } from '$lib/schema/helpers';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { readEventZero } from '$lib/schema/event';
+import { decodeEventListCursor } from '$lib/utils/event/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -21,6 +22,32 @@ export const inputSchema = object({
 });
 export type EventListFilter = InferOutput<typeof inputSchema>;
 
+function listEventsQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	let q = builder.event
+		.where((expr) => eventReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('startsAt', 'asc')
+		.orderBy('id', 'asc')
+		.limit(limit);
+	if (input.cursor) {
+		const cursor = decodeEventListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
+	}
+	return q;
+}
+
+/** Exact page size for REST and other non-UI callers. */
 export function listEventsQuery({
 	ctx,
 	input
@@ -28,20 +55,27 @@ export function listEventsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	let q = builder.event
-		.where((expr) => eventReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.orderBy('startsAt', 'asc')
-		.limit(input.pageSize || 50);
-	if (input.cursor) {
-		q = q.start({ id: input.cursor });
-	}
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listEventsQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listEventsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listEventsQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export const listEvents = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listEventsQuery({ ctx, input: args });
+	return listEventsPaginatedQuery({ ctx, input: args });
 });
 
 function whereClause(
