@@ -16,7 +16,10 @@
 	import { appState } from '$lib/state.svelte';
 	import { locale, t } from '$lib/index.svelte';
 	const timeAgo = getTimeAgo(locale.current);
-	const { note }: { note: ReadPersonNoteWithUserZero } = $props();
+	const {
+		note,
+		onNotesChanged
+	}: { note: ReadPersonNoteWithUserZero; onNotesChanged?: () => void } = $props();
 	let editOpen = $state(false);
 	import EditNote from '$lib/components/layouts/app/action-menus/person/notes/EditNote.svelte';
 
@@ -33,7 +36,8 @@
 					personNoteId: note.id
 				}
 			});
-			const input = z.mutate(mutators.personNote.delete(parsed));
+			z.mutate(mutators.personNote.delete(parsed));
+			onNotesChanged?.();
 			toast.success(t`Note deleted`);
 		}
 	}
@@ -78,7 +82,7 @@
 			{/if}
 		</div>
 		{#if editOpen}
-			<EditNote {note} bind:editOpen />
+			<EditNote {note} bind:editOpen {onNotesChanged} />
 		{:else}
 			<div class="prose prose-sm" data-testid="person-note-content">{note.note}</div>
 		{/if}

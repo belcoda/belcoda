@@ -82,6 +82,10 @@
 		});
 	}
 
+	function onNotesChanged() {
+		paginatedNotes.reset();
+	}
+
 	import XIcon from '@lucide/svelte/icons/x';
 </script>
 
@@ -99,7 +103,7 @@
 					><XIcon class="size-4" /></Drawer.Close
 				>
 			</div>
-			<PersonNoteForm personId={person.id} />
+			<PersonNoteForm personId={person.id} {onNotesChanged} />
 		</Drawer.Header>
 		<div class="space-y-4 overflow-y-auto p-4" data-testid="person-notes-list">
 			{#if paginatedNotes.items.length > 0}
@@ -112,6 +116,7 @@
 								twoFactorEnabled: note.user?.twoFactorEnabled ?? false
 							}
 						} as ReadPersonNoteWithUserZero}
+						{onNotesChanged}
 					/>
 				{/each}
 				{#if paginatedNotes.hasMore}
