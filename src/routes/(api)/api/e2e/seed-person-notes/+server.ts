@@ -4,6 +4,7 @@ import { env } from '$env/dynamic/private';
 import { drizzle } from '$lib/server/db';
 import * as schema from '$lib/schema/drizzle';
 import { and, eq } from 'drizzle-orm';
+import { isE2EOrganizationSlug } from '../../../../../../e2e/helpers/test-data';
 
 export const POST: RequestHandler = async ({ request }) => {
 	if (env.NODE_ENV === 'production') {
@@ -20,6 +21,16 @@ export const POST: RequestHandler = async ({ request }) => {
 	});
 	if (!person) {
 		throw error(404, 'Person not found');
+	}
+
+	const organization = await drizzle.query.organization.findFirst({
+		where: eq(schema.organization.id, person.organizationId)
+	});
+	if (!organization) {
+		throw error(404, 'Organization not found');
+	}
+	if (!isE2EOrganizationSlug(organization.slug)) {
+		throw error(403, 'This endpoint can only seed E2E fixture organizations');
 	}
 
 	const owner = await drizzle.query.member.findFirst({

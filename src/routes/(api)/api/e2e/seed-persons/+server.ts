@@ -5,6 +5,7 @@ import { drizzle } from '$lib/server/db';
 import * as schema from '$lib/schema/drizzle';
 import { DEFAULT_SOCIAL_MEDIA } from '$lib/schema/person/meta';
 import { eq } from 'drizzle-orm';
+import { isE2EOrganizationSlug } from '../../../../../../e2e/helpers/test-data';
 
 export const POST: RequestHandler = async ({ locals, request }) => {
 	if (env.NODE_ENV === 'production') {
@@ -26,6 +27,9 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	});
 	if (!organization) {
 		throw error(404, 'Organization not found');
+	}
+	if (!isE2EOrganizationSlug(organization.slug)) {
+		throw error(403, 'This endpoint can only seed E2E fixture organizations');
 	}
 
 	const count = Math.max(1, Math.min(Math.trunc(body.count), 200));
