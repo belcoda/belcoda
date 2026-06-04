@@ -25,6 +25,7 @@
 	import type { ReadEventZero } from '$lib/schema/event';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodeEventListCursor } from '$lib/utils/event/cursor';
+	import { setEventsListPaginationContext } from '$lib/components/layouts/app/sidebars/events/events-list-pagination';
 	import { IsInViewport, watch } from 'runed';
 	import { formatNumber } from '$lib/utils/number';
 
@@ -82,6 +83,9 @@
 		getBaseFilter: () => ({ ...eventListFilter, dateRange }),
 		encodeCursor: encodeEventCursor,
 		pageSize
+	});
+	setEventsListPaginationContext({
+		reset: () => paginatedEvents.reset()
 	});
 	const eventList = $derived.by(() =>
 		z.createQuery(queries.event.list(paginatedEvents.pageFilter))
