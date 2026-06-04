@@ -5050,8 +5050,10 @@ msgstr ""
 
 #. 0: formatNumber(paginatedNotes.items.length, locale.current)
 #. 0: formatNumber(paginatedPersonList.items.length, locale.current)
+#. 0: formatNumber(paginatedEvents.items.length, locale.current)
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
 msgid "{0} shown"
 msgstr "{0} mostrados"
 

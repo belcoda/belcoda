@@ -21,7 +21,16 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import RenderEvent from '$lib/components/layouts/app/sidebars/events/RenderEvent.svelte';
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
+	import type { ReadEventZero } from '$lib/schema/event';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodeEventListCursor } from '$lib/utils/event/cursor';
+	import { IsInViewport, watch } from 'runed';
+	import { formatNumber } from '$lib/utils/number';
+
+	const pageSize = 25;
+	let sentinel: HTMLElement | null = $state(null);
+	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 	let placeholder = $state(getTodayCalendarDate(getLocalTimeZone()));
 	let value = $state<DateRange>({
 		start: undefined,
@@ -69,9 +78,41 @@
 		isArchived: false
 	});
 
+	const paginatedEvents = new PaginatedZeroList<EventListFilter, ReadEventZero>({
+		getBaseFilter: () => ({ ...eventListFilter, dateRange }),
+		encodeCursor: encodeEventCursor,
+		pageSize
+	});
 	const eventList = $derived.by(() =>
-		z.createQuery(queries.event.list({ ...eventListFilter, dateRange: dateRange }))
+		z.createQuery(queries.event.list(paginatedEvents.pageFilter))
 	);
+
+	watch(
+		() => eventList.data,
+		(data) => {
+			paginatedEvents.handlePage(data);
+		}
+	);
+	watch(
+		() =>
+			[
+				sentinelIsInViewport.current,
+				paginatedEvents.hasMore,
+				paginatedEvents.items.length
+			] as const,
+		([isInViewport, hasMore]) => {
+			if (isInViewport && hasMore) {
+				paginatedEvents.loadMore();
+			}
+		}
+	);
+
+	function encodeEventCursor(event: ReadEventZero) {
+		return encodeEventListCursor({
+			startsAt: event.startsAt,
+			id: event.id
+		});
+	}
 </script>
 
 <Sidebar.Root
@@ -120,12 +161,18 @@
 		</Sidebar.Header>
 		<Sidebar.Content>
 			<Sidebar.Group class="p-0">
-				<Sidebar.GroupContent class="h-full p-0 ">
+				<Sidebar.GroupContent class="h-full overflow-y-auto p-0" data-testid="events-sidebar-list">
 					<div class="flex flex-col">
-						{#if eventList.data && eventList.data.length > 0}
-							{#each eventList.data as event (event.id)}
+						{#if paginatedEvents.items.length > 0}
+							{#each paginatedEvents.items as event (event.id)}
 								<RenderEvent {event} />
 							{/each}
+							{#if paginatedEvents.hasMore}
+								<div bind:this={sentinel} class="h-1" data-testid="events-scroll-sentinel"></div>
+							{/if}
+							<div class="pt-2 text-center text-xs text-muted-foreground">
+								{t`${formatNumber(paginatedEvents.items.length, locale.current)} shown`}
+							</div>
 						{/if}
 						{#if eventList.details.type === 'unknown'}
 							{@render eventItemSkeleton()}
@@ -134,7 +181,7 @@
 						{:else if eventList.details.type === 'error'}
 							<div>Error loading events</div>
 						{/if}
-						{#if eventList.details.type === 'complete' && (!eventList.data || eventList.data.length === 0)}
+						{#if eventList.details.type === 'complete' && paginatedEvents.items.length === 0}
 							<Empty.Root>
 								<Empty.Header>
 									<Empty.Media variant="icon">
