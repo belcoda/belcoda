@@ -26,7 +26,7 @@
 	let confirmDeleteOpen = $state(false);
 </script>
 
-<Table.Row>
+<Table.Row data-testid="petition-signature-item">
 	<Table.Cell>
 		{@render personItem(signature)}
 	</Table.Cell>

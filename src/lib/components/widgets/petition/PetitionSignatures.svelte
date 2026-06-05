@@ -1,13 +1,21 @@
 <script lang="ts">
 	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 	import { type ReadPetitionZero } from '$lib/schema/petition/petition';
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	const { petition }: { petition: Readonly<ReadPetitionZero> } = $props();
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import type { PetitionSignatureListFilter } from '$lib/zero/query/petition_signature/list';
 	import queries from '$lib/zero/query/index';
 	import { type ReadPetitionSignatureZeroWithPerson } from '$lib/schema/petition/petition-signature';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodePetitionSignatureListCursor } from '$lib/utils/petition-signature/cursor';
+	import { IsInViewport, watch } from 'runed';
+	import { formatNumber } from '$lib/utils/number';
+
+	const pageSize = 25;
+	let sentinel: HTMLElement | null = $state(null);
+	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 
 	let filter: PetitionSignatureListFilter = $state({
 		...getListFilter(appState.organizationId),
@@ -15,9 +23,46 @@
 		petitionId: petition.id
 	});
 
-	const petitionSignatures = $derived.by(() => {
-		return z.createQuery(queries.petitionSignature.list(filter));
+	const paginatedSignatures = new PaginatedZeroList<
+		PetitionSignatureListFilter,
+		ReadPetitionSignatureZeroWithPerson
+	>({
+		getBaseFilter: () => filter,
+		encodeCursor: encodeSignatureCursor,
+		pageSize
 	});
+
+	const petitionSignatures = $derived.by(() => {
+		return z.createQuery(queries.petitionSignature.list(paginatedSignatures.pageFilter));
+	});
+
+	watch(
+		() => petitionSignatures.data,
+		(data) => {
+			paginatedSignatures.handlePage(data);
+		}
+	);
+
+	watch(
+		() =>
+			[
+				sentinelIsInViewport.current,
+				paginatedSignatures.hasMore,
+				paginatedSignatures.items.length
+			] as const,
+		([isInViewport, hasMore]) => {
+			if (isInViewport && hasMore) {
+				paginatedSignatures.loadMore();
+			}
+		}
+	);
+
+	function encodeSignatureCursor(signature: ReadPetitionSignatureZeroWithPerson) {
+		return encodePetitionSignatureListCursor({
+			createdAt: signature.createdAt,
+			id: signature.id
+		});
+	}
 
 	let selectedSignatures = $state<Readonly<ReadPetitionSignatureZeroWithPerson>[]>([]);
 
@@ -47,7 +92,7 @@
 				{#if !petition.archivedAt}
 					<AddPersonModal
 						trigger={addPersonTrigger}
-						personIdsToExclude={petitionSignatures.data.map((sig) => sig.personId)}
+						personIdsToExclude={paginatedSignatures.items.map((sig) => sig.personId)}
 						actionText={t`Add signature`}
 						onSelected={(personIds) => {
 							handleAddPerson({ petitionId: petition.id, personIds });
@@ -59,12 +104,26 @@
 	</Card.Header>
 
 	<Card.Content>
-		<SignatureTable
-			signatures={petitionSignatures.data ?? []}
-			{petition}
-			bind:selectedSignatures
-			queryIsCompleted={petitionSignatures.details.type === 'complete'}
-		/>
+		<div data-testid="petition-signatures-list">
+			<SignatureTable
+				signatures={paginatedSignatures.items}
+				{petition}
+				bind:selectedSignatures
+				queryIsCompleted={petitionSignatures.details.type === 'complete'}
+			/>
+			{#if paginatedSignatures.hasMore}
+				<div
+					bind:this={sentinel}
+					class="h-1"
+					data-testid="petition-signatures-scroll-sentinel"
+				></div>
+			{/if}
+			{#if paginatedSignatures.items.length > 0}
+				<div class="pt-2 text-center text-xs text-muted-foreground">
+					{t`${formatNumber(paginatedSignatures.items.length, locale.current)} shown`}
+				</div>
+			{/if}
+		</div>
 	</Card.Content>
 </Card.Root>
 
