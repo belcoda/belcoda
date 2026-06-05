@@ -6,8 +6,15 @@ export type EventsListPaginationContext = {
 	reset: () => void;
 };
 
-export function setEventsListPaginationContext(ctx: EventsListPaginationContext) {
+export function initEventsListPaginationContext() {
+	const ctx: EventsListPaginationContext = { reset: () => {} };
 	setContext(EVENTS_LIST_PAGINATION_KEY, ctx);
+	return ctx;
+}
+
+export function bindEventsListPaginationReset(reset: () => void) {
+	const ctx = getContext<EventsListPaginationContext | undefined>(EVENTS_LIST_PAGINATION_KEY);
+	if (ctx) ctx.reset = reset;
 }
 
 export function resetEventsListPagination() {
