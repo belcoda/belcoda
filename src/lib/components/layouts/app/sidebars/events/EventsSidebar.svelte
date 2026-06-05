@@ -26,12 +26,10 @@
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodeEventListCursor } from '$lib/utils/event/cursor';
 	import { setEventsListPaginationContext } from '$lib/components/layouts/app/sidebars/events/events-list-pagination';
-	import { IsInViewport, watch } from 'runed';
+	import { watch } from 'runed';
 	import { formatNumber } from '$lib/utils/number';
 
 	const pageSize = 25;
-	let sentinel: HTMLElement | null = $state(null);
-	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 	let placeholder = $state(getTodayCalendarDate(getLocalTimeZone()));
 	let value = $state<DateRange>({
 		start: undefined,
@@ -97,19 +95,15 @@
 			paginatedEvents.handlePage(data);
 		}
 	);
-	watch(
-		() =>
-			[
-				sentinelIsInViewport.current,
-				paginatedEvents.hasMore,
-				paginatedEvents.items.length
-			] as const,
-		([isInViewport, hasMore]) => {
-			if (isInViewport && hasMore) {
-				paginatedEvents.loadMore();
-			}
+	function handleScroll(e: Event) {
+		const target = e.currentTarget as HTMLElement;
+		if (
+			paginatedEvents.hasMore &&
+			target.scrollHeight - target.scrollTop - target.clientHeight < 200
+		) {
+			paginatedEvents.loadMore();
 		}
-	);
+	}
 
 	function encodeEventCursor(event: ReadEventZero) {
 		return encodeEventListCursor({
@@ -163,7 +157,7 @@
 			/>
 			<EventFilter bind:filter={eventListFilter} />
 		</Sidebar.Header>
-		<Sidebar.Content>
+		<Sidebar.Content onscroll={handleScroll} data-testid="events-sidebar-scroll">
 			<Sidebar.Group class="p-0">
 				<Sidebar.GroupContent class="h-full overflow-y-auto p-0" data-testid="events-sidebar-list">
 					<div class="flex flex-col">
@@ -171,9 +165,6 @@
 							{#each paginatedEvents.items as event (event.id)}
 								<RenderEvent {event} />
 							{/each}
-							{#if paginatedEvents.hasMore}
-								<div bind:this={sentinel} class="h-1" data-testid="events-scroll-sentinel"></div>
-							{/if}
 							<div class="pt-2 text-center text-xs text-muted-foreground">
 								{t`${formatNumber(paginatedEvents.items.length, locale.current)} shown`}
 							</div>

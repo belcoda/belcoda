@@ -42,16 +42,15 @@ test.describe.serial('Events', () => {
 
 		await loginAsOwner(page, PROJECT);
 		await page.goto('/events');
-		await page.getByPlaceholder('Search...').fill(`E2E pagination event ${seedBody.runId}`);
 
-		await page.getByTestId('events-sidebar-list').waitFor({ state: 'visible', timeout: 10_000 });
+		const sidebarList = await page
+			.getByTestId('events-sidebar-list')
+			.waitFor({ state: 'visible', timeout: 10_000 });
 		const items = page.getByTestId('event-sidebar-item');
 		await expect(items).toHaveCount(25, { timeout: 15_000 });
 
-		const scrollArea = page.getByTestId('events-sidebar-scroll');
-		await scrollArea.evaluate((element) => {
-			element.scrollTop = element.scrollHeight;
-		});
+		await items.first().hover();
+		await page.mouse.wheel(0, 10_000);
 
 		await expect(items).toHaveCount(30, { timeout: 30_000 });
 	});
