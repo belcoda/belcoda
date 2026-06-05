@@ -62,6 +62,39 @@ const ids = {
 };
 
 test.describe.serial('Petitions: create, edit, publish, admin', () => {
+	test('owner can load more signatures in the petition summary table', async ({
+		page,
+		request
+	}) => {
+		const petitionSeedResponse = await request.post(`${BASE_URL}/api/e2e/seed-petitions`, {
+			data: { count: 1 }
+		});
+		expect(petitionSeedResponse.ok()).toBeTruthy();
+		const petitionSeedBody = (await petitionSeedResponse.json()) as { petitionIds: string[] };
+		const petitionId = petitionSeedBody.petitionIds[0];
+		expect(petitionId).toBeTruthy();
+
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-petition-signatures`, {
+			data: { petitionId, count: 30 }
+		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedBody = (await seedResponse.json()) as { runId: string };
+		expect(seedBody.runId).toBeTruthy();
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto(`/petitions/${petitionId}`);
+
+		await page
+			.getByTestId('petition-signatures-list')
+			.waitFor({ state: 'visible', timeout: 10_000 });
+		const items = page.getByTestId('petition-signature-item');
+		await expect(items).toHaveCount(25, { timeout: 15_000 });
+
+		await page.getByTestId('petition-signatures-scroll-sentinel').scrollIntoViewIfNeeded();
+
+		await expect(items).toHaveCount(30, { timeout: 30_000 });
+	});
+
 	test('owner can load more petitions in the sidebar', async ({ page, request }) => {
 		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-petitions`, {
 			data: { count: 30 }
