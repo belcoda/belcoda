@@ -19,6 +19,7 @@
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { handleDeleteSignature } from './signatureActions';
+	import { resetPetitionSignaturesListPagination } from './petition-signatures-list-pagination';
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
 	import { t } from '$lib/index.svelte';
 	import { renderName } from '$lib/utils/name';
@@ -62,6 +63,7 @@
 					petitionId: signature.petitionId,
 					personId: signature.personId
 				});
+				resetPetitionSignaturesListPagination();
 				confirmDeleteOpen = false;
 			}}
 		>

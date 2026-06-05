@@ -31,6 +31,9 @@
 		encodeCursor: encodeSignatureCursor,
 		pageSize
 	});
+	setPetitionSignaturesListPaginationContext({
+		reset: () => paginatedSignatures.reset()
+	});
 
 	const petition = $derived.by(() => {
 		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
@@ -79,6 +82,10 @@
 	import PetitionListItem from '../PetitionListItem.svelte';
 	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
 	import { handleAddPerson } from '$lib/components/widgets/petition/signatures/signatureActions';
+	import {
+		resetPetitionSignaturesListPagination,
+		setPetitionSignaturesListPaginationContext
+	} from '$lib/components/widgets/petition/signatures/petition-signatures-list-pagination';
 	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -288,6 +295,7 @@
 					actionText={t`Add signature`}
 					onSelected={(personIds) => {
 						handleAddPerson({ petitionId: params.petitionId, personIds });
+						resetPetitionSignaturesListPagination();
 					}}
 				/>
 			{/if}
