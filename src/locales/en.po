@@ -5077,11 +5077,13 @@ msgstr "🎨 Sticker"
 #. 0: formatNumber(paginatedEvents.items.length, locale.current)
 #. 0: formatNumber(paginatedPetitions.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
+#. 0: formatNumber(paginatedSignatures.items.length, locale.current)
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 msgid "{0} shown"
 msgstr "{0} shown"
 
