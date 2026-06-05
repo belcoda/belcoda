@@ -15,17 +15,58 @@
 	import { page } from '$app/state';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
+	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodePetitionListCursor } from '$lib/utils/petition/cursor';
+	import { setPetitionsListPaginationContext } from '$lib/components/layouts/app/sidebars/petitions/petitions-list-pagination';
+	import { watch } from 'runed';
+	import { formatNumber } from '$lib/utils/number';
 
 	import PetitionFilter from '$lib/components/layouts/app/sidebars/petitions/filter/PetitionFilter.svelte';
 
+	const pageSize = 25;
+
 	let petitionListFilter: PetitionListFilter = $state({
 		...getListFilter(appState.organizationId),
-		status: null,
-		tagId: null
+		status: null
 	});
 
-	const petitionList = $derived.by(() => z.createQuery(queries.petition.list(petitionListFilter)));
+	const paginatedPetitions = new PaginatedZeroList<PetitionListFilter, ReadPetitionZero>({
+		getBaseFilter: () => petitionListFilter,
+		encodeCursor: encodePetitionCursor,
+		pageSize
+	});
+	setPetitionsListPaginationContext({
+		reset: () => paginatedPetitions.reset()
+	});
+	const petitionList = $derived.by(() =>
+		z.createQuery(queries.petition.list(paginatedPetitions.pageFilter))
+	);
+
+	watch(
+		() => petitionList.data,
+		(data) => {
+			paginatedPetitions.handlePage(data);
+		}
+	);
+
+	function handleScroll(e: Event) {
+		const target = e.currentTarget as HTMLElement;
+		if (
+			paginatedPetitions.hasMore &&
+			target.scrollHeight - target.scrollTop - target.clientHeight < 200
+		) {
+			paginatedPetitions.loadMore();
+		}
+	}
+
+	function encodePetitionCursor(petition: ReadPetitionZero) {
+		return encodePetitionListCursor({
+			createdAt: petition.createdAt,
+			id: petition.id
+		});
+	}
 </script>
 
 <Sidebar.Root
@@ -45,14 +86,18 @@
 			</div>
 			<PetitionFilter bind:filter={petitionListFilter} />
 		</Sidebar.Header>
-		<Sidebar.Content>
+		<Sidebar.Content onscroll={handleScroll} data-testid="petitions-sidebar-scroll">
 			<Sidebar.Group class="p-0">
-				<Sidebar.GroupContent class="h-full p-0">
+				<Sidebar.GroupContent
+					class="h-full overflow-y-auto p-0"
+					data-testid="petitions-sidebar-list"
+				>
 					<div class="flex flex-col">
-						{#if petitionList.data && petitionList.data.length > 0}
-							{#each petitionList.data as petition (petition.id)}
+						{#if paginatedPetitions.items.length > 0}
+							{#each paginatedPetitions.items as petition (petition.id)}
 								<a
 									href={`/petitions/${petition.id}`}
+									data-testid="petition-sidebar-item"
 									class="flex w-full items-center justify-start gap-3 border-b px-2 py-3 last:border-b-0 hover:bg-muted"
 									class:bg-muted={page.url.pathname.startsWith(`/petitions/${petition.id}`)}
 								>
@@ -83,6 +128,9 @@
 									</ColorBadge>
 								</a>
 							{/each}
+							<div class="pt-2 text-center text-xs text-muted-foreground">
+								{t`${formatNumber(paginatedPetitions.items.length, locale.current)} shown`}
+							</div>
 						{/if}
 						{#if petitionList.details.type === 'unknown'}
 							{@render petitionItemSkeleton()}
@@ -91,7 +139,7 @@
 						{:else if petitionList.details.type === 'error'}
 							<div>Error loading petitions</div>
 						{/if}
-						{#if petitionList.details.type === 'complete' && (!petitionList.data || petitionList.data.length === 0)}
+						{#if petitionList.details.type === 'complete' && paginatedPetitions.items.length === 0}
 							<Empty.Root>
 								<Empty.Header>
 									<Empty.Media variant="icon">
