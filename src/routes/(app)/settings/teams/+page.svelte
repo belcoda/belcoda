@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { getListFilter, appState } from '$lib/state.svelte';
@@ -7,14 +7,41 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import NewTeam from './NewTeam.svelte';
 	import EditTeam from './EditTeam.svelte';
 	import { formatDate } from '$lib/utils/date';
+	import { formatNumber } from '$lib/utils/number';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodeTeamListCursor } from '$lib/utils/team/cursor';
+	import { type ReadTeamZero } from '$lib/schema/team';
+	import { watch } from 'runed';
 
 	let teamListFilter = $state({
 		...getListFilter(appState.organizationId)
 	});
-	const teamList = $derived.by(() => z.createQuery(queries.team.list(teamListFilter)));
+	const pageSize = 25;
+	const paginatedTeams = new PaginatedZeroList({
+		getBaseFilter: () => teamListFilter,
+		encodeCursor: encodeTeamCursor,
+		pageSize
+	});
+	const teamList = $derived.by(() => z.createQuery(queries.team.list(paginatedTeams.pageFilter)));
+
+	watch(
+		() => teamList.data,
+		(data) => {
+			paginatedTeams.handlePage(data);
+		}
+	);
+
+	function encodeTeamCursor(team: ReadTeamZero) {
+		return encodeTeamListCursor({ createdAt: team.createdAt, id: team.id });
+	}
+
+	function handleTeamCreated() {
+		paginatedTeams.reset();
+	}
 </script>
 
 <ContentLayout rootLink="/settings">
@@ -36,14 +63,14 @@
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>
-						{#if teamList.data && teamList.data.length === 0}
+						{#if teamList.data !== undefined && paginatedTeams.items.length === 0}
 							<Table.Row>
 								<Table.Cell colspan={3} class="py-12 text-center text-muted-foreground">
 									{t`No teams yet. Create your first team to get started.`}
 								</Table.Cell>
 							</Table.Row>
-						{:else if teamList.data}
-							{#each teamList.data as team (team.id)}
+						{:else if paginatedTeams.items.length > 0}
+							{#each paginatedTeams.items as team (team.id)}
 								<Table.Row data-testid="team-row" data-team-id={team.id}>
 									<Table.Cell class="font-medium">
 										<a
@@ -70,13 +97,31 @@
 						{/if}
 					</Table.Body>
 				</Table.Root>
+				{#if paginatedTeams.items.length > 0}
+					<div class="mt-4 space-y-2">
+						<div class="text-center text-xs text-muted-foreground">
+							{t`${formatNumber(paginatedTeams.items.length, locale.current)} shown`}
+						</div>
+						{#if paginatedTeams.hasMore}
+							<Button
+								variant="ghost"
+								class="w-full"
+								data-testid="teams-load-more"
+								disabled={paginatedTeams.loadingMore}
+								onclick={() => paginatedTeams.loadMore()}
+							>
+								{t`Load more`}
+							</Button>
+						{/if}
+					</div>
+				{/if}
 			</Card.Content>
 		</Card.Root>
 	</div>
 	{#snippet header()}
 		<div class="flex items-center justify-between">
 			<H2>{t`Teams`}</H2>
-			<NewTeam />
+			<NewTeam onCreated={handleTeamCreated} />
 		</div>
 	{/snippet}
 </ContentLayout>
