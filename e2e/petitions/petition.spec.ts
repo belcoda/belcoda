@@ -5,7 +5,7 @@ import { PetitionEditPage } from '../pages/petitions/petition-edit.page';
 import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page';
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
-import { getOrgSlug, slugifyTitle } from '../helpers/config';
+import { BASE_URL, getOrgSlug, slugifyTitle } from '../helpers/config';
 import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
@@ -62,6 +62,27 @@ const ids = {
 };
 
 test.describe.serial('Petitions: create, edit, publish, admin', () => {
+	test('owner can load more petitions in the sidebar', async ({ page, request }) => {
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-petitions`, {
+			data: { count: 30 }
+		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedBody = (await seedResponse.json()) as { runId: string };
+		expect(seedBody.runId).toBeTruthy();
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto('/petitions');
+
+		await page.getByTestId('petitions-sidebar-list').waitFor({ state: 'visible', timeout: 10_000 });
+		const items = page.getByTestId('petition-sidebar-item');
+		await expect(items).toHaveCount(25, { timeout: 15_000 });
+
+		await items.first().hover();
+		await page.mouse.wheel(0, 10_000);
+
+		await expect(items).toHaveCount(30, { timeout: 30_000 });
+	});
+
 	test('owner can add a petition and it is saved as draft', async ({ page }) => {
 		const suffix = Date.now();
 		ids.petitionTitle = `E2E Petition ${suffix}`;
