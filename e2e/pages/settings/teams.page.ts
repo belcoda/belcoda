@@ -8,6 +8,8 @@ export class TeamsPage {
 	readonly newTeamSubmit: Locator;
 	readonly editTeamNameInput: Locator;
 	readonly editTeamSubmit: Locator;
+	readonly loadMoreButton: Locator;
+	readonly teamRows: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
@@ -17,6 +19,8 @@ export class TeamsPage {
 		this.newTeamSubmit = page.getByTestId('new-team-submit');
 		this.editTeamNameInput = page.getByTestId('edit-team-name');
 		this.editTeamSubmit = page.getByTestId('edit-team-submit');
+		this.loadMoreButton = page.getByTestId('teams-load-more');
+		this.teamRows = page.getByTestId('team-row');
 	}
 
 	async goto() {

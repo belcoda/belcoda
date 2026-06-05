@@ -1,10 +1,36 @@
 import { expect, test } from '@playwright/test';
 import { PersonCreatePage } from '../pages/community/person-create.page';
 import { TeamsPage, TeamDetailPage } from '../pages/settings/teams.page';
+import { BASE_URL } from '../helpers/config';
 import { loginAsOwner, loginAsMember } from '../helpers/login';
 import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'community' as const;
+
+test('owner can load more teams', async ({ page, request }) => {
+	const teamsPage = new TeamsPage(page);
+	await loginAsOwner(page, PROJECT);
+	await teamsPage.goto();
+	const countBeforeSeed = await teamsPage.teamRows.count();
+
+	const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-teams`, {
+		data: { count: 30 }
+	});
+	expect(seedResponse.ok()).toBeTruthy();
+	const seedBody = (await seedResponse.json()) as { runId: string };
+	expect(seedBody.runId).toBeTruthy();
+
+	await teamsPage.goto();
+	const expectedTotal = countBeforeSeed + 30;
+	const expectedFirstPage = Math.min(25, expectedTotal);
+
+	await expect(teamsPage.teamRows).toHaveCount(expectedFirstPage, { timeout: 15_000 });
+
+	if (expectedTotal > 25) {
+		await teamsPage.loadMoreButton.click();
+		await expect(teamsPage.teamRows).toHaveCount(expectedTotal, { timeout: 15_000 });
+	}
+});
 
 test.describe.serial('Settings: Teams', () => {
 	const ids = {
