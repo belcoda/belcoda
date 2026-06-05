@@ -101,6 +101,7 @@
 	import PetitionSignupSurvey from '$lib/components/forms/petition/PetitionSignupSurvey.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { resetPetitionsListPagination } from '$lib/components/layouts/app/sidebars/petitions/petitions-list-pagination';
 	import { TagSelectMulti } from '$lib/components/ui/custom-select/tag/index.js';
 
 	$effect(() => {
@@ -236,6 +237,7 @@
 									}
 								})
 							);
+							resetPetitionsListPagination();
 							toast.success(t`Petition archived`);
 							goto('/petitions');
 						}}
@@ -269,6 +271,7 @@
 									}
 								})
 							);
+							resetPetitionsListPagination();
 							toast.success(t`Petition deleted`);
 							goto('/petitions');
 						}}
