@@ -1,15 +1,13 @@
-import { getContext, setContext } from 'svelte';
+let resetPagination: (() => void) | null = null;
 
-const PETITIONS_LIST_PAGINATION_KEY = Symbol('petitionsListPagination');
+export function registerPetitionsListPaginationReset(reset: () => void) {
+	resetPagination = reset;
+}
 
-export type PetitionsListPaginationContext = {
-	reset: () => void;
-};
-
-export function setPetitionsListPaginationContext(ctx: PetitionsListPaginationContext) {
-	setContext(PETITIONS_LIST_PAGINATION_KEY, ctx);
+export function unregisterPetitionsListPaginationReset() {
+	resetPagination = null;
 }
 
 export function resetPetitionsListPagination() {
-	getContext<PetitionsListPaginationContext | undefined>(PETITIONS_LIST_PAGINATION_KEY)?.reset();
+	resetPagination?.();
 }

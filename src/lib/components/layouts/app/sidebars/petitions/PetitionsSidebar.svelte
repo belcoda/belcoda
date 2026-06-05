@@ -19,7 +19,11 @@
 	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodePetitionListCursor } from '$lib/utils/petition/cursor';
-	import { setPetitionsListPaginationContext } from '$lib/components/layouts/app/sidebars/petitions/petitions-list-pagination';
+	import {
+		registerPetitionsListPaginationReset,
+		unregisterPetitionsListPaginationReset
+	} from '$lib/components/layouts/app/sidebars/petitions/petitions-list-pagination';
+	import { onDestroy } from 'svelte';
 	import { watch } from 'runed';
 	import { formatNumber } from '$lib/utils/number';
 
@@ -37,9 +41,8 @@
 		encodeCursor: encodePetitionCursor,
 		pageSize
 	});
-	setPetitionsListPaginationContext({
-		reset: () => paginatedPetitions.reset()
-	});
+	registerPetitionsListPaginationReset(() => paginatedPetitions.reset());
+	onDestroy(unregisterPetitionsListPaginationReset);
 	const petitionList = $derived.by(() =>
 		z.createQuery(queries.petition.list(paginatedPetitions.pageFilter))
 	);

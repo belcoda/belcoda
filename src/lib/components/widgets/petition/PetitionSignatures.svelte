@@ -31,9 +31,15 @@
 		encodeCursor: encodeSignatureCursor,
 		pageSize
 	});
-	setPetitionSignaturesListPaginationContext({
-		reset: () => paginatedSignatures.reset()
-	});
+	import { onDestroy } from 'svelte';
+	import {
+		registerPetitionSignaturesListPaginationReset,
+		resetPetitionSignaturesListPagination,
+		unregisterPetitionSignaturesListPaginationReset
+	} from './signatures/petition-signatures-list-pagination';
+
+	registerPetitionSignaturesListPaginationReset(() => paginatedSignatures.reset());
+	onDestroy(unregisterPetitionSignaturesListPaginationReset);
 
 	const petitionSignatures = $derived.by(() => {
 		return z.createQuery(queries.petitionSignature.list(paginatedSignatures.pageFilter));
@@ -75,10 +81,6 @@
 	import SignatureTable from './signatures/SignatureTable.svelte';
 	import AddPersonModal from '$lib/components/widgets/person/add_modal/AddPersonModal.svelte';
 	import { handleAddPerson } from './signatures/signatureActions';
-	import {
-		resetPetitionSignaturesListPagination,
-		setPetitionSignaturesListPaginationContext
-	} from './signatures/petition-signatures-list-pagination';
 </script>
 
 <Card.Root data-testid="petition-signature-table">
