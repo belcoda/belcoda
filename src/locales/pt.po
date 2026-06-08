@@ -5059,14 +5059,16 @@ msgstr ""
 #. 0: formatNumber(paginatedNotes.items.length, locale.current)
 #. 0: formatNumber(paginatedPersonList.items.length, locale.current)
 #. 0: formatNumber(paginatedTeams.items.length, locale.current)
+#. 0: formatNumber(paginatedTags.items.length, locale.current)
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
-#: src/routes/(app)/settings/teams/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 msgid "{0} shown"
 msgstr "{0} exibidos"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/routes/(app)/settings/teams/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 msgid "Load more"
 msgstr "Carregar mais"
 

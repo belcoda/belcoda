@@ -51,6 +51,8 @@ export class PersonProfilePage {
 
 	async editEmail(email: string) {
 		await this.waitForLoaded();
+		await this.emailEditButton.waitFor({ state: 'visible', timeout: 10_000 });
+		await this.emailEditButton.scrollIntoViewIfNeeded();
 		await this.emailEditButton.click();
 		await this.emailInput.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.emailInput.fill(email);
