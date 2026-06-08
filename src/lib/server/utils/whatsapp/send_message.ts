@@ -1,9 +1,8 @@
 import {
 	convertWhatsappMessageToApiFormat,
-	convertWhatsAppTemplateMessageToApiFormat,
-	createMessageFromTemplateAndTemplateMessage,
-	convertNodeToFullMessage
+	convertWhatsAppTemplateMessageToApiFormat
 } from './ycloud/convert_outbound';
+import { createMessageFromTemplateAndTemplateMessage } from '$lib/utils/whatsapp/template';
 import { db } from '$lib/server/db';
 import { and, eq } from 'drizzle-orm';
 import {
@@ -196,9 +195,9 @@ export async function sendWhatsappTemplateMessage({
 	message: WhatsappTemplateMessageData;
 	organizationId: string;
 	templateId: string;
-	threadId: string;
+	threadId?: string;
 	personId: string;
-	nodeId: string;
+	nodeId?: string;
 	messageId?: string;
 	sendingUserId?: string;
 }) {
@@ -255,8 +254,8 @@ export async function sendWhatsappTemplateMessage({
 			});
 			const messageToSend = await convertWhatsAppTemplateMessageToApiFormat({
 				templateMessage: resolvedMessage,
-				nodeId: nodeId,
-				whatsappThreadId: threadId,
+				nodeId: nodeId ?? null,
+				whatsappThreadId: threadId ?? null,
 				whatsappMessageId: whatsappMessageId,
 				from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
 				...recipient,
@@ -293,7 +292,7 @@ export async function sendWhatsappTemplateMessage({
 					metadata: {
 						type: 'whatsapp_message_outgoing',
 						whatsappMessageId: whatsappMessageId,
-						whatsappThreadId: threadId,
+						whatsappThreadId: threadId ?? null,
 						sentByUserId: sendingUserId ?? null,
 						teamId: null //for now, always null -- we don't currently support team messaging
 					}

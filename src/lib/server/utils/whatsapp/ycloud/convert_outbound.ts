@@ -6,6 +6,7 @@ import {
 import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import type { LanguageCode } from '$lib/utils/language';
 import type { YCloudWhatsappMessage } from '$lib/schema/whatsapp/ycloud/message';
+import { createButtonActionString } from '$lib/utils/whatsapp/template';
 import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -41,8 +42,8 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	language
 }: {
 	templateMessage: WhatsappTemplateMessageData;
-	nodeId: string;
-	whatsappThreadId: string;
+	nodeId?: string | null;
+	whatsappThreadId?: string | null;
 	whatsappMessageId: string;
 	from: string;
 	to?: string;
@@ -120,9 +121,9 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 		...(recipient ? { recipient } : {}),
 		type: 'template',
 		externalId: createExternalId({
-			whatsappMessageId: whatsappMessageId,
-			whatsappThreadId: whatsappThreadId,
-			nodeId: nodeId
+			whatsappMessageId: whatsappMessageId ?? null,
+			whatsappThreadId: whatsappThreadId ?? null,
+			nodeId: nodeId ?? null
 		}),
 		template: {
 			name: name,
@@ -135,71 +136,16 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 	};
 }
 
-export function createMessageFromTemplateAndTemplateMessage({
-	templateMessage,
-	template,
-	messageId,
-	threadId
-}: {
-	templateMessage: WhatsappTemplateMessageData;
-	template: TemplateMessageComponents;
-	messageId: string;
-	threadId: string;
-}) {
-	let returnObject: WhatsappMessage = {
-		id: messageId,
-		emojiReactions: [],
-		buttons: []
-	};
-	let templateHeader = template.find((t) => t.type === 'HEADER');
-	let templateBody = template.find((t) => t.type === 'BODY');
-	let templateButtons = template.find((t) => t.type === 'BUTTONS');
-	if (templateHeader && templateMessage.header) {
-		if (templateHeader.format === 'IMAGE') {
-			returnObject.image_url = templateMessage.header.imageUrl || undefined;
-		}
-		if (templateHeader.format === 'TEXT' && templateMessage.header?.templateStrings) {
-			const baseString = templateHeader.text;
-			//replace the {{n}} in baseString with the values from templateMessage.header.templateStrings
-			const replacedString = baseString.replace(/{{(\d+)}}/g, (match, p1) => {
-				return templateMessage.header?.templateStrings?.[parseInt(p1) - 1] || match;
-			});
-			returnObject.headerText = replacedString;
-		}
-	}
-	if (templateBody && templateMessage.body && templateMessage.body?.templateStrings) {
-		const baseString = templateBody.text;
-		//replace the {{n}} in baseString with the values from templateMessage.body.templateStrings
-		const replacedString = baseString.replace(/{{(\d+)}}/g, (match, p1) => {
-			return templateMessage.body?.templateStrings?.[parseInt(p1) - 1] || match;
-		});
-		returnObject.text = replacedString;
-	}
-	if (templateButtons && templateButtons.buttons && templateMessage.buttons) {
-		returnObject.buttons = templateButtons.buttons.map((button, index) => {
-			return {
-				text: button.text,
-				action: createButtonActionString({
-					threadId: threadId,
-					nodeId: messageId,
-					buttonId: templateMessage.buttons?.[index]?.id || uuidv4()
-				})
-			};
-		});
-	}
-	return returnObject;
-}
-
 export function createExternalId({
 	whatsappMessageId,
 	whatsappThreadId,
 	nodeId
 }: {
 	whatsappMessageId: string | null;
-	whatsappThreadId: string;
-	nodeId: string | null;
+	whatsappThreadId: string | null;
+	nodeId?: string | null;
 }) {
-	return `${whatsappThreadId}:${nodeId || 'UNKNOWN'}:${whatsappMessageId || 'UNKNOWN'}`;
+	return `${whatsappThreadId || 'UNKNOWN'}:${nodeId || 'UNKNOWN'}:${whatsappMessageId || 'UNKNOWN'}`;
 }
 
 export function extractExternalId(externalId: string): {
@@ -382,18 +328,6 @@ function generateTextMessage({
 			body: text
 		}
 	};
-}
-
-export function createButtonActionString({
-	threadId,
-	nodeId,
-	buttonId
-}: {
-	threadId: string;
-	nodeId: string;
-	buttonId: string;
-}) {
-	return `${threadId}:${nodeId}:${buttonId}`;
 }
 
 export function extractButtonActionString(actionString: string): {
