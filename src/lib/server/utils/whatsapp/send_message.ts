@@ -365,7 +365,7 @@ export async function sendWhatsappTemplateMessage({
 					metadata: {
 						type: 'whatsapp_message_outgoing',
 						whatsappMessageId: whatsappMessageId,
-						whatsappThreadId: threadId,
+						whatsappThreadId: threadId ?? null,
 						sentByUserId: sendingUserId ?? null,
 						teamId: null //for now, always null -- we don't currently support team messaging
 					}
