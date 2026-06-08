@@ -6,7 +6,7 @@
 	import { Alert } from '$lib/components/ui/alert/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-import BusinessAccountActivated from './BusinessAccountActivated.svelte';
+	import BusinessAccountActivated from './BusinessAccountActivated.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
@@ -73,9 +73,9 @@ import BusinessAccountActivated from './BusinessAccountActivated.svelte';
 		};
 	});
 
-	function persistWhatsappSettingsFromEmbedded(number: string, wabaId: string) {
+	async function persistWhatsappSettingsFromEmbedded(number: string, wabaId: string) {
 		if (appState.organizationId && appState.activeOrganization.data) {
-			z.mutate(
+			const result = z.mutate(
 				mutators.organization.updateWhatsappSettings({
 					metadata: {
 						organizationId: appState.organizationId,
@@ -87,6 +87,7 @@ import BusinessAccountActivated from './BusinessAccountActivated.svelte';
 					}
 				})
 			);
+			await result.server;
 		}
 	}
 
@@ -100,21 +101,8 @@ import BusinessAccountActivated from './BusinessAccountActivated.svelte';
 			if (data.event === 'FINISH') {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				const { phone_number_id, waba_id, business_id } = data.data;
-				if (appState.organizationId && appState.activeOrganization.data) {
-					z.mutate(
-						mutators.organization.updateWhatsappSettings({
-							metadata: {
-								organizationId: appState.organizationId,
-								existingSettings: appState.activeOrganization.data.settings
-							},
-							input: {
-								number: phone_number_id,
-								wabaId: waba_id
-							}
-						})
-					);
-				}
-				persistWhatsappSettingsFromEmbedded(phone_number_id, waba_id);
+				await persistWhatsappSettingsFromEmbedded(phone_number_id, waba_id);
+				document.location.reload();
 			} else if (data.event === 'ERROR') {
 				error = data.data.error_message;
 			} else {
