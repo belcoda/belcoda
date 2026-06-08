@@ -3,6 +3,7 @@
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import EmbeddedFlow from './EmbeddedFlow.svelte';
 	import BusinessProfile from './BusinessProfile.svelte';
+	import WhatsappAccountBootstrap from './WhatsappAccountBootstrap.svelte';
 	import { appState } from '$lib/state.svelte';
 	import type { PageProps } from './$types';
 
@@ -14,9 +15,14 @@
 				appState.activeOrganization?.data?.settings.whatsApp.number
 		)
 	);
+
+	const whatsappAccountScope = $derived(`${appState.organizationId}-${whatsappConfigured}`);
 </script>
 
 <ContentLayout rootLink="/settings">
+	{#key whatsappAccountScope}
+		<WhatsappAccountBootstrap configured={whatsappConfigured} />
+	{/key}
 	{#snippet header()}
 		<div class="flex items-center justify-between">
 			<h1 class="text-2xl font-bold" data-testid="whatsapp-accounts-heading">
@@ -26,6 +32,8 @@
 	{/snippet}
 	<EmbeddedFlow mockExternalServices={data.mockExternalServices} />
 	{#if whatsappConfigured}
-		<BusinessProfile />
+		{#key appState.organizationId}
+			<BusinessProfile />
+		{/key}
 	{/if}
 </ContentLayout>
