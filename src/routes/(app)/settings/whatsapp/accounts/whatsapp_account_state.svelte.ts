@@ -118,12 +118,17 @@ export const whatsappAccountState = {
 				throw new Error(message || t`Failed to save WhatsApp business profile`);
 			}
 			const data = (await response.json()) as WhatsappBusinessProfile;
+			if (loadedOrganizationId !== organizationId) {
+				return data;
+			}
 			profile = data;
 			return data;
 		} catch (err) {
 			const message =
 				err instanceof Error ? err.message : t`Failed to save WhatsApp business profile`;
-			error = message;
+			if (loadedOrganizationId === organizationId) {
+				error = message;
+			}
 			throw err instanceof Error ? err : new Error(message);
 		} finally {
 			saving = false;
