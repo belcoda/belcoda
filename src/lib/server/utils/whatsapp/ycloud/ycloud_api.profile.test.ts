@@ -27,7 +27,7 @@ const fullProfile: WhatsappBusinessProfile = {
 	nameStatus: 'APPROVED'
 };
 
-function profileUrl(method?: string) {
+function profileUrl() {
 	return `https://api.ycloud.test/whatsapp/phoneNumbers/${wabaId}/${encodeURIComponent(phoneNumber)}/profile`;
 }
 
