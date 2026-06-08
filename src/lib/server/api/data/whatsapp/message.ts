@@ -16,7 +16,9 @@ import {
 	isReactionSupportedMessageType,
 	whatsappMessageApiSchema,
 	type CreateWhatsAppMessageMutatorSchema,
-	createWhatsAppMessageMutatorSchema
+	createWhatsAppMessageMutatorSchema,
+	createWhatsappTemplateMessageMutatorSchema,
+	type CreateWhatsappTemplateMessageMutatorSchema
 } from '$lib/schema/whatsapp-message';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -31,7 +33,10 @@ import { env as publicEnv } from '$env/dynamic/public';
 import { sendEmojiReaction } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { extractExternalId } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
 import { drizzle } from '$lib/server/db';
-import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/send_message';
+import {
+	sendWhatsappMessage,
+	sendWhatsappTemplateMessage
+} from '$lib/server/utils/whatsapp/send_message';
 
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { builder } from '$lib/zero/schema';
@@ -391,4 +396,36 @@ export async function sendIndividualMessage({
 	} else {
 		throw new Error('You are not authorized to send a WhatsApp message in this organization');
 	}
+}
+
+export async function sendTemplateMessage({
+	ctx,
+	args: argsInput,
+	tx
+}: {
+	args: CreateWhatsAppMessageMutatorSchema;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const args = parse(createWhatsAppMessageMutatorSchema, argsInput);
+}
+
+export async function sendIndividualTemplateMessage({
+	ctx,
+	args: argsInput,
+	tx
+}: {
+	args: CreateWhatsappTemplateMessageMutatorSchema;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const args = parse(createWhatsappTemplateMessageMutatorSchema, argsInput);
+	await sendWhatsappTemplateMessage({
+		message: args.input.whatsappTemplateMessage,
+		organizationId: args.metadata.organizationId,
+		personId: args.metadata.personId,
+		sendingUserId: ctx.userId || args.metadata.sentByUserId || undefined,
+		messageId: args.metadata.whatsappMessageId,
+		templateId: args.metadata.templateId
+	});
 }

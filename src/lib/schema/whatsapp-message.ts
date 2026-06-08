@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
+import { templateMessageComponents } from '$lib/schema/whatsapp/template';
 import {
 	whatsappMessage as whatsappMessageObjectSchema,
 	whatsappMessageActivityTypeSchema,
@@ -64,6 +65,15 @@ export const createWhatsappMessageSchemaZero = v.object({
 	whatsappMessage: whatsappMessageObjectSchema
 });
 export type CreateWhatsappMessageSchemaZero = v.InferOutput<typeof createWhatsappMessageSchemaZero>;
+
+import { whatsappTemplateMessageNodeData } from '$lib/schema/flow/index';
+export const createWhatsappTemplateMessageSchemaZero = v.object({
+	whatsappTemplateMessage: whatsappTemplateMessageNodeData
+});
+export type CreateWhatsappTemplateMessageSchemaZero = v.InferOutput<
+	typeof createWhatsappTemplateMessageSchemaZero
+>;
+
 export const createWhatsAppMessageMutatorMetadata = v.object({
 	whatsappMessageId: helpers.uuid,
 	personId: helpers.uuid,
@@ -80,6 +90,18 @@ export const createWhatsAppMessageMutatorSchema = v.object({
 });
 export type CreateWhatsAppMessageMutatorSchema = v.InferOutput<
 	typeof createWhatsAppMessageMutatorSchema
+>;
+
+export const createWhatsappTemplateMessageMutatorSchema = v.object({
+	input: createWhatsappTemplateMessageSchemaZero,
+	metadata: v.object({
+		...createWhatsAppMessageMutatorMetadata.entries,
+		templateComponents: templateMessageComponents,
+		templateId: helpers.uuid
+	})
+});
+export type CreateWhatsappTemplateMessageMutatorSchema = v.InferOutput<
+	typeof createWhatsappTemplateMessageMutatorSchema
 >;
 
 export function isReactionSupportedMessageType(type: WhatsappMessageActivityType): boolean {
