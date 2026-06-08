@@ -78,6 +78,12 @@ export const whatsappBusinessProfileSchema = v.object({
 
 export type WhatsappBusinessProfile = v.InferOutput<typeof whatsappBusinessProfileSchema>;
 
+/** PATCH fast-path: reject empty `{}` success bodies; `about` is always sent on save. */
+export const whatsappBusinessProfilePatchResponseSchema = v.required(
+	whatsappBusinessProfileSchema,
+	['about']
+);
+
 export const whatsappBusinessAccountSummarySchema = v.object({
 	businessStatus: v.optional(v.nullable(v.string())),
 	businessName: v.optional(v.nullable(v.string())),

@@ -18,6 +18,7 @@ import {
 	mockWhatsappBusinessAccountSummary,
 	mockWhatsappBusinessProfile,
 	whatsappBusinessAccountSummarySchema,
+	whatsappBusinessProfilePatchResponseSchema,
 	whatsappBusinessProfileSchema,
 	toYCloudProfileUpdatePayload,
 	type UpdateWhatsappBusinessProfileInput,
@@ -117,7 +118,16 @@ async function sendToYCloud({
 			);
 			throw new Error(`Failed to send to YCloud: ${endpoint} (${response.status})`);
 		}
-		return response.json();
+		const text = await response.text();
+		if (!text.trim()) {
+			return {};
+		}
+		try {
+			return JSON.parse(text);
+		} catch (parseError) {
+			log.error({ parseError, text }, `Invalid JSON from YCloud: ${endpoint}`);
+			throw new Error(`Invalid JSON response from YCloud: ${endpoint}`);
+		}
 	} catch (error) {
 		log.error({ error }, `Error sending to YCloud: ${endpoint}`);
 		throw error;
@@ -645,12 +655,16 @@ export async function updateWhatsappPhoneNumberProfile({
 		skipBodyLog: true
 	});
 
-	const parsed = await v.parseAsync(whatsappBusinessProfileSchema, response).catch((e) => {
-		log.error(renderValiError(e), 'Error parsing WhatsApp profile update response from YCloud');
-		throw new Error('Invalid WhatsApp profile update response from YCloud');
-	});
+	const parsed = await v.safeParseAsync(whatsappBusinessProfilePatchResponseSchema, response);
+	if (parsed.success) {
+		return parsed.output;
+	}
 
-	return parsed;
+	log.info(
+		{ wabaId, phoneNumber },
+		'YCloud profile PATCH returned no usable profile; refetching'
+	);
+	return getWhatsappPhoneNumberProfile({ wabaId, phoneNumber });
 }
 
 export async function getWhatsappBusinessAccountSummary({

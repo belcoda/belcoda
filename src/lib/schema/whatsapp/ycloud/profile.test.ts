@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import * as v from 'valibot';
 import {
 	toYCloudProfileUpdatePayload,
-	updateWhatsappBusinessProfileInput
+	updateWhatsappBusinessProfileInput,
+	whatsappBusinessProfilePatchResponseSchema
 } from './profile';
 
 describe('updateWhatsappBusinessProfileInput', () => {
@@ -26,6 +27,21 @@ describe('updateWhatsappBusinessProfileInput', () => {
 				about: ''
 			})
 		).toThrow();
+	});
+});
+
+describe('whatsappBusinessProfilePatchResponseSchema', () => {
+	it('rejects an empty PATCH success body', () => {
+		const result = v.safeParse(whatsappBusinessProfilePatchResponseSchema, {});
+		expect(result.success).toBe(false);
+	});
+
+	it('accepts a PATCH body that includes about', () => {
+		const result = v.safeParse(whatsappBusinessProfilePatchResponseSchema, {
+			about: 'Hello',
+			verifiedName: 'Acme'
+		});
+		expect(result.success).toBe(true);
 	});
 });
 
