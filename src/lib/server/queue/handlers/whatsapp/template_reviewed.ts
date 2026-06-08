@@ -17,7 +17,14 @@ export async function handleWhatsappTemplateReviewed(body: any) {
 						throw new Error('Missing wabaId in whatsapp template reviewed webhook');
 					}
 
-					log.info({ body, wabaId }, 'Whatsapp template approved');
+					log.info(
+						{
+							wabaId,
+							templateName: body.whatsappTemplate?.name,
+							templateLocale: body.whatsappTemplate?.language
+						},
+						'Whatsapp template approved'
+					);
 					const organization = await db
 						.select()
 						.from(organizationTable)
