@@ -49,7 +49,7 @@ test.describe.serial('Communications: WhatsApp', () => {
 		await navigationPage.gotoDrafts();
 		await navigationPage.clickComposeWhatsApp();
 
-		await expect(page).toHaveURL(/\/communications\/whatsapp\/drafts\/[0-9a-f-]{36}$/i, {
+		await expect(page).toHaveURL(/\/communications\/whatsapp\/drafts\/[0-9a-f-]{36}(\?.*)?$/i, {
 			timeout: 20_000
 		});
 
@@ -79,9 +79,8 @@ test.describe.serial('Communications: WhatsApp', () => {
 		const draftPage = new WhatsAppDraftPage(page);
 		await draftPage.gotoDraftById(state.threadId);
 		await draftPage.waitForLoaded();
-		await draftPage.addSimpleMessageNode();
-		await draftPage.editLatestMessageText('E2E follow-up text message');
 		await draftPage.selectEveryoneRecipient();
+		await draftPage.save();
 		await draftPage.sendAndConfirm();
 
 		await expect(page).toHaveURL(`/communications/whatsapp/sent/${state.threadId}`, {

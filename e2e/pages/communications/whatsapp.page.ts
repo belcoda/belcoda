@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class WhatsAppNavigationPage {
 	readonly page: Page;
@@ -75,7 +75,6 @@ export class WhatsAppListPage {
 
 export class WhatsAppDraftPage {
 	readonly page: Page;
-	readonly saveButton: Locator;
 	readonly sendButton: Locator;
 	readonly discardButton: Locator;
 	readonly testButton: Locator;
@@ -89,7 +88,6 @@ export class WhatsAppDraftPage {
 
 	constructor(page: Page) {
 		this.page = page;
-		this.saveButton = page.getByTestId('flow-save-button');
 		this.sendButton = page.getByTestId('flow-send-button');
 		this.discardButton = page.getByTestId('flow-discard-button');
 		this.testButton = page.getByTestId('flow-test-button');
@@ -107,15 +105,19 @@ export class WhatsAppDraftPage {
 	}
 
 	async waitForLoaded() {
-		await this.saveButton.waitFor({ state: 'visible', timeout: 20_000 });
+		await this.discardButton.waitFor({ state: 'visible', timeout: 20_000 });
 		await this.sendButton.waitFor({ state: 'visible', timeout: 20_000 });
 	}
 
 	async save() {
-		await this.saveButton.click();
+		const saving = this.page.getByText(/Saving/);
+		await saving.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {});
+		await saving.waitFor({ state: 'hidden', timeout: 20_000 });
+		await expect(this.page.getByText(/Saved/)).toBeVisible({ timeout: 20_000 });
 	}
 
 	async sendAndConfirm() {
+		await expect(this.sendButton).toBeEnabled({ timeout: 20_000 });
 		this.page.once('dialog', (dialog) => dialog.accept());
 		await this.sendButton.click();
 	}
@@ -127,6 +129,7 @@ export class WhatsAppDraftPage {
 		const everyoneOption = this.recipientOptions.filter({ hasText: /Everyone/i }).first();
 		await everyoneOption.waitFor({ state: 'visible', timeout: 10_000 });
 		await everyoneOption.click();
+		await this.page.keyboard.press('Escape');
 	}
 
 	async addSimpleMessageNode() {
