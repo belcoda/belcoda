@@ -5,7 +5,7 @@ import { array, type InferOutput, object, optional, nullable } from 'valibot';
 import { listFilter, type ListFilter, uuid } from '$lib/schema/helpers';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { readTeamZero } from '$lib/schema/team';
-import { decodeTeamListCursor } from '$lib/utils/team/cursor';
+import { decodeRestTeamListCursor, decodeTeamListCursor } from '$lib/utils/team/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -13,14 +13,18 @@ export const inputSchema = object({
 });
 export type ListTeamsInput = InferOutput<typeof inputSchema>;
 
+type TeamListStartCursor = { createdAt: number; id: string } | { id: string };
+
 function listTeamsQueryBase({
 	ctx,
 	input,
-	limit
+	limit,
+	resolveStartCursor
 }: {
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 	limit: number;
+	resolveStartCursor: (cursor: string) => TeamListStartCursor | null;
 }) {
 	let q = builder.team
 		.where((expr) => teamReadPermissions(expr, ctx))
@@ -30,9 +34,9 @@ function listTeamsQueryBase({
 		.orderBy('id', 'desc')
 		.limit(limit);
 	if (input.cursor) {
-		const cursor = decodeTeamListCursor(input.cursor);
-		if (cursor) {
-			q = q.start(cursor);
+		const start = resolveStartCursor(input.cursor);
+		if (start) {
+			q = q.start(start);
 		}
 	}
 	return q;
@@ -47,7 +51,12 @@ export function listTeamsQuery({
 	input: InferOutput<typeof inputSchema>;
 }) {
 	const pageSize = input.pageSize || 50;
-	return listTeamsQueryBase({ ctx, input, limit: pageSize });
+	return listTeamsQueryBase({
+		ctx,
+		input,
+		limit: pageSize,
+		resolveStartCursor: decodeRestTeamListCursor
+	});
 }
 
 /**
@@ -62,7 +71,12 @@ export function listTeamsPaginatedQuery({
 	input: InferOutput<typeof inputSchema>;
 }) {
 	const pageSize = input.pageSize || 50;
-	return listTeamsQueryBase({ ctx, input, limit: pageSize + 1 });
+	return listTeamsQueryBase({
+		ctx,
+		input,
+		limit: pageSize + 1,
+		resolveStartCursor: decodeTeamListCursor
+	});
 }
 
 export const listTeams = defineQuery(inputSchema, ({ ctx, args }) => {
