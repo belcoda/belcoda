@@ -5,7 +5,7 @@ import { array, type InferOutput, object, optional, nullable, boolean } from 'va
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
 import { readTagZero } from '$lib/schema/tag';
-import { decodeTagListCursor } from '$lib/utils/tag/cursor';
+import { decodeRestTagListCursor, decodeTagListCursor } from '$lib/utils/tag/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -14,14 +14,18 @@ export const inputSchema = object({
 });
 export type ListTagsInput = InferOutput<typeof inputSchema>;
 
+type TagListStartCursor = { createdAt: number; id: string } | { id: string };
+
 function listTagsQueryBase({
 	ctx,
 	input,
-	limit
+	limit,
+	resolveStartCursor
 }: {
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 	limit: number;
+	resolveStartCursor: (cursor: string) => TagListStartCursor | null;
 }) {
 	let q = builder.tag
 		.where((expr) => tagReadPermissions(expr, ctx))
@@ -31,9 +35,9 @@ function listTagsQueryBase({
 		.orderBy('id', 'desc')
 		.limit(limit);
 	if (input.cursor) {
-		const cursor = decodeTagListCursor(input.cursor);
-		if (cursor) {
-			q = q.start(cursor);
+		const start = resolveStartCursor(input.cursor);
+		if (start) {
+			q = q.start(start);
 		}
 	}
 	return q;
@@ -48,7 +52,12 @@ export function listTagsQuery({
 	input: InferOutput<typeof inputSchema>;
 }) {
 	const pageSize = input.pageSize || 50;
-	return listTagsQueryBase({ ctx, input, limit: pageSize });
+	return listTagsQueryBase({
+		ctx,
+		input,
+		limit: pageSize,
+		resolveStartCursor: decodeRestTagListCursor
+	});
 }
 
 /**
@@ -63,7 +72,12 @@ export function listTagsPaginatedQuery({
 	input: InferOutput<typeof inputSchema>;
 }) {
 	const pageSize = input.pageSize || 50;
-	return listTagsQueryBase({ ctx, input, limit: pageSize + 1 });
+	return listTagsQueryBase({
+		ctx,
+		input,
+		limit: pageSize + 1,
+		resolveStartCursor: decodeTagListCursor
+	});
 }
 
 export const listTags = defineQuery(inputSchema, ({ ctx, args }) => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { encodeCursor } from '$lib/utils/cursor';
-import { decodeTagListCursor, encodeTagListCursor } from './cursor';
+import { decodeRestTagListCursor, decodeTagListCursor, encodeTagListCursor } from './cursor';
 
 describe('encodeTagListCursor / decodeTagListCursor', () => {
 	const row = {
@@ -17,5 +17,18 @@ describe('encodeTagListCursor / decodeTagListCursor', () => {
 		expect(decodeTagListCursor(encodeCursor({ id: row.id }))).toBeNull();
 		expect(decodeTagListCursor(encodeCursor({ createdAt: 'not-a-number', id: row.id }))).toBeNull();
 		expect(decodeTagListCursor('invalid')).toBeNull();
+	});
+});
+
+describe('decodeRestTagListCursor', () => {
+	const tagId = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+
+	it('accepts a raw tag id for REST pagination', () => {
+		expect(decodeRestTagListCursor(tagId)).toEqual({ id: tagId });
+	});
+
+	it('returns null for invalid values', () => {
+		expect(decodeRestTagListCursor('not-a-uuid')).toBeNull();
+		expect(decodeRestTagListCursor('')).toBeNull();
 	});
 });
