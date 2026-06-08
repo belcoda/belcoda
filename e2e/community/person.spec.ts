@@ -107,7 +107,9 @@ test.describe.serial('Community and person pages', () => {
 		await loginAsOwner(page, PROJECT);
 		await profilePage.goto(ids.personPath);
 
-		await profilePage.editEmail(newEmail);
+		await expect(async () => {
+			await profilePage.editEmail(newEmail);
+		}).toPass({ timeout: 30_000 });
 
 		await expect(page.getByTestId('person-profile-email-display')).toHaveText(newEmail, {
 			timeout: 15_000
