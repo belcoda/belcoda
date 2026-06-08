@@ -32,9 +32,9 @@
 		cloneTemplateMessageData,
 		getParamDisplayValue,
 		getParamSource,
-		getVariableLabel,
 		patchParamSource,
-		patchParamSourceType
+		patchParamSourceType,
+		getVariableLabel
 	} from './template-message-form';
 
 	let { id, data }: NodeProps<Node<WhatsappTemplateMessageData, 'templateMessage'>> = $props();
