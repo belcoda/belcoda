@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
+	import { t } from '$lib/index.svelte';
 	import queries from '$lib/zero/query/index';
 	const { params } = $props();
 	const person = $derived.by(() => {
@@ -11,6 +12,7 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import ActivityTimeline from '$lib/components/widgets/activity/ActivityTimeline.svelte';
 	import SendBusinessApiIndividualMessage from '$lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte';
+	import SendBusinessApiTemplateMessage from '$lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte';
 	const lastReceivedAt = $derived(person.data?.mostRecentWhatsappMessageReceivedAt || 0);
 	const lastReceivedAtDate = $derived(new Date((() => lastReceivedAt)()));
 	const isLastReceivedAtLessThan24HoursAgo = $derived(
@@ -23,15 +25,22 @@
 	);
 </script>
 
-<ContentLayout
-	rootLink="/community"
-	{header}
-	bodyPadding="p-0"
-	hideFooter={!isLastReceivedAtLessThan24HoursAgo || !whatsappOnboarded}
->
+<ContentLayout rootLink="/community" {header} bodyPadding="p-0">
 	<ActivityTimeline personId={params.personId} />
 	{#snippet footer()}
-		<SendBusinessApiIndividualMessage personId={params.personId} />
+		{#if whatsappOnboarded}
+			{#if isLastReceivedAtLessThan24HoursAgo}
+				<SendBusinessApiIndividualMessage personId={params.personId} />
+			{:else}
+				<SendBusinessApiTemplateMessage personId={params.personId} />
+			{/if}
+		{:else}
+			<div class="flex items-center justify-center">
+				<p class="text-sm text-muted-foreground">
+					{t`WhatsApp is not onboarded for this organization. Please contact support to onboard.`}
+				</p>
+			</div>
+		{/if}
 	{/snippet}
 </ContentLayout>
 
