@@ -299,7 +299,10 @@ export async function sendWhatsappTemplateMessage({
 				}
 			});
 		}
+	});
 
+	//persist message in db
+	await db.transaction(async (tx) => {
 		const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
 			templateMessage: resolvedMessage,
 			template: template.components,
@@ -343,5 +346,31 @@ export async function sendWhatsappTemplateMessage({
 				}
 			}
 		});
+	});
+
+	//bill the message
+	await db.transaction(async (tx) => {
+		const claimedFreeCredit = await _reduceFreeWhatsAppMessageCredits({
+			organizationId: organization.id,
+			tx
+		});
+		if (!claimedFreeCredit) {
+			const delta = (ycloudResponse.totalPrice ?? 0) * 100; //convert to cents
+			const deltaInHundredthsOfCents = Math.ceil(delta * 100); //convert to hundredths of cents
+			await _createLedgerEntry({
+				tx,
+				args: {
+					organizationId: organization.id,
+					deltaInUsdHundredthsOfCents: -deltaInHundredthsOfCents,
+					metadata: {
+						type: 'whatsapp_message_outgoing',
+						whatsappMessageId: whatsappMessageId,
+						whatsappThreadId: threadId,
+						sentByUserId: sendingUserId ?? null,
+						teamId: null //for now, always null -- we don't currently support team messaging
+					}
+				}
+			});
+		}
 	});
 }

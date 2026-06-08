@@ -4,7 +4,7 @@ import * as helpers from '$lib/schema/helpers';
 const ledgerEntryMetadataTypes = [
 	v.object({
 		type: v.literal('added_from_stripe'),
-		addedByUserId: helpers.uuid,
+		addedByUserId: v.union([helpers.uuid, v.literal('UNKNOWN_USER_ID')]),
 		stripeCheckoutSessionId: helpers.mediumStringEmpty,
 		stripeWebhookDetails: v.record(v.string(), v.unknown())
 	}),
@@ -38,7 +38,7 @@ export type LedgerSchema = v.InferOutput<typeof ledgerSchema>;
 
 export const createLedgerEntrySchema = v.object({
 	organizationId: helpers.uuid,
-	deltaInUsdHundredthsOfCents: v.pipe(v.number(), v.integer()), //positive for credits, negative for debits
+	deltaInUsdHundredthsOfCents: v.pipe(v.number(), v.integer()), //positive for deposits, negative for debits
 	metadata: ledgerEntryMetadataSchema
 });
 export type CreateLedgerEntrySchema = v.InferOutput<typeof createLedgerEntrySchema>;
