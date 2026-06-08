@@ -5072,12 +5072,17 @@ msgstr "🎧 Audio message"
 msgid "🎨 Sticker"
 msgstr "🎨 Sticker"
 
+#. 0: formatNumber(paginatedNotes.items.length, locale.current)
 #. 0: formatNumber(paginatedPersonList.items.length, locale.current)
+#. 0: formatNumber(paginatedTags.items.length, locale.current)
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 msgid "{0} shown"
 msgstr "{0} shown"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
 msgid "Load more"
 msgstr "Load more"
 

@@ -1,10 +1,10 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput, object } from 'valibot';
-import { listFilter, parseSchema, uuid } from '$lib/schema/helpers';
+import { type InferOutput, object } from 'valibot';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
-import { readPersonNoteWithUserZero } from '$lib/schema/person-note';
+import { decodePersonNoteListCursor } from '$lib/utils/person-note/cursor';
 
 export const inputSchema = object({
 	organizationId: listFilter.entries.organizationId,
@@ -16,12 +16,14 @@ export const inputSchema = object({
 });
 export type ListPersonNotesInput = InferOutput<typeof inputSchema>;
 
-export function listPersonNotesQuery({
+function listPersonNotesQueryBase({
 	ctx,
-	input
+	input,
+	limit
 }: {
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
+	limit: number;
 }) {
 	let q = builder.personNote
 		.where((expr) => personNoteReadPermissions(expr, ctx))
@@ -29,15 +31,46 @@ export function listPersonNotesQuery({
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
-		.limit(input.pageSize || 50);
+		.orderBy('id', 'desc')
+		.limit(limit);
 	if (input.cursor) {
-		q = q.start({ id: input.cursor });
+		const cursor = decodePersonNoteListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
 	}
 	return q;
 }
 
+/** Exact page size for REST and other non-UI callers. */
+export function listPersonNotesQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonNotesQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listPersonNotesPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonNotesQueryBase({ ctx, input, limit: pageSize + 1 });
+}
+
 export const listPersonNotes = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listPersonNotesQuery({ ctx, input: args });
+	return listPersonNotesPaginatedQuery({ ctx, input: args });
 });
 
 function whereClause(
