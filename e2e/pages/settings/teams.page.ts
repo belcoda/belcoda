@@ -37,6 +37,14 @@ export class TeamsPage {
 			.filter({ has: this.page.locator(`[data-testid="team-row-name"]:has-text("${name}")`) });
 	}
 
+	teamRowsForSeedRun(runId: string): Locator {
+		return this.teamRows.filter({
+			has: this.page.locator(
+				`[data-testid="team-row-name"]:has-text("E2E pagination team ${runId}")`
+			)
+		});
+	}
+
 	editTriggerForTeam(teamId: string): Locator {
 		return this.page.locator(`[data-testid="edit-team-trigger"][data-team-id="${teamId}"]`);
 	}

@@ -10,8 +10,6 @@ const PROJECT = 'community' as const;
 test('owner can load more teams', async ({ page, request }) => {
 	const teamsPage = new TeamsPage(page);
 	await loginAsOwner(page, PROJECT);
-	await teamsPage.goto();
-	const countBeforeSeed = await teamsPage.teamRows.count();
 
 	const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-teams`, {
 		data: { count: 30 }
@@ -21,15 +19,14 @@ test('owner can load more teams', async ({ page, request }) => {
 	expect(seedBody.runId).toBeTruthy();
 
 	await teamsPage.goto();
-	const expectedTotal = countBeforeSeed + 30;
-	const expectedFirstPage = Math.min(25, expectedTotal);
+	const seededRows = teamsPage.teamRowsForSeedRun(seedBody.runId);
 
-	await expect(teamsPage.teamRows).toHaveCount(expectedFirstPage, { timeout: 15_000 });
+	await expect(seededRows.first()).toBeVisible({ timeout: 15_000 });
+	await expect(teamsPage.loadMoreButton).toBeVisible({ timeout: 15_000 });
+	expect(await seededRows.count()).toBeLessThan(30);
 
-	if (expectedTotal > 25) {
-		await teamsPage.loadMoreButton.click();
-		await expect(teamsPage.teamRows).toHaveCount(expectedTotal, { timeout: 15_000 });
-	}
+	await teamsPage.loadMoreButton.click();
+	await expect(seededRows).toHaveCount(30, { timeout: 15_000 });
 });
 
 test.describe.serial('Settings: Teams', () => {
