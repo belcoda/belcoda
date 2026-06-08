@@ -1,18 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { t } from '$lib/index.svelte';
-	import { appState } from '$lib/state.svelte';
-	import type {
-		WhatsappBusinessAccountSummary,
-		WhatsappProfileAndAccountResponse
-	} from '$lib/schema/whatsapp/ycloud/profile';
+	import { whatsappAccountState } from './whatsapp_account_state.svelte';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 
-	let loading = $state(true);
-	let error = $state<string | null>(null);
-	let waba = $state<WhatsappBusinessAccountSummary | null>(null);
+	const loading = $derived(whatsappAccountState.loading);
+	const error = $derived(whatsappAccountState.error);
+	const waba = $derived(whatsappAccountState.waba);
 
 	function formatStatus(value: string | null | undefined): string {
 		if (!value) return t`—`;
@@ -22,38 +17,6 @@
 			.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
 			.join(' ');
 	}
-
-	async function loadWaba() {
-		const organizationId = appState.organizationId;
-		if (!organizationId) {
-			error = t`No active organization`;
-			loading = false;
-			return;
-		}
-
-		loading = true;
-		error = null;
-		try {
-			const response = await fetch(
-				`/api/utils/whatsapp/profile?organizationId=${encodeURIComponent(organizationId)}`
-			);
-			if (!response.ok) {
-				const message = await response.text();
-				throw new Error(message || t`Failed to load WhatsApp business account details`);
-			}
-			const data = (await response.json()) as WhatsappProfileAndAccountResponse;
-			waba = data.waba;
-		} catch (err) {
-			error =
-				err instanceof Error ? err.message : t`Failed to load WhatsApp business account details`;
-		} finally {
-			loading = false;
-		}
-	}
-
-	onMount(() => {
-		void loadWaba();
-	});
 </script>
 
 <Card.Root data-testid="whatsapp-accounts-activated-card">

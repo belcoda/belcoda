@@ -7,6 +7,7 @@
 		type WhatsappBusinessProfile,
 		type WhatsappPhoneNumberProfileVertical
 	} from '$lib/schema/whatsapp/ycloud/profile';
+	import { whatsappAccountState } from './whatsapp_account_state.svelte';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -19,10 +20,10 @@
 	import ImageUploadNew from '$lib/components/ui/image-upload/ImageUploadNew.svelte';
 	import { toast } from 'svelte-sonner';
 
-	let profile = $state<WhatsappBusinessProfile | null>(null);
-	let loading = $state(true);
-	let error = $state<string | null>(null);
-	let submitting = $state(false);
+	const profile = $derived(whatsappAccountState.profile);
+	const loading = $derived(whatsappAccountState.loading);
+	const error = $derived(whatsappAccountState.error);
+	const submitting = $derived(whatsappAccountState.saving);
 
 	let about = $state('');
 	let description = $state('');
@@ -45,6 +46,15 @@
 		profilePictureUrl = data.profilePictureUrl ?? null;
 	}
 
+	onMount(async () => {
+		const organizationId = appState.organizationId;
+		await whatsappAccountState.load(organizationId);
+		const currentProfile = whatsappAccountState.profile;
+		if (currentProfile) {
+			applyProfileToForm(currentProfile);
+		}
+	});
+
 	function formatNameStatus(status: string | null | undefined): string {
 		if (!status) return t`—`;
 		return status
@@ -60,34 +70,6 @@
 		);
 	}
 
-	async function loadProfile() {
-		const organizationId = appState.organizationId;
-		if (!organizationId) {
-			error = t`No active organization`;
-			loading = false;
-			return;
-		}
-
-		loading = true;
-		error = null;
-		try {
-			const response = await fetch(
-				`/api/utils/whatsapp/profile?organizationId=${encodeURIComponent(organizationId)}`
-			);
-			if (!response.ok) {
-				const message = await response.text();
-				throw new Error(message || t`Failed to load WhatsApp business profile`);
-			}
-			const data = await response.json();
-			profile = data.profile as WhatsappBusinessProfile;
-			applyProfileToForm(profile);
-		} catch (err) {
-			error = err instanceof Error ? err.message : t`Failed to load WhatsApp business profile`;
-		} finally {
-			loading = false;
-		}
-	}
-
 	async function saveProfile() {
 		const organizationId = appState.organizationId;
 		if (!organizationId) {
@@ -101,47 +83,25 @@
 			return;
 		}
 
-		submitting = true;
-		error = null;
 		try {
 			const websites = [website1.trim(), website2.trim()].filter(Boolean);
-			const response = await fetch(
-				`/api/utils/whatsapp/profile?organizationId=${encodeURIComponent(organizationId)}`,
-				{
-					method: 'PATCH',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						about: aboutTrimmed,
-						description: description.trim(),
-						address: address.trim(),
-						email: email.trim(),
-						vertical,
-						websites: websites.length > 0 ? websites : [],
-						profilePictureUrl: profilePictureUrl?.trim() ?? ''
-					})
-				}
-			);
-			if (!response.ok) {
-				const message = await response.text();
-				throw new Error(message || t`Failed to save WhatsApp business profile`);
-			}
-			const data = (await response.json()) as WhatsappBusinessProfile;
-			profile = data;
+			const data = await whatsappAccountState.saveProfile(organizationId, {
+				about: aboutTrimmed,
+				description: description.trim(),
+				address: address.trim(),
+				email: email.trim(),
+				vertical,
+				websites: websites.length > 0 ? websites : [],
+				profilePictureUrl: profilePictureUrl?.trim() ?? ''
+			});
 			applyProfileToForm(data);
 			toast.success(t`WhatsApp business profile saved`);
 		} catch (err) {
 			const message =
 				err instanceof Error ? err.message : t`Failed to save WhatsApp business profile`;
-			error = message;
 			toast.error(message);
-		} finally {
-			submitting = false;
 		}
 	}
-
-	onMount(() => {
-		void loadProfile();
-	});
 </script>
 
 <Card.Root class="mt-4" data-testid="whatsapp-business-profile-card">
