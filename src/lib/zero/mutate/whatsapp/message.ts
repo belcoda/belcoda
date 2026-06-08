@@ -2,9 +2,12 @@ import { defineMutator } from '@rocicorp/zero';
 import {
 	emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema,
 	isReactionSupportedMessageType,
-	createWhatsAppMessageMutatorSchema
+	createWhatsAppMessageMutatorSchema,
+	createWhatsappTemplateMessageMutatorSchema
 } from '$lib/schema/whatsapp-message';
 import { env as publicEnv } from '$env/dynamic/public';
+import { createMessageFromTemplateAndTemplateMessage } from '$lib/utils/whatsapp/template';
+
 export const emojiReaction = defineMutator(emojiReactionMutatorSchema, async ({ tx, args }) => {
 	if (!isReactionSupportedMessageType(args.whatsappMessage.type)) {
 		throw new Error('Activity is not an incoming or outgoing whatsapp API message');
@@ -66,6 +69,42 @@ export const sendIndividualMessage = defineMutator(
 			readAt: null
 		});
 		//if we have an activity id, we should create the activity immediately...
+		if (args.metadata.activityId) {
+			tx.mutate.activity.insert({
+				id: args.metadata.activityId,
+				organizationId: args.metadata.organizationId,
+				personId: args.metadata.personId,
+				userId: args.metadata.sentByUserId,
+				type: 'whatsapp_message_outgoing',
+				referenceId: args.metadata.whatsappMessageId,
+				unread: true,
+				createdAt: Date.now()
+			});
+		}
+	}
+);
+
+export const sendIndividualTemplateMessage = defineMutator(
+	createWhatsappTemplateMessageMutatorSchema,
+	async ({ tx, args }) => {
+		const message = createMessageFromTemplateAndTemplateMessage({
+			templateMessage: args.input.whatsappTemplateMessage,
+			template: args.metadata.templateComponents,
+			messageId: args.metadata.whatsappMessageId
+		});
+		tx.mutate.whatsappMessage.insert({
+			id: args.metadata.whatsappMessageId,
+			organizationId: args.metadata.organizationId,
+			personId: args.metadata.personId,
+			message,
+			type: 'outgoing_api_message',
+			status: 'pending',
+			userId: args.metadata.sentByUserId,
+			createdAt: Date.now(),
+			updatedAt: Date.now(),
+			deliveredAt: null,
+			readAt: null
+		});
 		if (args.metadata.activityId) {
 			tx.mutate.activity.insert({
 				id: args.metadata.activityId,
