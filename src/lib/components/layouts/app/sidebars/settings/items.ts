@@ -77,10 +77,10 @@ export const settingsItems: {
 		permissions: 'owner'
 	},
 	{
-		title: () => t`Credit balance`,
+		title: () => t`Account balance`,
 		group: () => t`Billing`,
 		url: '/settings/billing/credit',
-		keywords: ['credit', 'balance', 'billing', 'payments', 'recharge'],
+		keywords: ['balance', 'billing', 'payments', 'recharge', 'funds', 'usd'],
 		permissions: 'owner'
 	},
 	{
