@@ -37,11 +37,23 @@ export class WhatsAppListPage {
 	readonly page: Page;
 	readonly searchInput: Locator;
 	readonly threadRows: Locator;
+	readonly scrollContainer: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
 		this.searchInput = page.getByTestId('communications-whatsapp-search-input');
 		this.threadRows = page.getByTestId('communications-whatsapp-thread-row');
+		this.scrollContainer = page.getByTestId('whatsapp-list-scroll');
+	}
+
+	threadRowsForRun(runId: string): Locator {
+		return this.threadRows.filter({ hasText: `E2E pagination thread ${runId}` });
+	}
+
+	async scrollToBottom() {
+		await this.scrollContainer.evaluate((element) => {
+			element.scrollTop = element.scrollHeight;
+		});
 	}
 
 	threadRowById(threadId: string): Locator {

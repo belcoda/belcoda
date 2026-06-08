@@ -94,7 +94,7 @@
 		</div>
 		<Input placeholder={t`Type to search...`} bind:value={search} data-testid="email-list-search" />
 	</div>
-	<div class="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+	<div class="min-h-0 flex-1 overflow-y-auto overscroll-contain" data-testid="email-list-scroll">
 		<div class="flex flex-col">
 			{#if paginatedEmails.items.length > 0}
 				{#each paginatedEmails.items as email (email.id)}

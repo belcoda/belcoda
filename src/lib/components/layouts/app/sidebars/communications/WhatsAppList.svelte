@@ -97,7 +97,7 @@
 			bind:value={search}
 		/>
 	</div>
-	<div class="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+	<div class="min-h-0 flex-1 overflow-y-auto overscroll-contain" data-testid="whatsapp-list-scroll">
 		<div class="flex flex-col">
 			{#if paginatedThreads.items.length > 0}
 				{#each paginatedThreads.items as whatsappThread (whatsappThread.id)}
