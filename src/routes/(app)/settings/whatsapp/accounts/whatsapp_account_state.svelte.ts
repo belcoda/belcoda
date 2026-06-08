@@ -13,6 +13,7 @@ let saving = $state(false);
 let error = $state<string | null>(null);
 let loadedOrganizationId = $state<string | null>(null);
 let inFlight: Promise<void> | null = null;
+let inFlightOrganizationId: string | null = null;
 
 function profileUrl(organizationId: string) {
 	return `/api/utils/whatsapp/profile?organizationId=${encodeURIComponent(organizationId)}`;
@@ -26,6 +27,7 @@ function reset() {
 	error = null;
 	loadedOrganizationId = null;
 	inFlight = null;
+	inFlightOrganizationId = null;
 }
 
 async function fetchProfile(organizationId: string) {
@@ -38,17 +40,26 @@ async function fetchProfile(organizationId: string) {
 			throw new Error(message || t`Failed to load WhatsApp business profile`);
 		}
 		const data = (await response.json()) as WhatsappProfileAndAccountResponse;
+		if (inFlightOrganizationId !== organizationId) {
+			return;
+		}
 		profile = data.profile;
 		waba = data.waba;
 		loadedOrganizationId = organizationId;
 	} catch (err) {
+		if (inFlightOrganizationId !== organizationId) {
+			return;
+		}
 		profile = null;
 		waba = null;
 		loadedOrganizationId = null;
 		error = err instanceof Error ? err.message : t`Failed to load WhatsApp business profile`;
 	} finally {
-		loading = false;
-		inFlight = null;
+		if (inFlightOrganizationId === organizationId) {
+			loading = false;
+			inFlight = null;
+			inFlightOrganizationId = null;
+		}
 	}
 }
 
@@ -68,6 +79,9 @@ export const whatsappAccountState = {
 	get error() {
 		return error;
 	},
+	get loadedOrganizationId() {
+		return loadedOrganizationId;
+	},
 
 	async load(organizationId: string) {
 		if (loadedOrganizationId === organizationId && profile !== null && waba !== null) {
@@ -81,10 +95,11 @@ export const whatsappAccountState = {
 			error = null;
 		}
 
-		if (inFlight) {
+		if (inFlight && inFlightOrganizationId === organizationId) {
 			return inFlight;
 		}
 
+		inFlightOrganizationId = organizationId;
 		inFlight = fetchProfile(organizationId);
 		return inFlight;
 	},

@@ -49,6 +49,9 @@
 	onMount(async () => {
 		const organizationId = appState.organizationId;
 		await whatsappAccountState.load(organizationId);
+		if (whatsappAccountState.loadedOrganizationId !== organizationId) {
+			return;
+		}
 		const currentProfile = whatsappAccountState.profile;
 		if (currentProfile) {
 			applyProfileToForm(currentProfile);
