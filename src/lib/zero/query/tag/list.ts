@@ -2,9 +2,10 @@ import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, optional, nullable, boolean } from 'valibot';
-import { listFilter, type ListFilter, uuid } from '$lib/schema/helpers';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
 import { readTagZero } from '$lib/schema/tag';
+import { decodeTagListCursor } from '$lib/utils/tag/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -13,6 +14,32 @@ export const inputSchema = object({
 });
 export type ListTagsInput = InferOutput<typeof inputSchema>;
 
+function listTagsQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	let q = builder.tag
+		.where((expr) => tagReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('createdAt', 'desc')
+		.orderBy('id', 'desc')
+		.limit(limit);
+	if (input.cursor) {
+		const cursor = decodeTagListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
+	}
+	return q;
+}
+
+/** Exact page size for REST and other non-UI callers. */
 export function listTagsQuery({
 	ctx,
 	input
@@ -20,19 +47,27 @@ export function listTagsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	let q = builder.tag
-		.where((expr) => tagReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.limit(input.pageSize || 50);
-	if (input.cursor) {
-		q = q.start({ id: input.cursor });
-	}
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listTagsQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listTagsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listTagsQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export const listTags = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listTagsQuery({ ctx, input: args });
+	return listTagsPaginatedQuery({ ctx, input: args });
 });
 
 function whereClause(
