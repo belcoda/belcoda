@@ -18,14 +18,6 @@
 	/* svelte-ignore state_referenced_locally */
 	locale.setLocale(data.locale);
 
-	function loadLocaleReady(currentLocale: typeof locale.current) {
-		return loadLocale(currentLocale).then(() => {
-			if (browser) {
-				clearDeploymentReloadFlag();
-			}
-		});
-	}
-
 	beforeNavigate(({ to, willUnload }) => {
 		if (updated.current && !willUnload && to?.url) {
 			location.href = to.url.href;
@@ -53,7 +45,7 @@
 <main
 	class="[&::-webkit-scrollbar]:width-[6px] overflow-y-auto [&::-webkit-scrollbar-thumb]:rounded-[3px] [&::-webkit-scrollbar-thumb]:bg-gray-200"
 >
-	{#await loadLocaleReady(locale.current)}
+	{#await loadLocale(locale.current)}
 		<!-- TODO: Replace with skeleton loader-->
 		<div class="flex h-screen w-screen items-center justify-center">
 			<span class="icon-[lucide--loader] size-10 animate-spin"></span>
