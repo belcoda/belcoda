@@ -11,8 +11,6 @@
 	import CookieBanner from '$lib/components/widgets/CookieBanner.svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { updated } from '$app/state';
-	import { browser } from '$app/environment';
-	import { clearDeploymentReloadFlag } from '$lib/utils/deployment-recovery';
 
 	const { data, children } = $props();
 	/* svelte-ignore state_referenced_locally */
