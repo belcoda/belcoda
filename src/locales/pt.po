@@ -2655,6 +2655,7 @@ msgstr "Descartar"
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
@@ -3754,6 +3755,7 @@ msgid "Search tag..."
 msgstr "Pesquisar tag..."
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "Search templates..."
 msgstr "Pesquisar modelos..."
 
@@ -4901,15 +4903,19 @@ msgid "Delivery logs"
 msgstr "Registos de entregas"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "Text"
 msgstr "Texto"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "Variable"
 msgstr "Variável"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "Fallback text"
 msgstr "Texto de reserva"
 
@@ -4978,6 +4984,7 @@ msgid "No variables found."
 msgstr "Nenhuma variável encontrada."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
 msgstr "Adicione texto de reserva para destinatários sem este valor."
 
@@ -4986,10 +4993,12 @@ msgid "[Name unknown]"
 msgstr "[Nome desconhecido]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved templates found."
 msgstr "Nenhum modelo aprovado encontrado."
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 #: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "Manage templates"
 msgstr "Gerir modelos"
@@ -5054,7 +5063,7 @@ msgstr "🎧 Mensagem de áudio"
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
-msgstr ""
+msgstr "🎨 Autocolante"
 
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
@@ -5287,73 +5296,48 @@ msgstr "Sua conta comercial do WhatsApp está conectada. Revise a verificação 
 #~ msgid "Purchase additional credit with Stripe."
 #~ msgstr ""
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Enter an amount in USD to continue in Stripe checkout."
-msgstr ""
+#~ msgid "Enter an amount in USD to continue in Stripe checkout."
+#~ msgstr ""
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Amount (USD)"
-msgstr ""
+#~ msgid "Amount (USD)"
+#~ msgstr ""
 
 #~ msgid "Minimum purchase: US${0}"
 #~ msgstr ""
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Continue to checkout"
+#~ msgid "Continue to checkout"
+#~ msgstr ""
+
+#~ msgid "Or choose a preset amount:"
+#~ msgstr ""
+
+#~ msgid "Payment completed. Your balance will update shortly."
+#~ msgstr ""
+
+#~ msgid "Payment was cancelled."
+#~ msgstr ""
+
+#~ msgid "You don't have permission to add funds. Only organization owners can access this page."
+#~ msgstr ""
+
+#~ msgid "Account balance"
+#~ msgstr ""
+
+#~ msgid "Add funds to your balance with Stripe."
+#~ msgstr ""
+
+#~ msgid "Add funds"
+#~ msgstr ""
+
+#~ msgid "Add {0}"
+#~ msgstr ""
+
+#~ msgid "Enter a valid amount. Minimum purchase is {0}."
+#~ msgstr ""
+
+#~ msgid "Minimum purchase: {0}"
+#~ msgstr ""
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
 msgstr ""
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Or choose a preset amount:"
-msgstr ""
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Payment completed. Your balance will update shortly."
-msgstr ""
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Payment was cancelled."
-msgstr ""
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "You don't have permission to add funds. Only organization owners can access this page."
-msgstr ""
-
-#: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Account balance"
-msgstr ""
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add funds to your balance with Stripe."
-msgstr ""
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add funds"
-msgstr ""
-
-#. 0: formatUsdAmount(parsedPurchaseAmount, locale.current)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add {0}"
-msgstr ""
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Enter a valid amount. Minimum purchase is {0}."
-msgstr ""
-
-#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Minimum purchase: {0}"
-msgstr ""
-
-#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
-msgid "Add image"
-msgstr "Adicionar imagem"
-
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
-msgstr "Sua conta comercial do WhatsApp está conectada. Revise a verificação e os detalhes da conta abaixo."
-
-#: src/lib/components/widgets/activity/preview/whatsapp_message.ts
-msgid "🎨 Sticker"
-msgstr "🎨 Autocolante"
