@@ -45,6 +45,10 @@
 		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
 
+	const allSignatures = $derived.by(() => {
+		return z.createQuery(queries.petition.signatures({ petitionId: params.petitionId }));
+	});
+
 	const petitionSignatures = $derived.by(() => {
 		return z.createQuery(queries.petitionSignature.list(paginatedSignatures.pageFilter));
 	});
@@ -130,27 +134,37 @@
 		return customColumns.find((column) => column.id === id)?.label;
 	}
 
-	const table = $derived.by(() => {
-		const list = paginatedSignatures.items;
+	function buildSignatureTableRows(
+		list: readonly ReadPetitionSignatureZeroWithPerson[],
+		headers: string[],
+		personColumns: string[]
+	) {
 		const rows: Record<string, string | null | undefined>[] = [];
 		for (const signature of list) {
 			const row: Record<string, string | null | undefined> = {};
-			const sig = signature as ReadPetitionSignatureZeroWithPerson;
-			for (const header of tableHeaders) {
-				if (displayColumns.includes(header)) {
+			for (const header of headers) {
+				if (personColumns.includes(header)) {
 					row[header] = renderSignatureColumn({
 						columnName: header,
-						signature: sig,
+						signature,
 						locale: locale.current
 					});
 				} else {
-					row[header] = formatSurveyResponseValue(getSignatureResponsesField(sig, header));
+					row[header] = formatSurveyResponseValue(getSignatureResponsesField(signature, header));
 				}
 			}
 			rows.push(row);
 		}
 		return rows;
-	});
+	}
+
+	const table = $derived.by(() =>
+		buildSignatureTableRows(paginatedSignatures.items, tableHeaders, displayColumns)
+	);
+
+	const exportTable = $derived.by(() =>
+		buildSignatureTableRows(allSignatures.data ?? [], tableHeaders, displayColumns)
+	);
 
 	const transformedTable = $derived.by(() => {
 		const headers = tableHeaders;
@@ -170,7 +184,7 @@
 			used.add(exportKey);
 			exportKeys.push(exportKey);
 		}
-		return table.map((row) => {
+		return exportTable.map((row) => {
 			const newRow: Record<string, string | null | undefined> = {};
 			for (let i = 0; i < headers.length; i++) {
 				newRow[exportKeys[i]] = row[headers[i]];
@@ -179,9 +193,9 @@
 		});
 	});
 	const downloadCsvReady = $derived(
-		petitionSignatures.details.type === 'complete' &&
+		allSignatures.details.type === 'complete' &&
 			petition.data &&
-			paginatedSignatures.items.length > 0
+			(allSignatures.data?.length ?? 0) > 0
 	);
 	async function downloadTableAsCSV() {
 		if (!downloadCsvReady) {
