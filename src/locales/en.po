@@ -4993,8 +4993,9 @@ msgstr "No variables found."
 msgid "Add fallback text for recipients without this value."
 msgstr "Add fallback text for recipients without this value."
 
-#~ msgid "[Name unknown]"
-#~ msgstr "[Name unknown]"
+#: src/lib/utils/name.ts
+msgid "[Name unknown]"
+msgstr "[Name unknown]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
@@ -5075,65 +5076,47 @@ msgstr "🎨 Sticker"
 #~ msgid "Purchase additional credit with Stripe."
 #~ msgstr "Purchase additional credit with Stripe."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Enter an amount in USD to continue in Stripe checkout."
-msgstr "Enter an amount in USD to continue in Stripe checkout."
+#~ msgid "Enter an amount in USD to continue in Stripe checkout."
+#~ msgstr "Enter an amount in USD to continue in Stripe checkout."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Amount (USD)"
-msgstr "Amount (USD)"
+#~ msgid "Amount (USD)"
+#~ msgstr "Amount (USD)"
 
 #~ msgid "Minimum purchase: US${0}"
 #~ msgstr "Minimum purchase: US${0}"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Continue to checkout"
-msgstr "Continue to checkout"
+#~ msgid "Continue to checkout"
+#~ msgstr "Continue to checkout"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Or choose a preset amount:"
-msgstr "Or choose a preset amount:"
+#~ msgid "Or choose a preset amount:"
+#~ msgstr "Or choose a preset amount:"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Payment completed. Your balance will update shortly."
-msgstr "Payment completed. Your balance will update shortly."
+#~ msgid "Payment completed. Your balance will update shortly."
+#~ msgstr "Payment completed. Your balance will update shortly."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Payment was cancelled."
-msgstr "Payment was cancelled."
+#~ msgid "Payment was cancelled."
+#~ msgstr "Payment was cancelled."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "You don't have permission to add funds. Only organization owners can access this page."
-msgstr "You don't have permission to add funds. Only organization owners can access this page."
+#~ msgid "You don't have permission to add funds. Only organization owners can access this page."
+#~ msgstr "You don't have permission to add funds. Only organization owners can access this page."
 
-#: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Account balance"
-msgstr "Account balance"
+#~ msgid "Account balance"
+#~ msgstr "Account balance"
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add funds to your balance with Stripe."
-msgstr "Add funds to your balance with Stripe."
+#~ msgid "Add funds to your balance with Stripe."
+#~ msgstr "Add funds to your balance with Stripe."
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add funds"
-msgstr "Add funds"
+#~ msgid "Add funds"
+#~ msgstr "Add funds"
 
-#. 0: formatUsdAmount(parsedPurchaseAmount, locale.current)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Add {0}"
-msgstr "Add {0}"
+#~ msgid "Add {0}"
+#~ msgstr "Add {0}"
 
-#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Enter a valid amount. Minimum purchase is {0}."
-msgstr "Enter a valid amount. Minimum purchase is {0}."
+#~ msgid "Enter a valid amount. Minimum purchase is {0}."
+#~ msgstr "Enter a valid amount. Minimum purchase is {0}."
 
-#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Minimum purchase: {0}"
-msgstr "Minimum purchase: {0}"
+#~ msgid "Minimum purchase: {0}"
+#~ msgstr "Minimum purchase: {0}"
 
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
@@ -5322,54 +5305,6 @@ msgstr "Add image"
 
 #~ msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 #~ msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
-
-#~ msgid "Enter a valid amount. Minimum purchase is US${0}."
-#~ msgstr "Enter a valid amount. Minimum purchase is US${0}."
-
-#~ msgid "Purchase additional credit with Stripe."
-#~ msgstr "Purchase additional credit with Stripe."
-
-#~ msgid "Enter an amount in USD to continue in Stripe checkout."
-#~ msgstr "Enter an amount in USD to continue in Stripe checkout."
-
-#~ msgid "Amount (USD)"
-#~ msgstr "Amount (USD)"
-
-#~ msgid "Minimum purchase: US${0}"
-#~ msgstr "Minimum purchase: US${0}"
-
-#~ msgid "Continue to checkout"
-#~ msgstr "Continue to checkout"
-
-#~ msgid "Or choose a preset amount:"
-#~ msgstr "Or choose a preset amount:"
-
-#~ msgid "Payment completed. Your balance will update shortly."
-#~ msgstr "Payment completed. Your balance will update shortly."
-
-#~ msgid "Payment was cancelled."
-#~ msgstr "Payment was cancelled."
-
-#~ msgid "You don't have permission to add funds. Only organization owners can access this page."
-#~ msgstr "You don't have permission to add funds. Only organization owners can access this page."
-
-#~ msgid "Account balance"
-#~ msgstr "Account balance"
-
-#~ msgid "Add funds to your balance with Stripe."
-#~ msgstr "Add funds to your balance with Stripe."
-
-#~ msgid "Add funds"
-#~ msgstr "Add funds"
-
-#~ msgid "Add {0}"
-#~ msgstr "Add {0}"
-
-#~ msgid "Enter a valid amount. Minimum purchase is {0}."
-#~ msgstr "Enter a valid amount. Minimum purchase is {0}."
-
-#~ msgid "Minimum purchase: {0}"
-#~ msgstr "Minimum purchase: {0}"
 
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
