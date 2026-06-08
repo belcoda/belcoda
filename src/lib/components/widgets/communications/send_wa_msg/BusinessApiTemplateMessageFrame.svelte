@@ -151,6 +151,3 @@
 		<span class="sr-only">{t`Send`}</span>
 	</Button>
 </div>
-<div>
-	{JSON.stringify(messageData)}
-</div>
