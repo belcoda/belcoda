@@ -5,6 +5,7 @@ import { array, type InferOutput, object, optional } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
 import { readPetitionSignatureZeroWithPerson } from '$lib/schema/petition/petition-signature';
+import { decodePetitionSignatureListCursor } from '$lib/utils/petition-signature/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -18,6 +19,33 @@ const byPetitionInputSchema = object({
 });
 export type PetitionSignaturesByPetitionInput = InferOutput<typeof byPetitionInputSchema>;
 
+function listPetitionSignaturesQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	let q = builder.petitionSignature
+		.related('person')
+		.where((expr) => petitionSignatureReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('createdAt', 'desc')
+		.orderBy('id', 'desc')
+		.limit(limit);
+	if (input.cursor) {
+		const cursor = decodePetitionSignatureListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
+	}
+	return q;
+}
+
+/** Exact page size for REST and other non-UI callers. */
 export function listPetitionSignaturesQuery({
 	ctx,
 	input
@@ -25,18 +53,23 @@ export function listPetitionSignaturesQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const pageSize = input.pageSize ?? (input.petitionId ? 10_000 : 50);
-	let q = builder.petitionSignature
-		.related('person')
-		.where((expr) => petitionSignatureReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.orderBy('createdAt', 'desc')
-		.limit(pageSize);
-	if (input.cursor) {
-		q = q.start({ id: input.cursor });
-	}
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listPetitionSignaturesQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listPetitionSignaturesPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPetitionSignaturesQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export function listPetitionSignaturesByPetitionQuery({
@@ -51,11 +84,12 @@ export function listPetitionSignaturesByPetitionQuery({
 		.where((expr) => petitionSignatureReadPermissions(expr, ctx))
 		.where('deletedAt', 'IS', null)
 		.related('person')
-		.orderBy('createdAt', 'desc');
+		.orderBy('createdAt', 'desc')
+		.orderBy('id', 'desc');
 }
 
 export const listPetitionSignatures = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listPetitionSignaturesQuery({ ctx, input: args });
+	return listPetitionSignaturesPaginatedQuery({ ctx, input: args });
 });
 
 export const listPetitionSignaturesByPetition = defineQuery(
