@@ -51,13 +51,13 @@
 	let sending = $state(false);
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { v7 as uuidv7 } from 'uuid';
-
+	let templateVariableResetKey = $state(0);
 	async function sendMessage() {
 		if (sending) return;
 		sending = true;
 		const messageId = uuidv7();
 		try {
-			z.mutate(
+			const result = z.mutate(
 				mutators.whatsappMessage.sendIndividualTemplateMessage({
 					input: {
 						whatsappTemplateMessage: $state.snapshot(messageData)
@@ -68,12 +68,14 @@
 						activityId: uuidv7(),
 						sentByUserId: appState.userId,
 						whatsappMessageId: messageId,
-						templateComponents: template.components,
+						templateComponents: $state.snapshot(template.components),
 						templateId: template.id
 					}
 				})
 			);
-			messageData = createEmptyMessageData(template?.id);
+			await result.server;
+			messageData = createEmptyMessageData(template.id);
+			templateVariableResetKey++;
 		} finally {
 			sending = false;
 		}
@@ -128,7 +130,7 @@
 	</Popover.Root>
 	<div class="w-full grow">
 		{#if template}
-			{#key template.id}
+			{#key `template.id-${templateVariableResetKey}`}
 				<SendBusinessApiTemplateMessage
 					template={template as ReadWhatsappTemplateZero}
 					bind:data={messageData}
