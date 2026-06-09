@@ -25,7 +25,7 @@
 
 	//filter out all templates that DO HAVE buttons (we can't send button templates with a single message with no actions/automations)
 	const filteredTemplates = $derived(
-		allApprovedTemplates.data?.filter((t) => !t.components.some((c) => c.type === 'BUTTONS'))
+		(allApprovedTemplates.data ?? []).filter((t) => !t.components.some((c) => c.type === 'BUTTONS'))
 	);
 
 	let templateId: string = $state(
@@ -35,7 +35,7 @@
 
 	//if defaultTemplateId is part of the filteredTemplates, use that, otherwise use the first template
 	const template = $derived(
-		filteredTemplates.find((t) => t.id === templateId) ?? filteredTemplates[0]
+		filteredTemplates.find((t) => t.id === templateId) ?? filteredTemplates[0] ?? null
 	);
 
 	let open = $state(false);
