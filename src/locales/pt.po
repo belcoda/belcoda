@@ -5292,7 +5292,7 @@ msgstr "Adicionar imagem"
 
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-msgstr ""
+msgstr "O WhatsApp não está configurado para esta organização. Por favor, contacte o suporte para proceder à ativação."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
