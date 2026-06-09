@@ -29,27 +29,22 @@ export const inputSchema = object({
 
 export type ListPersonsInput = InferOutput<typeof inputSchema>;
 
-/**
- * Paginated person list. Fetches one row past `input.pageSize` (default 50) so callers can
- * detect a next page without a separate count query. Trim before display: keep at most
- * `input.pageSize` rows and treat any extra as `hasMore` (see `processPage` in
- * `$lib/state/paginated-zero-list.svelte.ts`, used by the community person list).
- */
-export function listPersonsQuery({
+function listPersonsQueryBase({
 	ctx,
-	input
+	input,
+	limit
 }: {
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
+	limit: number;
 }) {
-	const pageSize = (input.pageSize || 50) + 1;
 	let q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
 		.orderBy('id', 'desc')
-		.limit(pageSize);
+		.limit(limit);
 	if (input.cursor) {
 		const cursor = decodePersonListCursor(input.cursor);
 		if (cursor) {
@@ -59,8 +54,35 @@ export function listPersonsQuery({
 	return q;
 }
 
+/** Exact page size for REST and other non-UI callers. */
+export function listPersonsQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonsQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listPersonsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonsQueryBase({ ctx, input, limit: pageSize + 1 });
+}
+
 export const listPersons = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listPersonsQuery({ ctx, input: args });
+	return listPersonsPaginatedQuery({ ctx, input: args });
 });
 
 export function listFilteredPersonsQuery({
@@ -70,21 +92,19 @@ export function listFilteredPersonsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const pageSize = (input.pageSize || 50) + 1;
-	const q = builder.person
-		.where((expr) => personReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.orderBy('mostRecentActivityAt', 'desc')
-		.orderBy('id', 'desc')
-		.limit(pageSize);
-	if (input.cursor) {
-		const cursor = decodePersonListCursor(input.cursor);
-		if (cursor) {
-			return q.start(cursor);
-		}
-	}
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listPersonsQueryBase({ ctx, input, limit: pageSize });
+}
+
+export function listFilteredPersonsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonsQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export function listPersonByIdsArrayQuery({
