@@ -82,7 +82,7 @@
 	}
 </script>
 
-<div class="flex w-full items-end gap-2">
+<div class="flex w-full items-end gap-2" data-testid="person-wa-compose-template">
 	<Popover.Root bind:open>
 		<Popover.Trigger>
 			{#snippet child({ props })}
