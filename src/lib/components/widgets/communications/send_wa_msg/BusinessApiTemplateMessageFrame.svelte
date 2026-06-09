@@ -144,7 +144,7 @@
 		class="rounded-full"
 		size="icon"
 		onclick={sendMessage}
-		disabled={sendin || !template}
+		disabled={sending || !template}
 	>
 		{#if sending}
 			<LoaderIcon class="size-4 animate-spin" />
