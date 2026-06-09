@@ -4977,9 +4977,8 @@ msgstr "Nenhuma variável encontrada."
 msgid "Add fallback text for recipients without this value."
 msgstr "Adicione texto de reserva para destinatários sem este valor."
 
-#: src/lib/utils/name.ts
-msgid "[Name unknown]"
-msgstr "[Nome desconhecido]"
+#~ msgid "[Name unknown]"
+#~ msgstr "[Nome desconhecido]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
