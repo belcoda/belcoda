@@ -5284,7 +5284,7 @@ msgstr "Agregar imagen"
 
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-msgstr ""
+msgstr "WhatsApp no está habilitado para esta organización. Póngase en contacto con soporte para habilitarlo."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
