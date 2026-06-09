@@ -5075,8 +5075,9 @@ msgstr "🎨 Pegatina"
 #~ msgid "You don't have permission to add funds. Only organization owners can access this page."
 #~ msgstr ""
 
-#~ msgid "Account balance"
-#~ msgstr ""
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Account balance"
+msgstr ""
 
 #~ msgid "Add funds to your balance with Stripe."
 #~ msgstr ""

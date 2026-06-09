@@ -5099,8 +5099,9 @@ msgstr "🎨 Sticker"
 #~ msgid "You don't have permission to add funds. Only organization owners can access this page."
 #~ msgstr "You don't have permission to add funds. Only organization owners can access this page."
 
-#~ msgid "Account balance"
-#~ msgstr "Account balance"
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Account balance"
+msgstr "Account balance"
 
 #~ msgid "Add funds to your balance with Stripe."
 #~ msgstr "Add funds to your balance with Stripe."

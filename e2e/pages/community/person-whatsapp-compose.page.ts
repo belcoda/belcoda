@@ -23,6 +23,11 @@ export class PersonWhatsappComposePage {
 		return this.templateComposer.getByText(label, { exact: true });
 	}
 
+	templateParamInput() {
+		// Popover content is portaled to document body, not inside the composer.
+		return this.page.locator('[data-slot="popover-content"] [data-slot="input"]');
+	}
+
 	sendButton(composer: Locator) {
 		return composer.getByRole('button', { name: 'Send' });
 	}

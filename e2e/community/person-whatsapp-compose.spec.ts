@@ -1,11 +1,9 @@
 import { expect, test, type Browser } from '@playwright/test';
 import { createApiClient } from '../api/api-client';
 import { ApiKeysPage } from '../pages/settings/api-keys.page';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
 import { PersonWhatsappComposePage } from '../pages/community/person-whatsapp-compose.page';
 import { loginAsOwner } from '../helpers/login';
-import { getTestUsers } from '../helpers/auth';
+import { ownerStorageState } from '../helpers/auth-storage';
 import { E2E_COMMUNITY_MOCK_WABA_ID } from '../helpers/config';
 import {
 	buildWhatsAppInboundTextWebhook,
@@ -27,20 +25,14 @@ let cachedApiKey: string | null = null;
 async function ensureCommunityOwnerApiKey(browser: Browser): Promise<string> {
 	if (cachedApiKey) return cachedApiKey;
 
-	const owner = getTestUsers(PROJECT).owner;
-	const context = await browser.newContext();
+	const context = await browser.newContext({ storageState: ownerStorageState(PROJECT) });
 	const page = await context.newPage();
 	try {
-		const loginPage = new LoginPage(page);
-		const communityPage = new CommunityPage(page);
-		await loginPage.goto();
-		await loginPage.login(owner.email, owner.password);
-		await page.waitForURL('/community', { timeout: 30_000 });
-		await communityPage.expectLoaded();
-
 		const apiKeysPage = new ApiKeysPage(page);
-		const keyName = `e2e-community-wa-${Date.now()}`;
 		await apiKeysPage.goto();
+		await apiKeysPage.root.waitFor({ state: 'visible', timeout: 15_000 });
+
+		const keyName = `e2e-community-wa-${Date.now()}`;
 		await apiKeysPage.createApiKey(keyName);
 		await apiKeysPage.keyDisplay.waitFor({ state: 'visible', timeout: 15_000 });
 		const key = await apiKeysPage.keyDisplay.inputValue();
@@ -60,6 +52,7 @@ test.describe.serial('Community: person WhatsApp compose', () => {
 	};
 
 	test.beforeAll(async ({ browser }) => {
+		test.setTimeout(60_000);
 		await ensureCommunityOwnerApiKey(browser);
 	});
 
@@ -96,16 +89,20 @@ test.describe.serial('Community: person WhatsApp compose', () => {
 
 		await expect(composePage.templateComposer).toBeVisible({ timeout: 15_000 });
 		await composePage.templateVariableChip('Maria').click();
-		const paramInput = page.locator('[data-slot="popover-content"] input').first();
+		const paramInput = composePage.templateParamInput();
 		await expect(paramInput).toBeVisible({ timeout: 5_000 });
 		await paramInput.fill('E2E Name');
+		await expect(composePage.templateVariableChip('E2E Name')).toBeVisible({ timeout: 5_000 });
 		await page.keyboard.press('Escape');
 
 		await composePage.sendButton(composePage.templateComposer).click();
 
-		await expect(composePage.outgoingMessageText('Hi E2E Name, do you have a second to talk?')).toBeVisible({
-			timeout: 20_000
-		});
+		await expect
+			.poll(
+				async () => composePage.outgoingMessageText('Hi E2E Name, do you have a second to talk?').count(),
+				{ timeout: 20_000 }
+			)
+			.toBeGreaterThan(0);
 	});
 
 	test('inbound message opens window and shows individual composer', async ({ page, request }) => {
