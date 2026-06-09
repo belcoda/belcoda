@@ -398,18 +398,6 @@ export async function sendIndividualMessage({
 	}
 }
 
-export async function sendTemplateMessage({
-	ctx,
-	args: argsInput,
-	tx
-}: {
-	args: CreateWhatsAppMessageMutatorSchema;
-	ctx: QueryContext;
-	tx: ServerTransaction;
-}) {
-	const args = parse(createWhatsAppMessageMutatorSchema, argsInput);
-}
-
 export async function sendIndividualTemplateMessage({
 	ctx,
 	args: argsInput,
