@@ -9,6 +9,8 @@ export class TagsPage {
 	readonly editTagNameInput: Locator;
 	readonly editTagActiveCheckbox: Locator;
 	readonly editTagSubmit: Locator;
+	readonly loadMoreButton: Locator;
+	readonly tagRows: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
@@ -19,6 +21,8 @@ export class TagsPage {
 		this.editTagNameInput = page.getByTestId('edit-tag-name');
 		this.editTagActiveCheckbox = page.getByTestId('edit-tag-active');
 		this.editTagSubmit = page.getByTestId('edit-tag-submit');
+		this.loadMoreButton = page.getByTestId('tags-load-more');
+		this.tagRows = page.getByTestId('tag-row');
 	}
 
 	async goto() {
@@ -33,6 +37,12 @@ export class TagsPage {
 		return this.page
 			.locator('[data-testid="tag-row"]')
 			.filter({ has: this.page.locator(`[data-testid="tag-row-name"]:has-text("${name}")`) });
+	}
+
+	tagRowsForSeedRun(runId: string): Locator {
+		return this.tagRows.filter({
+			has: this.page.locator(`[data-testid="tag-row-name"]:has-text("E2E pagination tag ${runId}")`)
+		});
 	}
 
 	editTriggerForTag(tagId: string): Locator {

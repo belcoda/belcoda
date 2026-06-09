@@ -69,7 +69,7 @@ export function buildSharedComponents() {
 			},
 			PageSize: queryParamsOpenAPIDefinition.pageSize,
 			Search: queryParamsOpenAPIDefinition.searchString,
-			StartAfter: queryParamsOpenAPIDefinition.startAfter
+			Cursor: queryParamsOpenAPIDefinition.cursor
 		},
 		responses: {
 			BadRequest: {

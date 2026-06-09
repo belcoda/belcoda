@@ -19,7 +19,7 @@ import { listEvents } from '$lib/zero/query/event/list';
 import { readEvent } from '$lib/zero/query/event/read';
 
 // event_signup
-import { listEventSignups } from '$lib/zero/query/event_signup/list';
+import { listEventSignups, listEventSignupsByEvent } from '$lib/zero/query/event_signup/list';
 import { readEventSignup } from '$lib/zero/query/event_signup/read';
 
 // organizations
@@ -96,6 +96,7 @@ export {
 	readEvent,
 	// event_signup
 	listEventSignups,
+	listEventSignupsByEvent,
 	readEventSignup,
 	// organizations
 	listOrganizations,
@@ -171,7 +172,8 @@ export default defineQueries({
 	},
 	event: {
 		list: listEvents,
-		read: readEvent
+		read: readEvent,
+		signups: listEventSignupsByEvent
 	},
 	eventSignup: {
 		list: listEventSignups,

@@ -35,8 +35,8 @@ export function listUsersQuery({
 		q = q.where(({ cmp }) => cmp('id', 'NOT IN', input.excludedIds));
 	}
 	q = q.limit(input.pageSize);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
+	if (input.cursor) {
+		q = q.start({ id: input.cursor });
 	}
 	return q;
 }

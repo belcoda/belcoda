@@ -5102,6 +5102,32 @@ msgstr ""
 msgid "Minimum purchase: {0}"
 msgstr ""
 
+#. 0: formatNumber(paginatedNotes.items.length, locale.current)
+#. 0: formatNumber(paginatedPersonList.items.length, locale.current)
+#. 0: formatNumber(paginatedEvents.items.length, locale.current)
+#. 0: formatNumber(paginatedPetitions.items.length, locale.current)
+#. 0: formatNumber(paginatedSignatures.items.length, locale.current)
+#. 0: formatNumber(paginatedSignatures.items.length, locale.current)
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
+#. 0: formatNumber(paginatedTeams.items.length, locale.current)
+#. 0: formatNumber(paginatedTags.items.length, locale.current)
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "{0} shown"
+msgstr "{0} mostrados"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Load more"
+msgstr "Cargar más"
+
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte

@@ -2,9 +2,10 @@ import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, optional, nullable, boolean } from 'valibot';
-import { listFilter, parseSchema } from '$lib/schema/helpers';
+import { listFilter } from '$lib/schema/helpers';
 import { emailMessageReadPermissions } from '$lib/zero/query/email_message/permissions';
 import { readEmailMessageZero } from '$lib/schema/email-message';
+import { decodeCommunicationsListCursor } from '$lib/utils/communications/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -13,6 +14,33 @@ export const inputSchema = object({
 });
 export type ListEmailMessagesInput = InferOutput<typeof inputSchema>;
 
+function listEmailMessagesQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	const direction = input.reverseCron ? 'desc' : 'asc';
+	let q = builder.emailMessage
+		.where((expr) => emailMessageReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('updatedAt', direction)
+		.orderBy('id', direction)
+		.limit(limit);
+	if (input.cursor) {
+		const cursor = decodeCommunicationsListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
+	}
+	return q;
+}
+
+/** Exact page size for non-UI callers. */
 export function listEmailMessagesQuery({
 	ctx,
 	input
@@ -20,20 +48,27 @@ export function listEmailMessagesQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	let q = builder.emailMessage
-		.where((expr) => emailMessageReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.orderBy('updatedAt', input.reverseCron ? 'desc' : 'asc')
-		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
-	}
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listEmailMessagesQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listEmailMessagesPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listEmailMessagesQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export const listEmailMessages = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listEmailMessagesQuery({ ctx, input: args });
+	return listEmailMessagesPaginatedQuery({ ctx, input: args });
 });
 
 function whereClause(
