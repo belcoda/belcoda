@@ -109,7 +109,7 @@ export function convertWhatsAppTemplateMessageToApiFormat({
 				parameters: [
 					{
 						type: 'payload' as const,
-						payload: `${whatsappThreadId}:${nodeId}:${button.id}`
+						payload: `${whatsappThreadId ?? 'UNKNOWN'}:${nodeId ?? 'UNKNOWN'}:${button.id}`
 					}
 				]
 			});
