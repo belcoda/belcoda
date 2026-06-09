@@ -14,18 +14,38 @@ export const inputSchema = object({
 });
 export type ListTagsInput = InferOutput<typeof inputSchema>;
 
-type TagListStartCursor = { createdAt: number; id: string } | { id: string };
-
-function listTagsQueryBase({
+function listTagsRestQueryBase({
 	ctx,
 	input,
-	limit,
-	resolveStartCursor
+	limit
 }: {
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 	limit: number;
-	resolveStartCursor: (cursor: string) => TagListStartCursor | null;
+}) {
+	let q = builder.tag
+		.where((expr) => tagReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('id', 'desc')
+		.limit(limit);
+	if (input.cursor) {
+		const start = decodeRestTagListCursor(input.cursor);
+		if (start) {
+			q = q.start(start);
+		}
+	}
+	return q;
+}
+
+function listTagsUiQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
 }) {
 	let q = builder.tag
 		.where((expr) => tagReadPermissions(expr, ctx))
@@ -35,7 +55,7 @@ function listTagsQueryBase({
 		.orderBy('id', 'desc')
 		.limit(limit);
 	if (input.cursor) {
-		const start = resolveStartCursor(input.cursor);
+		const start = decodeTagListCursor(input.cursor);
 		if (start) {
 			q = q.start(start);
 		}
@@ -43,7 +63,7 @@ function listTagsQueryBase({
 	return q;
 }
 
-/** Exact page size for REST and other non-UI callers. */
+/** Exact page size for REST callers. Sorts by id only to match the { id } REST cursor. */
 export function listTagsQuery({
 	ctx,
 	input
@@ -52,17 +72,13 @@ export function listTagsQuery({
 	input: InferOutput<typeof inputSchema>;
 }) {
 	const pageSize = input.pageSize || 50;
-	return listTagsQueryBase({
-		ctx,
-		input,
-		limit: pageSize,
-		resolveStartCursor: decodeRestTagListCursor
-	});
+	return listTagsRestQueryBase({ ctx, input, limit: pageSize });
 }
 
 /**
  * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
  * `hasMore` via `processPage` without a separate count query.
+ * Sorts by createdAt + id to match the { createdAt, id } encoded cursor.
  */
 export function listTagsPaginatedQuery({
 	ctx,
@@ -72,12 +88,7 @@ export function listTagsPaginatedQuery({
 	input: InferOutput<typeof inputSchema>;
 }) {
 	const pageSize = input.pageSize || 50;
-	return listTagsQueryBase({
-		ctx,
-		input,
-		limit: pageSize + 1,
-		resolveStartCursor: decodeTagListCursor
-	});
+	return listTagsUiQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export const listTags = defineQuery(inputSchema, ({ ctx, args }) => {
