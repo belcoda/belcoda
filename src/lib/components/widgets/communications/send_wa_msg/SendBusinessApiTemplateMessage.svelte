@@ -59,9 +59,8 @@
 	const templateHeader = $derived(template.components.find((c) => c.type === 'HEADER'));
 	const templateBody = $derived(template.components.find((c) => c.type === 'BODY'));
 
-	$effect(() => {
+	function hydrateFromData() {
 		const id = template.id;
-		if (hydratedForTemplateId === id) return;
 
 		const mergeExisting =
 			hasSavedParams && savedTemplateIdOnMount === id && hydratedForTemplateId === null;
@@ -77,7 +76,7 @@
 		headerImageUrl = next.headerImageUrl;
 		hydratedForTemplateId = id;
 		commit();
-	});
+	}
 
 	const header = $derived.by(() => {
 		if (templateHeader?.format === 'TEXT') {
@@ -101,6 +100,11 @@
 		bodyParams = patchParamSource(bodyParams, index, source);
 		commit();
 	}
+
+	import { onMount } from 'svelte';
+	onMount(() => {
+		hydrateFromData();
+	});
 </script>
 
 <div class="w-full rounded-md border border-input bg-gray-50 shadow-xs">
