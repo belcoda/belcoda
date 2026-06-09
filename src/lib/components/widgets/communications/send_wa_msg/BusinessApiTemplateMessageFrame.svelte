@@ -54,6 +54,7 @@
 	let templateVariableResetKey = $state(0);
 	async function sendMessage() {
 		if (sending) return;
+		if (!template) return;
 		sending = true;
 		const messageId = uuidv7();
 		try {
@@ -143,7 +144,7 @@
 		class="rounded-full"
 		size="icon"
 		onclick={sendMessage}
-		disabled={sending}
+		disabled={sendin || !template}
 	>
 		{#if sending}
 			<LoaderIcon class="size-4 animate-spin" />
