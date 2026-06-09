@@ -413,19 +413,26 @@ export async function sendTemplateMessage({
 export async function sendIndividualTemplateMessage({
 	ctx,
 	args: argsInput,
-	tx
+	tx: _tx //not used
 }: {
 	args: CreateWhatsappTemplateMessageMutatorSchema;
 	ctx: QueryContext;
 	tx: ServerTransaction;
 }) {
 	const args = parse(createWhatsappTemplateMessageMutatorSchema, argsInput);
-	await sendWhatsappTemplateMessage({
-		message: args.input.whatsappTemplateMessage,
-		organizationId: args.metadata.organizationId,
-		personId: args.metadata.personId,
-		sendingUserId: ctx.userId || args.metadata.sentByUserId || undefined,
-		messageId: args.metadata.whatsappMessageId,
-		templateId: args.metadata.templateId
-	});
+	if (
+		ctx.adminOrgs.includes(args.metadata.organizationId) ||
+		ctx.ownerOrgs.includes(args.metadata.organizationId)
+	) {
+		await sendWhatsappTemplateMessage({
+			message: args.input.whatsappTemplateMessage,
+			organizationId: args.metadata.organizationId,
+			personId: args.metadata.personId,
+			sendingUserId: ctx.userId || args.metadata.sentByUserId || undefined,
+			messageId: args.metadata.whatsappMessageId,
+			templateId: args.metadata.templateId
+		});
+	} else {
+		throw new Error('You are not authorized to send a WhatsApp message in this organization');
+	}
 }
