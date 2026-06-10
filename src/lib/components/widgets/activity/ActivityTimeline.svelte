@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	import ActivityRenderer from './ActivityRenderer.svelte';
-	import { IsInViewport, watch } from 'runed';
+	import { watch } from 'runed';
 	import type { ReadActivityZero } from '$lib/schema/activity';
 	import type { ListActivityInput } from '$lib/zero/query/activity/list';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
@@ -18,8 +19,12 @@
 	const { personId }: Props = $props();
 
 	const pageSize = 20;
-	let sentinel: HTMLElement | null = $state(null);
-	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
+	const loadMoreScrollThreshold = 200;
+
+	let scrollContainer: HTMLElement | null = $state(null);
+	let scrollHeightBeforeLoad = 0;
+	let previousItemCount = 0;
+
 	const paginatedActivities = new PaginatedZeroList<ActivityListBaseFilter, ReadActivityZero>({
 		getBaseFilter: () => ({ personId }),
 		encodeCursor: encodeActivityCursor,
@@ -28,10 +33,12 @@
 	const activityQuery = $derived.by(() =>
 		z.createQuery(queries.activity.list(paginatedActivities.pageFilter))
 	);
+	const chronologicalActivities = $derived([...paginatedActivities.items].reverse());
 
 	watch(
 		() => personId,
 		() => {
+			previousItemCount = 0;
 			paginatedActivities.reset();
 		}
 	);
@@ -42,18 +49,42 @@
 		}
 	);
 	watch(
-		() =>
-			[
-				sentinelIsInViewport.current,
-				paginatedActivities.hasMore,
-				paginatedActivities.items.length
-			] as const,
-		([isInViewport, hasMore]) => {
-			if (isInViewport && hasMore) {
-				paginatedActivities.loadMore();
+		() => paginatedActivities.items.length,
+		(itemCount) => {
+			if (!scrollContainer || itemCount === 0) {
+				previousItemCount = itemCount;
+				return;
 			}
+
+			void tick().then(() => {
+				if (!scrollContainer) return;
+
+				if (previousItemCount === 0) {
+					scrollToBottom();
+				} else if (itemCount > previousItemCount) {
+					const scrollHeightDelta = scrollContainer.scrollHeight - scrollHeightBeforeLoad;
+					scrollContainer.scrollTop += scrollHeightDelta;
+				}
+
+				previousItemCount = itemCount;
+			});
 		}
 	);
+
+	function scrollToBottom() {
+		if (!scrollContainer) return;
+		scrollContainer.scrollTop = scrollContainer.scrollHeight;
+	}
+
+	function handleScroll() {
+		if (!scrollContainer || !paginatedActivities.hasMore || paginatedActivities.loadingMore) {
+			return;
+		}
+		if (scrollContainer.scrollTop < loadMoreScrollThreshold) {
+			scrollHeightBeforeLoad = scrollContainer.scrollHeight;
+			paginatedActivities.loadMore();
+		}
+	}
 
 	function encodeActivityCursor(activity: ReadActivityZero) {
 		return encodeActivityListCursor({
@@ -63,14 +94,16 @@
 	}
 </script>
 
-<div class="activity-timeline min-h-full bg-gray-50">
-	<div class="activity-timeline p-4">
-		{#if paginatedActivities.items.length > 0}
-			{#if paginatedActivities.hasMore}
-				<div bind:this={sentinel} class="h-1" data-testid="activity-scroll-sentinel"></div>
-			{/if}
-			<div class="flex flex-col-reverse gap-y-4">
-				{#each paginatedActivities.items as activity (activity.id)}
+<div class="flex min-h-0 flex-1 flex-col bg-gray-50">
+	<div
+		bind:this={scrollContainer}
+		class="activity-timeline flex-1 overflow-y-auto p-4"
+		data-testid="activity-timeline-scroll"
+		onscroll={handleScroll}
+	>
+		{#if chronologicalActivities.length > 0}
+			<div class="flex flex-col gap-y-4">
+				{#each chronologicalActivities as activity (activity.id)}
 					<ActivityRenderer {activity} />
 				{/each}
 			</div>
