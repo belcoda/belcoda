@@ -45,6 +45,8 @@
 		resizeObserver = new ResizeObserver(() => {
 			if (pendingScrollRestore) {
 				maintainScrollPosition();
+			} else {
+				loadMoreIfNotScrollable();
 			}
 		});
 		if (listContent) {
@@ -96,12 +98,13 @@
 			void tick().then(() => {
 				if (!scrollContainer) return;
 
-				if (previousItemCount === 0) {
+				if (previousItemCount === 0 || (itemCount > previousItemCount && !pendingScrollRestore)) {
 					scrollToBottom();
 				} else if (itemCount > previousItemCount && pendingScrollRestore) {
 					maintainScrollPosition();
 				}
 
+				loadMoreIfNotScrollable();
 				previousItemCount = itemCount;
 			});
 		}
@@ -156,16 +159,40 @@
 		scrollContainer.scrollTop = scrollContainer.scrollHeight;
 	}
 
+	function canScrollTimeline() {
+		if (!scrollContainer) return true;
+		return scrollContainer.scrollHeight > scrollContainer.clientHeight + 1;
+	}
+
+	function loadMoreOlder(restoreScroll: boolean) {
+		if (!paginatedActivities.hasMore || paginatedActivities.loadingMore) {
+			return;
+		}
+
+		if (restoreScroll) {
+			const anchorId = chronologicalActivities[0]?.id;
+			if (anchorId) {
+				startScrollRestore(anchorId);
+			}
+		}
+
+		paginatedActivities.loadMore();
+	}
+
+	function loadMoreIfNotScrollable() {
+		if (!scrollContainer || pendingScrollRestore) return;
+		if (!paginatedActivities.hasMore || paginatedActivities.loadingMore) return;
+		if (!canScrollTimeline()) {
+			loadMoreOlder(false);
+		}
+	}
+
 	function handleScroll() {
 		if (!scrollContainer || !paginatedActivities.hasMore || paginatedActivities.loadingMore) {
 			return;
 		}
 		if (scrollContainer.scrollTop < loadMoreScrollThreshold) {
-			const anchorId = chronologicalActivities[0]?.id;
-			if (anchorId) {
-				startScrollRestore(anchorId);
-			}
-			paginatedActivities.loadMore();
+			loadMoreOlder(true);
 		}
 	}
 
