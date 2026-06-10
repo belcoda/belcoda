@@ -4,6 +4,12 @@
 	import queries from '$lib/zero/query/index';
 	import ActivityRenderer from './ActivityRenderer.svelte';
 	import { IsInViewport, watch } from 'runed';
+	import type { ReadActivityZero } from '$lib/schema/activity';
+	import type { ListActivityInput } from '$lib/zero/query/activity/list';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodeActivityListCursor } from '$lib/utils/activity/cursor';
+
+	type ActivityListBaseFilter = Omit<ListActivityInput, 'cursor' | 'pageSize'>;
 
 	type Props = {
 		personId: string;
@@ -11,41 +17,68 @@
 
 	const { personId }: Props = $props();
 
-	let limit = $state(20);
+	const pageSize = 20;
 	let sentinel: HTMLElement | null = $state(null);
-
-	const activityQuery = $derived.by(() => {
-		return z.createQuery(queries.activity.list({ personId, limit }));
-	});
-
 	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
+	const paginatedActivities = new PaginatedZeroList<ActivityListBaseFilter, ReadActivityZero>({
+		getBaseFilter: () => ({ personId }),
+		encodeCursor: encodeActivityCursor,
+		pageSize
+	});
+	const activityQuery = $derived.by(() =>
+		z.createQuery(queries.activity.list(paginatedActivities.pageFilter))
+	);
 
 	watch(
-		() => sentinelIsInViewport.current,
-		(isInViewport) => {
-			if (isInViewport && activityQuery.data) {
-				limit += 20;
+		() => personId,
+		() => {
+			paginatedActivities.reset();
+		}
+	);
+	watch(
+		() => activityQuery.data,
+		(data) => {
+			paginatedActivities.handlePage(data);
+		}
+	);
+	watch(
+		() =>
+			[
+				sentinelIsInViewport.current,
+				paginatedActivities.hasMore,
+				paginatedActivities.items.length
+			] as const,
+		([isInViewport, hasMore]) => {
+			if (isInViewport && hasMore) {
+				paginatedActivities.loadMore();
 			}
 		}
 	);
+
+	function encodeActivityCursor(activity: ReadActivityZero) {
+		return encodeActivityListCursor({
+			createdAt: activity.createdAt,
+			id: activity.id
+		});
+	}
 </script>
 
 <div class="activity-timeline min-h-full bg-gray-50">
 	<div class="activity-timeline p-4">
-		{#if activityQuery.data === undefined}
-			<div class="text-center text-sm text-gray-400">{t`Loading activities...`}</div>
-		{:else if activityQuery.data.length === 0}
-			<div class="text-center text-sm text-gray-400">{t`No activities yet`}</div>
-		{:else}
+		{#if paginatedActivities.items.length > 0}
+			{#if paginatedActivities.hasMore}
+				<div bind:this={sentinel} class="h-1" data-testid="activity-scroll-sentinel"></div>
+			{/if}
 			<div class="flex flex-col-reverse gap-y-4">
-				{#each activityQuery.data as activity (activity.id)}
+				{#each paginatedActivities.items as activity (activity.id)}
 					<ActivityRenderer {activity} />
 				{/each}
 			</div>
+		{:else if activityQuery.data}
+			<div class="text-center text-sm text-gray-400">{t`No activities yet`}</div>
+		{:else}
+			<div class="text-center text-sm text-gray-400">{t`Loading activities...`}</div>
 		{/if}
-
-		<!-- Sentinel for infinite scroll -->
-		<div bind:this={sentinel} class="h-4"></div>
 	</div>
 </div>
 
