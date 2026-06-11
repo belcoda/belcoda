@@ -83,7 +83,7 @@ export const whatsappAccountState = {
 		return loadedOrganizationId;
 	},
 
-	async load(organizationId: string) {
+	load: async (organizationId: string) => {
 		if (loadedOrganizationId === organizationId && profile !== null && waba !== null) {
 			return;
 		}
@@ -104,7 +104,7 @@ export const whatsappAccountState = {
 		return inFlight;
 	},
 
-	async saveProfile(organizationId: string, input: UpdateWhatsappBusinessProfileInput) {
+	saveProfile: async (organizationId: string, input: UpdateWhatsappBusinessProfileInput) => {
 		saving = true;
 		error = null;
 		try {
@@ -135,5 +135,7 @@ export const whatsappAccountState = {
 		}
 	},
 
-	reset
+	reset: () => {
+		reset();
+	}
 };
