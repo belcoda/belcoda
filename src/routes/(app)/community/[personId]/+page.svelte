@@ -30,7 +30,7 @@
 	{header}
 	bodyPadding="p-0"
 	scrollBody={false}
-	hideFooter={!isLastReceivedAtLessThan24HoursAgo || !whatsappOnboarded}
+	hideFooter={!whatsappOnboarded}
 >
 	<ActivityTimeline personId={params.personId} />
 	{#snippet footer()}
