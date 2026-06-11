@@ -10,7 +10,7 @@ const DEFAULT_LIST_FILTER: ListFilter = {
 	teamId: null,
 	pageSize: 25,
 	searchString: null,
-	startAfter: null,
+	cursor: null,
 	isDeleted: null,
 	excludedIds: []
 };

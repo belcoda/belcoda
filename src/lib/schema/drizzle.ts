@@ -89,7 +89,12 @@ export const organization = pgTable(
 		balance: integer('balance').notNull().default(0),
 		freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
 		freeEmailMessageCredits: integer('free_email_message_credits'),
-		resetFreeQuotasAfter: timestamp('reset_free_quotas_after', { withTimezone: true, mode: 'date' }),
+		resetFreeQuotasAfter: timestamp('reset_free_quotas_after', {
+			withTimezone: true,
+			mode: 'date'
+		}),
+		stripeCustomerId: text('stripe_customer_id').unique(),
+		billingEmail: text('billing_email'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
 			.notNull()
 			.default(sql`now()`),

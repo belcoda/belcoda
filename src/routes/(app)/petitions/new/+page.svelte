@@ -17,6 +17,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { goto } from '$app/navigation';
 	import { v7 as uuidv7 } from 'uuid';
+	import { resetPetitionsListPagination } from '$lib/components/layouts/app/sidebars/petitions/petitions-list-pagination';
 
 	let createdPetition = $state<ReadPetitionZero | null>(null);
 	let modalOpen = $state(false);
@@ -43,6 +44,7 @@
 			})
 		);
 		await petition.client;
+		resetPetitionsListPagination();
 		createdPetition = parse(readPetitionZero, {
 			id,
 			...parsed,

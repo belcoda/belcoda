@@ -30,6 +30,7 @@ function chainProjects(prefix: E2EProject, testMatches: string[]): Project[] {
 
 const COMMUNITY_SPEC_FILES = [
 	'**/community/person.spec.ts',
+	'**/community/person-whatsapp-compose.spec.ts',
 	'**/settings/tags.spec.ts',
 	'**/settings/teams.spec.ts',
 	'**/settings/community-settings.spec.ts'

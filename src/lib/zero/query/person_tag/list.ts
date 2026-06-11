@@ -1,14 +1,14 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { object, type InferOutput } from 'valibot';
+import { object, safeParse, type InferOutput } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { personTagReadPermissions } from '$lib/zero/query/person_tag/permissions';
 
 export const inputSchema = object({
 	organizationId: listFilter.entries.organizationId,
 	searchString: listFilter.entries.searchString,
-	startAfter: listFilter.entries.startAfter,
+	cursor: listFilter.entries.cursor,
 	pageSize: listFilter.entries.pageSize,
 	personId: uuid
 });
@@ -28,9 +28,19 @@ export function listPersonTagsQuery({
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		const [tagId, personId] = input.startAfter.split('.'); //startAfter is a string of the form tagId.personId
-		q = q.start({ tagId, personId });
+	if (input.cursor) {
+		const parts = input.cursor.split('.');
+		if (parts.length === 2) {
+			const [tagId, personId] = parts;
+			if (
+				tagId &&
+				personId &&
+				safeParse(uuid, tagId).success &&
+				safeParse(uuid, personId).success
+			) {
+				q = q.start({ tagId, personId });
+			}
+		}
 	}
 	return q;
 }

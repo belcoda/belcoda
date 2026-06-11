@@ -19,6 +19,7 @@
 	import type { ReadOrganizationZero } from '$lib/schema/organization';
 	import { parse } from 'valibot';
 	import { goto } from '$app/navigation';
+	import { resetEventsListPagination } from '$lib/components/layouts/app/sidebars/events/events-list-pagination';
 
 	let showModal = $state(false);
 	let updatedEvent = $state<ReadEventZero | null>(null);
@@ -40,6 +41,7 @@
 			})
 		);
 		await updatedEventMutator.client;
+		resetEventsListPagination();
 		// Show modal with updated event data
 		updatedEvent = { ...event.data, ...parsed } as ReadEventZero;
 		showModal = true;

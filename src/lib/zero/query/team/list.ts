@@ -2,9 +2,10 @@ import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, optional, nullable } from 'valibot';
-import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
+import { listFilter, type ListFilter, uuid } from '$lib/schema/helpers';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { readTeamZero } from '$lib/schema/team';
+import { decodeRestTeamListCursor, decodeTeamListCursor } from '$lib/utils/team/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -12,6 +13,36 @@ export const inputSchema = object({
 });
 export type ListTeamsInput = InferOutput<typeof inputSchema>;
 
+type TeamListStartCursor = { createdAt: number; id: string } | { id: string };
+
+function listTeamsQueryBase({
+	ctx,
+	input,
+	limit,
+	resolveStartCursor
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+	resolveStartCursor: (cursor: string) => TeamListStartCursor | null;
+}) {
+	let q = builder.team
+		.where((expr) => teamReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('createdAt', 'desc')
+		.orderBy('id', 'desc')
+		.limit(limit);
+	if (input.cursor) {
+		const start = resolveStartCursor(input.cursor);
+		if (start) {
+			q = q.start(start);
+		}
+	}
+	return q;
+}
+
+/** Exact page size for REST and other non-UI callers. */
 export function listTeamsQuery({
 	ctx,
 	input
@@ -19,20 +50,37 @@ export function listTeamsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	let q = builder.team
-		.where((expr) => teamReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
-	}
+	const pageSize = input.pageSize || 50;
+	return listTeamsQueryBase({
+		ctx,
+		input,
+		limit: pageSize,
+		resolveStartCursor: decodeRestTeamListCursor
+	});
+}
 
-	return q;
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listTeamsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listTeamsQueryBase({
+		ctx,
+		input,
+		limit: pageSize + 1,
+		resolveStartCursor: decodeTeamListCursor
+	});
 }
 
 export const listTeams = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listTeamsQuery({ ctx, input: args });
+	return listTeamsPaginatedQuery({ ctx, input: args });
 });
 
 function whereClause(

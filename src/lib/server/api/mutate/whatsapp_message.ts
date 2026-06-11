@@ -1,6 +1,7 @@
 import {
 	emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema,
-	createWhatsAppMessageMutatorSchema
+	createWhatsAppMessageMutatorSchema,
+	createWhatsappTemplateMessageMutatorSchema
 } from '$lib/schema/whatsapp-message';
 import { defineMutator } from '@rocicorp/zero';
 import * as dataFunctions from '$lib/server/api/data/whatsapp/message';
@@ -27,6 +28,20 @@ export const sendIndividualMessage = defineMutator(
 			throw new Error('sendIndividualMessage can only be called from the server');
 		}
 		await dataFunctions.sendIndividualMessage({
+			ctx,
+			tx,
+			args: args
+		});
+	}
+);
+
+export const sendIndividualTemplateMessage = defineMutator(
+	createWhatsappTemplateMessageMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server') {
+			throw new Error('sendIndividualTemplateMessage can only be called from the server');
+		}
+		await dataFunctions.sendIndividualTemplateMessage({
 			ctx,
 			tx,
 			args: args

@@ -26,6 +26,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			freeEmailMessageCredits: true,
 			resetFreeQuotasAfter: true,
 			settings: true,
+			stripeCustomerId: false,
+			billingEmail: false,
 			createdAt: true,
 			updatedAt: true
 		},

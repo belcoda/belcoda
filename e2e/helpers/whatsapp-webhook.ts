@@ -5,6 +5,44 @@ export function getE2EDefaultWhatsAppNumber(): string {
 	return E2E_DUMMY_WHATSAPP_NUMBER;
 }
 
+export function buildWhatsAppInboundTextWebhook({
+	wabaId = E2E_MOCK_WABA_ID,
+	from,
+	to,
+	body,
+	customerName
+}: {
+	wabaId?: string;
+	from: string;
+	to: string;
+	body: string;
+	customerName?: string;
+}) {
+	const now = new Date().toISOString();
+	const inboundId = crypto.randomUUID().replace(/-/g, '');
+	const evtId = `evt_${inboundId}`;
+
+	return {
+		id: evtId,
+		type: 'whatsapp.inbound_message.received' as const,
+		apiVersion: 'v2' as const,
+		createTime: now,
+		whatsappInboundMessage: {
+			id: inboundId,
+			wamid: `wamid.${crypto.randomUUID().replace(/-/g, '')}`,
+			wabaId,
+			from,
+			to,
+			sendTime: now,
+			type: 'text' as const,
+			text: { body },
+			...(customerName
+				? { customerProfile: { name: customerName } }
+				: {})
+		}
+	};
+}
+
 export function buildWhatsAppInboundFlowReplyWebhook({
 	wabaId = E2E_MOCK_WABA_ID,
 	from,

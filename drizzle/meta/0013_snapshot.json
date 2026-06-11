@@ -1,5 +1,5 @@
 {
-  "id": "9e44b896-12ca-42e1-90b3-a7a4ce1c0daf",
+  "id": "989e0edf-35ca-401a-b434-3489d498384a",
   "prevId": "50a358c9-179f-41b7-8b06-bd47547d7480",
   "version": "7",
   "dialect": "postgresql",
@@ -1599,6 +1599,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "stripe_customer_id": {
+          "name": "stripe_customer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_email": {
+          "name": "billing_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -1614,24 +1626,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "organization_waba_id_unique": {
-          "name": "organization_waba_id_unique",
-          "columns": [
-            {
-              "expression": "(\"settings\"->'whatsApp'->>'wabaId')",
-              "asc": true,
-              "isExpression": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "where": "(\"organization\".\"settings\"->'whatsApp'->>'wabaId') IS NOT NULL",
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {

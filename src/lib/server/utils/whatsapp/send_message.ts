@@ -1,9 +1,8 @@
 import {
 	convertWhatsappMessageToApiFormat,
-	convertWhatsAppTemplateMessageToApiFormat,
-	createMessageFromTemplateAndTemplateMessage,
-	convertNodeToFullMessage
+	convertWhatsAppTemplateMessageToApiFormat
 } from './ycloud/convert_outbound';
+import { createMessageFromTemplateAndTemplateMessage } from '$lib/utils/whatsapp/template';
 import { db } from '$lib/server/db';
 import { and, eq } from 'drizzle-orm';
 import {
@@ -196,9 +195,9 @@ export async function sendWhatsappTemplateMessage({
 	message: WhatsappTemplateMessageData;
 	organizationId: string;
 	templateId: string;
-	threadId: string;
+	threadId?: string;
 	personId: string;
-	nodeId: string;
+	nodeId?: string;
 	messageId?: string;
 	sendingUserId?: string;
 }) {
@@ -255,8 +254,8 @@ export async function sendWhatsappTemplateMessage({
 			});
 			const messageToSend = await convertWhatsAppTemplateMessageToApiFormat({
 				templateMessage: resolvedMessage,
-				nodeId: nodeId,
-				whatsappThreadId: threadId,
+				nodeId: nodeId ?? null,
+				whatsappThreadId: threadId ?? null,
 				whatsappMessageId: whatsappMessageId,
 				from: organization.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
 				...recipient,
@@ -277,30 +276,9 @@ export async function sendWhatsappTemplateMessage({
 	if (!ycloudResponse.id) {
 		throw new Error('Failed to send message to YCloud');
 	}
-	await db.transaction(async (tx) => {
-		const claimedFreeCredit = await _reduceFreeWhatsAppMessageCredits({
-			organizationId: organization.id,
-			tx
-		});
-		if (!claimedFreeCredit) {
-			const delta = (ycloudResponse.totalPrice ?? 0) * 100; //convert to cents
-			const deltaInHundredthsOfCents = Math.ceil(delta * 100); //convert to hundredths of cents
-			await _createLedgerEntry({
-				tx,
-				args: {
-					organizationId: organization.id,
-					deltaInUsdHundredthsOfCents: -deltaInHundredthsOfCents,
-					metadata: {
-						type: 'whatsapp_message_outgoing',
-						whatsappMessageId: whatsappMessageId,
-						whatsappThreadId: threadId,
-						sentByUserId: sendingUserId ?? null,
-						teamId: null //for now, always null -- we don't currently support team messaging
-					}
-				}
-			});
-		}
 
+	//persist message in db
+	await db.transaction(async (tx) => {
 		const combinedTemplateMessage = createMessageFromTemplateAndTemplateMessage({
 			templateMessage: resolvedMessage,
 			template: template.components,
@@ -344,5 +322,31 @@ export async function sendWhatsappTemplateMessage({
 				}
 			}
 		});
+	});
+
+	//bill the message
+	await db.transaction(async (tx) => {
+		const claimedFreeCredit = await _reduceFreeWhatsAppMessageCredits({
+			organizationId: organization.id,
+			tx
+		});
+		if (!claimedFreeCredit) {
+			const delta = (ycloudResponse.totalPrice ?? 0) * 100; //convert to cents
+			const deltaInHundredthsOfCents = Math.ceil(delta * 100); //convert to hundredths of cents
+			await _createLedgerEntry({
+				tx,
+				args: {
+					organizationId: organization.id,
+					deltaInUsdHundredthsOfCents: -deltaInHundredthsOfCents,
+					metadata: {
+						type: 'whatsapp_message_outgoing',
+						whatsappMessageId: whatsappMessageId,
+						whatsappThreadId: threadId ?? null,
+						sentByUserId: sendingUserId ?? null,
+						teamId: null //for now, always null -- we don't currently support team messaging
+					}
+				}
+			});
+		}
 	});
 }

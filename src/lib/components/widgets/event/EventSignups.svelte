@@ -3,12 +3,27 @@
 
 	import { type ReadEventZero } from '$lib/schema/event';
 	const { event }: { event: ReadEventZero } = $props();
-	import { t } from '$lib/index.svelte';
+	import { t, locale } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import type { ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
 	import queries from '$lib/zero/query/index';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodeEventSignupListCursor } from '$lib/utils/event-signup/cursor';
+	import { IsInViewport, watch } from 'runed';
+	import { formatNumber } from '$lib/utils/number';
+	import { onDestroy } from 'svelte';
+	import {
+		registerEventSignupsListPaginationReset,
+		resetEventSignupsListPagination,
+		unregisterEventSignupsListPaginationReset
+	} from './signups/event-signups-list-pagination';
+
+	const pageSize = 25;
+	let sentinel: HTMLElement | null = $state(null);
+	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
+
 	let filter = $state<ListEventSignupsInput>({
 		...getListFilter(appState.organizationId),
 		includeIncomplete: false,
@@ -16,14 +31,56 @@
 		eventId: event.id
 	});
 
+	const paginatedSignups = new PaginatedZeroList<
+		ListEventSignupsInput,
+		ReadEventSignupZeroWithPerson
+	>({
+		getBaseFilter: () => filter,
+		encodeCursor: encodeSignupCursor,
+		pageSize
+	});
+
+	registerEventSignupsListPaginationReset(() => paginatedSignups.reset());
+	onDestroy(unregisterEventSignupsListPaginationReset);
+
 	/** Keeps `includeIncomplete` aligned with `list.ts` whereClause: incomplete rows are excluded unless this flag is true. */
 	function setSignupStatusFilter(status: ListEventSignupsInput['status']) {
 		filter.status = status;
 		filter.includeIncomplete = status === 'incomplete';
 	}
+
 	const eventSignups = $derived.by(() => {
-		return z.createQuery(queries.eventSignup.list(filter));
+		return z.createQuery(queries.eventSignup.list(paginatedSignups.pageFilter));
 	});
+
+	watch(
+		() => eventSignups.data,
+		(data) => {
+			paginatedSignups.handlePage(data as ReadEventSignupZeroWithPerson[] | undefined);
+		}
+	);
+
+	watch(
+		() =>
+			[
+				sentinelIsInViewport.current,
+				paginatedSignups.hasMore,
+				paginatedSignups.items.length
+			] as const,
+		([isInViewport, hasMore]) => {
+			if (isInViewport && hasMore) {
+				paginatedSignups.loadMore();
+			}
+		}
+	);
+
+	function encodeSignupCursor(signup: ReadEventSignupZeroWithPerson) {
+		return encodeEventSignupListCursor({
+			createdAt: signup.createdAt,
+			id: signup.id
+		});
+	}
+
 	let selectedEventSignups = $state<ReadEventSignupZeroWithPerson[]>([]);
 
 	import { handleAddPerson } from './signups/actions';
@@ -91,9 +148,10 @@
 				</DropdownMenu.Root>
 				<AddPersonModal
 					trigger={addPersonTrigger}
-					personIdsToExclude={eventSignups.data.map((signup) => signup.personId)}
+					personIdsToExclude={paginatedSignups.items.map((signup) => signup.personId)}
 					onSelected={(personIds) => {
 						handleAddPerson({ eventId: event.id, personIds });
+						resetEventSignupsListPagination();
 					}}
 				/>
 			</div>
@@ -101,12 +159,22 @@
 	</Card.Header>
 
 	<Card.Content>
-		<SignupTable
-			signups={eventSignups.data as ReadEventSignupZeroWithPerson[]}
-			{event}
-			bind:selectedSignups={selectedEventSignups}
-			queryIsCompleted={eventSignups.details.type === 'complete'}
-		/>
+		<div data-testid="event-signups-list">
+			<SignupTable
+				signups={paginatedSignups.items}
+				{event}
+				bind:selectedSignups={selectedEventSignups}
+				queryIsCompleted={eventSignups.details.type === 'complete'}
+			/>
+			{#if paginatedSignups.hasMore}
+				<div bind:this={sentinel} class="h-1" data-testid="event-signups-scroll-sentinel"></div>
+			{/if}
+			{#if paginatedSignups.items.length > 0}
+				<div class="pt-2 text-center text-xs text-muted-foreground">
+					{t`${formatNumber(paginatedSignups.items.length, locale.current)} shown`}
+				</div>
+			{/if}
+		</div>
 	</Card.Content>
 </Card.Root>
 

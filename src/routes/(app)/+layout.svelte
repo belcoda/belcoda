@@ -7,6 +7,7 @@
 	import { zero } from '$lib/zero.svelte';
 	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
 	import { onMount } from 'svelte';
+	import DeploymentRecoveryReset from '$lib/utils/DeploymentRecoveryReset.svelte';
 
 	const { children, data } = $props();
 
@@ -65,6 +66,7 @@
 
 {#if zero.hasInstance && appState.layoutBootstrapComplete}
 	<Onboarding />
+	<DeploymentRecoveryReset />
 	{@render children()}
 {:else}
 	<div class="flex h-screen w-screen items-center justify-center">

@@ -14,7 +14,7 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 
-	const { personId }: { personId: string } = $props();
+	const { personId, onNotesChanged }: { personId: string; onNotesChanged?: () => void } = $props();
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: createPersonNoteZero,
 		initialData: {
@@ -32,7 +32,8 @@
 					personNoteId: uuidv7()
 				}
 			});
-			const input = z.mutate(mutators.personNote.create(parsed));
+			z.mutate(mutators.personNote.create(parsed));
+			onNotesChanged?.();
 			form.reset();
 		}
 	});

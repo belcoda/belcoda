@@ -63,7 +63,7 @@
 	}
 </script>
 
-<InputGroup.Root>
+<InputGroup.Root data-testid="person-wa-compose-individual">
 	{#if showImagePreview}
 		<InputGroup.Addon align="block-start" class="w-full [.border-b]:pb-3">
 			<div

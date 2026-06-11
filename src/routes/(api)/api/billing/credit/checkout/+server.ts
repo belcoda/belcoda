@@ -1,10 +1,14 @@
 import { json } from '@sveltejs/kit';
-import { drizzle } from '$lib/server/db';
+import { db, drizzle } from '$lib/server/db';
 import { stripeClient } from '$lib/server/stripe';
+import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import {
-	CREDIT_PURCHASE_METADATA_TYPE,
-	isCreditPurchaseAmountUsd
-} from '$lib/utils/billing/credit';
+	BALANCE_TOP_UP_STRIPE_AMOUNT_METADATA_KEY,
+	BALANCE_TOP_UP_STRIPE_METADATA_TYPE,
+	isValidBalanceTopUpAmountUsd
+} from '$lib/utils/billing/balance';
+import { organization as organizationTable } from '$lib/schema/drizzle';
+import { eq } from 'drizzle-orm';
 
 type CheckoutRequestBody = {
 	amount?: number;
@@ -26,8 +30,21 @@ export async function POST(event) {
 
 	const amount = body?.amount;
 	const organizationId = body?.organizationId;
-	if (typeof amount !== 'number' || !isCreditPurchaseAmountUsd(amount) || !organizationId) {
-		return json({ error: 'Invalid credit purchase request' }, { status: 400 });
+	if (typeof amount !== 'number' || !isValidBalanceTopUpAmountUsd(amount) || !organizationId) {
+		return json({ error: 'Invalid balance top-up request' }, { status: 400 });
+	}
+
+	let customerId: string | null = null;
+
+	const organization = await db.transaction(async (tx) => {
+		const organization = await getOrganizationByIdUnsafe({
+			organizationId,
+			tx
+		});
+		return organization;
+	});
+	if (!organization) {
+		return json({ error: 'Organization not found' }, { status: 404 });
 	}
 
 	const membership = await drizzle.query.member.findFirst({
@@ -39,21 +56,38 @@ export async function POST(event) {
 			)
 	});
 	if (!membership) {
-		return json({ error: 'Only organization owners can purchase credits' }, { status: 403 });
+		return json({ error: 'Only organization owners can add funds' }, { status: 403 });
 	}
 
-	const user = session.user as typeof session.user & { stripeCustomerId?: string | null };
+	if (!organization.stripeCustomerId) {
+		//create a stripe customer ID desho?
+		const stripeCustomer = await stripeClient.customers.create({
+			email: organization.billingEmail ?? session.user.email,
+			name: organization.name,
+			metadata: {
+				organizationId
+			}
+		});
+		await drizzle
+			.update(organizationTable)
+			.set({
+				stripeCustomerId: stripeCustomer.id
+			})
+			.where(eq(organizationTable.id, organizationId));
+		customerId = stripeCustomer.id;
+	} else {
+		customerId = organization.stripeCustomerId;
+	}
+
+	if (!customerId) {
+		return json({ error: 'Unable to create or find a Stripe customer ID' }, { status: 500 });
+	}
+
 	const checkoutSession = await stripeClient.checkout.sessions.create({
 		mode: 'payment',
-		success_url: `${event.url.origin}/settings/billing/credit?credit_purchase=success`,
-		cancel_url: `${event.url.origin}/settings/billing/credit?credit_purchase=cancelled`,
-		...(user.stripeCustomerId
-			? {
-					customer: user.stripeCustomerId
-				}
-			: {
-					customer_email: session.user.email
-				}),
+		success_url: `${event.url.origin}/settings/billing/credit?balance_purchase=success`,
+		cancel_url: `${event.url.origin}/settings/billing/credit?balance_purchase=cancelled`,
+		customer: customerId,
 		line_items: [
 			{
 				quantity: 1,
@@ -61,17 +95,17 @@ export async function POST(event) {
 					currency: 'usd',
 					unit_amount: amount * 100,
 					product_data: {
-						name: `Belcoda credit top-up ($${amount})`,
-						description: `Organization credit purchase (${organizationId})`
+						name: `Belcoda balance top-up ($${amount})`,
+						description: `Organization balance top-up (${organization.name})`
 					}
 				}
 			}
 		],
 		client_reference_id: organizationId,
 		metadata: {
-			type: CREDIT_PURCHASE_METADATA_TYPE,
+			type: BALANCE_TOP_UP_STRIPE_METADATA_TYPE,
 			organizationId,
-			creditAmount: String(amount),
+			[BALANCE_TOP_UP_STRIPE_AMOUNT_METADATA_KEY]: String(amount),
 			purchasedByUserId: session.user.id
 		}
 	});

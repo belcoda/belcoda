@@ -18,8 +18,13 @@
 
 	let {
 		note,
-		editOpen = $bindable(true)
-	}: { note: ReadPersonNoteWithUserZero; editOpen: boolean } = $props();
+		editOpen = $bindable(true),
+		onNotesChanged
+	}: {
+		note: ReadPersonNoteWithUserZero;
+		editOpen: boolean;
+		onNotesChanged?: () => void;
+	} = $props();
 	import { toast } from 'svelte-sonner';
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: updatePersonNoteZero,
@@ -38,7 +43,8 @@
 					personNoteId: note.id
 				}
 			});
-			const input = z.mutate(mutators.personNote.update(parsed));
+			z.mutate(mutators.personNote.update(parsed));
+			onNotesChanged?.();
 			toast.success('Note updated');
 			editOpen = false;
 		}

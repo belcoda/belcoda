@@ -31,14 +31,60 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import { z } from '$lib/zero.svelte';
-	const notes = $derived.by(() =>
-		z.createQuery(
-			queries.personNote.list({
-				...getListFilter(appState.organizationId),
-				personId: person.id
-			})
-		)
+	import { type PersonNoteListRow, type ReadPersonNoteWithUserZero } from '$lib/schema/person-note';
+	import type { ListPersonNotesInput } from '$lib/zero/query/person_note/list';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodePersonNoteListCursor } from '$lib/utils/person-note/cursor';
+	import { IsInViewport, watch } from 'runed';
+	import { formatNumber } from '$lib/utils/number';
+
+	const pageSize = 25;
+	let sentinel: HTMLElement | null = $state(null);
+	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
+	const paginatedNotes = new PaginatedZeroList<ListPersonNotesInput, PersonNoteListRow>({
+		getBaseFilter: () => ({
+			...getListFilter(appState.organizationId),
+			personId: person.id
+		}),
+		encodeCursor: encodePersonNoteCursor,
+		pageSize
+	});
+	const notesQuery = $derived.by(() =>
+		z.createQuery(queries.personNote.list(paginatedNotes.pageFilter))
 	);
+
+	watch(
+		() => person.id,
+		() => {
+			paginatedNotes.reset();
+		}
+	);
+	watch(
+		() => notesQuery.data,
+		(data) => {
+			paginatedNotes.handlePage(data as PersonNoteListRow[] | undefined);
+		}
+	);
+	watch(
+		() =>
+			[sentinelIsInViewport.current, paginatedNotes.hasMore, paginatedNotes.items.length] as const,
+		([isInViewport, hasMore]) => {
+			if (isInViewport && hasMore) {
+				paginatedNotes.loadMore();
+			}
+		}
+	);
+
+	function encodePersonNoteCursor(note: PersonNoteListRow) {
+		return encodePersonNoteListCursor({
+			createdAt: note.createdAt,
+			id: note.id
+		});
+	}
+
+	function onNotesChanged() {
+		paginatedNotes.reset();
+	}
 
 	import XIcon from '@lucide/svelte/icons/x';
 </script>
@@ -57,19 +103,29 @@
 					><XIcon class="size-4" /></Drawer.Close
 				>
 			</div>
-			<PersonNoteForm personId={person.id} />
+			<PersonNoteForm personId={person.id} {onNotesChanged} />
 		</Drawer.Header>
 		<div class="space-y-4 overflow-y-auto p-4" data-testid="person-notes-list">
-			{#if notes.data && notes.data.length > 0}
-				{#each notes.data as note (note.id)}
+			{#if paginatedNotes.items.length > 0}
+				{#each paginatedNotes.items as note (note.id)}
 					<PersonNote
 						note={{
 							...note,
-							user: { ...note.user!, twoFactorEnabled: note.user?.twoFactorEnabled ?? false }
-						}}
+							user: {
+								...note.user!,
+								twoFactorEnabled: note.user?.twoFactorEnabled ?? false
+							}
+						} as ReadPersonNoteWithUserZero}
+						{onNotesChanged}
 					/>
 				{/each}
-			{:else}
+				{#if paginatedNotes.hasMore}
+					<div bind:this={sentinel} class="h-1" data-testid="person-notes-scroll-sentinel"></div>
+				{/if}
+				<div class="pt-2 text-center text-xs text-muted-foreground">
+					{t`${formatNumber(paginatedNotes.items.length, locale.current)} shown`}
+				</div>
+			{:else if notesQuery.data}
 				<div class="flex items-center justify-center">
 					<Empty.Root>
 						<Empty.Header>
