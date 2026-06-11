@@ -6,18 +6,83 @@
 
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
+	import { appState, getListFilter } from '$lib/state.svelte';
+	import type { PetitionSignatureListFilter } from '$lib/zero/query/petition_signature/list';
+	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { encodePetitionSignatureListCursor } from '$lib/utils/petition-signature/cursor';
+	import { IsInViewport, watch } from 'runed';
+	import { formatNumber } from '$lib/utils/number';
+
+	const pageSize = 25;
+	let sentinel: HTMLElement | null = $state(null);
+	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
+
+	let filter: PetitionSignatureListFilter = $state({
+		...getListFilter(appState.organizationId),
+		/* svelte-ignore state_referenced_locally */
+		petitionId: params.petitionId
+	});
+
+	const paginatedSignatures = new PaginatedZeroList<
+		PetitionSignatureListFilter,
+		ReadPetitionSignatureZeroWithPerson
+	>({
+		getBaseFilter: () => filter,
+		encodeCursor: encodeSignatureCursor,
+		pageSize
+	});
+	import { onDestroy } from 'svelte';
+	import {
+		registerPetitionSignaturesListPaginationReset,
+		resetPetitionSignaturesListPagination,
+		unregisterPetitionSignaturesListPaginationReset
+	} from '$lib/components/widgets/petition/signatures/petition-signatures-list-pagination';
+
+	registerPetitionSignaturesListPaginationReset(() => paginatedSignatures.reset());
+	onDestroy(unregisterPetitionSignaturesListPaginationReset);
 
 	const petition = $derived.by(() => {
 		return z.createQuery(queries.petition.read({ petitionId: params.petitionId }));
 	});
 
-	const signatures = $derived.by(() => {
+	const allSignatures = $derived.by(() => {
 		return z.createQuery(queries.petition.signatures({ petitionId: params.petitionId }));
 	});
 
+	const petitionSignatures = $derived.by(() => {
+		return z.createQuery(queries.petitionSignature.list(paginatedSignatures.pageFilter));
+	});
+
+	watch(
+		() => petitionSignatures.data,
+		(data) => {
+			paginatedSignatures.handlePage(data);
+		}
+	);
+
+	watch(
+		() =>
+			[
+				sentinelIsInViewport.current,
+				paginatedSignatures.hasMore,
+				paginatedSignatures.items.length
+			] as const,
+		([isInViewport, hasMore]) => {
+			if (isInViewport && hasMore) {
+				paginatedSignatures.loadMore();
+			}
+		}
+	);
+
+	function encodeSignatureCursor(signature: ReadPetitionSignatureZeroWithPerson) {
+		return encodePetitionSignatureListCursor({
+			createdAt: signature.createdAt,
+			id: signature.id
+		});
+	}
+
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { ElementSize } from 'runed';
-	import { watch } from 'runed';
 
 	let tableContainer = $state() as HTMLElement;
 	const size = new ElementSize(() => tableContainer);
@@ -69,27 +134,37 @@
 		return customColumns.find((column) => column.id === id)?.label;
 	}
 
-	const table = $derived.by(() => {
-		const list = signatures.data ?? [];
+	function buildSignatureTableRows(
+		list: readonly ReadPetitionSignatureZeroWithPerson[],
+		headers: string[],
+		personColumns: string[]
+	) {
 		const rows: Record<string, string | null | undefined>[] = [];
 		for (const signature of list) {
 			const row: Record<string, string | null | undefined> = {};
-			const sig = signature as ReadPetitionSignatureZeroWithPerson;
-			for (const header of tableHeaders) {
-				if (displayColumns.includes(header)) {
+			for (const header of headers) {
+				if (personColumns.includes(header)) {
 					row[header] = renderSignatureColumn({
 						columnName: header,
-						signature: sig,
+						signature,
 						locale: locale.current
 					});
 				} else {
-					row[header] = formatSurveyResponseValue(getSignatureResponsesField(sig, header));
+					row[header] = formatSurveyResponseValue(getSignatureResponsesField(signature, header));
 				}
 			}
 			rows.push(row);
 		}
 		return rows;
-	});
+	}
+
+	const table = $derived.by(() =>
+		buildSignatureTableRows(paginatedSignatures.items, tableHeaders, displayColumns)
+	);
+
+	const exportTable = $derived.by(() =>
+		buildSignatureTableRows(allSignatures.data ?? [], tableHeaders, displayColumns)
+	);
 
 	const transformedTable = $derived.by(() => {
 		const headers = tableHeaders;
@@ -109,7 +184,7 @@
 			used.add(exportKey);
 			exportKeys.push(exportKey);
 		}
-		return table.map((row) => {
+		return exportTable.map((row) => {
 			const newRow: Record<string, string | null | undefined> = {};
 			for (let i = 0; i < headers.length; i++) {
 				newRow[exportKeys[i]] = row[headers[i]];
@@ -117,7 +192,11 @@
 			return newRow;
 		});
 	});
-	const downloadCsvReady = $derived(signatures.details.type === 'complete' && petition.data);
+	const downloadCsvReady = $derived(
+		allSignatures.details.type === 'complete' &&
+			petition.data &&
+			(allSignatures.data?.length ?? 0) > 0
+	);
 	async function downloadTableAsCSV() {
 		if (!downloadCsvReady) {
 			return;
@@ -134,13 +213,17 @@
 </script>
 
 <ContentLayout rootLink="/petitions/{params.petitionId}" {header}>
-	{#if signatures.details.type === 'complete'}
-		<div class="space-y-4">
-			<p class="text-muted-foreground">
-				Total signatures: {signatures.data?.length ?? 0}
-			</p>
+	{#if petitionSignatures.details.type === 'unknown'}
+		<Skeleton class="h-48 w-full" />
+	{:else}
+		<div class="space-y-4" data-testid="petition-signatures-detailed-list">
+			{#if paginatedSignatures.items.length > 0}
+				<p class="text-muted-foreground">
+					{t`${formatNumber(paginatedSignatures.items.length, locale.current)} shown`}
+				</p>
+			{/if}
 			{#if petition.data}
-				{#if (signatures.data?.length ?? 0) === 0}
+				{#if paginatedSignatures.items.length === 0}
 					<Empty.Root>
 						<Empty.Header>
 							<Empty.Media variant="icon">
@@ -174,8 +257,8 @@
 									</Table.Row>
 								</Table.Header>
 								<Table.Body>
-									{#each table as row, rowIndex (signatures.data?.[rowIndex]?.id ?? rowIndex)}
-										<Table.Row>
+									{#each table as row, rowIndex (paginatedSignatures.items[rowIndex]?.id ?? rowIndex)}
+										<Table.Row data-testid="petition-signature-detailed-item">
 											{#each tableHeaders as column (column)}
 												<Table.Cell>{row[column] ?? ''}</Table.Cell>
 											{/each}
@@ -185,11 +268,16 @@
 							</Table.Root>
 						</ScrollArea>
 					</div>
+					{#if paginatedSignatures.hasMore}
+						<div
+							bind:this={sentinel}
+							class="h-1"
+							data-testid="petition-signatures-detailed-scroll-sentinel"
+						></div>
+					{/if}
 				{/if}
 			{/if}
 		</div>
-	{:else}
-		<Skeleton class="h-48 w-full" />
 	{/if}
 </ContentLayout>
 
@@ -223,6 +311,7 @@
 					actionText={t`Add signature`}
 					onSelected={(personIds) => {
 						handleAddPerson({ petitionId: params.petitionId, personIds });
+						resetPetitionSignaturesListPagination();
 					}}
 				/>
 			{/if}

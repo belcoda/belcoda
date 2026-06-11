@@ -2,9 +2,10 @@ import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, optional, nullable, boolean } from 'valibot';
-import { listFilter, type ListFilter, uuid } from '$lib/schema/helpers';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
 import { readTagZero } from '$lib/schema/tag';
+import { decodeRestTagListCursor, decodeTagListCursor } from '$lib/utils/tag/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -13,6 +14,56 @@ export const inputSchema = object({
 });
 export type ListTagsInput = InferOutput<typeof inputSchema>;
 
+function listTagsRestQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	let q = builder.tag
+		.where((expr) => tagReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('id', 'desc')
+		.limit(limit);
+	if (input.cursor) {
+		const start = decodeRestTagListCursor(input.cursor);
+		if (start) {
+			q = q.start(start);
+		}
+	}
+	return q;
+}
+
+function listTagsUiQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	let q = builder.tag
+		.where((expr) => tagReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('createdAt', 'desc')
+		.orderBy('id', 'desc')
+		.limit(limit);
+	if (input.cursor) {
+		const start = decodeTagListCursor(input.cursor);
+		if (start) {
+			q = q.start(start);
+		}
+	}
+	return q;
+}
+
+/** Exact page size for REST callers. Sorts by id only to match the { id } REST cursor. */
 export function listTagsQuery({
 	ctx,
 	input
@@ -20,19 +71,28 @@ export function listTagsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	let q = builder.tag
-		.where((expr) => tagReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
-	}
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listTagsRestQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ * Sorts by createdAt + id to match the { createdAt, id } encoded cursor.
+ */
+export function listTagsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listTagsUiQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export const listTags = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listTagsQuery({ ctx, input: args });
+	return listTagsPaginatedQuery({ ctx, input: args });
 });
 
 function whereClause(

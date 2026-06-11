@@ -45,6 +45,12 @@ export const readPersonNoteWithUserZero = v.object({
 });
 export type ReadPersonNoteWithUserZero = v.InferOutput<typeof readPersonNoteWithUserZero>;
 
+export const personNoteListRowZero = v.object({
+	...readPersonNoteZero.entries,
+	user: v.optional(readUserZero)
+});
+export type PersonNoteListRow = v.InferOutput<typeof personNoteListRowZero>;
+
 export const createPersonNoteZero = v.object({
 	note: personNoteSchema.entries.note
 });

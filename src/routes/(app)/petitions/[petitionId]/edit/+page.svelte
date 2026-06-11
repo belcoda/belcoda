@@ -20,6 +20,7 @@
 	import { parse } from 'valibot';
 	import { goto } from '$app/navigation';
 	import { appState } from '$lib/state.svelte';
+	import { resetPetitionsListPagination } from '$lib/components/layouts/app/sidebars/petitions/petitions-list-pagination';
 
 	async function onSubmit(data: CreatePetitionZero | UpdatePetitionZero) {
 		if (!petition.data) return;
@@ -34,6 +35,7 @@
 			})
 		);
 		await updatedPetitionMutator.client;
+		resetPetitionsListPagination();
 		await goto(`/petitions/${petition.data.id}`);
 	}
 </script>

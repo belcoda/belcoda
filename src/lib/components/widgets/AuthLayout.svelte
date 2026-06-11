@@ -17,7 +17,10 @@
 	import GradientBorder from '$lib/components/widgets/GradientBorder.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import logo from '$lib/assets/logo.png';
+	import DeploymentRecoveryReset from '$lib/utils/DeploymentRecoveryReset.svelte';
 </script>
+
+<DeploymentRecoveryReset />
 
 <div class="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
 	<div class="flex w-full max-w-sm flex-col gap-6">

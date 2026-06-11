@@ -5,6 +5,7 @@ import { TagsPage } from '../pages/settings/tags.page';
 import { TeamsPage } from '../pages/settings/teams.page';
 import { loginAsOwner } from '../helpers/login';
 import { CommunityPage } from '../pages/community/community.page';
+import { BASE_URL } from '../helpers/config';
 
 const PROJECT = 'community' as const;
 
@@ -106,7 +107,9 @@ test.describe.serial('Community and person pages', () => {
 		await loginAsOwner(page, PROJECT);
 		await profilePage.goto(ids.personPath);
 
-		await profilePage.editEmail(newEmail);
+		await expect(async () => {
+			await profilePage.editEmail(newEmail);
+		}).toPass({ timeout: 30_000 });
 
 		await expect(page.getByTestId('person-profile-email-display')).toHaveText(newEmail, {
 			timeout: 15_000
@@ -177,6 +180,28 @@ test.describe.serial('Community and person pages', () => {
 		const profileLoaded = page.getByTestId('person-profile-loaded');
 		await profileLoaded.waitFor({ state: 'visible', timeout: 15_000 });
 		await expect(profileLoaded.getByText(ids.teamName)).toBeVisible({ timeout: 10_000 });
+	});
+
+	test('owner can load more notes in the notes drawer', async ({ page, request }) => {
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-person-notes`, {
+			data: { personId: ids.personId, count: 30 }
+		});
+		expect(seedResponse.ok()).toBeTruthy();
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+
+		await page.getByTestId('notes-action-notes-btn').click();
+		await page.getByTestId('person-notes-list').waitFor({ state: 'visible', timeout: 10_000 });
+		await expect(page.getByTestId('person-note-item')).toHaveCount(25, { timeout: 15_000 });
+
+		const notesList = page.getByTestId('person-notes-list');
+		await notesList.evaluate((element) => {
+			element.scrollTop = element.scrollHeight;
+		});
+
+		await expect(page.getByTestId('person-note-item')).toHaveCount(30, { timeout: 15_000 });
 	});
 
 	test('owner can add a note from the notes drawer on the timeline', async ({ page }) => {

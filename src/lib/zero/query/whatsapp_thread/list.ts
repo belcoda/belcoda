@@ -1,11 +1,11 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput, object } from 'valibot';
+import { array, type InferOutput, object, optional, boolean } from 'valibot';
 import { listFilter } from '$lib/schema/helpers';
 import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';
 import { readWhatsappThreadZero } from '$lib/schema/whatsapp-thread';
-import { optional, boolean } from 'valibot';
+import { decodeCommunicationsListCursor } from '$lib/utils/communications/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -14,6 +14,33 @@ export const inputSchema = object({
 });
 export type ListWhatsappThreadsInput = InferOutput<typeof inputSchema>;
 
+function listWhatsappThreadsQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	const direction = input.reverseCron ? 'desc' : 'asc';
+	let q = builder.whatsappThread
+		.where((expr) => whatsappThreadReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('updatedAt', direction)
+		.orderBy('id', direction)
+		.limit(limit);
+	if (input.cursor) {
+		const cursor = decodeCommunicationsListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
+	}
+	return q;
+}
+
+/** Exact page size for non-UI callers. */
 export function listWhatsappThreadsQuery({
 	ctx,
 	input
@@ -21,24 +48,27 @@ export function listWhatsappThreadsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	let q = builder.whatsappThread
-		.where((expr) => whatsappThreadReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		q = q.start({ id: input.startAfter });
-	}
-	if (input.reverseCron) {
-		q = q.orderBy('updatedAt', 'desc');
-	} else {
-		q = q.orderBy('updatedAt', 'asc');
-	}
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listWhatsappThreadsQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listWhatsappThreadsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listWhatsappThreadsQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export const listWhatsappThreads = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listWhatsappThreadsQuery({ ctx, input: args });
+	return listWhatsappThreadsPaginatedQuery({ ctx, input: args });
 });
 
 function whereClause(

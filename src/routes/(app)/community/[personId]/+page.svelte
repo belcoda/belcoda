@@ -25,7 +25,13 @@
 	);
 </script>
 
-<ContentLayout rootLink="/community" {header} bodyPadding="p-0">
+<ContentLayout
+	rootLink="/community"
+	{header}
+	bodyPadding="p-0"
+	scrollBody={false}
+	hideFooter={!isLastReceivedAtLessThan24HoursAgo || !whatsappOnboarded}
+>
 	<ActivityTimeline personId={params.personId} />
 	{#snippet footer()}
 		{#if whatsappOnboarded}

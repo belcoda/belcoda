@@ -6,6 +6,7 @@
 	import { Alert } from '$lib/components/ui/alert/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import BusinessAccountActivated from './BusinessAccountActivated.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
@@ -72,9 +73,9 @@
 		};
 	});
 
-	function persistWhatsappSettingsFromEmbedded(number: string, wabaId: string) {
+	async function persistWhatsappSettingsFromEmbedded(number: string, wabaId: string) {
 		if (appState.organizationId && appState.activeOrganization.data) {
-			z.mutate(
+			const result = z.mutate(
 				mutators.organization.updateWhatsappSettings({
 					metadata: {
 						organizationId: appState.organizationId,
@@ -86,6 +87,7 @@
 					}
 				})
 			);
+			await result.server;
 		}
 	}
 
@@ -99,21 +101,8 @@
 			if (data.event === 'FINISH') {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				const { phone_number_id, waba_id, business_id } = data.data;
-				if (appState.organizationId && appState.activeOrganization.data) {
-					z.mutate(
-						mutators.organization.updateWhatsappSettings({
-							metadata: {
-								organizationId: appState.organizationId,
-								existingSettings: appState.activeOrganization.data.settings
-							},
-							input: {
-								number: phone_number_id,
-								wabaId: waba_id
-							}
-						})
-					);
-				}
-				persistWhatsappSettingsFromEmbedded(phone_number_id, waba_id);
+				await persistWhatsappSettingsFromEmbedded(phone_number_id, waba_id);
+				document.location.reload();
 			} else if (data.event === 'ERROR') {
 				error = data.data.error_message;
 			} else {
@@ -163,27 +152,7 @@
 {/if}
 
 {#if appState.activeOrganization?.data?.settings.whatsApp.wabaId && appState.activeOrganization?.data?.settings.whatsApp.number}
-	<Card.Root data-testid="whatsapp-accounts-activated-card">
-		<Card.Header>
-			<Card.Title>{t`WhatsApp Business Account Activated`}</Card.Title>
-		</Card.Header>
-		<Card.Content class="space-y-2 text-sm text-muted-foreground">
-			<p>
-				{t`Your WhatsApp Business Account has been created successfully. You can now use WhatsApp
-				messaging features.`}
-			</p>
-			<p data-testid="whatsapp-accounts-phone-line">
-				{t`Your WhatsApp Business Account number is ${
-					appState.activeOrganization?.data?.settings.whatsApp.number
-				}`}.
-			</p>
-			<p data-testid="whatsapp-accounts-waba-line">
-				{t`Your WhatsApp Business Account ID is ${
-					appState.activeOrganization?.data?.settings.whatsApp.wabaId
-				}`}.
-			</p>
-		</Card.Content>
-	</Card.Root>
+	<BusinessAccountActivated />
 {:else}
 	<Card.Root data-testid="whatsapp-accounts-activate-card">
 		<Card.Header>
