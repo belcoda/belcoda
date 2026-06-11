@@ -1,17 +1,46 @@
 import { defineQuery } from '@rocicorp/zero';
 import { builder, type QueryContext } from '$lib/zero/schema';
-import { object, type InferOutput, optional } from 'valibot';
-import { uuid, count } from '$lib/schema/helpers';
+import { object, type InferOutput } from 'valibot';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { activityReadPermissions } from '$lib/zero/query/activity/permissions';
 import { readActivityZero } from '$lib/schema/activity';
+import { decodeActivityListCursor } from '$lib/utils/activity/cursor';
+
+const DEFAULT_PAGE_SIZE = 20;
 
 export const inputSchema = object({
 	personId: uuid,
-	limit: optional(count)
+	cursor: listFilter.entries.cursor,
+	pageSize: listFilter.entries.pageSize
 });
 
 export type ListActivityInput = InferOutput<typeof inputSchema>;
 
+function listActivityQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	let q = builder.activity
+		.where('personId', '=', input.personId)
+		.where((expr) => activityReadPermissions(expr, ctx))
+		.orderBy('createdAt', 'desc')
+		.orderBy('id', 'desc')
+		.limit(limit);
+	if (input.cursor) {
+		const cursor = decodeActivityListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
+	}
+	return q;
+}
+
+// Exact page size for REST and other non-UI callers
 export function listActivityQuery({
 	ctx,
 	input
@@ -19,17 +48,27 @@ export function listActivityQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const limit = input.limit ?? 20;
-	const q = builder.activity
-		.where('personId', '=', input.personId)
-		.where((expr) => activityReadPermissions(expr, ctx))
-		.orderBy('createdAt', 'desc')
-		.limit(limit);
-	return q;
+	const pageSize = input.pageSize || DEFAULT_PAGE_SIZE;
+	return listActivityQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listActivityPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || DEFAULT_PAGE_SIZE;
+	return listActivityQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export const listActivity = defineQuery(inputSchema, ({ args, ctx }) => {
-	return listActivityQuery({ ctx, input: args });
+	return listActivityPaginatedQuery({ ctx, input: args });
 });
 
 export const outputSchema = readActivityZero;
