@@ -63,27 +63,27 @@ async function fetchProfile(organizationId: string) {
 	}
 }
 
-export const whatsappAccountState = {
+class WhatsappAccountState {
 	get profile() {
 		return profile;
-	},
+	}
 	get waba() {
 		return waba;
-	},
+	}
 	get loading() {
 		return loading;
-	},
+	}
 	get saving() {
 		return saving;
-	},
+	}
 	get error() {
 		return error;
-	},
+	}
 	get loadedOrganizationId() {
 		return loadedOrganizationId;
-	},
+	}
 
-	load: async (organizationId: string) => {
+	async load(organizationId: string) {
 		if (loadedOrganizationId === organizationId && profile !== null && waba !== null) {
 			return;
 		}
@@ -102,9 +102,9 @@ export const whatsappAccountState = {
 		inFlightOrganizationId = organizationId;
 		inFlight = fetchProfile(organizationId);
 		return inFlight;
-	},
+	}
 
-	saveProfile: async (organizationId: string, input: UpdateWhatsappBusinessProfileInput) => {
+	async saveProfile(organizationId: string, input: UpdateWhatsappBusinessProfileInput) {
 		saving = true;
 		error = null;
 		try {
@@ -133,9 +133,11 @@ export const whatsappAccountState = {
 		} finally {
 			saving = false;
 		}
-	},
+	}
 
-	reset: () => {
+	reset() {
 		reset();
 	}
-};
+}
+
+export const whatsappAccountState = new WhatsappAccountState();
