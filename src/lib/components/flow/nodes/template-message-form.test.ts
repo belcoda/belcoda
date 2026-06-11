@@ -79,7 +79,9 @@ describe('applyTemplateDefaults', () => {
 			...emptyFormState(),
 			bodyParams: [{ type: 'literal', value: 'E2E Name' }]
 		};
-		const result = applyTemplateDefaults(current, defaultComponents, { mergeExisting: true });
+		const result = applyTemplateDefaults(current as TemplateMessageFormState, defaultComponents, {
+			mergeExisting: true
+		});
 		expect(result.bodyParams).toEqual([{ type: 'literal', value: 'E2E Name' }]);
 	});
 });
@@ -94,9 +96,7 @@ describe('patchParamSource and patchParamSourceType', () => {
 	it('switches literal to variable preserving string as fallback', () => {
 		const params = [{ type: 'literal' as const, value: 'Maria' }];
 		const patched = patchParamSourceType(params, 0, 'variable');
-		expect(patched).toEqual([
-			{ type: 'variable', key: 'person.given_name', fallback: 'Maria' }
-		]);
+		expect(patched).toEqual([{ type: 'variable', key: 'person.given_name', fallback: 'Maria' }]);
 	});
 
 	it('switches variable to literal using fallback as value', () => {
