@@ -8,7 +8,7 @@ import type { QueryContext } from '$lib/zero/schema';
 import { builder } from '$lib/zero/schema';
 import { db } from '$lib/server/db';
 import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';
-import { createMessageFromTemplateAndTemplateMessage } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
+import { createMessageFromTemplateAndTemplateMessage } from '$lib/utils/whatsapp/template';
 import { type Flow } from '$lib/schema/flow/index';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue/index';
 import {

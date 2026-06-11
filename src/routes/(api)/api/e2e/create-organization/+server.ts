@@ -2,6 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { drizzle } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import * as schema from '$lib/schema/drizzle';
+import { DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS } from '$lib/schema/helpers';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 import { error, json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
@@ -85,6 +86,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			defaultTimezone: 'America/New_York',
 			settings,
 			balance: 0,
+			freeWhatsAppMessageCredits: effectiveWabaId ? DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS : null,
 			createdAt: now,
 			updatedAt: now
 		});

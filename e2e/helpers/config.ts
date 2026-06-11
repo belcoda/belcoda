@@ -1,6 +1,8 @@
 export const BASE_URL =
 	process.env.E2E_BASE_URL ?? process.env.PUBLIC_HOST ?? 'http://localhost:5173';
 export const E2E_MOCK_WABA_ID = 'e2e-mock-waba-id';
+/** Unique WABA for the community org so inbound webhook tests resolve a single organization. */
+export const E2E_COMMUNITY_MOCK_WABA_ID = 'e2e-community-mock-waba-id';
 export const E2E_DUMMY_WHATSAPP_NUMBER = '+15555555555';
 export const E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID = '15551234567';
 export const E2E_EMBEDDED_SIGNUP_PHONE_NUMBER = '+15550000000';
