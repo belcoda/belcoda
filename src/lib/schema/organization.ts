@@ -22,6 +22,8 @@ export const organizationSchema = v.object({
 	freeWhatsAppMessageCredits: v.nullable(helpers.count), //monthly allowance of free whatsapp messages
 	freeEmailMessageCredits: v.nullable(helpers.count), //monthly allowance of free email messages
 	resetFreeQuotasAfter: v.nullable(helpers.date), //date and time when the free quotas will be reset
+	stripeCustomerId: v.nullable(helpers.shortString), //stripe customer id for the organization
+	billingEmail: v.nullable(helpers.email), //email address for the organization's billing
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });
@@ -46,11 +48,20 @@ export const readOrganizationRest = v.object({
 });
 export type ReadOrganizationRest = v.InferOutput<typeof readOrganizationRest>;
 
-export const readOrganizationZero = v.object({
-	...organizationSchema.entries,
-	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp
-});
+export const readOrganizationZero = v.omit(
+	v.object({
+		...organizationSchema.entries,
+		createdAt: helpers.dateToTimestamp,
+		updatedAt: helpers.dateToTimestamp
+	}),
+	[
+		'freeWhatsAppMessageCredits',
+		'freeEmailMessageCredits',
+		'resetFreeQuotasAfter',
+		'stripeCustomerId',
+		'billingEmail'
+	] //TODO: Remove these omits once in a future PR once we add them to the zero schema
+);
 export type ReadOrganizationZero = v.InferOutput<typeof readOrganizationZero>;
 
 export const createOrganization = v.object({

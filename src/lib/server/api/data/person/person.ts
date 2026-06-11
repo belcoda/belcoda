@@ -282,16 +282,22 @@ export async function getPerson({
 export async function _getPersonByIdUnsafe({
 	personId,
 	organizationId,
+	includeDeleted = true,
 	tx
 }: {
 	personId: string;
 	organizationId: string;
+	includeDeleted?: boolean;
 	tx: ServerTransaction;
 }) {
+	const whereClause = [eq(person.id, personId), eq(person.organizationId, organizationId)];
+	if (!includeDeleted) {
+		whereClause.push(isNull(person.deletedAt));
+	}
 	const [personRecord] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(person)
-		.where(and(eq(person.id, personId), eq(person.organizationId, organizationId)));
+		.where(and(...whereClause));
 	if (!personRecord) {
 		throw new Error('Person not found');
 	}

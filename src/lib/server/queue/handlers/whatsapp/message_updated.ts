@@ -82,11 +82,13 @@ export async function handleWhatsappMessageUpdated(body: unknown) {
 			status: WhatsappMessageStatus;
 			updatedAt: Date;
 			statusMessage: string | null;
+			wamidId?: string;
 			deliveredAt?: Date;
 			readAt?: Date;
 		} = {
 			status: internalStatus,
 			updatedAt: now,
+			wamidId: wmsg.wamid,
 			statusMessage: internalStatus === 'failed' ? buildFailureStatusMessage(wmsg) : null
 		};
 		if (internalStatus === 'delivered') {

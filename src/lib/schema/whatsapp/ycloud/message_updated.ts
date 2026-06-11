@@ -12,6 +12,7 @@ export const whatsappMessageUpdatedObject = v.object({
 	/** YCloud message resource id — stored in our `whatsapp_message.external_id` after send. */
 	id: mediumString,
 	status: ycloudOutboundMessageStatus,
+	wamid: v.optional(mediumString),
 	from: v.optional(mediumString),
 	to: v.optional(mediumString),
 	wabaId: v.optional(mediumString),

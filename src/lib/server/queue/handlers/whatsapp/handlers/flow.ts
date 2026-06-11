@@ -1,6 +1,6 @@
 import pino from '$lib/pino';
 import { drizzle } from '$lib/server/db';
-import { person as personTable, organization as organizationTable } from '$lib/schema/drizzle';
+import { person as personTable } from '$lib/schema/drizzle';
 import { eq } from 'drizzle-orm';
 import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { v7 as uuidv7 } from 'uuid';
@@ -25,6 +25,7 @@ import {
 	personActionHelperCustomFieldsOnly
 } from '$lib/schema/person';
 import type { FlowResponses } from '$lib/schema/whatsapp/flows/responses';
+import type { WhatsappIdentityLookup } from '$lib/server/api/data/person/findOrCreate';
 
 const log = pino(import.meta.url);
 const isMockExternalServices = privateEnv.MOCK_EXTERNAL_SERVICES === 'true';
@@ -237,15 +238,18 @@ async function determineFlowTarget(responsePayload: Record<string, unknown>) {
 
 export async function handleFlowResponse({
 	flowName,
-	body,
 	response,
 	from,
+	whatsappIdentity,
+	whatsappContextWamidId,
 	tx
 }: {
 	flowName: string;
 	body?: string;
 	response: string;
 	from: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 	tx: ServerTransaction;
 }) {
 	try {
@@ -307,6 +311,8 @@ export async function handleFlowResponse({
 						customFields: customFields
 					},
 					organizationId: event.organizationId,
+					whatsappIdentity,
+					whatsappContextWamidId,
 					tx
 				});
 
@@ -363,7 +369,9 @@ export async function handleFlowResponse({
 					signatureDetails: { channel: { type: 'whatsapp' } },
 					organizationId: petition.organizationId,
 					responses: Object.keys(customFields).length > 0 ? customFields : null,
-					skipNotifications: true
+					skipNotifications: true,
+					whatsappIdentity,
+					whatsappContextWamidId
 				});
 
 				await sendPetitionConfirmationMessage({

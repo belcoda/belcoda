@@ -1,9 +1,11 @@
-import { drizzle } from '$lib/server/db';
-import { organization, person as personTable } from '$lib/schema/drizzle';
-import { eq, and, sql } from 'drizzle-orm';
+import { organization } from '$lib/schema/drizzle';
+import { sql } from 'drizzle-orm';
 import { getCountryCodeFromPhoneNumber } from '$lib/utils/phone';
 import type { ServerTransaction } from '@rocicorp/zero';
-import { findOrCreatePerson } from '$lib/server/api/data/person/findOrCreate';
+import {
+	findOrCreatePerson,
+	type WhatsappIdentityLookup
+} from '$lib/server/api/data/person/findOrCreate';
 import type { CountryCode } from '$lib/utils/country';
 
 export async function getDetailsFromMessageByWabaId({
@@ -12,6 +14,8 @@ export async function getDetailsFromMessageByWabaId({
 	teamId,
 	personPhoneNumber,
 	personName,
+	whatsappIdentity,
+	whatsappContextWamidId,
 	tx
 }: {
 	wabaId: string;
@@ -19,6 +23,8 @@ export async function getDetailsFromMessageByWabaId({
 	teamId?: string;
 	personPhoneNumber: string;
 	personName: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 	tx: ServerTransaction;
 }) {
 	const orgResult = await tx.dbTransaction.wrappedTransaction
@@ -44,7 +50,9 @@ export async function getDetailsFromMessageByWabaId({
 		teamId,
 		addedFrom: { type: 'incoming_whatsapp_message', messageId },
 		organizationId: orgResult[0].id,
-		tx
+		tx,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 
 	return { organization: orgResult[0], person };
@@ -56,6 +64,8 @@ export async function getPersonIdFromButtonAction({
 	organizationId,
 	organizationCountry,
 	messageId,
+	whatsappIdentity,
+	whatsappContextWamidId,
 	tx
 }: {
 	personPhoneNumber: string;
@@ -63,6 +73,8 @@ export async function getPersonIdFromButtonAction({
 	messageId: string;
 	organizationId: string;
 	organizationCountry: CountryCode;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 	tx: ServerTransaction;
 }) {
 	const person = await findOrCreatePerson({
@@ -74,7 +86,9 @@ export async function getPersonIdFromButtonAction({
 		},
 		addedFrom: { type: 'incoming_whatsapp_message', messageId },
 		organizationId,
-		tx
+		tx,
+		whatsappIdentity,
+		whatsappContextWamidId
 	});
 	return person.id;
 }

@@ -94,6 +94,7 @@
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { resetEventsListPagination } from '$lib/components/layouts/app/sidebars/events/events-list-pagination';
 	import CountrySelect from '$lib/components/ui/custom-select/country/country.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
 	import { TagSelectSingle } from '$lib/components/ui/custom-select/tag/index.js';
@@ -235,6 +236,7 @@
 											}
 										})
 									);
+									resetEventsListPagination();
 									toast.success(t`Event archived`);
 									goto('/events');
 								}
@@ -262,6 +264,7 @@
 											}
 										})
 									);
+									resetEventsListPagination();
 									toast.success(t`Event deleted`);
 									goto('/events');
 								}

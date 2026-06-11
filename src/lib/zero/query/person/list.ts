@@ -4,6 +4,7 @@ import { array, type InferOutput, optional, object, nullable, picklist } from 'v
 import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { readPersonZero } from '$lib/schema/person';
+import { decodePersonListCursor } from '$lib/utils/person/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
@@ -27,6 +28,33 @@ export const inputSchema = object({
 });
 
 export type ListPersonsInput = InferOutput<typeof inputSchema>;
+
+function listPersonsQueryBase({
+	ctx,
+	input,
+	limit
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+	limit: number;
+}) {
+	let q = builder.person
+		.where((expr) => personReadPermissions(expr, ctx))
+		.where('organizationId', '=', input.organizationId)
+		.where((expr) => whereClause(expr, { filter: input }))
+		.orderBy('mostRecentActivityAt', 'desc')
+		.orderBy('id', 'desc')
+		.limit(limit);
+	if (input.cursor) {
+		const cursor = decodePersonListCursor(input.cursor);
+		if (cursor) {
+			q = q.start(cursor);
+		}
+	}
+	return q;
+}
+
+/** Exact page size for REST and other non-UI callers. */
 export function listPersonsQuery({
 	ctx,
 	input
@@ -34,22 +62,27 @@ export function listPersonsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	let q = builder.person
-		.where((expr) => personReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.orderBy('mostRecentActivityAt', 'desc')
-		.limit(input.pageSize || 50);
-	if (input.startAfter) {
-		q = q.start({
-			id: input.startAfter
-		});
-	}
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listPersonsQueryBase({ ctx, input, limit: pageSize });
+}
+
+/**
+ * Zero client pagination: fetches one row past `pageSize` so `PaginatedZeroList` can detect
+ * `hasMore` via `processPage` without a separate count query.
+ */
+export function listPersonsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonsQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export const listPersons = defineQuery(inputSchema, ({ ctx, args }) => {
-	return listPersonsQuery({ ctx, input: args });
+	return listPersonsPaginatedQuery({ ctx, input: args });
 });
 
 export function listFilteredPersonsQuery({
@@ -59,13 +92,19 @@ export function listFilteredPersonsQuery({
 	ctx: QueryContext;
 	input: InferOutput<typeof inputSchema>;
 }) {
-	const q = builder.person
-		.where((expr) => personReadPermissions(expr, ctx))
-		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
-		.orderBy('mostRecentActivityAt', 'desc')
-		.limit(input.pageSize || 50);
-	return q;
+	const pageSize = input.pageSize || 50;
+	return listPersonsQueryBase({ ctx, input, limit: pageSize });
+}
+
+export function listFilteredPersonsPaginatedQuery({
+	ctx,
+	input
+}: {
+	ctx: QueryContext;
+	input: InferOutput<typeof inputSchema>;
+}) {
+	const pageSize = input.pageSize || 50;
+	return listPersonsQueryBase({ ctx, input, limit: pageSize + 1 });
 }
 
 export function listPersonByIdsArrayQuery({
