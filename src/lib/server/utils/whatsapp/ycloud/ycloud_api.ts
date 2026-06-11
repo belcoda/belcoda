@@ -14,6 +14,17 @@ import { convertWhatsappMessageToApiFormat } from '$lib/server/utils/whatsapp/yc
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import { whatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { renderValiError } from '$lib/schema/helpers';
+import {
+	mockWhatsappBusinessAccountSummary,
+	mockWhatsappBusinessProfile,
+	whatsappBusinessAccountSummarySchema,
+	whatsappBusinessProfilePatchResponseSchema,
+	whatsappBusinessProfileSchema,
+	toYCloudProfileUpdatePayload,
+	type UpdateWhatsappBusinessProfileInput,
+	type WhatsappBusinessAccountSummary,
+	type WhatsappBusinessProfile
+} from '$lib/schema/whatsapp/ycloud/profile';
 
 export const whatsAppTemplateResponseSchema = v.object({
 	wabaId: v.string(),
@@ -58,17 +69,25 @@ function mockYCloudResponseForEndpoint(endpoint: `/${string}`) {
 	if (endpoint.includes('/phoneNumbers/') && endpoint.endsWith('/register')) {
 		return { phoneNumber: '+15550000000' };
 	}
+	if (endpoint.includes('/phoneNumbers/') && endpoint.endsWith('/profile')) {
+		return mockWhatsappBusinessProfile();
+	}
+	if (endpoint.startsWith('/whatsapp/businessAccounts/')) {
+		return mockWhatsappBusinessAccountSummary();
+	}
 	return {};
 }
 
 async function sendToYCloud({
 	endpoint,
 	body,
-	method
+	method,
+	skipBodyLog = false
 }: {
 	endpoint: `/${string}`;
-	body?: any;
+	body?: unknown;
 	method: 'POST' | 'PUT' | 'DELETE' | 'GET' | 'PATCH';
+	skipBodyLog?: boolean;
 }) {
 	if (isMockExternalServicesEnabled()) {
 		const mocked = mockYCloudResponseForEndpoint(endpoint);
@@ -77,7 +96,12 @@ async function sendToYCloud({
 	}
 
 	try {
-		log.debug({ endpoint: `${env.YCLOUD_API_URL}${endpoint}`, body, method }, 'Sending to YCloud');
+		log.debug(
+			skipBodyLog
+				? { endpoint: `${env.YCLOUD_API_URL}${endpoint}`, method }
+				: { endpoint: `${env.YCLOUD_API_URL}${endpoint}`, body, method },
+			'Sending to YCloud'
+		);
 		const response = await fetch(`${env.YCLOUD_API_URL}${endpoint}`, {
 			method,
 			body: JSON.stringify(body),
@@ -94,7 +118,16 @@ async function sendToYCloud({
 			);
 			throw new Error(`Failed to send to YCloud: ${endpoint} (${response.status})`);
 		}
-		return response.json();
+		const text = await response.text();
+		if (!text.trim()) {
+			return {};
+		}
+		try {
+			return JSON.parse(text);
+		} catch (parseError) {
+			log.error({ parseError, text }, `Invalid JSON from YCloud: ${endpoint}`);
+			throw new Error(`Invalid JSON response from YCloud: ${endpoint}`);
+		}
 	} catch (error) {
 		log.error({ error }, `Error sending to YCloud: ${endpoint}`);
 		throw error;
@@ -574,6 +607,87 @@ export async function checkWhatsappTemplateExists({
 		log.warn({ error }, 'Unexpected error checking template existence');
 		throw error;
 	}
+}
+
+export async function getWhatsappPhoneNumberProfile({
+	wabaId,
+	phoneNumber
+}: {
+	wabaId: string;
+	phoneNumber: string;
+}): Promise<WhatsappBusinessProfile> {
+	if (isMockExternalServicesEnabled()) {
+		log.info({ wabaId, phoneNumber, isMock: true }, 'Mocking YCloud WhatsApp profile retrieve');
+		return mockWhatsappBusinessProfile();
+	}
+
+	const response = await sendToYCloud({
+		endpoint: `/whatsapp/phoneNumbers/${wabaId}/${encodeURIComponent(phoneNumber)}/profile`,
+		method: 'GET'
+	});
+
+	const parsed = await v.parseAsync(whatsappBusinessProfileSchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing WhatsApp profile response from YCloud');
+		throw new Error('Invalid WhatsApp profile response from YCloud');
+	});
+
+	return parsed;
+}
+
+export async function updateWhatsappPhoneNumberProfile({
+	wabaId,
+	phoneNumber,
+	profile
+}: {
+	wabaId: string;
+	phoneNumber: string;
+	profile: UpdateWhatsappBusinessProfileInput;
+}): Promise<WhatsappBusinessProfile> {
+	if (isMockExternalServicesEnabled()) {
+		log.info({ wabaId, phoneNumber, isMock: true }, 'Mocking YCloud WhatsApp profile update');
+		return { ...mockWhatsappBusinessProfile(), ...profile };
+	}
+
+	const response = await sendToYCloud({
+		endpoint: `/whatsapp/phoneNumbers/${wabaId}/${encodeURIComponent(phoneNumber)}/profile`,
+		body: toYCloudProfileUpdatePayload(profile),
+		method: 'PATCH',
+		skipBodyLog: true
+	});
+
+	const parsed = await v.safeParseAsync(whatsappBusinessProfilePatchResponseSchema, response);
+	if (parsed.success) {
+		return parsed.output;
+	}
+
+	log.info(
+		{ wabaId, phoneNumber },
+		'YCloud profile PATCH returned no usable profile; refetching'
+	);
+	return getWhatsappPhoneNumberProfile({ wabaId, phoneNumber });
+}
+
+export async function getWhatsappBusinessAccountSummary({
+	wabaId
+}: {
+	wabaId: string;
+}): Promise<WhatsappBusinessAccountSummary> {
+	if (isMockExternalServicesEnabled()) {
+		log.info({ wabaId, isMock: true }, 'Mocking YCloud WhatsApp business account retrieve');
+		return mockWhatsappBusinessAccountSummary();
+	}
+
+	const response = await sendToYCloud({
+		endpoint: `/whatsapp/businessAccounts/${wabaId}`,
+		method: 'GET'
+	});
+
+	const parsed = await v.parseAsync(whatsappBusinessAccountSummarySchema, response).catch((e) => {
+		log.error(renderValiError(e), 'Error parsing WhatsApp business account response from YCloud');
+		throw new Error('Invalid WhatsApp business account response from YCloud');
+	});
+
+	return parsed;
 }
 
 export async function bindPhoneNumberToWaba({
