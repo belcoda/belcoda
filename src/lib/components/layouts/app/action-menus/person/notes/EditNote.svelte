@@ -18,14 +18,18 @@
 
 	let {
 		note,
-		editOpen = $bindable(true)
-	}: { note: ReadPersonNoteWithUserZero; editOpen: boolean } = $props();
+		editOpen = $bindable(true),
+		onNotesChanged
+	}: {
+		note: ReadPersonNoteWithUserZero;
+		editOpen: boolean;
+		onNotesChanged?: () => void;
+	} = $props();
 	import { toast } from 'svelte-sonner';
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: updatePersonNoteZero,
 		initialData: {
-			/* svelte-ignore state_referenced_locally */
-			note: note.note
+			note: (() => note.note ?? '')()
 		},
 		onSubmit: async (data) => {
 			const parsed = parse(updateMutatorSchemaZero, {
@@ -39,7 +43,8 @@
 					personNoteId: note.id
 				}
 			});
-			const input = z.mutate(mutators.personNote.update(parsed));
+			z.mutate(mutators.personNote.update(parsed));
+			onNotesChanged?.();
 			toast.success('Note updated');
 			editOpen = false;
 		}
@@ -64,8 +69,8 @@
 					/>
 					<InputGroup.Addon align="block-end">
 						<InputGroup.Text class="ms-auto"
-							><span class:text-destructive={$data.note.length > MEDIUM_STRING_MAX_LENGTH}
-								>{$data.note.length}/{MEDIUM_STRING_MAX_LENGTH}</span
+							><span class:text-destructive={($data.note?.length ?? 0) > MEDIUM_STRING_MAX_LENGTH}
+								>{$data.note?.length ?? 0}/{MEDIUM_STRING_MAX_LENGTH}</span
 							></InputGroup.Text
 						>
 					</InputGroup.Addon>

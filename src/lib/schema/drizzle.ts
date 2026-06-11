@@ -55,6 +55,7 @@ import { type OrganizationSettingsSchema } from '$lib/schema/organization/settin
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import { type FilterGroupType } from '$lib/schema/person/filter';
+import type { LedgerEntryMetadataSchema, LedgerSchema } from '$lib/schema/ledger';
 import {
 	type WhatsappMessage,
 	type WhatsappTemplateMessage,
@@ -73,24 +74,40 @@ type Permissions = {
 };
 type IsTrue<T extends true> = T;
 
-export const organization = pgTable('organization', {
-	id: uuid('id').primaryKey(),
-	name: text('name').notNull().unique(),
-	slug: text('slug').notNull().unique(),
-	logo: text('logo'),
-	icon: text('icon'),
-	country: text('country').$type<CountryCode>().notNull(),
-	defaultLanguage: text('default_language').$type<LanguageCode>().notNull(),
-	defaultTimezone: text('default_timezone').notNull(),
-	settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
-	balance: integer('balance').notNull().default(0),
-	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
-		.notNull()
-		.default(sql`now()`),
-	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
-		.notNull()
-		.default(sql`now()`)
-});
+export const organization = pgTable(
+	'organization',
+	{
+		id: uuid('id').primaryKey(),
+		name: text('name').notNull().unique(),
+		slug: text('slug').notNull().unique(),
+		logo: text('logo'),
+		icon: text('icon'),
+		country: text('country').$type<CountryCode>().notNull(),
+		defaultLanguage: text('default_language').$type<LanguageCode>().notNull(),
+		defaultTimezone: text('default_timezone').notNull(),
+		settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
+		balance: integer('balance').notNull().default(0),
+		freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
+		freeEmailMessageCredits: integer('free_email_message_credits'),
+		resetFreeQuotasAfter: timestamp('reset_free_quotas_after', {
+			withTimezone: true,
+			mode: 'date'
+		}),
+		stripeCustomerId: text('stripe_customer_id').unique(),
+		billingEmail: text('billing_email'),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.default(sql`now()`),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.default(sql`now()`)
+	},
+	(table) => [
+		uniqueIndex('organization_waba_id_unique')
+			.on(sql`(${table.settings}->'whatsApp'->>'wabaId')`)
+			.where(sql`(${table.settings}->'whatsApp'->>'wabaId') IS NOT NULL`)
+	]
+);
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
 type OrganizationValibotMatchesDrizzle = IsTrue<
 	OrganizationSchema extends typeof organization.$inferSelect ? true : false
@@ -371,6 +388,10 @@ export const person = pgTable(
 		mostRecentActivityPreview: jsonb(
 			'most_recent_activity_preview'
 		).$type<ActivityPreviewPayload>(),
+		mostRecentWhatsappMessageReceivedAt: timestamp('most_recent_whatsapp_message_received_at', {
+			withTimezone: true,
+			mode: 'date'
+		}),
 
 		profilePicture: text('profile_picture'),
 		addedFrom: jsonb('added_from').notNull().$type<PersonAddedFrom>(),
@@ -946,6 +967,27 @@ type ActionCodeValibotMatchesDrizzle = IsTrue<
 type ActionCodeDrizzleMatchesValibot = IsTrue<
 	typeof actionCode.$inferSelect extends ActionCodeSchema ? true : false
 >;
+
+export const ledger = pgTable('ledger', {
+	id: uuid('id').primaryKey(),
+	organizationId: uuid('organization_id')
+		.notNull()
+		.references(() => organization.id),
+	deltaInUsdHundredthsOfCents: integer('delta_in_usd_hundredths_of_cents').notNull(),
+	idempotencyKey: text('idempotency_key').notNull().unique(),
+	metadata: jsonb('metadata').$type<LedgerEntryMetadataSchema>().notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+		.notNull()
+		.default(sql`now()`)
+});
+
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type LedgerValibotMatchesDrizzle = IsTrue<
+	LedgerSchema extends typeof ledger.$inferSelect ? true : false
+>;
+type LedgerDrizzleMatchesValibot = IsTrue<
+	typeof ledger.$inferSelect extends LedgerSchema ? true : false
+>;
 export const account = pgTable('account', {
 	id: uuid('id').primaryKey(),
 	userId: uuid('user_id')
@@ -1311,5 +1353,12 @@ export const personImportRelations = relations(personImport, ({ one }) => ({
 	importedByPerson: one(user, {
 		fields: [personImport.importedBy],
 		references: [user.id]
+	})
+}));
+
+export const ledgerRelations = relations(ledger, ({ one }) => ({
+	organization: one(organization, {
+		fields: [ledger.organizationId],
+		references: [organization.id]
 	})
 }));

@@ -38,12 +38,13 @@ jobs:
           DATABASE_URL: ${{ secrets.PROXIED_PRODUCTION_DATABASE_URL }}
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      # App deploy
-      - run: flyctl deploy -c deploy/fly.production.toml --remote-only --build-arg PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN_STAGING }} --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN_STAGING }} --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
+      # Zero deploy
+      - run: flyctl deploy -c deploy/fly.zero.production.toml --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      # Zero deploy
-      - run: flyctl deploy -c deploy/fly.zero.production.toml --remote-only
+      # App deploy
+      # Note: This currently uses staging environment variables for Sentry and AWS S3 bucket. These variables are only needed for the build step. But it's true they should be replaced with separate production build arguments in the future.
+      - run: flyctl deploy -c deploy/fly.production.toml --remote-only --build-arg PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN_STAGING }} --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN_STAGING }} --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

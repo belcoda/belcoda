@@ -283,6 +283,7 @@ function mapCsvRowToPerson(
 		profilePicture: csvRow['profile_picture'] || csvRow['profilePicture'] || null,
 		addedFrom,
 		mostRecentActivityAt: new Date(),
-		mostRecentActivityPreview: null
+		mostRecentActivityPreview: null,
+		mostRecentWhatsappMessageReceivedAt: null
 	};
 }

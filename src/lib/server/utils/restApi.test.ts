@@ -62,7 +62,7 @@ describe('buildApiListQueryFromUrl', () => {
 			searchString: null,
 			teamId: null,
 			isDeleted: null,
-			startAfter: null,
+			cursor: null,
 			excludedIds: []
 		});
 	});
@@ -94,12 +94,12 @@ describe('buildApiListQueryFromUrl', () => {
 		).toBe('alice');
 	});
 
-	it('reads startAfter from startAfter query param', () => {
+	it('reads cursor from cursor query param', () => {
 		expect(
 			buildApiListFilter({
 				organizationId: orgId,
-				url: urlWith('startAfter=cursor-token')
-			}).startAfter
+				url: urlWith('cursor=cursor-token')
+			}).cursor
 		).toBe('cursor-token');
 	});
 
@@ -115,7 +115,7 @@ describe('buildApiListQueryFromUrl', () => {
 		expect(
 			buildApiListFilter({
 				organizationId: orgId,
-				url: urlWith('pageSize=10&search=pat&startAfter=s1')
+				url: urlWith('pageSize=10&search=pat&cursor=s1')
 			})
 		).toEqual({
 			organizationId: orgId,
@@ -123,7 +123,7 @@ describe('buildApiListQueryFromUrl', () => {
 			searchString: 'pat',
 			teamId: null,
 			isDeleted: null,
-			startAfter: 's1',
+			cursor: 's1',
 			excludedIds: []
 		});
 	});

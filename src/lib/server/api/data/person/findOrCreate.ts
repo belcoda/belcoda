@@ -1,5 +1,5 @@
 import { drizzle } from '$lib/server/db';
-import { person, personTeam } from '$lib/schema/drizzle';
+import { person, personTeam, personWhatsappIdentity, whatsappMessage } from '$lib/schema/drizzle';
 import { eq, or, and, isNull } from 'drizzle-orm';
 
 import { personActionHelper, type PersonActionHelper } from '$lib/schema/person';
@@ -18,42 +18,188 @@ import { personApiSchema } from '$lib/schema/person';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 const log = pino(import.meta.url);
 
+export type WhatsappIdentityLookup = {
+	wabaId: string;
+	bsuid?: string | null;
+};
+
+async function _findPersonByWhatsappIdentityUnsafe({
+	organizationId,
+	whatsappIdentity,
+	tx
+}: {
+	organizationId: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	tx: ServerTransaction;
+}) {
+	if (!whatsappIdentity?.wabaId || !whatsappIdentity.bsuid) {
+		return undefined;
+	}
+
+	const [personRecord] = await tx.dbTransaction.wrappedTransaction
+		.select({
+			id: person.id,
+			organizationId: person.organizationId,
+			familyName: person.familyName,
+			givenName: person.givenName,
+			addressLine1: person.addressLine1,
+			addressLine2: person.addressLine2,
+			locality: person.locality,
+			region: person.region,
+			postcode: person.postcode,
+			country: person.country,
+			preferredLanguage: person.preferredLanguage,
+			workplace: person.workplace,
+			position: person.position,
+			gender: person.gender,
+			dateOfBirth: person.dateOfBirth,
+			emailAddress: person.emailAddress,
+			subscribed: person.subscribed,
+			doNotContact: person.doNotContact,
+			phoneNumber: person.phoneNumber,
+			whatsAppUsername: person.whatsAppUsername,
+			socialMedia: person.socialMedia,
+			externalId: person.externalId,
+			mostRecentActivityAt: person.mostRecentActivityAt,
+			mostRecentActivityPreview: person.mostRecentActivityPreview,
+			mostRecentWhatsappMessageReceivedAt: person.mostRecentWhatsappMessageReceivedAt,
+			profilePicture: person.profilePicture,
+			addedFrom: person.addedFrom,
+			createdAt: person.createdAt,
+			updatedAt: person.updatedAt,
+			deletedAt: person.deletedAt
+		})
+		.from(personWhatsappIdentity)
+		.innerJoin(person, eq(person.id, personWhatsappIdentity.personId))
+		.where(
+			and(
+				isNull(personWhatsappIdentity.deletedAt),
+				isNull(person.deletedAt),
+				eq(personWhatsappIdentity.organizationId, organizationId),
+				eq(personWhatsappIdentity.wabaId, whatsappIdentity.wabaId),
+				eq(personWhatsappIdentity.bsuid, whatsappIdentity.bsuid),
+				eq(person.organizationId, organizationId)
+			)
+		);
+	return personRecord;
+}
+
+async function _findPersonByWhatsappContextMessageUnsafe({
+	organizationId,
+	whatsappContextWamidId,
+	tx
+}: {
+	organizationId: string;
+	whatsappContextWamidId?: string;
+	tx: ServerTransaction;
+}) {
+	if (!whatsappContextWamidId) {
+		return undefined;
+	}
+
+	const [personRecord] = await tx.dbTransaction.wrappedTransaction
+		.select({
+			id: person.id,
+			organizationId: person.organizationId,
+			familyName: person.familyName,
+			givenName: person.givenName,
+			addressLine1: person.addressLine1,
+			addressLine2: person.addressLine2,
+			locality: person.locality,
+			region: person.region,
+			postcode: person.postcode,
+			country: person.country,
+			preferredLanguage: person.preferredLanguage,
+			workplace: person.workplace,
+			position: person.position,
+			gender: person.gender,
+			dateOfBirth: person.dateOfBirth,
+			emailAddress: person.emailAddress,
+			subscribed: person.subscribed,
+			doNotContact: person.doNotContact,
+			phoneNumber: person.phoneNumber,
+			whatsAppUsername: person.whatsAppUsername,
+			socialMedia: person.socialMedia,
+			externalId: person.externalId,
+			mostRecentActivityAt: person.mostRecentActivityAt,
+			mostRecentActivityPreview: person.mostRecentActivityPreview,
+			mostRecentWhatsappMessageReceivedAt: person.mostRecentWhatsappMessageReceivedAt,
+			profilePicture: person.profilePicture,
+			addedFrom: person.addedFrom,
+			createdAt: person.createdAt,
+			updatedAt: person.updatedAt,
+			deletedAt: person.deletedAt
+		})
+		.from(whatsappMessage)
+		.innerJoin(person, eq(person.id, whatsappMessage.personId))
+		.where(
+			and(
+				isNull(person.deletedAt),
+				eq(whatsappMessage.organizationId, organizationId),
+				eq(whatsappMessage.wamidId, whatsappContextWamidId),
+				eq(person.organizationId, organizationId)
+			)
+		);
+	return personRecord;
+}
+
 export async function findOrCreatePerson({
 	personAction,
 	addedFrom,
 	updateExistingPerson = false,
 	tx,
 	organizationId,
-	teamId
+	teamId,
+	whatsappIdentity,
+	whatsappContextWamidId
 }: {
 	personAction: PersonActionHelper;
 	addedFrom: PersonAddedFrom;
 	organizationId: string;
 	updateExistingPerson?: boolean;
 	teamId?: string;
+	whatsappIdentity?: WhatsappIdentityLookup;
+	whatsappContextWamidId?: string;
 	tx: ServerTransaction;
 }) {
 	const parsedActionHelper = parse(personActionHelper, personAction);
 	const parsedAddedFrom = parse(personAddedFrom, addedFrom);
-	const whereConditions = [];
-	if (personAction.emailAddress) {
-		whereConditions.push(eq(person.emailAddress, personAction.emailAddress));
-	}
-	if (personAction.phoneNumber) {
-		whereConditions.push(eq(person.phoneNumber, personAction.phoneNumber));
-	}
 
-	// there should only ever be one because there is a unique index against organizationId and phoneNumber/emailAddress
-	const [personRecord] = await tx.dbTransaction.wrappedTransaction
-		.select()
-		.from(person)
-		.where(
-			and(
-				isNull(person.deletedAt),
-				eq(person.organizationId, organizationId),
-				or(...whereConditions)
-			)
-		);
+	let personRecord =
+		(await _findPersonByWhatsappIdentityUnsafe({
+			organizationId,
+			whatsappIdentity,
+			tx
+		})) ??
+		(await _findPersonByWhatsappContextMessageUnsafe({
+			organizationId,
+			whatsappContextWamidId,
+			tx
+		}));
+
+	if (!personRecord) {
+		const whereConditions = [];
+		if (parsedActionHelper.emailAddress) {
+			whereConditions.push(eq(person.emailAddress, parsedActionHelper.emailAddress));
+		}
+		if (parsedActionHelper.phoneNumber) {
+			whereConditions.push(eq(person.phoneNumber, parsedActionHelper.phoneNumber));
+		}
+
+		if (whereConditions.length > 0) {
+			// there should only ever be one because there is a unique index against organizationId and phoneNumber/emailAddress
+			[personRecord] = await tx.dbTransaction.wrappedTransaction
+				.select()
+				.from(person)
+				.where(
+					and(
+						isNull(person.deletedAt),
+						eq(person.organizationId, organizationId),
+						or(...whereConditions)
+					)
+				);
+		}
+	}
 
 	if (personRecord) {
 		if (updateExistingPerson) {

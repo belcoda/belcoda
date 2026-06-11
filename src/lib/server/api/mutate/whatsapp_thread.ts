@@ -44,6 +44,20 @@ export const updateWhatsappThread = defineMutator(
 	}
 );
 
+export const upsertWhatsappThread = defineMutator(
+	createMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server') {
+			throw new Error('upsertWhatsappThread can only be called from the server');
+		}
+		await dataFunctions.upsertWhatsappThread({
+			tx,
+			ctx,
+			args: args
+		});
+	}
+);
+
 export const deleteWhatsappThread = defineMutator(
 	deleteMutatorSchema,
 	async ({ tx, args, ctx }) => {

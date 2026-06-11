@@ -38,8 +38,12 @@ export class PersonProfilePage {
 
 	async editName(givenName: string, familyName: string) {
 		await this.waitForLoaded();
+		await this.nameDisplay.waitFor({ state: 'visible', timeout: 10_000 });
+		await this.nameEditButton.waitFor({ state: 'visible', timeout: 10_000 });
+		await this.nameEditButton.scrollIntoViewIfNeeded();
 		await this.nameEditButton.click();
-		await this.nameSaveButton.waitFor({ state: 'visible', timeout: 10_000 });
+		await this.givenNameInput.waitFor({ state: 'visible', timeout: 10_000 });
+		await this.familyNameInput.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.givenNameInput.fill(givenName);
 		await this.familyNameInput.fill(familyName);
 		await this.nameSaveButton.click();
@@ -47,10 +51,11 @@ export class PersonProfilePage {
 
 	async editEmail(email: string) {
 		await this.waitForLoaded();
+		await this.emailEditButton.waitFor({ state: 'visible', timeout: 10_000 });
+		await this.emailEditButton.scrollIntoViewIfNeeded();
 		await this.emailEditButton.click();
 		await this.emailInput.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.emailInput.fill(email);
-		await this.emailSaveButton.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.emailSaveButton.click();
 	}
 

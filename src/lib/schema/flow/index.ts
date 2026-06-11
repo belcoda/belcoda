@@ -28,7 +28,7 @@ const nodeBase = v.object({
 export type FlowNodeBase = v.InferOutput<typeof nodeBase>;
 
 const eventSignupData = v.object({
-	eventId: helpers.uuid
+	eventId: v.nullable(helpers.uuid)
 });
 export type EventSignupData = v.InferOutput<typeof eventSignupData>;
 const eventSignupNode = v.object({
@@ -39,7 +39,7 @@ const eventSignupNode = v.object({
 export type EventSignupNodeData = v.InferOutput<typeof eventSignupNode>;
 
 const petitionSignupData = v.object({
-	petitionId: helpers.uuid
+	petitionId: v.nullable(helpers.uuid)
 });
 export type PetitionSignupData = v.InferOutput<typeof petitionSignupData>;
 const petitionSignupNode = v.object({
@@ -50,7 +50,7 @@ const petitionSignupNode = v.object({
 export type PetitionSignupNodeData = v.InferOutput<typeof petitionSignupNode>;
 
 const tagAddData = v.object({
-	tagId: helpers.uuid
+	tagId: v.nullable(helpers.uuid)
 });
 export type TagAddData = v.InferOutput<typeof tagAddData>;
 const tagAddNode = v.object({
@@ -83,9 +83,9 @@ const targetingNode = v.object({
 export type TargetingNodeData = v.InferOutput<typeof targetingNode>;
 
 export const whatsappMessageNodeData = v.object({
-	text: helpers.mediumString,
+	text: v.optional(helpers.mediumString),
 	imageUrl: v.optional(v.nullable(helpers.url)),
-	buttons: v.array(v.object({ id: helpers.uuid, label: helpers.mediumString }))
+	buttons: v.optional(v.array(v.object({ id: helpers.uuid, label: helpers.mediumString })), [])
 });
 export type WhatsappMessageData = v.InferOutput<typeof whatsappMessageNodeData>;
 const messageNode = v.object({
@@ -130,7 +130,7 @@ const nodeSchema = v.variant('type', [
 	messageNode,
 	templateMessageNode
 ]);
-
+export type Node = v.InferOutput<typeof nodeSchema>;
 const edgeSchema = v.object({
 	id: helpers.mediumString,
 	source: helpers.uuid,

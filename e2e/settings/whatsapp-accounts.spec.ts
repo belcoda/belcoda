@@ -1,46 +1,25 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { WhatsappAccountsPage } from '../pages/settings/whatsapp-accounts.page';
-import { getTestUsers } from '../helpers/auth';
+import { loginAsOwner, loginAsMember } from '../helpers/login';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 import {
+	E2E_EMBEDDED_SIGNUP_PHONE_NUMBER,
 	E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
 	E2E_EMBEDDED_SIGNUP_WABA_ID
 } from '../helpers/config';
 
 const PROJECT = 'whatsapp-accounts' as const;
-const USERS = getTestUsers(PROJECT);
-
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
-
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
 
 test.describe.serial('Settings: WhatsApp accounts', () => {
 	test('member cannot access WhatsApp accounts settings', async ({ page }) => {
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 
 		await page.goto('/settings/whatsapp/accounts');
-
-		await expect(page.getByTestId('whatsapp-accounts-heading')).toHaveCount(0);
-		await expect(page.getByTestId('whatsapp-accounts-launch-signup')).toHaveCount(0);
+		await expectMemberCannotAccessSettings(page);
 	});
 
 	test('owner sees activate card when no account is connected', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const accountsPage = new WhatsappAccountsPage(page);
 		await accountsPage.goto();
@@ -51,7 +30,7 @@ test.describe.serial('Settings: WhatsApp accounts', () => {
 	});
 
 	test('owner can connect a WhatsApp account', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const accountsPage = new WhatsappAccountsPage(page);
 		await accountsPage.goto();
@@ -64,7 +43,7 @@ test.describe.serial('Settings: WhatsApp accounts', () => {
 		});
 
 		await expect(accountsPage.activatedCard()).toBeVisible({ timeout: 20_000 });
-		await expect(accountsPage.phoneLine()).toContainText(E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID);
+		await expect(accountsPage.phoneLine()).toContainText(E2E_EMBEDDED_SIGNUP_PHONE_NUMBER);
 		await expect(accountsPage.wabaLine()).toContainText(E2E_EMBEDDED_SIGNUP_WABA_ID);
 		await expect
 			.poll(
@@ -83,7 +62,7 @@ test.describe.serial('Settings: WhatsApp accounts', () => {
 	});
 
 	test('owner reaches page via settings sidebar', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		await page.goto('/settings/tags');
 		await page.getByTestId('settings-sidebar-whatsapp-accounts').click();

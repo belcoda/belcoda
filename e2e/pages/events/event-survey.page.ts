@@ -29,9 +29,9 @@ export class EventSurveyPage {
 	async addShortTextQuestion(label: string) {
 		await this.addQuestionTrigger.click();
 		await this.page.getByTestId('survey-add-short-text').click();
-
-		const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
-		await labelInput.waitFor({ state: 'visible', timeout: 15_000 });
-		await labelInput.fill(label);
+		await this.page
+			.locator('[data-testid^="survey-custom-question-label-"]')
+			.last()
+			.fill(label, { timeout: 15_000 });
 	}
 }

@@ -41,6 +41,30 @@ export const updateWhatsappThread = defineMutator(updateMutatorSchema, async ({ 
 	});
 });
 
+export const upsertWhatsappThread = defineMutator(createMutatorSchema, async ({ tx, args }) => {
+	if (!args.input.flow) {
+		throw new Error('upsertWhatsappThread requires flow');
+	}
+	tx.mutate.whatsappThread.upsert({
+		id: args.metadata.whatsappThreadId,
+		organizationId: args.metadata.organizationId,
+		teamId: null,
+		flow: args.input.flow,
+		sentBy: null,
+		title: null,
+		description: null,
+		startedAt: null,
+		completedAt: null,
+		estimatedRecipientCount: 0, //will be set to 0 on the client, but not updated if update on the server
+		successfulRecipientCount: 0, //will be set to 0 on the client, but not updated if update on the server
+		failedRecipientCount: 0, //will be set to 0 on the client, but not updated if update on the server
+		estimatedCost: 0, //will be set to 0 on the client, but not updated if update on the server
+		totalCost: 0, //will be set to 0 on the client, but not updated if update on the server
+		createdAt: now(), //likewise, will not be updated on the server...
+		updatedAt: now()
+	});
+});
+
 export const deleteWhatsappThread = defineMutator(deleteMutatorSchema, async ({ tx, args }) => {
 	tx.mutate.whatsappThread.update({
 		id: args.id,

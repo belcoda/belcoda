@@ -7,11 +7,9 @@
 
 	let {
 		whatsappThreadId,
-		beforeSend,
 		onSent
 	}: {
 		whatsappThreadId: string;
-		beforeSend: () => Promise<void>;
 		onSent?: () => void;
 	} = $props();
 
@@ -25,7 +23,6 @@
 		loading = true;
 		const trimmedPhoneNumber = phoneNumber.trim();
 		try {
-			await beforeSend();
 			const response = await fetch(`/api/utils/whatsapp/send_test_whatsapp/${whatsappThreadId}`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },

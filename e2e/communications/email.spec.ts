@@ -1,22 +1,39 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
-import { EmailNavigationPage } from '../pages/communications/email-navigation.page';
+import { expect, test } from '@playwright/test';
+import { EmailListPage, EmailNavigationPage } from '../pages/communications/email-navigation.page';
 import { EmailDraftPage } from '../pages/communications/email-draft.page';
 import { EmailSentPage } from '../pages/communications/email-sent.page';
-import { getTestUsers } from '../helpers/auth';
+import { BASE_URL, getOrgSlug } from '../helpers/config';
+import { loginAsOwner } from '../helpers/login';
 
 const PROJECT = 'communications' as const;
-const USERS = getTestUsers(PROJECT);
 
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
+test('owner can load more email drafts via infinite scroll', async ({ page, request }) => {
+	const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-email-messages`, {
+		data: { count: 30, organizationSlug: getOrgSlug(PROJECT) }
+	});
+	expect(seedResponse.ok()).toBeTruthy();
+	const { runId } = (await seedResponse.json()) as { runId: string };
+
+	await loginAsOwner(page, PROJECT);
+
+	const navigationPage = new EmailNavigationPage(page);
+	await navigationPage.gotoDrafts();
+
+	const listPage = new EmailListPage(page);
+	await listPage.waitForListVisible();
+
+	const seededRows = listPage.emailItemsForRun(runId);
+	await expect(seededRows.first()).toBeVisible({ timeout: 15_000 });
+
+	const initialCount = await seededRows.count();
+	expect(initialCount).toBeGreaterThan(0);
+	expect(initialCount).toBeLessThan(30);
+
+	await expect(async () => {
+		await listPage.scrollToBottom();
+		await expect(seededRows).toHaveCount(30);
+	}).toPass({ timeout: 15_000 });
+});
 
 test.describe.serial('Communications: Email Drafts', () => {
 	const state = {
@@ -32,7 +49,7 @@ test.describe.serial('Communications: Email Drafts', () => {
 		state.subject = `E2E Email Draft ${suffix}`;
 		state.body = `E2E Email Body ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const navigationPage = new EmailNavigationPage(page);
 		await navigationPage.gotoDrafts();
@@ -52,7 +69,7 @@ test.describe.serial('Communications: Email Drafts', () => {
 	});
 
 	test('owner sees subject and body persisted on draft reload', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const draftPage = new EmailDraftPage(page);
 		await draftPage.gotoDraftById(state.draftId);
@@ -63,7 +80,7 @@ test.describe.serial('Communications: Email Drafts', () => {
 	});
 
 	test('owner can discard an email draft', async ({ page }) => {
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const draftPage = new EmailDraftPage(page);
 		await draftPage.gotoDraftById(state.draftId);
@@ -78,7 +95,7 @@ test.describe.serial('Communications: Email Drafts', () => {
 		state.sentSubject = `E2E Send Email ${suffix}`;
 		state.sentBody = `E2E Send Body ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		const draftPage = new EmailDraftPage(page);
 		await draftPage.gotoNewDraft();

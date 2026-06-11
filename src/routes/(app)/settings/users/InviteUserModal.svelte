@@ -32,7 +32,7 @@
 	}
 
 	async function handleInvite() {
-		if (!email.trim()) {
+		if (!email?.trim()) {
 			toast.error(t`Please enter an email address`);
 			return;
 		}
@@ -109,7 +109,7 @@
 			</Button>
 			<Button
 				onclick={handleInvite}
-				disabled={submitting || !email.trim()}
+				disabled={submitting || !email?.trim()}
 				data-testid="invite-user-submit"
 			>
 				{#if submitting}

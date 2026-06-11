@@ -16,8 +16,8 @@ let cachedOwnerUserId: string | null = null;
  * because some `/api/v1` endpoints (e.g. POST person notes) require a
  * concrete `userId` in the body.
  *
- * Module-scoped so it is reused across every spec in the file (Playwright is
- * configured with `workers: 1`, so this cache is safe).
+ * Module-scoped so it is reused across every spec in the same file (safe when
+ * tests in that file run on one worker; see playwright.config.ts).
  */
 export async function ensureOwnerApiKey(
 	browser: Browser

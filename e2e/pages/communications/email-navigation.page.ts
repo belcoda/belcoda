@@ -32,3 +32,31 @@ export class EmailNavigationPage {
 		await this.composeEmailLink.click();
 	}
 }
+
+export class EmailListPage {
+	readonly page: Page;
+	readonly searchInput: Locator;
+	readonly emailItems: Locator;
+	readonly scrollContainer: Locator;
+
+	constructor(page: Page) {
+		this.page = page;
+		this.searchInput = page.getByTestId('email-list-search');
+		this.emailItems = page.getByTestId('email-list-item');
+		this.scrollContainer = page.getByTestId('email-list-scroll');
+	}
+
+	emailItemsForRun(runId: string): Locator {
+		return this.emailItems.filter({ hasText: `E2E pagination email ${runId}` });
+	}
+
+	async waitForListVisible() {
+		await this.searchInput.waitFor({ state: 'visible', timeout: 15_000 });
+	}
+
+	async scrollToBottom() {
+		await this.scrollContainer.evaluate((element) => {
+			element.scrollTop = element.scrollHeight;
+		});
+	}
+}

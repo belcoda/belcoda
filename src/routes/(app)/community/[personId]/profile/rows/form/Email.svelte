@@ -24,6 +24,7 @@
 			/* svelte-ignore state_referenced_locally */
 			emailAddress: person.emailAddress
 		},
+		validateOnLoad: false,
 		onSubmit: async (data) => {
 			const response = z.mutate(
 				mutators.person.update({

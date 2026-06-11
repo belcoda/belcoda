@@ -12,6 +12,8 @@
 	import { v7 as uuidv7 } from 'uuid';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 
+	let { onCreated }: { onCreated?: () => void } = $props();
+
 	let { form, data, errors, Errors, helpers } = createForm({
 		schema: createTag,
 		onSubmit: async (data) => {
@@ -25,6 +27,7 @@
 				})
 			);
 			isOpen = false;
+			onCreated?.();
 		}
 	});
 	let isOpen = $state(false);

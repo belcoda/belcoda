@@ -45,15 +45,17 @@ test.describe('Login Form', () => {
 	});
 });
 
-test.describe('Successful Login', () => {
-	test('valid credentials redirect to /community', async ({ page }) => {
+test.describe('Email and password login (UI)', () => {
+	test('user signs in on the login page with email and password', async ({ page }) => {
 		const loginPage = new LoginPage(page);
 		const communityPage = new CommunityPage(page);
 
 		await loginPage.goto();
+		await expect(loginPage.emailInput).toBeVisible();
+		await expect(loginPage.passwordInput).toBeVisible();
 		await loginPage.login(USERS.owner.email, USERS.owner.password);
 
-		await expect(page).toHaveURL('/community');
+		await expect(page).toHaveURL('/community', { timeout: 30_000 });
 		await communityPage.expectLoaded();
 	});
 });

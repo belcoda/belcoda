@@ -32,6 +32,12 @@ export class PetitionCreatePage {
 		await this.titleInput.fill(title);
 	}
 
+	async slugFromPreview(): Promise<string> {
+		const text = await this.slugPreview.textContent();
+		const match = text?.match(/\/petitions\/([a-z0-9-]+)/);
+		return match?.[1] ?? '';
+	}
+
 	async fillDescription(description: string) {
 		await this.descriptionInput.fill(description);
 	}

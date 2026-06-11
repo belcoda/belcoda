@@ -14,7 +14,11 @@ import {
 	emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema,
 	type EmojiReactionMutatorSchemaZero as EmojiReactionMutatorSchema,
 	isReactionSupportedMessageType,
-	whatsappMessageApiSchema
+	whatsappMessageApiSchema,
+	type CreateWhatsAppMessageMutatorSchema,
+	createWhatsAppMessageMutatorSchema,
+	createWhatsappTemplateMessageMutatorSchema,
+	type CreateWhatsappTemplateMessageMutatorSchema
 } from '$lib/schema/whatsapp-message';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -29,6 +33,13 @@ import { env as publicEnv } from '$env/dynamic/public';
 import { sendEmojiReaction } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { extractExternalId } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
 import { drizzle } from '$lib/server/db';
+import {
+	sendWhatsappMessage,
+	sendWhatsappTemplateMessage
+} from '$lib/server/utils/whatsapp/send_message';
+
+import { personReadPermissions } from '$lib/zero/query/person/permissions';
+import { builder } from '$lib/zero/schema';
 
 export async function _findWhatsAppMessageByWamidIdUnsafe({
 	wamidId,
@@ -288,17 +299,21 @@ export async function emojiReaction({
 
 export async function createWhatsAppMessage({
 	id,
+	wamidId,
 	message,
 	type,
 	organizationId,
+	externalId,
 	personId,
 	tx
 }: {
 	id: string;
 	message: WhatsappMessage;
 	organizationId: string;
+	wamidId?: string | undefined;
 	type: WhatsappMessageActivityType;
 	personId: string;
+	externalId?: string | undefined;
 	tx: ServerTransaction;
 }) {
 	const parsed = await parse(whatsappMessageObjectSchema, message);
@@ -307,8 +322,10 @@ export async function createWhatsAppMessage({
 		id: insertedId,
 		message: parsed,
 		type,
+		externalId: externalId ?? null,
 		personId,
 		status: 'pending',
+		wamidId: wamidId ?? null,
 		organizationId,
 		createdAt: new Date(),
 		updatedAt: new Date()
@@ -334,4 +351,76 @@ export async function createWhatsAppMessage({
 		queueSendOptionsFromTransaction(tx)
 	);
 	return created;
+}
+
+export async function sendIndividualMessage({
+	ctx,
+	args: argsInput,
+	tx
+}: {
+	args: CreateWhatsAppMessageMutatorSchema;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const args = parse(createWhatsAppMessageMutatorSchema, argsInput);
+	if (
+		ctx.adminOrgs.includes(args.metadata.organizationId) ||
+		ctx.ownerOrgs.includes(args.metadata.organizationId)
+	) {
+		const person = await tx.run(
+			builder.person
+				.where('id', '=', args.metadata.personId)
+				.where('organizationId', '=', args.metadata.organizationId)
+				.where((expr) => personReadPermissions(expr, ctx))
+				.one()
+		);
+		if (!person) {
+			throw new Error('Person not found');
+		}
+		if (
+			!person.mostRecentWhatsappMessageReceivedAt ||
+			new Date(person.mostRecentWhatsappMessageReceivedAt) <
+				new Date(Date.now() - 1000 * 60 * 60 * 24)
+		) {
+			throw new Error(
+				'Person has not received a WhatsApp message in the last 24 hours. Customer service window is closed. Please send a template message instead.'
+			);
+		}
+		await sendWhatsappMessage({
+			message: args.input.whatsappMessage,
+			organizationId: args.metadata.organizationId,
+			personId: args.metadata.personId,
+			sendingUserId: ctx.userId || args.metadata.sentByUserId || undefined,
+			messageId: args.metadata.whatsappMessageId
+		});
+	} else {
+		throw new Error('You are not authorized to send a WhatsApp message in this organization');
+	}
+}
+
+export async function sendIndividualTemplateMessage({
+	ctx,
+	args: argsInput,
+	tx: _tx //not used
+}: {
+	args: CreateWhatsappTemplateMessageMutatorSchema;
+	ctx: QueryContext;
+	tx: ServerTransaction;
+}) {
+	const args = parse(createWhatsappTemplateMessageMutatorSchema, argsInput);
+	if (
+		ctx.adminOrgs.includes(args.metadata.organizationId) ||
+		ctx.ownerOrgs.includes(args.metadata.organizationId)
+	) {
+		await sendWhatsappTemplateMessage({
+			message: args.input.whatsappTemplateMessage,
+			organizationId: args.metadata.organizationId,
+			personId: args.metadata.personId,
+			sendingUserId: ctx.userId || args.metadata.sentByUserId || undefined,
+			messageId: args.metadata.whatsappMessageId,
+			templateId: args.metadata.templateId
+		});
+	} else {
+		throw new Error('You are not authorized to send a WhatsApp message in this organization');
+	}
 }

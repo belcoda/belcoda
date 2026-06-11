@@ -20,6 +20,8 @@
 
 <a
 	href={`/events/${event.id}`}
+	data-testid="event-sidebar-item"
+	data-event-id={event.id}
 	class="flex w-full items-center justify-start gap-3 border-b px-2 py-3 last:border-b-0 hover:bg-muted"
 	class:bg-muted={page.url.pathname.startsWith(`/events/${event.id}`)}
 >

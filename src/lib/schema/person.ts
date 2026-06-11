@@ -37,6 +37,7 @@ export const personSchema = v.object({
 
 	mostRecentActivityAt: helpers.date,
 	mostRecentActivityPreview: v.nullable(activityPreviewPayloads),
+	mostRecentWhatsappMessageReceivedAt: v.nullable(helpers.date),
 
 	profilePicture: v.nullable(helpers.url),
 	addedFrom: personAddedFrom,
@@ -48,7 +49,7 @@ export const personSchema = v.object({
 export type PersonSchema = v.InferOutput<typeof personSchema>;
 
 export const personApiSchema = v.object({
-	...v.omit(personSchema, ['organizationId']).entries,
+	...v.omit(personSchema, ['organizationId', 'mostRecentWhatsappMessageReceivedAt']).entries,
 	dateOfBirth: v.nullable(helpers.dateToString),
 	mostRecentActivityAt: helpers.dateToString,
 	createdAt: helpers.dateToString,
@@ -57,7 +58,7 @@ export const personApiSchema = v.object({
 });
 
 export const readPersonRest = v.object({
-	...v.omit(personSchema, ['organizationId']).entries,
+	...v.omit(personSchema, ['organizationId', 'mostRecentWhatsappMessageReceivedAt']).entries,
 	dateOfBirth: v.nullable(helpers.timestampToDate),
 	mostRecentActivityAt: helpers.timestampToDate,
 	createdAt: helpers.timestampToDate,
@@ -67,7 +68,7 @@ export const readPersonRest = v.object({
 export type ReadPersonRest = v.InferOutput<typeof readPersonRest>;
 
 export const readPersonZero = v.object({
-	...personSchema.entries,
+	...v.omit(personSchema, ['mostRecentWhatsappMessageReceivedAt']).entries,
 	dateOfBirth: v.nullable(helpers.dateToTimestamp),
 	mostRecentActivityAt: helpers.dateToTimestamp,
 	createdAt: helpers.dateToTimestamp,

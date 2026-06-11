@@ -128,7 +128,7 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 		if (event.request.headers.get('x-api-key') == EASYCRON_SECRET) {
 			return resolve(event);
 		} else {
-			return error(401, 'Unauthorized: API key not valid for cron');
+			return json({ error: 'Unauthorized: API key not valid for cron' }, { status: 401 });
 		}
 	}
 
@@ -264,6 +264,11 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 		'accelerometer=()'
 	].join(', ');
 	response.headers.set('Permissions-Policy', permissionsPolicies);
+
+	const contentType = response.headers.get('content-type') ?? '';
+	if (contentType.includes('text/html')) {
+		response.headers.set('Cache-Control', 'no-cache');
+	}
 
 	return response;
 };

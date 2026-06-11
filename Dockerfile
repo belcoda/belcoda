@@ -39,6 +39,7 @@ ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME}
 ENV DATABASE_URL="postgres://postgres:test@localhost/database"
 ENV STRIPE_SECRET_KEY="TESTBUILDKEY"
+ENV PUBLIC_COMMUNITY_PAGINATION_MODE="button"
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # Install ca-certificates so SSL works properly inside the container (required for Sentry source map uploads)

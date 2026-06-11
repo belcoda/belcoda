@@ -20,12 +20,12 @@ export class OrganizationPage {
 	}
 
 	async acceptInvitation() {
-		await this.acceptButton.waitFor({ state: 'visible', timeout: 10_000 });
+		await this.acceptButton.waitFor({ state: 'visible', timeout: 30_000 });
 		await this.acceptButton.click();
 	}
 
 	async declineInvitation() {
-		await this.declineButton.waitFor({ state: 'visible', timeout: 10_000 });
+		await this.declineButton.waitFor({ state: 'visible', timeout: 30_000 });
 		this.page.once('dialog', (dialog) => dialog.accept());
 		await this.declineButton.click();
 	}

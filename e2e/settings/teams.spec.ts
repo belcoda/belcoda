@@ -1,30 +1,33 @@
-import { expect, test, type Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { CommunityPage } from '../pages/community/community.page';
+import { expect, test } from '@playwright/test';
 import { PersonCreatePage } from '../pages/community/person-create.page';
 import { TeamsPage, TeamDetailPage } from '../pages/settings/teams.page';
-import { getTestUsers } from '../helpers/auth';
+import { BASE_URL } from '../helpers/config';
+import { loginAsOwner, loginAsMember } from '../helpers/login';
+import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
 
 const PROJECT = 'community' as const;
-const USERS = getTestUsers(PROJECT);
 
-async function loginAsOwner(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.owner.email, USERS.owner.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
+test('owner can load more teams', async ({ page, request }) => {
+	const teamsPage = new TeamsPage(page);
+	await loginAsOwner(page, PROJECT);
 
-async function loginAsMember(page: Page) {
-	const loginPage = new LoginPage(page);
-	const communityPage = new CommunityPage(page);
-	await loginPage.goto();
-	await loginPage.login(USERS.member.email, USERS.member.password);
-	await expect(page).toHaveURL('/community');
-	await communityPage.expectLoaded();
-}
+	const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-teams`, {
+		data: { count: 30 }
+	});
+	expect(seedResponse.ok()).toBeTruthy();
+	const seedBody = (await seedResponse.json()) as { runId: string };
+	expect(seedBody.runId).toBeTruthy();
+
+	await teamsPage.goto();
+	const seededRows = teamsPage.teamRowsForSeedRun(seedBody.runId);
+
+	await expect(seededRows.first()).toBeVisible({ timeout: 15_000 });
+	await expect(teamsPage.loadMoreButton).toBeVisible({ timeout: 15_000 });
+	expect(await seededRows.count()).toBeLessThan(30);
+
+	await teamsPage.loadMoreButton.click();
+	await expect(seededRows).toHaveCount(30, { timeout: 15_000 });
+});
 
 test.describe.serial('Settings: Teams', () => {
 	const ids = {
@@ -40,7 +43,7 @@ test.describe.serial('Settings: Teams', () => {
 		const suffix = `${Date.now()}`;
 		ids.teamName = `E2E Team ${suffix}`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await teamsPage.goto();
 
 		await teamsPage.createTeam(ids.teamName);
@@ -55,7 +58,7 @@ test.describe.serial('Settings: Teams', () => {
 	test('new team appears in the teams list', async ({ page }) => {
 		const teamsPage = new TeamsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await teamsPage.goto();
 
 		await expect(teamsPage.teamRow(ids.teamId)).toBeVisible({ timeout: 15_000 });
@@ -65,7 +68,7 @@ test.describe.serial('Settings: Teams', () => {
 		const teamsPage = new TeamsPage(page);
 		const newName = `${ids.teamName} Renamed`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await teamsPage.goto();
 
 		await teamsPage.editTeam(ids.teamId, newName);
@@ -79,7 +82,7 @@ test.describe.serial('Settings: Teams', () => {
 	test('owner can navigate to the team detail page', async ({ page }) => {
 		const teamsPage = new TeamsPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await teamsPage.goto();
 
 		await teamsPage.teamRow(ids.teamId).getByTestId('team-row-name').click();
@@ -94,7 +97,7 @@ test.describe.serial('Settings: Teams', () => {
 		ids.personFamilyName = `Member ${suffix}`;
 		const email = `e2e-team-member-${suffix}@belcoda.test`;
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 
 		await personCreate.goto();
 		await personCreate.fillRequiredFields(ids.personGivenName, ids.personFamilyName, email);
@@ -124,7 +127,7 @@ test.describe.serial('Settings: Teams', () => {
 	test('person is listed on the team detail page', async ({ page }) => {
 		const teamDetail = new TeamDetailPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await teamDetail.goto(ids.teamId);
 
 		await expect(teamDetail.personRow(ids.personId)).toBeVisible({ timeout: 15_000 });
@@ -133,10 +136,10 @@ test.describe.serial('Settings: Teams', () => {
 	test('member cannot access team management', async ({ page }) => {
 		const teamsPage = new TeamsPage(page);
 
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 		await teamsPage.goto();
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(teamsPage.newTeamTrigger).toHaveCount(0);
 		await expect(teamsPage.teamRow(ids.teamId)).toHaveCount(0);
 	});
@@ -144,10 +147,10 @@ test.describe.serial('Settings: Teams', () => {
 	test('member cannot access team detail management', async ({ page }) => {
 		const teamDetail = new TeamDetailPage(page);
 
-		await loginAsMember(page);
+		await loginAsMember(page, PROJECT);
 		await teamDetail.goto(ids.teamId);
 
-		await expect(page.getByText(/not authorized|unauthorized/i)).toBeVisible({ timeout: 15_000 });
+		await expectMemberCannotAccessSettings(page);
 		await expect(teamDetail.addPersonTrigger).toHaveCount(0);
 		await expect(teamDetail.removePersonButton(ids.personId)).toHaveCount(0);
 	});
@@ -155,7 +158,7 @@ test.describe.serial('Settings: Teams', () => {
 	test('owner can remove a person from the team', async ({ page }) => {
 		const teamDetail = new TeamDetailPage(page);
 
-		await loginAsOwner(page);
+		await loginAsOwner(page, PROJECT);
 		await teamDetail.goto(ids.teamId);
 
 		await teamDetail.removePersonButton(ids.personId).click();

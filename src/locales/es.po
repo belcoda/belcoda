@@ -82,6 +82,7 @@ msgstr ""
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
@@ -254,6 +255,7 @@ msgid "System"
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -598,56 +600,74 @@ msgid "Are you sure you want to discard your changes?"
 msgstr ""
 
 #. 0: HUMAN_READABLE_MAX_FILE_SIZE
+#. 0: humanReadableMaxFileSize
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File too large. Max size is {0}."
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File type not allowed. Allowed types are .png, .jpg, .jpeg."
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File validation error. Please try again."
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "File upload error. Please try again."
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Unknown error. Please try again."
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload"
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Upload an image to your workspace"
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Error: "
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Replace image"
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Allowed: .png, .jpg, .jpeg"
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Max size: "
 msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
+#: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 msgid "Click or drag to upload image"
 msgstr ""
 
@@ -799,6 +819,7 @@ msgstr ""
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 #: src/routes/(auth)/login/+page.svelte
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
@@ -828,6 +849,7 @@ msgstr ""
 #: src/lib/components/forms/event/render_survey_question.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Address.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Address"
 msgstr ""
 
@@ -1388,6 +1410,7 @@ msgstr ""
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Description"
 msgstr ""
 
@@ -1836,6 +1859,9 @@ msgstr ""
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Error"
 msgstr ""
 
@@ -2634,8 +2660,10 @@ msgstr ""
 msgid "Discard"
 msgstr ""
 
-#: src/lib/components/flow/Flow.svelte
-#: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Send"
 msgstr ""
@@ -2734,11 +2762,8 @@ msgstr ""
 msgid "Exports"
 msgstr ""
 
-#: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit balance"
-msgstr ""
+#~ msgid "Credit balance"
+#~ msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "API keys"
@@ -2803,13 +2828,11 @@ msgstr ""
 msgid "Current period ends"
 msgstr ""
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Opening Stripe..."
-msgstr ""
+#~ msgid "Opening Stripe..."
+#~ msgstr ""
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Manage in Stripe"
-msgstr ""
+#~ msgid "Manage in Stripe"
+#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Need a different plan?"
@@ -2827,34 +2850,29 @@ msgstr ""
 msgid "Contact us for Enterprise tier"
 msgstr ""
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit purchase completed. Your balance will update shortly."
-msgstr ""
+#~ msgid "Credit purchase completed. Your balance will update shortly."
+#~ msgstr ""
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Credit purchase was cancelled."
-msgstr ""
+#~ msgid "Credit purchase was cancelled."
+#~ msgstr ""
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
-msgstr ""
+#~ msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
+#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "This balance belongs to your organization and is shared across your workspace."
 msgstr ""
 
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Purchase additional credit with Stripe using one of the preset amounts below."
-msgstr ""
+#~ msgid "Purchase additional credit with Stripe using one of the preset amounts below."
+#~ msgstr ""
+
+#~ msgid "Buy more credit"
+#~ msgstr ""
+
+#~ msgid "Select a preset amount to continue in Stripe checkout."
+#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Buy more credit"
-msgstr ""
-
-#: src/routes/(app)/settings/billing/credit/+page.svelte
-msgid "Select a preset amount to continue in Stripe checkout."
-msgstr ""
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Redirecting..."
 msgstr ""
@@ -3733,6 +3751,7 @@ msgid "Search tag..."
 msgstr ""
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "Search templates..."
 msgstr ""
 
@@ -3906,19 +3925,15 @@ msgstr ""
 msgid "The WhatsApp signup was cancelled. If you want to try again, click the button below."
 msgstr ""
 
-#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "WhatsApp Business Account Activated"
 msgstr ""
 
-#. 0: appState.activeOrganization?.data?.settings.whatsApp.number
-#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
-msgid "Your WhatsApp Business Account number is {0}"
-msgstr ""
+#~ msgid "Your WhatsApp Business Account number is {0}"
+#~ msgstr ""
 
-#. 0: appState.activeOrganization?.data?.settings.whatsApp.wabaId
-#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
-msgid "Your WhatsApp Business Account ID is {0}"
-msgstr ""
+#~ msgid "Your WhatsApp Business Account ID is {0}"
+#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Activate WhatsApp Business Account"
@@ -4220,19 +4235,17 @@ msgstr ""
 msgid "Failed to load subscription"
 msgstr ""
 
-#: src/routes/(app)/settings/billing/subscription/+page.svelte
-msgid "Unable to open Stripe billing portal"
-msgstr ""
+#~ msgid "Unable to open Stripe billing portal"
+#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Unable to start Stripe checkout"
 msgstr ""
 
-#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
-msgid ""
-"Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-"\t\t\t\tmessaging features."
-msgstr ""
+#~ msgid ""
+#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
+#~ "\t\t\t\tmessaging features."
+#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
@@ -4872,15 +4885,19 @@ msgid "Delivery logs"
 msgstr "Registros de entregas"
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "Text"
 msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "Variable"
 msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "Fallback text"
 msgstr ""
 
@@ -4949,19 +4966,21 @@ msgid "No variables found."
 msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "Add fallback text for recipients without this value."
 msgstr ""
 
-#: src/lib/utils/name.ts
-msgid "[Name unknown]"
-msgstr "[Nombre desconocido]"
+#~ msgid "[Name unknown]"
+#~ msgstr "[Nombre desconocido]"
 
 #: src/lib/components/flow/nodes/template/Combobox.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved templates found."
 msgstr ""
 
-#: src/lib/components/flow/Flow.svelte
 #: src/lib/components/flow/nodes/template/Combobox.svelte
+#: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
+#: src/routes/(app)/communications/whatsapp/drafts/[whatsappThreadId]/+page.svelte
 msgid "Manage templates"
 msgstr ""
 
@@ -5025,4 +5044,376 @@ msgstr ""
 
 #: src/lib/components/widgets/activity/preview/whatsapp_message.ts
 msgid "🎨 Sticker"
+msgstr "🎨 Pegatina"
+
+#~ msgid "Enter a valid amount. Minimum purchase is US${0}."
+#~ msgstr ""
+
+#~ msgid "Purchase additional credit with Stripe."
+#~ msgstr ""
+
+#~ msgid "Enter an amount in USD to continue in Stripe checkout."
+#~ msgstr ""
+
+#~ msgid "Amount (USD)"
+#~ msgstr ""
+
+#~ msgid "Minimum purchase: US${0}"
+#~ msgstr ""
+
+#~ msgid "Continue to checkout"
+#~ msgstr ""
+
+#~ msgid "Or choose a preset amount:"
+#~ msgstr ""
+
+#~ msgid "Payment completed. Your balance will update shortly."
+#~ msgstr ""
+
+#~ msgid "Payment was cancelled."
+#~ msgstr ""
+
+#~ msgid "You don't have permission to add funds. Only organization owners can access this page."
+#~ msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Account balance"
+msgstr ""
+
+#~ msgid "Add funds to your balance with Stripe."
+#~ msgstr ""
+
+#~ msgid "Add funds"
+#~ msgstr ""
+
+#~ msgid "Add {0}"
+#~ msgstr ""
+
+#~ msgid "Enter a valid amount. Minimum purchase is {0}."
+#~ msgstr ""
+
+#~ msgid "Minimum purchase: {0}"
+#~ msgstr ""
+
+#. 0: formatNumber(paginatedNotes.items.length, locale.current)
+#. 0: formatNumber(paginatedPersonList.items.length, locale.current)
+#. 0: formatNumber(paginatedEvents.items.length, locale.current)
+#. 0: formatNumber(paginatedPetitions.items.length, locale.current)
+#. 0: formatNumber(paginatedSignatures.items.length, locale.current)
+#. 0: formatNumber(paginatedSignatures.items.length, locale.current)
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
+#. 0: formatNumber(paginatedTeams.items.length, locale.current)
+#. 0: formatNumber(paginatedTags.items.length, locale.current)
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "{0} shown"
+msgstr "{0} mostrados"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
+#: src/routes/(app)/settings/tags/+page.svelte
+msgid "Load more"
+msgstr "Cargar más"
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Not scheduled"
+msgstr "Sin programar"
+
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Free WhatsApp messages"
+msgstr "Mensajes gratuitos de WhatsApp"
+
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Remaining free messages this month for your organization."
+msgstr "Mensajes gratuitos restantes este mes para tu organización."
+
+#. 0: formattedResetDate
+#. 0: formattedResetDate
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+#: src/lib/components/widgets/billing/FreeWhatsAppQuotaCard.svelte
+msgid "Resets on {0}"
+msgstr "Se restablece el {0}"
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+msgid "Free emails"
+msgstr "Correos gratuitos"
+
+#: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
+msgid "Remaining free emails this month for your organization."
+msgstr "Correos gratuitos restantes este mes para tu organización."
+
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
+msgid "Are you sure you want to discard this WhatsApp draft?"
+msgstr "¿Está seguro de que desea descartar este borrador de WhatsApp?"
+
+#: src/lib/components/flow/flow_state.svelte.ts
+msgid "Changes not saved"
+msgstr "Cambios no guardados"
+
+#~ msgid "Failed to save draft"
+#~ msgstr ""
+
+#~ msgid "Failed to persist draft flow"
+#~ msgstr ""
+
+#. 0: derivedTimeAgoFormatter.format(lastSavedAt())
+#: src/lib/components/flow/DisplaySavedState.svelte
+msgid "Saved {0}"
+msgstr "Guardado {0}"
+
+#: src/lib/components/flow/nodes/EventSignup.svelte
+msgid "Add to event:"
+msgstr "Añadir al evento:"
+
+#: src/lib/components/flow/nodes/TeamAdd.svelte
+msgid "Add to team:"
+msgstr "Añadir al equipo:"
+
+#: src/lib/components/flow/nodes/TagAdd.svelte
+msgid "Add to tag:"
+msgstr "Añadir a la etiqueta:"
+
+#: src/lib/components/flow/nodes/PetitionSignup.svelte
+msgid "Add to petition:"
+msgstr "Añadir a la petición:"
+
+#: src/lib/components/flow/nodes/Targeting.svelte
+msgid "Recipients:"
+msgstr "Destinatarios:"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Uploading image…"
+msgstr "Subiendo imagen…"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Image attachment preview"
+msgstr "Vista previa del adjunto de imagen"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Remove image"
+msgstr "Eliminar imagen"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Write your message..."
+msgstr "Escribe tu mensaje..."
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Add image"
+msgstr "Agregar imagen"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "—"
+msgstr "—"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "No active organization"
+msgstr "No hay ninguna organización activa"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Failed to load WhatsApp business profile"
+msgstr "No se pudo cargar el perfil comercial de WhatsApp"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "WhatsApp business profile saved"
+msgstr "Perfil comercial de WhatsApp guardado"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Failed to save WhatsApp business profile"
+msgstr "No se pudo guardar el perfil comercial de WhatsApp"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Business profile"
+msgstr "Perfil comercial"
+
+#~ msgid "Manage how your business appears on WhatsApp. Some fields are set by Meta and cannot be edited here."
+#~ msgstr ""
+
+#~ msgid "Loading business profile…"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Verified name"
+msgstr "Nombre verificado"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Name status"
+msgstr "Estado del nombre"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Profile picture"
+msgstr "Foto de perfil"
+
+#~ msgid "WhatsApp business profile"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "About"
+msgstr "Acerca de"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Industry"
+msgstr "Sector"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Website 1"
+msgstr "Sitio web 1"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Website 2"
+msgstr "Sitio web 2"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Save profile"
+msgstr "Guardar perfil"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Manage how your business appears on WhatsApp. Verified name and name status are set by Meta."
+msgstr "Administra cómo aparece tu empresa en WhatsApp. El nombre verificado y el estado del nombre los define Meta."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Upload a square image. Save the profile to apply changes on WhatsApp."
+msgstr "Sube una imagen cuadrada. Guarda el perfil para aplicar los cambios en WhatsApp."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Heads up"
+msgstr "Atención"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "Updates to your WhatsApp Business profile can take time to propagate. After saving changes, wait at least 10 minutes before submitting another update, and confirm the latest values directly in WhatsApp first."
+msgstr "Las actualizaciones de tu perfil comercial de WhatsApp pueden tardar en propagarse. Después de guardar los cambios, espera al menos 10 minutos antes de enviar otra actualización y confirma los valores más recientes directamente en WhatsApp."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "WABA name"
+msgstr "Nombre de la WABA"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Business legal name"
+msgstr "Razón social"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Business status"
+msgstr "Estado de la empresa"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Verification status"
+msgstr "Estado de verificación"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Messaging limit"
+msgstr "Límite de mensajes"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Business ID"
+msgstr "ID de la empresa"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Business verification required"
+msgstr "Verificación comercial obligatoria"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Your organizational display name is hidden from message recipients until your business verification process is complete."
+msgstr "El nombre de visualización de tu organización permanece oculto para los destinatarios de los mensajes hasta que se complete el proceso de verificación comercial."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Complete verification"
+msgstr "Completar verificación"
+
+#~ msgid "Business account details and verification status are shown below."
+#~ msgstr ""
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Failed to load WhatsApp business account details"
+msgstr "No se pudieron cargar los detalles de la cuenta comercial de WhatsApp"
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
+msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
+msgstr "Tu cuenta comercial de WhatsApp está conectada. Revisa la verificación y los detalles de la cuenta a continuación."
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
+msgstr "WhatsApp no está habilitado para esta organización. Póngase en contacto con soporte para habilitarlo."
+
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+msgid "Fallback"
+msgstr "Alternativa"
+
+#. 0: getVariableLabel(source.key)
+#: src/lib/components/flow/nodes/TemplateMessage.svelte
+msgid "The fallback value will be used if we don't have the {0} on file."
+msgstr "El valor alternativo se usará si no tenemos {0} registrado."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter an amount in USD to continue in Stripe checkout."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Amount (USD)"
+msgstr ""
+
+#~ msgid "Minimum purchase: US${0}"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Continue to checkout"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Or choose a preset amount:"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Payment completed. Your balance will update shortly."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Payment was cancelled."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "You don't have permission to add funds. Only organization owners can access this page."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Account balance"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add funds to your balance with Stripe."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add funds"
+msgstr ""
+
+#. 0: formatUsdAmount(parsedPurchaseAmount, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add {0}"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter a valid amount. Minimum purchase is {0}."
+msgstr ""
+
+#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Minimum purchase: {0}"
 msgstr ""

@@ -73,6 +73,54 @@ export function createCroppedFile(
 	});
 }
 
+export type ResizeImageOptions = {
+	maxDimension?: number;
+	outputMimeType?: 'image/jpeg' | 'image/png';
+	quality?: number;
+};
+
+function fileNameForMime(mimeType: string) {
+	return mimeType === 'image/png' ? 'resized-image.png' : 'resized-image.jpg';
+}
+
+/**
+ * Scales an image down so its longest edge is at most maxDimension, then re-encodes to a File.
+ */
+export function resizeImageFile(
+	imageElement: HTMLImageElement,
+	options: ResizeImageOptions = {}
+): Promise<File> {
+	const maxDimension = options.maxDimension ?? 2048;
+	const outputMimeType = options.outputMimeType ?? 'image/jpeg';
+	const quality = options.quality ?? 0.85;
+
+	const { width, height } = imageElement;
+	const longestEdge = Math.max(width, height);
+	const scale = longestEdge > maxDimension ? maxDimension / longestEdge : 1;
+	const targetWidth = Math.round(width * scale);
+	const targetHeight = Math.round(height * scale);
+
+	return new Promise((resolve, reject) => {
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+
+		if (!ctx) return reject(new Error('Could not get canvas context.'));
+
+		canvas.width = targetWidth;
+		canvas.height = targetHeight;
+		ctx.drawImage(imageElement, 0, 0, targetWidth, targetHeight);
+
+		canvas.toBlob(
+			(blob) => {
+				if (!blob) return reject(new Error('Failed to create Blob from canvas.'));
+				resolve(new File([blob], fileNameForMime(outputMimeType), { type: outputMimeType }));
+			},
+			outputMimeType,
+			quality
+		);
+	});
+}
+
 // --- S3 Upload Helpers ---
 
 /**
