@@ -11,11 +11,24 @@ export async function handleWhatsappTemplateReviewed(body: any) {
 				const status = body.whatsappTemplate.status;
 				log.debug({ body }, 'Whatsapp template reviewed');
 				if (status === 'APPROVED') {
-					log.info({ body, wabaId: body.whatsappTemplate.wabaId }, 'Whatsapp template approved');
+					const wabaId = body.whatsappTemplate?.wabaId;
+					if (wabaId == null || wabaId === '') {
+						log.error({ body }, 'Missing wabaId in whatsapp template reviewed webhook');
+						throw new Error('Missing wabaId in whatsapp template reviewed webhook');
+					}
+
+					log.info(
+						{
+							wabaId,
+							templateName: body.whatsappTemplate?.name,
+							templateLocale: body.whatsappTemplate?.language
+						},
+						'Whatsapp template approved'
+					);
 					const organization = await db
 						.select()
 						.from(organizationTable)
-						.where(sql`settings->'whatsApp'->>'wabaId' = ${body.whatsappTemplate.wabaId}`)
+						.where(sql`settings->'whatsApp'->>'wabaId' = ${wabaId}`)
 						.limit(1);
 					if (!organization || organization.length === 0) {
 						log.error({ body }, 'Organization not found');

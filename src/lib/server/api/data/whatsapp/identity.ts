@@ -38,6 +38,10 @@ export async function getOrganizationByWabaIdUnsafe({
 	wabaId: string;
 	tx: ServerTransaction;
 }) {
+	if (wabaId == null || wabaId === '') {
+		throw new Error('wabaId is required and must be a non-empty string');
+	}
+
 	const orgResult = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(organization)

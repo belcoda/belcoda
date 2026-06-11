@@ -8,6 +8,7 @@ import {
 } from '$lib/server/api/data/person/findOrCreate';
 import type { CountryCode } from '$lib/utils/country';
 
+/** Not currently implemented anywhere. Leave it for now, but don't use without reviewing.  */
 export async function getDetailsFromMessageByWabaId({
 	wabaId,
 	messageId,
@@ -27,6 +28,10 @@ export async function getDetailsFromMessageByWabaId({
 	whatsappContextWamidId?: string;
 	tx: ServerTransaction;
 }) {
+	if (wabaId == null || wabaId === '') {
+		throw new Error('wabaId is required and must be a non-empty string');
+	}
+
 	const orgResult = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(organization)

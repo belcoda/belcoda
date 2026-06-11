@@ -5054,40 +5054,6 @@ msgstr "🎧 Mensagem de áudio"
 msgid "🎨 Sticker"
 msgstr "🎨 Autocolante"
 
-#~ msgid "Enter a valid amount. Minimum purchase is US${0}."
-#~ msgstr ""
-
-#~ msgid "Purchase additional credit with Stripe."
-#~ msgstr ""
-
-#~ msgid "Enter an amount in USD to continue in Stripe checkout."
-#~ msgstr ""
-
-#~ msgid "Amount (USD)"
-#~ msgstr ""
-
-#~ msgid "Minimum purchase: US${0}"
-#~ msgstr ""
-
-#~ msgid "Continue to checkout"
-#~ msgstr ""
-
-#~ msgid "Or choose a preset amount:"
-#~ msgstr ""
-
-#~ msgid "Payment completed. Your balance will update shortly."
-#~ msgstr ""
-
-#~ msgid "Payment was cancelled."
-#~ msgstr ""
-
-#~ msgid "You don't have permission to add funds. Only organization owners can access this page."
-#~ msgstr ""
-
-#: src/lib/components/layouts/app/sidebars/settings/items.ts
-msgid "Account balance"
-msgstr ""
-
 #~ msgid "Add funds to your balance with Stripe."
 #~ msgstr ""
 
@@ -5366,3 +5332,62 @@ msgstr "Texto de reserva"
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "The fallback value will be used if we don't have the {0} on file."
 msgstr "O valor de reserva será usado se não tivermos {0} registrado."
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter an amount in USD to continue in Stripe checkout."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Amount (USD)"
+msgstr ""
+
+#~ msgid "Minimum purchase: US${0}"
+#~ msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Continue to checkout"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Or choose a preset amount:"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Payment completed. Your balance will update shortly."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Payment was cancelled."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "You don't have permission to add funds. Only organization owners can access this page."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Account balance"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add funds to your balance with Stripe."
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add funds"
+msgstr ""
+
+#. 0: formatUsdAmount(parsedPurchaseAmount, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Add {0}"
+msgstr ""
+
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Enter a valid amount. Minimum purchase is {0}."
+msgstr ""
+
+#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
+#: src/routes/(app)/settings/billing/credit/+page.svelte
+msgid "Minimum purchase: {0}"
+msgstr ""

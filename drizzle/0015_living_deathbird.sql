@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "organization_waba_id_unique" ON "organization" USING btree (("settings"->'whatsApp'->>'wabaId')) WHERE ("organization"."settings"->'whatsApp'->>'wabaId') IS NOT NULL;
