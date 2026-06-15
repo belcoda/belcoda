@@ -15,7 +15,7 @@
 		$props();
 
 	const primaryColor = $derived(
-		organization.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
+		organization?.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
 	);
 
 	const eventTimeData = $derived(
