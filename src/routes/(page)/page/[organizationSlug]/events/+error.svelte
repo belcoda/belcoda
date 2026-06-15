@@ -1,18 +1,24 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { page } from '$app/state';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
 </script>
 
-<div
-	class="flex h-screen w-screen flex-wrap items-center justify-center bg-linear-to-br from-blue-100 to-purple-100 text-gray-600"
->
-	<div class="-mt-20">
-		<div class="grid w-64 grid-cols-1 gap-4 rounded-lg bg-gray-50 p-5 shadow">
-			<div class="flex justify-center">
-				<img src="/logos/logomark_black.svg" class="w-10 opacity-10" alt={t`Belcoda icon`} />
+<div class="flex min-h-screen items-center justify-center bg-background p-4">
+	<Card.Root class="w-full max-w-md">
+		<Card.Header class="text-center">
+			<div class="mb-4 flex justify-center">
+				<AlertCircleIcon class="size-12 text-destructive" />
 			</div>
-			<h2 class="text-center text-2xl font-bold text-gray-700">{page.status}</h2>
-			<div class="text-center text-base font-light text-gray-500">{page.error?.message}</div>
-		</div>
-	</div>
+			<Card.Title class="text-2xl">{t`Event Not Found`}</Card.Title>
+			<Card.Description>
+				{page.error?.message || t`The event you are looking for could not be found.`}
+			</Card.Description>
+		</Card.Header>
+		<Card.Content class="flex justify-center">
+			<Button href="/">{t`Return to Home`}</Button>
+		</Card.Content>
+	</Card.Root>
 </div>
