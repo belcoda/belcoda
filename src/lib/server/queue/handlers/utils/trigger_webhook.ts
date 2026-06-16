@@ -13,9 +13,12 @@ import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
 
 const MAX_RETRY_DELAY = 300; // 300 seconds (5 minutes) (pg-boss counts in seconds)
-const MAX_RETRY_COUNT = 10;
+const MAX_RETRY_COUNT = 6;
 
 function getRetryDelay(retryDelay: number, retryCount: number): number {
+	if (retryDelay === 0) {
+		retryDelay = 1;
+	}
 	return Math.min(
 		MAX_RETRY_DELAY,
 		retryDelay *
@@ -120,6 +123,18 @@ export async function triggerWebhook({
 				if (retryCount < MAX_RETRY_COUNT) {
 					const queue = await getQueue();
 					const newRetryDelay = getRetryDelay(retryDelay, retryCount);
+					log.info(
+						{
+							webhookId: webhook.id,
+							eventType,
+							payload,
+							organizationId,
+							retryDelay,
+							retryCount,
+							newRetryDelay
+						},
+						'Retrying webhook'
+					);
 					await queue.triggerWebhook(
 						{
 							organizationId,
