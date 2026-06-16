@@ -133,12 +133,6 @@
 				if (!whatsappMessage.data) {
 					return;
 				}
-				console.log('emoji', {
-					whatsappMessage: $state.snapshot(whatsappMessage.data),
-					emoji: $state.snapshot(emoji),
-					organizationId: appState.organizationId,
-					personId: activity.personId
-				});
 				z.mutate(
 					mutators.whatsappMessage.emojiReaction({
 						whatsappMessage: $state.snapshot(whatsappMessage.data),
