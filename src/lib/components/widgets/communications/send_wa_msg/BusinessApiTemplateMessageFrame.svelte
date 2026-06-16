@@ -28,6 +28,10 @@
 		(allApprovedTemplates.data ?? []).filter((t) => !t.components.some((c) => c.type === 'BUTTONS'))
 	);
 
+	const allTemplatesFilteredByButtons = $derived(
+		(allApprovedTemplates.data?.length ?? 0) > 0 && filteredTemplates.length === 0
+	);
+
 	let templateId: string = $state(
 		appState.activeOrganization?.data?.settings.whatsApp.defaultTemplateId ??
 			(() => filteredTemplates[0]?.id)()
@@ -85,48 +89,57 @@
 
 <div class="flex w-full items-end gap-2" data-testid="person-wa-compose-template">
 	<Popover.Root bind:open>
-		<Popover.Trigger>
-			{#snippet child({ props })}
-				<Button
-					{...props}
-					variant="default"
-					class="rounded-full"
-					size="icon"
-					role="combobox"
-					aria-expanded={open}
-				>
-					<SquarePenIcon />
-				</Button>
-			{/snippet}
-		</Popover.Trigger>
-		<Popover.Content class="p-0">
-			<Command.Root>
-				<Command.Input bind:value={searchString} placeholder={t`Search templates...`} />
-				<Command.List>
-					<Command.Empty>
-						<div class="space-y-2 px-2 py-3 text-sm">
-							<p>{t`No approved templates found.`}</p>
-							<Button variant="link" class="h-auto p-0" href="/settings/whatsapp/templates"
-								>{t`Manage templates`}</Button
-							>
-						</div>
-					</Command.Empty>
-					<Command.Group value="templates">
-						{#each filteredTemplates as templateItem (templateItem.id)}
-							<Command.Item
-								value={templateItem.id}
-								onSelect={() => {
-									templateId = templateItem.id;
-									open = false;
-								}}
-							>
-								<CheckIcon class={cn(template?.id !== templateItem.id && 'text-transparent')} />
-								{templateItem.name}
-							</Command.Item>
-						{/each}
-					</Command.Group>
-				</Command.List>
-			</Command.Root>
+			<Popover.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="default"
+						class="rounded-full"
+						size="icon"
+						role="combobox"
+						aria-expanded={open}
+					>
+						<SquarePenIcon />
+					</Button>
+				{/snippet}
+			</Popover.Trigger>
+			<Popover.Content class="p-0">
+				<Command.Root>
+					<Command.Input bind:value={searchString} placeholder={t`Search templates...`} />
+					<Command.List>
+						<Command.Empty>
+							<div class="space-y-2 px-2 py-3 text-sm">
+								{#if allTemplatesFilteredByButtons}
+									<p>
+										{t`Templates with quick reply buttons cannot be sent as individual messages.`}
+									</p>
+									<p>
+										{t`Button templates can still be used for bulk sending in the Communications module.`}
+									</p>
+								{:else}
+									<p>{t`No approved templates found.`}</p>
+								{/if}
+								<Button variant="link" class="h-auto p-0" href="/settings/whatsapp/templates"
+									>{t`Manage templates`}</Button
+								>
+							</div>
+						</Command.Empty>
+						<Command.Group value="templates">
+							{#each filteredTemplates as templateItem (templateItem.id)}
+								<Command.Item
+									value={templateItem.id}
+									onSelect={() => {
+										templateId = templateItem.id;
+										open = false;
+									}}
+								>
+									<CheckIcon class={cn(template?.id !== templateItem.id && 'text-transparent')} />
+									{templateItem.name}
+								</Command.Item>
+							{/each}
+						</Command.Group>
+					</Command.List>
+				</Command.Root>
 		</Popover.Content>
 	</Popover.Root>
 	<div class="w-full grow">
@@ -137,6 +150,17 @@
 					bind:data={messageData}
 				/>
 			{/key}
+		{:else if filteredTemplates.length === 0}
+			<p class="text-sm text-muted-foreground">
+				{#if allTemplatesFilteredByButtons}
+					{t`Your approved templates include quick reply buttons, which cannot be used for individual messages. Use templates without buttons here, or send button templates via the bulk Communications module.`}
+				{:else}
+					{t`No approved WhatsApp templates yet.`}
+					<Button variant="link" class="h-auto p-0 text-sm" href="/settings/whatsapp/templates"
+						>{t`Manage templates`}</Button
+					>
+				{/if}
+			</p>
 		{/if}
 	</div>
 	<Button
