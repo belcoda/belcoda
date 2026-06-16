@@ -266,7 +266,12 @@ export const url = v.pipe(
 
 export const domainNameOrUrl = v.union([domainName, url], 'Must be a valid domain name or URL');
 
-export const emoji = v.pipe(v.string(), v.length(1, 'Must be exactly one emoji'), v.emoji());
+export const emoji = v.pipe(
+	v.string(),
+	v.minLength(1, 'Must be at least one emoji'),
+	v.maxLength(128), //should be enough for any single emoji
+	v.emoji()
+);
 
 export const dbDate = v.union([
 	v.pipe(v.string(), v.isoDate()),
