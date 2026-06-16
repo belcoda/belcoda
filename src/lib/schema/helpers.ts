@@ -269,7 +269,7 @@ export const domainNameOrUrl = v.union([domainName, url], 'Must be a valid domai
 export const emoji = v.pipe(
 	v.string(),
 	v.minLength(1, 'Must be at least one emoji'),
-	v.maxLength(10, 'Must be at most 10 emojis'),
+	v.maxLength(128), //should be enough for any single emoji
 	v.emoji()
 );
 
