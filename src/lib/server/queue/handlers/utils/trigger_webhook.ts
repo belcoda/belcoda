@@ -10,16 +10,41 @@ const log = pino(import.meta.url);
 import { sql, eq } from 'drizzle-orm';
 import { webhookLog, webhook as webhookTable } from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
+import { getQueue } from '$lib/server/queue';
+
+const MAX_RETRY_DELAY = 300; // 300 seconds (5 minutes) (pg-boss counts in seconds)
+const MAX_RETRY_COUNT = 10;
+
+function getRetryDelay(retryDelay: number, retryCount: number): number {
+	return Math.min(
+		MAX_RETRY_DELAY,
+		retryDelay *
+			(2 ** Math.min(16, retryCount) / 2 + (2 ** Math.min(16, retryCount) / 2) * Math.random())
+	);
+}
 
 export async function triggerWebhook({
 	payload,
-	organizationId
+	organizationId,
+	retryDelay = 0,
+	retryCount = 0
 }: {
 	payload: WebhookPayload;
 	organizationId: string;
+	retryDelay?: number;
+	retryCount?: number;
 }) {
 	try {
-		log.info({ payloadType: payload.type, organizationId }, 'Triggering webhook');
+		log.info(
+			{
+				payloadType: payload.type,
+				organizationId,
+				timestamp: new Date().toISOString(),
+				retryDelay,
+				retryCount
+			},
+			'Triggering webhook'
+		);
 		const parsed = parse(webhookPayloadSchema, payload);
 		const eventType = parsed.type;
 
@@ -79,7 +104,9 @@ export async function triggerWebhook({
 						error,
 						type: eventType,
 						payload: parsed.data,
-						organizationId
+						organizationId,
+						retryDelay,
+						retryCount
 					},
 					'Failed to trigger webhook'
 				);
@@ -89,6 +116,27 @@ export async function triggerWebhook({
 						lastFailureAt: new Date()
 					})
 					.where(eq(webhookTable.id, webhook.id));
+
+				if (retryCount < MAX_RETRY_COUNT) {
+					const queue = await getQueue();
+					const newRetryDelay = getRetryDelay(retryDelay, retryCount);
+					await queue.triggerWebhook(
+						{
+							organizationId,
+							payload,
+							retryDelay: newRetryDelay,
+							retryCount: retryCount + 1
+						},
+						{
+							startAfter: newRetryDelay //in seconds
+						}
+					);
+				} else {
+					log.error(
+						{ webhookId: webhook.id, eventType, payload, organizationId, retryDelay, retryCount },
+						'CRITICAL: Webhook failed after max retries'
+					);
+				}
 			} finally {
 				clearTimeout(timeoutId);
 				try {
