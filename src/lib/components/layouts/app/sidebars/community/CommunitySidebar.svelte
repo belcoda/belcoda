@@ -21,9 +21,7 @@
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodePersonListCursor } from '$lib/utils/person/cursor';
 	import { IsInViewport, watch } from 'runed';
-	import { Button } from '$lib/components/ui/button';
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
-	import { COMMUNITY_PAGINATION_MODE } from '$lib/utils/pagination';
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		tagId: null,
@@ -56,7 +54,7 @@
 				paginatedPersonList.items.length
 			] as const,
 		([isInViewport, hasMore]) => {
-			if (COMMUNITY_PAGINATION_MODE === 'infinite' && isInViewport && hasMore) {
+			if (isInViewport && hasMore) {
 				paginatedPersonList.loadMore();
 			}
 		}
@@ -101,18 +99,7 @@
 					<div class="mb-2 text-center text-xs text-muted-foreground">
 						{t`${formatNumber(paginatedPersonList.items.length, locale.current)} shown`}
 					</div>
-					{#if COMMUNITY_PAGINATION_MODE === 'button' && paginatedPersonList.hasMore}
-						<Button
-							variant="ghost"
-							class="w-full"
-							data-testid="community-load-more"
-							disabled={paginatedPersonList.loadingMore}
-							onclick={() => paginatedPersonList.loadMore()}
-						>
-							{t`Load more`}
-						</Button>
-					{/if}
-					{#if COMMUNITY_PAGINATION_MODE === 'infinite' && paginatedPersonList.hasMore}
+					{#if paginatedPersonList.hasMore}
 						<div bind:this={sentinel} class="h-1" data-testid="community-scroll-sentinel"></div>
 					{/if}
 				</div>
