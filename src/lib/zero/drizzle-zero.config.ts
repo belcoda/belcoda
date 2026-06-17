@@ -227,6 +227,20 @@ export default drizzleZeroConfig(drizzleSchema, {
 			unread: true,
 			createdAt: true
 		},
+		notification: {
+			id: true,
+			organizationId: true,
+			userId: true,
+			type: true,
+			referenceId: true,
+			sourceKey: true,
+			payload: true,
+			status: true,
+			readAt: true,
+			dismissedAt: true,
+			createdAt: true,
+			updatedAt: true
+		},
 
 		whatsappGroup: {
 			id: true,
