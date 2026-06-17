@@ -26,6 +26,10 @@ import { readEventSignup } from '$lib/zero/query/event_signup/read';
 import { listOrganizations } from '$lib/zero/query/organizations/list';
 import { readOrganization } from '$lib/zero/query/organizations/read';
 
+// notification
+import { listNotifications } from '$lib/zero/query/notification/list';
+import { readNotification } from '$lib/zero/query/notification/read';
+
 // person
 import { listPersons, listPersonByIdsArray } from '$lib/zero/query/person/list';
 import { readPerson } from '$lib/zero/query/person/read';
@@ -101,6 +105,9 @@ export {
 	// organizations
 	listOrganizations,
 	readOrganization,
+	// notification
+	listNotifications,
+	readNotification,
 	// person
 	listPersons,
 	listPersonByIdsArray,
@@ -182,6 +189,10 @@ export default defineQueries({
 	organization: {
 		list: listOrganizations,
 		read: readOrganization
+	},
+	notification: {
+		list: listNotifications,
+		read: readNotification
 	},
 	person: {
 		list: listPersons,
