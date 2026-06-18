@@ -5416,3 +5416,60 @@ msgstr ""
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved WhatsApp templates yet."
 msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationBell.svelte
+msgid "Open notifications"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unread WhatsApp"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Flow notification"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Event signup"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Petition signup"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Notification"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Notifications"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Mark all as read"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Loading notifications..."
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unable to load notifications."
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "No notifications yet."
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unknown time"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Mark as read"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Dismiss"
+msgstr ""

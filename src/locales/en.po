@@ -5432,3 +5432,60 @@ msgstr "Your approved templates include quick reply buttons, which cannot be use
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved WhatsApp templates yet."
 msgstr "No approved WhatsApp templates yet."
+
+#: src/lib/components/widgets/notifications/NotificationBell.svelte
+msgid "Open notifications"
+msgstr "Open notifications"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unread WhatsApp"
+msgstr "Unread WhatsApp"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Flow notification"
+msgstr "Flow notification"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Event signup"
+msgstr "Event signup"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Petition signup"
+msgstr "Petition signup"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Notification"
+msgstr "Notification"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Notifications"
+msgstr "Notifications"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Mark all as read"
+msgstr "Mark all as read"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Loading notifications..."
+msgstr "Loading notifications..."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unable to load notifications."
+msgstr "Unable to load notifications."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "No notifications yet."
+msgstr "No notifications yet."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unknown time"
+msgstr "Unknown time"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Mark as read"
+msgstr "Mark as read"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Dismiss"
+msgstr "Dismiss"
