@@ -5,6 +5,48 @@ export const notificationStatuses = ['unread', 'read', 'dismissed'] as const;
 export const notificationStatus = v.picklist(notificationStatuses);
 export type NotificationStatus = v.InferOutput<typeof notificationStatus>;
 
+export const createNotificationRoutingSchema = v.object({
+	recipientUserIds: v.optional(v.array(helpers.uuid), []),
+	creatorUserId: v.optional(v.nullable(helpers.uuid), null)
+});
+export type CreateNotificationRoutingSchema = v.InferOutput<typeof createNotificationRoutingSchema>;
+
+const notificationCreateBaseSchema = {
+	organizationId: helpers.uuid,
+	referenceId: helpers.uuid,
+	sourceKey: helpers.mediumString,
+	payload: v.optional(v.nullable(helpers.jsonSchema)),
+	routing: v.optional(createNotificationRoutingSchema)
+};
+
+export const createNotificationSchema = v.variant('type', [
+	v.object({
+		type: v.literal('whatsapp_unread'),
+		...notificationCreateBaseSchema
+	}),
+	v.object({
+		type: v.literal('whatsapp_message'),
+		...notificationCreateBaseSchema
+	}),
+	v.object({
+		type: v.literal('flow_notify_user'),
+		...notificationCreateBaseSchema
+	}),
+	v.object({
+		type: v.literal('event_signup'),
+		...notificationCreateBaseSchema
+	}),
+	v.object({
+		type: v.literal('petition_signup'),
+		...notificationCreateBaseSchema
+	}),
+	v.object({
+		type: v.literal('generic'),
+		...notificationCreateBaseSchema
+	})
+]);
+export type CreateNotificationSchema = v.InferOutput<typeof createNotificationSchema>;
+
 export const notificationSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
