@@ -102,7 +102,7 @@
 </script>
 
 <div class="flex h-full flex-col">
-	<div class="flex items-center justify-between border-b px-4 py-3">
+	<div class="flex items-center justify-between border-b py-3 ps-4 pe-14">
 		<h2 class="text-lg font-semibold">{t`Notifications`}</h2>
 		<Button
 			variant="ghost"
