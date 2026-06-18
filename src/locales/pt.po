@@ -4616,6 +4616,7 @@ msgstr ""
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 #: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "WhatsApp message"
 msgstr ""
 
