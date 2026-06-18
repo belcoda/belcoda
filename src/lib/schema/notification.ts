@@ -47,6 +47,33 @@ export const createNotificationSchema = v.variant('type', [
 ]);
 export type CreateNotificationSchema = v.InferOutput<typeof createNotificationSchema>;
 
+export const notificationMutatorMetadata = v.object({
+	organizationId: helpers.uuid,
+	notificationId: helpers.uuid
+});
+export type NotificationMutatorMetadata = v.InferOutput<typeof notificationMutatorMetadata>;
+
+export const markNotificationAsReadMutatorSchemaZero = v.object({
+	metadata: notificationMutatorMetadata
+});
+export type MarkNotificationAsReadMutatorSchemaZero = v.InferOutput<
+	typeof markNotificationAsReadMutatorSchemaZero
+>;
+
+export const dismissNotificationMutatorSchemaZero = v.object({
+	metadata: notificationMutatorMetadata
+});
+export type DismissNotificationMutatorSchemaZero = v.InferOutput<
+	typeof dismissNotificationMutatorSchemaZero
+>;
+
+export const markAllNotificationsAsReadMutatorSchemaZero = v.object({
+	metadata: v.pick(notificationMutatorMetadata, ['organizationId'])
+});
+export type MarkAllNotificationsAsReadMutatorSchemaZero = v.InferOutput<
+	typeof markAllNotificationsAsReadMutatorSchemaZero
+>;
+
 export const notificationSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
