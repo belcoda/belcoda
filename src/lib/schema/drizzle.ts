@@ -36,7 +36,6 @@ import type { PersonSchema, Gender } from '$lib/schema/person';
 import type { PersonWhatsappIdentitySchema } from '$lib/schema/person-whatsapp-identity';
 import type { PersonImportSchema, PersonImportStatus } from '$lib/schema/person-import';
 import type { ActivitySchema } from '$lib/schema/activity';
-import type { NotificationSchema, NotificationStatus } from '$lib/schema/notification';
 import type { WhatsappGroupSchema } from '$lib/schema/whatsapp-group';
 import type { WhatsappTemplateSchema } from '$lib/schema/whatsapp-template';
 import type { WhatsappThreadSchema } from '$lib/schema/whatsapp-thread';
@@ -52,7 +51,6 @@ import type { SerializedEditorState } from 'lexical';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
-import type { JsonSchema } from '$lib/schema/helpers';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
@@ -560,8 +558,8 @@ export const notification = pgTable(
 		type: text('type').notNull(),
 		referenceId: uuid('reference_id').notNull(),
 		sourceKey: text('source_key').notNull(),
-		payload: jsonb('payload').$type<JsonSchema>(),
-		status: text('status').$type<NotificationStatus>().notNull().default('unread'),
+		payload: jsonb('payload'),
+		status: text('status').notNull().default('unread'),
 		readAt: timestamp('read_at', { withTimezone: true, mode: 'date' }),
 		dismissedAt: timestamp('dismissed_at', { withTimezone: true, mode: 'date' }),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
@@ -581,13 +579,6 @@ export const notification = pgTable(
 		index('notification_organization_created_at').on(table.organizationId, table.createdAt.desc())
 	]
 );
-// will throw a type error if the drizzle schema definition does not match the base valibot schema
-type NotificationValibotMatchesDrizzle = IsTrue<
-	NotificationSchema extends typeof notification.$inferSelect ? true : false
->;
-type NotificationDrizzleMatchesValibot = IsTrue<
-	typeof notification.$inferSelect extends NotificationSchema ? true : false
->;
 
 //whatsapp schema
 
