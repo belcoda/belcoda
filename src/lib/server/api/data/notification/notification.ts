@@ -4,7 +4,18 @@ import { parse } from 'valibot';
 import { v7 as uuidv7 } from 'uuid';
 
 import { member, notification } from '$lib/schema/drizzle';
-import { createNotificationSchema, type CreateNotificationSchema } from '$lib/schema/notification';
+import {
+	createNotificationSchema,
+	type CreateNotificationSchema,
+	markNotificationAsReadMutatorSchemaZero,
+	type MarkNotificationAsReadMutatorSchemaZero,
+	dismissNotificationMutatorSchemaZero,
+	type DismissNotificationMutatorSchemaZero,
+	markAllNotificationsAsReadMutatorSchemaZero,
+	type MarkAllNotificationsAsReadMutatorSchemaZero
+} from '$lib/schema/notification';
+import { builder, type QueryContext } from '$lib/zero/schema';
+import { notificationReadPermissions } from '$lib/zero/query/notification/permissions';
 
 async function resolveNotificationRecipients({
 	tx,
@@ -86,5 +97,111 @@ export async function createNotification({
 		.onConflictDoNothing({
 			target: [notification.organizationId, notification.userId, notification.sourceKey]
 		})
+		.returning();
+}
+
+export async function markNotificationAsRead({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext & { userId: string };
+	args: MarkNotificationAsReadMutatorSchemaZero;
+}) {
+	const parsed = parse(markNotificationAsReadMutatorSchemaZero, args);
+	const row = await tx.run(
+		builder.notification
+			.where('id', '=', parsed.metadata.notificationId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => notificationReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!row) {
+		throw new Error('Notification not found');
+	}
+	if (row.status !== 'unread') {
+		return row;
+	}
+	const now = new Date();
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(notification)
+		.set({
+			status: 'read',
+			readAt: now,
+			updatedAt: now
+		})
+		.where(and(eq(notification.id, row.id), eq(notification.organizationId, row.organizationId)))
+		.returning();
+	if (!updated) {
+		throw new Error('Unable to mark notification as read');
+	}
+	return updated;
+}
+
+export async function dismissNotification({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext & { userId: string };
+	args: DismissNotificationMutatorSchemaZero;
+}) {
+	const parsed = parse(dismissNotificationMutatorSchemaZero, args);
+	const row = await tx.run(
+		builder.notification
+			.where('id', '=', parsed.metadata.notificationId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => notificationReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!row) {
+		throw new Error('Notification not found');
+	}
+	if (row.status === 'dismissed') {
+		return row;
+	}
+	const now = new Date();
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(notification)
+		.set({
+			status: 'dismissed',
+			dismissedAt: now,
+			updatedAt: now
+		})
+		.where(and(eq(notification.id, row.id), eq(notification.organizationId, row.organizationId)))
+		.returning();
+	if (!updated) {
+		throw new Error('Unable to dismiss notification');
+	}
+	return updated;
+}
+
+export async function markAllNotificationsAsRead({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext & { userId: string };
+	args: MarkAllNotificationsAsReadMutatorSchemaZero;
+}) {
+	const parsed = parse(markAllNotificationsAsReadMutatorSchemaZero, args);
+	const now = new Date();
+	return tx.dbTransaction.wrappedTransaction
+		.update(notification)
+		.set({
+			status: 'read',
+			readAt: now,
+			updatedAt: now
+		})
+		.where(
+			and(
+				eq(notification.organizationId, parsed.metadata.organizationId),
+				eq(notification.userId, ctx.userId),
+				eq(notification.status, 'unread')
+			)
+		)
 		.returning();
 }

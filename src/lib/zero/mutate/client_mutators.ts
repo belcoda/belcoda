@@ -1,6 +1,7 @@
 import * as person from '$lib/zero/mutate/person';
 import * as personNote from '$lib/zero/mutate/person_note';
 import * as personImport from '$lib/zero/mutate/person_import';
+import * as notification from '$lib/zero/mutate/notification';
 import * as eventSignup from '$lib/zero/mutate/event_signup';
 import * as event from '$lib/zero/mutate/event';
 import * as petition from '$lib/zero/mutate/petition';
@@ -29,6 +30,11 @@ export const mutators = defineMutators({
 	personImport: {
 		insert: personImport.insertPersonImport,
 		triggerQueue: personImport.triggerImportQueue
+	},
+	notification: {
+		markAsRead: notification.markNotificationAsRead,
+		dismiss: notification.dismissNotification,
+		markAllAsRead: notification.markAllNotificationsAsRead
 	},
 	personNote: {
 		create: personNote.createPersonNote,
