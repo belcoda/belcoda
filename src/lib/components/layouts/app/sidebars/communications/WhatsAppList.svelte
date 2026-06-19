@@ -56,6 +56,18 @@
 	const whatsappThreadsQuery = $derived.by(() =>
 		z.createQuery(queries.whatsappThread.list(paginatedThreads.pageFilter))
 	);
+	const unreadNotificationsQuery = $derived.by(() =>
+		z.createQuery(
+			queries.notification.list({
+				...getListFilter(appState.organizationId, { pageSize: 200 }),
+				status: 'unread'
+			})
+		)
+	);
+	const unreadReferenceIds = $derived.by(
+		() =>
+			new Set((unreadNotificationsQuery.data ?? []).map((notification) => notification.referenceId))
+	);
 
 	const whatsAppThreadId = $derived(page.params.whatsappThreadId);
 
@@ -110,10 +122,15 @@
 					>
 						<div class="flex w-full items-center justify-between gap-2">
 							<div
-								class="line-clamp-1 font-medium"
+								class="flex items-center gap-1"
 								data-testid="communications-whatsapp-thread-title"
 							>
-								{whatsappThread.title || t`(No title)`}
+								<span class="line-clamp-1 font-medium">
+									{whatsappThread.title || t`(No title)`}
+								</span>
+								{#if unreadReferenceIds.has(whatsappThread.id)}
+									<span class="size-2 shrink-0 rounded-full bg-primary"></span>
+								{/if}
 							</div>
 							<div class="text-xs text-nowrap text-muted-foreground">
 								{formatShortTimestamp(whatsappThread.updatedAt)}
