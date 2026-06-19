@@ -20,14 +20,17 @@
 		...getListFilter(appState.organizationId, { pageSize: 10 }),
 		status: null
 	}));
+	const unreadFilter = $derived.by(() => ({
+		...getListFilter(appState.organizationId, { pageSize: 1 }),
+		status: 'unread' as const
+	}));
 
 	const inboxQuery = $derived.by(() => z.createQuery(queries.notification.list(inboxFilter)));
+	const unreadQuery = $derived.by(() => z.createQuery(queries.notification.list(unreadFilter)));
 	const notifications = $derived(inboxQuery.data ?? []);
+	const hasUnreadNotifications = $derived((unreadQuery.data?.length ?? 0) > 0);
 	const displayedNotifications = $derived(
 		notifications.filter((notification) => notification.status !== 'dismissed')
-	);
-	const unreadCount = $derived(
-		displayedNotifications.filter((notification) => notification.status === 'unread').length
 	);
 
 	let busyIds = $state<Record<string, boolean>>({});
@@ -86,7 +89,7 @@
 	}
 
 	async function markAllAsRead() {
-		if (markAllBusy || unreadCount === 0) {
+		if (markAllBusy || !hasUnreadNotifications) {
 			return;
 		}
 		markAllBusy = true;
@@ -111,7 +114,7 @@
 			variant="ghost"
 			size="sm"
 			onclick={markAllAsRead}
-			disabled={markAllBusy || unreadCount === 0}
+			disabled={markAllBusy || !hasUnreadNotifications}
 		>
 			{t`Mark all as read`}
 		</Button>
