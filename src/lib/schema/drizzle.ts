@@ -545,6 +545,41 @@ type ActivityDrizzleMatchesValibot = IsTrue<
 	typeof activity.$inferSelect extends ActivitySchema ? true : false
 >;
 
+export const notification = pgTable(
+	'notification',
+	{
+		id: uuid('id').notNull().primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => user.id),
+		type: text('type').notNull(),
+		referenceId: uuid('reference_id').notNull(),
+		sourceKey: text('source_key').notNull(),
+		payload: jsonb('payload'),
+		status: text('status').notNull().default('unread'),
+		readAt: timestamp('read_at', { withTimezone: true, mode: 'date' }),
+		dismissedAt: timestamp('dismissed_at', { withTimezone: true, mode: 'date' }),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.default(sql`now()`),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.default(sql`now()`)
+	},
+	(table) => [
+		unique('notification_dedupe_unique').on(table.organizationId, table.userId, table.sourceKey),
+		index('notification_user_status_created_at').on(
+			table.userId,
+			table.status,
+			table.createdAt.desc()
+		),
+		index('notification_organization_created_at').on(table.organizationId, table.createdAt.desc())
+	]
+);
+
 //whatsapp schema
 
 export const whatsappGroup = pgTable('whatsapp_group', {
@@ -1190,6 +1225,17 @@ export const activityRelations = relations(activity, ({ one }) => ({
 	}),
 	user: one(user, {
 		fields: [activity.userId],
+		references: [user.id]
+	})
+}));
+
+export const notificationRelations = relations(notification, ({ one }) => ({
+	organization: one(organization, {
+		fields: [notification.organizationId],
+		references: [organization.id]
+	}),
+	user: one(user, {
+		fields: [notification.userId],
 		references: [user.id]
 	})
 }));
