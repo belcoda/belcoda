@@ -6,6 +6,7 @@
 	import OrgMenu from '$lib/components/layouts/app/navigation/OrgMenu.svelte';
 	import { t } from '$lib/index.svelte';
 	import { appState } from '$lib/state.svelte';
+	import NotificationBell from '$lib/components/widgets/notifications/NotificationBell.svelte';
 </script>
 
 <Sidebar.Root
@@ -113,6 +114,11 @@
 	</Sidebar.Content>
 	<Sidebar.Footer>
 		<Sidebar.Menu>
+			<Sidebar.MenuItem>
+				<NotificationBell
+					class="mx-auto size-12 text-sidebar-primary-foreground transition-transform hover:scale-110 hover:bg-gray-700"
+				/>
+			</Sidebar.MenuItem>
 			<Sidebar.MenuItem>
 				<NavUser />
 			</Sidebar.MenuItem>
