@@ -32,6 +32,7 @@ type QueueDbAdapter = {
 
 type QueueSendOptions = {
 	db?: QueueDbAdapter;
+	startAfter?: number;
 };
 import type { ServerTransaction } from '@rocicorp/zero';
 function _createTxDbWrapper(trx: ServerTransaction) {
