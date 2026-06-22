@@ -131,9 +131,25 @@ export async function markNotificationAsRead({
 			readAt: now,
 			updatedAt: now
 		})
-		.where(and(eq(notification.id, row.id), eq(notification.organizationId, row.organizationId)))
+		.where(
+			and(
+				eq(notification.id, row.id),
+				eq(notification.organizationId, row.organizationId),
+				eq(notification.status, 'unread')
+			)
+		)
 		.returning();
 	if (!updated) {
+		const latestRow = await tx.run(
+			builder.notification
+				.where('id', '=', parsed.metadata.notificationId)
+				.where('organizationId', '=', parsed.metadata.organizationId)
+				.where((expr) => notificationReadPermissions(expr, ctx))
+				.one()
+		);
+		if (latestRow) {
+			return latestRow;
+		}
 		throw new Error('Unable to mark notification as read');
 	}
 	return updated;
