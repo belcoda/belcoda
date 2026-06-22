@@ -5,7 +5,7 @@ export function notificationReadPermissions(
 	builder: ExpressionBuilder<'notification', Schema>,
 	ctx: QueryContext
 ) {
-	const { and, or, cmp, exists } = builder;
+	const { and, cmp, exists } = builder;
 	return and(
 		exists('organization', (o) => {
 			return o.where(({ or, cmp }) => {
