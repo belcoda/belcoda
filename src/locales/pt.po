@@ -4616,6 +4616,7 @@ msgstr ""
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 #: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "WhatsApp message"
 msgstr ""
 
@@ -5415,3 +5416,60 @@ msgstr ""
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved WhatsApp templates yet."
 msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationBell.svelte
+msgid "Open notifications"
+msgstr "Abrir notificações"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unread WhatsApp"
+msgstr "WhatsApp não lido"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Flow notification"
+msgstr "Notificação de fluxo"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Event signup"
+msgstr "Inscrição em evento"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Petition signup"
+msgstr "Assinatura de petição"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Notification"
+msgstr "Notificação"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Notifications"
+msgstr "Notificações"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Mark all as read"
+msgstr "Marcar todas como lidas"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Loading notifications..."
+msgstr "Carregando notificações..."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unable to load notifications."
+msgstr "Não foi possível carregar as notificações."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "No notifications yet."
+msgstr "Ainda não há notificações."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Unknown time"
+msgstr "Hora desconhecida"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Mark as read"
+msgstr "Marcar como lida"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Dismiss"
+msgstr "Dispensar"
