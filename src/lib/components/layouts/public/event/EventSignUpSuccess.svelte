@@ -17,10 +17,10 @@
 		$props();
 
 	const primaryColor = $derived(
-		organization.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
+		organization?.settings?.theme?.primaryColor || defaultDisplaySettings.primaryColor
 	); // purple/indigo default
 	const secondaryColor = $derived(
-		organization.settings?.theme?.secondaryColor || defaultDisplaySettings.secondaryColor
+		organization?.settings?.theme?.secondaryColor || defaultDisplaySettings.secondaryColor
 	); // Green default
 
 	const eventTimeData = $derived(
