@@ -68,10 +68,15 @@ function whereClause(
 	{ filter }: { filter: ListNotificationsInput }
 ) {
 	const { and, or, cmp } = builder;
-	const filterArr = [
-		cmp('id', 'NOT IN', filter.excludedIds),
-		or(cmp('status', '=', 'unread'), cmp('createdAt', '>', Date.now() - RECENT_WINDOW_MS))
-	];
+	const filterArr = [cmp('id', 'NOT IN', filter.excludedIds)];
+	if (filter.status !== 'dismissed') {
+		filterArr.push(
+			or(
+				cmp('status', '=', 'unread'),
+				and(cmp('status', '=', 'read'), cmp('createdAt', '>', Date.now() - RECENT_WINDOW_MS))
+			)
+		);
+	}
 	if (filter.status) {
 		filterArr.push(cmp('status', '=', filter.status));
 	}
