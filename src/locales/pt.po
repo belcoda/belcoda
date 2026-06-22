@@ -5419,57 +5419,57 @@ msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationBell.svelte
 msgid "Open notifications"
-msgstr ""
+msgstr "Abrir notificações"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unread WhatsApp"
-msgstr ""
+msgstr "WhatsApp não lido"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Flow notification"
-msgstr ""
+msgstr "Notificação de fluxo"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Event signup"
-msgstr ""
+msgstr "Inscrição em evento"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Petition signup"
-msgstr ""
+msgstr "Assinatura de petição"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Notification"
-msgstr ""
+msgstr "Notificação"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Notifications"
-msgstr ""
+msgstr "Notificações"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Mark all as read"
-msgstr ""
+msgstr "Marcar todas como lidas"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Loading notifications..."
-msgstr ""
+msgstr "Carregando notificações..."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unable to load notifications."
-msgstr ""
+msgstr "Não foi possível carregar as notificações."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "No notifications yet."
-msgstr ""
+msgstr "Ainda não há notificações."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unknown time"
-msgstr ""
+msgstr "Hora desconhecida"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Mark as read"
-msgstr ""
+msgstr "Marcar como lida"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Dismiss"
-msgstr ""
+msgstr "Dispensar"
