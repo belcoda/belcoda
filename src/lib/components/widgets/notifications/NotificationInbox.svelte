@@ -29,9 +29,6 @@
 	const unreadQuery = $derived.by(() => z.createQuery(queries.notification.list(unreadFilter)));
 	const notifications = $derived(inboxQuery.data ?? []);
 	const hasUnreadNotifications = $derived((unreadQuery.data?.length ?? 0) > 0);
-	const displayedNotifications = $derived(
-		notifications.filter((notification) => notification.status !== 'dismissed')
-	);
 
 	let busyIds = $state<Record<string, boolean>>({});
 	let markAllBusy = $state(false);
@@ -125,11 +122,11 @@
 			<p class="px-4 py-6 text-sm text-muted-foreground">{t`Loading notifications...`}</p>
 		{:else if inboxQuery.details.type === 'error'}
 			<p class="px-4 py-6 text-sm text-destructive">{t`Unable to load notifications.`}</p>
-		{:else if displayedNotifications.length === 0}
+		{:else if notifications.length === 0}
 			<p class="px-4 py-6 text-sm text-muted-foreground">{t`No notifications yet.`}</p>
 		{:else}
 			<ul>
-				{#each displayedNotifications as notification (notification.id)}
+				{#each notifications as notification (notification.id)}
 					<li class="border-b px-4 py-3">
 						<div class="mb-1 flex items-center justify-between gap-2">
 							<div class="flex items-center gap-2">
