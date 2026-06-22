@@ -27,6 +27,7 @@ function getRetryDelay(retryDelay: number, retryCount: number): number {
 }
 
 export async function sendWebhook({
+	id,
 	webhook,
 	eventType,
 	payload,
@@ -34,6 +35,7 @@ export async function sendWebhook({
 	retryDelay = 0,
 	retryCount = 0
 }: {
+	id: string; // per triggered webhook event. persisted across retries. effectively an idempotency identifier for the webhook event.
 	webhook: typeof webhookTable.$inferSelect;
 	eventType: WebhookPayload['type'];
 	payload: WebhookPayload;
@@ -43,7 +45,7 @@ export async function sendWebhook({
 }) {
 	const parsed = parse(webhookPayloadSchema, payload);
 	const webhookBody = {
-		id: uuidv7(),
+		id,
 		type: eventType,
 		createdAt: new Date().toISOString(),
 		apiVersion: CURRENT_API_VERSION,
@@ -118,6 +120,7 @@ export async function sendWebhook({
 			);
 			await queue.sendWebhook(
 				{
+					id,
 					webhook,
 					eventType,
 					organizationId,
@@ -187,6 +190,7 @@ export async function triggerWebhook({
 		const queue = await getQueue();
 		for (const webhook of returnedWebhooks) {
 			await queue.sendWebhook({
+				id: uuidv7(),
 				webhook,
 				eventType,
 				payload,
