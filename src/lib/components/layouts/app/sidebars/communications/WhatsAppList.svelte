@@ -56,7 +56,6 @@
 	const whatsappThreadsQuery = $derived.by(() =>
 		z.createQuery(queries.whatsappThread.list(paginatedThreads.pageFilter))
 	);
-
 	const whatsAppThreadId = $derived(page.params.whatsappThreadId);
 
 	watch(
@@ -110,10 +109,12 @@
 					>
 						<div class="flex w-full items-center justify-between gap-2">
 							<div
-								class="line-clamp-1 font-medium"
+								class="flex items-center gap-1"
 								data-testid="communications-whatsapp-thread-title"
 							>
-								{whatsappThread.title || t`(No title)`}
+								<span class="line-clamp-1 font-medium">
+									{whatsappThread.title || t`(No title)`}
+								</span>
 							</div>
 							<div class="text-xs text-nowrap text-muted-foreground">
 								{formatShortTimestamp(whatsappThread.updatedAt)}
