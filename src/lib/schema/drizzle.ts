@@ -582,12 +582,10 @@ export const notification = pgTable(
 	]
 );
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
-type NotificationValibotMatchesDrizzle = IsTrue<
-	NotificationSchema extends typeof notification.$inferSelect ? true : false
->;
-type NotificationDrizzleMatchesValibot = IsTrue<
-	typeof notification.$inferSelect extends NotificationSchema ? true : false
->;
+export type NotificationSchemaTypeChecks = [
+	IsTrue<NotificationSchema extends typeof notification.$inferSelect ? true : false>,
+	IsTrue<typeof notification.$inferSelect extends NotificationSchema ? true : false>
+];
 
 //whatsapp schema
 
