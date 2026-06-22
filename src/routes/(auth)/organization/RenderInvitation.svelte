@@ -19,9 +19,6 @@
 	const invitedBy = (email: string) => {
 		return t`Invited by ${email}`;
 	};
-	const errorLoadingInvitation = (err: Error) => {
-		return t`Error loading invitation: ${err.message}`;
-	};
 	const declineConfirmMessage = () =>
 		t`Are you sure you want to decline this invitation? You will need to contact an organizational admin to get invited again.`;
 
@@ -60,63 +57,63 @@
 {#await authClient.organization.getInvitation({ query: { id: invitationId } })}
 	{@render skeletonItem()}
 {:then invitation}
-	<Item.Root variant="outline">
-		{#snippet child({ props })}
-			<div {...props}>
-				<Item.Media variant="icon">
-					<MailIcon class="size-4 text-muted-foreground" />
-				</Item.Media>
-				<Item.Content>
-					<Item.Title class="line-clamp-1">
-						{invitation.data?.organizationName}
-					</Item.Title>
-					{#if invitation.data?.inviterEmail}
-						<Item.Description class="line-clamp-1 text-xs text-muted-foreground"
-							>{invitedBy(invitation.data.inviterEmail)}</Item.Description
-						>
-					{/if}
-				</Item.Content>
-				<Item.Content class="flex w-full flex-col items-end gap-2">
-					{#if error}
-						<ErrorAlert>{error}</ErrorAlert>
-					{/if}
-					<div class="">
-						<Button
-							variant="default"
-							size="sm"
-							disabled={accepting || declining}
-							onclick={handleAccept}
-							data-testid="invitation-accept"
-						>
-							{#if accepting}
-								<Spinner class="size-4" />
-							{:else}
-								{t`Accept invitation`}
-								<ArrowRightIcon class="size-4" />
-							{/if}
-						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							class="text-xs text-muted-foreground"
-							disabled={accepting || declining}
-							onclick={handleDecline}
-							data-testid="invitation-decline"
-						>
-							{#if declining}
-								<Spinner class="size-3" />
-							{:else}
-								{t`Decline invitation`}
-								<XIcon class="size-3" />
-							{/if}
-						</Button>
-					</div>
-				</Item.Content>
-			</div>
-		{/snippet}
-	</Item.Root>
-{:catch err}
-	<ErrorAlert>{errorLoadingInvitation(err)}</ErrorAlert>
+	{#if invitation.data}
+		<Item.Root variant="outline">
+			{#snippet child({ props })}
+				<div {...props}>
+					<Item.Media variant="icon">
+						<MailIcon class="size-4 text-muted-foreground" />
+					</Item.Media>
+					<Item.Content>
+						<Item.Title class="line-clamp-1">
+							{invitation.data.organizationName}
+						</Item.Title>
+						{#if invitation.data.inviterEmail}
+							<Item.Description class="line-clamp-1 text-xs text-muted-foreground"
+								>{invitedBy(invitation.data.inviterEmail)}</Item.Description
+							>
+						{/if}
+					</Item.Content>
+					<Item.Content class="flex w-full flex-col items-end gap-2">
+						{#if error}
+							<ErrorAlert>{error}</ErrorAlert>
+						{/if}
+						<div class="">
+							<Button
+								variant="default"
+								size="sm"
+								disabled={accepting || declining}
+								onclick={handleAccept}
+								data-testid="invitation-accept"
+							>
+								{#if accepting}
+									<Spinner class="size-4" />
+								{:else}
+									{t`Accept invitation`}
+									<ArrowRightIcon class="size-4" />
+								{/if}
+							</Button>
+							<Button
+								variant="ghost"
+								size="sm"
+								class="text-xs text-muted-foreground"
+								disabled={accepting || declining}
+								onclick={handleDecline}
+								data-testid="invitation-decline"
+							>
+								{#if declining}
+									<Spinner class="size-3" />
+								{:else}
+									{t`Decline invitation`}
+									<XIcon class="size-3" />
+								{/if}
+							</Button>
+						</div>
+					</Item.Content>
+				</div>
+			{/snippet}
+		</Item.Root>
+	{/if}
 {/await}
 {#snippet skeletonItem()}
 	<div class="flex items-center space-x-4">

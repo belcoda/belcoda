@@ -1026,6 +1026,80 @@ const memberTable = {
 	},
 	primaryKey: ['id']
 } as const;
+const notificationTable = {
+	name: 'notification',
+	columns: {
+		id: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string
+		},
+		organizationId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'organization_id'
+		},
+		userId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'user_id'
+		},
+		type: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string
+		},
+		referenceId: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'reference_id'
+		},
+		sourceKey: {
+			type: 'string',
+			optional: false,
+			customType: null as unknown as string,
+			serverName: 'source_key'
+		},
+		payload: {
+			type: 'json',
+			optional: true,
+			customType: null as unknown as ZeroCustomType<typeof zeroSchema, 'notification', 'payload'>
+		},
+		status: {
+			type: 'string',
+			optional: true,
+			customType: null as unknown as 'unread' | 'read' | 'dismissed'
+		},
+		readAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'read_at'
+		},
+		dismissedAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'dismissed_at'
+		},
+		createdAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'created_at'
+		},
+		updatedAt: {
+			type: 'number',
+			optional: true,
+			customType: null as unknown as number,
+			serverName: 'updated_at'
+		}
+	},
+	primaryKey: ['id']
+} as const;
 const organizationTable = {
 	name: 'organization',
 	columns: {
@@ -3424,6 +3498,17 @@ const memberRelationships = {
 	],
 	user: [{ sourceField: ['userId'], destField: ['id'], destSchema: 'user', cardinality: 'one' }]
 } as const;
+const notificationRelationships = {
+	organization: [
+		{
+			sourceField: ['organizationId'],
+			destField: ['id'],
+			destSchema: 'organization',
+			cardinality: 'one'
+		}
+	],
+	user: [{ sourceField: ['userId'], destField: ['id'], destSchema: 'user', cardinality: 'one' }]
+} as const;
 const organizationRelationships = {
 	memberships: [
 		{
@@ -3608,6 +3693,7 @@ export const schema = {
 		eventSignup: eventSignupTable,
 		invitation: invitationTable,
 		member: memberTable,
+		notification: notificationTable,
 		organization: organizationTable,
 		person: personTable,
 		personImport: personImportTable,
@@ -3644,6 +3730,7 @@ export const schema = {
 		eventSignup: eventSignupRelationships,
 		invitation: invitationRelationships,
 		member: memberRelationships,
+		notification: notificationRelationships,
 		organization: organizationRelationships,
 		personImport: personImportRelationships,
 		personNote: personNoteRelationships,
@@ -3714,6 +3801,11 @@ export type Invitation = Row<(typeof schema)['tables']['invitation']>;
  * This type is auto-generated from your Drizzle schema definition.
  */
 export type Member = Row<(typeof schema)['tables']['member']>;
+/**
+ * Represents a row from the "notification" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type Notification = Row<(typeof schema)['tables']['notification']>;
 /**
  * Represents a row from the "organization" table.
  * This type is auto-generated from your Drizzle schema definition.
