@@ -16,6 +16,7 @@ import {
 } from '$lib/schema/notification';
 import { builder, type QueryContext } from '$lib/zero/schema';
 import { notificationReadPermissions } from '$lib/zero/query/notification/permissions';
+import { getOrganizationMember } from '$lib/server/api/data/organization/member';
 
 async function resolveNotificationRecipients({
 	tx,
@@ -204,6 +205,10 @@ export async function markAllNotificationsAsRead({
 	args: MarkAllNotificationsAsReadMutatorSchemaZero;
 }) {
 	const parsed = parse(markAllNotificationsAsReadMutatorSchemaZero, args);
+	await getOrganizationMember({
+		tx,
+		args: { organizationId: parsed.metadata.organizationId, userId: ctx.userId }
+	});
 	const now = new Date();
 	return tx.dbTransaction.wrappedTransaction
 		.update(notification)
