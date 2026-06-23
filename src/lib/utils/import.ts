@@ -1,7 +1,7 @@
 import { person } from '$lib/schema/drizzle';
 import pino from '$lib/pino';
 import { drizzle } from '$lib/server/db';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 import { personSchema, type PersonSchema } from '$lib/schema/person';
 import { parse as valibotParse } from 'valibot';
 import { type CountryCode, isValidCountryCode } from '$lib/utils/country';
@@ -13,6 +13,7 @@ import type { GenderOption } from '$lib/utils/person';
 import { t } from '$lib/index.svelte';
 import Papa from 'papaparse';
 import ISO6391 from 'iso-639-1';
+import { and, eq, or, isNull, type SQL } from 'drizzle-orm';
 
 const log = pino(import.meta.url);
 
@@ -27,11 +28,17 @@ interface ImportResult {
 	failedRows: { row: number; error: string; data?: any }[];
 }
 
-export async function parseImportCsv(
-	csvString: string,
-	organizationId: string,
-	addedFrom: PersonAddedFrom
-): Promise<ImportResult> {
+export async function parseImportCsv({
+	csvString,
+	organizationId,
+	addedFrom,
+	upsert = false
+}: {
+	csvString: string;
+	organizationId: string;
+	addedFrom: PersonAddedFrom;
+	upsert?: boolean;
+}): Promise<ImportResult> {
 	const records: Array<{ csvRow: CsvRow; line: number }> = [];
 	let successCount = 0;
 	let failedCount = 0;
@@ -62,7 +69,7 @@ export async function parseImportCsv(
 
 			const personDataWithId = {
 				...personData,
-				id: uuidv4(),
+				id: uuidv7(),
 				createdAt: new Date(),
 				updatedAt: new Date(),
 				deletedAt: null
@@ -71,9 +78,60 @@ export async function parseImportCsv(
 			try {
 				const validatedPerson = valibotParse(personSchema, personDataWithId);
 				try {
-					await drizzle.insert(person).values(validatedPerson);
-					successCount++;
-					log.debug({ row: line }, 'Person imported successfully');
+					let result: typeof person.$inferSelect | undefined = undefined;
+					// if we're upserting, we want to find an existing person record
+					if (upsert) {
+						const whereConditions: SQL[] = [];
+						if (validatedPerson.emailAddress) {
+							whereConditions.push(eq(person.emailAddress, validatedPerson.emailAddress));
+						}
+						if (validatedPerson.phoneNumber) {
+							whereConditions.push(eq(person.phoneNumber, validatedPerson.phoneNumber));
+						}
+						if (whereConditions.length > 0) {
+							result = await drizzle.query.person.findFirst({
+								where: and(
+									or(...whereConditions),
+									eq(person.organizationId, organizationId),
+									isNull(person.deletedAt)
+								)
+							});
+						}
+						// if we have found an existing person record (and of course, we're still in the upsert only conditional)
+						// then, we want to update it
+						if (result) {
+							await drizzle
+								.update(person)
+								.set({
+									...validatedPerson,
+									id: result.id,
+									organizationId: result.organizationId,
+									createdAt: result.createdAt,
+									externalId: result.externalId,
+									addedFrom: result.addedFrom,
+									mostRecentActivityAt: result.mostRecentActivityAt,
+									mostRecentActivityPreview: result.mostRecentActivityPreview,
+									mostRecentWhatsappMessageReceivedAt: result.mostRecentWhatsappMessageReceivedAt,
+									updatedAt: new Date()
+								})
+								.where(
+									and(
+										eq(person.id, result.id),
+										eq(person.organizationId, organizationId),
+										isNull(person.deletedAt)
+									)
+								);
+							successCount++;
+							log.debug({ row: line }, 'Person updated successfully');
+						}
+					}
+
+					// in any case, if we don't have a result, we want to insert a new person record
+					if (!result) {
+						await drizzle.insert(person).values(validatedPerson);
+						successCount++;
+						log.debug({ row: line }, 'Person imported successfully');
+					}
 				} catch (error) {
 					log.error({ error }, 'Database insert error');
 					//if it's a postgres unique error, handle that
