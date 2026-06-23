@@ -22,32 +22,34 @@
 			time: 'Today, 18:30',
 			status: 'Next',
 			signups: 184,
-			capacity: 220,
-			waitlist: 14
+			incomplete: 7,
+			reminder: 'Sent'
 		},
 		{
 			name: 'Volunteer onboarding call',
 			time: 'Tomorrow, 09:00',
 			status: 'Upcoming',
 			signups: 62,
-			capacity: 80,
-			waitlist: 0
+			incomplete: 3,
+			reminder: 'Scheduled'
 		},
 		{
 			name: 'Canvassing launch: North District',
 			time: 'Fri, 16:00',
 			status: 'Upcoming',
 			signups: 128,
-			capacity: 150,
-			waitlist: 6
+			incomplete: 11,
+			reminder: 'Not sent'
 		}
 	];
 
-	const eventFunnel = [
-		{ label: 'Invited', value: 12800, percent: 100 },
-		{ label: 'Viewed', value: 6420, percent: 50 },
-		{ label: 'Signed up', value: 1480, percent: 23 },
-		{ label: 'Attended', value: 964, percent: 15 }
+	const signupStatus = [
+		{ label: 'Signed up', value: 1480, percent: 100 },
+		{ label: 'Attended', value: 964, percent: 65 },
+		{ label: 'No-show', value: 188, percent: 13 },
+		{ label: 'Cancelled', value: 74, percent: 5 },
+		{ label: 'Not attending', value: 116, percent: 8 },
+		{ label: 'Incomplete', value: 42, percent: 3 }
 	];
 
 	const eventTypes = [
@@ -57,22 +59,22 @@
 	];
 
 	const sourceRows = [
-		{ source: 'WhatsApp broadcast', signups: 612, conversion: '31%' },
-		{ source: 'Email campaign', signups: 408, conversion: '18%' },
-		{ source: 'Public page', signups: 284, conversion: '12%' },
-		{ source: 'Manual invite', signups: 176, conversion: '27%' }
+		{ source: 'WhatsApp flow', signups: 612, share: '41%' },
+		{ source: 'Public event page', signups: 408, share: '28%' },
+		{ source: 'Admin panel', signups: 284, share: '19%' },
+		{ source: 'Imported or manual follow-up', signups: 176, share: '12%' }
 	];
 
 	const insights = [
 		'Reminder messages sent 24 hours before an event are producing the highest attendance rate.',
-		'Central Ward events are filling faster than capacity; consider adding a second session.',
+		'Central Ward signups are accelerating faster than similar events; consider creating a follow-up session.',
 		'First-time attendees are more likely to show up when they receive a WhatsApp confirmation.'
 	];
 
 	const notifications = [
 		{
-			title: 'Next event is 84% full',
-			meta: 'Climate briefing has 36 seats remaining and 14 people on the waitlist.',
+			title: '7 incomplete signups need review',
+			meta: 'Climate briefing has incomplete signup records that may need follow-up before tonight.',
 			time: '12 min ago',
 			kind: 'Events'
 		},
@@ -143,65 +145,74 @@
 						<div class="grid gap-3 sm:grid-cols-3">
 							<div class="rounded-md border p-3">
 								<p class="text-sm text-muted-foreground">Signups</p>
-								<p class="mt-1 text-2xl font-semibold">184 / 220</p>
+								<p class="mt-1 text-2xl font-semibold">184</p>
 							</div>
 							<div class="rounded-md border p-3">
-								<p class="text-sm text-muted-foreground">Expected turnout</p>
-								<p class="mt-1 text-2xl font-semibold">147</p>
+								<p class="text-sm text-muted-foreground">Incomplete</p>
+								<p class="mt-1 text-2xl font-semibold">7</p>
 							</div>
 							<div class="rounded-md border p-3">
-								<p class="text-sm text-muted-foreground">Waitlist</p>
-								<p class="mt-1 text-2xl font-semibold">14</p>
+								<p class="text-sm text-muted-foreground">Reminder</p>
+								<p class="mt-1 text-2xl font-semibold">Sent</p>
 							</div>
 						</div>
 
 						<div>
 							<div class="mb-2 flex items-center justify-between text-sm">
-								<span class="font-medium">Capacity filled</span>
-								<span class="text-muted-foreground">84%</span>
+								<span class="font-medium">Signup pace vs similar events</span>
+								<span class="text-muted-foreground">+18%</span>
 							</div>
 							<div class="h-2 rounded-full bg-muted">
-								<div class="h-2 w-[84%] rounded-full bg-teal-600"></div>
+								<div class="h-2 w-[68%] rounded-full bg-teal-600"></div>
 							</div>
 						</div>
 
 						<div class="grid gap-3 sm:grid-cols-2">
 							<div class="flex gap-3 rounded-md bg-emerald-50 p-3 text-emerald-950">
 								<CheckCircle2Icon class="mt-0.5 size-5 shrink-0 text-emerald-700" />
-								<p class="text-sm">Reminder sequence is scheduled and venue capacity is healthy.</p>
+								<p class="text-sm">Signup confirmations and event reminders have been sent.</p>
 							</div>
 							<div class="flex gap-3 rounded-md bg-amber-50 p-3 text-amber-950">
 								<CircleAlertIcon class="mt-0.5 size-5 shrink-0 text-amber-700" />
 								<p class="text-sm">
-									The waitlist is growing; consider a second session or overflow stream.
+									Incomplete signups should be checked in the detailed signups table.
 								</p>
 							</div>
 						</div>
 					</div>
 
 					<div class="rounded-md border p-4">
-						<p class="text-sm font-medium">Attendee mix</p>
+						<p class="text-sm font-medium">Signup channels</p>
 						<div class="mt-4 space-y-4">
 							<div>
 								<div class="mb-1 flex justify-between text-sm">
-									<span>Returning</span>
-									<span class="text-muted-foreground">58%</span>
+									<span>Public event page</span>
+									<span class="text-muted-foreground">52%</span>
 								</div>
 								<div class="h-2 rounded-full bg-muted">
-									<div class="h-2 w-[58%] rounded-full bg-sky-600"></div>
+									<div class="h-2 w-[52%] rounded-full bg-sky-600"></div>
 								</div>
 							</div>
 							<div>
 								<div class="mb-1 flex justify-between text-sm">
-									<span>First-time</span>
-									<span class="text-muted-foreground">42%</span>
+									<span>Admin panel</span>
+									<span class="text-muted-foreground">31%</span>
 								</div>
 								<div class="h-2 rounded-full bg-muted">
-									<div class="h-2 w-[42%] rounded-full bg-amber-600"></div>
+									<div class="h-2 w-[31%] rounded-full bg-amber-600"></div>
+								</div>
+							</div>
+							<div>
+								<div class="mb-1 flex justify-between text-sm">
+									<span>WhatsApp flow</span>
+									<span class="text-muted-foreground">17%</span>
+								</div>
+								<div class="h-2 rounded-full bg-muted">
+									<div class="h-2 w-[17%] rounded-full bg-teal-600"></div>
 								</div>
 							</div>
 							<div class="border-t pt-4 text-sm text-muted-foreground">
-								First-time attendee share is 9 points higher than your 30-day average.
+								Channel data maps to the signup source stored on each event signup.
 							</div>
 						</div>
 					</div>
@@ -228,8 +239,8 @@
 								</div>
 								<div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
 									<span>{event.signups} signups</span>
-									<span>{event.capacity} capacity</span>
-									<span>{event.waitlist} waitlist</span>
+									<span>{event.incomplete} incomplete</span>
+									<span>{event.reminder} reminder</span>
 								</div>
 							</li>
 						{/each}
@@ -261,11 +272,11 @@
 
 			<Card.Root class="rounded-md">
 				<Card.Header>
-					<Card.Title>Event funnel</Card.Title>
-					<Card.Description>Where people move from invitation to attendance.</Card.Description>
+					<Card.Title>Signup status</Card.Title>
+					<Card.Description>Current outcomes from event signup records.</Card.Description>
 				</Card.Header>
 				<Card.Content class="space-y-4">
-					{#each eventFunnel as step}
+					{#each signupStatus as step}
 						<div>
 							<div class="mb-2 flex items-center justify-between gap-3">
 								<span class="text-sm font-medium">{step.label}</span>
@@ -315,7 +326,7 @@
 								<tr class="border-b text-left text-muted-foreground">
 									<th class="py-2 font-medium">Source</th>
 									<th class="py-2 font-medium">Signups</th>
-									<th class="py-2 font-medium">Conversion</th>
+									<th class="py-2 font-medium">Share</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -323,7 +334,7 @@
 									<tr class="border-b last:border-b-0">
 										<td class="py-3 font-medium">{row.source}</td>
 										<td class="py-3 text-muted-foreground">{row.signups}</td>
-										<td class="py-3 text-muted-foreground">{row.conversion}</td>
+										<td class="py-3 text-muted-foreground">{row.share}</td>
 									</tr>
 								{/each}
 							</tbody>
