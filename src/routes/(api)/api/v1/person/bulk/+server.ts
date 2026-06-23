@@ -1,9 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import {
-	safeApiRouteQueryContext,
-	processIncomingBody,
-	processOutgoingBody
-} from '$lib/server/utils/restApi';
+import { safeApiRouteQueryContext, processIncomingBody } from '$lib/server/utils/restApi';
 import { bulkUpsertPersonRestSchema } from '$lib/schema/person';
 import { getQueue } from '$lib/server/queue/index.js';
 
