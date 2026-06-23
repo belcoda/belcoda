@@ -30,7 +30,7 @@ interface ImportResult {
 export async function parseImportCsv(
 	csvString: string,
 	organizationId: string,
-	importId: string
+	addedFrom: PersonAddedFrom
 ): Promise<ImportResult> {
 	const records: Array<{ csvRow: CsvRow; line: number }> = [];
 	let successCount = 0;
@@ -58,7 +58,7 @@ export async function parseImportCsv(
 		const { csvRow, line } = records[i];
 
 		try {
-			const personData = mapCsvRowToPerson(csvRow, organizationId, importId);
+			const personData = mapCsvRowToPerson(csvRow, organizationId, addedFrom);
 
 			const personDataWithId = {
 				...personData,
@@ -185,7 +185,7 @@ function parseDateOfBirth(dob: string | null | undefined): Date | null {
 function mapCsvRowToPerson(
 	csvRow: CsvRow,
 	organizationId: string,
-	importId: string
+	addedFrom: PersonAddedFrom
 ): Omit<PersonSchema, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
 	let country = csvRow['country']?.trim() || null;
 	if (country) {
@@ -232,11 +232,6 @@ function mapCsvRowToPerson(
 		linkedIn: csvRow['linkedIn'] || null,
 		tiktok: csvRow['tiktok'] || null,
 		website: csvRow['website'] || null
-	};
-
-	const addedFrom: PersonAddedFrom = {
-		type: 'import',
-		importId
 	};
 
 	const phoneNumber = csvRow['phone_number'] || csvRow['phone'] || csvRow['phoneNumber'] || null;
