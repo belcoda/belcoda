@@ -54,9 +54,11 @@ export async function importPeople({
 
 		log.info({ personImportId }, 'Starting CSV parsing and people import');
 
-		const parseResult = await parseImportCsv(csvContent, organizationId, {
-			type: 'import',
-			importId: personImportId
+		const parseResult = await parseImportCsv({
+			csvString: csvContent,
+			organizationId,
+			addedFrom: { type: 'import', importId: personImportId },
+			upsert: false
 		});
 
 		log.info(
