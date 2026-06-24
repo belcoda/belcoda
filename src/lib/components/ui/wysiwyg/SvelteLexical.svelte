@@ -25,7 +25,7 @@
 		ImagePlugin,
 		ImageNode,
 		InsertDropDown,
-		InsertImageDropDownItem
+		DropDownItem
 	} from 'svelte-lexical';
 	import InsertImageCombinedDialog from './InsertImageCombinedDialog.svelte';
 	import { theme } from 'svelte-lexical/dist/themes/default';
@@ -117,7 +117,10 @@
 					<InsertLink />
 					<Divider />
 					<InsertDropDown>
-						<InsertImageDropDownItem onclick={() => imageDialog?.show()} />
+						<DropDownItem onclick={() => imageDialog?.show()} class="item">
+							<i class="icon image"></i>
+							<span class="text">Image</span>
+						</DropDownItem>
 					</InsertDropDown>
 					{#if enableTemplateVariables}
 						<Divider />
