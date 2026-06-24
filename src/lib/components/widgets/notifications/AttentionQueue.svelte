@@ -8,87 +8,129 @@
 	import InboxIcon from '@lucide/svelte/icons/inbox';
 	import MegaphoneIcon from '@lucide/svelte/icons/megaphone';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
-	import type { NotificationStatus } from '$lib/schema/notification';
+	import { locale } from '$lib/index.svelte';
+	import { appState, getListFilter } from '$lib/state.svelte';
+	import { formatShortTimestamp } from '$lib/utils/date';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import queries from '$lib/zero/query/index';
+	import { z } from '$lib/zero.svelte';
+	import type { ReadNotificationZero } from '$lib/schema/notification';
 
-	type NotifType =
-		| 'whatsapp_unread'
-		| 'whatsapp_message'
-		| 'flow_notify_user'
-		| 'event_signup'
-		| 'petition_signup'
-		| 'generic';
+	const filter = $derived.by(() => ({
+		...getListFilter(appState.organizationId, { pageSize: 20 }),
+		status: null
+	}));
 
-	interface Notification {
-		id: string;
-		type: NotifType;
-		status: NotificationStatus;
-		title: string;
-		meta: string;
-		time: string;
-		actionLabel: string;
-		actionHref: string;
-	}
-
-	const notifications: Notification[] = [
-		{
-			id: '1',
-			type: 'whatsapp_unread',
-			status: 'unread',
-			title: 'Sofia Martinez replied in thread #47',
-			meta: '2 min ago · "Yes I\'ll be there, can I bring a friend?"',
-			time: '2 min ago',
-			actionLabel: 'Reply',
-			actionHref: '/communications/whatsapp/sent'
-		},
-		{
-			id: '2',
-			type: 'whatsapp_message',
-			status: 'unread',
-			title: 'James Kariuki — new inbound message',
-			meta: '18 min ago · First message from this contact',
-			time: '18 min ago',
-			actionLabel: 'Open thread',
-			actionHref: '/communications/whatsapp/sent'
-		},
-		{
-			id: '3',
-			type: 'flow_notify_user',
-			status: 'unread',
-			title: 'Onboarding flow: Priya Okonkwo needs manual review',
-			meta: '35 min ago · Triggered by notifyUser node',
-			time: '35 min ago',
-			actionLabel: 'Review',
-			actionHref: '/community'
-		},
-		{
-			id: '4',
-			type: 'event_signup',
-			status: 'unread',
-			title: '5 new signups for Community town hall',
-			meta: '1 hour ago · 47 / 80 total',
-			time: '1 hour ago',
-			actionLabel: 'View signups',
-			actionHref: '/events'
-		},
-		{
-			id: '5',
-			type: 'generic',
-			status: 'read',
-			title: 'Email blast "June update" delivered to 1,204 people',
-			meta: 'Yesterday',
-			time: 'Yesterday',
-			actionLabel: 'View',
-			actionHref: '/communications/email/sent'
-		}
-	];
+	const query = $derived.by(() => z.createQuery(queries.notification.list(filter)));
+	const all = $derived(query.data ?? []);
 
 	const whatsappNotifs = $derived(
-		notifications.filter((n) => n.type === 'whatsapp_unread' || n.type === 'whatsapp_message')
+		all.filter(
+			(n) =>
+				(n.type === 'whatsapp_unread' || n.type === 'whatsapp_message') && n.status === 'unread'
+		)
 	);
-	const flowNotifs = $derived(notifications.filter((n) => n.type === 'flow_notify_user'));
-	const eventNotifs = $derived(notifications.filter((n) => n.type === 'event_signup'));
-	const readNotifs = $derived(notifications.filter((n) => n.status === 'read'));
-	const unreadCount = $derived(notifications.filter((n) => n.status === 'unread').length);
+	const flowNotifs = $derived(
+		all.filter((n) => n.type === 'flow_notify_user' && n.status === 'unread')
+	);
+	const eventNotifs = $derived(
+		all.filter((n) => n.type === 'event_signup' && n.status === 'unread')
+	);
+	const petitionNotifs = $derived(
+		all.filter((n) => n.type === 'petition_signup' && n.status === 'unread')
+	);
+	const readNotifs = $derived(all.filter((n) => n.status === 'read'));
+	const unreadCount = $derived(all.filter((n) => n.status === 'unread').length);
+
+	let busyIds = $state<Record<string, boolean>>({});
+
+	function setBusy(id: string, busy: boolean) {
+		const next = { ...busyIds };
+		if (busy) next[id] = true;
+		else delete next[id];
+		busyIds = next;
+	}
+
+	async function dismiss(notificationId: string) {
+		if (busyIds[notificationId]) return;
+		setBusy(notificationId, true);
+		try {
+			await z.mutate(
+				mutators.notification.dismiss({
+					metadata: { organizationId: appState.organizationId, notificationId }
+				})
+			);
+		} finally {
+			setBusy(notificationId, false);
+		}
+	}
+
+	async function markAsRead(notificationId: string) {
+		if (busyIds[notificationId]) return;
+		setBusy(notificationId, true);
+		try {
+			await z.mutate(
+				mutators.notification.markAsRead({
+					metadata: { organizationId: appState.organizationId, notificationId }
+				})
+			);
+		} finally {
+			setBusy(notificationId, false);
+		}
+	}
+
+	function actionHref(n: ReadNotificationZero): string {
+		switch (n.type) {
+			case 'whatsapp_unread':
+			case 'whatsapp_message':
+				return '/communications/whatsapp/sent';
+			case 'flow_notify_user':
+				return '/community';
+			case 'event_signup':
+				return n.referenceId ? `/events/${n.referenceId}/signups` : '/events';
+			case 'petition_signup':
+				return n.referenceId ? `/petitions/${n.referenceId}` : '/petitions';
+			default:
+				return '/dashboard';
+		}
+	}
+
+	function actionLabel(type: string): string {
+		switch (type) {
+			case 'whatsapp_unread':
+			case 'whatsapp_message':
+				return 'Open thread';
+			case 'flow_notify_user':
+				return 'Review';
+			case 'event_signup':
+				return 'View signups';
+			case 'petition_signup':
+				return 'View signatures';
+			default:
+				return 'View';
+		}
+	}
+
+	function typeLabel(type: string): string {
+		switch (type) {
+			case 'whatsapp_unread':
+			case 'whatsapp_message':
+				return 'WhatsApp message';
+			case 'flow_notify_user':
+				return 'Flow notification';
+			case 'event_signup':
+				return 'Event signup';
+			case 'petition_signup':
+				return 'Petition signature';
+			default:
+				return 'Notification';
+		}
+	}
+
+	function timestamp(n: ReadNotificationZero): string {
+		if (!n.createdAt) return '';
+		return formatShortTimestamp(n.createdAt, locale.current);
+	}
 </script>
 
 <Card.Root class="rounded-lg">
@@ -103,13 +145,18 @@
 			{/if}
 		</div>
 	</Card.Header>
+
 	<Card.Content class="p-0">
-		{#if unreadCount === 0 && readNotifs.length === 0}
+		{#if query.details.type === 'unknown'}
+			<p class="px-4 py-8 text-sm text-muted-foreground">Loading...</p>
+		{:else if query.details.type === 'error'}
+			<p class="px-4 py-8 text-sm text-destructive">Unable to load notifications.</p>
+		{:else if all.length === 0}
 			<div class="flex flex-col items-center gap-2 px-4 py-12 text-center">
 				<CheckCheck class="size-8 text-muted-foreground" />
 				<p class="text-sm font-medium">You're all caught up</p>
 				<p class="max-w-xs text-xs text-muted-foreground">
-					No unread notifications. New WhatsApp replies and flow alerts will appear here.
+					New WhatsApp replies and flow alerts will appear here.
 				</p>
 			</div>
 		{:else}
@@ -120,29 +167,34 @@
 					WhatsApp — needs reply
 				</div>
 				{#each whatsappNotifs as notif (notif.id)}
-					<div
-						class="flex items-start gap-3 border-b px-4 py-3 {notif.status === 'unread'
-							? 'bg-background'
-							: 'bg-muted/30'}"
-					>
-						<span
-							class="mt-0.5 size-2 shrink-0 rounded-full {notif.status === 'unread'
-								? 'bg-primary'
-								: 'bg-transparent'}"
-						></span>
+					<div class="flex items-start gap-3 border-b bg-background px-4 py-3">
+						<span class="mt-0.5 size-2 shrink-0 rounded-full bg-primary"></span>
 						<div
 							class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
 						>
 							<MessageCircleIcon class="size-4" />
 						</div>
 						<div class="min-w-0 flex-1">
-							<p class="text-sm leading-snug font-medium">{notif.title}</p>
-							<p class="mt-0.5 text-xs text-muted-foreground">{notif.meta}</p>
+							<p class="text-sm leading-snug font-medium">{typeLabel(notif.type)}</p>
+							<p class="mt-0.5 text-xs text-muted-foreground">{timestamp(notif)}</p>
 							<div class="mt-2 flex gap-2">
-								<Button href={notif.actionHref} size="sm" class="h-7 text-xs"
-									>{notif.actionLabel}</Button
+								<Button
+									href={actionHref(notif)}
+									size="sm"
+									class="h-7 text-xs"
+									onclick={() => markAsRead(notif.id)}
 								>
-								<Button variant="outline" size="sm" class="h-7 text-xs">Dismiss</Button>
+									{actionLabel(notif.type)}
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									class="h-7 text-xs"
+									onclick={() => dismiss(notif.id)}
+									disabled={busyIds[notif.id]}
+								>
+									Dismiss
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -156,7 +208,7 @@
 					Flow alerts
 				</div>
 				{#each flowNotifs as notif (notif.id)}
-					<div class="flex items-start gap-3 border-b px-4 py-3">
+					<div class="flex items-start gap-3 border-b bg-background px-4 py-3">
 						<span class="mt-0.5 size-2 shrink-0 rounded-full bg-primary"></span>
 						<div
 							class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -164,13 +216,26 @@
 							<BoltIcon class="size-4" />
 						</div>
 						<div class="min-w-0 flex-1">
-							<p class="text-sm leading-snug font-medium">{notif.title}</p>
-							<p class="mt-0.5 text-xs text-muted-foreground">{notif.meta}</p>
+							<p class="text-sm leading-snug font-medium">{typeLabel(notif.type)}</p>
+							<p class="mt-0.5 text-xs text-muted-foreground">{timestamp(notif)}</p>
 							<div class="mt-2 flex gap-2">
-								<Button href={notif.actionHref} size="sm" class="h-7 text-xs"
-									>{notif.actionLabel}</Button
+								<Button
+									href={actionHref(notif)}
+									size="sm"
+									class="h-7 text-xs"
+									onclick={() => markAsRead(notif.id)}
 								>
-								<Button variant="outline" size="sm" class="h-7 text-xs">Dismiss</Button>
+									{actionLabel(notif.type)}
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									class="h-7 text-xs"
+									onclick={() => dismiss(notif.id)}
+									disabled={busyIds[notif.id]}
+								>
+									Dismiss
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -184,7 +249,7 @@
 					Event signups
 				</div>
 				{#each eventNotifs as notif (notif.id)}
-					<div class="flex items-start gap-3 border-b px-4 py-3">
+					<div class="flex items-start gap-3 border-b bg-background px-4 py-3">
 						<span class="mt-0.5 size-2 shrink-0 rounded-full bg-primary"></span>
 						<div
 							class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -192,13 +257,67 @@
 							<CalendarIcon class="size-4" />
 						</div>
 						<div class="min-w-0 flex-1">
-							<p class="text-sm leading-snug font-medium">{notif.title}</p>
-							<p class="mt-0.5 text-xs text-muted-foreground">{notif.meta}</p>
+							<p class="text-sm leading-snug font-medium">{typeLabel(notif.type)}</p>
+							<p class="mt-0.5 text-xs text-muted-foreground">{timestamp(notif)}</p>
 							<div class="mt-2 flex gap-2">
-								<Button href={notif.actionHref} size="sm" class="h-7 text-xs"
-									>{notif.actionLabel}</Button
+								<Button
+									href={actionHref(notif)}
+									size="sm"
+									class="h-7 text-xs"
+									onclick={() => markAsRead(notif.id)}
 								>
-								<Button variant="outline" size="sm" class="h-7 text-xs">Dismiss</Button>
+									{actionLabel(notif.type)}
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									class="h-7 text-xs"
+									onclick={() => dismiss(notif.id)}
+									disabled={busyIds[notif.id]}
+								>
+									Dismiss
+								</Button>
+							</div>
+						</div>
+					</div>
+				{/each}
+			{/if}
+
+			{#if petitionNotifs.length > 0}
+				<div
+					class="border-b bg-muted/40 px-4 py-1.5 text-[10px] font-medium tracking-wider text-muted-foreground uppercase"
+				>
+					Petition signatures
+				</div>
+				{#each petitionNotifs as notif (notif.id)}
+					<div class="flex items-start gap-3 border-b bg-background px-4 py-3">
+						<span class="mt-0.5 size-2 shrink-0 rounded-full bg-primary"></span>
+						<div
+							class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+						>
+							<MegaphoneIcon class="size-4" />
+						</div>
+						<div class="min-w-0 flex-1">
+							<p class="text-sm leading-snug font-medium">{typeLabel(notif.type)}</p>
+							<p class="mt-0.5 text-xs text-muted-foreground">{timestamp(notif)}</p>
+							<div class="mt-2 flex gap-2">
+								<Button
+									href={actionHref(notif)}
+									size="sm"
+									class="h-7 text-xs"
+									onclick={() => markAsRead(notif.id)}
+								>
+									{actionLabel(notif.type)}
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									class="h-7 text-xs"
+									onclick={() => dismiss(notif.id)}
+									disabled={busyIds[notif.id]}
+								>
+									Dismiss
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -217,11 +336,11 @@
 						<div
 							class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground"
 						>
-							<MegaphoneIcon class="size-4" />
+							<InboxIcon class="size-4" />
 						</div>
 						<div class="min-w-0 flex-1">
-							<p class="text-sm leading-snug text-muted-foreground">{notif.title}</p>
-							<p class="mt-0.5 text-xs text-muted-foreground">{notif.time}</p>
+							<p class="text-sm leading-snug text-muted-foreground">{typeLabel(notif.type)}</p>
+							<p class="mt-0.5 text-xs text-muted-foreground">{timestamp(notif)}</p>
 						</div>
 					</div>
 				{/each}
