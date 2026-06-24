@@ -237,13 +237,16 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
 	// Anti-clickjacking protection
-	// response.headers.set('X-Frame-Options', 'DENY'); //can't use yet, as we still need framing for google oauth
+	response.headers.set('X-Frame-Options', 'SAMEORIGIN');
 
 	// HSTS - Force HTTPS for 1 year
 	response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
 	// Prevent MIME sniffing
 	response.headers.set('X-Content-Type-Options', 'nosniff');
+
+	// Limit referrer data shared with external origins
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
 	// Cross-Origin Resource Policy
 	// Don't set CORP for static assets (/_app/immutable/*) to avoid preload issues in strict browsers

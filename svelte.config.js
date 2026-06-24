@@ -1,6 +1,25 @@
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
+const zeroSyncServer = process.env.PUBLIC_ZERO_SERVER;
+const zeroSyncSources = [];
+
+if (zeroSyncServer) {
+	try {
+		const zeroSyncUrl = new URL(zeroSyncServer);
+		zeroSyncSources.push(zeroSyncUrl.origin);
+
+		// Zero sync may use websocket upgrades from the same host.
+		if (zeroSyncUrl.protocol === 'https:') {
+			zeroSyncSources.push(`wss://${zeroSyncUrl.host}`);
+		} else if (zeroSyncUrl.protocol === 'http:') {
+			zeroSyncSources.push(`ws://${zeroSyncUrl.host}`);
+		}
+	} catch {
+		zeroSyncSources.push(zeroSyncServer);
+	}
+}
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://svelte.dev/docs/kit/integrations
@@ -8,6 +27,43 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter(),
+		csp: {
+			mode: 'auto',
+			directives: {
+				'default-src': ["'self'"],
+				'script-src': [
+					"'self'",
+					"'strict-dynamic'",
+					'https://www.googletagmanager.com', // Google Tag Manager bootstrap script
+					'https://connect.facebook.net', // Facebook SDK for WhatsApp embedded signup
+					'https://app.cal.com' // Cal.com booking widget scripts
+				],
+				'style-src': ["'self'", "'unsafe-inline'"],
+				'img-src': [
+					"'self'",
+					'data:',
+					'blob:',
+					'https://*.amazonaws.com', // S3-hosted media and uploads
+					'https://picsum.photos' // Placeholder/demo images
+				],
+				'connect-src': [
+					"'self'",
+					'https://*.ingest.sentry.io', // Sentry error/event ingestion API
+					'https://www.google-analytics.com', // Google Analytics measurement endpoint
+					...zeroSyncSources // Zero sync server host from PUBLIC_ZERO_SERVER
+				],
+				'frame-src': [
+					'https://www.youtube.com', // Embedded YouTube videos
+					'https://app.cal.com', // Cal.com inline booking iframe
+					'https://www.facebook.com' // Facebook OAuth/embedded signup dialogs
+				],
+				'frame-ancestors': ["'self'"],
+				'font-src': ["'self'"],
+				'object-src': ["'none'"],
+				'base-uri': ["'self'"],
+				'form-action': ["'self'"]
+			}
+		},
 
 		version: {
 			pollInterval: 60_000
