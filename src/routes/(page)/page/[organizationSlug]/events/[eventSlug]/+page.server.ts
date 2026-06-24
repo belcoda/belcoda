@@ -22,7 +22,7 @@ import {
 import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
 import { event, session } from '$lib/schema/drizzle.js';
-import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { ServerTransaction } from '@rocicorp/zero';
 const lexicalRenderer = new LexicalHtmlRenderer();
 

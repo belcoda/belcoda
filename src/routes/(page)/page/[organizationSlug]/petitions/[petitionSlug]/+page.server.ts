@@ -7,7 +7,7 @@ import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
 import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
 import { _getPetitionActionCodeUnsafe } from '$lib/server/api/data/petition/check';
 import { generateWhatsAppPetitionLink } from '$lib/utils/petitions/link';
-import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
 import { sanitize, clearWindow } from 'isomorphic-dompurify';
 import { superValidate } from 'sveltekit-superforms';
