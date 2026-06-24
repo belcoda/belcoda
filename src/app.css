@@ -3,10 +3,6 @@
 @import 'tw-animate-css';
 @plugin '@iconify/tailwind4';
 
-.app-shell {
-	display: contents;
-}
-
 @custom-variant dark (&:is(.dark *));
 
 @source inline(
