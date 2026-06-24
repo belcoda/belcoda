@@ -31,6 +31,20 @@ export default defineConfig({
 			)
 		}
 	},
+	ssr: {
+		// The @tryghost/kg-lexical-html-renderer chain mixes ESM with extensionless
+		// imports (e.g. `lodash/cloneDeep`) that Node's strict ESM resolver rejects, and
+		// CJS @lexical@0.13 packages that use `require` / named exports. Pre-bundling it
+		// with esbuild via optimizeDeps converts the whole subtree into clean ESM.
+		noExternal: ['@tryghost/kg-lexical-html-renderer'],
+		optimizeDeps: {
+			include: ['@tryghost/kg-lexical-html-renderer'],
+			// jsdom (a transitive dep of the renderer) relies on the CJS `__dirname`
+			// global to locate its own files (e.g. default-stylesheet.css), so it can't
+			// be bundled into ESM. Keep it external so Node loads it natively.
+			exclude: ['jsdom']
+		}
+	},
 	plugins: [
 		sentrySvelteKit({
 			org: 'belcoda',
@@ -39,7 +53,7 @@ export default defineConfig({
 		}),
 		sveltekit(),
 		tailwindcss(),
-		wuchale('wuchale.config.js'),
+		wuchale({ configPath: 'wuchale.config.js' }),
 		devtoolsJson()
 	],
 	test: {
