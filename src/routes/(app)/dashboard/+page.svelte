@@ -3,13 +3,38 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import NotificationBell from '$lib/components/widgets/notifications/NotificationBell.svelte';
+	import BoltIcon from '@lucide/svelte/icons/bolt';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
+	import CheckCheck from '@lucide/svelte/icons/check-check';
 	import ClockIcon from '@lucide/svelte/icons/clock';
+	import InboxIcon from '@lucide/svelte/icons/inbox';
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
+	import MegaphoneIcon from '@lucide/svelte/icons/megaphone';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import Share2Icon from '@lucide/svelte/icons/share-2';
 	import UsersIcon from '@lucide/svelte/icons/users';
+
+	type NotifType =
+		| 'whatsapp_unread'
+		| 'whatsapp_message'
+		| 'flow_notify_user'
+		| 'event_signup'
+		| 'petition_signup'
+		| 'generic';
+
+	type NotifStatus = 'unread' | 'read';
+
+	interface MockNotification {
+		id: string;
+		type: NotifType;
+		status: NotifStatus;
+		title: string;
+		meta: string;
+		time: string;
+		actionLabel: string;
+		actionHref: string;
+	}
 
 	const metrics = [
 		{ label: 'Upcoming events', value: '8', sub: 'Next: Jul 2' },
@@ -18,59 +43,74 @@
 		{ label: 'Active petitions', value: '3', sub: '2,104 signatures' }
 	];
 
+	const mockNotifications: MockNotification[] = [
+		{
+			id: '1',
+			type: 'whatsapp_unread',
+			status: 'unread',
+			title: 'Sofia Martinez replied in thread #47',
+			meta: '2 min ago · "Yes I\'ll be there, can I bring a friend?"',
+			time: '2 min ago',
+			actionLabel: 'Reply',
+			actionHref: '/communications/whatsapp/sent'
+		},
+		{
+			id: '2',
+			type: 'whatsapp_message',
+			status: 'unread',
+			title: 'James Kariuki — new inbound message',
+			meta: '18 min ago · First message from this contact',
+			time: '18 min ago',
+			actionLabel: 'Open thread',
+			actionHref: '/communications/whatsapp/sent'
+		},
+		{
+			id: '3',
+			type: 'flow_notify_user',
+			status: 'unread',
+			title: 'Onboarding flow: Priya Okonkwo needs manual review',
+			meta: '35 min ago · Triggered by notifyUser node',
+			time: '35 min ago',
+			actionLabel: 'Review',
+			actionHref: '/community'
+		},
+		{
+			id: '4',
+			type: 'event_signup',
+			status: 'unread',
+			title: '5 new signups for Community town hall',
+			meta: '1 hour ago · 47 / 80 total',
+			time: '1 hour ago',
+			actionLabel: 'View signups',
+			actionHref: '/events'
+		},
+		{
+			id: '5',
+			type: 'generic',
+			status: 'read',
+			title: 'Email blast "June update" delivered to 1,204 people',
+			meta: 'Yesterday',
+			time: 'Yesterday',
+			actionLabel: 'View',
+			actionHref: '/communications/email/sent'
+		}
+	];
+
 	const nextEvent = {
 		day: '02',
 		month: 'Jul',
 		title: 'Community town hall — July 2026',
-		description:
-			'Join us for our monthly town hall to discuss community priorities, hear from local leaders, and organize around our shared goals.',
 		location: 'City Hall, Room 4',
 		time: '6:00 PM – 8:30 PM',
 		signups: 47,
 		capacity: 80,
-		hasWhatsApp: true
+		hasWhatsApp: true,
+		href: '/events'
 	};
 
 	const upcomingEvents = [
-		{
-			day: '12',
-			month: 'Jul',
-			title: 'Volunteer training session',
-			signups: 23,
-			venue: 'Online',
-			tags: ['volunteers', 'training']
-		},
-		{
-			day: '19',
-			month: 'Jul',
-			title: 'Canvassing launch day',
-			signups: 61,
-			venue: 'Riverside Park',
-			tags: ['canvassing']
-		}
-	];
-
-	const notifications = [
-		{
-			text: 'Sofia Martinez signed up for Town Hall',
-			time: '2 min ago',
-			colorClass: 'bg-primary'
-		},
-		{
-			text: 'New WhatsApp message in thread #47',
-			time: '15 min ago',
-			colorClass: 'bg-primary'
-		},
-		{
-			text: 'Petition "Fair housing now" reached 500 signatures',
-			time: '1 hour ago',
-			colorClass: 'bg-emerald-600'
-		},
-		{
-			text: 'Email blast "June update" delivered to 1,204 people',
-			time: 'Yesterday',
-			colorClass: 'bg-muted-foreground'
-		}
+		{ day: '12', month: 'Jul', title: 'Volunteer training session', href: '/events' },
+		{ day: '19', month: 'Jul', title: 'Canvassing launch day', href: '/events' }
 	];
 
 	const capacityPct = Math.round((nextEvent.signups / nextEvent.capacity) * 100);
@@ -89,6 +129,14 @@
 		month: 'long',
 		year: 'numeric'
 	});
+
+	const whatsappNotifs = mockNotifications.filter(
+		(n) => n.type === 'whatsapp_unread' || n.type === 'whatsapp_message'
+	);
+	const flowNotifs = mockNotifications.filter((n) => n.type === 'flow_notify_user');
+	const eventNotifs = mockNotifications.filter((n) => n.type === 'event_signup');
+	const readNotifs = mockNotifications.filter((n) => n.status === 'read');
+	const unreadCount = mockNotifications.filter((n) => n.status === 'unread').length;
 </script>
 
 <svelte:head>
@@ -96,7 +144,7 @@
 </svelte:head>
 
 <div class="min-h-full bg-background">
-	<div class="mx-auto flex w-full max-w-[1400px] flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+	<div class="mx-auto flex w-full max-w-[1400px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">
 		<!-- Header -->
 		<header class="flex items-start justify-between gap-4">
 			<div>
@@ -123,150 +171,256 @@
 			{/each}
 		</section>
 
-		<!-- Next event hero -->
-		<section class="rounded-lg bg-muted p-4">
-			<div class="flex gap-4">
-				<!-- Date block -->
-				<div
-					class="flex shrink-0 flex-col items-center justify-center rounded-md bg-primary px-4 py-3 text-center"
-				>
-					<span class="text-2xl leading-none font-medium text-primary-foreground"
-						>{nextEvent.day}</span
-					>
-					<span class="mt-1.5 text-[11px] tracking-wider text-primary-foreground/70 uppercase"
-						>{nextEvent.month}</span
-					>
-				</div>
-
-				<!-- Content -->
-				<div class="min-w-0 flex-1">
-					<div class="mb-2 flex items-center gap-2">
-						<Badge
-							variant="secondary"
-							class="border-emerald-200 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-							>Published</Badge
-						>
-						<span class="text-xs text-muted-foreground">Next event</span>
-					</div>
-
-					<h2 class="text-sm leading-snug font-medium">{nextEvent.title}</h2>
-					<p class="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-						{nextEvent.description}
-					</p>
-
-					<div class="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-						<span class="flex items-center gap-1">
-							<MapPinIcon class="size-3" />{nextEvent.location}
-						</span>
-						<span class="flex items-center gap-1">
-							<ClockIcon class="size-3" />{nextEvent.time}
-						</span>
-						<span class="flex items-center gap-1">
-							<UsersIcon class="size-3" />{nextEvent.signups} / {nextEvent.capacity} signed up
-						</span>
-					</div>
-
-					<!-- Capacity bar -->
-					<div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-background">
-						<div class="h-1.5 rounded-full bg-primary" style="width: {capacityPct}%"></div>
-					</div>
-
-					<!-- Actions -->
-					<div class="mt-3 flex flex-wrap gap-2">
-						<Button href="/events" size="sm">View signups</Button>
-						<Button variant="outline" size="sm">
-							<MessageCircleIcon class="size-4 text-emerald-600" />
-							Send reminder
-						</Button>
-						<Button variant="outline" size="sm">
-							<Share2Icon class="size-4" />
-							Share
-						</Button>
-					</div>
-				</div>
-			</div>
-
-			<!-- WhatsApp bar -->
-			{#if nextEvent.hasWhatsApp}
-				<div
-					class="mt-3 flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2 dark:bg-emerald-900/20"
-				>
-					<MessageCircleIcon class="size-4 shrink-0 text-emerald-600" />
-					<span class="text-xs text-emerald-800 dark:text-emerald-400"
-						>WhatsApp flow connected — signups via mobile</span
-					>
-					<Button
-						variant="outline"
-						size="sm"
-						class="ml-auto border-emerald-200 bg-emerald-50 text-xs text-emerald-800 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-transparent dark:text-emerald-400"
-					>
-						Send reminder
-					</Button>
-				</div>
-			{/if}
-		</section>
-
-		<!-- Two-column section -->
-		<section class="grid gap-4 xl:grid-cols-2">
-			<!-- Upcoming events -->
+		<!-- Main content: inbox + event sidebar -->
+		<section class="grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+			<!-- Inbox -->
 			<Card.Root class="rounded-lg">
-				<Card.Header>
-					<div class="flex items-center justify-between">
-						<Card.Title>Upcoming events</Card.Title>
-						<Badge variant="secondary">8</Badge>
+				<Card.Header class="border-b px-4 py-3">
+					<div class="flex items-center gap-2">
+						<InboxIcon class="size-4 text-muted-foreground" />
+						<span class="font-medium">Inbox</span>
+						{#if unreadCount > 0}
+							<Badge variant="destructive" class="ml-auto">{unreadCount} unread</Badge>
+						{:else}
+							<Badge variant="secondary" class="ml-auto">All clear</Badge>
+						{/if}
 					</div>
 				</Card.Header>
-				<Card.Content class="space-y-3">
-					{#each upcomingEvents as event}
-						<div class="flex gap-3 rounded-md border p-3">
+				<Card.Content class="p-0">
+					{#if unreadCount === 0 && readNotifs.length === 0}
+						<!-- Empty state -->
+						<div class="flex flex-col items-center gap-2 px-4 py-12 text-center">
+							<CheckCheck class="size-8 text-muted-foreground" />
+							<p class="text-sm font-medium">You're all caught up</p>
+							<p class="max-w-xs text-xs text-muted-foreground">
+								No unread notifications. New WhatsApp replies and flow alerts will appear here.
+							</p>
+						</div>
+					{:else}
+						<!-- WhatsApp group -->
+						{#if whatsappNotifs.length > 0}
 							<div
-								class="flex shrink-0 flex-col items-center justify-center rounded-md bg-primary/10 px-3 py-2 text-center"
+								class="border-b bg-muted/40 px-4 py-1.5 text-[10px] font-medium tracking-wider text-muted-foreground uppercase"
 							>
-								<span class="text-lg leading-none font-medium text-primary">{event.day}</span>
-								<span class="mt-1 text-[10px] tracking-wider text-primary/70 uppercase"
-									>{event.month}</span
+								WhatsApp — needs reply
+							</div>
+							{#each whatsappNotifs as notif (notif.id)}
+								<div
+									class="flex items-start gap-3 border-b px-4 py-3 {notif.status === 'unread'
+										? 'bg-background'
+										: 'bg-muted/30'}"
+								>
+									<span
+										class="mt-0.5 size-2 shrink-0 rounded-full {notif.status === 'unread'
+											? 'bg-primary'
+											: 'bg-transparent'}"
+									></span>
+									<div
+										class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+									>
+										<MessageCircleIcon class="size-4" />
+									</div>
+									<div class="min-w-0 flex-1">
+										<p class="text-sm leading-snug font-medium">{notif.title}</p>
+										<p class="mt-0.5 text-xs text-muted-foreground">{notif.meta}</p>
+										<div class="mt-2 flex gap-2">
+											<Button href={notif.actionHref} size="sm" class="h-7 text-xs"
+												>{notif.actionLabel}</Button
+											>
+											<Button variant="outline" size="sm" class="h-7 text-xs">Dismiss</Button>
+										</div>
+									</div>
+								</div>
+							{/each}
+						{/if}
+
+						<!-- Flow alerts group -->
+						{#if flowNotifs.length > 0}
+							<div
+								class="border-b bg-muted/40 px-4 py-1.5 text-[10px] font-medium tracking-wider text-muted-foreground uppercase"
+							>
+								Flow alerts
+							</div>
+							{#each flowNotifs as notif (notif.id)}
+								<div class="flex items-start gap-3 border-b px-4 py-3">
+									<span class="mt-0.5 size-2 shrink-0 rounded-full bg-primary"></span>
+									<div
+										class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+									>
+										<BoltIcon class="size-4" />
+									</div>
+									<div class="min-w-0 flex-1">
+										<p class="text-sm leading-snug font-medium">{notif.title}</p>
+										<p class="mt-0.5 text-xs text-muted-foreground">{notif.meta}</p>
+										<div class="mt-2 flex gap-2">
+											<Button href={notif.actionHref} size="sm" class="h-7 text-xs"
+												>{notif.actionLabel}</Button
+											>
+											<Button variant="outline" size="sm" class="h-7 text-xs">Dismiss</Button>
+										</div>
+									</div>
+								</div>
+							{/each}
+						{/if}
+
+						<!-- Event signups group -->
+						{#if eventNotifs.length > 0}
+							<div
+								class="border-b bg-muted/40 px-4 py-1.5 text-[10px] font-medium tracking-wider text-muted-foreground uppercase"
+							>
+								Event signups
+							</div>
+							{#each eventNotifs as notif (notif.id)}
+								<div class="flex items-start gap-3 border-b px-4 py-3">
+									<span class="mt-0.5 size-2 shrink-0 rounded-full bg-primary"></span>
+									<div
+										class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+									>
+										<CalendarIcon class="size-4" />
+									</div>
+									<div class="min-w-0 flex-1">
+										<p class="text-sm leading-snug font-medium">{notif.title}</p>
+										<p class="mt-0.5 text-xs text-muted-foreground">{notif.meta}</p>
+										<div class="mt-2 flex gap-2">
+											<Button href={notif.actionHref} size="sm" class="h-7 text-xs"
+												>{notif.actionLabel}</Button
+											>
+											<Button variant="outline" size="sm" class="h-7 text-xs">Dismiss</Button>
+										</div>
+									</div>
+								</div>
+							{/each}
+						{/if}
+
+						<!-- Read/older items -->
+						{#if readNotifs.length > 0}
+							<div
+								class="border-b bg-muted/40 px-4 py-1.5 text-[10px] font-medium tracking-wider text-muted-foreground uppercase"
+							>
+								Earlier
+							</div>
+							{#each readNotifs as notif (notif.id)}
+								<div class="flex items-start gap-3 border-b bg-muted/20 px-4 py-3 last:border-b-0">
+									<span class="mt-0.5 size-2 shrink-0"></span>
+									<div
+										class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground"
+									>
+										<MegaphoneIcon class="size-4" />
+									</div>
+									<div class="min-w-0 flex-1">
+										<p class="text-sm leading-snug text-muted-foreground">{notif.title}</p>
+										<p class="mt-0.5 text-xs text-muted-foreground">{notif.time}</p>
+									</div>
+								</div>
+							{/each}
+						{/if}
+					{/if}
+				</Card.Content>
+			</Card.Root>
+
+			<!-- Right sidebar: next event + upcoming -->
+			<div class="flex flex-col gap-4">
+				<!-- Next event -->
+				<Card.Root class="rounded-lg">
+					<Card.Header class="pb-3">
+						<div class="flex items-center justify-between">
+							<Card.Title class="text-sm">Next event</Card.Title>
+							<Badge
+								variant="secondary"
+								class="border-emerald-200 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+							>
+								Published
+							</Badge>
+						</div>
+					</Card.Header>
+					<Card.Content class="space-y-3 pt-0">
+						<!-- Date block -->
+						<div class="flex items-center gap-3">
+							<div
+								class="flex shrink-0 flex-col items-center justify-center rounded-md bg-primary px-3 py-2 text-center"
+							>
+								<span class="text-xl leading-none font-medium text-primary-foreground"
+									>{nextEvent.day}</span
+								>
+								<span class="mt-1 text-[10px] tracking-wider text-primary-foreground/70 uppercase"
+									>{nextEvent.month}</span
 								>
 							</div>
-							<div class="min-w-0 flex-1">
-								<p class="text-sm font-medium">{event.title}</p>
-								<p class="mt-0.5 text-xs text-muted-foreground">
-									{event.signups} signed up · {event.venue}
-								</p>
-								<div class="mt-1.5 flex flex-wrap gap-1">
-									{#each event.tags as tag}
-										<span
-											class="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground"
-											>{tag}</span
-										>
-									{/each}
-								</div>
+							<div class="min-w-0">
+								<p class="text-sm leading-snug font-medium">{nextEvent.title}</p>
 							</div>
 						</div>
-					{/each}
-					<Button variant="outline" class="w-full" href="/events">View all events</Button>
-				</Card.Content>
-			</Card.Root>
 
-			<!-- Notifications -->
-			<Card.Root class="rounded-lg">
-				<Card.Header>
-					<Card.Title>Recent notifications</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<ul class="divide-y">
-						{#each notifications as notif}
-							<li class="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-								<span class="mt-1.5 inline-block size-2 shrink-0 rounded-full {notif.colorClass}"
-								></span>
-								<div class="min-w-0 flex-1">
-									<p class="text-sm leading-snug">{notif.text}</p>
-									<p class="mt-0.5 text-xs text-muted-foreground">{notif.time}</p>
+						<!-- Meta -->
+						<div class="space-y-1 text-xs text-muted-foreground">
+							<span class="flex items-center gap-1.5"
+								><MapPinIcon class="size-3" />{nextEvent.location}</span
+							>
+							<span class="flex items-center gap-1.5"
+								><ClockIcon class="size-3" />{nextEvent.time}</span
+							>
+							<span class="flex items-center gap-1.5"
+								><UsersIcon class="size-3" />{nextEvent.signups} / {nextEvent.capacity} signed up</span
+							>
+						</div>
+
+						<!-- Capacity bar -->
+						<div>
+							<div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+								<div class="h-1.5 rounded-full bg-primary" style="width: {capacityPct}%"></div>
+							</div>
+						</div>
+
+						<!-- WhatsApp bar -->
+						{#if nextEvent.hasWhatsApp}
+							<div
+								class="flex items-center gap-2 rounded-md bg-emerald-50 px-2.5 py-2 text-xs text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400"
+							>
+								<MessageCircleIcon class="size-3.5 shrink-0 text-emerald-600" />
+								<span>WhatsApp flow active</span>
+							</div>
+						{/if}
+
+						<!-- Actions -->
+						<div class="flex gap-2">
+							<Button href={nextEvent.href} size="sm" class="h-7 flex-1 text-xs"
+								>View signups</Button
+							>
+							<Button variant="outline" size="sm" class="h-7 text-xs">
+								<Share2Icon class="size-3.5" />
+							</Button>
+						</div>
+					</Card.Content>
+				</Card.Root>
+
+				<!-- Upcoming events -->
+				<Card.Root class="rounded-lg">
+					<Card.Header class="pb-2">
+						<Card.Title class="text-sm">Upcoming</Card.Title>
+					</Card.Header>
+					<Card.Content class="space-y-2 pt-0">
+						{#each upcomingEvents as event}
+							<a
+								href={event.href}
+								class="flex items-center gap-3 rounded-md border p-2.5 no-underline hover:bg-muted/50"
+							>
+								<div
+									class="flex shrink-0 flex-col items-center justify-center rounded bg-primary/10 px-2 py-1 text-center"
+								>
+									<span class="text-sm leading-none font-medium text-primary">{event.day}</span>
+									<span class="mt-0.5 text-[9px] tracking-wider text-primary/70 uppercase"
+										>{event.month}</span
+									>
 								</div>
-							</li>
+								<p class="min-w-0 truncate text-xs font-medium">{event.title}</p>
+							</a>
 						{/each}
-					</ul>
-				</Card.Content>
-			</Card.Root>
+						<Button variant="outline" size="sm" href="/events" class="mt-1 h-7 w-full text-xs">
+							View all events
+						</Button>
+					</Card.Content>
+				</Card.Root>
+			</div>
 		</section>
 	</div>
 </div>
