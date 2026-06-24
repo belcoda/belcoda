@@ -2520,9 +2520,8 @@ msgstr "Escolha um e-mail da lista para ver seus detalhes e estatísticas."
 msgid "Create New Email"
 msgstr "Criar novo e-mail"
 
-#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
-msgid "Belcoda icon"
-msgstr "Ícone do Belcoda"
+#~ msgid "Belcoda icon"
+#~ msgstr "Ícone do Belcoda"
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
@@ -2575,6 +2574,7 @@ msgstr "Petição não encontrada"
 msgid "The petition you are looking for could not be found."
 msgstr "A petição que você está procurando não foi encontrada."
 
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 #: src/routes/(page)/page/[organizationSlug]/petitions/+error.svelte
 msgid "Return to Home"
 msgstr "Voltar ao início"
@@ -5073,18 +5073,17 @@ msgstr "🎨 Autocolante"
 #. 0: formatNumber(paginatedPersonList.items.length, locale.current)
 #. 0: formatNumber(paginatedEvents.items.length, locale.current)
 #. 0: formatNumber(paginatedPetitions.items.length, locale.current)
+#. 0: formatNumber(paginatedSignups.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
-#. 0: formatNumber(paginatedTeams.items.length, locale.current)
-#. 0: formatNumber(paginatedTags.items.length, locale.current)
+#. 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
-#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
-#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
 msgid "{0} shown"
 msgstr "{0} exibidos"
@@ -5473,3 +5472,11 @@ msgstr "Marcar como lida"
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Dismiss"
 msgstr "Dispensar"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "Event Not Found"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "The event you are looking for could not be found."
+msgstr ""
