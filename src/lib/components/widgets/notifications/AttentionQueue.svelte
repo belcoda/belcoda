@@ -14,7 +14,6 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import queries from '$lib/zero/query/index';
 	import { z } from '$lib/zero.svelte';
-	import type { ReadNotificationZero } from '$lib/schema/notification';
 
 	const filter = $derived.by(() => ({
 		...getListFilter(appState.organizationId, { pageSize: 20 }),
@@ -23,6 +22,7 @@
 
 	const query = $derived.by(() => z.createQuery(queries.notification.list(filter)));
 	const all = $derived(query.data ?? []);
+	type NotificationItem = NonNullable<(typeof query)['data']>[number];
 
 	const whatsappNotifs = $derived(
 		all.filter(
@@ -79,7 +79,7 @@
 		}
 	}
 
-	function actionHref(n: ReadNotificationZero): string {
+	function actionHref(n: NotificationItem): string {
 		switch (n.type) {
 			case 'whatsapp_unread':
 			case 'whatsapp_message':
@@ -127,8 +127,8 @@
 		}
 	}
 
-	function timestamp(n: ReadNotificationZero): string {
-		if (!n.createdAt) return '';
+	function timestamp(n: NotificationItem): string {
+		if (n.createdAt == null) return '';
 		return formatShortTimestamp(n.createdAt, locale.current);
 	}
 </script>
