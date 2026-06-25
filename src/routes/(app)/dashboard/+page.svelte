@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
 	import NotificationBell from '$lib/components/widgets/notifications/NotificationBell.svelte';
-	import AttentionQueue from '$lib/components/widgets/notifications/AttentionQueue.svelte';
+	import RecentNotifications from '$lib/components/widgets/notifications/RecentNotifications.svelte';
 	import NextEventCard from '$lib/components/widgets/event/NextEventCard.svelte';
 	import UpcomingEventsList from '$lib/components/widgets/event/UpcomingEventsList.svelte';
 	import DashboardMetrics from '$lib/components/widgets/dashboard/DashboardMetrics.svelte';
@@ -45,12 +45,11 @@
 
 		<DashboardMetrics />
 
-		<section class="grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-			<AttentionQueue />
-			<div class="flex flex-col gap-4">
-				<NextEventCard />
-				<UpcomingEventsList />
-			</div>
+		<NextEventCard />
+
+		<section class="grid gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+			<UpcomingEventsList />
+			<RecentNotifications />
 		</section>
 	</div>
 </div>
