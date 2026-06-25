@@ -81,78 +81,93 @@
 		</Card.Content>
 	</Card.Root>
 {:else}
-	<Card.Root class="rounded-lg">
-		<Card.Content class="p-5">
-			<div class="flex gap-5">
-				{#if startDate}
-					<div
-						class="flex shrink-0 flex-col items-center justify-center rounded-lg bg-primary px-5 py-4 text-center"
+	<Card.Root class="overflow-hidden rounded-lg">
+		<div class="flex">
+			{#if event.featureImage}
+				<div class="relative w-36 shrink-0">
+					<img
+						src={event.featureImage}
+						alt={event.title}
+						class="h-full min-h-44 w-full object-cover"
+					/>
+					{#if startDate}
+						<div
+							class="absolute bottom-3 left-3 rounded-md bg-black/55 px-2.5 py-2 text-center backdrop-blur-sm"
+						>
+							<span class="text-xl leading-none font-semibold text-white">{startDate.day}</span>
+							<span class="mt-1 block text-[9px] tracking-widest text-white/75 uppercase"
+								>{startDate.month}</span
+							>
+						</div>
+					{/if}
+				</div>
+			{:else if startDate}
+				<div class="flex shrink-0 flex-col items-center justify-center bg-primary px-5 text-center">
+					<span class="text-3xl leading-none font-semibold text-primary-foreground"
+						>{startDate.day}</span
 					>
-						<span class="text-3xl leading-none font-semibold text-primary-foreground"
-							>{startDate.day}</span
-						>
-						<span
-							class="mt-1.5 text-xs font-medium tracking-widest text-primary-foreground/70 uppercase"
-							>{startDate.month}</span
-						>
+					<span
+						class="mt-1.5 text-xs font-medium tracking-widest text-primary-foreground/70 uppercase"
+						>{startDate.month}</span
+					>
+				</div>
+			{/if}
+
+			<!-- Right: content -->
+			<div class="min-w-0 flex-1 p-5">
+				<div class="flex items-center gap-2">
+					<Badge
+						variant="secondary"
+						class="border-emerald-200 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+					>
+						Published
+					</Badge>
+					<span class="text-xs text-muted-foreground">Next event</span>
+				</div>
+
+				<h2 class="mt-2 text-lg leading-tight font-semibold">{event.title}</h2>
+
+				{#if description}
+					<p class="mt-1.5 line-clamp-2 text-sm text-muted-foreground">{description}</p>
+				{/if}
+
+				<div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+					{#if location}
+						<span class="flex items-center gap-1.5">
+							<MapPinIcon class="size-3.5 shrink-0" />{location}
+						</span>
+					{/if}
+					{#if eventTime}
+						<span class="flex items-center gap-1.5">
+							<ClockIcon class="size-3.5 shrink-0" />{eventTime.timeStr}
+						</span>
+					{/if}
+					<span class="flex items-center gap-1.5">
+						<UsersIcon class="size-3.5 shrink-0" />
+						{signupCount}{event.maxSignups ? ` / ${event.maxSignups}` : ''} signed up
+					</span>
+				</div>
+
+				{#if capacityPct !== null}
+					<div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+						<div class="h-1.5 rounded-full bg-primary" style="width: {capacityPct}%"></div>
 					</div>
 				{/if}
 
-				<div class="min-w-0 flex-1">
-					<div class="flex items-center gap-2">
-						<Badge
-							variant="secondary"
-							class="border-emerald-200 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-						>
-							Published
-						</Badge>
-						<span class="text-xs text-muted-foreground">Next event</span>
-					</div>
-
-					<h2 class="mt-2 text-lg leading-tight font-semibold">{event.title}</h2>
-
-					{#if description}
-						<p class="mt-1.5 line-clamp-2 text-sm text-muted-foreground">{description}</p>
-					{/if}
-
-					<div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-						{#if location}
-							<span class="flex items-center gap-1.5">
-								<MapPinIcon class="size-3.5 shrink-0" />{location}
-							</span>
-						{/if}
-						{#if eventTime}
-							<span class="flex items-center gap-1.5">
-								<ClockIcon class="size-3.5 shrink-0" />{eventTime.timeStr}
-							</span>
-						{/if}
-						<span class="flex items-center gap-1.5">
-							<UsersIcon class="size-3.5 shrink-0" />
-							{signupCount}{event.maxSignups ? ` / ${event.maxSignups}` : ''} signed up
-						</span>
-					</div>
-
-					{#if capacityPct !== null}
-						<div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-							<div class="h-1.5 rounded-full bg-primary" style="width: {capacityPct}%"></div>
-						</div>
-					{/if}
-
-					<div class="mt-4 flex flex-wrap gap-2">
-						<Button href="/events/{event.id}/signups" size="sm">View signups</Button>
-						{#if hasWhatsApp}
-							<Button variant="outline" size="sm" href="/events/{event.id}/reminders">
-								<MessageCircleIcon class="size-4" />
-								Send reminder
-							</Button>
-						{/if}
-						<Button variant="outline" size="sm" href="/events/{event.id}/preview">
-							<Share2Icon class="size-4" />
-							Share
+				<div class="mt-4 flex flex-wrap gap-2">
+					<Button href="/events/{event.id}/signups" size="sm">View signups</Button>
+					{#if hasWhatsApp}
+						<Button variant="outline" size="sm" href="/events/{event.id}/reminders">
+							<MessageCircleIcon class="size-4" />
+							Send reminder
 						</Button>
-					</div>
+					{/if}
+					<Button variant="outline" size="sm" href="/events/{event.id}/preview">
+						<Share2Icon class="size-4" />
+						Share
+					</Button>
 				</div>
 			</div>
-		</Card.Content>
+		</div>
 	</Card.Root>
 {/if}
