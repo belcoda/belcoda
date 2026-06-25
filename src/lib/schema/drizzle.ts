@@ -36,6 +36,7 @@ import type { PersonSchema, Gender } from '$lib/schema/person';
 import type { PersonWhatsappIdentitySchema } from '$lib/schema/person-whatsapp-identity';
 import type { PersonImportSchema, PersonImportStatus } from '$lib/schema/person-import';
 import type { ActivitySchema } from '$lib/schema/activity';
+import type { NotificationSchema, NotificationStatus } from '$lib/schema/notification';
 import type { WhatsappGroupSchema } from '$lib/schema/whatsapp-group';
 import type { WhatsappTemplateSchema } from '$lib/schema/whatsapp-template';
 import type { WhatsappThreadSchema } from '$lib/schema/whatsapp-thread';
@@ -51,6 +52,7 @@ import type { SerializedEditorState } from 'lexical';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
+import type { JsonSchema } from '$lib/schema/helpers';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
@@ -544,6 +546,46 @@ type ActivityValibotMatchesDrizzle = IsTrue<
 type ActivityDrizzleMatchesValibot = IsTrue<
 	typeof activity.$inferSelect extends ActivitySchema ? true : false
 >;
+
+export const notification = pgTable(
+	'notification',
+	{
+		id: uuid('id').notNull().primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => user.id),
+		type: text('type').notNull(),
+		referenceId: uuid('reference_id').notNull(),
+		sourceKey: text('source_key').notNull(),
+		payload: jsonb('payload').$type<JsonSchema>(),
+		status: text('status').$type<NotificationStatus>().notNull().default('unread'),
+		readAt: timestamp('read_at', { withTimezone: true, mode: 'date' }),
+		dismissedAt: timestamp('dismissed_at', { withTimezone: true, mode: 'date' }),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.default(sql`now()`),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.default(sql`now()`)
+	},
+	(table) => [
+		unique('notification_dedupe_unique').on(table.organizationId, table.userId, table.sourceKey),
+		index('notification_user_status_created_at').on(
+			table.userId,
+			table.status,
+			table.createdAt.desc()
+		),
+		index('notification_organization_created_at').on(table.organizationId, table.createdAt.desc())
+	]
+);
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+export type NotificationSchemaTypeChecks = [
+	IsTrue<NotificationSchema extends typeof notification.$inferSelect ? true : false>,
+	IsTrue<typeof notification.$inferSelect extends NotificationSchema ? true : false>
+];
 
 //whatsapp schema
 
@@ -1190,6 +1232,17 @@ export const activityRelations = relations(activity, ({ one }) => ({
 	}),
 	user: one(user, {
 		fields: [activity.userId],
+		references: [user.id]
+	})
+}));
+
+export const notificationRelations = relations(notification, ({ one }) => ({
+	organization: one(organization, {
+		fields: [notification.organizationId],
+		references: [organization.id]
+	}),
+	user: one(user, {
+		fields: [notification.userId],
 		references: [user.id]
 	})
 }));

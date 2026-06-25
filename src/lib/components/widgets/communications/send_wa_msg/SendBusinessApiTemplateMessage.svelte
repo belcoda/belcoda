@@ -1,6 +1,8 @@
 <script lang="ts">
 	import TriangleAlertIcon from '@lucide/svelte/icons/triangle-alert';
+	import InfoIcon from '@lucide/svelte/icons/info';
 	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { WhatsappTemplateMessageData } from '$lib/schema/flow/index';
@@ -121,10 +123,35 @@
 		</div>
 	{/if}
 
-	<div class="min-h-16 px-3 py-3 text-sm whitespace-pre-wrap">
-		{#if templateHeader && templateHeader.format === 'TEXT' && header}
-			<div class="mb-2 font-medium">
-				{#each header as item, i (i)}
+	<div class="flex items-start gap-1">
+		<div class="min-h-16 flex-1 px-3 py-3 text-sm whitespace-pre-wrap">
+			{#if templateHeader && templateHeader.format === 'TEXT' && header}
+				<div class="mb-2 font-medium">
+					{#each header as item, i (i)}
+						{#if item.type === 'text'}
+							<span>{item.value}</span>
+						{:else}
+							<Popover.Root>
+								<Popover.Trigger class="inline-block">
+									{#snippet child({ props })}
+										<span
+											{...props}
+											class="rounded-sm bg-blue-600/90 px-2 py-0.5 text-sm font-medium text-white outline-none"
+											>{getParamDisplayValue(headerParams, 0, `{{${item.id}}}`)}</span
+										>
+									{/snippet}
+								</Popover.Trigger>
+								<Popover.Content class="w-80 bg-none">
+									{@render paramSourceEditor('header', 0)}
+								</Popover.Content>
+							</Popover.Root>
+						{/if}
+					{/each}
+				</div>
+			{/if}
+
+			{#if body.length > 0}
+				{#each body as item, i (i)}
 					{#if item.type === 'text'}
 						<span>{item.value}</span>
 					{:else}
@@ -134,45 +161,32 @@
 									<span
 										{...props}
 										class="rounded-sm bg-blue-600/90 px-2 py-0.5 text-sm font-medium text-white outline-none"
-										>{getParamDisplayValue(headerParams, 0, `{{${item.id}}}`)}</span
+										>{getParamDisplayValue(
+											bodyParams,
+											getTokenArrayIndex(item.id),
+											`{{${item.id}}}`
+										)}</span
 									>
 								{/snippet}
 							</Popover.Trigger>
 							<Popover.Content class="w-80 bg-none">
-								{@render paramSourceEditor('header', 0)}
+								{@render paramSourceEditor('body', getTokenArrayIndex(item.id))}
 							</Popover.Content>
 						</Popover.Root>
 					{/if}
 				{/each}
-			</div>
-		{/if}
-
-		{#if body.length > 0}
-			{#each body as item, i (i)}
-				{#if item.type === 'text'}
-					<span>{item.value}</span>
-				{:else}
-					<Popover.Root>
-						<Popover.Trigger class="inline-block">
-							{#snippet child({ props })}
-								<span
-									{...props}
-									class="rounded-sm bg-blue-600/90 px-2 py-0.5 text-sm font-medium text-white outline-none"
-									>{getParamDisplayValue(
-										bodyParams,
-										getTokenArrayIndex(item.id),
-										`{{${item.id}}}`
-									)}</span
-								>
-							{/snippet}
-						</Popover.Trigger>
-						<Popover.Content class="w-80 bg-none">
-							{@render paramSourceEditor('body', getTokenArrayIndex(item.id))}
-						</Popover.Content>
-					</Popover.Root>
-				{/if}
-			{/each}
-		{/if}
+			{/if}
+		</div>
+		<div class="shrink-0 self-center px-2">
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<InfoIcon class="size-3.5 text-muted-foreground" />
+				</Tooltip.Trigger>
+				<Tooltip.Content class="max-w-sm">
+					{t`WhatsApp requires pre-approved templates for messages sent outside the 24-hour window after a customer's last message, to protect users from spam.`}
+				</Tooltip.Content>
+			</Tooltip.Root>
+		</div>
 	</div>
 </div>
 
