@@ -1,0 +1,41 @@
+name: SBOM (CycloneDX)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # needed to commit the regenerated SBOM back to the repo
+
+jobs:
+  sbom:
+    name: Generate CycloneDX SBOM
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # cyclonedx-npm reads package-lock.json directly — no full install needed.
+      - name: Generate SBOM
+        run: >-
+          npx --yes @cyclonedx/cyclonedx-npm@latest
+          --output-format JSON
+          --output-reproducible
+          --output-file sbom.cdx.json
+
+      - name: Commit SBOM if changed
+        run: |
+          if git diff --quiet -- sbom.cdx.json; then
+            echo "SBOM unchanged — nothing to commit"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sbom.cdx.json
+          git commit -m "chore: update CycloneDX SBOM"
+          git push
