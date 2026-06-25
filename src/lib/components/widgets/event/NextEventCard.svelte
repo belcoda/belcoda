@@ -54,10 +54,7 @@
 		return null;
 	});
 
-	const description = $derived.by(() => {
-		if (!event?.description) return null;
-		return typeof event.description === 'string' ? event.description : null;
-	});
+	const description = $derived(event?.shortDescription ?? null);
 
 	const hasWhatsApp = $derived(!!event?.settings?.whatsappFlowId);
 	const capacityPct = $derived.by(() => {
