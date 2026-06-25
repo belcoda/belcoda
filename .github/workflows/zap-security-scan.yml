@@ -28,3 +28,12 @@ jobs:
           allow_issue_writing: true
           artifact_name: 'zap-report'
           fail_action: false
+
+      - name: Upload to DefectDojo
+        run: |
+          curl -X POST "$DEFECTDOJO_URL/api/v2/reimport-scan/" \
+          -H "Authorization: Token $DD_TOKEN" \
+          -F "file=@trivy.json" \
+          -F "scan_type=Trivy Scan" \
+          -F "engagement_name=CI: Zap" \
+          -F "auto_create_context=true"
