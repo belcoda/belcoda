@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
 	import UsersIcon from '@lucide/svelte/icons/users';
+	import { locale } from '$lib/index.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import queries from '$lib/zero/query/index';
 	import { z } from '$lib/zero.svelte';
@@ -44,8 +45,8 @@
 	function formatDate(startsAt: number, timezone: string): { day: string; month: string } {
 		const d = new Date(startsAt);
 		return {
-			day: d.toLocaleDateString('en-GB', { day: '2-digit', timeZone: timezone }),
-			month: d.toLocaleDateString('en-GB', { month: 'short', timeZone: timezone })
+			day: d.toLocaleDateString(locale.current, { day: '2-digit', timeZone: timezone }),
+			month: d.toLocaleDateString(locale.current, { month: 'short', timeZone: timezone })
 		};
 	}
 </script>

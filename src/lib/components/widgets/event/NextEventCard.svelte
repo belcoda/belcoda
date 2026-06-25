@@ -39,8 +39,8 @@
 		if (!event) return null;
 		const d = new Date(event.startsAt);
 		return {
-			day: d.toLocaleDateString('en-GB', { day: '2-digit', timeZone: event.timezone }),
-			month: d.toLocaleDateString('en-GB', { month: 'short', timeZone: event.timezone })
+			day: d.toLocaleDateString(locale.current, { day: '2-digit', timeZone: event.timezone }),
+			month: d.toLocaleDateString(locale.current, { month: 'short', timeZone: event.timezone })
 		};
 	});
 
