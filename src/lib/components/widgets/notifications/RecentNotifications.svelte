@@ -7,7 +7,6 @@
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import queries from '$lib/zero/query/index';
 	import { z } from '$lib/zero.svelte';
-	import type { ReadNotificationZero } from '$lib/schema/notification';
 
 	const filter = $derived.by(() => ({
 		...getListFilter(appState.organizationId, { pageSize: 10 }),
@@ -16,9 +15,10 @@
 
 	const query = $derived.by(() => z.createQuery(queries.notification.list(filter)));
 	const notifications = $derived(query.data ?? []);
+	type NotificationItem = NonNullable<(typeof query)['data']>[number];
 	const unreadCount = $derived(notifications.filter((n) => n.status === 'unread').length);
 
-	function label(n: ReadNotificationZero): string {
+	function label(n: NotificationItem): string {
 		const payload = n.payload as Record<string, unknown> | null;
 		switch (n.type) {
 			case 'event_signup':
@@ -57,8 +57,8 @@
 		}
 	}
 
-	function timestamp(n: ReadNotificationZero): string {
-		if (!n.createdAt) return '';
+	function timestamp(n: NotificationItem): string {
+		if (n.createdAt == null) return '';
 		return formatShortTimestamp(n.createdAt, locale.current);
 	}
 </script>
