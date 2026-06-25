@@ -6,6 +6,7 @@
 	import UpcomingEventsList from '$lib/components/widgets/event/UpcomingEventsList.svelte';
 	import DashboardMetrics from '$lib/components/widgets/dashboard/DashboardMetrics.svelte';
 	import PlusIcon from '@lucide/svelte/icons/plus';
+	import { appState } from '$lib/state.svelte';
 
 	const today = new Date();
 	const greeting = (() => {
@@ -14,6 +15,8 @@
 		if (h < 18) return 'Good afternoon';
 		return 'Good evening';
 	})();
+
+	const userName = $derived(appState.user.data?.name?.split(' ')[0] ?? '');
 
 	const dateLabel = today.toLocaleDateString('en-GB', {
 		weekday: 'long',
@@ -31,7 +34,9 @@
 	<div class="mx-auto flex w-full max-w-[1400px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">
 		<header class="flex items-start justify-between gap-4">
 			<div>
-				<h1 class="text-xl font-medium text-foreground">{greeting}, Amara</h1>
+				<h1 class="text-xl font-medium text-foreground">
+					{greeting}{userName ? `, ${userName}` : ''}
+				</h1>
 				<p class="mt-1 text-sm text-muted-foreground">{dateLabel}</p>
 			</div>
 			<div class="flex items-center gap-2">
