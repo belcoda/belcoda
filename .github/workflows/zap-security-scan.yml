@@ -28,12 +28,16 @@ jobs:
           allow_issue_writing: true
           artifact_name: 'zap-report'
           fail_action: false
+          cmd_options: '-x report_xml.xml'
 
       - name: Upload to DefectDojo
         run: |
           curl -X POST "$DEFECTDOJO_URL/api/v2/reimport-scan/" \
           -H "Authorization: Token $DD_TOKEN" \
-          -F "file=@trivy.json" \
-          -F "scan_type=Trivy Scan" \
-          -F "engagement_name=CI: Zap" \
+          -F "file=@zap-report.xml" \
+          -F "scan_type=ZAP Scan" \
+          -F "product_name=Belcoda App" \
+          -F "engagement_name=CI/CD: DAST - Staging" \
+          -F "environment=Staging" \
+          -F "close_old_findings=true" \
           -F "auto_create_context=true"
