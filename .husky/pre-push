@@ -15,4 +15,6 @@ echo "✅ Migrations up to date"
 
 npm run check
 
-
+# Some issues will always remain, especially as we have a 7 day cooldown period before dependencies are allowed to be updated.
+# Reporting vulns is good, but we should only block pushes on critical vulnerabilities.
+npm run cve:check:critical
