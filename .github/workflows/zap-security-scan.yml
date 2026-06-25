@@ -31,10 +31,14 @@ jobs:
           cmd_options: '-x report_xml.xml'
 
       - name: Upload to DefectDojo
+        env:
+          DEFECTDOJO_URL: ${{ secrets.DEFECTDOJO_URL }}
+          DD_TOKEN: ${{ secrets.DD_TOKEN }}
         run: |
-          curl -X POST "$DEFECTDOJO_URL/api/v2/reimport-scan/" \
+          test -f report_xml.xml || { echo "No ZAP XML report found — aborting upload"; exit 1; }
+          curl -sSf -X POST "$DEFECTDOJO_URL/api/v2/reimport-scan/" \
           -H "Authorization: Token $DD_TOKEN" \
-          -F "file=@zap-report.xml" \
+          -F "file=@report_xml.xml" \
           -F "scan_type=ZAP Scan" \
           -F "product_name=Belcoda App" \
           -F "engagement_name=CI/CD: DAST - Staging" \
