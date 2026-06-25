@@ -37,14 +37,14 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>Notifications Digest</Card.Title>
+		<Card.Title>{t`Notifications Digest`}</Card.Title>
 		<Card.Description>
 			{#if unreadCount === 0}
-				No unread notifications
+				{t`No unread notifications`}
 			{:else if unreadCount === 1}
-				1 unread notification
+				{t`1 unread notification`}
 			{:else}
-				{`${formatNumber(unreadCount, locale.current)} unread notifications`}
+				{t`${formatNumber(unreadCount, locale.current)} unread notifications`}
 			{/if}
 		</Card.Description>
 	</Card.Header>
