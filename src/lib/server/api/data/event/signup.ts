@@ -36,6 +36,7 @@ import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
 
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
+import { createNotification } from '$lib/server/api/data/notification/notification';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import {
 	inputSchema as listEventSignupsInputSchema,
@@ -651,7 +652,24 @@ export async function signUpForEventUnsafe({
 			organizationId: organizationRecord.id
 		});
 	}
-	//TODO: Implement whatsapp notification
+	if (!skipNotifications && !existingEventSignup) {
+		const personName =
+			[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') || null;
+		await createNotification({
+			tx,
+			args: {
+				type: 'event_signup',
+				organizationId: organizationRecord.id,
+				referenceId: eventRecord.id,
+				sourceKey: `event_signup:${insertedEventSignup.id}`,
+				payload: {
+					personName,
+					eventTitle: eventRecord.title,
+					eventId: eventRecord.id
+				}
+			}
+		});
+	}
 	const queueSignup = await getQueue();
 	await queueEventSignupWebhook(
 		queueSignup,
