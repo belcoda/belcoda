@@ -914,6 +914,38 @@ export async function updateEventSignupStatus({
 	return result;
 }
 
+function assertSignupAllowedForChannel(
+	eventRecord: {
+		endsAt: string | number | Date;
+		startsAt: string | number | Date;
+		createdAt: string | number | Date;
+		updatedAt: string | number | Date;
+		reminderSentAt: string | number | Date | null;
+		cancelledAt: string | number | Date | null;
+		deletedAt: string | number | Date | null;
+		archivedAt: string | number | Date | null;
+	},
+	channelType: string
+) {
+	const isAdminPanel = channelType === 'adminPanel';
+	if (
+		!isAdminPanel &&
+		getEventHasEnded({
+			...eventRecord,
+			endsAt: new Date(eventRecord.endsAt),
+			startsAt: new Date(eventRecord.startsAt),
+			createdAt: new Date(eventRecord.createdAt),
+			updatedAt: new Date(eventRecord.updatedAt),
+			reminderSentAt: eventRecord.reminderSentAt ? new Date(eventRecord.reminderSentAt) : null,
+			cancelledAt: eventRecord.cancelledAt ? new Date(eventRecord.cancelledAt) : null,
+			deletedAt: eventRecord.deletedAt ? new Date(eventRecord.deletedAt) : null,
+			archivedAt: eventRecord.archivedAt ? new Date(eventRecord.archivedAt) : null
+		} as typeof event.$inferSelect)
+	) {
+		throw new Error('Event signup period has ended');
+	}
+}
+
 export async function createEventSignup({
 	tx,
 	ctx,
@@ -953,22 +985,7 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
-	if (
-		parsed.input.details.channel.type !== 'adminPanel' &&
-		getEventHasEnded({
-			...event,
-			endsAt: new Date(event.endsAt),
-			startsAt: new Date(event.startsAt),
-			createdAt: new Date(event.createdAt),
-			updatedAt: new Date(event.updatedAt),
-			reminderSentAt: event.reminderSentAt ? new Date(event.reminderSentAt) : null,
-			cancelledAt: event.cancelledAt ? new Date(event.cancelledAt) : null,
-			deletedAt: event.deletedAt ? new Date(event.deletedAt) : null,
-			archivedAt: event.archivedAt ? new Date(event.archivedAt) : null
-		})
-	) {
-		throw new Error('Event signup period has ended');
-	}
+	assertSignupAllowedForChannel(event, parsed.input.details.channel.type);
 	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(eventSignup)
