@@ -8,7 +8,8 @@ const log = pino(import.meta.url);
 import {
 	type WhatsappMessage,
 	whatsappMessage as whatsappMessageObjectSchema,
-	type WhatsappMessageActivityType
+	type WhatsappMessageActivityType,
+	type EmojiReaction
 } from '$lib/schema/whatsapp/message';
 import {
 	emojiReactionMutatorSchemaZero as emojiReactionMutatorSchema,
@@ -205,6 +206,39 @@ export async function handleIncomingReaction({
 	}
 }
 
+function applyBelcodaReaction({
+	existingReactions,
+	reaction,
+	personId,
+	phoneNumber
+}: {
+	existingReactions: EmojiReaction[];
+	reaction: string;
+	personId: string;
+	phoneNumber: string;
+}): EmojiReaction[] {
+	const emojiReactionArray = structuredClone(existingReactions);
+	const existingReactionIndex = emojiReactionArray?.findIndex((reaction) => reaction.viaBelcoda);
+	if (existingReactionIndex !== -1) {
+		if (reaction) {
+			emojiReactionArray[existingReactionIndex].emoji = reaction || null;
+			emojiReactionArray[existingReactionIndex].reactedAt = new Date().getTime();
+		} else {
+			emojiReactionArray.splice(existingReactionIndex, 1);
+		}
+	} else if (reaction) {
+		//only add the reaction if it is not null
+		emojiReactionArray.push({
+			emoji: reaction || null,
+			personId,
+			phoneNumber,
+			viaBelcoda: true,
+			reactedAt: new Date().getTime()
+		});
+	}
+	return emojiReactionArray;
+}
+
 export async function emojiReaction({
 	ctx,
 	args: argsInput,
@@ -227,73 +261,58 @@ export async function emojiReaction({
 	if (!isReactionSupportedMessageType(messageActivity.type)) {
 		throw new Error('Message activity type not supported');
 	}
-	if (messageActivity.wamidId) {
-		// first find if the reactor (personId / phone number) is already in the emojiReactions array
-		const personRecord = await getPerson({
-			tx,
-			ctx,
-			args: { organizationId: args.organizationId, personId: args.personId }
-		});
-		const to = personRecord.whatsAppUsername?.trim() || personRecord.phoneNumber?.trim() || '';
-		if (!to) {
-			throw new Error('Person WhatsApp username or phone number required for reaction');
-		}
-
-		//get organization record
-		const organizationRecord = await getOrganizationByIdUnsafe({
-			organizationId: args.organizationId,
-			tx
-		});
-		const from =
-			organizationRecord.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER;
-		const reaction = args.emoji || '';
-		const wamid = messageActivity.wamidId;
-
-		const emojiReactionArray = structuredClone(messageActivity.message.emojiReactions || []);
-		const existingReactionIndex = emojiReactionArray?.findIndex((reaction) => reaction.viaBelcoda);
-		if (existingReactionIndex !== -1) {
-			if (reaction) {
-				emojiReactionArray[existingReactionIndex].emoji = reaction || null;
-				emojiReactionArray[existingReactionIndex].reactedAt = new Date().getTime();
-			} else {
-				emojiReactionArray.splice(existingReactionIndex, 1);
-			}
-		} else {
-			if (reaction) {
-				//only add the reaction if it is not null
-				emojiReactionArray.push({
-					emoji: reaction || null,
-					personId: args.personId,
-					phoneNumber: from,
-					viaBelcoda: true,
-					reactedAt: new Date().getTime()
-				});
-			}
-		}
-
-		await tx.dbTransaction.wrappedTransaction
-			.update(whatsappMessage)
-			.set({
-				updatedAt: new Date(),
-				message: { ...messageActivity.message, emojiReactions: emojiReactionArray }
-			})
-			.where(eq(whatsappMessage.id, messageActivity.id));
-		try {
-			await sendEmojiReaction({
-				messageWamid: wamid,
-				emoji: reaction,
-				from,
-				to
-			});
-		} catch (error) {
-			log.error(
-				{ error, messageActivity, reaction, wamid, from, to },
-				'Failed to send emoji reaction'
-			);
-			throw error; //in the future, maybe we'd look at reversing the database update...
-		}
-	} else {
+	if (!messageActivity.wamidId) {
 		throw new Error('Message does not have a wamid ID, which is required for reactions');
+	}
+
+	// first find if the reactor (personId / phone number) is already in the emojiReactions array
+	const personRecord = await getPerson({
+		tx,
+		ctx,
+		args: { organizationId: args.organizationId, personId: args.personId }
+	});
+	const to = personRecord.whatsAppUsername?.trim() || personRecord.phoneNumber?.trim() || '';
+	if (!to) {
+		throw new Error('Person WhatsApp username or phone number required for reaction');
+	}
+
+	//get organization record
+	const organizationRecord = await getOrganizationByIdUnsafe({
+		organizationId: args.organizationId,
+		tx
+	});
+	const from =
+		organizationRecord.settings.whatsApp.number || publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER;
+	const reaction = args.emoji || '';
+	const wamid = messageActivity.wamidId;
+
+	const emojiReactionArray = applyBelcodaReaction({
+		existingReactions: messageActivity.message.emojiReactions || [],
+		reaction,
+		personId: args.personId,
+		phoneNumber: from
+	});
+
+	await tx.dbTransaction.wrappedTransaction
+		.update(whatsappMessage)
+		.set({
+			updatedAt: new Date(),
+			message: { ...messageActivity.message, emojiReactions: emojiReactionArray }
+		})
+		.where(eq(whatsappMessage.id, messageActivity.id));
+	try {
+		await sendEmojiReaction({
+			messageWamid: wamid,
+			emoji: reaction,
+			from,
+			to
+		});
+	} catch (error) {
+		log.error(
+			{ error, messageActivity, reaction, wamid, from, to },
+			'Failed to send emoji reaction'
+		);
+		throw error; //in the future, maybe we'd look at reversing the database update...
 	}
 }
 
