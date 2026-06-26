@@ -16,6 +16,45 @@ export interface ActivityGeneratorOptions {
 	count: number;
 }
 
+function selectOrRandom(ids: string[]): string {
+	return ids.length > 0 ? selectOneOfArray(ids) : uuidv7();
+}
+
+function resolveReferenceId(
+	activityType: ActivityType,
+	ids: { eventIds: string[]; petitionIds: string[]; tagIds: string[]; teamIds: string[] }
+): string {
+	switch (activityType) {
+		case 'event_signup':
+		case 'event_attended':
+		case 'event_not_attending':
+		case 'event_noshow':
+		case 'event_apology':
+		case 'event_removed':
+		case 'event_signup_email_sent':
+		case 'event_reminder_email_sent':
+			return selectOrRandom(ids.eventIds);
+		case 'petition_signed':
+		case 'petition_removed':
+			return selectOrRandom(ids.petitionIds);
+		case 'tag_added':
+		case 'tag_removed':
+			return selectOrRandom(ids.tagIds);
+		case 'team_added':
+		case 'team_removed':
+			return selectOrRandom(ids.teamIds);
+		default:
+			return uuidv7();
+	}
+}
+
+function resolveUserId(userIds: string[]): string | undefined {
+	if (Math.random() > 0.3 && userIds.length > 0) {
+		return selectOneOfArray(userIds);
+	}
+	return undefined;
+}
+
 export function generateActivities(
 	options: ActivityGeneratorOptions
 ): (typeof activityTable.$inferInsert)[] {
@@ -50,50 +89,18 @@ export function generateActivities(
 
 	for (const [activityType, typeCount] of typeCounts.entries()) {
 		for (let i = 0; i < typeCount; i++) {
-			let referenceId: string | null = null;
-
-			// Determine referenceId based on activity type
-			switch (activityType) {
-				case 'event_signup':
-				case 'event_attended':
-				case 'event_not_attending':
-				case 'event_noshow':
-				case 'event_apology':
-				case 'event_removed':
-				case 'event_signup_email_sent':
-				case 'event_reminder_email_sent':
-					referenceId = eventIds.length > 0 ? selectOneOfArray(eventIds) : uuidv7();
-					break;
-				case 'petition_signed':
-				case 'petition_removed':
-					referenceId = petitionIds.length > 0 ? selectOneOfArray(petitionIds) : uuidv7();
-					break;
-				case 'tag_added':
-				case 'tag_removed':
-					referenceId = tagIds.length > 0 ? selectOneOfArray(tagIds) : uuidv7();
-					break;
-				case 'team_added':
-				case 'team_removed':
-					referenceId = teamIds.length > 0 ? selectOneOfArray(teamIds) : uuidv7();
-					break;
-				case 'email_outgoing':
-				case 'note_added':
-					referenceId = uuidv7();
-					break;
-				default:
-					referenceId = uuidv7();
-			}
+			const referenceId = resolveReferenceId(activityType, {
+				eventIds,
+				petitionIds,
+				tagIds,
+				teamIds
+			});
 
 			const activity: typeof activityTable.$inferInsert = {
 				id: uuidv7(),
 				organizationId,
 				personId: peopleIds.length > 0 ? selectOneOfArray(peopleIds) : uuidv7(),
-				userId:
-					Math.random() > 0.3
-						? userIds.length > 0
-							? selectOneOfArray(userIds)
-							: undefined
-						: undefined,
+				userId: resolveUserId(userIds),
 				type: activityType,
 				referenceId,
 				unread: Math.random() > 0.7, // 30% chance of being unread
