@@ -11,7 +11,7 @@ import {
 Sentry.init({
 	dsn: env.PUBLIC_SENTRY_DSN,
 
-	tracesSampleRate: 1.0,
+	tracesSampleRate: 1,
 
 	// Enable sending user PII (Personally Identifiable Information)
 	// https://docs.sentry.io/platforms/javascript/guides/sveltekit/configuration/options/#sendDefaultPii

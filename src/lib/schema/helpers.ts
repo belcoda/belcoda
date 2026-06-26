@@ -13,7 +13,7 @@ export const DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS = 80;
 
 /** Matches PostgreSQL `timestamp + interval '1 month'` (calendar month, not a fixed duration). */
 export function addOneCalendarMonth(date: Date): Date {
-	const result = new Date(date.getTime());
+	const result = new Date(date);
 	const originalDay = result.getDate();
 	result.setDate(1);
 	result.setMonth(result.getMonth() + 1);
@@ -376,7 +376,7 @@ export const password = v.pipe(
 	v.maxLength(800000, 'Password is too long'),
 	v.regex(/[a-z]/, 'Password must contain at least one lowercase letter'),
 	v.regex(/[A-Z]/, 'Password must contain at least one uppercase letter'),
-	v.regex(/[0-9]/, 'Password must contain at least one number')
+	v.regex(/\d/, 'Password must contain at least one number')
 );
 
 export const signupSchema = v.pipe(

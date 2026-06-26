@@ -75,7 +75,7 @@ export const filterTypes = {
 		label: mediumString
 	})
 };
-export const filterType = v.variant('type', [...Object.values(filterTypes)]);
+export const filterType = v.variant('type', Object.values(filterTypes));
 export type FilterType = v.InferOutput<typeof filterType>;
 
 export const filterGroup = v.object({
