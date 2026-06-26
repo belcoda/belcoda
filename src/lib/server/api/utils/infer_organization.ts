@@ -119,8 +119,8 @@ export async function inferOrganizationIdFromUrl({ url }: { url: URL }): Promise
 function checkIfPathStartsWithPattern(path: string, pattern: string): string | null {
 	// Escape regex special characters in the pattern except for [uuid]
 	const regexPattern = pattern
-		.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-		.replace('\\[uuid\\]', '([0-9a-fA-F-]{36})');
+		.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
+		.replace(String.raw`\[uuid\]`, '([0-9a-fA-F-]{36})');
 
 	// UUID must be followed by end of path or a slash (segment boundary)
 	const regex = new RegExp(`^${regexPattern}(?:$|/)`);
