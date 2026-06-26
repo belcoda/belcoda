@@ -113,7 +113,7 @@ export async function verifySendSignature({
 			Name: existing?.Name || `Mock Signature ${emailSignatureExternalId}`,
 			Confirmed: true,
 			ReturnPathDomain: existing?.ReturnPathDomain || null,
-			ReturnPathDomainVerified: existing?.ReturnPathDomain ? true : false
+			ReturnPathDomainVerified: !!existing?.ReturnPathDomain
 		};
 		mockSendSignatures.set(emailSignatureExternalId, mockResult);
 		log.info(
