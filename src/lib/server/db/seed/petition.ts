@@ -66,8 +66,7 @@ export function generatePetitions(
 	}
 
 	const actionCodes: (typeof actionCodeTable.$inferInsert)[] = [];
-	for (let i = 0; i < petitions.length; i++) {
-		const petition = petitions[i];
+	for (const petition of petitions) {
 		actionCodes.push({
 			id: nanoid(),
 			organizationId: options.organizationId,

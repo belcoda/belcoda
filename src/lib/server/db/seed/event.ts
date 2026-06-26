@@ -96,8 +96,7 @@ function generateActionCodes(
 	organizationId: string
 ): (typeof actionCodeTable.$inferInsert)[] {
 	const actionCodes: (typeof actionCodeTable.$inferInsert)[] = [];
-	for (let i = 0; i < events.length; i++) {
-		const event = events[i];
+	for (const event of events) {
 		actionCodes.push({
 			id: nanoid(),
 			organizationId,
