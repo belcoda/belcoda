@@ -63,7 +63,7 @@ export default function Form<
 			if (callback) {
 				callback();
 			} else {
-				window.history.back();
+				globalThis.history.back();
 			}
 		}
 

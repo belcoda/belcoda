@@ -52,13 +52,13 @@ export class WhatsappAccountsPage {
 	}) {
 		await this.page.evaluate(
 			({ phoneNumberId, wabaId }) => {
-				const completeSignup = (window as any).__belcodaCompleteWhatsAppSignup;
+				const completeSignup = (globalThis as any).__belcodaCompleteWhatsAppSignup;
 				if (typeof completeSignup === 'function') {
 					completeSignup(phoneNumberId, wabaId);
 					return;
 				}
 
-				window.dispatchEvent(
+				globalThis.dispatchEvent(
 					new MessageEvent('message', {
 						origin: 'https://www.facebook.com',
 						data: JSON.stringify({
