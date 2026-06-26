@@ -208,7 +208,6 @@ export async function deletePersonNote({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
-	return;
 }
 
 export async function listPersonNotes({
