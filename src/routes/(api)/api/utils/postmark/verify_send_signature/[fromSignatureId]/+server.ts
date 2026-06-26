@@ -51,7 +51,7 @@ export async function PUT(event) {
 		// Verify with Postmark
 		const result = await verifySendSignature({
 			organizationId: emailFromSignatureRecord.organizationId,
-			emailSignatureExternalId: parseInt(emailFromSignatureRecord.externalId)
+			emailSignatureExternalId: Number.parseInt(emailFromSignatureRecord.externalId)
 		});
 
 		const verified = result.Confirmed === true;

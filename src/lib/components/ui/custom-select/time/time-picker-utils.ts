@@ -4,7 +4,7 @@ import { Time, fromAbsolute } from '@internationalized/date';
  * regular expression to check for valid hour format (00-23)
  */
 export function isValidHour(value: string) {
-	return /^(0[0-9]|1[0-9]|2[0-3])$/.test(value);
+	return /^(0\d|1\d|2[0-3])$/.test(value);
 }
 
 /**
@@ -18,7 +18,7 @@ export function isValid12Hour(value: string) {
  * regular expression to check for valid minute format (00-59)
  */
 export function isValidMinuteOrSecond(value: string) {
-	return /^[0-5][0-9]$/.test(value);
+	return /^[0-5]\d$/.test(value);
 }
 
 type GetValidNumberConfig = { max: number; min?: number; loop?: boolean };
@@ -27,9 +27,9 @@ export function getValidNumber(
 	value: string,
 	{ max, min = 0, loop = false }: GetValidNumberConfig
 ) {
-	let numericValue = parseInt(value, 10);
+	let numericValue = Number.parseInt(value, 10);
 
-	if (isNaN(numericValue)) return '00';
+	if (Number.isNaN(numericValue)) return '00';
 
 	if (!loop) {
 		if (numericValue > max) numericValue = max;
@@ -63,8 +63,8 @@ type GetValidArrowNumberConfig = {
 };
 
 export function getValidArrowNumber(value: string, { min, max, step }: GetValidArrowNumberConfig) {
-	let numericValue = parseInt(value, 10);
-	if (!isNaN(numericValue)) {
+	let numericValue = Number.parseInt(value, 10);
+	if (!Number.isNaN(numericValue)) {
 		numericValue += step;
 		return getValidNumber(String(numericValue), { min, max, loop: true });
 	}
@@ -85,21 +85,21 @@ export function getValidArrowMinuteOrSecond(value: string, step: number) {
 
 export function setMinutes(time: Time, value: string) {
 	const minutes = getValidMinuteOrSecond(value);
-	return time.set({ minute: parseInt(minutes, 10) });
+	return time.set({ minute: Number.parseInt(minutes, 10) });
 }
 
 export function setSeconds(time: Time, value: string) {
 	const seconds = getValidMinuteOrSecond(value);
-	return time.set({ second: parseInt(seconds, 10) });
+	return time.set({ second: Number.parseInt(seconds, 10) });
 }
 
 export function setHours(time: Time, value: string) {
 	const hours = getValidHour(value);
-	return time.set({ hour: parseInt(hours, 10) });
+	return time.set({ hour: Number.parseInt(hours, 10) });
 }
 
 export function set12Hours(time: Time, value: string, period: Period) {
-	const hours = parseInt(getValid12Hour(value), 10);
+	const hours = Number.parseInt(getValid12Hour(value), 10);
 	const convertedHours = convert12HourTo24Hour(hours, period);
 	return time.set({ hour: convertedHours });
 }

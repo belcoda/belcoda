@@ -73,9 +73,7 @@ export async function parseImportCsv(
 
 	log.debug({ rowCount: records.length }, 'CSV parsing completed');
 
-	for (let i = 0; i < records.length; i++) {
-		const { csvRow, line } = records[i];
-
+	for (const { csvRow, line } of records) {
 		try {
 			const personData = mapCsvRowToPerson(csvRow, organizationId, importId);
 
@@ -186,7 +184,7 @@ function parseDateOfBirth(dob: string | null | undefined): Date | null {
 
 	try {
 		const date = new Date(dob);
-		if (isNaN(date.getTime())) return null;
+		if (Number.isNaN(date.getTime())) return null;
 		return date;
 	} catch {
 		return null;
