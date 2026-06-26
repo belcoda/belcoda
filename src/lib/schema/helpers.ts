@@ -6,8 +6,8 @@ export const uuid = v.pipe(v.string(), v.uuid());
 export const SHORT_STRING_MAX_LENGTH = 100;
 export const MEDIUM_STRING_MAX_LENGTH = 500;
 export const LONG_STRING_MAX_LENGTH = 100000;
-export const SLUG_REGEXP = new RegExp('^[a-z0-9-]+(?:-[a-z0-9]+)*$');
-export const UNDERSCORE_SLUG_REGEXP = new RegExp('^[a-z0-9_]+$');
+export const SLUG_REGEXP = /^[a-z0-9-]+(?:-[a-z0-9]+)*$/;
+export const UNDERSCORE_SLUG_REGEXP = /^[a-z0-9_]+$/;
 export const CURRENT_API_VERSION = '2026-04-16';
 export const DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS = 80;
 
@@ -278,7 +278,7 @@ export const dbDate = v.union([
 	v.pipe(
 		v.string(),
 		//pattern to match YYY7-MM-DD
-		v.regex(new RegExp('\\d{4}-\\d{2}-\\d{2}')),
+		v.regex(/\d{4}-\d{2}-\d{2}/),
 		v.transform((input: string) => {
 			return new Date(input).toISOString();
 		})
