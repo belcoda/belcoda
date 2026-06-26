@@ -27,12 +27,40 @@ interface ImportResult {
 	failedRows: { row: number; error: string; data?: any }[];
 }
 
+function isPostgresUniqueViolation(error: unknown): boolean {
+	return (
+		error instanceof Error &&
+		'cause' in error &&
+		typeof error.cause === 'object' &&
+		error.cause !== null &&
+		'code' in error.cause &&
+		typeof error.cause.code === 'string' &&
+		error.cause.code === '23505'
+	);
+}
+
+function isEntirelyEmptyRow(row: Record<string, string>): boolean {
+	return Object.values(row).every(
+		(value) => value === null || value === undefined || String(value).trim() === ''
+	);
+}
+
+function collectNonEmptyRows(rows: unknown[]): Array<{ csvRow: CsvRow; line: number }> {
+	const records: Array<{ csvRow: CsvRow; line: number }> = [];
+	for (const [index, row] of rows.entries()) {
+		if (!isEntirelyEmptyRow(row as Record<string, string>)) {
+			// Line 1 is the header; first data row is line 2.
+			records.push({ csvRow: row as CsvRow, line: index + 2 });
+		}
+	}
+	return records;
+}
+
 export async function parseImportCsv(
 	csvString: string,
 	organizationId: string,
 	importId: string
 ): Promise<ImportResult> {
-	const records: Array<{ csvRow: CsvRow; line: number }> = [];
 	let successCount = 0;
 	let failedCount = 0;
 	const failedRows: { row: number; error: string; data?: CsvRow }[] = [];
@@ -41,16 +69,7 @@ export async function parseImportCsv(
 	if (parsed.errors.length > 0) {
 		log.error({ errors: parsed.errors }, 'CSV parsing errors');
 	}
-	for (const [index, row] of parsed.data.entries()) {
-		const isEntirelyEmptyRow = Object.values(row as Record<string, string>).every(
-			(value) => value === null || value === undefined || String(value).trim() === ''
-		);
-
-		if (!isEntirelyEmptyRow) {
-			// Line 1 is the header; first data row is line 2.
-			records.push({ csvRow: row as CsvRow, line: index + 2 });
-		}
-	}
+	const records = collectNonEmptyRows(parsed.data);
 
 	log.debug({ rowCount: records.length }, 'CSV parsing completed');
 
@@ -78,15 +97,7 @@ export async function parseImportCsv(
 					log.error({ error }, 'Database insert error');
 					//if it's a postgres unique error, handle that
 					failedCount++;
-					const isPostgresUniqueError =
-						error instanceof Error &&
-						'cause' in error &&
-						typeof error.cause === 'object' &&
-						error.cause !== null &&
-						'code' in error.cause &&
-						typeof error.cause.code === 'string' &&
-						error.cause.code === '23505';
-					const errorMessage = isPostgresUniqueError
+					const errorMessage = isPostgresUniqueViolation(error)
 						? 'A person with this email address or phone number already exists'
 						: 'Database insert error: Unknown error';
 					failedRows.push({
@@ -182,48 +193,55 @@ function parseDateOfBirth(dob: string | null | undefined): Date | null {
 	}
 }
 
-function mapCsvRowToPerson(
-	csvRow: CsvRow,
-	organizationId: string,
-	importId: string
-): Omit<PersonSchema, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
-	let country = csvRow['country']?.trim() || null;
-	if (country) {
-		const lowercased = country.toLowerCase();
-		if (!isValidCountryCode(lowercased)) {
-			const extractedCode = getCode(country);
-			if (extractedCode && isValidCountryCode(extractedCode)) {
-				country = extractedCode.toUpperCase() as CountryCode;
-			} else {
-				throw new Error(
-					t`Invalid country: "${country}" (must be a valid country code or country name)`
-				);
-			}
-		} else {
-			country = lowercased.toUpperCase() as CountryCode;
-		}
-	} else {
+function resolveCountry(csvRow: CsvRow): CountryCode {
+	const country = csvRow['country']?.trim() || null;
+	if (!country) {
 		throw new Error(t`Country is required`);
 	}
 
-	let preferredLanguage = (
+	const lowercased = country.toLowerCase();
+	if (isValidCountryCode(lowercased)) {
+		return lowercased.toUpperCase() as CountryCode;
+	}
+
+	const extractedCode = getCode(country);
+	if (extractedCode && isValidCountryCode(extractedCode)) {
+		return extractedCode.toUpperCase() as CountryCode;
+	}
+
+	throw new Error(t`Invalid country: "${country}" (must be a valid country code or country name)`);
+}
+
+function resolvePreferredLanguage(csvRow: CsvRow): LanguageCode {
+	const preferredLanguage = (
 		csvRow['preferred_language'] ||
 		csvRow['language'] ||
 		'en'
 	).toLocaleLowerCase() as LanguageCode;
 
-	if (!isSupportedLanguage(preferredLanguage)) {
-		const normalized = ISO6391.getCode(csvRow['preferred_language'] || csvRow['language']);
-		if (normalized && isSupportedLanguage(normalized)) {
-			preferredLanguage = normalized as LanguageCode;
-		} else {
-			log.debug(
-				{ language: csvRow['preferred_language'] || csvRow['language'] },
-				'Invalid language, using default'
-			);
-			preferredLanguage = 'en';
-		}
+	if (isSupportedLanguage(preferredLanguage)) {
+		return preferredLanguage;
 	}
+
+	const normalized = ISO6391.getCode(csvRow['preferred_language'] || csvRow['language']);
+	if (normalized && isSupportedLanguage(normalized)) {
+		return normalized as LanguageCode;
+	}
+
+	log.debug(
+		{ language: csvRow['preferred_language'] || csvRow['language'] },
+		'Invalid language, using default'
+	);
+	return 'en';
+}
+
+function mapCsvRowToPerson(
+	csvRow: CsvRow,
+	organizationId: string,
+	importId: string
+): Omit<PersonSchema, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
+	const country = resolveCountry(csvRow);
+	const preferredLanguage = resolvePreferredLanguage(csvRow);
 
 	const socialMedia: SocialMedia = {
 		facebook: csvRow['facebook'] || null,
