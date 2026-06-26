@@ -1,12 +1,6 @@
-import { type Transaction } from '@rocicorp/zero';
-import { type Schema } from '$lib/zero/schema';
-
 import { defineMutator } from '@rocicorp/zero';
 
 import {
-	type CreateMutatorSchemaOutput,
-	type UpdateMutatorSchemaOutput,
-	type SendMutatorSchemaOutput,
 	deleteMutatorSchema,
 	createMutatorSchema,
 	updateMutatorSchema,

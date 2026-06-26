@@ -4,7 +4,6 @@ import type { QueryContext } from '$lib/zero/schema';
 import { object, type InferOutput } from 'valibot';
 import { uuid } from '$lib/schema/helpers';
 import { whatsappTemplateReadPermissions } from '$lib/zero/query/whatsapp_template/permissions';
-import { readWhatsappTemplateZero } from '$lib/schema/whatsapp-template';
 
 export const inputSchema = object({
 	templateId: uuid
@@ -28,4 +27,4 @@ export const readWhatsappTemplate = defineQuery(inputSchema, ({ ctx, args }) => 
 	return readWhatsappTemplateQuery({ ctx, input: args });
 });
 
-export const outputSchema = readWhatsappTemplateZero;
+export { readWhatsappTemplateZero as outputSchema } from '$lib/schema/whatsapp-template';

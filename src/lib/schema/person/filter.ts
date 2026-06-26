@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { url, givenName, familyName, longString, mediumString } from '$lib/schema/helpers';
+import { url, givenName, familyName, mediumString } from '$lib/schema/helpers';
 import { countryCodes } from '$lib/utils/country';
 import { genderOptions, ageGroupList } from '$lib/utils/person';
 export const filterTypes = {

@@ -1,9 +1,8 @@
 import { currentRuntime } from 'wuchale/load-utils/server'
-import { loadCatalog, loadIDs } from './.wuchale/main.proxy.sync.js'
-
 const key = 'main'
 
-export { loadCatalog, loadIDs, key } // for hooks.server.{js,ts}
+export { loadCatalog, loadIDs } from './.wuchale/main.proxy.sync.js'
+export { key } // for hooks.server.{js,ts}
 
 // for non-reactive
 export const getRuntime = (/** @type {string} */ loadID) => currentRuntime(key, loadID)

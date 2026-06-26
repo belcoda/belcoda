@@ -1,5 +1,3 @@
-import type { ActionCodeSchema } from '$lib/schema/action-code';
-import { _getActionCodeUnsafe } from '$lib/server/api/data/action/check';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 // action codes look like [#j1r2qf]

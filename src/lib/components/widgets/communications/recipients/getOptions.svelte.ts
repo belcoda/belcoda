@@ -1,4 +1,3 @@
-import { appState, getListFilter } from '$lib/state.svelte';
 import { type FilterType } from '$lib/schema/person/filter';
 
 import { countryCodes, renderLocalizedCountryName } from '$lib/utils/country';

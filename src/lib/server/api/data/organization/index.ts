@@ -2,7 +2,7 @@ import { organization, member } from '$lib/schema/drizzle';
 import { drizzle } from '$lib/server/db';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { eq, or, isNull, lte, sql, and } from 'drizzle-orm';
-import { type QueryContext, builder } from '$lib/zero/schema';
+import { type QueryContext } from '$lib/zero/schema';
 import {
 	updateOrganizationZeroMutatorSchema,
 	updateOrganizationWhatsappSettingsMutatorSchema,

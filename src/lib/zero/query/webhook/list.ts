@@ -1,7 +1,7 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object } from 'valibot';
-import { listFilter, parseSchema, type ListFilter } from '$lib/schema/helpers';
+import { listFilter } from '$lib/schema/helpers';
 import { webhookReadPermissions } from '$lib/zero/query/webhook/permissions';
 import { readWebhookZero } from '$lib/schema/webhook';
 

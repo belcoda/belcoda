@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { slugify } from '$lib/utils/slug';
 import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { petition as petitionTable, actionCode as actionCodeTable } from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
