@@ -28,8 +28,7 @@ import type {
 	WebhookEventTypes,
 	WebhookStatus,
 	WebhookLogPayload,
-	WebhookEvent,
-	WebhookEvents
+	WebhookEvent
 } from '$lib/schema/webhook';
 import type { WebhookLogSchema } from '$lib/schema/webhook-log';
 import type { PersonSchema, Gender } from '$lib/schema/person';
@@ -60,12 +59,13 @@ import { type FilterGroupType } from '$lib/schema/person/filter';
 import type { LedgerEntryMetadataSchema, LedgerSchema } from '$lib/schema/ledger';
 import {
 	type WhatsappMessage,
-	type WhatsappTemplateMessage,
 	type WhatsappMessageActivityType
 } from '$lib/schema/whatsapp/message';
-import { type WhatsappMessageActions } from '$lib/schema/whatsapp/actions';
-import { type EventSettings } from '$lib/schema/event/settings';
-import { type EventSignupDetails, type EventSignupStatus } from '$lib/schema/event/settings';
+import {
+	type EventSettings,
+	type EventSignupDetails,
+	type EventSignupStatus
+} from '$lib/schema/event/settings';
 import { type SocialMedia, type PersonAddedFrom } from '$lib/schema/person/meta';
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
 import type { PetitionSettingsSchema, PetitionSignatureDetails } from './petition/settings';

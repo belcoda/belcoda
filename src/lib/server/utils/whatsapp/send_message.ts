@@ -14,11 +14,14 @@ import {
 } from '$lib/schema/drizzle';
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import { sendWhatsappMessage as sendWhatsappMessageToYCloud } from './ycloud/ycloud_api';
-import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
+import type { WhatsappTemplateMessageData } from '$lib/schema/flow';
 import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import type { WhatsappMessage as WhatsappMessageType } from '$lib/schema/whatsapp/message';
 
-import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
+import {
+	getOrganizationByIdUnsafe,
+	_reduceFreeWhatsAppMessageCredits
+} from '$lib/server/api/data/organization';
 import { v7 as uuidv7 } from 'uuid';
 import { env as publicEnv } from '$env/dynamic/public';
 import { createActivityWhatsAppMessageOutgoing } from '$lib/server/api/data/activity/activity';
@@ -29,7 +32,6 @@ import {
 } from '$lib/utils/template-variables';
 import { resolveOutboundWhatsappRecipient } from '$lib/server/api/data/whatsapp/identity';
 import { _createLedgerEntry } from '$lib/server/api/data/ledger';
-import { _reduceFreeWhatsAppMessageCredits } from '$lib/server/api/data/organization';
 
 type WhatsappMessage =
 	| ReturnType<typeof convertWhatsappMessageToApiFormat>

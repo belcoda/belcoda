@@ -1,8 +1,7 @@
 // @ts-check
 import { adapter as svelte } from '@wuchale/svelte';
 import { adapter as js } from 'wuchale/adapter-vanilla';
-import { defineConfig } from 'wuchale';
-import { gemini } from 'wuchale';
+import { defineConfig, gemini } from 'wuchale';
 
 export default defineConfig({
 	// sourceLocale is en by default

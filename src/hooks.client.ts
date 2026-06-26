@@ -3,10 +3,7 @@ import * as Sentry from '@sentry/sveltekit';
 import { env } from '$env/dynamic/public';
 import type { HandleClientError } from '@sveltejs/kit';
 import { dev } from '$app/environment';
-import {
-	clearDeploymentReloadFlag,
-	registerDeploymentRecoveryListeners
-} from '$lib/utils/deployment-recovery';
+import { registerDeploymentRecoveryListeners } from '$lib/utils/deployment-recovery';
 
 Sentry.init({
 	dsn: env.PUBLIC_SENTRY_DSN,

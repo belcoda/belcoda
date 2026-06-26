@@ -7,7 +7,7 @@ import { env as privateEnv } from '$env/dynamic/private';
 const { EASYCRON_SECRET } = privateEnv;
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
-import { error, json, redirect } from '@sveltejs/kit';
+import { json, redirect } from '@sveltejs/kit';
 import { v4 as uuidv4 } from 'uuid';
 
 import { detectSubdomain } from '$lib/utils/routing';

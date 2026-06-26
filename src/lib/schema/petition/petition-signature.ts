@@ -2,10 +2,8 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { petitionSignatureDetails } from '$lib/schema/petition/settings';
-import { readPersonZero } from '$lib/schema/person';
+import { readPersonZero, personActionHelper } from '$lib/schema/person';
 import { personAddedFrom } from '$lib/schema/person/meta';
-
-import { personActionHelper } from '$lib/schema/person';
 
 export const petitionSignatureSchema = v.object({
 	id: helpers.uuid,

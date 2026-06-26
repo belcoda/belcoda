@@ -2,7 +2,7 @@ import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { object, type InferOutput } from 'valibot';
-import { uuid, parseSchema } from '$lib/schema/helpers';
+import { uuid } from '$lib/schema/helpers';
 import { whatsappTemplateReadPermissions } from '$lib/zero/query/whatsapp_template/permissions';
 import { readWhatsappTemplateZero } from '$lib/schema/whatsapp-template';
 

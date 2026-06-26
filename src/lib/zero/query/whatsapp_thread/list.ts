@@ -1,6 +1,5 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
-import { builder, type Schema } from '$lib/zero/schema';
-import type { QueryContext } from '$lib/zero/schema';
+import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, optional, boolean } from 'valibot';
 import { listFilter } from '$lib/schema/helpers';
 import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';

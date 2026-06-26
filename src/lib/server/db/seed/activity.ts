@@ -3,7 +3,6 @@ import { v7 as uuidv7 } from 'uuid';
 import { selectOneOfArray } from './utils';
 import { activity as activityTable } from '$lib/schema/drizzle';
 import type { ActivityType } from '$lib/schema/activity/types';
-import { activityTypesList } from '$lib/schema/activity/types';
 
 export interface ActivityGeneratorOptions {
 	organizationId: string;
