@@ -19,7 +19,7 @@ export function buildWhatsAppInboundTextWebhook({
 	customerName?: string;
 }) {
 	const now = new Date().toISOString();
-	const inboundId = crypto.randomUUID().replace(/-/g, '');
+	const inboundId = crypto.randomUUID().replaceAll('-', '');
 	const evtId = `evt_${inboundId}`;
 
 	return {
@@ -29,16 +29,14 @@ export function buildWhatsAppInboundTextWebhook({
 		createTime: now,
 		whatsappInboundMessage: {
 			id: inboundId,
-			wamid: `wamid.${crypto.randomUUID().replace(/-/g, '')}`,
+			wamid: `wamid.${crypto.randomUUID().replaceAll('-', '')}`,
 			wabaId,
 			from,
 			to,
 			sendTime: now,
 			type: 'text' as const,
 			text: { body },
-			...(customerName
-				? { customerProfile: { name: customerName } }
-				: {})
+			...(customerName ? { customerProfile: { name: customerName } } : {})
 		}
 	};
 }
@@ -55,7 +53,7 @@ export function buildWhatsAppInboundFlowReplyWebhook({
 	responseJson: Record<string, unknown>;
 }) {
 	const now = new Date().toISOString();
-	const inboundId = crypto.randomUUID().replace(/-/g, '');
+	const inboundId = crypto.randomUUID().replaceAll('-', '');
 	const evtId = `evt_${inboundId}`;
 
 	return {
@@ -65,7 +63,7 @@ export function buildWhatsAppInboundFlowReplyWebhook({
 		createTime: now,
 		whatsappInboundMessage: {
 			id: inboundId,
-			wamid: `wamid.${crypto.randomUUID().replace(/-/g, '')}`,
+			wamid: `wamid.${crypto.randomUUID().replaceAll('-', '')}`,
 			wabaId,
 			from,
 			to,

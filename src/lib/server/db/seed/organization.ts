@@ -110,7 +110,7 @@ export function generateOrganization({
 
 	if (isStressTest) {
 		name = generateOrganizationName();
-		slug = `${slugifyUnderscore(name)}-${id.slice(0, 8)}`.replace(/_/g, '-');
+		slug = `${slugifyUnderscore(name)}-${id.slice(0, 8)}`.replaceAll('_', '-');
 	} else {
 		name = OWNER_ORGANIZATION_NAME!;
 		slug = OWNER_ORGANIZATION_SLUG!;
