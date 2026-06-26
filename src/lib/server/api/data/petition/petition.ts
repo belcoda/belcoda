@@ -362,11 +362,9 @@ export async function countPetitionsForOrg({
 	}
 	if (input.status) {
 		if (input.status === 'draft') {
-			whereParts.push(eq(petition.published, false));
-			whereParts.push(isNull(petition.archivedAt));
+			whereParts.push(eq(petition.published, false), isNull(petition.archivedAt));
 		} else if (input.status === 'published') {
-			whereParts.push(eq(petition.published, true));
-			whereParts.push(isNull(petition.archivedAt));
+			whereParts.push(eq(petition.published, true), isNull(petition.archivedAt));
 		} else if (input.status === 'archived') {
 			whereParts.push(isNotNull(petition.archivedAt));
 		}

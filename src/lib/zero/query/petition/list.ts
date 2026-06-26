@@ -86,11 +86,9 @@ function whereClause(
 
 	if (filter.status) {
 		if (filter.status === 'draft') {
-			filterArr.push(cmp('published', '=', false));
-			filterArr.push(cmp('archivedAt', 'IS', null));
+			filterArr.push(cmp('published', '=', false), cmp('archivedAt', 'IS', null));
 		} else if (filter.status === 'published') {
-			filterArr.push(cmp('published', '=', true));
-			filterArr.push(cmp('archivedAt', 'IS', null));
+			filterArr.push(cmp('published', '=', true), cmp('archivedAt', 'IS', null));
 		} else if (filter.status === 'archived') {
 			filterArr.push(cmp('archivedAt', 'IS NOT', null));
 		}

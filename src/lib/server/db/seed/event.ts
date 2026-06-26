@@ -97,20 +97,22 @@ function generateActionCodes(
 ): (typeof actionCodeTable.$inferInsert)[] {
 	const actionCodes: (typeof actionCodeTable.$inferInsert)[] = [];
 	for (const event of events) {
-		actionCodes.push({
-			id: nanoid(),
-			organizationId,
-			referenceId: event.id,
-			type: 'event_signup',
-			createdAt: event.createdAt
-		});
-		actionCodes.push({
-			id: nanoid(),
-			organizationId,
-			referenceId: event.id,
-			type: 'event_attended',
-			createdAt: event.createdAt
-		});
+		actionCodes.push(
+			{
+				id: nanoid(),
+				organizationId,
+				referenceId: event.id,
+				type: 'event_signup',
+				createdAt: event.createdAt
+			},
+			{
+				id: nanoid(),
+				organizationId,
+				referenceId: event.id,
+				type: 'event_attended',
+				createdAt: event.createdAt
+			}
+		);
 	}
 	return actionCodes;
 }
