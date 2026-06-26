@@ -56,6 +56,6 @@ export async function POST({ request, url }) {
 			payload: body,
 			createdAt: new Date()
 		});
-		return new Response('OK', { status: 200 }); //we don't want to block the webhook from being processed
 	}
+	return new Response('OK', { status: 200 }); //we don't want to block the webhook from being processed
 }
