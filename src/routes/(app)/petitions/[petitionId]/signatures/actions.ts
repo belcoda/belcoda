@@ -139,6 +139,12 @@ function renderSignatureChannel(
 	}
 }
 
+function renderDoNotContact(doNotContact: boolean | null | undefined): string | null {
+	if (doNotContact === true) return t`Yes`;
+	if (doNotContact === false) return t`No`;
+	return null;
+}
+
 export function renderSignatureColumn({
 	columnName,
 	signature,
@@ -148,46 +154,46 @@ export function renderSignatureColumn({
 	signature: ReadPetitionSignatureZeroWithPerson;
 	locale: Locale;
 }) {
-	if (columnName === 'person.givenName') {
-		return signature.person?.givenName;
-	} else if (columnName === 'person.familyName') {
-		return signature.person?.familyName;
-	} else if (columnName === 'person.email') {
-		return signature.person?.emailAddress;
-	} else if (columnName === 'person.phone') {
-		return signature.person?.phoneNumber;
-	} else if (columnName === 'person.doNotContact') {
-		if (signature.person?.doNotContact === true) return t`Yes`;
-		if (signature.person?.doNotContact === false) return t`No`;
-		return null;
-	} else if (columnName === 'person.addressLine1') {
-		return signature.person?.addressLine1;
-	} else if (columnName === 'person.addressLine2') {
-		return signature.person?.addressLine2;
-	} else if (columnName === 'person.locality') {
-		return signature.person?.locality;
-	} else if (columnName === 'person.dateOfBirth') {
-		return formatDateForLocale(signature.person?.dateOfBirth, locale);
-	} else if (columnName === 'person.gender') {
-		return signature.person?.gender ? renderGender(signature.person.gender) : null;
-	} else if (columnName === 'person.position') {
-		return signature.person?.position;
-	} else if (columnName === 'person.workplace') {
-		return signature.person?.workplace;
-	} else if (columnName === 'person.region') {
-		return signature.person?.region;
-	} else if (columnName === 'person.postcode') {
-		return signature.person?.postcode;
-	} else if (columnName === 'person.country') {
-		return signature.person?.country
-			? renderLocalizedCountryName(signature.person.country as CountryCode, locale)
-			: null;
-	} else if (columnName === 'person.createdAt') {
-		return formatDateForLocale(signature.person?.createdAt, locale);
-	} else if (columnName === 'signature.createdAt') {
-		return formatDateForLocale(signature.createdAt, locale);
-	} else if (columnName === 'signature.channel') {
-		return renderSignatureChannel(signature.details?.channel?.type);
+	switch (columnName) {
+		case 'person.givenName':
+			return signature.person?.givenName;
+		case 'person.familyName':
+			return signature.person?.familyName;
+		case 'person.email':
+			return signature.person?.emailAddress;
+		case 'person.phone':
+			return signature.person?.phoneNumber;
+		case 'person.doNotContact':
+			return renderDoNotContact(signature.person?.doNotContact);
+		case 'person.addressLine1':
+			return signature.person?.addressLine1;
+		case 'person.addressLine2':
+			return signature.person?.addressLine2;
+		case 'person.locality':
+			return signature.person?.locality;
+		case 'person.dateOfBirth':
+			return formatDateForLocale(signature.person?.dateOfBirth, locale);
+		case 'person.gender':
+			return signature.person?.gender ? renderGender(signature.person.gender) : null;
+		case 'person.position':
+			return signature.person?.position;
+		case 'person.workplace':
+			return signature.person?.workplace;
+		case 'person.region':
+			return signature.person?.region;
+		case 'person.postcode':
+			return signature.person?.postcode;
+		case 'person.country':
+			return signature.person?.country
+				? renderLocalizedCountryName(signature.person.country as CountryCode, locale)
+				: null;
+		case 'person.createdAt':
+			return formatDateForLocale(signature.person?.createdAt, locale);
+		case 'signature.createdAt':
+			return formatDateForLocale(signature.createdAt, locale);
+		case 'signature.channel':
+			return renderSignatureChannel(signature.details?.channel?.type);
+		default:
+			return undefined;
 	}
-	return undefined;
 }
