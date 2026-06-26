@@ -115,47 +115,37 @@ export function renderPersonColumn({
 	signup: ReadEventSignupZeroWithPerson;
 	locale: Locale;
 }) {
-	if (columnName === 'person.givenName') {
-		return signup.person?.givenName;
-	} else if (columnName === 'person.familyName') {
-		return signup.person?.familyName;
-	} else if (columnName === 'person.email') {
-		return signup.person?.emailAddress;
-	} else if (columnName === 'person.phone') {
-		return signup.person?.phoneNumber;
-	} else if (columnName === 'person.dateOfBirth') {
-		return signup.person?.dateOfBirth
-			? new Date(signup.person.dateOfBirth).toLocaleDateString()
-			: null;
-	} else if (columnName === 'person.gender') {
-		return signup.person?.gender ? renderGender(signup.person.gender) : null;
-	} else if (columnName === 'person.position') {
-		return signup.person?.position;
-	} else if (columnName === 'person.workplace') {
-		return signup.person?.workplace;
-	} else if (columnName === 'person.region') {
-		return signup.person?.region;
-	} else if (columnName === 'person.postcode') {
-		return signup.person?.postcode;
-	} else if (columnName === 'person.country') {
-		return signup.person?.country
-			? renderLocalizedCountryName(signup.person.country as CountryCode, locale)
-			: null;
-	} else if (columnName === 'person.createdAt') {
-		return signup.person?.createdAt ? new Date(signup.person.createdAt).toLocaleDateString() : null;
-	} else if (columnName === 'signup.status') {
-		return signup.status;
-	} else if (columnName === 'signup.notificationSentAt') {
-		return signup.signupNotificationSentAt
-			? new Date(signup.signupNotificationSentAt).toLocaleDateString()
-			: null;
-	} else if (columnName === 'signup.reminderSentAt') {
-		return signup.reminderSentAt ? new Date(signup.reminderSentAt).toLocaleDateString() : null;
-	} else if (columnName === 'signup.cancellationNotificationSentAt') {
-		return signup.cancellationNotificationSentAt
-			? new Date(signup.cancellationNotificationSentAt).toLocaleDateString()
-			: null;
-	} else if (columnName === 'signup.createdAt') {
-		return signup.createdAt ? new Date(signup.createdAt).toLocaleDateString() : null;
-	}
+	const renderers: Record<string, () => string | null | undefined> = {
+		'person.givenName': () => signup.person?.givenName,
+		'person.familyName': () => signup.person?.familyName,
+		'person.email': () => signup.person?.emailAddress,
+		'person.phone': () => signup.person?.phoneNumber,
+		'person.dateOfBirth': () =>
+			signup.person?.dateOfBirth ? new Date(signup.person.dateOfBirth).toLocaleDateString() : null,
+		'person.gender': () => (signup.person?.gender ? renderGender(signup.person.gender) : null),
+		'person.position': () => signup.person?.position,
+		'person.workplace': () => signup.person?.workplace,
+		'person.region': () => signup.person?.region,
+		'person.postcode': () => signup.person?.postcode,
+		'person.country': () =>
+			signup.person?.country
+				? renderLocalizedCountryName(signup.person.country as CountryCode, locale)
+				: null,
+		'person.createdAt': () =>
+			signup.person?.createdAt ? new Date(signup.person.createdAt).toLocaleDateString() : null,
+		'signup.status': () => signup.status,
+		'signup.notificationSentAt': () =>
+			signup.signupNotificationSentAt
+				? new Date(signup.signupNotificationSentAt).toLocaleDateString()
+				: null,
+		'signup.reminderSentAt': () =>
+			signup.reminderSentAt ? new Date(signup.reminderSentAt).toLocaleDateString() : null,
+		'signup.cancellationNotificationSentAt': () =>
+			signup.cancellationNotificationSentAt
+				? new Date(signup.cancellationNotificationSentAt).toLocaleDateString()
+				: null,
+		'signup.createdAt': () =>
+			signup.createdAt ? new Date(signup.createdAt).toLocaleDateString() : null
+	};
+	return renderers[columnName]?.();
 }
