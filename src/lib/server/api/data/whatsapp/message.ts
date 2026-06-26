@@ -222,7 +222,7 @@ function applyBelcodaReaction({
 	if (existingReactionIndex !== -1) {
 		if (reaction) {
 			emojiReactionArray[existingReactionIndex].emoji = reaction || null;
-			emojiReactionArray[existingReactionIndex].reactedAt = new Date().getTime();
+			emojiReactionArray[existingReactionIndex].reactedAt = Date.now();
 		} else {
 			emojiReactionArray.splice(existingReactionIndex, 1);
 		}
@@ -233,7 +233,7 @@ function applyBelcodaReaction({
 			personId,
 			phoneNumber,
 			viaBelcoda: true,
-			reactedAt: new Date().getTime()
+			reactedAt: Date.now()
 		});
 	}
 	return emojiReactionArray;
