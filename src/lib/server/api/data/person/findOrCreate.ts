@@ -84,6 +84,41 @@ async function _findPersonByWhatsappIdentityUnsafe({
 	return personRecord;
 }
 
+async function _findPersonByEmailOrPhoneUnsafe({
+	organizationId,
+	parsedActionHelper,
+	tx
+}: {
+	organizationId: string;
+	parsedActionHelper: PersonActionHelper;
+	tx: ServerTransaction;
+}) {
+	const whereConditions = [];
+	if (parsedActionHelper.emailAddress) {
+		whereConditions.push(eq(person.emailAddress, parsedActionHelper.emailAddress));
+	}
+	if (parsedActionHelper.phoneNumber) {
+		whereConditions.push(eq(person.phoneNumber, parsedActionHelper.phoneNumber));
+	}
+
+	if (whereConditions.length === 0) {
+		return undefined;
+	}
+
+	// there should only ever be one because there is a unique index against organizationId and phoneNumber/emailAddress
+	const [personRecord] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(person)
+		.where(
+			and(
+				isNull(person.deletedAt),
+				eq(person.organizationId, organizationId),
+				or(...whereConditions)
+			)
+		);
+	return personRecord;
+}
+
 async function _findPersonByWhatsappContextMessageUnsafe({
 	organizationId,
 	whatsappContextWamidId,
@@ -143,6 +178,48 @@ async function _findPersonByWhatsappContextMessageUnsafe({
 	return personRecord;
 }
 
+async function _updateExistingPerson({
+	personRecord,
+	parsedActionHelper,
+	organizationId,
+	tx
+}: {
+	personRecord: { id: string };
+	parsedActionHelper: PersonActionHelper;
+	organizationId: string;
+	tx: ServerTransaction;
+}) {
+	try {
+		const [updatedPerson] = await tx.dbTransaction.wrappedTransaction
+			.update(person)
+			.set({
+				...parsedActionHelper,
+				preferredLanguage: parsedActionHelper.preferredLanguage || undefined,
+				updatedAt: new Date()
+			})
+			.where(eq(person.id, personRecord.id))
+			.returning();
+		if (!updatedPerson) {
+			throw new Error('Unable to update person');
+		}
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
+				organizationId,
+				payload: {
+					type: 'person.updated',
+					data: parse(personApiSchema, updatedPerson)
+				}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+		return updatedPerson;
+	} catch (error) {
+		log.error({ error }, 'Unable to update person');
+	}
+	return undefined;
+}
+
 export async function findOrCreatePerson({
 	personAction,
 	addedFrom,
@@ -178,58 +255,23 @@ export async function findOrCreatePerson({
 		}));
 
 	if (!personRecord) {
-		const whereConditions = [];
-		if (parsedActionHelper.emailAddress) {
-			whereConditions.push(eq(person.emailAddress, parsedActionHelper.emailAddress));
-		}
-		if (parsedActionHelper.phoneNumber) {
-			whereConditions.push(eq(person.phoneNumber, parsedActionHelper.phoneNumber));
-		}
-
-		if (whereConditions.length > 0) {
-			// there should only ever be one because there is a unique index against organizationId and phoneNumber/emailAddress
-			[personRecord] = await tx.dbTransaction.wrappedTransaction
-				.select()
-				.from(person)
-				.where(
-					and(
-						isNull(person.deletedAt),
-						eq(person.organizationId, organizationId),
-						or(...whereConditions)
-					)
-				);
-		}
+		personRecord = await _findPersonByEmailOrPhoneUnsafe({
+			organizationId,
+			parsedActionHelper,
+			tx
+		});
 	}
 
 	if (personRecord) {
 		if (updateExistingPerson) {
-			try {
-				const [updatedPerson] = await tx.dbTransaction.wrappedTransaction
-					.update(person)
-					.set({
-						...parsedActionHelper,
-						preferredLanguage: parsedActionHelper.preferredLanguage || undefined,
-						updatedAt: new Date()
-					})
-					.where(eq(person.id, personRecord.id))
-					.returning();
-				if (!updatedPerson) {
-					throw new Error('Unable to update person');
-				}
-				const queue = await getQueue();
-				await queue.triggerWebhook(
-					{
-						organizationId,
-						payload: {
-							type: 'person.updated',
-							data: parse(personApiSchema, updatedPerson)
-						}
-					},
-					queueSendOptionsFromTransaction(tx)
-				);
+			const updatedPerson = await _updateExistingPerson({
+				personRecord,
+				parsedActionHelper,
+				organizationId,
+				tx
+			});
+			if (updatedPerson) {
 				return updatedPerson;
-			} catch (error) {
-				log.error({ error }, 'Unable to update person');
 			}
 		}
 		return personRecord;
