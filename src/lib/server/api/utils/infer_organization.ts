@@ -124,6 +124,6 @@ function checkIfPathStartsWithPattern(path: string, pattern: string): string | n
 
 	// UUID must be followed by end of path or a slash (segment boundary)
 	const regex = new RegExp(`^${regexPattern}(?:$|/)`);
-	const match = path.match(regex);
+	const match = regex.exec(path);
 	return match ? match[1] : null;
 }
