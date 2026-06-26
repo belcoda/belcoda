@@ -29,18 +29,16 @@ export function getValidNumber(
 ) {
 	let numericValue = parseInt(value, 10);
 
-	if (!isNaN(numericValue)) {
-		if (!loop) {
-			if (numericValue > max) numericValue = max;
-			if (numericValue < min) numericValue = min;
-		} else {
-			if (numericValue > max) numericValue = min;
-			if (numericValue < min) numericValue = max;
-		}
-		return numericValue.toString().padStart(2, '0');
-	}
+	if (isNaN(numericValue)) return '00';
 
-	return '00';
+	if (!loop) {
+		if (numericValue > max) numericValue = max;
+		if (numericValue < min) numericValue = min;
+	} else {
+		if (numericValue > max) numericValue = min;
+		if (numericValue < min) numericValue = max;
+	}
+	return numericValue.toString().padStart(2, '0');
 }
 
 export function getValidHour(value: string) {
