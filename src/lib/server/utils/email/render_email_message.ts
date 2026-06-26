@@ -57,7 +57,7 @@ function renderTemplateVariables({
 			return token;
 		}
 
-		if (!Object.prototype.hasOwnProperty.call(values, key)) {
+		if (!Object.hasOwn(values, key)) {
 			return token;
 		}
 
