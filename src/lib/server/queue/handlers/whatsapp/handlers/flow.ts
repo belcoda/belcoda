@@ -618,19 +618,7 @@ export async function handleEventSignupFlowResponse({
 	return eventSignup;
 }
 
-export async function handlePetitionSignatureFlowResponse({
-	petitionId,
-	givenName,
-	from,
-	responses,
-	tx
-}: {
-	petitionId: string;
-	from: string;
-	givenName: string;
-	responses?: FlowResponses;
-	tx: ServerTransaction;
-}) {
+function extractPetitionCustomFields(responses?: FlowResponses): Record<string, unknown> {
 	const customFields: Record<string, unknown> = {};
 
 	if (responses?.response_json) {
@@ -695,6 +683,24 @@ export async function handlePetitionSignatureFlowResponse({
 			log.error({ error }, 'Failed to parse petition flow response for custom fields');
 		}
 	}
+
+	return customFields;
+}
+
+export async function handlePetitionSignatureFlowResponse({
+	petitionId,
+	givenName,
+	from,
+	responses,
+	tx
+}: {
+	petitionId: string;
+	from: string;
+	givenName: string;
+	responses?: FlowResponses;
+	tx: ServerTransaction;
+}) {
+	const customFields = extractPetitionCustomFields(responses);
 
 	const petition = await _getPetitionByIdUnsafeNoTenantCheck({ petitionId, tx });
 	if (!petition) {
