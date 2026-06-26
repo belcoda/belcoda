@@ -280,7 +280,7 @@ export const dbDate = v.union([
 		//pattern to match YYY7-MM-DD
 		v.regex(new RegExp('\\d{4}-\\d{2}-\\d{2}')),
 		v.transform((input: string) => {
-			new Date(input).toISOString();
+			return new Date(input).toISOString();
 		})
 	),
 	v.pipe(
