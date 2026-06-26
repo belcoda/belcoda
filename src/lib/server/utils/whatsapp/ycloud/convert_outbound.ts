@@ -143,9 +143,9 @@ export function createExternalId({
 }
 
 export function extractExternalId(externalId: string): {
-	whatsappMessageId: string | 'UNKNOWN';
+	whatsappMessageId: string;
 	whatsappThreadId: string;
-	nodeId: string | 'UNKNOWN';
+	nodeId: string;
 } {
 	const [whatsappThreadId, nodeId, whatsappMessageId] = externalId.split(':');
 	if (!whatsappThreadId || !nodeId || !whatsappMessageId) {
