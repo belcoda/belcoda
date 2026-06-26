@@ -4,7 +4,6 @@ import * as helpers from '$lib/schema/helpers';
 import { eventSignupDetails, eventSignupStatus } from '$lib/schema/event/settings';
 import { readPersonZero, personActionHelper } from '$lib/schema/person';
 import { personAddedFrom } from '$lib/schema/person/meta';
-import { surveyQuestionResponse } from '$lib/schema/survey/questions';
 
 export const eventSignupSchema = v.object({
 	id: helpers.uuid,

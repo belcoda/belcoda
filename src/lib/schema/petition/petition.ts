@@ -1,6 +1,5 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-import { get } from '$lib/utils/http';
 
 import { petitionSettingsSchema } from './settings';
 import { generatePetitionTitleAsyncSchema } from './helpers';

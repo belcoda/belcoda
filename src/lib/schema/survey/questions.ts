@@ -3,7 +3,6 @@ import * as helpers from '$lib/schema/helpers';
 import type { Locale } from '$lib/utils/language';
 
 import {
-	type PersonActionHelper,
 	personActionHelper,
 	setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions
 } from '$lib/schema/person';

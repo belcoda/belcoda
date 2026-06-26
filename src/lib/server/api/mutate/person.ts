@@ -1,7 +1,6 @@
 import { defineMutator } from '@rocicorp/zero';
 
 import {
-	updatePersonZero,
 	createMutatorSchemaZero,
 	deleteMutatorSchemaZero,
 	addPersonToTeamMutatorSchemaZero,

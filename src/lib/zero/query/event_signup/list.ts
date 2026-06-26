@@ -1,10 +1,10 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, optional, boolean } from 'valibot';
-import { listFilter, parseSchema, uuid } from '$lib/schema/helpers';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { eventSignupReadPermissions } from '$lib/zero/query/event_signup/permissions';
 import { readEventSignupZeroWithPerson } from '$lib/schema/event-signup';
-import { eventSignupDetails, eventSignupStatus } from '$lib/schema/event/settings';
+import { eventSignupStatus } from '$lib/schema/event/settings';
 import {
 	decodeEventSignupListCursor,
 	decodeRestEventSignupListCursor
