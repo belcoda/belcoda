@@ -365,8 +365,6 @@ export function convertInternalToYCloudRequest(
 /**
  * Validate that the internal format is properly structured for YCloud
  */
-
-// TODO: This should probably be part of a test suite but it does help with validation here
 export function validateInternalForYCloud(internal: WhatsappFlowInternal): {
 	isValid: boolean;
 	errors: string[];
@@ -595,7 +593,7 @@ function buildSignupFlowFromSurveyCollections(params: {
 	components.push(footer);
 
 	const screen: WhatsAppFlowScreen = {
-		id: 'registration', // TODO: make this unique. Only letters and underscore allowed
+		id: 'registration', //only letters and underscore allowed. Must be unique per flow
 		title: `${title} - ${resourceSuffix}`,
 		terminal: true,
 		success: true,
