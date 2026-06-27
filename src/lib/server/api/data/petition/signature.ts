@@ -477,7 +477,6 @@ export async function signPetitionUnsafe({
 		personId: personRecord.id,
 		organizationId: organizationRecord.id
 	});
-	//TODO: Implement whatsapp notification
 
 	const { organizationId, ...sigWebhookData } = insertedPetitionSignature;
 	const queueSig = await getQueue();
