@@ -12,7 +12,7 @@ export const petitionSignatureSchema = v.object({
 	petitionId: helpers.uuid,
 	personId: helpers.uuid,
 	details: petitionSignatureDetails,
-	responses: v.nullable(v.any()), // TODO: Define response schema when flows are ready
+	responses: v.nullable(v.any()),
 	createdAt: helpers.date,
 	updatedAt: helpers.date,
 	deletedAt: v.nullable(helpers.date)
