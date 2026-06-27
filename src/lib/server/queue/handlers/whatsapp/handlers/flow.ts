@@ -439,7 +439,6 @@ export async function processFlowDataExchange({
 		throw new Error('Missing or invalid phone number in form data');
 	}
 
-	// TODO: This should be done using the "from" phone number that the message came from.
 	// Look up person by phone number
 	const existingPerson = await drizzle.query.person.findFirst({
 		where: eq(personTable.phoneNumber, phone)
