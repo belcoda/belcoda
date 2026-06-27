@@ -952,8 +952,6 @@ export const petition = pgTable('petition', {
 	featureImage: text('feature_image'),
 
 	settings: jsonb('settings').$type<PetitionSettingsSchema>().notNull(),
-	// TODO: Implement these once flows are ready
-	// flowQuestions: jsonb('flow_questions').$type<PetitionFlowQuestions>(),
 
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
@@ -976,7 +974,6 @@ export const petitionSignature = pgTable(
 			.notNull()
 			.references(() => person.id),
 		details: jsonb('details').$type<PetitionSignatureDetails>().notNull(),
-		// TODO: Define response schema when flows are ready
 		responses: jsonb('responses'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
