@@ -485,7 +485,6 @@ async function handleButtonMessage(
 	message: ButtonMessage,
 	ctx: MessageRoutingContext
 ): Promise<MessageRoutingResult> {
-	// TODO: handle button messages
 	await processButtonAction(message.button.payload, ctx);
 	return {};
 }
