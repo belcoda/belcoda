@@ -651,7 +651,6 @@ export async function signUpForEventUnsafe({
 			organizationId: organizationRecord.id
 		});
 	}
-	//TODO: Implement whatsapp notification
 	const queueSignup = await getQueue();
 	await queueEventSignupWebhook(
 		queueSignup,
