@@ -200,8 +200,6 @@ export const email = v.pipe(
 	v.maxLength(MEDIUM_STRING_MAX_LENGTH, `Maximum length is ${MEDIUM_STRING_MAX_LENGTH} characters`),
 	v.email()
 );
-// TODO: Add timezone validation when timezone utilities are implemented
-// export const timezone = v.picklist(timezones, 'Invalid timezone');
 
 // This regex uses a negative lookahead to ensure the email address is NOT a public email domain
 // Also, using belcoda.org or belcoda.com is not allowed, because they would be automatically verified by Postmark
