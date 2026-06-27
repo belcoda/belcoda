@@ -21,7 +21,6 @@ export function renderAddress({
 	// Output a renderred address string based on values which may or may not be present
 	// in the addressLine1, addressLine2, locality, region, postcode and country fields.
 
-	//TODO: Fix country code to be a name
 	const addressParts = [
 		addressLine1,
 		addressLine2,
