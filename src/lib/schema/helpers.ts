@@ -310,10 +310,10 @@ export function renderValiError(err: unknown):
 		let messageArr: string[] = [];
 		err.issues.forEach((issue) => {
 			const dotPath = v.getDotPath(issue);
-			if (!dotPath) {
-				messageArr.push(issue.message);
-			} else {
+			if (dotPath) {
 				messageArr.push(`${dotPath} (Received: ${issue.received}): ${issue.message}`);
+			} else {
+				messageArr.push(issue.message);
 			}
 		});
 		return {
