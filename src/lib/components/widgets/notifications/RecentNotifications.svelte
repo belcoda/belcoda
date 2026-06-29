@@ -7,6 +7,7 @@
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import queries from '$lib/zero/query/index';
 	import { z } from '$lib/zero.svelte';
+	import type { NotificationPayload } from '$lib/schema/notification/payload';
 
 	const filter = $derived.by(() => ({
 		...getListFilter(appState.organizationId, { pageSize: 10 }),
@@ -16,10 +17,100 @@
 	const query = $derived.by(() => z.createQuery(queries.notification.list(filter)));
 	const notifications = $derived(query.data ?? []);
 	type NotificationItem = NonNullable<(typeof query)['data']>[number];
+	type NotificationGroup = {
+		key: string;
+		type: string;
+		referenceId: string;
+		notifications: NotificationItem[];
+		latestAt: number | null;
+		personNames: string[];
+		personIds: string[];
+		subjectTitle: string | null;
+		hasUnread: boolean;
+	};
+
 	const unreadCount = $derived(notifications.filter((n) => n.status === 'unread').length);
 
+	function groupKey(n: NotificationItem): string {
+		const payload = n.payload as NotificationPayload | null;
+		switch (n.type) {
+			case 'whatsapp_message':
+			case 'whatsapp_unread':
+				// group by person, not by individual message
+				return `${n.type}:${payload?.personId ?? n.id}`;
+			case 'generic':
+				// each generic notification stands alone
+				return n.id;
+			default:
+				return `${n.type}:${n.referenceId}`;
+		}
+	}
+
+	const groups = $derived.by(() => {
+		const map = new Map<string, NotificationGroup>();
+		for (const n of notifications) {
+			const key = groupKey(n);
+			const payload = n.payload as NotificationPayload | null;
+			if (!map.has(key)) {
+				map.set(key, {
+					key,
+					type: n.type,
+					referenceId: n.referenceId,
+					notifications: [],
+					latestAt: n.createdAt,
+					personNames: [],
+					personIds: [],
+					subjectTitle: payload?.subjectTitle ?? null,
+					hasUnread: false
+				});
+			}
+			const group = map.get(key)!;
+			group.notifications.push(n);
+			if (n.createdAt != null && (group.latestAt == null || n.createdAt > group.latestAt)) {
+				group.latestAt = n.createdAt;
+			}
+			if (n.status === 'unread') group.hasUnread = true;
+			const name = payload?.personName;
+			const pid = payload?.personId;
+			if (name && !group.personNames.includes(name)) group.personNames.push(name);
+			if (pid && !group.personIds.includes(pid)) group.personIds.push(pid);
+		}
+		return [...map.values()].sort((a, b) => (b.latestAt ?? 0) - (a.latestAt ?? 0));
+	});
+
+	// count of groups (not raw notifications) per type. used in the digest
+	const digestCounts = $derived.by(() => {
+		const counts: Record<string, number> = {};
+		for (const g of groups) counts[g.type] = (counts[g.type] ?? 0) + 1;
+		return counts;
+	});
+
+	function formatNames(names: string[]): string {
+		if (names.length === 0) return '';
+		if (names.length === 1) return names[0];
+		if (names.length === 2) return `${names[0]} and ${names[1]}`;
+		const others = names.length - 2;
+		return `${names[0]}, ${names[1]}, and ${others} other${others > 1 ? 's' : ''}`;
+	}
+
+	function subjectUrl(type: string, referenceId: string): string | null {
+		switch (type) {
+			case 'event_signup':
+				return `/events/${referenceId}`;
+			case 'petition_signup':
+				return `/petitions/${referenceId}`;
+			default:
+				return null;
+		}
+	}
+
+	function groupTimestamp(group: NotificationGroup): string {
+		if (group.latestAt == null) return '';
+		return formatShortTimestamp(group.latestAt, locale.current);
+	}
+
 	function label(n: NotificationItem): string {
-		const payload = n.payload as Record<string, unknown> | null;
+		const payload = n.payload as NotificationPayload | null;
 		switch (n.type) {
 			case 'event_signup':
 				return payload?.personName
@@ -31,9 +122,7 @@
 					: 'New petition signature';
 			case 'whatsapp_unread':
 			case 'whatsapp_message':
-				return payload?.threadId
-					? `New WhatsApp message in thread #${payload.threadId}`
-					: 'New WhatsApp message';
+				return payload?.personId ? 'New WhatsApp message' : 'New WhatsApp message';
 			case 'flow_notify_user':
 				return payload?.message ? String(payload.message) : 'Flow alert';
 			default:
