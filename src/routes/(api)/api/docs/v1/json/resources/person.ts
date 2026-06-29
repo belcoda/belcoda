@@ -79,7 +79,7 @@ export async function buildPersonResourceSpec() {
 					}
 				}
 			},
-			'/api/v1/person/bulk': {
+			/* '/api/v1/person/bulk': {
 				put: {
 					tags: ['Person'],
 					summary: 'Bulk upsert people from CSV',
@@ -105,7 +105,7 @@ export async function buildPersonResourceSpec() {
 						'500': { $ref: '#/components/responses/InternalServerError' }
 					}
 				}
-			},
+			}, */
 			'/api/v1/person/{personId}': {
 				get: {
 					tags: ['Person'],
@@ -254,7 +254,7 @@ export async function buildPersonResourceSpec() {
 			Person: personOpenApiSchema,
 			CreatePersonRequest: createPersonRequestOpenApiSchema,
 			UpdatePersonRequest: updatePersonRequestOpenApiSchema,
-			BulkUpsertPersonRequest: bulkUpsertPersonRequestOpenApiSchema,
+			/* BulkUpsertPersonRequest: bulkUpsertPersonRequestOpenApiSchema,
 			BulkUpsertPersonResponse: {
 				type: 'object',
 				required: ['queued'],
@@ -264,7 +264,7 @@ export async function buildPersonResourceSpec() {
 					}
 				},
 				additionalProperties: false
-			},
+			}, */
 			PersonNote: personNoteOpenApiSchema,
 			CreatePersonNoteRequest: createPersonNoteRequestOpenApiSchema,
 			UpdatePersonNoteRequest: updatePersonNoteRequestOpenApiSchema,
