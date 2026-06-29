@@ -48,11 +48,14 @@ export const readOrganizationRest = v.object({
 });
 export type ReadOrganizationRest = v.InferOutput<typeof readOrganizationRest>;
 
-export const readOrganizationZero = v.object({
-	...organizationSchema.entries,
-	createdAt: helpers.dateToTimestamp,
-	updatedAt: helpers.dateToTimestamp
-});
+export const readOrganizationZero = v.omit(
+	v.object({
+		...organizationSchema.entries,
+		createdAt: helpers.dateToTimestamp,
+		updatedAt: helpers.dateToTimestamp
+	}),
+	['stripeCustomerId', 'billingEmail']
+);
 export type ReadOrganizationZero = v.InferOutput<typeof readOrganizationZero>;
 
 export const createOrganization = v.object({
