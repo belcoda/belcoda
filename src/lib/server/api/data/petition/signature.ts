@@ -490,8 +490,8 @@ export async function signPetitionUnsafe({
 				sourceKey: `petition_signup:${insertedPetitionSignature.id}`,
 				payload: {
 					personName,
-					petitionTitle: petitionRecord.title,
-					petitionId: petitionRecord.id
+					personId: personRecord.id,
+					subjectTitle: petitionRecord.title
 				}
 			}
 		});

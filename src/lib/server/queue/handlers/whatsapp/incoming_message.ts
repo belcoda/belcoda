@@ -482,7 +482,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 						organizationId,
 						referenceId: insertedWhatsAppMessageId,
 						sourceKey: `whatsapp_message:${insertedWhatsAppMessageId}`,
-						payload: { personId }
+						payload: { personName: senderDisplayName, personId }
 					}
 				});
 			}
