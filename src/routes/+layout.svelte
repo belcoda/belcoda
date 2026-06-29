@@ -45,6 +45,9 @@
 			defer
 			src="https://cloud.umami.is/script.js"
 			data-website-id="5678fa17-8b31-4017-bcee-5c723cad11bc"
+			data-exclude-search="true"
+			data-performance="true"
+			data-exclude-hash="true"
 		></script>
 	{/if}
 </svelte:head>
