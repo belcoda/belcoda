@@ -56,7 +56,7 @@ const config = {
 					'https://app.cal.com', // Cal.com inline booking iframe
 					'https://www.facebook.com' // Facebook OAuth/embedded signup dialogs
 				],
-				'frame-ancestors': ["'self'"],
+				'frame-ancestors': ['*'],
 				'font-src': ["'self'"],
 				'object-src': ["'none'"],
 				'base-uri': ["'self'"],

@@ -236,9 +236,6 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
-	// Anti-clickjacking protection
-	response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-
 	// HSTS - Force HTTPS for 1 year
 	response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
