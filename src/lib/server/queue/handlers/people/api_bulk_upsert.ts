@@ -1,4 +1,4 @@
-import { parseImportCsv } from '$lib/utils/import';
+import { parseImportCsv } from '$lib/server/utils/person/import';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
