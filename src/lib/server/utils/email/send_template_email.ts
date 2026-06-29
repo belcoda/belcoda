@@ -30,7 +30,12 @@ export default async function sendTemplateEmail(options: {
 			MessageStream: options.stream
 		})
 	});
-	if (!result.ok) {
+	if (result.ok) {
+		const json = await result.json();
+		log.debug('Email sent successfully');
+		log.debug(json);
+		return json.MessageID;
+	} else {
 		if (result.status === 422) {
 			const json = await result.json();
 			log.error({ result: json }, 'Failed to send email (422 error)');
@@ -39,10 +44,5 @@ export default async function sendTemplateEmail(options: {
 			log.error(json);
 		}
 		throw new Error('Failed to send email');
-	} else {
-		const json = await result.json();
-		log.debug('Email sent successfully');
-		log.debug(json);
-		return json.MessageID;
 	}
 }
