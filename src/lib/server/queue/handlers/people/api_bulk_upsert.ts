@@ -17,11 +17,10 @@ export async function apiBulkUpsert({
 	if (!csvText) {
 		throw new Error(`Failed to fetch CSV text: ${csvUrl}`);
 	}
-	const parseResult = await parseImportCsv({
+	await parseImportCsv({
 		csvString: csvText,
 		organizationId,
 		addedFrom: { type: 'rest_api' },
 		upsert: true
 	});
-	log.debug({ parseResult }, 'Parsed CSV');
 }
