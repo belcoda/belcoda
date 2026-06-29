@@ -13,7 +13,7 @@ jobs:
   dependabot:
     runs-on: ubuntu-latest
     # Run for Dependabot PRs, or when dispatched manually for debugging.
-    if: ${{ github.actor == 'dependabot[bot]' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
       - uses: actions/checkout@v4
 
