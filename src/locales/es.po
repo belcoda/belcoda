@@ -2520,9 +2520,8 @@ msgstr ""
 msgid "Create New Email"
 msgstr ""
 
-#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
-msgid "Belcoda icon"
-msgstr ""
+#~ msgid "Belcoda icon"
+#~ msgstr ""
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
@@ -2575,6 +2574,7 @@ msgstr ""
 msgid "The petition you are looking for could not be found."
 msgstr ""
 
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 #: src/routes/(page)/page/[organizationSlug]/petitions/+error.svelte
 msgid "Return to Home"
 msgstr ""
@@ -5065,18 +5065,17 @@ msgstr "🎨 Pegatina"
 #. 0: formatNumber(paginatedPersonList.items.length, locale.current)
 #. 0: formatNumber(paginatedEvents.items.length, locale.current)
 #. 0: formatNumber(paginatedPetitions.items.length, locale.current)
+#. 0: formatNumber(paginatedSignups.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
-#. 0: formatNumber(paginatedTeams.items.length, locale.current)
-#. 0: formatNumber(paginatedTags.items.length, locale.current)
+#. 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
-#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
-#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
 msgid "{0} shown"
 msgstr "{0} mostrados"
@@ -5464,4 +5463,12 @@ msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Dismiss"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "Event Not Found"
+msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "The event you are looking for could not be found."
 msgstr ""
