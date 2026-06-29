@@ -33,7 +33,6 @@ const config = {
 				'default-src': ["'self'"],
 				'script-src': [
 					"'self'",
-					"'strict-dynamic'",
 					'https://www.googletagmanager.com', // Google Tag Manager bootstrap script
 					'https://connect.facebook.net', // Facebook SDK for WhatsApp embedded signup
 					'https://app.cal.com' // Cal.com booking widget scripts
