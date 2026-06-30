@@ -30,7 +30,7 @@
 		switch (n.type) {
 			case 'whatsapp_message':
 			case 'whatsapp_unread':
-				return `${n.type}:${payload?.personId ?? n.id}`;
+				return `whatsapp:${payload?.personId ?? n.id}`;
 			case 'generic':
 				return n.id;
 			default:
