@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import { drizzle } from '$lib/server/db';
 import { petition, petitionSignature, organization, person } from '$lib/schema/drizzle';
 import { eq, and, isNull, count, desc } from 'drizzle-orm';
-import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
 import pino from '$lib/pino';
 import { superValidate } from 'sveltekit-superforms';

@@ -6,5 +6,5 @@ if (!env.STRIPE_SECRET_KEY) {
 }
 
 export const stripeClient = new Stripe(env.STRIPE_SECRET_KEY, {
-	apiVersion: '2025-11-17.clover'
+	apiVersion: '2026-05-27.dahlia'
 });
