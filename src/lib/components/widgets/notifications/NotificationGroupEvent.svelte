@@ -27,7 +27,22 @@
 			)
 		);
 	}
+
+	function extraSignupCount(): number {
+		return group.personNames.length - 2;
+	}
 </script>
+
+{#snippet personNameLink(i: number)}
+	{#if group.personIds[i]}
+		<a
+			href={resolve(`/community/${group.personIds[i]}`)}
+			class="font-medium text-foreground hover:underline">{group.personNames[i]}</a
+		>
+	{:else}
+		{group.personNames[i]}
+	{/if}
+{/snippet}
 
 <div class="flex items-start gap-2">
 	<div
@@ -52,26 +67,19 @@
 			{/if}
 		</div>
 		<p class="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-			{#each group.personNames.slice(0, 2) as name, i (name)}
-				{#if i > 0}{i === group.personNames.length - 1 || group.personNames.length > 2
-						? ', '
-						: ` ${t`and`} `}{/if}
-				{#if group.personIds[i]}
-					<a
-						href={resolve(`/community/${group.personIds[i]}`)}
-						class="font-medium text-foreground hover:underline">{name}</a
-					>
-				{:else}
-					{name}
-				{/if}
-			{/each}
-			{#if group.personNames.length > 2}
-				{@const extra = group.personNames.length - 2}
-				, {t`and`}
-				{extra}
-				{extra > 1 ? t`others` : t`other`}
+			{#if group.personNames.length === 0}
+				{t`New signup`}
+			{:else if group.personNames.length === 1}
+				{@render personNameLink(0)} {t`signed up`}
+			{:else if group.personNames.length === 2}
+				{@render personNameLink(0)} {t`and`} {@render personNameLink(1)} {t`signed up (plural)`}
+			{:else if extraSignupCount() === 1}
+				{@render personNameLink(0)}, {@render personNameLink(1)}{t`, and 1 other signed up`}
+			{:else}
+				{@render personNameLink(0)}, {@render personNameLink(
+					1
+				)}{t`, and ${extraSignupCount()} others signed up`}
 			{/if}
-			{group.personNames.length > 0 ? ` ${t`signed up`}` : t`New signup`}
 		</p>
 		<div class="mt-1.5 flex items-center gap-1.5">
 			<a
