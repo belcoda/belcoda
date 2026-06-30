@@ -5523,7 +5523,6 @@ msgid "signups"
 msgstr "signups"
 
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
-#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "messages"
 msgstr "messages"
 
@@ -5531,7 +5530,6 @@ msgstr "messages"
 msgid "alerts"
 msgstr "alerts"
 
-#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "notifications"
 msgstr "notifications"
@@ -5630,3 +5628,23 @@ msgstr "{0}, {1}, and 1 other signed the petition"
 #: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "{0}, {1}, and {2} others signed the petition"
 msgstr "{0}, {1}, and {2} others signed the petition"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "signup"
+msgstr "signup"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "signature"
+msgstr "signature"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "message"
+msgstr "message"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "alert"
+msgstr "alert"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "notification"
+msgstr "notification"

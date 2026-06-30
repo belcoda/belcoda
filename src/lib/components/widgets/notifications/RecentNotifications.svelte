@@ -81,34 +81,53 @@
 		return counts;
 	});
 
-	type DigestEntry = { label: string; dotClass: string };
+	type DigestKind = 'signup' | 'signature' | 'message' | 'alert' | 'notification';
+	type DigestEntry = { kind: DigestKind; dotClass: string };
 	const digestEntries: Record<string, DigestEntry> = {
-		event_signup: { label: t`signups`, dotClass: 'bg-primary' },
-		petition_signup: { label: t`signatures`, dotClass: 'bg-violet-500' },
-		whatsapp_message: { label: t`messages`, dotClass: 'bg-emerald-500' },
-		whatsapp_unread: { label: t`messages`, dotClass: 'bg-emerald-500' },
-		flow_notify_user: { label: t`alerts`, dotClass: 'bg-amber-500' },
-		generic: { label: t`notifications`, dotClass: 'bg-muted-foreground' }
+		event_signup: { kind: 'signup', dotClass: 'bg-primary' },
+		petition_signup: { kind: 'signature', dotClass: 'bg-violet-500' },
+		whatsapp_message: { kind: 'message', dotClass: 'bg-emerald-500' },
+		whatsapp_unread: { kind: 'message', dotClass: 'bg-emerald-500' },
+		flow_notify_user: { kind: 'alert', dotClass: 'bg-amber-500' },
+		generic: { kind: 'notification', dotClass: 'bg-muted-foreground' }
 	};
 
+	function digestLabel(kind: DigestKind, count: number): string {
+		void locale.current;
+		switch (kind) {
+			case 'signup':
+				return count === 1 ? t`signup` : t`signups`;
+			case 'signature':
+				return count === 1 ? t`signature` : t`signatures`;
+			case 'message':
+				return count === 1 ? t`message` : t`messages`;
+			case 'alert':
+				return count === 1 ? t`alert` : t`alerts`;
+			case 'notification':
+				return count === 1 ? t`notification` : t`notifications`;
+		}
+	}
+
 	const digest = $derived.by(() => {
-		const merged: { key: string; label: string; dotClass: string; count: number }[] = [];
+		const merged: { key: string; kind: DigestKind; dotClass: string; count: number }[] = [];
 		const seen = new SvelteSet<string>();
 		for (const [type, count] of Object.entries(digestCounts)) {
-			const entry = digestEntries[type] ?? {
-				label: t`notifications`,
-				dotClass: 'bg-muted-foreground'
-			};
+			const entry =
+				digestEntries[type] ??
+				({
+					kind: 'notification',
+					dotClass: 'bg-muted-foreground'
+				} satisfies DigestEntry);
 			const chipKey = type.startsWith('whatsapp') ? 'whatsapp' : type;
 			const existing = merged.find((d) => d.key === chipKey);
 			if (existing) {
 				existing.count += count;
 			} else if (!seen.has(chipKey)) {
 				seen.add(chipKey);
-				merged.push({ key: chipKey, label: entry.label, dotClass: entry.dotClass, count });
+				merged.push({ key: chipKey, kind: entry.kind, dotClass: entry.dotClass, count });
 			}
 		}
-		return merged;
+		return merged.map((chip) => ({ ...chip, label: digestLabel(chip.kind, chip.count) }));
 	});
 
 	function fallbackTimestamp(group: NotificationGroup): string {
