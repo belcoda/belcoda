@@ -29,6 +29,10 @@ inputs:
     description: 'Auto-close findings that are no longer present in the report'
     required: false
     default: 'true'
+  skip_if_unconfigured:
+    description: 'Warn and skip instead of failing when defectdojo_url or token is missing'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -44,12 +48,18 @@ runs:
         DD_ENGAGEMENT: ${{ inputs.engagement_name }}
         DD_ENVIRONMENT: ${{ inputs.environment }}
         DD_CLOSE_OLD: ${{ inputs.close_old_findings }}
+        DD_SKIP_IF_UNCONFIGURED: ${{ inputs.skip_if_unconfigured }}
+        DD_UNTRUSTED: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
       run: |
         set -euo pipefail
 
         if [ -z "${DEFECTDOJO_URL:-}" ] || [ -z "${DD_TOKEN:-}" ]; then
-          echo "::warning::Skipping DefectDojo upload — defectdojo_url and token are not available"
-          exit 0
+          if [ "${DD_SKIP_IF_UNCONFIGURED}" = "true" ] || [ "${DD_UNTRUSTED}" = "true" ]; then
+            echo "::warning::Skipping DefectDojo upload — defectdojo_url and token are not available"
+            exit 0
+          fi
+          echo "::error::defectdojo_url and token inputs must be set (check repo secrets are mapped)"
+          exit 1
         fi
 
         if [ ! -f "$DD_FILE" ]; then
