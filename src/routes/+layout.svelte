@@ -11,6 +11,7 @@
 	import CookieBanner from '$lib/components/widgets/CookieBanner.svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { updated } from '$app/state';
+	import { dev } from '$app/environment';
 
 	const { data, children } = $props();
 	/* svelte-ignore state_referenced_locally */
@@ -37,6 +38,17 @@
 			gtag('js', new Date());
 			gtag('config', 'AW-17963790839');
 		</script>
+	{/if}
+	{#if !dev}
+		<!-- umami doesn't require cookie consent, because it's a privacy-focused analytics tool -->
+		<script
+			defer
+			src="https://cloud.umami.is/script.js"
+			data-website-id="5678fa17-8b31-4017-bcee-5c723cad11bc"
+			data-exclude-search="true"
+			data-performance="true"
+			data-exclude-hash="true"
+		></script>
 	{/if}
 </svelte:head>
 

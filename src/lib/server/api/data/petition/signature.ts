@@ -47,6 +47,7 @@ import { readPetitionSignatureQuery } from '$lib/zero/query/petition_signature/r
 import type { InferOutput } from 'valibot';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { createWhatsAppMessage } from '../whatsapp/message';
+import { createNotification } from '$lib/server/api/data/notification/notification';
 
 async function applyPetitionTagsToPersonUnsafe({
 	tx,
@@ -477,7 +478,24 @@ export async function signPetitionUnsafe({
 		personId: personRecord.id,
 		organizationId: organizationRecord.id
 	});
-	//TODO: Implement whatsapp notification
+	if (!skipNotifications && !existingPetitionSignature) {
+		const personName =
+			[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') || null;
+		await createNotification({
+			tx,
+			args: {
+				type: 'petition_signup',
+				organizationId: organizationRecord.id,
+				referenceId: petitionRecord.id,
+				sourceKey: `petition_signup:${insertedPetitionSignature.id}`,
+				payload: {
+					personName,
+					petitionTitle: petitionRecord.title,
+					petitionId: petitionRecord.id
+				}
+			}
+		});
+	}
 
 	const { organizationId, ...sigWebhookData } = insertedPetitionSignature;
 	const queueSig = await getQueue();

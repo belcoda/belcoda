@@ -6,7 +6,7 @@ export const notificationStatus = v.picklist(notificationStatuses);
 export type NotificationStatus = v.InferOutput<typeof notificationStatus>;
 
 export const createNotificationRoutingSchema = v.object({
-	recipientUserIds: v.optional(v.array(helpers.uuid), []),
+	recipientUserIds: v.optional(v.array(helpers.uuid)),
 	creatorUserId: v.optional(v.nullable(helpers.uuid), null)
 });
 export type CreateNotificationRoutingSchema = v.InferOutput<typeof createNotificationRoutingSchema>;
