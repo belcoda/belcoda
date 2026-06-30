@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/sveltekit';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 
 import { env } from '$env/dynamic/public';
-const { PUBLIC_ROOT_DOMAIN } = env;
+const { PUBLIC_ROOT_DOMAIN, PUBLIC_ZERO_SERVER } = env;
 import { env as privateEnv } from '$env/dynamic/private';
 const { EASYCRON_SECRET } = privateEnv;
 import { svelteKitHandler } from 'better-auth/svelte-kit';
@@ -17,6 +17,7 @@ const log = pino(import.meta.url);
 import { sequence } from '@sveltejs/kit/hooks';
 import { LOCALES, type Locale } from '$lib/utils/language';
 import { buildBetterAuth } from '$lib/server/auth';
+import { augmentContentSecurityPolicy, getZeroSyncConnectSources } from '$lib/server/csp';
 
 import * as main from './locales/main.loader.server.svelte.js';
 import * as js from './locales/js.loader.server.js';
@@ -268,6 +269,14 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const contentType = response.headers.get('content-type') ?? '';
 	if (contentType.includes('text/html')) {
 		response.headers.set('Cache-Control', 'no-cache');
+
+		const csp = response.headers.get('Content-Security-Policy');
+		if (csp) {
+			const augmented = augmentContentSecurityPolicy(csp, {
+				extraConnectSources: getZeroSyncConnectSources(PUBLIC_ZERO_SERVER)
+			});
+			response.headers.set('Content-Security-Policy', augmented);
+		}
 	}
 
 	return response;
