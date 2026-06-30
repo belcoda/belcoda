@@ -437,7 +437,6 @@ msgstr "Owner"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 #: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
-#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -5581,13 +5580,13 @@ msgstr "New signature"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up (plural)"
-msgstr "signed up"
+msgstr "signed up (plural)"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid ", and 1 other signed up"
 msgstr ", and 1 other signed up"
 
-#. 0: extraSignupCount()
+#. 0: formattedExtraSignupCount()
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid ", and {0} others signed up"
 msgstr ", and {0} others signed up"

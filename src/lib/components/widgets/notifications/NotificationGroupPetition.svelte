@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
 	import { locale, t } from '$lib/index.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
-	import type { NotificationGroup } from './types';
+	import type { NotificationGroup, NotificationGroupPerson } from './types';
 
 	const { group }: { group: NotificationGroup } = $props();
 
@@ -28,6 +29,16 @@
 	}
 </script>
 
+{#snippet personNameLink(person: NotificationGroupPerson)}
+	{#if person.id}
+		<a href={resolve(`/community/${person.id}`)} class="font-medium text-foreground hover:underline"
+			>{person.name}</a
+		>
+	{:else}
+		{person.name}
+	{/if}
+{/snippet}
+
 <div class="flex items-start gap-2">
 	<div
 		class="flex size-[26px] shrink-0 items-center justify-center rounded-md bg-violet-500/10 text-violet-600"
@@ -37,7 +48,7 @@
 	<div class="min-w-0 flex-1">
 		<div class="flex items-baseline gap-1.5">
 			<a
-				href="/petitions/{group.referenceId}"
+				href={resolve(`/petitions/${group.referenceId}`)}
 				class="truncate text-[12px] leading-snug font-medium hover:underline"
 			>
 				{group.subjectTitle ?? t`Petition`}
@@ -51,30 +62,23 @@
 			{/if}
 		</div>
 		<p class="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-			{#each group.personNames.slice(0, 2) as name, i (name)}
-				{#if i > 0}{i === group.personNames.length - 1 || group.personNames.length > 2
+			{#each group.people.slice(0, 2) as person, i (person.id ?? person.name)}
+				{#if i > 0}{i === group.people.length - 1 || group.people.length > 2
 						? ', '
 						: ` ${t`and`} `}{/if}
-				{#if group.personIds[i]}
-					<a
-						href="/community/{group.personIds[i]}"
-						class="font-medium text-foreground hover:underline">{name}</a
-					>
-				{:else}
-					{name}
-				{/if}
+				{@render personNameLink(person)}
 			{/each}
-			{#if group.personNames.length > 2}
-				{@const extra = group.personNames.length - 2}
+			{#if group.people.length > 2}
+				{@const extra = group.people.length - 2}
 				, {t`and`}
 				{extra}
 				{extra > 1 ? t`others` : t`other`}
 			{/if}
-			{group.personNames.length > 0 ? ` ${t`signed`}` : t`New signature`}
+			{group.people.length > 0 ? ` ${t`signed`}` : t`New signature`}
 		</p>
 		<div class="mt-1.5 flex items-center gap-1.5">
 			<a
-				href="/petitions/{group.referenceId}"
+				href={resolve(`/petitions/${group.referenceId}`)}
 				onclick={markAsRead}
 				class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 			>

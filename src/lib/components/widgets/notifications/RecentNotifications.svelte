@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import BellIcon from '@lucide/svelte/icons/bell';
@@ -38,7 +39,7 @@
 	}
 
 	const groups = $derived.by(() => {
-		const map = new Map<string, NotificationGroup>();
+		const map = new SvelteMap<string, NotificationGroup>();
 		for (const n of notifications) {
 			const key = groupKey(n);
 			const payload = n.payload as NotificationPayload | null;
@@ -49,8 +50,7 @@
 					referenceId: n.referenceId,
 					notifications: [],
 					latestAt: n.createdAt,
-					personNames: [],
-					personIds: [],
+					people: [],
 					subjectTitle: payload?.subjectTitle ?? null,
 					hasUnread: false
 				});
@@ -63,8 +63,14 @@
 			if (n.status === 'unread') group.hasUnread = true;
 			const name = payload?.personName;
 			const pid = payload?.personId;
-			if (name && !group.personNames.includes(name)) group.personNames.push(name);
-			if (pid && !group.personIds.includes(pid)) group.personIds.push(pid);
+			if (name) {
+				const person = group.people.find((person) => person.id === pid || person.name === name);
+				if (person) {
+					person.id ??= pid ?? null;
+				} else {
+					group.people.push({ name, id: pid ?? null });
+				}
+			}
 		}
 		return [...map.values()].sort((a, b) => (b.latestAt ?? 0) - (a.latestAt ?? 0));
 	});
@@ -87,7 +93,7 @@
 
 	const digest = $derived.by(() => {
 		const merged: { key: string; label: string; dotClass: string; count: number }[] = [];
-		const seen = new Set<string>();
+		const seen = new SvelteSet<string>();
 		for (const [type, count] of Object.entries(digestCounts)) {
 			const entry = digestEntries[type] ?? {
 				label: t`notifications`,

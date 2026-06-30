@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import { locale, t } from '$lib/index.svelte';
 	import { appState } from '$lib/state.svelte';
@@ -8,6 +9,7 @@
 	import type { NotificationGroup } from './types';
 
 	const { group }: { group: NotificationGroup } = $props();
+	const person = $derived(group.people[0]);
 
 	function groupTimestamp(): string {
 		if (group.latestAt == null) return '';
@@ -35,23 +37,23 @@
 		<MessageCircleIcon class="size-3.5" />
 	</div>
 	<div class="min-w-0 flex-1">
-		{#if group.personIds[0]}
+		{#if person?.id}
 			<a
-				href="/community/{group.personIds[0]}"
+				href={resolve(`/community/${person.id}`)}
 				class="text-[12px] leading-snug font-medium hover:underline"
 			>
-				{group.personNames[0] ?? t`Unknown`}
+				{person.name}
 			</a>
 		{:else}
-			<span class="text-[12px] leading-snug font-medium">{group.personNames[0] ?? t`Unknown`}</span>
+			<span class="text-[12px] leading-snug font-medium">{person?.name ?? t`Unknown`}</span>
 		{/if}
 		<p class="mt-0.5 text-[11px] leading-snug text-muted-foreground">
 			{t`Sent a WhatsApp message`}
 		</p>
 		<div class="mt-1.5 flex items-center gap-1.5">
-			{#if group.personIds[0]}
+			{#if person?.id}
 				<a
-					href="/community/{group.personIds[0]}"
+					href={resolve(`/community/${person.id}`)}
 					onclick={markAsRead}
 					class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 				>

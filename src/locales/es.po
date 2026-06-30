@@ -437,7 +437,6 @@ msgstr ""
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 #: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
-#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Unknown"
 msgstr ""
 
@@ -5537,7 +5536,7 @@ msgstr "otro"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up"
-msgstr "se inscribió"
+msgstr "se inscribieron"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "New signup"
@@ -5557,13 +5556,13 @@ msgstr "Nueva firma"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up (plural)"
-msgstr "se inscribieron"
+msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid ", and 1 other signed up"
 msgstr ", y 1 otro se inscribieron"
 
-#. 0: extraSignupCount()
+#. 0: formattedExtraSignupCount()
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid ", and {0} others signed up"
 msgstr ", y {0} otros se inscribieron"

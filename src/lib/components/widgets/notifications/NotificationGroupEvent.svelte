@@ -6,7 +6,7 @@
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
-	import type { NotificationGroup } from './types';
+	import type { NotificationGroup, NotificationGroupPerson } from './types';
 
 	const { group }: { group: NotificationGroup } = $props();
 
@@ -29,18 +29,21 @@
 	}
 
 	function extraSignupCount(): number {
-		return group.personNames.length - 2;
+		return group.people.length - 2;
+	}
+
+	function formattedExtraSignupCount(): string {
+		return extraSignupCount().toString();
 	}
 </script>
 
-{#snippet personNameLink(i: number)}
-	{#if group.personIds[i]}
-		<a
-			href={resolve(`/community/${group.personIds[i]}`)}
-			class="font-medium text-foreground hover:underline">{group.personNames[i]}</a
+{#snippet personNameLink(person: NotificationGroupPerson)}
+	{#if person.id}
+		<a href={resolve(`/community/${person.id}`)} class="font-medium text-foreground hover:underline"
+			>{person.name}</a
 		>
 	{:else}
-		{group.personNames[i]}
+		{person.name}
 	{/if}
 {/snippet}
 
@@ -67,18 +70,23 @@
 			{/if}
 		</div>
 		<p class="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-			{#if group.personNames.length === 0}
+			{#if group.people.length === 0}
 				{t`New signup`}
-			{:else if group.personNames.length === 1}
-				{@render personNameLink(0)} {t`signed up`}
-			{:else if group.personNames.length === 2}
-				{@render personNameLink(0)} {t`and`} {@render personNameLink(1)} {t`signed up (plural)`}
+			{:else if group.people.length === 1}
+				{@render personNameLink(group.people[0])} {t`signed up`}
+			{:else if group.people.length === 2}
+				{@render personNameLink(group.people[0])}
+				{t`and`}
+				{@render personNameLink(group.people[1])}
+				{t`signed up (plural)`}
 			{:else if extraSignupCount() === 1}
-				{@render personNameLink(0)}, {@render personNameLink(1)}{t`, and 1 other signed up`}
+				{@render personNameLink(group.people[0])}, {@render personNameLink(
+					group.people[1]
+				)}{t`, and 1 other signed up`}
 			{:else}
-				{@render personNameLink(0)}, {@render personNameLink(
-					1
-				)}{t`, and ${extraSignupCount()} others signed up`}
+				{@render personNameLink(group.people[0])}, {@render personNameLink(
+					group.people[1]
+				)}{t`, and ${formattedExtraSignupCount()} others signed up`}
 			{/if}
 		</p>
 		<div class="mt-1.5 flex items-center gap-1.5">

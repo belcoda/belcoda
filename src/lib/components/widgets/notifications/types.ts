@@ -4,14 +4,18 @@ export type NotificationGroupItem = {
 	payload: unknown;
 };
 
+export type NotificationGroupPerson = {
+	name: string;
+	id: string | null;
+};
+
 export type NotificationGroup = {
 	key: string;
 	type: string;
 	referenceId: string;
 	notifications: NotificationGroupItem[];
 	latestAt: number | null;
-	personNames: string[];
-	personIds: string[];
+	people: NotificationGroupPerson[];
 	subjectTitle: string | null;
 	hasUnread: boolean;
 };
