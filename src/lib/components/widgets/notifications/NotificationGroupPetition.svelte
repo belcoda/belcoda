@@ -54,7 +54,7 @@
 			{#each group.personNames.slice(0, 2) as name, i (name)}
 				{#if i > 0}{i === group.personNames.length - 1 || group.personNames.length > 2
 						? ', '
-						: ' and '}{/if}
+						: ` ${t`and`} `}{/if}
 				{#if group.personIds[i]}
 					<a
 						href="/community/{group.personIds[i]}"
@@ -66,9 +66,11 @@
 			{/each}
 			{#if group.personNames.length > 2}
 				{@const extra = group.personNames.length - 2}
-				, and {extra} other{extra > 1 ? 's' : ''}
+				, {t`and`}
+				{extra}
+				{extra > 1 ? t`others` : t`other`}
 			{/if}
-			{group.personNames.length > 0 ? ' signed' : 'New signature'}
+			{group.personNames.length > 0 ? ` ${t`signed`}` : t`New signature`}
 		</p>
 		<div class="mt-1.5 flex items-center gap-1.5">
 			<a
@@ -76,7 +78,7 @@
 				onclick={markAsRead}
 				class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 			>
-				View petition
+				{t`View petition`}
 			</a>
 			<span class="ml-auto text-[10px] text-muted-foreground/70">{groupTimestamp()}</span>
 		</div>

@@ -256,6 +256,7 @@ msgstr "Sistema"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -436,6 +437,8 @@ msgid "Owner"
 msgstr "Proprietário"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Unknown"
 msgstr "Desconhecido"
 
@@ -2691,6 +2694,7 @@ msgid "Recent Signatures"
 msgstr "Assinaturas recentes"
 
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "signatures"
 msgstr "assinaturas"
 
@@ -4445,7 +4449,7 @@ msgstr "Obrigado por assinar «{0}». A sua assinatura foi registada. Clique no 
 msgid "Your signature on \"{0}\" was recorded"
 msgstr "A sua assinatura em «{0}» foi registada"
 
-#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
 msgid "View petition"
 msgstr "Ver petição"
@@ -4875,6 +4879,7 @@ msgid "Time"
 msgstr "Hora"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Event"
 msgstr "Evento"
@@ -4930,6 +4935,7 @@ msgid "Sender"
 msgstr "Remetente"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "Petition"
 msgstr "Petição"
 
@@ -5441,6 +5447,7 @@ msgstr "Assinatura de petição"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "Notification"
 msgstr "Notificação"
 
@@ -5484,18 +5491,84 @@ msgstr "Evento não encontrado"
 msgid "The event you are looking for could not be found."
 msgstr "O evento que você está procurando não foi encontrado."
 
-#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "View event"
-msgstr ""
+msgstr "Ver evento"
 
-#: src/lib/components/widgets/notifications/RecentNotifications.svelte
-msgid "View signups"
-msgstr ""
+#~ msgid "View signups"
+#~ msgstr ""
 
-#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Sent a WhatsApp message"
-msgstr ""
+msgstr "Enviou uma mensagem de WhatsApp"
+
+#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
+msgid "View person"
+msgstr "Ver pessoa"
 
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
-msgid "View person"
-msgstr ""
+msgid "signups"
+msgstr "inscrições"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "messages"
+msgstr "mensagens"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "alerts"
+msgstr "alertas"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "notifications"
+msgstr "notificações"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "Recent notifications"
+msgstr "Notificações recentes"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "No notifications yet"
+msgstr "Sem notificações ainda"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "and"
+msgstr "e"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "others"
+msgstr "outros"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "other"
+msgstr "outro"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "signed up"
+msgstr "inscreveu-se"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "New signup"
+msgstr "Nova inscrição"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "Email all"
+msgstr "Enviar email a todos"
+
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "signed"
+msgstr "assinou"
+
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "New signature"
+msgstr "Nova assinatura"
