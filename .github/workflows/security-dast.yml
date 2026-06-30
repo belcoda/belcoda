@@ -10,12 +10,12 @@ on:
     - cron: '0 3 * * 1' # weekly, Monday 03:00 UTC
   workflow_dispatch:
 
-permissions:
-  issues: write
-
 jobs:
   zap:
     name: ZAP Baseline
+    permissions:
+      contents: read
+      issues: write
     # Run after a successful staging deploy, on the weekly schedule, or manually.
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
@@ -44,6 +44,8 @@ jobs:
 
   nuclei:
     name: Nuclei
+    permissions:
+      contents: read
     # Weekly / manual only — don't re-scan on every deploy (ZAP covers that).
     if: ${{ github.event_name != 'workflow_run' }}
     runs-on: ubuntu-latest
