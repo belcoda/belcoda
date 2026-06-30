@@ -8,6 +8,7 @@
 	import queries from '$lib/zero/query/index';
 	import { z } from '$lib/zero.svelte';
 	import type { NotificationPayload } from '$lib/schema/notification/payload';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
@@ -110,6 +111,19 @@
 	function groupTimestamp(group: NotificationGroup): string {
 		if (group.latestAt == null) return '';
 		return formatShortTimestamp(group.latestAt, locale.current);
+	}
+
+	async function markGroupAsRead(group: NotificationGroup) {
+		const unread = group.notifications.filter((n) => n.status === 'unread');
+		await Promise.all(
+			unread.map((n) =>
+				z.mutate(
+					mutators.notification.markAsRead({
+						metadata: { organizationId: appState.organizationId, notificationId: n.id }
+					})
+				)
+			)
+		);
 	}
 
 	type DigestEntry = { label: string; dotClass: string };
@@ -236,12 +250,14 @@
 									<div class="mt-1.5 flex items-center gap-1.5">
 										<a
 											href="/events/{group.referenceId}"
+											onclick={() => markGroupAsRead(group)}
 											class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 										>
 											View event
 										</a>
 										<a
 											href="/events/{group.referenceId}/signups"
+											onclick={() => markGroupAsRead(group)}
 											class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 										>
 											Email all
@@ -303,6 +319,7 @@
 									<div class="mt-1.5 flex items-center gap-1.5">
 										<a
 											href="/petitions/{group.referenceId}"
+											onclick={() => markGroupAsRead(group)}
 											class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 										>
 											View petition
@@ -340,6 +357,7 @@
 										{#if group.personIds[0]}
 											<a
 												href="/community/{group.personIds[0]}"
+												onclick={() => markGroupAsRead(group)}
 												class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 											>
 												View person
