@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
 	import { locale, t } from '$lib/index.svelte';
 	import { appState } from '$lib/state.svelte';
@@ -37,7 +38,7 @@
 	<div class="min-w-0 flex-1">
 		<div class="flex items-baseline gap-1.5">
 			<a
-				href="/events/{group.referenceId}"
+				href={resolve(`/events/${group.referenceId}`)}
 				class="truncate text-[12px] leading-snug font-medium hover:underline"
 			>
 				{group.subjectTitle ?? t`Event`}
@@ -57,7 +58,7 @@
 						: ` ${t`and`} `}{/if}
 				{#if group.personIds[i]}
 					<a
-						href="/community/{group.personIds[i]}"
+						href={resolve(`/community/${group.personIds[i]}`)}
 						class="font-medium text-foreground hover:underline">{name}</a
 					>
 				{:else}
@@ -74,14 +75,14 @@
 		</p>
 		<div class="mt-1.5 flex items-center gap-1.5">
 			<a
-				href="/events/{group.referenceId}"
+				href={resolve(`/events/${group.referenceId}`)}
 				onclick={markAsRead}
 				class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 			>
 				{t`View event`}
 			</a>
 			<a
-				href="/events/{group.referenceId}/signups"
+				href={resolve(`/events/${group.referenceId}/signups`)}
 				onclick={markAsRead}
 				class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 			>
