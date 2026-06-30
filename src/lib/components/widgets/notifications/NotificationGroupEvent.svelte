@@ -9,14 +9,6 @@
 
 	const { group }: { group: NotificationGroup } = $props();
 
-	function formatNames(names: string[]): string {
-		if (names.length === 0) return '';
-		if (names.length === 1) return names[0];
-		if (names.length === 2) return `${names[0]} ${t`and`} ${names[1]}`;
-		const others = names.length - 2;
-		return `${names[0]}, ${names[1]}, ${t`and`} ${others} ${others > 1 ? t`others` : t`other`}`;
-	}
-
 	function groupTimestamp(): string {
 		if (group.latestAt == null) return '';
 		return formatShortTimestamp(group.latestAt, locale.current);
