@@ -8,6 +8,13 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import type { NotificationGroup, NotificationGroupPerson } from './types';
 
+	const SIGNER_ONE_MARKER = '__SIGNER_ONE__';
+	const SIGNER_TWO_MARKER = '__SIGNER_TWO__';
+
+	type SignatureMessagePart =
+		| { type: 'text'; value: string }
+		| { type: 'person'; value: NotificationGroupPerson };
+
 	const { group }: { group: NotificationGroup } = $props();
 
 	function groupTimestamp(): string {
@@ -26,6 +33,41 @@
 				)
 			)
 		);
+	}
+
+	function extraSignerCount(): number {
+		return group.people.length - 2;
+	}
+
+	function formattedExtraSignerCount(): string {
+		return extraSignerCount().toString();
+	}
+
+	function signatureMessage(): string {
+		if (group.people.length === 0) return t`New signature`;
+		if (group.people.length === 1) return t`${SIGNER_ONE_MARKER} signed the petition`;
+		if (group.people.length === 2) {
+			return t`${SIGNER_ONE_MARKER} and ${SIGNER_TWO_MARKER} signed the petition`;
+		}
+		if (extraSignerCount() === 1) {
+			return t`${SIGNER_ONE_MARKER}, ${SIGNER_TWO_MARKER}, and 1 other signed the petition`;
+		}
+		return t`${SIGNER_ONE_MARKER}, ${SIGNER_TWO_MARKER}, and ${formattedExtraSignerCount()} others signed the petition`;
+	}
+
+	function signatureMessageParts(): SignatureMessagePart[] {
+		return signatureMessage()
+			.split(/(__SIGNER_ONE__|__SIGNER_TWO__)/g)
+			.flatMap((part): SignatureMessagePart[] => {
+				if (!part) return [];
+				if (part === SIGNER_ONE_MARKER && group.people[0]) {
+					return [{ type: 'person', value: group.people[0] }];
+				}
+				if (part === SIGNER_TWO_MARKER && group.people[1]) {
+					return [{ type: 'person', value: group.people[1] }];
+				}
+				return [{ type: 'text', value: part }];
+			});
 	}
 </script>
 
@@ -62,19 +104,13 @@
 			{/if}
 		</div>
 		<p class="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-			{#each group.people.slice(0, 2) as person, i (person.id ?? person.name)}
-				{#if i > 0}{i === group.people.length - 1 || group.people.length > 2
-						? ', '
-						: ` ${t`and`} `}{/if}
-				{@render personNameLink(person)}
+			{#each signatureMessageParts() as part, i (i)}
+				{#if part.type === 'person'}
+					{@render personNameLink(part.value)}
+				{:else}
+					{part.value}
+				{/if}
 			{/each}
-			{#if group.people.length > 2}
-				{@const extra = group.people.length - 2}
-				, {t`and`}
-				{extra}
-				{extra > 1 ? t`others` : t`other`}
-			{/if}
-			{group.people.length > 0 ? ` ${t`signed`}` : t`New signature`}
 		</p>
 		<div class="mt-1.5 flex items-center gap-1.5">
 			<a

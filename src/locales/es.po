@@ -5521,18 +5521,14 @@ msgid "No notifications yet"
 msgstr "Aún no hay notificaciones"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "and"
 msgstr "y"
 
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
-msgid "others"
-msgstr "otros"
+#~ msgid "others"
+#~ msgstr "otros"
 
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
-msgid "other"
-msgstr "otro"
+#~ msgid "other"
+#~ msgstr "otro"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up"
@@ -5546,9 +5542,8 @@ msgstr "Nueva inscripción"
 msgid "Email all"
 msgstr "Enviar a todos"
 
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
-msgid "signed"
-msgstr "firmó"
+#~ msgid "signed"
+#~ msgstr "firmó"
 
 #: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "New signature"
@@ -5591,3 +5586,23 @@ msgstr ""
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "About is required and cannot be empty"
 msgstr ""
+
+#. 0: SIGNER_ONE_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0} signed the petition"
+msgstr "{0} firmó la petición"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0} and {1} signed the petition"
+msgstr "{0} y {1} firmaron la petición"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0}, {1}, and 1 other signed the petition"
+msgstr "{0}, {1} y 1 persona más firmaron la petición"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER; 2: formattedExtraSignerCount()
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0}, {1}, and {2} others signed the petition"
+msgstr "{0}, {1} y {2} personas más firmaron la petición"

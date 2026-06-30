@@ -5545,18 +5545,14 @@ msgid "No notifications yet"
 msgstr "No notifications yet"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "and"
 msgstr "and"
 
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
-msgid "others"
-msgstr "others"
+#~ msgid "others"
+#~ msgstr "others"
 
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
-msgid "other"
-msgstr "other"
+#~ msgid "other"
+#~ msgstr "other"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up"
@@ -5570,9 +5566,8 @@ msgstr "New signup"
 msgid "Email all"
 msgstr "Email all"
 
-#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
-msgid "signed"
-msgstr "signed"
+#~ msgid "signed"
+#~ msgstr "signed"
 
 #: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "New signature"
@@ -5615,3 +5610,23 @@ msgstr "No notifications to show right now."
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "About is required and cannot be empty"
 msgstr "About is required and cannot be empty"
+
+#. 0: SIGNER_ONE_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0} signed the petition"
+msgstr "{0} signed the petition"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0} and {1} signed the petition"
+msgstr "{0} and {1} signed the petition"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0}, {1}, and 1 other signed the petition"
+msgstr "{0}, {1}, and 1 other signed the petition"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER; 2: formattedExtraSignerCount()
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0}, {1}, and {2} others signed the petition"
+msgstr "{0}, {1}, and {2} others signed the petition"
