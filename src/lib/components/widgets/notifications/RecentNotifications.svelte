@@ -9,6 +9,7 @@
 	import { z } from '$lib/zero.svelte';
 	import type { NotificationPayload } from '$lib/schema/notification/payload';
 	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
+	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 
 	const filter = $derived.by(() => ({
 		...getListFilter(appState.organizationId, { pageSize: 10 }),
@@ -253,7 +254,43 @@
 						{:else if group.type === 'petition_signup'}
 							<p class="text-xs text-muted-foreground">Petition group placeholder</p>
 						{:else if group.type === 'whatsapp_message' || group.type === 'whatsapp_unread'}
-							<p class="text-xs text-muted-foreground">WhatsApp group placeholder</p>
+							<div class="flex items-start gap-2">
+								<div
+									class="flex size-[26px] shrink-0 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-600"
+								>
+									<MessageCircleIcon class="size-3.5" />
+								</div>
+								<div class="min-w-0 flex-1">
+									{#if group.personIds[0]}
+										<a
+											href="/community/{group.personIds[0]}"
+											class="text-[12px] leading-snug font-medium hover:underline"
+										>
+											{group.personNames[0] ?? 'Unknown'}
+										</a>
+									{:else}
+										<span class="text-[12px] leading-snug font-medium"
+											>{group.personNames[0] ?? 'Unknown'}</span
+										>
+									{/if}
+									<p class="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+										Sent a WhatsApp message
+									</p>
+									<div class="mt-1.5 flex items-center gap-1.5">
+										{#if group.personIds[0]}
+											<a
+												href="/community/{group.personIds[0]}"
+												class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
+											>
+												View person
+											</a>
+										{/if}
+										<span class="ml-auto text-[10px] text-muted-foreground/70"
+											>{groupTimestamp(group)}</span
+										>
+									</div>
+								</div>
+							</div>
 						{:else}
 							<p class="text-xs {group.hasUnread ? 'font-medium' : 'text-muted-foreground'}">
 								{(group.notifications[0]?.payload as { message?: string } | null)?.message ??
