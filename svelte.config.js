@@ -29,7 +29,8 @@ const config = {
 				'connect-src': [
 					"'self'",
 					'https://*.ingest.sentry.io', // Sentry error/event ingestion API
-					'https://www.google-analytics.com' // Google Analytics measurement endpoint
+					'https://www.google-analytics.com', // Google Analytics measurement endpoint
+					'https://*.s3.amazonaws.com' // Direct browser PUT uploads (images, CSV imports)
 					// Zero sync host added at runtime in hooks.server.ts (PUBLIC_ZERO_SERVER)
 				],
 				'frame-src': [
