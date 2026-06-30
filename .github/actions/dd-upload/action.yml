@@ -48,8 +48,8 @@ runs:
         set -euo pipefail
 
         if [ -z "${DEFECTDOJO_URL:-}" ] || [ -z "${DD_TOKEN:-}" ]; then
-          echo "::error::defectdojo_url and token inputs must be set (check repo secrets are mapped)"
-          exit 1
+          echo "::warning::Skipping DefectDojo upload — defectdojo_url and token are not available"
+          exit 0
         fi
 
         if [ ! -f "$DD_FILE" ]; then
