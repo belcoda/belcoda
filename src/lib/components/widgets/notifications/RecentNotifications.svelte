@@ -117,7 +117,7 @@
 			<Card.Title class="text-sm">{t`Recent notifications`}</Card.Title>
 			{#if unreadCount > 0}
 				<span
-					class="text-destructive-foreground flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium"
+					class="flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-300 px-1 text-[10px] font-medium text-orange-700"
 				>
 					{unreadCount}
 				</span>
