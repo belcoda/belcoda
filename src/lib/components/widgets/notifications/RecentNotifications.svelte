@@ -109,47 +109,37 @@
 		return formatShortTimestamp(group.latestAt, locale.current);
 	}
 
-	function label(n: NotificationItem): string {
-		const payload = n.payload as NotificationPayload | null;
-		switch (n.type) {
-			case 'event_signup':
-				return payload?.personName
-					? `${payload.personName} signed up for an event`
-					: 'New event signup';
-			case 'petition_signup':
-				return payload?.personName
-					? `${payload.personName} signed a petition`
-					: 'New petition signature';
-			case 'whatsapp_unread':
-			case 'whatsapp_message':
-				return payload?.personId ? 'New WhatsApp message' : 'New WhatsApp message';
-			case 'flow_notify_user':
-				return payload?.message ? String(payload.message) : 'Flow alert';
-			default:
-				return payload?.message ? String(payload.message) : 'Notification';
-		}
-	}
+	type DigestEntry = { label: string; dotClass: string };
+	const digestEntries: Record<string, DigestEntry> = {
+		event_signup: { label: 'signups', dotClass: 'bg-primary' },
+		petition_signup: { label: 'signatures', dotClass: 'bg-violet-500' },
+		whatsapp_message: { label: 'messages', dotClass: 'bg-emerald-500' },
+		whatsapp_unread: { label: 'messages', dotClass: 'bg-emerald-500' },
+		flow_notify_user: { label: 'alerts', dotClass: 'bg-amber-500' },
+		generic: { label: 'notifications', dotClass: 'bg-muted-foreground' }
+	};
 
-	function dotColor(type: string): string {
-		switch (type) {
-			case 'whatsapp_unread':
-			case 'whatsapp_message':
-				return 'bg-emerald-500';
-			case 'event_signup':
-				return 'bg-primary';
-			case 'petition_signup':
-				return 'bg-violet-500';
-			case 'flow_notify_user':
-				return 'bg-amber-500';
-			default:
-				return 'bg-muted-foreground';
+	// Merged digest so whatsapp_message and whatsapp_unread share one chip
+	const digest = $derived.by(() => {
+		const merged: { key: string; label: string; dotClass: string; count: number }[] = [];
+		const seen = new Set<string>();
+		for (const [type, count] of Object.entries(digestCounts)) {
+			const entry = digestEntries[type] ?? {
+				label: 'notifications',
+				dotClass: 'bg-muted-foreground'
+			};
+			// merge whatsapp variants under one chip
+			const chipKey = type.startsWith('whatsapp') ? 'whatsapp' : type;
+			const existing = merged.find((d) => d.key === chipKey);
+			if (existing) {
+				existing.count += count;
+			} else if (!seen.has(chipKey)) {
+				seen.add(chipKey);
+				merged.push({ key: chipKey, label: entry.label, dotClass: entry.dotClass, count });
+			}
 		}
-	}
-
-	function timestamp(n: NotificationItem): string {
-		if (n.createdAt == null) return '';
-		return formatShortTimestamp(n.createdAt, locale.current);
-	}
+		return merged;
+	});
 </script>
 
 <Card.Root class="rounded-lg">
@@ -174,27 +164,41 @@
 				<p class="text-xs text-muted-foreground">No notifications yet</p>
 			</div>
 		{:else}
+			{#if digest.length > 0}
+				<div
+					class="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md bg-muted/50 px-2.5 py-1.5"
+				>
+					{#each digest as chip, i (chip.key)}
+						{#if i > 0}<span class="text-[10px] text-muted-foreground">·</span>{/if}
+						<span class="flex items-center gap-1 text-[11px] text-muted-foreground">
+							<span class="size-1.5 rounded-full {chip.dotClass}"></span>
+							{chip.count}
+							{chip.label}
+						</span>
+					{/each}
+				</div>
+			{/if}
+
 			<ul class="divide-y">
-				{#each notifications as n (n.id)}
-					<li class="flex items-start gap-3 py-2.5 first:pt-0">
-						<span
-							class="mt-1.5 size-2 shrink-0 rounded-full {dotColor(n.type)} {n.status === 'unread'
-								? 'opacity-100'
-								: 'opacity-30'}"
-						></span>
-						<div class="min-w-0 flex-1">
-							<p
-								class="text-xs leading-snug {n.status === 'unread'
-									? 'font-medium'
-									: 'text-muted-foreground'}"
-							>
-								{label(n)}
+				{#each groups as group (group.key)}
+					<li class="py-2.5 first:pt-0">
+						{#if group.type === 'event_signup'}
+							<p class="text-xs text-muted-foreground">Event signup group placeholder</p>
+						{:else if group.type === 'petition_signup'}
+							<p class="text-xs text-muted-foreground">Petition group placeholder</p>
+						{:else if group.type === 'whatsapp_message' || group.type === 'whatsapp_unread'}
+							<p class="text-xs text-muted-foreground">WhatsApp group placeholder</p>
+						{:else}
+							<p class="text-xs {group.hasUnread ? 'font-medium' : 'text-muted-foreground'}">
+								{(group.notifications[0]?.payload as { message?: string } | null)?.message ??
+									'Notification'}
 							</p>
-							<p class="mt-0.5 text-[10px] text-muted-foreground">{timestamp(n)}</p>
-						</div>
+							<p class="mt-0.5 text-[10px] text-muted-foreground">{groupTimestamp(group)}</p>
+						{/if}
 					</li>
 				{/each}
 			</ul>
+
 			<Button variant="ghost" size="sm" href="/notifications" class="mt-2 h-7 w-full text-xs">
 				View all
 			</Button>
