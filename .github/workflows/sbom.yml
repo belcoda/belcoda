@@ -23,19 +23,19 @@ jobs:
       # cyclonedx-npm reads package-lock.json directly — no full install needed.
       - name: Generate SBOM
         run: >-
-          npx --yes @cyclonedx/cyclonedx-npm@latest
+          npx --yes @cyclonedx/cyclonedx-npm@5.0.0
           --output-format JSON
           --output-reproducible
           --output-file sbom.cdx.json
 
       - name: Commit SBOM if changed
         run: |
-          if git diff --quiet -- sbom.cdx.json; then
-            echo "SBOM unchanged — nothing to commit"
-            exit 0
-          fi
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add sbom.cdx.json
+          if git diff --cached --quiet; then
+            echo "SBOM unchanged — nothing to commit"
+            exit 0
+          fi
           git commit -m "chore: update CycloneDX SBOM"
           git push
