@@ -12,6 +12,7 @@
 	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
+	import { t } from '$lib/index.svelte';
 
 	const filter = $derived.by(() => ({
 		...getListFilter(appState.organizationId, { pageSize: 10 }),
@@ -253,14 +254,14 @@
 											onclick={() => markGroupAsRead(group)}
 											class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 										>
-											View event
+											{t`View event`}
 										</a>
 										<a
 											href="/events/{group.referenceId}/signups"
 											onclick={() => markGroupAsRead(group)}
 											class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 										>
-											Email all
+											{t`View signups`}
 										</a>
 										<span class="ml-auto text-[10px] text-muted-foreground/70"
 											>{groupTimestamp(group)}</span
@@ -322,7 +323,7 @@
 											onclick={() => markGroupAsRead(group)}
 											class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 										>
-											View petition
+											{t`View petition`}
 										</a>
 										<span class="ml-auto text-[10px] text-muted-foreground/70"
 											>{groupTimestamp(group)}</span
@@ -351,7 +352,7 @@
 										>
 									{/if}
 									<p class="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-										Sent a WhatsApp message
+										{t`Sent a WhatsApp message`}
 									</p>
 									<div class="mt-1.5 flex items-center gap-1.5">
 										{#if group.personIds[0]}
@@ -360,7 +361,7 @@
 												onclick={() => markGroupAsRead(group)}
 												class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
 											>
-												View person
+												{t`View person`}
 											</a>
 										{/if}
 										<span class="ml-auto text-[10px] text-muted-foreground/70"
@@ -381,7 +382,7 @@
 			</ul>
 
 			<Button variant="ghost" size="sm" href="/notifications" class="mt-2 h-7 w-full text-xs">
-				View all
+				{t`View all`}
 			</Button>
 		{/if}
 	</Card.Content>

@@ -3352,6 +3352,7 @@ msgstr "Publicar evento"
 msgid "View full page"
 msgstr "Ver página completa"
 
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 msgid "View all"
 msgstr "Ver tudo"
@@ -4444,6 +4445,7 @@ msgstr "Obrigado por assinar «{0}». A sua assinatura foi registada. Clique no 
 msgid "Your signature on \"{0}\" was recorded"
 msgstr "A sua assinatura em «{0}» foi registada"
 
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
 msgid "View petition"
 msgstr "Ver petição"
@@ -5481,3 +5483,19 @@ msgstr "Evento não encontrado"
 #: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 msgid "The event you are looking for could not be found."
 msgstr "O evento que você está procurando não foi encontrado."
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "View event"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "View signups"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "Sent a WhatsApp message"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "View person"
+msgstr ""
