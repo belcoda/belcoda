@@ -10,6 +10,7 @@
 	import type { NotificationPayload } from '$lib/schema/notification/payload';
 	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
+	import FileTextIcon from '@lucide/svelte/icons/file-text';
 
 	const filter = $derived.by(() => ({
 		...getListFilter(appState.organizationId, { pageSize: 10 }),
@@ -252,7 +253,66 @@
 								</div>
 							</div>
 						{:else if group.type === 'petition_signup'}
-							<p class="text-xs text-muted-foreground">Petition group placeholder</p>
+							<div class="flex items-start gap-2">
+								<div
+									class="flex size-[26px] shrink-0 items-center justify-center rounded-md bg-violet-500/10 text-violet-600"
+								>
+									<FileTextIcon class="size-3.5" />
+								</div>
+								<div class="min-w-0 flex-1">
+									<div class="flex items-baseline gap-1.5">
+										{#if subjectUrl(group.type, group.referenceId)}
+											<a
+												href={subjectUrl(group.type, group.referenceId)}
+												class="truncate text-[12px] leading-snug font-medium hover:underline"
+											>
+												{group.subjectTitle ?? 'Petition'}
+											</a>
+										{:else}
+											<span class="truncate text-[12px] leading-snug font-medium"
+												>{group.subjectTitle ?? 'Petition'}</span
+											>
+										{/if}
+										{#if group.notifications.length > 1}
+											<span
+												class="shrink-0 rounded bg-violet-500/10 px-1 py-px text-[10px] font-medium text-violet-600"
+												>+{group.notifications.length}</span
+											>
+										{/if}
+									</div>
+									<p class="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+										{#each group.personNames.slice(0, 2) as name, i (name)}
+											{#if i > 0}{i === group.personNames.length - 1 || group.personNames.length > 2
+													? ', '
+													: ' and '}{/if}
+											{#if group.personIds[i]}
+												<a
+													href="/community/{group.personIds[i]}"
+													class="font-medium text-foreground hover:underline">{name}</a
+												>
+											{:else}
+												{name}
+											{/if}
+										{/each}
+										{#if group.personNames.length > 2}
+											{@const extra = group.personNames.length - 2}
+											, and {extra} other{extra > 1 ? 's' : ''}
+										{/if}
+										{group.personNames.length > 0 ? ' signed' : 'New signature'}
+									</p>
+									<div class="mt-1.5 flex items-center gap-1.5">
+										<a
+											href="/petitions/{group.referenceId}"
+											class="rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
+										>
+											View petition
+										</a>
+										<span class="ml-auto text-[10px] text-muted-foreground/70"
+											>{groupTimestamp(group)}</span
+										>
+									</div>
+								</div>
+							</div>
 						{:else if group.type === 'whatsapp_message' || group.type === 'whatsapp_unread'}
 							<div class="flex items-start gap-2">
 								<div

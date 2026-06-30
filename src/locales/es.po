@@ -5465,3 +5465,11 @@ msgstr ""
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Dismiss"
 msgstr ""
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "Event Not Found"
+msgstr "Evento no encontrado"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "The event you are looking for could not be found."
+msgstr "No se pudo encontrar el evento que buscas."

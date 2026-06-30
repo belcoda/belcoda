@@ -5489,3 +5489,11 @@ msgstr "Mark as read"
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Dismiss"
 msgstr "Dismiss"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "Event Not Found"
+msgstr "Event Not Found"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "The event you are looking for could not be found."
+msgstr "The event you are looking for could not be found."

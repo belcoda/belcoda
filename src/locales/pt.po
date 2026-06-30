@@ -5473,3 +5473,11 @@ msgstr "Marcar como lida"
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Dismiss"
 msgstr "Dispensar"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "Event Not Found"
+msgstr "Evento não encontrado"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "The event you are looking for could not be found."
+msgstr "O evento que você está procurando não foi encontrado."
