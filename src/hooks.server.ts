@@ -17,7 +17,11 @@ const log = pino(import.meta.url);
 import { sequence } from '@sveltejs/kit/hooks';
 import { LOCALES, type Locale } from '$lib/utils/language';
 import { buildBetterAuth } from '$lib/server/auth';
-import { augmentContentSecurityPolicy, getZeroSyncConnectSources } from '$lib/server/csp';
+import {
+	augmentContentSecurityPolicy,
+	getZeroSyncConnectSources,
+	isPublicEmbedPage
+} from '$lib/server/csp';
 
 import * as main from './locales/main.loader.server.svelte.js';
 import * as js from './locales/js.loader.server.js';
@@ -273,7 +277,8 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 		const csp = response.headers.get('Content-Security-Policy');
 		if (csp) {
 			const augmented = augmentContentSecurityPolicy(csp, {
-				extraConnectSources: getZeroSyncConnectSources(PUBLIC_ZERO_SERVER)
+				extraConnectSources: getZeroSyncConnectSources(PUBLIC_ZERO_SERVER),
+				allowEmbedding: isPublicEmbedPage(event.url.pathname, event.url.searchParams)
 			});
 			response.headers.set('Content-Security-Policy', augmented);
 		}

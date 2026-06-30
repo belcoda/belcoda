@@ -19,16 +19,32 @@ export function getZeroSyncConnectSources(zeroServer: string | undefined): strin
 	return sources;
 }
 
+/**
+ * Public page routes customers embed via `?layout=embed` iframes on external sites.
+ */
+export function isPublicEmbedPage(pathname: string, searchParams: URLSearchParams): boolean {
+	return pathname.startsWith('/page/') && searchParams.get('layout') === 'embed';
+}
+
 export function augmentContentSecurityPolicy(
 	csp: string,
 	options: {
 		extraConnectSources?: string[];
+		allowEmbedding?: boolean;
 	}
 ): string {
-	if (!options.extraConnectSources?.length) return csp;
+	let result = csp;
 
-	return csp.replace(
-		/connect-src ([^;]+)/,
-		(_, sources) => `connect-src ${sources} ${options.extraConnectSources!.join(' ')}`
-	);
+	if (options.extraConnectSources?.length) {
+		result = result.replace(
+			/connect-src ([^;]+)/,
+			(_, sources) => `connect-src ${sources} ${options.extraConnectSources!.join(' ')}`
+		);
+	}
+
+	if (options.allowEmbedding) {
+		result = result.replace(/frame-ancestors [^;]+/, 'frame-ancestors *');
+	}
+
+	return result;
 }

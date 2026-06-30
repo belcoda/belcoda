@@ -38,7 +38,8 @@ const config = {
 					'https://app.cal.com', // Cal.com inline booking iframe
 					'https://www.facebook.com' // Facebook OAuth/embedded signup dialogs
 				],
-				'frame-ancestors': ['*'],
+				// Relaxed to * for public embed pages (?layout=embed) in hooks.server.ts
+				'frame-ancestors': ["'self'"],
 				'font-src': ["'self'"],
 				'object-src': ["'none'"],
 				'base-uri': ["'self'"],
