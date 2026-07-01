@@ -28,6 +28,11 @@ const config = {
 					'https://*.amazonaws.com', // S3-hosted media and uploads
 					'https://picsum.photos' // Placeholder/demo images
 				],
+				'media-src': [
+					"'self'",
+					'blob:',
+					'https://*.amazonaws.com' // S3-hosted WhatsApp audio/video
+				],
 				'connect-src': [
 					"'self'",
 					'https://*.ingest.sentry.io', // Sentry error/event ingestion API
