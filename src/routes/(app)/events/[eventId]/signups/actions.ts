@@ -120,8 +120,14 @@ export function renderPersonColumn({
 		'person.familyName': () => signup.person?.familyName,
 		'person.email': () => signup.person?.emailAddress,
 		'person.phone': () => signup.person?.phoneNumber,
+		'person.doNotContact': () => (signup.person?.doNotContact ? 'true' : 'false'),
+		'person.addressLine1': () => signup.person?.addressLine1,
+		'person.addressLine2': () => signup.person?.addressLine2,
+		'person.locality': () => signup.person?.locality,
 		'person.dateOfBirth': () =>
-			signup.person?.dateOfBirth ? new Date(signup.person.dateOfBirth).toLocaleDateString() : null,
+			signup.person?.dateOfBirth
+				? new Date(signup.person.dateOfBirth).toLocaleDateString(locale)
+				: null,
 		'person.gender': () => (signup.person?.gender ? renderGender(signup.person.gender) : null),
 		'person.position': () => signup.person?.position,
 		'person.workplace': () => signup.person?.workplace,
@@ -132,20 +138,22 @@ export function renderPersonColumn({
 				? renderLocalizedCountryName(signup.person.country as CountryCode, locale)
 				: null,
 		'person.createdAt': () =>
-			signup.person?.createdAt ? new Date(signup.person.createdAt).toLocaleDateString() : null,
+			signup.person?.createdAt
+				? new Date(signup.person.createdAt).toLocaleDateString(locale)
+				: null,
 		'signup.status': () => signup.status,
 		'signup.notificationSentAt': () =>
 			signup.signupNotificationSentAt
-				? new Date(signup.signupNotificationSentAt).toLocaleDateString()
+				? new Date(signup.signupNotificationSentAt).toLocaleDateString(locale)
 				: null,
 		'signup.reminderSentAt': () =>
-			signup.reminderSentAt ? new Date(signup.reminderSentAt).toLocaleDateString() : null,
+			signup.reminderSentAt ? new Date(signup.reminderSentAt).toLocaleDateString(locale) : null,
 		'signup.cancellationNotificationSentAt': () =>
 			signup.cancellationNotificationSentAt
-				? new Date(signup.cancellationNotificationSentAt).toLocaleDateString()
+				? new Date(signup.cancellationNotificationSentAt).toLocaleDateString(locale)
 				: null,
 		'signup.createdAt': () =>
-			signup.createdAt ? new Date(signup.createdAt).toLocaleDateString() : null
+			signup.createdAt ? new Date(signup.createdAt).toLocaleDateString(locale) : null
 	};
 	return renderers[columnName]?.();
 }
