@@ -1,3 +1,5 @@
+import { detectSubdomain } from '$lib/utils/routing';
+
 /**
  * Host origins allowed for Zero sync connect-src (HTTP + WebSocket).
  */
@@ -26,8 +28,24 @@ export function getZeroSyncConnectSources(zeroServer: string | undefined): strin
 /**
  * Public page routes customers embed via `?layout=embed` iframes on external sites.
  */
-export function isPublicEmbedPage(pathname: string, searchParams: URLSearchParams): boolean {
-	return pathname.startsWith('/page/') && searchParams.get('layout') === 'embed';
+const publicEmbedPathPattern = /^\/(events|petitions)\//;
+const canonicalPublicEmbedPathPattern = /^\/page\/[^/]+\/(events|petitions)\//;
+
+export function isPublicEmbedPage(
+	pathname: string,
+	searchParams: URLSearchParams,
+	options?: { host?: string; rootDomain?: string }
+): boolean {
+	if (searchParams.get('layout') !== 'embed') return false;
+
+	if (canonicalPublicEmbedPathPattern.test(pathname)) {
+		return true;
+	}
+
+	const { host, rootDomain } = options ?? {};
+	if (!host || !rootDomain) return false;
+
+	return detectSubdomain(host, rootDomain) !== false && publicEmbedPathPattern.test(pathname);
 }
 
 export function augmentContentSecurityPolicy(

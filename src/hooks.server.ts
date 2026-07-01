@@ -278,7 +278,10 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 		if (csp) {
 			const augmented = augmentContentSecurityPolicy(csp, {
 				extraConnectSources: getZeroSyncConnectSources(PUBLIC_ZERO_SERVER),
-				allowEmbedding: isPublicEmbedPage(event.url.pathname, event.url.searchParams)
+				allowEmbedding: isPublicEmbedPage(event.url.pathname, event.url.searchParams, {
+					host: event.url.host,
+					rootDomain: PUBLIC_ROOT_DOMAIN
+				})
 			});
 			response.headers.set('Content-Security-Policy', augmented);
 		}
