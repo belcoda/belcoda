@@ -2520,9 +2520,8 @@ msgstr "Choose an email from the list to view its details and statistics."
 msgid "Create New Email"
 msgstr "Create New Email"
 
-#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
-msgid "Belcoda icon"
-msgstr "Belcoda icon"
+#~ msgid "Belcoda icon"
+#~ msgstr "Belcoda icon"
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
@@ -2575,6 +2574,7 @@ msgstr "Petition Not Found"
 msgid "The petition you are looking for could not be found."
 msgstr "The petition you are looking for could not be found."
 
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 #: src/routes/(page)/page/[organizationSlug]/petitions/+error.svelte
 msgid "Return to Home"
 msgstr "Return to Home"
@@ -5089,18 +5089,17 @@ msgstr "🎨 Sticker"
 #. 0: formatNumber(paginatedPersonList.items.length, locale.current)
 #. 0: formatNumber(paginatedEvents.items.length, locale.current)
 #. 0: formatNumber(paginatedPetitions.items.length, locale.current)
+#. 0: formatNumber(paginatedSignups.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
-#. 0: formatNumber(paginatedTeams.items.length, locale.current)
-#. 0: formatNumber(paginatedTags.items.length, locale.current)
+#. 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
+#: src/lib/components/widgets/event/EventSignups.svelte
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
-#: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
-#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
 msgid "{0} shown"
 msgstr "{0} shown"
@@ -5489,3 +5488,11 @@ msgstr "Mark as read"
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Dismiss"
 msgstr "Dismiss"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "Event Not Found"
+msgstr "Event Not Found"
+
+#: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
+msgid "The event you are looking for could not be found."
+msgstr "The event you are looking for could not be found."

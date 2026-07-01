@@ -207,7 +207,7 @@ async function seedOrganization(
 }
 
 async function main() {
-	console.assert(process.env.DATABASE_URL, 'DATABASE_URL is not set');
+	console.assert(!!process.env.DATABASE_URL, 'DATABASE_URL is not set');
 	const db = drizzle(process.env.DATABASE_URL!);
 
 	// Check for --stress flag

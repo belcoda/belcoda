@@ -26,10 +26,10 @@ async function resolveNotificationRecipients({
 }: {
 	tx: ServerTransaction;
 	organizationId: string;
-	recipientUserIds: string[];
+	recipientUserIds: string[] | undefined;
 	creatorUserId: string | null;
 }): Promise<string[]> {
-	if (recipientUserIds.length > 0) {
+	if (recipientUserIds !== undefined) {
 		return [...new Set(recipientUserIds)];
 	}
 
@@ -64,12 +64,11 @@ export async function createNotification({
 	args: CreateNotificationSchema;
 }) {
 	const parsed = parse(createNotificationSchema, args);
-	const routing = parsed.routing ?? { recipientUserIds: [], creatorUserId: null };
 	const recipients = await resolveNotificationRecipients({
 		tx,
 		organizationId: parsed.organizationId,
-		recipientUserIds: routing.recipientUserIds,
-		creatorUserId: routing.creatorUserId
+		recipientUserIds: parsed.routing?.recipientUserIds,
+		creatorUserId: parsed.routing?.creatorUserId ?? null
 	});
 
 	if (recipients.length === 0) {

@@ -23,9 +23,9 @@ import { eventSignupReadPermissions } from '$lib/zero/query/event_signup/permiss
 
 import { parse } from 'valibot';
 
-import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
+import { event, eventSignup, person, organization, member, teamMember } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and, sql, ne, count as countRows, isNull, or } from 'drizzle-orm';
+import { eq, and, sql, ne, count as countRows, isNull, or, inArray } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import {
 	findOrCreatePerson,
@@ -36,6 +36,7 @@ import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
 
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
+import { createNotification } from '$lib/server/api/data/notification/notification';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import {
 	inputSchema as listEventSignupsInputSchema,
@@ -45,6 +46,41 @@ import { readEventSignupQuery } from '$lib/zero/query/event_signup/read';
 import type { InferOutput } from 'valibot';
 
 type QueueT = Awaited<ReturnType<typeof getQueue>>;
+
+async function getEventSignupNotificationRecipientUserIds({
+	tx,
+	eventRecord
+}: {
+	tx: ServerTransaction;
+	eventRecord: typeof event.$inferSelect;
+}) {
+	if (eventRecord.teamId) {
+		const eventTeamMembers = await tx.dbTransaction.wrappedTransaction
+			.select({ userId: teamMember.userId })
+			.from(teamMember)
+			.where(eq(teamMember.teamId, eventRecord.teamId));
+
+		if (eventTeamMembers.length > 0) {
+			return [...new Set(eventTeamMembers.map((m) => m.userId))];
+		}
+	}
+
+	const adminOwnerMembers = await tx.dbTransaction.wrappedTransaction
+		.select({ userId: member.userId })
+		.from(member)
+		.where(
+			and(
+				eq(member.organizationId, eventRecord.organizationId),
+				inArray(member.role, ['owner', 'admin'])
+			)
+		);
+
+	if (adminOwnerMembers.length > 0) {
+		return [...new Set(adminOwnerMembers.map((m) => m.userId))];
+	}
+
+	return [];
+}
 
 async function queueEventSignupWebhook(
 	queue: QueueT,
@@ -649,6 +685,32 @@ export async function signUpForEventUnsafe({
 			personId: personRecord.id,
 			tagId: eventRecord.attendanceTag,
 			organizationId: organizationRecord.id
+		});
+	}
+	if (!skipNotifications && !existingEventSignup) {
+		const personName =
+			[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') || null;
+		const recipientUserIds = await getEventSignupNotificationRecipientUserIds({
+			tx,
+			eventRecord
+		});
+		await createNotification({
+			tx,
+			args: {
+				type: 'event_signup',
+				organizationId: organizationRecord.id,
+				referenceId: eventRecord.id,
+				sourceKey: `event_signup:${insertedEventSignup.id}`,
+				payload: {
+					personName,
+					eventTitle: eventRecord.title,
+					eventId: eventRecord.id
+				},
+				routing: {
+					recipientUserIds,
+					creatorUserId: null
+				}
+			}
 		});
 	}
 	const queueSignup = await getQueue();

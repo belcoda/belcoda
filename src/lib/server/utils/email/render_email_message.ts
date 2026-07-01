@@ -1,4 +1,4 @@
-import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import { organization as organizationTable, person, user as userTable } from '$lib/schema/drizzle';
 import { templateVariableKeys, type TemplateVariableKey } from '$lib/schema/template-variables';
 

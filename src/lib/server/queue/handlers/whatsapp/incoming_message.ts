@@ -46,6 +46,7 @@ import {
 import { convertIncomingWhatsAppMessage } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/convert_incoming';
 
 import { v7 as uuidv7 } from 'uuid';
+import { createNotification } from '$lib/server/api/data/notification/notification';
 export async function handleIncomingMessage(incomingMessage: unknown) {
 	try {
 		const parsed = parse(incomingMessageSchema, incomingMessage);
@@ -196,6 +197,19 @@ async function processIncomingMessageInTransaction(
 			tx
 		});
 		log.debug(activity, 'Activity created');
+	}
+
+	if (insertedWhatsAppMessageId) {
+		await createNotification({
+			tx,
+			args: {
+				type: 'whatsapp_message',
+				organizationId,
+				referenceId: insertedWhatsAppMessageId,
+				sourceKey: `whatsapp_message:${insertedWhatsAppMessageId}`,
+				payload: { personId }
+			}
+		});
 	}
 }
 

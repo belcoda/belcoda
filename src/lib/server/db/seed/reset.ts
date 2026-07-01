@@ -3,7 +3,7 @@ import { reset } from 'drizzle-seed';
 import * as schema from '$lib/schema/drizzle';
 export default async function main() {
 	try {
-		console.assert(process.env.DATABASE_URL, 'DATABASE_URL is not set');
+		console.assert(!!process.env.DATABASE_URL, 'DATABASE_URL is not set');
 		validatePostgresConnectionString(process.env.DATABASE_URL!);
 		const db = drizzle(process.env.DATABASE_URL!);
 		await reset(db, schema); //reset the entire databas

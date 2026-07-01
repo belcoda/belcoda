@@ -24,8 +24,8 @@ import { runWithLocale, loadLocales } from 'wuchale/load-utils/server';
 import { locales } from './locales/data.js';
 
 // load at server startup
-loadLocales(main.key, main.loadIDs, main.loadCatalog, locales);
-loadLocales(js.key, js.loadIDs, js.loadCatalog, locales);
+loadLocales(main.key, main.loadCount, main.loadCatalog, locales);
+loadLocales(js.key, js.loadCount, js.loadCatalog, locales);
 
 /**
  * Determine the locale for an incoming request by consulting a locale cookie and optional URL override.
