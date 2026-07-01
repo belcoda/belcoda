@@ -50,9 +50,13 @@ export class WhatsappAccountsPage {
 		phoneNumberId: string;
 		wabaId: string;
 	}) {
+		interface BelcodaGlobal {
+			__belcodaCompleteWhatsAppSignup?: (phoneNumberId: string, wabaId: string) => void;
+		}
 		await this.page.evaluate(
 			({ phoneNumberId, wabaId }) => {
-				const completeSignup = (globalThis as any).__belcodaCompleteWhatsAppSignup;
+				const completeSignup = (globalThis as unknown as BelcodaGlobal)
+					.__belcodaCompleteWhatsAppSignup;
 				if (typeof completeSignup === 'function') {
 					completeSignup(phoneNumberId, wabaId);
 					return;
