@@ -2,7 +2,12 @@ import * as Sentry from '@sentry/sveltekit';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 
 import { env } from '$env/dynamic/public';
-const { PUBLIC_ROOT_DOMAIN, PUBLIC_ZERO_SERVER } = env;
+const {
+	PUBLIC_ROOT_DOMAIN,
+	PUBLIC_ZERO_SERVER,
+	PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME,
+	PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_REGION
+} = env;
 import { env as privateEnv } from '$env/dynamic/private';
 const { EASYCRON_SECRET } = privateEnv;
 import { svelteKitHandler } from 'better-auth/svelte-kit';
@@ -20,6 +25,7 @@ import { buildBetterAuth } from '$lib/server/auth';
 import {
 	augmentContentSecurityPolicy,
 	getZeroSyncConnectSources,
+	getS3UploadConnectSources,
 	isPublicEmbedPage
 } from '$lib/server/csp';
 
@@ -277,7 +283,13 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 		const csp = response.headers.get('Content-Security-Policy');
 		if (csp) {
 			const augmented = augmentContentSecurityPolicy(csp, {
-				extraConnectSources: getZeroSyncConnectSources(PUBLIC_ZERO_SERVER),
+				extraConnectSources: [
+					...getZeroSyncConnectSources(PUBLIC_ZERO_SERVER),
+					...getS3UploadConnectSources(
+						PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME,
+						PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_REGION
+					)
+				],
 				allowEmbedding: isPublicEmbedPage(event.url.pathname, event.url.searchParams, {
 					host: event.url.host,
 					rootDomain: PUBLIC_ROOT_DOMAIN

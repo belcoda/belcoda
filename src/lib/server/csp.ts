@@ -26,6 +26,26 @@ export function getZeroSyncConnectSources(zeroServer: string | undefined): strin
 }
 
 /**
+ * Exact S3 virtual-hosted origins for browser PUT uploads (presigned URLs).
+ * CSP only allows * as the left-most host label, so regional hosts like
+ * bucket.s3.eu-central-1.amazonaws.com cannot use *.s3.*.amazonaws.com.
+ */
+export function getS3UploadConnectSources(
+	bucketName: string | undefined,
+	region: string | undefined
+): string[] {
+	const bucket = bucketName?.trim();
+	if (!bucket) return [];
+
+	const sources = new Set([`https://${bucket}.s3.amazonaws.com`]);
+	const bucketRegion = region?.trim();
+	if (bucketRegion) {
+		sources.add(`https://${bucket}.s3.${bucketRegion}.amazonaws.com`);
+	}
+	return [...sources];
+}
+
+/**
  * Public page routes customers embed via `?layout=embed` iframes on external sites.
  */
 const publicEmbedPathPattern = /^\/(events|petitions)\//;
