@@ -178,7 +178,9 @@ function isCompleteEventSignupStatus(status: EventSignupStatus | null | undefine
 	return status === 'signup' || status === 'attended' || status === 'noshow';
 }
 
-function getEventHasEnded(eventRecord: typeof event.$inferSelect) {
+function getEventHasEnded(
+	eventRecord: Pick<typeof event.$inferSelect, 'endsAt'> | { endsAt: number }
+) {
 	return eventRecord.endsAt <= new Date();
 }
 
@@ -976,33 +978,11 @@ export async function updateEventSignupStatus({
 }
 
 function assertSignupAllowedForChannel(
-	eventRecord: {
-		endsAt: string | number | Date;
-		startsAt: string | number | Date;
-		createdAt: string | number | Date;
-		updatedAt: string | number | Date;
-		reminderSentAt: string | number | Date | null;
-		cancelledAt: string | number | Date | null;
-		deletedAt: string | number | Date | null;
-		archivedAt: string | number | Date | null;
-	},
+	eventRecord: Pick<typeof event.$inferSelect, 'endsAt'> | { endsAt: number },
 	channelType: string
 ) {
 	const isAdminPanel = channelType === 'adminPanel';
-	if (
-		!isAdminPanel &&
-		getEventHasEnded({
-			...eventRecord,
-			endsAt: new Date(eventRecord.endsAt),
-			startsAt: new Date(eventRecord.startsAt),
-			createdAt: new Date(eventRecord.createdAt),
-			updatedAt: new Date(eventRecord.updatedAt),
-			reminderSentAt: eventRecord.reminderSentAt ? new Date(eventRecord.reminderSentAt) : null,
-			cancelledAt: eventRecord.cancelledAt ? new Date(eventRecord.cancelledAt) : null,
-			deletedAt: eventRecord.deletedAt ? new Date(eventRecord.deletedAt) : null,
-			archivedAt: eventRecord.archivedAt ? new Date(eventRecord.archivedAt) : null
-		} as typeof event.$inferSelect)
-	) {
+	if (!isAdminPanel && getEventHasEnded(eventRecord)) {
 		throw new Error('Event signup period has ended');
 	}
 }
