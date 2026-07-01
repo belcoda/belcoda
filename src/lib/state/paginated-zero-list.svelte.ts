@@ -128,7 +128,7 @@ function stableStringify(value: unknown) {
 			return item;
 		}
 		return Object.keys(item)
-			.sort((a, b) => a.localeCompare(b))
+			.sort()
 			.reduce<Record<string, unknown>>((acc, key) => {
 				acc[key] = item[key];
 				return acc;
