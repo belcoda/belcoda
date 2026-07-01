@@ -3975,7 +3975,7 @@ msgstr ""
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Are you sure you want to send this WhatsApp draft?"
-msgstr ""
+msgstr "Tem certeza de que deseja enviar este rascunho do WhatsApp?"
 
 #: src/routes/(app)/settings/whatsapp/templates/[id]/+page.svelte
 msgid "Edit WhatsApp template"
@@ -5538,7 +5538,7 @@ msgstr "e"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up"
-msgstr "inscreveram-se"
+msgstr "inscreveu-se"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "New signup"
@@ -5557,7 +5557,7 @@ msgstr "Nova assinatura"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up (plural)"
-msgstr ""
+msgstr "inscreveram-se"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid ", and 1 other signed up"
@@ -5570,20 +5570,20 @@ msgstr ", e {0} outros inscreveram-se"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "Notifications Digest"
-msgstr ""
+msgstr "Resumo de notificações"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "No unread notifications"
-msgstr ""
+msgstr "Nenhuma notificação não lida"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "1 unread notification"
-msgstr ""
+msgstr "1 notificação não lida"
 
 #. 0: formatNumber(unreadCount, locale.current)
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "{0} unread notifications"
-msgstr ""
+msgstr "{0} notificações não lidas"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "No notifications to show right now."

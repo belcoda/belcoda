@@ -5411,7 +5411,7 @@ msgstr ""
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unread WhatsApp"
-msgstr ""
+msgstr "WhatsApp no leído"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
@@ -5447,7 +5447,7 @@ msgstr ""
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Loading notifications..."
-msgstr ""
+msgstr "Cargando notificaciones..."
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
@@ -5530,7 +5530,7 @@ msgstr "y"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up"
-msgstr "se inscribieron"
+msgstr "se inscribió"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "New signup"
@@ -5549,7 +5549,7 @@ msgstr "Nueva firma"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up (plural)"
-msgstr ""
+msgstr "se inscribieron"
 
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid ", and 1 other signed up"
@@ -5562,20 +5562,20 @@ msgstr ", y {0} otros se inscribieron"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "Notifications Digest"
-msgstr ""
+msgstr "Resumen de notificaciones"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "No unread notifications"
-msgstr ""
+msgstr "Sin notificaciones sin leer"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "1 unread notification"
-msgstr ""
+msgstr "1 notificación sin leer"
 
 #. 0: formatNumber(unreadCount, locale.current)
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "{0} unread notifications"
-msgstr ""
+msgstr "{0} notificaciones sin leer"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "No notifications to show right now."
