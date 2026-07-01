@@ -5406,7 +5406,7 @@ msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationBell.svelte
 msgid "Open notifications"
-msgstr ""
+msgstr "Abrir notificaciones"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
@@ -5416,17 +5416,17 @@ msgstr "WhatsApp no leído"
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Flow notification"
-msgstr ""
+msgstr "Notificación de flujo"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Event signup"
-msgstr ""
+msgstr "Inscripción a evento"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Petition signup"
-msgstr ""
+msgstr "Firma de petición"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
@@ -5434,15 +5434,15 @@ msgstr ""
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "Notification"
-msgstr ""
+msgstr "Notificación"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Notifications"
-msgstr ""
+msgstr "Notificaciones"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Mark all as read"
-msgstr ""
+msgstr "Marcar todo como leído"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
@@ -5452,24 +5452,24 @@ msgstr "Cargando notificaciones..."
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unable to load notifications."
-msgstr ""
+msgstr "No se pudieron cargar las notificaciones."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "No notifications yet."
-msgstr ""
+msgstr "Aún no hay notificaciones."
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unknown time"
-msgstr ""
+msgstr "Hora desconocida"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Mark as read"
-msgstr ""
+msgstr "Marcar como leído"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Dismiss"
-msgstr ""
+msgstr "Descartar"
 
 #: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 msgid "Event Not Found"
@@ -5566,7 +5566,7 @@ msgstr "Resumen de notificaciones"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "No unread notifications"
-msgstr "Sin notificaciones sin leer"
+msgstr "No hay notificaciones sin leer"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "1 unread notification"
@@ -5579,7 +5579,7 @@ msgstr "{0} notificaciones sin leer"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "No notifications to show right now."
-msgstr ""
+msgstr "No hay notificaciones que mostrar en este momento."
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "About is required and cannot be empty"
