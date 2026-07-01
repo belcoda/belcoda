@@ -159,7 +159,7 @@ function whereClause(
 	if (filter.mostRecentActivity) {
 		filterArr.push(...mostRecentActivityConditions(cmp, filter.mostRecentActivity));
 	}
-	if (filter.personIdsToExclude) {
+	if (filter.personIdsToExclude && filter.personIdsToExclude.length > 0) {
 		filterArr.push(cmp('id', 'NOT IN', filter.personIdsToExclude));
 	}
 	return and(...filterArr);
