@@ -117,12 +117,17 @@ export function convertQuestionsToValibotSchema(questions: SurveyQuestion[]) {
 				[question.id]: schema
 			};
 		},
-		{} as Record<string, v.GenericSchema<unknown, unknown>>
+		// Survey schemas are dynamically built and heterogeneous (fields output
+		// string | number | boolean | Date | string[]). `any` is load-bearing here:
+		// switching to `unknown` breaks output inference for every customFields consumer.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		{} as Record<string, v.GenericSchema<any, any>>
 	);
 	return result;
 }
 
-function requiredOrOptional<TSchema extends v.GenericSchema<unknown, unknown>>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- see convertQuestionsToValibotSchema: matches the heterogeneous survey schema output
+function requiredOrOptional<TSchema extends v.GenericSchema<any, any>>(
 	required: boolean,
 	schema: TSchema
 ) {
