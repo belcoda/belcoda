@@ -266,10 +266,11 @@ export async function emojiReaction({
 	}
 
 	// first find if the reactor (personId / phone number) is already in the emojiReactions array
+	// use the personId from the stored message record, not the client-supplied args.personId
 	const personRecord = await getPerson({
 		tx,
 		ctx,
-		args: { organizationId: args.organizationId, personId: args.personId }
+		args: { organizationId: args.organizationId, personId: messageActivity.personId }
 	});
 	const to = personRecord.whatsAppUsername?.trim() || personRecord.phoneNumber?.trim() || '';
 	if (!to) {
@@ -289,7 +290,7 @@ export async function emojiReaction({
 	const emojiReactionArray = applyBelcodaReaction({
 		existingReactions: messageActivity.message.emojiReactions || [],
 		reaction,
-		personId: args.personId,
+		personId: messageActivity.personId,
 		phoneNumber: from
 	});
 
