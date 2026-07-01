@@ -4618,7 +4618,7 @@ msgstr ""
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "WhatsApp message"
-msgstr ""
+msgstr "Mensagem de WhatsApp"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "No captions available"
@@ -5587,7 +5587,7 @@ msgstr "{0} notificações não lidas"
 
 #: src/lib/components/widgets/notifications/DashboardDigest.svelte
 msgid "No notifications to show right now."
-msgstr ""
+msgstr "Não há notificações para mostrar neste momento."
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "About is required and cannot be empty"
