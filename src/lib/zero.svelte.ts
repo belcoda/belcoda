@@ -7,7 +7,7 @@ import { mutators } from '$lib/zero/mutate/client_mutators';
 type AppZero = Z<Schema>;
 
 function getZeroEndpoints() {
-	const origin = location.origin || publicEnv.PUBLIC_HOST;
+	const origin = (typeof location !== 'undefined' && location.origin) || publicEnv.PUBLIC_HOST;
 	return {
 		queryURL: `${origin}/api/utils/zero/query`,
 		mutateURL: `${origin}/api/utils/zero/push`
