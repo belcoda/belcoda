@@ -6,6 +6,14 @@ import { mutators } from '$lib/zero/mutate/client_mutators';
 
 type AppZero = Z<Schema>;
 
+function getZeroEndpoints() {
+	const origin = location.origin || publicEnv.PUBLIC_HOST;
+	return {
+		queryURL: `${origin}/api/utils/zero/query`,
+		mutateURL: `${origin}/api/utils/zero/push`
+	};
+}
+
 class ZeroInstance {
 	#z = $state<AppZero | null>(null);
 
@@ -46,10 +54,7 @@ class ZeroInstance {
 			throw new Error('zero.init: PUBLIC_ZERO_SERVER is not configured');
 		}
 
-		const appOrigin = publicEnv.PUBLIC_HOST?.replace(/\/$/, '');
-		if (!appOrigin) {
-			throw new Error('zero.init: PUBLIC_HOST is not configured');
-		}
+		const { queryURL, mutateURL } = getZeroEndpoints();
 
 		this.#z = new Z({
 			cacheURL,
@@ -59,8 +64,8 @@ class ZeroInstance {
 			context: parsedContext,
 			userID: userId,
 			// Must match ZERO_QUERY_URL / ZERO_MUTATE_URL on the sync server (full URL, not a path).
-			queryURL: `${appOrigin}/api/utils/zero/query`,
-			mutateURL: `${appOrigin}/api/utils/zero/push`
+			queryURL,
+			mutateURL
 		});
 	}
 }
