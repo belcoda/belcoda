@@ -43,7 +43,7 @@ function resolveReferenceId(
 		case 'team_removed':
 			return selectOrRandom(ids.teamIds);
 		default:
-			return uuidv7();
+			throw new Error(`Activity type "${activityType}" is not supported in seed data`);
 	}
 }
 
@@ -69,8 +69,6 @@ export function generateActivities(
 		{ type: 'petition_signed', weight: 20 },
 		{ type: 'tag_added', weight: 15 },
 		{ type: 'team_added', weight: 8 },
-		{ type: 'email_outgoing', weight: 5 },
-		{ type: 'note_added', weight: 2 },
 		{ type: 'tag_removed', weight: 1 },
 		{ type: 'team_removed', weight: 1 }
 	];
