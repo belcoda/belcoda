@@ -29,6 +29,16 @@ async function createAdditionalMembers(
 	if (!Array.isArray(members) || members.length === 0) return;
 
 	for (const memberData of members) {
+		if (
+			memberData === null ||
+			typeof memberData !== 'object' ||
+			typeof memberData.email !== 'string' ||
+			!memberData.email ||
+			(memberData.role !== 'admin' && memberData.role !== 'member')
+		) {
+			continue;
+		}
+
 		const memberUser = await drizzle.query.user.findFirst({
 			where: eq(schema.user.email, memberData.email)
 		});
@@ -39,7 +49,7 @@ async function createAdditionalMembers(
 			id: crypto.randomUUID(),
 			userId: memberUser.id,
 			organizationId,
-			role: memberData.role || 'member',
+			role: memberData.role,
 			createdAt: now
 		});
 	}
