@@ -12,7 +12,12 @@ env:
 
 jobs:
   review_app:
+    # Only run for PRs opened from a branch in this repo, never from forks —
+    # fork PRs must not trigger a deploy that receives the secret set below.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       url: ${{ steps.deploy.outputs.url }}
     # Only run one deployment at a time per PR.
@@ -27,12 +32,18 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       # Match fly-pr-review-apps app naming: pr-{number}-{owner}-{repo}, lowercased, _ → -
       - name: Set review app host
         id: review_host
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
         run: |
-          app="pr-${{ github.event.number }}-${{ github.repository_owner }}-${{ github.event.repository.name }}"
+          app="pr-${PR_NUMBER}-${REPO_OWNER}-${REPO_NAME}"
           app=$(echo "$app" | tr '[:upper:]' '[:lower:]' | tr '_' '-')
           hostname="${app}.fly.dev"
           echo "app=$app" >> "$GITHUB_OUTPUT"
