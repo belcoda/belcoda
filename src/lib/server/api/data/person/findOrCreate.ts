@@ -189,8 +189,14 @@ async function _updateExistingPerson({
 	organizationId: string;
 	tx: ServerTransaction;
 }) {
+	// The profile update is best-effort: a failure here (e.g. an incoming
+	// email/phone that conflicts with another contact) must not abort an
+	// otherwise-valid signup/action. On update failure we return undefined so the
+	// caller falls back to the already-matched person; on success we return the
+	// freshly-updated row so callers never see stale data.
+	let updatedPerson: typeof person.$inferSelect | undefined;
 	try {
-		const [updatedPerson] = await tx.dbTransaction.wrappedTransaction
+		[updatedPerson] = await tx.dbTransaction.wrappedTransaction
 			.update(person)
 			.set({
 				...parsedActionHelper,
@@ -199,9 +205,21 @@ async function _updateExistingPerson({
 			})
 			.where(eq(person.id, personRecord.id))
 			.returning();
-		if (!updatedPerson) {
-			throw new Error('Unable to update person');
-		}
+	} catch (error) {
+		log.error({ error }, 'Unable to update existing person; continuing with the matched record');
+		return undefined;
+	}
+	if (!updatedPerson) {
+		log.error(
+			{ personId: personRecord.id },
+			'Person update returned no row; continuing with the matched record'
+		);
+		return undefined;
+	}
+
+	// Enqueuing the person.updated webhook is non-critical; a failure must not
+	// roll back or block the successful update.
+	try {
 		const queue = await getQueue();
 		await queue.triggerWebhook(
 			{
@@ -213,11 +231,11 @@ async function _updateExistingPerson({
 			},
 			queueSendOptionsFromTransaction(tx)
 		);
-		return updatedPerson;
 	} catch (error) {
-		log.error({ error }, 'Unable to update person');
-		throw error;
+		log.error({ error }, 'Failed to enqueue person.updated webhook after update');
 	}
+
+	return updatedPerson;
 }
 
 export async function findOrCreatePerson({
