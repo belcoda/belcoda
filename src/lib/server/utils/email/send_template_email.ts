@@ -32,8 +32,7 @@ export default async function sendTemplateEmail(options: {
 	});
 	if (result.ok) {
 		const json = await result.json();
-		log.debug('Email sent successfully');
-		log.debug(json);
+		log.debug({ MessageID: json.MessageID }, 'Email sent successfully');
 		return json.MessageID;
 	} else {
 		if (result.status === 422) {
