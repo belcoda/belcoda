@@ -93,7 +93,9 @@ function isPublicRoutePath(pathname: string): boolean {
 		pathname.startsWith('/api/docs/') ||
 		pathname === '/api/auth' ||
 		pathname.startsWith('/api/auth/') || //this is for the better-auth api which handles its own authentication
-		(NODE_ENV !== 'production' && (pathname === '/api/e2e' || pathname.startsWith('/api/e2e/'))) || // E2E testing endpoints (dev only)
+		// E2E testing endpoints — fail closed: only public under an explicit dev/test allowlist
+		((NODE_ENV === 'development' || NODE_ENV === 'test') &&
+			(pathname === '/api/e2e' || pathname.startsWith('/api/e2e/'))) ||
 		pathname === '/webhooks' ||
 		pathname.startsWith('/webhooks/') ||
 		pathname === '/sentry-example-page' ||
@@ -212,7 +214,7 @@ async function applyOneTimeTokenSession(event: RequestEvent, auth: BetterAuth): 
 		/* event.url.searchParams.delete('authToken'); //kill the token so it can't be used again
 															log.debug({ url: event.url.toString() }, '[DEBUG] Token deleted from search params'); */
 		log.debug(
-			{ sessionId: session?.session?.id ?? null, time: Date.now() },
+			{ verified: session?.session != null, time: Date.now() },
 			'[DEBUG] Session verified from one time token'
 		);
 		event.locals.session = session;
