@@ -2,18 +2,6 @@
  * Host origins allowed for Zero sync connect-src (HTTP + WebSocket).
  */
 export function getZeroSyncConnectSources(zeroServer: string | undefined): string[] {
-	if (!zeroServer) return [];
-
-	const sources: string[] = [];
-	try {
-		const url = new URL(zeroServer);
-		sources.push(url.origin);
-		if (url.protocol === 'https:') {
-			sources.push(`wss://${url.host}`);
-		} else if (url.protocol === 'http:') {
-			sources.push(`ws://${url.host}`);
-		}
-export function getZeroSyncConnectSources(zeroServer: string | undefined): string[] {
 	const zeroServerUrl = zeroServer?.trim();
 	if (!zeroServerUrl) return [];
 
@@ -32,8 +20,6 @@ export function getZeroSyncConnectSources(zeroServer: string | undefined): strin
 	} catch {
 		return [];
 	}
-	return sources;
-}
 	return sources;
 }
 
