@@ -121,36 +121,51 @@ async function processApprovedTemplate(template: ApprovedTemplate) {
 // on this param staying broad); the payload is validated at runtime below.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function handleWhatsappTemplateReviewed(body: any) {
-	try {
-		if (body.type !== 'whatsapp.template.reviewed') {
-			return;
-		}
-
-		// Untrusted webhook payload: validate the required fields once, up front.
-		const template = body.whatsappTemplate;
-		if (!template || !template.status || !template.name || !template.language || !template.wabaId) {
-			log.error({ body }, 'Invalid or incomplete whatsapp.template.reviewed payload');
-			return;
-		}
-		const validated: ApprovedTemplate = {
-			status: template.status,
-			name: template.name,
-			language: template.language,
-			wabaId: template.wabaId
-		};
-
-		try {
-			log.debug({ body }, 'Whatsapp template reviewed');
-			if (validated.status === 'APPROVED') {
-				await processApprovedTemplate(validated);
-			} else {
-				throw new Error('Whatsapp template not approved');
-			}
-		} catch (error) {
-			log.error({ error }, 'Error processing whatsapp template approved webhook');
-			throw error;
-		}
-	} catch (error) {
-		log.error({ error }, 'Error processing queued template reviewed event');
+	if (body?.type !== 'whatsapp.template.reviewed') {
+		return;
 	}
+
+	// Untrusted webhook payload: validate the required fields once, up front.
+	// Log only a missing-field summary rather than the raw payload.
+	const template = body?.whatsappTemplate;
+	if (!template?.status || !template?.name || !template?.language || !template?.wabaId) {
+		log.error(
+			{
+				missing: {
+					status: !template?.status,
+					name: !template?.name,
+					language: !template?.language,
+					wabaId: !template?.wabaId
+				}
+			},
+			'Invalid or incomplete whatsapp.template.reviewed payload'
+		);
+		return;
+	}
+	const validated: ApprovedTemplate = {
+		status: template.status,
+		name: template.name,
+		language: template.language,
+		wabaId: template.wabaId
+	};
+
+	log.debug(
+		{
+			name: validated.name,
+			language: validated.language,
+			wabaId: validated.wabaId,
+			status: validated.status
+		},
+		'Whatsapp template reviewed'
+	);
+
+	// A non-approved status is a normal outcome, not an error — return without throwing.
+	if (validated.status !== 'APPROVED') {
+		log.info({ status: validated.status }, 'Whatsapp template not approved; skipping');
+		return;
+	}
+
+	// Let genuine failures (DB / organization lookup) propagate so the queue can
+	// retry and the job is not silently marked as successful.
+	await processApprovedTemplate(validated);
 }
