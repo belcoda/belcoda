@@ -13,9 +13,27 @@ export function getZeroSyncConnectSources(zeroServer: string | undefined): strin
 		} else if (url.protocol === 'http:') {
 			sources.push(`ws://${url.host}`);
 		}
+export function getZeroSyncConnectSources(zeroServer: string | undefined): string[] {
+	const zeroServerUrl = zeroServer?.trim();
+	if (!zeroServerUrl) return [];
+
+	const sources: string[] = [];
+	try {
+		const url = new URL(zeroServerUrl);
+		if (!['http:', 'https:', 'ws:', 'wss:'].includes(url.protocol)) {
+			return [];
+		}
+		sources.push(url.origin);
+		if (url.protocol === 'https:') {
+			sources.push(`wss://${url.host}`);
+		} else if (url.protocol === 'http:') {
+			sources.push(`ws://${url.host}`);
+		}
 	} catch {
-		sources.push(zeroServer);
+		return [];
 	}
+	return sources;
+}
 	return sources;
 }
 
