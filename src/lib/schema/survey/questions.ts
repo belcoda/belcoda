@@ -117,12 +117,12 @@ export function convertQuestionsToValibotSchema(questions: SurveyQuestion[]) {
 				[question.id]: schema
 			};
 		},
-		{} as Record<string, v.GenericSchema<any, any>>
+		{} as Record<string, v.GenericSchema<unknown, unknown>>
 	);
 	return result;
 }
 
-function requiredOrOptional<TSchema extends v.GenericSchema<any, any>>(
+function requiredOrOptional<TSchema extends v.GenericSchema<unknown, unknown>>(
 	required: boolean,
 	schema: TSchema
 ) {
