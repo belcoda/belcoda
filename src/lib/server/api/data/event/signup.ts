@@ -977,12 +977,11 @@ export async function updateEventSignupStatus({
 	return result;
 }
 
-function assertSignupAllowedForChannel(
+function assertSignupAllowedUnlessStaffSession(
 	eventRecord: Pick<typeof event.$inferSelect, 'endsAt'> | { endsAt: number },
-	channelType: string
+	ctx: QueryContext
 ) {
-	const isAdminPanel = channelType === 'adminPanel';
-	if (!isAdminPanel && getEventHasEnded(eventRecord)) {
+	if (!ctx.userId && getEventHasEnded(eventRecord)) {
 		throw new Error('Event signup period has ended');
 	}
 }
@@ -1026,7 +1025,7 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
-	assertSignupAllowedForChannel(event, parsed.input.details.channel.type);
+	assertSignupAllowedUnlessStaffSession(event, ctx);
 	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(eventSignup)
