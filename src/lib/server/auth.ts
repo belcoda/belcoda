@@ -173,6 +173,7 @@ export function buildBetterAuth(localeInput: string) {
 			'https://belcoda-zero.fly.dev',
 			'https://zero.staging.belcoda.com',
 			'https://zero.app.belcoda.com',
+			'https://pr-*-belcoda-belcoda.fly.dev',
 			`.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 		],
 		session: {
@@ -194,7 +195,7 @@ export function buildBetterAuth(localeInput: string) {
 				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('localhost') ||
 				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('127.0.0.1')
 					? { enabled: false }
-					: { enabled: true, domain: `.belcoda.com` },
+					: { enabled: true, domain: `.${publicEnv.PUBLIC_ROOT_DOMAIN!}` },
 			cookiePrefix: 'belcoda',
 			ipAddress: {
 				ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] // Cloudflare specific header
