@@ -6,17 +6,6 @@ import type { LanguageCode } from '$lib/utils/language';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
-// Inbound webhook payload — untrusted, so every field is optional until validated.
-interface WhatsappTemplateReviewedPayload {
-	type?: string;
-	whatsappTemplate?: {
-		status?: string;
-		name?: string;
-		language?: LanguageCode;
-		wabaId?: string;
-	};
-}
-
 // A payload that has passed validation and is guaranteed to have all required fields.
 interface ApprovedTemplate {
 	status: string;
@@ -128,7 +117,10 @@ async function processApprovedTemplate(template: ApprovedTemplate) {
 	}
 }
 
-export async function handleWhatsappTemplateReviewed(body: WhatsappTemplateReviewedPayload) {
+// Queue handlers receive untyped job.data (the dispatch in queue/index.ts relies
+// on this param staying broad); the payload is validated at runtime below.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function handleWhatsappTemplateReviewed(body: any) {
 	try {
 		if (body.type !== 'whatsapp.template.reviewed') {
 			return;
