@@ -49,9 +49,13 @@ export async function PUT(event) {
 		}
 
 		// Verify with Postmark
+		const rawExternalId = emailFromSignatureRecord.externalId;
+		if (!/^\d+$/.test(rawExternalId)) {
+			return error(400, 'Email from signature has an invalid external ID');
+		}
 		const result = await verifySendSignature({
 			organizationId: emailFromSignatureRecord.organizationId,
-			emailSignatureExternalId: Number.parseInt(emailFromSignatureRecord.externalId)
+			emailSignatureExternalId: Number.parseInt(rawExternalId, 10)
 		});
 
 		const verified = result.Confirmed === true;
