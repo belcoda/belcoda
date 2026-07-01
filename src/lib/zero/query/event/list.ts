@@ -121,10 +121,10 @@ function dateRangeConditions(
 	dateRange: NonNullable<InferOutput<typeof inputSchema>['dateRange']>
 ) {
 	const conditions = [];
-	if (dateRange.start) {
+	if (dateRange.start != null) {
 		conditions.push(cmp('startsAt', '>=', dateRange.start));
 	}
-	if (dateRange.end) {
+	if (dateRange.end != null) {
 		conditions.push(cmp('endsAt', '<=', dateRange.end));
 	}
 	return conditions;
