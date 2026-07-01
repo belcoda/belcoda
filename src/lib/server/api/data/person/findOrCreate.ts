@@ -216,8 +216,8 @@ async function _updateExistingPerson({
 		return updatedPerson;
 	} catch (error) {
 		log.error({ error }, 'Unable to update person');
+		throw error;
 	}
-	return undefined;
 }
 
 export async function findOrCreatePerson({
