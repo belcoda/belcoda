@@ -1,18 +1,38 @@
 import { drizzle as db } from '$lib/server/db';
 import { whatsappTemplate, organization as organizationTable } from '$lib/schema/drizzle';
 import { eq, sql, and } from 'drizzle-orm';
+import type { LanguageCode } from '$lib/utils/language';
 
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
-async function findOrganizationByWabaId(wabaId: string, body: any) {
+// Inbound webhook payload — untrusted, so every field is optional until validated.
+interface WhatsappTemplateReviewedPayload {
+	type?: string;
+	whatsappTemplate?: {
+		status?: string;
+		name?: string;
+		language?: LanguageCode;
+		wabaId?: string;
+	};
+}
+
+// A payload that has passed validation and is guaranteed to have all required fields.
+interface ApprovedTemplate {
+	status: string;
+	name: string;
+	language: LanguageCode;
+	wabaId: string;
+}
+
+async function findOrganizationByWabaId(wabaId: string, template: ApprovedTemplate) {
 	const organization = await db
 		.select()
 		.from(organizationTable)
 		.where(sql`settings->'whatsApp'->>'wabaId' = ${wabaId}`)
 		.limit(1);
 	if (!organization || organization.length === 0) {
-		log.error({ body }, 'Organization not found');
+		log.error({ template }, 'Organization not found');
 		throw new Error('Organization not found');
 	}
 	if (organization.length > 1) {
@@ -62,31 +82,13 @@ async function setDefaultTemplateIfUnset(organizationId: string, approvedTemplat
 	});
 }
 
-async function processApprovedTemplate(body: any) {
-	const wabaId = body.whatsappTemplate?.wabaId;
-	if (wabaId == null || wabaId === '') {
-		log.error({ body }, 'Missing wabaId in whatsapp template reviewed webhook');
-		throw new Error('Missing wabaId in whatsapp template reviewed webhook');
-	}
+async function processApprovedTemplate(template: ApprovedTemplate) {
+	const { wabaId, name, language } = template;
 
-	log.info(
-		{
-			wabaId,
-			templateName: body.whatsappTemplate?.name,
-			templateLocale: body.whatsappTemplate?.language
-		},
-		'Whatsapp template approved'
-	);
-	const organization = await findOrganizationByWabaId(wabaId, body);
+	log.info({ wabaId, templateName: name, templateLocale: language }, 'Whatsapp template approved');
+	const organization = await findOrganizationByWabaId(wabaId, template);
 	const organizationId = organization.id;
-	log.debug(
-		{
-			organizationId,
-			name: body.whatsappTemplate.name,
-			locale: body.whatsappTemplate.language
-		},
-		'Updating whatsapp template'
-	);
+	log.debug({ organizationId, name, locale: language }, 'Updating whatsapp template');
 	const updated = await db
 		.update(whatsappTemplate)
 		.set({
@@ -95,18 +97,14 @@ async function processApprovedTemplate(body: any) {
 		.where(
 			and(
 				eq(whatsappTemplate.organizationId, organizationId),
-				eq(whatsappTemplate.name, body.whatsappTemplate.name),
-				eq(whatsappTemplate.locale, body.whatsappTemplate.language)
+				eq(whatsappTemplate.name, name),
+				eq(whatsappTemplate.locale, language)
 			)
 		)
 		.returning();
 	if (updated.length === 0) {
 		log.warn(
-			{
-				organizationId,
-				name: body.whatsappTemplate.name,
-				locale: body.whatsappTemplate.language
-			},
+			{ organizationId, name, locale: language },
 			'No whatsapp template matched approved webhook payload'
 		);
 		return;
@@ -130,21 +128,35 @@ async function processApprovedTemplate(body: any) {
 	}
 }
 
-export async function handleWhatsappTemplateReviewed(body: any) {
+export async function handleWhatsappTemplateReviewed(body: WhatsappTemplateReviewedPayload) {
 	try {
-		if (body.type === 'whatsapp.template.reviewed') {
-			try {
-				const status = body.whatsappTemplate.status;
-				log.debug({ body }, 'Whatsapp template reviewed');
-				if (status === 'APPROVED') {
-					await processApprovedTemplate(body);
-				} else {
-					throw new Error('Whatsapp template not approved');
-				}
-			} catch (error) {
-				log.error({ error }, 'Error processing whatsapp template approved webhook');
-				throw error;
+		if (body.type !== 'whatsapp.template.reviewed') {
+			return;
+		}
+
+		// Untrusted webhook payload: validate the required fields once, up front.
+		const template = body.whatsappTemplate;
+		if (!template || !template.status || !template.name || !template.language || !template.wabaId) {
+			log.error({ body }, 'Invalid or incomplete whatsapp.template.reviewed payload');
+			return;
+		}
+		const validated: ApprovedTemplate = {
+			status: template.status,
+			name: template.name,
+			language: template.language,
+			wabaId: template.wabaId
+		};
+
+		try {
+			log.debug({ body }, 'Whatsapp template reviewed');
+			if (validated.status === 'APPROVED') {
+				await processApprovedTemplate(validated);
+			} else {
+				throw new Error('Whatsapp template not approved');
 			}
+		} catch (error) {
+			log.error({ error }, 'Error processing whatsapp template approved webhook');
+			throw error;
 		}
 	} catch (error) {
 		log.error({ error }, 'Error processing queued template reviewed event');
