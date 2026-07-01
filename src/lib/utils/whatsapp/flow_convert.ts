@@ -202,81 +202,93 @@ type WhatsappFlowBaseField = {
 	visible: boolean;
 };
 
+function reverseConvertTextInput(component: WhatsAppTextInput, baseField: WhatsappFlowBaseField) {
+	return {
+		type: 'TextInput' as const,
+		...baseField,
+		inputType: component['input-type'] || 'text',
+		...(component['min-chars'] !== undefined && { minChars: component['min-chars'] }),
+		...(component['max-chars'] !== undefined && { maxChars: component['max-chars'] }),
+		...(component['helper-text'] && { helperText: component['helper-text'] }),
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] }),
+		...(component.pattern && { pattern: component.pattern })
+	};
+}
+
+function reverseConvertTextArea(component: WhatsAppTextArea, baseField: WhatsappFlowBaseField) {
+	return {
+		type: 'TextArea' as const,
+		...baseField,
+		...(component['max-length'] !== undefined && { maxLength: component['max-length'] }),
+		...(component['helper-text'] && { helperText: component['helper-text'] }),
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function reverseConvertRadioButtonsGroup(
+	component: WhatsAppRadioButtonsGroup,
+	baseField: WhatsappFlowBaseField
+) {
+	return {
+		type: 'RadioButtonsGroup' as const,
+		...baseField,
+		options: component['data-source'],
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function reverseConvertCheckboxGroup(
+	component: WhatsAppCheckboxGroup,
+	baseField: WhatsappFlowBaseField
+) {
+	return {
+		type: 'CheckboxGroup' as const,
+		...baseField,
+		options: component['data-source'],
+		...(component['min-selected-items'] !== undefined && {
+			minSelectedItems: component['min-selected-items']
+		}),
+		...(component['max-selected-items'] !== undefined && {
+			maxSelectedItems: component['max-selected-items']
+		}),
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function reverseConvertDatePicker(component: WhatsAppDatePicker, baseField: WhatsappFlowBaseField) {
+	return {
+		type: 'DatePicker' as const,
+		...baseField,
+		...(component['min-date'] && { minDate: component['min-date'] }),
+		...(component['max-date'] && { maxDate: component['max-date'] }),
+		...(component['unavailable-dates'] && { unavailableDates: component['unavailable-dates'] }),
+		...(component['helper-text'] && { helperText: component['helper-text'] }),
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function reverseConvertOptIn(component: WhatsAppOptIn, baseField: WhatsappFlowBaseField) {
+	return {
+		type: 'OptIn' as const,
+		...baseField,
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
 function convertComponentBySwitch(component: WhatsappFlowChild, baseField: WhatsappFlowBaseField) {
 	switch (component.type) {
-		case 'TextInput': {
-			const c = component as WhatsAppTextInput;
-			return {
-				type: 'TextInput' as const,
-				...baseField,
-				inputType: c['input-type'] || 'text',
-				...(c['min-chars'] !== undefined && { minChars: c['min-chars'] }),
-				...(c['max-chars'] !== undefined && { maxChars: c['max-chars'] }),
-				...(c['helper-text'] && { helperText: c['helper-text'] }),
-				...(c['init-value'] !== undefined && { initValue: c['init-value'] }),
-				...(c.pattern && { pattern: c.pattern })
-			};
-		}
-
-		case 'TextArea': {
-			const c = component as WhatsAppTextArea;
-			return {
-				type: 'TextArea' as const,
-				...baseField,
-				...(c['max-length'] !== undefined && { maxLength: c['max-length'] }),
-				...(c['helper-text'] && { helperText: c['helper-text'] }),
-				...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-			};
-		}
-
-		case 'RadioButtonsGroup': {
-			const c = component as WhatsAppRadioButtonsGroup;
-			return {
-				type: 'RadioButtonsGroup' as const,
-				...baseField,
-				options: c['data-source'],
-				...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-			};
-		}
-
-		case 'CheckboxGroup': {
-			const c = component as WhatsAppCheckboxGroup;
-			return {
-				type: 'CheckboxGroup' as const,
-				...baseField,
-				options: c['data-source'],
-				...(c['min-selected-items'] !== undefined && {
-					minSelectedItems: c['min-selected-items']
-				}),
-				...(c['max-selected-items'] !== undefined && {
-					maxSelectedItems: c['max-selected-items']
-				}),
-				...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-			};
-		}
-
-		case 'DatePicker': {
-			const c = component as WhatsAppDatePicker;
-			return {
-				type: 'DatePicker' as const,
-				...baseField,
-				...(c['min-date'] && { minDate: c['min-date'] }),
-				...(c['max-date'] && { maxDate: c['max-date'] }),
-				...(c['unavailable-dates'] && { unavailableDates: c['unavailable-dates'] }),
-				...(c['helper-text'] && { helperText: c['helper-text'] }),
-				...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-			};
-		}
-
-		case 'OptIn': {
-			const c = component as WhatsAppOptIn;
-			return {
-				type: 'OptIn' as const,
-				...baseField,
-				...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-			};
-		}
-
+		case 'TextInput':
+			return reverseConvertTextInput(component as WhatsAppTextInput, baseField);
+		case 'TextArea':
+			return reverseConvertTextArea(component as WhatsAppTextArea, baseField);
+		case 'RadioButtonsGroup':
+			return reverseConvertRadioButtonsGroup(component as WhatsAppRadioButtonsGroup, baseField);
+		case 'CheckboxGroup':
+			return reverseConvertCheckboxGroup(component as WhatsAppCheckboxGroup, baseField);
+		case 'DatePicker':
+			return reverseConvertDatePicker(component as WhatsAppDatePicker, baseField);
+		case 'OptIn':
+			return reverseConvertOptIn(component as WhatsAppOptIn, baseField);
 		default:
 			throw new Error(`Unknown component type: ${(component as { type: string }).type}`);
 	}
