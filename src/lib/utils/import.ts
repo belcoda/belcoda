@@ -9,6 +9,7 @@ import { isSupportedLanguage, type LanguageCode } from '$lib/utils/language';
 import { getCode } from 'country-list';
 import type { SocialMedia, PersonAddedFrom } from '$lib/schema/person/meta';
 import { getInternationalPhoneNumber } from '$lib/utils/phone';
+import { inputValueToDate } from '$lib/utils/date';
 import type { GenderOption } from '$lib/utils/person';
 import { t } from '$lib/index.svelte';
 import Papa from 'papaparse';
@@ -181,14 +182,20 @@ function normalizeGender(gender: string | null | undefined): GenderOption | null
 
 function parseDateOfBirth(dob: string | null | undefined): Date | null {
 	if (!dob) return null;
+	const trimmed = dob.trim();
+	if (!trimmed) return null;
 
-	try {
-		const date = new Date(dob);
-		if (Number.isNaN(date.getTime())) return null;
-		return date;
-	} catch {
-		return null;
-	}
+	// Fast path: strict YYYY-MM-DD is unambiguous and timezone-safe.
+	// inputValueToDate validates the parts numerically and builds the date in UTC.
+	const isoDate = inputValueToDate(trimmed);
+	if (isoDate) return isoDate;
+
+	// Fallback: be maximally accepting of other CSV date formats (e.g.
+	// MM/DD/YYYY, "1 Jan 1990"). Parsing here is intentionally permissive and
+	// may resolve ambiguous formats per the runtime's rules; the NaN guard
+	// preserves the null fallback for anything genuinely unparseable.
+	const parsed = new Date(trimmed);
+	return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
 function resolveCountry(csvRow: CsvRow): CountryCode {
