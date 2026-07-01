@@ -4,7 +4,7 @@ import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { env } from '$env/dynamic/public';
 const { PUBLIC_ROOT_DOMAIN } = env;
 import { env as privateEnv } from '$env/dynamic/private';
-const { EASYCRON_SECRET } = privateEnv;
+const { EASYCRON_SECRET, NODE_ENV } = privateEnv;
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
 import { json, redirect } from '@sveltejs/kit';
@@ -82,15 +82,22 @@ function isInternalOrStaticAssetPath(pathname: string): boolean {
  */
 function isPublicRoutePath(pathname: string): boolean {
 	return (
-		pathname.startsWith('/login') ||
-		pathname.startsWith('/signup') ||
-		pathname.startsWith('/logout') ||
-		pathname.startsWith('/api/docs') ||
-		pathname.startsWith('/verify-email') ||
-		pathname.startsWith('/api/auth') || //this is for the better-auth api which handles its own authentication
-		pathname.startsWith('/api/e2e') || // E2E testing endpoints (dev only)
-		pathname.startsWith('/webhooks') ||
-		pathname.startsWith('/sentry-example-page')
+		pathname === '/login' ||
+		pathname.startsWith('/login/') ||
+		pathname === '/signup' ||
+		pathname.startsWith('/signup/') ||
+		pathname === '/logout' ||
+		pathname === '/verify-email' ||
+		pathname.startsWith('/verify-email/') ||
+		pathname === '/api/docs' ||
+		pathname.startsWith('/api/docs/') ||
+		pathname === '/api/auth' ||
+		pathname.startsWith('/api/auth/') || //this is for the better-auth api which handles its own authentication
+		(NODE_ENV !== 'production' && (pathname === '/api/e2e' || pathname.startsWith('/api/e2e/'))) || // E2E testing endpoints (dev only)
+		pathname === '/webhooks' ||
+		pathname.startsWith('/webhooks/') ||
+		pathname === '/sentry-example-page' ||
+		pathname.startsWith('/sentry-example-page/')
 	);
 }
 
@@ -196,7 +203,7 @@ async function applyOneTimeTokenSession(event: RequestEvent, auth: BetterAuth): 
 		return;
 	}
 	try {
-		log.debug({ token, url: event.url.toString() }, 'Token found in search params on route');
+		log.debug({ pathname: event.url.pathname }, 'One-time auth token found in search params');
 		const session = await auth.api.verifyOneTimeToken({
 			body: {
 				token: token
@@ -204,7 +211,10 @@ async function applyOneTimeTokenSession(event: RequestEvent, auth: BetterAuth): 
 		});
 		/* event.url.searchParams.delete('authToken'); //kill the token so it can't be used again
 															log.debug({ url: event.url.toString() }, '[DEBUG] Token deleted from search params'); */
-		log.debug({ session, time: Date.now() }, '[DEBUG] Session verified from one time token');
+		log.debug(
+			{ sessionId: session?.session?.id ?? null, time: Date.now() },
+			'[DEBUG] Session verified from one time token'
+		);
 		event.locals.session = session;
 	} catch (error) {
 		log.error(error, 'Error verifying one time token');
