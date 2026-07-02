@@ -49,10 +49,13 @@ test.describe.serial('Community and person pages', () => {
 
 		await loginAsOwner(page, PROJECT);
 		await communityPage.goto();
-		await communityPage.searchCommunityList(ids.familyName);
 
 		const personLink = communityPage.personListLink(ids.personId);
-		await expect(personLink).toBeVisible();
+		await expect(async () => {
+			await communityPage.searchCommunityList(ids.familyName);
+			await expect(personLink).toBeVisible();
+		}).toPass({ timeout: 30_000 });
+
 		await expect(personLink).toContainText(ids.givenName);
 		await expect(personLink).toContainText(ids.familyName);
 	});

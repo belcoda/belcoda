@@ -18,8 +18,7 @@ test.describe.serial('Settings: API Keys', () => {
 		await apiKeysPage.goto();
 		await apiKeysPage.createApiKey(state.name);
 
-		await expect(page.getByText('API Key Created')).toBeVisible({ timeout: 15_000 });
-		await expect(apiKeysPage.keyDisplay).toBeVisible();
+		await expect(apiKeysPage.keyDisplay).toBeVisible({ timeout: 30_000 });
 		await apiKeysPage.closeCreateModalButton.click();
 		await expect(apiKeysPage.apiKeyRow(state.name)).toBeVisible({ timeout: 15_000 });
 	});

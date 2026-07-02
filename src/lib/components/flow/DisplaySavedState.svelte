@@ -19,14 +19,14 @@
 </script>
 
 <Panel position="bottom-left">
-	<div class="text-xs text-muted-foreground">
+	<div class="text-xs text-muted-foreground" data-testid="flow-save-state">
 		{#if isLoading()}
-			<div class="flex items-center gap-2">
+			<div class="flex items-center gap-2" data-testid="flow-save-state-saving">
 				<Spinner />
 				{t`Saving...`}
 			</div>
 		{:else}
-			<div class="flex items-center gap-2">
+			<div class="flex items-center gap-2" data-testid="flow-save-state-saved">
 				<CheckIcon class="size-3" strokeWidth={3} />
 				{derivedTimeAgo}
 			</div>

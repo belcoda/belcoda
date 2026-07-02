@@ -118,11 +118,15 @@ export class WhatsAppDraftPage {
 		await this.sendButton.waitFor({ state: 'visible', timeout: 20_000 });
 	}
 
+	async waitForSaved() {
+		await expect(this.page.getByTestId('flow-save-state-saved')).toBeVisible({ timeout: 30_000 });
+		await expect(this.page.getByTestId('flow-save-state-saving')).toHaveCount(0, {
+			timeout: 30_000
+		});
+	}
+
 	async save() {
-		const saving = this.page.getByText(/Saving/);
-		await saving.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {});
-		await saving.waitFor({ state: 'hidden', timeout: 20_000 });
-		await expect(this.page.getByText(/Saved/)).toBeVisible({ timeout: 20_000 });
+		await this.waitForSaved();
 	}
 
 	async sendAndConfirm() {
