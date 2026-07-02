@@ -5,7 +5,7 @@ import { PetitionEditPage } from '../pages/petitions/petition-edit.page';
 import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page';
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
-import { BASE_URL, getOrgSlug, slugifyTitle } from '../helpers/config';
+import { BASE_URL, getMockWabaId, getOrgSlug, slugifyTitle } from '../helpers/config';
 import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
@@ -347,6 +347,7 @@ test.describe.serial('Petitions: public page', () => {
 		const flowGivenName = `WA Petition ${suffix}`;
 
 		const webhookBody = buildWhatsAppInboundFlowReplyWebhook({
+			wabaId: getMockWabaId(PROJECT)!,
 			from: flowPhone,
 			to: getE2EDefaultWhatsAppNumber(),
 			responseJson: {

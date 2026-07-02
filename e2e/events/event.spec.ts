@@ -5,7 +5,7 @@ import { EventEditPage } from '../pages/events/event-edit.page';
 import { EventSignupsPage } from '../pages/events/event-signups.page';
 import { EventPublicPage } from '../pages/events/event-public-page.page';
 import { EventSurveyPage } from '../pages/events/event-survey.page';
-import { BASE_URL, getOrgSlug, slugifyTitle } from '../helpers/config';
+import { BASE_URL, getMockWabaId, getOrgSlug, slugifyTitle } from '../helpers/config';
 import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
@@ -334,6 +334,7 @@ test.describe.serial('Events', () => {
 		const flowGivenName = `WA Flow ${suffix}`;
 
 		const webhookBody = buildWhatsAppInboundFlowReplyWebhook({
+			wabaId: getMockWabaId(PROJECT)!,
 			from: flowPhone,
 			to: getE2EDefaultWhatsAppNumber(),
 			responseJson: {

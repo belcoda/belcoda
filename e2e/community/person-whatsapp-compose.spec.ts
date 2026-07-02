@@ -4,7 +4,7 @@ import { ApiKeysPage } from '../pages/settings/api-keys.page';
 import { PersonWhatsappComposePage } from '../pages/community/person-whatsapp-compose.page';
 import { loginAsOwner } from '../helpers/login';
 import { ownerStorageState } from '../helpers/auth-storage';
-import { E2E_COMMUNITY_MOCK_WABA_ID } from '../helpers/config';
+import { getMockWabaId } from '../helpers/config';
 import {
 	buildWhatsAppInboundTextWebhook,
 	getE2EDefaultWhatsAppNumber,
@@ -99,7 +99,8 @@ test.describe.serial('Community: person WhatsApp compose', () => {
 
 		await expect
 			.poll(
-				async () => composePage.outgoingMessageText('Hi E2E Name, do you have a second to talk?').count(),
+				async () =>
+					composePage.outgoingMessageText('Hi E2E Name, do you have a second to talk?').count(),
 				{ timeout: 20_000 }
 			)
 			.toBeGreaterThan(0);
@@ -107,7 +108,7 @@ test.describe.serial('Community: person WhatsApp compose', () => {
 
 	test('inbound message opens window and shows individual composer', async ({ page, request }) => {
 		const webhookBody = buildWhatsAppInboundTextWebhook({
-			wabaId: E2E_COMMUNITY_MOCK_WABA_ID,
+			wabaId: getMockWabaId(PROJECT)!,
 			from: state.personPhone,
 			to: getE2EDefaultWhatsAppNumber(),
 			body: 'Hello from E2E'
