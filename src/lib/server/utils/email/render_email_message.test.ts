@@ -59,8 +59,10 @@ function createParagraphNode(children: unknown[]) {
 // Mirrors the JSON produced by the svelte-lexical ImageNode's exportJSON()
 function createImageNode({
 	src = 'https://example.com/image.png',
-	altText = 'An example image'
-}: { src?: string; altText?: string } = {}) {
+	altText = 'An example image',
+	width = 0,
+	height = 0
+}: { src?: string; altText?: string; width?: number; height?: number } = {}) {
 	return {
 		altText,
 		caption: {
@@ -75,13 +77,13 @@ function createImageNode({
 				}
 			}
 		},
-		height: 0,
+		height,
 		maxWidth: 500,
 		showCaption: false,
 		src,
 		type: 'image',
 		version: 1,
-		width: 0
+		width
 	};
 }
 
@@ -242,8 +244,46 @@ describe('renderEmailMessage', () => {
 		});
 
 		expect(rendered.body).toBe(
-			'<p>Before</p><figure class="kg-card kg-image-card"><img src="https://example.com/inline.jpg" class="kg-image" alt="An example image" loading="lazy"></figure><p>After</p>'
+			'<p>Before</p><figure class="kg-card kg-image-card"><img src="https://example.com/inline.jpg" class="kg-image" alt="An example image" loading="lazy" style="max-width:100%;height:auto;"></figure><p>After</p>'
 		);
+	});
+
+	it('constrains images to the email content width so large images do not overflow', async () => {
+		const body = createBodyWithNodes([
+			createParagraphNode([
+				createImageNode({ src: 'https://example.com/huge.jpg', width: 2400, height: 1200 })
+			])
+		]);
+
+		const rendered = await renderEmailMessage({
+			subject: 'Big image',
+			body,
+			organization: { name: 'Belcoda', slug: 'belcoda' }
+		});
+
+		// fluid scaling for clients that honour max-width
+		expect(rendered.body).toContain('style="max-width:100%;height:auto;"');
+		// width/height attributes capped proportionally to 600px wide for Outlook
+		expect(rendered.body).toContain('width="600"');
+		expect(rendered.body).toContain('height="300"');
+		expect(rendered.body).not.toContain('width="2400"');
+	});
+
+	it('leaves small image dimensions untouched but still adds the fluid style', async () => {
+		const body = createBodyWithNodes([
+			createParagraphNode([
+				createImageNode({ src: 'https://example.com/small.jpg', width: 320, height: 240 })
+			])
+		]);
+
+		const rendered = await renderEmailMessage({
+			subject: 'Small image',
+			body,
+			organization: { name: 'Belcoda', slug: 'belcoda' }
+		});
+
+		expect(rendered.body).toContain('width="320" height="240"');
+		expect(rendered.body).toContain('style="max-width:100%;height:auto;"');
 	});
 
 	it('renders an image nested in a list item without leaving an empty list item behind', async () => {

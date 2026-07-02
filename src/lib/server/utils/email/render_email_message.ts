@@ -83,6 +83,11 @@ body (see normalize_lexical_body), render the Lexical segments between images
 with the Ghost renderer, and emit the image-card markup — matching the Ghost
 renderer's own output — ourselves.
 */
+// The standard content width for email; images wider than this are capped so
+// they never overflow the template. Matches the width @tryghost's own email
+// renderer resizes content images to.
+const EMAIL_CONTENT_WIDTH = 600;
+
 function renderImageNodeHtml(node: Record<string, unknown> & { src: string }): string {
 	const alt = typeof node.alt === 'string' ? node.alt : '';
 	const caption = typeof node.caption === 'string' ? node.caption : '';
@@ -96,9 +101,20 @@ function renderImageNodeHtml(node: Record<string, unknown> & { src: string }): s
 
 	let img = `<img src="${escapeHtml(node.src)}" class="kg-image" alt="${escapeHtml(alt)}" loading="lazy"`;
 	if (width && height) {
-		img += ` width="${width}" height="${height}"`;
+		// Outlook ignores max-width on images, so cap the width/height attributes
+		// themselves (proportionally) at the content width. The inline style below
+		// handles fluid scaling for clients that honour max-width.
+		if (width > EMAIL_CONTENT_WIDTH) {
+			const cappedHeight = Math.round((height * EMAIL_CONTENT_WIDTH) / width);
+			img += ` width="${EMAIL_CONTENT_WIDTH}" height="${cappedHeight}"`;
+		} else {
+			img += ` width="${width}" height="${height}"`;
+		}
 	}
-	img += '>';
+	// Constrain the image to its parent's width and keep its aspect ratio,
+	// regardless of the intrinsic pixel size. Email clients strip <style> blocks
+	// and class-based CSS, so this has to be inline on the element itself.
+	img += ' style="max-width:100%;height:auto;">';
 
 	const figcaption = caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : '';
 	return `<figure class="${figureClasses}">${img}${figcaption}</figure>`;
