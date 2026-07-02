@@ -1,28 +1,24 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-export async function scrollSidebarForMoreItems(
+export async function scrollSidebarSentinelIntoView(
 	page: Page,
-	scrollTestIds: string[]
+	sentinelTestId: string
 ): Promise<void> {
-	for (const testId of scrollTestIds) {
-		await page
-			.getByTestId(testId)
-			.evaluate((element) => {
-				element.scrollTop = element.scrollHeight;
-			})
-			.catch(() => {});
-	}
+	await page
+		.getByTestId(sentinelTestId)
+		.scrollIntoViewIfNeeded()
+		.catch(() => {});
 }
 
 export async function expectSidebarItemCountToReach(
 	items: Locator,
 	targetCount: number,
 	page: Page,
-	scrollTestIds: string[],
+	sentinelTestId: string,
 	timeout = 30_000
 ): Promise<void> {
 	await expect(async () => {
-		await scrollSidebarForMoreItems(page, scrollTestIds);
+		await scrollSidebarSentinelIntoView(page, sentinelTestId);
 		await expect(items).toHaveCount(targetCount);
 	}).toPass({ timeout });
 }
