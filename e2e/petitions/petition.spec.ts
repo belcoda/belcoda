@@ -6,6 +6,7 @@ import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
 import { BASE_URL, getMockWabaId, getOrgSlug, slugifyTitle } from '../helpers/config';
+import { expectSidebarItemCountToReach } from '../helpers/infinite-scroll';
 import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
@@ -110,10 +111,10 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		const items = page.getByTestId('petition-sidebar-item');
 		await expect(items).toHaveCount(25, { timeout: 15_000 });
 
-		await items.first().hover();
-		await page.mouse.wheel(0, 10_000);
-
-		await expect(items).toHaveCount(30, { timeout: 30_000 });
+		await expectSidebarItemCountToReach(items, 30, page, [
+			'petitions-sidebar-scroll',
+			'petitions-sidebar-list'
+		]);
 	});
 
 	test('owner can add a petition and it is saved as draft', async ({ page }) => {

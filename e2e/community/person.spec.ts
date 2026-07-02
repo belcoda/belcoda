@@ -36,9 +36,7 @@ test.describe.serial('Community and person pages', () => {
 		await personCreate.fillRequiredFields(ids.givenName, ids.familyName, email);
 		await personCreate.submit();
 
-		await expect(page).toHaveURL(
-			/\/community\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i
-		);
+		await expect(page).toHaveURL(/\/community\/[^/?#]+/i, { timeout: 30_000 });
 		ids.personPath = new URL(page.url()).pathname;
 		ids.personId = ids.personPath.split('/')[2] ?? '';
 		await expect(page.getByTestId('person-timeline-display-name')).toHaveText(

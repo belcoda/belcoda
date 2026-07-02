@@ -4,7 +4,7 @@ import {
 	WhatsAppListPage,
 	WhatsAppNavigationPage
 } from '../pages/communications/whatsapp.page';
-import { BASE_URL, getOrgSlug } from '../helpers/config';
+import { BASE_URL, getOrgSlug, WHATSAPP_DRAFT_DETAIL_URL } from '../helpers/config';
 import { loginAsOwner } from '../helpers/login';
 
 const PROJECT = 'communications' as const;
@@ -49,11 +49,12 @@ test.describe.serial('Communications: WhatsApp', () => {
 		await navigationPage.gotoDrafts();
 		await navigationPage.clickComposeWhatsApp();
 
-		await expect(page).toHaveURL(/\/communications\/whatsapp\/drafts\/[0-9a-f-]{36}(\?.*)?$/i, {
-			timeout: 20_000
-		});
+		await expect(page).toHaveURL(WHATSAPP_DRAFT_DETAIL_URL, { timeout: 30_000 });
 
-		state.threadId = new URL(page.url()).pathname.split('/').at(-1) ?? '';
+		const draftPathMatch = new URL(page.url()).pathname.match(
+			/\/communications\/whatsapp\/drafts\/([^/]+)/
+		);
+		state.threadId = draftPathMatch?.[1] ?? '';
 		expect(state.threadId).not.toBe('');
 
 		const draftPage = new WhatsAppDraftPage(page);

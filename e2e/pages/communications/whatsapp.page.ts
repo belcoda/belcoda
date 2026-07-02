@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
+import { WHATSAPP_DRAFT_DETAIL_URL } from '../../helpers/config';
 
 export class WhatsAppNavigationPage {
 	readonly page: Page;
@@ -29,7 +30,15 @@ export class WhatsAppNavigationPage {
 
 	async clickComposeWhatsApp() {
 		await this.openComposeMenu();
-		await this.composeWhatsAppLink.click();
+		await Promise.all([
+			this.page.waitForURL(WHATSAPP_DRAFT_DETAIL_URL, { timeout: 30_000 }),
+			this.composeWhatsAppLink.click()
+		]);
+	}
+
+	async gotoNewDraft() {
+		await this.page.goto('/communications/whatsapp/drafts/new');
+		await this.page.waitForURL(WHATSAPP_DRAFT_DETAIL_URL, { timeout: 30_000 });
 	}
 }
 
