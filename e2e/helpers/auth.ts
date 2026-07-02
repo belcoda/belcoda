@@ -98,7 +98,7 @@ export function extractSessionCookie(response: Response): string | null {
 			: [response.headers.get('set-cookie')].filter((h): h is string => !!h);
 
 	for (const header of setCookieHeaders) {
-		const match = header.match(/(?:__Secure-)?belcoda\.session_token=([^;]+)/);
+		const match = /(?:__Secure-)?belcoda\.session_token=([^;]+)/.exec(header);
 		if (match) return match[1];
 	}
 

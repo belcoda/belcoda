@@ -4,7 +4,7 @@ import { createLedgerEntrySchema } from '$lib/schema/ledger';
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { CreateLedgerEntrySchema, LedgerEntryMetadataSchema } from '$lib/schema/ledger';
 import { v7 as uuidv7 } from 'uuid';
-import { DrizzleQueryError, eq, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 import { isUniqueConstraintError } from '$lib/server/db';

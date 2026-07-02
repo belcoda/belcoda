@@ -3,13 +3,13 @@
 
 /// <reference types="wuchale/virtual" />
 
-import { loadCatalog, loadIDs, key } from 'virtual:wuchale/proxy/sync' // because it's on the server
-import { currentCatalog } from 'wuchale/load-utils/server'
+import { key } from 'virtual:wuchale/proxy/sync'; // because it's on the server
+import { currentCatalog } from 'wuchale/load-utils/server';
 
-export { loadCatalog, loadIDs, key } // for hooks.server.{js,ts}
+export { loadCatalog, loadIDs, key } from 'virtual:wuchale/proxy/sync'; // for hooks.server.{js,ts}
 
 // for non-reactive
-export const get = (/** @type {string} */ loadID) => currentCatalog(key, loadID)
+export const get = (/** @type {string} */ loadID) => currentCatalog(key, loadID);
 
 // same function, only will be inside $derived when used
-export default get
+export default get;

@@ -21,7 +21,7 @@ export async function checkEventSlug({
 	const result = await drizzle.query.event.findFirst({
 		where: and(...where)
 	});
-	return result ? true : false;
+	return !!result;
 }
 export async function checkEventTitle({
 	title,
@@ -43,7 +43,7 @@ export async function checkEventTitle({
 	const result = await drizzle.query.event.findFirst({
 		where: and(...where)
 	});
-	return result ? true : false;
+	return !!result;
 }
 
 export async function _getEventActionCodeUnsafe({ eventId }: { eventId: string }) {

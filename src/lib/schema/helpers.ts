@@ -6,14 +6,14 @@ export const uuid = v.pipe(v.string(), v.uuid());
 export const SHORT_STRING_MAX_LENGTH = 100;
 export const MEDIUM_STRING_MAX_LENGTH = 500;
 export const LONG_STRING_MAX_LENGTH = 100000;
-export const SLUG_REGEXP = new RegExp('^[a-z0-9-]+(?:-[a-z0-9]+)*$');
-export const UNDERSCORE_SLUG_REGEXP = new RegExp('^[a-z0-9_]+$');
+export const SLUG_REGEXP = /^[a-z0-9-]+(?:-[a-z0-9]+)*$/;
+export const UNDERSCORE_SLUG_REGEXP = /^[a-z0-9_]+$/;
 export const CURRENT_API_VERSION = '2026-04-16';
 export const DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS = 80;
 
 /** Matches PostgreSQL `timestamp + interval '1 month'` (calendar month, not a fixed duration). */
 export function addOneCalendarMonth(date: Date): Date {
-	const result = new Date(date.getTime());
+	const result = new Date(date);
 	const originalDay = result.getDate();
 	result.setDate(1);
 	result.setMonth(result.getMonth() + 1);
@@ -200,8 +200,6 @@ export const email = v.pipe(
 	v.maxLength(MEDIUM_STRING_MAX_LENGTH, `Maximum length is ${MEDIUM_STRING_MAX_LENGTH} characters`),
 	v.email()
 );
-// TODO: Add timezone validation when timezone utilities are implemented
-// export const timezone = v.picklist(timezones, 'Invalid timezone');
 
 // This regex uses a negative lookahead to ensure the email address is NOT a public email domain
 // Also, using belcoda.org or belcoda.com is not allowed, because they would be automatically verified by Postmark
@@ -278,9 +276,9 @@ export const dbDate = v.union([
 	v.pipe(
 		v.string(),
 		//pattern to match YYY7-MM-DD
-		v.regex(new RegExp('\\d{4}-\\d{2}-\\d{2}')),
+		v.regex(/^\d{4}-\d{2}-\d{2}$/),
 		v.transform((input: string) => {
-			new Date(input).toISOString();
+			return new Date(input).toISOString();
 		})
 	),
 	v.pipe(
@@ -312,10 +310,10 @@ export function renderValiError(err: unknown):
 		let messageArr: string[] = [];
 		err.issues.forEach((issue) => {
 			const dotPath = v.getDotPath(issue);
-			if (!dotPath) {
-				messageArr.push(issue.message);
-			} else {
+			if (dotPath) {
 				messageArr.push(`${dotPath} (Received: ${issue.received}): ${issue.message}`);
+			} else {
+				messageArr.push(issue.message);
 			}
 		});
 		return {
@@ -376,7 +374,7 @@ export const password = v.pipe(
 	v.maxLength(800000, 'Password is too long'),
 	v.regex(/[a-z]/, 'Password must contain at least one lowercase letter'),
 	v.regex(/[A-Z]/, 'Password must contain at least one uppercase letter'),
-	v.regex(/[0-9]/, 'Password must contain at least one number')
+	v.regex(/\d/, 'Password must contain at least one number')
 );
 
 export const signupSchema = v.pipe(

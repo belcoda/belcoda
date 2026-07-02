@@ -1,9 +1,6 @@
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
-import {
-	incomingMessageSchema,
-	type IncomingMessage
-} from '$lib/schema/whatsapp/ycloud/incoming_message';
+import { type IncomingMessage } from '$lib/schema/whatsapp/ycloud/incoming_message';
 import type { WhatsappMessage } from '$lib/schema/whatsapp/message';
 
 export async function convertIncomingWhatsAppMessage({

@@ -1,14 +1,8 @@
-import {
-	type WhatsappTemplateMessage,
-	type WhatsappMessage,
-	type WhatsappActions
-} from '$lib/schema/whatsapp/message';
-import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+import { type WhatsappMessage } from '$lib/schema/whatsapp/message';
 import type { LanguageCode } from '$lib/utils/language';
 import type { YCloudWhatsappMessage } from '$lib/schema/whatsapp/ycloud/message';
 import { createButtonActionString } from '$lib/utils/whatsapp/template';
 import type { WhatsappTemplateMessageData, WhatsappMessageData } from '$lib/schema/flow';
-import { v4 as uuidv4 } from 'uuid';
 
 export function convertNodeToFullMessage({
 	messageNode,
@@ -149,9 +143,9 @@ export function createExternalId({
 }
 
 export function extractExternalId(externalId: string): {
-	whatsappMessageId: string | 'UNKNOWN';
+	whatsappMessageId: string;
 	whatsappThreadId: string;
-	nodeId: string | 'UNKNOWN';
+	nodeId: string;
 } {
 	const [whatsappThreadId, nodeId, whatsappMessageId] = externalId.split(':');
 	if (!whatsappThreadId || !nodeId || !whatsappMessageId) {

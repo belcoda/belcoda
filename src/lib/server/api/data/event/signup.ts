@@ -178,7 +178,9 @@ function isCompleteEventSignupStatus(status: EventSignupStatus | null | undefine
 	return status === 'signup' || status === 'attended' || status === 'noshow';
 }
 
-function getEventHasEnded(eventRecord: typeof event.$inferSelect) {
+function getEventHasEnded(
+	eventRecord: Pick<typeof event.$inferSelect, 'endsAt'> | { endsAt: number }
+) {
 	return eventRecord.endsAt <= new Date();
 }
 
@@ -975,6 +977,15 @@ export async function updateEventSignupStatus({
 	return result;
 }
 
+function assertSignupAllowedUnlessStaffSession(
+	eventRecord: Pick<typeof event.$inferSelect, 'endsAt'> | { endsAt: number },
+	ctx: QueryContext
+) {
+	if (!ctx.userId && getEventHasEnded(eventRecord)) {
+		throw new Error('Event signup period has ended');
+	}
+}
+
 export async function createEventSignup({
 	tx,
 	ctx,
@@ -1014,22 +1025,7 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
-	if (
-		parsed.input.details.channel.type !== 'adminPanel' &&
-		getEventHasEnded({
-			...event,
-			endsAt: new Date(event.endsAt),
-			startsAt: new Date(event.startsAt),
-			createdAt: new Date(event.createdAt),
-			updatedAt: new Date(event.updatedAt),
-			reminderSentAt: event.reminderSentAt ? new Date(event.reminderSentAt) : null,
-			cancelledAt: event.cancelledAt ? new Date(event.cancelledAt) : null,
-			deletedAt: event.deletedAt ? new Date(event.deletedAt) : null,
-			archivedAt: event.archivedAt ? new Date(event.archivedAt) : null
-		})
-	) {
-		throw new Error('Event signup period has ended');
-	}
+	assertSignupAllowedUnlessStaffSession(event, ctx);
 	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(eventSignup)

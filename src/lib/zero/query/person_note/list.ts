@@ -1,6 +1,5 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
-import { builder, type Schema } from '$lib/zero/schema';
-import type { QueryContext } from '$lib/zero/schema';
+import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
 import { type InferOutput, object } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';

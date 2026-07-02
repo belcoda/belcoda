@@ -43,6 +43,46 @@ function buildFailureStatusMessage(msg: WhatsappMessageUpdatedObject): string {
 	return parts.join(' — ') || 'failed';
 }
 
+type WhatsappMessageUpdatePayload = {
+	status: WhatsappMessageStatus;
+	updatedAt: Date;
+	statusMessage: string | null;
+	wamidId?: string;
+	deliveredAt?: Date;
+	readAt?: Date;
+};
+
+function buildUpdatePayload(
+	wmsg: WhatsappMessageUpdatedObject,
+	internalStatus: WhatsappMessageStatus,
+	rowDeliveredAt: Date | null,
+	now: Date
+): WhatsappMessageUpdatePayload {
+	const deliveredAtForRead =
+		wmsg.deliverTime != null
+			? new Date(wmsg.deliverTime)
+			: wmsg.readTime != null
+				? new Date(wmsg.readTime)
+				: now;
+
+	const updatePayload: WhatsappMessageUpdatePayload = {
+		status: internalStatus,
+		updatedAt: now,
+		wamidId: wmsg.wamid,
+		statusMessage: internalStatus === 'failed' ? buildFailureStatusMessage(wmsg) : null
+	};
+	if (internalStatus === 'delivered') {
+		updatePayload.deliveredAt = wmsg.deliverTime ? new Date(wmsg.deliverTime) : now;
+	}
+	if (internalStatus === 'read') {
+		updatePayload.readAt = wmsg.readTime ? new Date(wmsg.readTime) : now;
+		if (!rowDeliveredAt) {
+			updatePayload.deliveredAt = deliveredAtForRead;
+		}
+	}
+	return updatePayload;
+}
+
 export async function handleWhatsappMessageUpdated(body: unknown) {
 	try {
 		const parsed = parse(messageUpdatedSchema, body);
@@ -71,35 +111,7 @@ export async function handleWhatsappMessageUpdated(body: unknown) {
 		const internalStatus = mapYCloudStatusToInternal(wmsg.status);
 		const now = new Date();
 
-		const deliveredAtForRead =
-			wmsg.deliverTime != null
-				? new Date(wmsg.deliverTime)
-				: wmsg.readTime != null
-					? new Date(wmsg.readTime)
-					: now;
-
-		const updatePayload: {
-			status: WhatsappMessageStatus;
-			updatedAt: Date;
-			statusMessage: string | null;
-			wamidId?: string;
-			deliveredAt?: Date;
-			readAt?: Date;
-		} = {
-			status: internalStatus,
-			updatedAt: now,
-			wamidId: wmsg.wamid,
-			statusMessage: internalStatus === 'failed' ? buildFailureStatusMessage(wmsg) : null
-		};
-		if (internalStatus === 'delivered') {
-			updatePayload.deliveredAt = wmsg.deliverTime ? new Date(wmsg.deliverTime) : now;
-		}
-		if (internalStatus === 'read') {
-			updatePayload.readAt = wmsg.readTime ? new Date(wmsg.readTime) : now;
-			if (!row.deliveredAt) {
-				updatePayload.deliveredAt = deliveredAtForRead;
-			}
-		}
+		const updatePayload = buildUpdatePayload(wmsg, internalStatus, row.deliveredAt, now);
 
 		await db.transaction(async (tx) => {
 			const [updatedMsg] = await tx.dbTransaction.wrappedTransaction

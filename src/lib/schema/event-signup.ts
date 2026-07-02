@@ -2,11 +2,8 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { eventSignupDetails, eventSignupStatus } from '$lib/schema/event/settings';
-import { readPersonZero } from '$lib/schema/person';
+import { readPersonZero, personActionHelper } from '$lib/schema/person';
 import { personAddedFrom } from '$lib/schema/person/meta';
-
-import { personActionHelper } from '$lib/schema/person';
-import { surveyQuestionResponse } from '$lib/schema/survey/questions';
 
 export const eventSignupSchema = v.object({
 	id: helpers.uuid,
