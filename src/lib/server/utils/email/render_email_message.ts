@@ -1,6 +1,7 @@
 import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import { organization as organizationTable, person, user as userTable } from '$lib/schema/drizzle';
 import { templateVariableKeys, type TemplateVariableKey } from '$lib/schema/template-variables';
+import { isRenderableImageNode, normalizeLexicalBody } from './normalize_lexical_body';
 
 const templateVariableKeySet = new Set<string>(templateVariableKeys);
 const templateVariableTokenPattern = /\{\{\s*([a-z_]+\.[a-z_]+)\s*\}\}/g;
@@ -70,6 +71,77 @@ function renderTemplateVariables({
 	});
 }
 
+/*
+@tryghost/kg-lexical-html-renderer only renders image nodes when the Koenig
+ImageNode class is registered with its headless editor. That class (from
+@tryghost/kg-default-nodes) is built against a separate nested copy of
+lexical@0.13.1 than the renderer's own, because this project pins
+lexical@0.40.0 at the root (for svelte-lexical) and npm therefore nests a
+private lexical copy inside each Ghost package. Registering the class makes
+parsing fail with "Unable to find an active editor". Instead we normalize the
+body (see normalize_lexical_body), render the Lexical segments between images
+with the Ghost renderer, and emit the image-card markup — matching the Ghost
+renderer's own output — ourselves.
+*/
+function renderImageNodeHtml(node: Record<string, unknown> & { src: string }): string {
+	const alt = typeof node.alt === 'string' ? node.alt : '';
+	const caption = typeof node.caption === 'string' ? node.caption : '';
+	const width = typeof node.width === 'number' ? node.width : null;
+	const height = typeof node.height === 'number' ? node.height : null;
+
+	let figureClasses = 'kg-card kg-image-card';
+	if (caption) {
+		figureClasses += ' kg-card-hascaption';
+	}
+
+	let img = `<img src="${escapeHtml(node.src)}" class="kg-image" alt="${escapeHtml(alt)}" loading="lazy"`;
+	if (width && height) {
+		img += ` width="${width}" height="${height}"`;
+	}
+	img += '>';
+
+	const figcaption = caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : '';
+	return `<figure class="${figureClasses}">${img}${figcaption}</figure>`;
+}
+
+async function renderLexicalBody(lexicalRenderer: LexicalHtmlRenderer, body: unknown) {
+	const normalized = normalizeLexicalBody(body);
+	const root =
+		typeof normalized === 'object' && normalized !== null
+			? (normalized as { root?: { children?: unknown[] } }).root
+			: undefined;
+	const children = root && Array.isArray(root.children) ? root.children : undefined;
+
+	if (!children || !children.some(isRenderableImageNode)) {
+		return lexicalRenderer.render(JSON.stringify(normalized));
+	}
+
+	const output: string[] = [];
+	let segment: unknown[] = [];
+
+	async function renderSegment() {
+		if (segment.length === 0) {
+			return;
+		}
+		output.push(
+			await lexicalRenderer.render(JSON.stringify({ root: { ...root, children: segment } }))
+		);
+		segment = [];
+	}
+
+	for (const child of children) {
+		if (isRenderableImageNode(child)) {
+			await renderSegment();
+			output.push(renderImageNodeHtml(child));
+		} else {
+			segment.push(child);
+		}
+	}
+	await renderSegment();
+
+	return output.join('');
+}
+
 export async function renderEmailMessage({
 	subject,
 	body,
@@ -89,7 +161,7 @@ export async function renderEmailMessage({
 		organization,
 		sender
 	});
-	const html = body ? await lexicalRenderer.render(JSON.stringify(body)) : '';
+	const html = body ? await renderLexicalBody(lexicalRenderer, body) : '';
 
 	return {
 		subject: renderTemplateVariables({
