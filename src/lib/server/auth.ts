@@ -348,7 +348,6 @@ export function buildBetterAuth(localeInput: string) {
 					}
 				}
 			}),
-			sveltekitCookies(getRequestEvent),
 			openAPI(),
 			apiKey({
 				storage: 'secondary-storage',
@@ -390,7 +389,8 @@ export function buildBetterAuth(localeInput: string) {
 					await applyBalanceTopUpFromStripeEvent(event);
 				}
 			}),
-			oneTimeToken()
+			oneTimeToken(),
+			sveltekitCookies(getRequestEvent)
 		],
 		emailVerification: {
 			autoSignInAfterVerification: true,
@@ -420,6 +420,14 @@ export function buildBetterAuth(localeInput: string) {
 				if (!value) {
 					return null;
 				}
+				return value;
+			},
+			getAndDelete: async (key: string) => {
+				const value = cache.get(key);
+				if (!value) {
+					return null;
+				}
+				cache.delete(key);
 				return value;
 			},
 			set: async (key: string, value: string) => {
