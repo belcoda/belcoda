@@ -173,6 +173,12 @@ export function buildBetterAuth(localeInput: string) {
 			'https://belcoda-zero.fly.dev',
 			'https://zero.staging.belcoda.com',
 			'https://zero.app.belcoda.com',
+			// Trust this deployment's own origin (e.g. a per-PR Fly review app at
+			// https://pr-123-belcoda-belcoda.fly.dev). Use the exact host rather than a
+			// `pr-*-belcoda-belcoda.fly.dev` wildcard: fly.dev app names are globally
+			// unique and claimable by anyone, so a wildcard would let a squatted app
+			// become a trusted origin (and this array also ships to production).
+			`https://${publicEnv.PUBLIC_ROOT_DOMAIN}`,
 			`.${publicEnv.PUBLIC_ROOT_DOMAIN}`
 		],
 		session: {
@@ -194,7 +200,7 @@ export function buildBetterAuth(localeInput: string) {
 				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('localhost') ||
 				publicEnv.PUBLIC_ROOT_DOMAIN?.includes('127.0.0.1')
 					? { enabled: false }
-					: { enabled: true, domain: `.belcoda.com` },
+					: { enabled: true, domain: `.${publicEnv.PUBLIC_ROOT_DOMAIN!}` },
 			cookiePrefix: 'belcoda',
 			ipAddress: {
 				ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] // Cloudflare specific header
