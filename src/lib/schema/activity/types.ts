@@ -30,7 +30,7 @@ export const activityType = v.picklist(activityTypesList);
 export type ActivityType = v.InferOutput<typeof activityType>;
 
 import * as v from 'valibot';
-import { shortString, mediumString, uuid, emoji } from '$lib/schema/helpers';
+import { shortString, mediumString, uuid } from '$lib/schema/helpers';
 
 export const activityPreviewTypesList = [...activityTypesList] as const;
 export const activityPreviewType = v.picklist(activityPreviewTypesList);

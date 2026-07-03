@@ -15,218 +15,161 @@ export async function generatePreview({
 	referenceId: string;
 }): Promise<ActivityPreviewPayload> {
 	switch (type) {
-		case 'tag_added': {
-			const tagResult = await drizzle.query.tag.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!tagResult) {
-				throw new Error('Tag not found');
-			}
-			return {
-				type: 'tag_added',
-				tagName: tagResult.name,
-				tagId: tagResult.id
-			};
-		}
-		case 'tag_removed': {
-			const tagResult = await drizzle.query.tag.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!tagResult) {
-				throw new Error('Tag not found');
-			}
-			return {
-				type: 'tag_removed',
-				tagName: tagResult.name,
-				tagId: tagResult.id
-			};
-		}
-		case 'team_added': {
-			const teamResult = await drizzle.query.team.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!teamResult) {
-				throw new Error('Team not found');
-			}
-			return {
-				type: 'team_added',
-				teamName: teamResult.name,
-				teamId: teamResult.id
-			};
-		}
-		case 'team_removed': {
-			const teamResult = await drizzle.query.team.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!teamResult) {
-				throw new Error('Team not found');
-			}
-			return {
-				type: 'team_removed',
-				teamName: teamResult.name,
-				teamId: teamResult.id
-			};
-		}
-		case 'note_added': {
-			const noteResult = await drizzle.query.personNote.findFirst({
-				where: (row, { and, eq }) => and(eq(row.id, referenceId))
-			});
-			if (!noteResult) {
-				throw new Error('Note not found');
-			}
-			const userResult = await drizzle.query.user.findFirst({
-				where: (row, { eq }) => eq(row.id, noteResult.userId)
-			});
-			if (!userResult) {
-				throw new Error('User not found');
-			}
-			return {
-				type: 'note_added',
-				notePreview: noteResult.note.substring(0, 100),
-				userName: userResult.name,
-				noteId: noteResult.id
-			};
-		}
-		case 'event_signup': {
-			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!eventSignupResult) {
-				throw new Error('Event signup not found');
-			}
-			const eventResult = await drizzle.query.event.findFirst({
-				where: (row, { eq }) => eq(row.id, eventSignupResult.eventId)
-			});
-			if (!eventResult) {
-				throw new Error('Event not found. Cannot generate preview.');
-			}
-			return {
-				type: 'event_signup',
-				eventName: eventResult.title,
-				eventId: eventResult.id
-			};
-		}
-		case 'event_attended': {
-			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!eventSignupResult) {
-				throw new Error('Event signup not found');
-			}
-			const eventResult = await drizzle.query.event.findFirst({
-				where: (row, { eq }) => eq(row.id, eventSignupResult.eventId)
-			});
-			if (!eventResult) {
-				throw new Error('Event not found. Cannot generate preview.');
-			}
-			return {
-				type: 'event_attended',
-				eventName: eventResult.title,
-				eventId: eventResult.id
-			};
-		}
-		case 'event_signup_email_sent': {
-			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!eventSignupResult) {
-				throw new Error('Event signup not found');
-			}
-			const eventResult = await drizzle.query.event.findFirst({
-				where: (row, { eq }) => eq(row.id, eventSignupResult.eventId)
-			});
-			if (!eventResult) {
-				throw new Error('Event not found. Cannot generate preview.');
-			}
-			return {
-				type: 'event_signup_email_sent',
-				eventName: eventResult.title,
-				eventId: eventResult.id
-			};
-		}
-		case 'petition_signed': {
-			const petitionSignatureResult = await drizzle.query.petitionSignature.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!petitionSignatureResult) {
-				throw new Error('Petition signature not found');
-			}
-			const petitionResult = await drizzle.query.petition.findFirst({
-				where: (row, { eq }) => eq(row.id, petitionSignatureResult.petitionId)
-			});
-			if (!petitionResult) {
-				throw new Error('Petition not found. Cannot generate preview.');
-			}
-			return {
-				type: 'petition_signed',
-				petitionName: petitionResult.title,
-				petitionId: petitionResult.id
-			};
-		}
-		case 'event_not_attending': {
-			const eventSignupResult = await drizzle.query.eventSignup.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!eventSignupResult) {
-				throw new Error('Event signup not found');
-			}
-			const eventResult = await drizzle.query.event.findFirst({
-				where: (row, { eq }) => eq(row.id, eventSignupResult.eventId)
-			});
-			if (!eventResult) {
-				throw new Error('Event not found. Cannot generate preview.');
-			}
-			return {
-				type: 'event_not_attending',
-				eventName: eventResult.title,
-				eventId: eventResult.id
-			};
-		}
-		case 'email_outgoing': {
-			const emailResult = await drizzle.query.emailMessage.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!emailResult) {
-				throw new Error('Email message not found');
-			}
-			const bodyStart = extractTextFromLexical(emailResult.body);
-			return {
-				type: 'email_outgoing',
-				subject: emailResult.subject ?? '',
-				bodyStart,
-				emailMessageId: emailResult.id
-			};
-		}
-		case 'whatsapp_message_incoming': {
-			const whatsappMessageResult = await drizzle.query.whatsappMessage.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!whatsappMessageResult) {
-				throw new Error('Whatsapp message not found');
-			}
-			return {
-				type: 'whatsapp_message_incoming',
-				message: whatsappMessageResult.message,
-				whatsappMessageId: whatsappMessageResult.id
-			};
-		}
-		case 'whatsapp_message_outgoing': {
-			const whatsappMessageResult = await drizzle.query.whatsappMessage.findFirst({
-				where: (row, { eq }) => eq(row.id, referenceId)
-			});
-			if (!whatsappMessageResult) {
-				throw new Error('Whatsapp message not found');
-			}
-			return {
-				type: 'whatsapp_message_outgoing',
-				message: whatsappMessageResult.message,
-				whatsappMessageId: whatsappMessageResult.id
-			};
-		}
+		case 'tag_added':
+		case 'tag_removed':
+			return generateTagPreview(type, referenceId);
+		case 'team_added':
+		case 'team_removed':
+			return generateTeamPreview(type, referenceId);
+		case 'note_added':
+			return generateNotePreview(referenceId);
+		case 'event_signup':
+		case 'event_attended':
+		case 'event_signup_email_sent':
+		case 'event_not_attending':
+			return generateEventPreview(type, referenceId);
+		case 'petition_signed':
+			return generatePetitionPreview(referenceId);
+		case 'email_outgoing':
+			return generateEmailPreview(referenceId);
+		case 'whatsapp_message_incoming':
+		case 'whatsapp_message_outgoing':
+			return generateWhatsappPreview(type, referenceId);
 		default: {
 			throw new Error(`Unsupported activity type: ${type}`);
 		}
 	}
+}
+
+async function generateTagPreview(
+	type: 'tag_added' | 'tag_removed',
+	referenceId: string
+): Promise<ActivityPreviewPayload> {
+	const tagResult = await drizzle.query.tag.findFirst({
+		where: (row, { eq }) => eq(row.id, referenceId)
+	});
+	if (!tagResult) {
+		throw new Error('Tag not found');
+	}
+	return {
+		type,
+		tagName: tagResult.name,
+		tagId: tagResult.id
+	};
+}
+
+async function generateTeamPreview(
+	type: 'team_added' | 'team_removed',
+	referenceId: string
+): Promise<ActivityPreviewPayload> {
+	const teamResult = await drizzle.query.team.findFirst({
+		where: (row, { eq }) => eq(row.id, referenceId)
+	});
+	if (!teamResult) {
+		throw new Error('Team not found');
+	}
+	return {
+		type,
+		teamName: teamResult.name,
+		teamId: teamResult.id
+	};
+}
+
+async function generateNotePreview(referenceId: string): Promise<ActivityPreviewPayload> {
+	const noteResult = await drizzle.query.personNote.findFirst({
+		where: (row, { and, eq }) => and(eq(row.id, referenceId))
+	});
+	if (!noteResult) {
+		throw new Error('Note not found');
+	}
+	const userResult = await drizzle.query.user.findFirst({
+		where: (row, { eq }) => eq(row.id, noteResult.userId)
+	});
+	if (!userResult) {
+		throw new Error('User not found');
+	}
+	return {
+		type: 'note_added',
+		notePreview: noteResult.note.substring(0, 100),
+		userName: userResult.name,
+		noteId: noteResult.id
+	};
+}
+
+async function generateEventPreview(
+	type: 'event_signup' | 'event_attended' | 'event_signup_email_sent' | 'event_not_attending',
+	referenceId: string
+): Promise<ActivityPreviewPayload> {
+	const eventSignupResult = await drizzle.query.eventSignup.findFirst({
+		where: (row, { eq }) => eq(row.id, referenceId)
+	});
+	if (!eventSignupResult) {
+		throw new Error('Event signup not found');
+	}
+	const eventResult = await drizzle.query.event.findFirst({
+		where: (row, { eq }) => eq(row.id, eventSignupResult.eventId)
+	});
+	if (!eventResult) {
+		throw new Error('Event not found. Cannot generate preview.');
+	}
+	return {
+		type,
+		eventName: eventResult.title,
+		eventId: eventResult.id
+	};
+}
+
+async function generatePetitionPreview(referenceId: string): Promise<ActivityPreviewPayload> {
+	const petitionSignatureResult = await drizzle.query.petitionSignature.findFirst({
+		where: (row, { eq }) => eq(row.id, referenceId)
+	});
+	if (!petitionSignatureResult) {
+		throw new Error('Petition signature not found');
+	}
+	const petitionResult = await drizzle.query.petition.findFirst({
+		where: (row, { eq }) => eq(row.id, petitionSignatureResult.petitionId)
+	});
+	if (!petitionResult) {
+		throw new Error('Petition not found. Cannot generate preview.');
+	}
+	return {
+		type: 'petition_signed',
+		petitionName: petitionResult.title,
+		petitionId: petitionResult.id
+	};
+}
+
+async function generateEmailPreview(referenceId: string): Promise<ActivityPreviewPayload> {
+	const emailResult = await drizzle.query.emailMessage.findFirst({
+		where: (row, { eq }) => eq(row.id, referenceId)
+	});
+	if (!emailResult) {
+		throw new Error('Email message not found');
+	}
+	const bodyStart = extractTextFromLexical(emailResult.body);
+	return {
+		type: 'email_outgoing',
+		subject: emailResult.subject ?? '',
+		bodyStart,
+		emailMessageId: emailResult.id
+	};
+}
+
+async function generateWhatsappPreview(
+	type: 'whatsapp_message_incoming' | 'whatsapp_message_outgoing',
+	referenceId: string
+): Promise<ActivityPreviewPayload> {
+	const whatsappMessageResult = await drizzle.query.whatsappMessage.findFirst({
+		where: (row, { eq }) => eq(row.id, referenceId)
+	});
+	if (!whatsappMessageResult) {
+		throw new Error('Whatsapp message not found');
+	}
+	return {
+		type,
+		message: whatsappMessageResult.message,
+		whatsappMessageId: whatsappMessageResult.id
+	};
 }
 
 function extractTextFromLexical(body: unknown): string {

@@ -11,9 +11,7 @@ import { _getEventActionCodeUnsafe } from '$lib/server/api/data/event/check';
 
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { parse } from 'valibot';
-import { getSurveySchema, type SurveySchema } from '$lib/schema/survey/questions';
-import { type EventSignupHelper, eventSignupHelper } from '$lib/schema/event-signup';
+import { getSurveySchema } from '$lib/schema/survey/questions';
 import {
 	signUpForEventHelper,
 	declineEventHelper,
@@ -21,7 +19,6 @@ import {
 } from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
-import { event, session } from '$lib/schema/drizzle.js';
 import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { ServerTransaction } from '@rocicorp/zero';
 const lexicalRenderer = new LexicalHtmlRenderer();

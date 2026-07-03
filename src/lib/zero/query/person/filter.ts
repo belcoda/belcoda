@@ -1,7 +1,7 @@
-import { filterGroup, type FilterGroupType, type FilterType } from '$lib/schema/person/filter';
+import { filterGroup, type FilterType } from '$lib/schema/person/filter';
 import { type ExpressionBuilder } from '@rocicorp/zero';
-import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
-import { object, parse, array, type InferOutput } from 'valibot';
+import { type Schema, type QueryContext } from '$lib/zero/schema';
+import { object, array, type InferOutput } from 'valibot';
 import { uuid } from '$lib/schema/helpers';
 import { readPersonZero } from '$lib/schema/person';
 

@@ -169,6 +169,47 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 	return upserted;
 }
 
+async function resolvePersonFromContextMessage({
+	contextWamidId,
+	organizationRecord,
+	wabaId,
+	messageId,
+	tx
+}: {
+	contextWamidId: string;
+	organizationRecord: typeof organization.$inferSelect;
+	wabaId: string;
+	messageId: string;
+	tx: ServerTransaction;
+}): Promise<typeof person.$inferSelect | undefined> {
+	try {
+		const contextMessage = await _findWhatsAppMessageByWamidIdUnsafe({
+			wamidId: contextWamidId,
+			tx
+		});
+		if (contextMessage.organizationId === organizationRecord.id) {
+			return await _getPersonByIdUnsafe({
+				personId: contextMessage.personId,
+				organizationId: organizationRecord.id,
+				includeDeleted: false,
+				tx
+			});
+		}
+	} catch (error) {
+		log.debug(
+			{
+				error,
+				organizationId: organizationRecord.id,
+				wabaId,
+				contextWamidId,
+				messageId
+			},
+			'Unable to resolve inbound WhatsApp sender from context message'
+		);
+	}
+	return undefined;
+}
+
 export async function resolveIncomingWhatsappIdentity({
 	inboundMessage,
 	messageId,
@@ -238,31 +279,13 @@ export async function resolveIncomingWhatsappIdentity({
 	}
 
 	if (!personRecord && inboundMessage.context?.id) {
-		try {
-			const contextMessage = await _findWhatsAppMessageByWamidIdUnsafe({
-				wamidId: inboundMessage.context.id,
-				tx
-			});
-			if (contextMessage.organizationId === organizationRecord.id) {
-				personRecord = await _getPersonByIdUnsafe({
-					personId: contextMessage.personId,
-					organizationId: organizationRecord.id,
-					includeDeleted: false,
-					tx
-				});
-			}
-		} catch (error) {
-			log.debug(
-				{
-					error,
-					organizationId: organizationRecord.id,
-					wabaId: inboundMessage.wabaId,
-					contextWamidId: inboundMessage.context.id,
-					messageId
-				},
-				'Unable to resolve inbound WhatsApp sender from context message'
-			);
-		}
+		personRecord = await resolvePersonFromContextMessage({
+			contextWamidId: inboundMessage.context.id,
+			organizationRecord,
+			wabaId: inboundMessage.wabaId,
+			messageId,
+			tx
+		});
 	}
 
 	if (!personRecord) {

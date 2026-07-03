@@ -26,6 +26,118 @@ import type {
 } from '$lib/schema/whatsapp/ycloud/flow_json_types';
 import { v7 as uuidv7 } from 'uuid';
 
+type WhatsappFlowField = WhatsappFlowSurveySchema['screens'][number]['fields'][number];
+
+function convertTextInputField(field: Extract<WhatsappFlowField, { type: 'TextInput' }>) {
+	const component: WhatsAppTextInput = {
+		type: 'TextInput',
+		name: field.id,
+		label: field.label,
+		required: field.required,
+		'input-type': (field.inputType as 'text' | 'email' | 'phone' | 'number' | 'password') || 'text',
+		visible: field.visible ?? true
+	};
+	if (field.minChars !== undefined) component['min-chars'] = field.minChars;
+	if (field.maxChars !== undefined) component['max-chars'] = field.maxChars;
+	if (field.helperText) component['helper-text'] = field.helperText;
+	if (field.initValue !== undefined) component['init-value'] = field.initValue;
+	if (field.pattern) component.pattern = field.pattern;
+	return component;
+}
+
+function convertTextAreaField(field: Extract<WhatsappFlowField, { type: 'TextArea' }>) {
+	const component: WhatsAppTextArea = {
+		type: 'TextArea',
+		name: field.id,
+		label: field.label,
+		required: field.required,
+		visible: field.visible ?? true
+	};
+	if (field.maxLength !== undefined) component['max-length'] = field.maxLength;
+	if (field.helperText) component['helper-text'] = field.helperText;
+	if (field.initValue !== undefined) component['init-value'] = field.initValue;
+	return component;
+}
+
+function convertRadioButtonsGroupField(
+	field: Extract<WhatsappFlowField, { type: 'RadioButtonsGroup' }>
+) {
+	const component: WhatsAppRadioButtonsGroup = {
+		type: 'RadioButtonsGroup',
+		name: field.id,
+		label: field.label,
+		required: field.required,
+		'data-source': field.options,
+		visible: field.visible ?? true
+	};
+	if (field.initValue !== undefined) component['init-value'] = field.initValue;
+	return component;
+}
+
+function convertCheckboxGroupField(field: Extract<WhatsappFlowField, { type: 'CheckboxGroup' }>) {
+	const component: WhatsAppCheckboxGroup = {
+		type: 'CheckboxGroup',
+		name: field.id,
+		label: field.label,
+		required: field.required,
+		'data-source': field.options,
+		visible: field.visible ?? true
+	};
+	if (field.minSelectedItems !== undefined)
+		component['min-selected-items'] = field.minSelectedItems;
+	if (field.maxSelectedItems !== undefined)
+		component['max-selected-items'] = field.maxSelectedItems;
+	if (field.initValue !== undefined) component['init-value'] = field.initValue;
+	return component;
+}
+
+function convertDatePickerField(field: Extract<WhatsappFlowField, { type: 'DatePicker' }>) {
+	const component: WhatsAppDatePicker = {
+		type: 'DatePicker',
+		name: field.id,
+		label: field.label,
+		required: field.required,
+		visible: field.visible ?? true
+	};
+	if (field.minDate) component['min-date'] = field.minDate;
+	if (field.maxDate) component['max-date'] = field.maxDate;
+	if (field.unavailableDates) component['unavailable-dates'] = field.unavailableDates;
+	if (field.helperText) component['helper-text'] = field.helperText;
+	if (field.initValue !== undefined) component['init-value'] = field.initValue;
+	return component;
+}
+
+function convertOptInField(field: Extract<WhatsappFlowField, { type: 'OptIn' }>) {
+	const component: WhatsAppOptIn = {
+		type: 'OptIn',
+		name: field.id,
+		label: field.label,
+		required: field.required,
+		visible: field.visible ?? true
+	};
+	if (field.initValue !== undefined) component['init-value'] = field.initValue;
+	return component;
+}
+
+function convertFieldToComponent(field: WhatsappFlowField): WhatsAppFlowComponent {
+	switch (field.type) {
+		case 'TextInput':
+			return convertTextInputField(field);
+		case 'TextArea':
+			return convertTextAreaField(field);
+		case 'RadioButtonsGroup':
+			return convertRadioButtonsGroupField(field);
+		case 'CheckboxGroup':
+			return convertCheckboxGroupField(field);
+		case 'DatePicker':
+			return convertDatePickerField(field);
+		case 'OptIn':
+			return convertOptInField(field);
+		default:
+			throw new Error(`Unknown field type: ${(field as { type: string }).type}`);
+	}
+}
+
 /**
  * Convert from form to internal format
  */
@@ -35,102 +147,7 @@ export function convertFormToInternal(formFlow: WhatsappFlowSurveySchema): Whats
 		const nextScreenId = !isLastScreen ? formFlow.screens[index + 1]?.id : undefined;
 
 		// Convert fields to WhatsApp components
-		const components: WhatsAppFlowComponent[] = screen.fields.map((field) => {
-			switch (field.type) {
-				case 'TextInput': {
-					const component: WhatsAppTextInput = {
-						type: 'TextInput',
-						name: field.id,
-						label: field.label,
-						required: field.required,
-						'input-type':
-							(field.inputType as 'text' | 'email' | 'phone' | 'number' | 'password') || 'text',
-						visible: field.visible ?? true
-					};
-					if (field.minChars !== undefined) component['min-chars'] = field.minChars;
-					if (field.maxChars !== undefined) component['max-chars'] = field.maxChars;
-					if (field.helperText) component['helper-text'] = field.helperText;
-					if (field.initValue !== undefined) component['init-value'] = field.initValue;
-					if (field.pattern) component.pattern = field.pattern;
-					return component;
-				}
-
-				case 'TextArea': {
-					const component: WhatsAppTextArea = {
-						type: 'TextArea',
-						name: field.id,
-						label: field.label,
-						required: field.required,
-						visible: field.visible ?? true
-					};
-					if (field.maxLength !== undefined) component['max-length'] = field.maxLength;
-					if (field.helperText) component['helper-text'] = field.helperText;
-					if (field.initValue !== undefined) component['init-value'] = field.initValue;
-					return component;
-				}
-
-				case 'RadioButtonsGroup': {
-					const component: WhatsAppRadioButtonsGroup = {
-						type: 'RadioButtonsGroup',
-						name: field.id,
-						label: field.label,
-						required: field.required,
-						'data-source': field.options,
-						visible: field.visible ?? true
-					};
-					if (field.initValue !== undefined) component['init-value'] = field.initValue;
-					return component;
-				}
-
-				case 'CheckboxGroup': {
-					const component: WhatsAppCheckboxGroup = {
-						type: 'CheckboxGroup',
-						name: field.id,
-						label: field.label,
-						required: field.required,
-						'data-source': field.options,
-						visible: field.visible ?? true
-					};
-					if (field.minSelectedItems !== undefined)
-						component['min-selected-items'] = field.minSelectedItems;
-					if (field.maxSelectedItems !== undefined)
-						component['max-selected-items'] = field.maxSelectedItems;
-					if (field.initValue !== undefined) component['init-value'] = field.initValue;
-					return component;
-				}
-
-				case 'DatePicker': {
-					const component: WhatsAppDatePicker = {
-						type: 'DatePicker',
-						name: field.id,
-						label: field.label,
-						required: field.required,
-						visible: field.visible ?? true
-					};
-					if (field.minDate) component['min-date'] = field.minDate;
-					if (field.maxDate) component['max-date'] = field.maxDate;
-					if (field.unavailableDates) component['unavailable-dates'] = field.unavailableDates;
-					if (field.helperText) component['helper-text'] = field.helperText;
-					if (field.initValue !== undefined) component['init-value'] = field.initValue;
-					return component;
-				}
-
-				case 'OptIn': {
-					const component: WhatsAppOptIn = {
-						type: 'OptIn',
-						name: field.id,
-						label: field.label,
-						required: field.required,
-						visible: field.visible ?? true
-					};
-					if (field.initValue !== undefined) component['init-value'] = field.initValue;
-					return component;
-				}
-
-				default:
-					throw new Error(`Unknown field type: ${(field as { type: string }).type}`);
-			}
-		});
+		const components: WhatsAppFlowComponent[] = screen.fields.map(convertFieldToComponent);
 
 		// Add footer navigation
 		const footer: WhatsAppFooter = isLastScreen
@@ -177,6 +194,126 @@ export function convertFormToInternal(formFlow: WhatsappFlowSurveySchema): Whats
  * Convert internal format to form-friendly format
  * Used when loading from the database to the UI for editing
  */
+type WhatsappFlowChild = WhatsappFlowInternal['screens'][number]['layout']['children'][number];
+type WhatsappFlowBaseField = {
+	id: string;
+	label: string;
+	required: boolean;
+	visible: boolean;
+};
+
+function reverseConvertTextInput(component: WhatsAppTextInput, baseField: WhatsappFlowBaseField) {
+	return {
+		type: 'TextInput' as const,
+		...baseField,
+		inputType: component['input-type'] || 'text',
+		...(component['min-chars'] !== undefined && { minChars: component['min-chars'] }),
+		...(component['max-chars'] !== undefined && { maxChars: component['max-chars'] }),
+		...(component['helper-text'] && { helperText: component['helper-text'] }),
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] }),
+		...(component.pattern && { pattern: component.pattern })
+	};
+}
+
+function reverseConvertTextArea(component: WhatsAppTextArea, baseField: WhatsappFlowBaseField) {
+	return {
+		type: 'TextArea' as const,
+		...baseField,
+		...(component['max-length'] !== undefined && { maxLength: component['max-length'] }),
+		...(component['helper-text'] && { helperText: component['helper-text'] }),
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function reverseConvertRadioButtonsGroup(
+	component: WhatsAppRadioButtonsGroup,
+	baseField: WhatsappFlowBaseField
+) {
+	return {
+		type: 'RadioButtonsGroup' as const,
+		...baseField,
+		options: component['data-source'],
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function reverseConvertCheckboxGroup(
+	component: WhatsAppCheckboxGroup,
+	baseField: WhatsappFlowBaseField
+) {
+	return {
+		type: 'CheckboxGroup' as const,
+		...baseField,
+		options: component['data-source'],
+		...(component['min-selected-items'] !== undefined && {
+			minSelectedItems: component['min-selected-items']
+		}),
+		...(component['max-selected-items'] !== undefined && {
+			maxSelectedItems: component['max-selected-items']
+		}),
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function reverseConvertDatePicker(component: WhatsAppDatePicker, baseField: WhatsappFlowBaseField) {
+	return {
+		type: 'DatePicker' as const,
+		...baseField,
+		...(component['min-date'] && { minDate: component['min-date'] }),
+		...(component['max-date'] && { maxDate: component['max-date'] }),
+		...(component['unavailable-dates'] && { unavailableDates: component['unavailable-dates'] }),
+		...(component['helper-text'] && { helperText: component['helper-text'] }),
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function reverseConvertOptIn(component: WhatsAppOptIn, baseField: WhatsappFlowBaseField) {
+	return {
+		type: 'OptIn' as const,
+		...baseField,
+		...(component['init-value'] !== undefined && { initValue: component['init-value'] })
+	};
+}
+
+function convertComponentBySwitch(component: WhatsappFlowChild, baseField: WhatsappFlowBaseField) {
+	switch (component.type) {
+		case 'TextInput':
+			return reverseConvertTextInput(component as WhatsAppTextInput, baseField);
+		case 'TextArea':
+			return reverseConvertTextArea(component as WhatsAppTextArea, baseField);
+		case 'RadioButtonsGroup':
+			return reverseConvertRadioButtonsGroup(component as WhatsAppRadioButtonsGroup, baseField);
+		case 'CheckboxGroup':
+			return reverseConvertCheckboxGroup(component as WhatsAppCheckboxGroup, baseField);
+		case 'DatePicker':
+			return reverseConvertDatePicker(component as WhatsAppDatePicker, baseField);
+		case 'OptIn':
+			return reverseConvertOptIn(component as WhatsAppOptIn, baseField);
+		default:
+			throw new Error(`Unknown component type: ${(component as { type: string }).type}`);
+	}
+}
+
+function convertComponentToField(component: WhatsappFlowChild) {
+	if (component.type === 'TextHeading') {
+		// Skip text headings in form conversion
+		return null;
+	}
+
+	// Type guards ensure safe access to component properties
+	const hasName = 'name' in component;
+	if (!hasName) return null;
+
+	const baseField = {
+		id: component.name,
+		label: component.label,
+		required: component.required,
+		visible: component.visible ?? true
+	};
+
+	return convertComponentBySwitch(component, baseField);
+}
+
 export function convertInternalToForm(
 	internalFlow: WhatsappFlowInternal
 ): WhatsappFlowSurveySchema {
@@ -184,101 +321,7 @@ export function convertInternalToForm(
 		// Filter out Footer components and convert back to fields
 		const fields = screen.layout.children
 			.filter((component) => component.type !== 'Footer')
-			.map((component) => {
-				if (component.type === 'TextHeading') {
-					// Skip text headings in form conversion
-					return null;
-				}
-
-				// Type guards ensure safe access to component properties
-				const hasName = 'name' in component;
-				if (!hasName) return null;
-
-				const baseField = {
-					id: component.name,
-					label: component.label,
-					required: component.required,
-					visible: component.visible ?? true
-				};
-
-				switch (component.type) {
-					case 'TextInput': {
-						const c = component as WhatsAppTextInput;
-						return {
-							type: 'TextInput' as const,
-							...baseField,
-							inputType: c['input-type'] || 'text',
-							...(c['min-chars'] !== undefined && { minChars: c['min-chars'] }),
-							...(c['max-chars'] !== undefined && { maxChars: c['max-chars'] }),
-							...(c['helper-text'] && { helperText: c['helper-text'] }),
-							...(c['init-value'] !== undefined && { initValue: c['init-value'] }),
-							...(c.pattern && { pattern: c.pattern })
-						};
-					}
-
-					case 'TextArea': {
-						const c = component as WhatsAppTextArea;
-						return {
-							type: 'TextArea' as const,
-							...baseField,
-							...(c['max-length'] !== undefined && { maxLength: c['max-length'] }),
-							...(c['helper-text'] && { helperText: c['helper-text'] }),
-							...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-						};
-					}
-
-					case 'RadioButtonsGroup': {
-						const c = component as WhatsAppRadioButtonsGroup;
-						return {
-							type: 'RadioButtonsGroup' as const,
-							...baseField,
-							options: c['data-source'],
-							...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-						};
-					}
-
-					case 'CheckboxGroup': {
-						const c = component as WhatsAppCheckboxGroup;
-						return {
-							type: 'CheckboxGroup' as const,
-							...baseField,
-							options: c['data-source'],
-							...(c['min-selected-items'] !== undefined && {
-								minSelectedItems: c['min-selected-items']
-							}),
-							...(c['max-selected-items'] !== undefined && {
-								maxSelectedItems: c['max-selected-items']
-							}),
-							...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-						};
-					}
-
-					case 'DatePicker': {
-						const c = component as WhatsAppDatePicker;
-						return {
-							type: 'DatePicker' as const,
-							...baseField,
-							...(c['min-date'] && { minDate: c['min-date'] }),
-							...(c['max-date'] && { maxDate: c['max-date'] }),
-							...(c['unavailable-dates'] && { unavailableDates: c['unavailable-dates'] }),
-							...(c['helper-text'] && { helperText: c['helper-text'] }),
-							...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-						};
-					}
-
-					case 'OptIn': {
-						const c = component as WhatsAppOptIn;
-						return {
-							type: 'OptIn' as const,
-							...baseField,
-							...(c['init-value'] !== undefined && { initValue: c['init-value'] })
-						};
-					}
-
-					default:
-						throw new Error(`Unknown component type: ${(component as { type: string }).type}`);
-				}
-			})
+			.map(convertComponentToField)
 			.filter((f) => f !== null); // Remove null entries (text headings)
 
 		return {
@@ -334,8 +377,6 @@ export function convertInternalToYCloudRequest(
 /**
  * Validate that the internal format is properly structured for YCloud
  */
-
-// TODO: This should probably be part of a test suite but it does help with validation here
 export function validateInternalForYCloud(internal: WhatsappFlowInternal): {
 	isValid: boolean;
 	errors: string[];
@@ -564,7 +605,7 @@ function buildSignupFlowFromSurveyCollections(params: {
 	components.push(footer);
 
 	const screen: WhatsAppFlowScreen = {
-		id: 'registration', // TODO: make this unique. Only letters and underscore allowed
+		id: 'registration', //only letters and underscore allowed. Must be unique per flow
 		title: `${title} - ${resourceSuffix}`,
 		terminal: true,
 		success: true,

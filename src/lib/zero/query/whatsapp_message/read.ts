@@ -4,7 +4,6 @@ import type { QueryContext } from '$lib/zero/schema';
 import { object, type InferOutput } from 'valibot';
 import { uuid } from '$lib/schema/helpers';
 import { whatsappMessageReadPermissions } from '$lib/zero/query/whatsapp_message/permissions';
-import { readWhatsappMessageZero } from '$lib/schema/whatsapp-message';
 
 export const inputSchema = object({
 	whatsappMessageId: uuid
@@ -28,4 +27,4 @@ export const readWhatsappMessage = defineQuery(inputSchema, ({ ctx, args }) => {
 	return readWhatsappMessageQuery({ ctx, input: args });
 });
 
-export const outputSchema = readWhatsappMessageZero;
+export { readWhatsappMessageZero as outputSchema } from '$lib/schema/whatsapp-message';

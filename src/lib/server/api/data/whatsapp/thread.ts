@@ -2,7 +2,7 @@ import {
 	whatsappTemplate as whatsappTemplateTable,
 	whatsappThread as whatsappThreadTable
 } from '$lib/schema/drizzle';
-import { and, eq, isNull, or, inArray, sql, type SQL } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import { builder } from '$lib/zero/schema';

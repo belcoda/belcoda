@@ -1,10 +1,8 @@
-import { appState, getListFilter } from '$lib/state.svelte';
 import { type FilterType } from '$lib/schema/person/filter';
 
 import { countryCodes, renderLocalizedCountryName } from '$lib/utils/country';
-import { ageGroupList } from '$lib/utils/person';
+import { ageGroupList, genderOptions } from '$lib/utils/person';
 import { languageCodes, getLocalizedLanguageName } from '$lib/utils/language';
-import { genderOptions } from '$lib/utils/person';
 import { renderGender } from '$lib/utils/person/gender/render';
 import { t, locale } from '$lib/index.svelte';
 

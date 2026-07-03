@@ -2,9 +2,8 @@ import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { object, type InferOutput } from 'valibot';
-import { uuid, parseSchema } from '$lib/schema/helpers';
+import { uuid } from '$lib/schema/helpers';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
-import { readPetitionZero } from '$lib/schema/petition/petition';
 
 export const inputSchema = object({
 	petitionId: uuid
@@ -29,4 +28,4 @@ export const readPetition = defineQuery(inputSchema, ({ ctx, args }) => {
 	return readPetitionQuery({ ctx, input: args });
 });
 
-export const outputSchema = readPetitionZero;
+export { readPetitionZero as outputSchema } from '$lib/schema/petition/petition';

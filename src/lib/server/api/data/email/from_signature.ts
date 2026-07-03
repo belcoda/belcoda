@@ -118,7 +118,7 @@ export async function updateEmailFromSignature({
 	if (emailFromSignatureRecord?.externalId) {
 		try {
 			const postmarkResult = await updateSendSignature({
-				emailSignatureExternalId: parseInt(emailFromSignatureRecord.externalId),
+				emailSignatureExternalId: Number.parseInt(emailFromSignatureRecord.externalId),
 				signatureBody: {
 					Name: parseUpdateParams.name,
 					ReplyToEmail: parseUpdateParams.replyTo || undefined,
@@ -236,7 +236,7 @@ export async function verifyEmailFromSignature({
 
 	const result = await verifySendSignature({
 		organizationId: emailFromSignatureRecord.organizationId,
-		emailSignatureExternalId: parseInt(emailFromSignatureRecord.externalId)
+		emailSignatureExternalId: Number.parseInt(emailFromSignatureRecord.externalId)
 	});
 
 	const verified = result.Confirmed === true;

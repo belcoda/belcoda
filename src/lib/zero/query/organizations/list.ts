@@ -3,7 +3,6 @@ import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
 import { array, object, type InferOutput } from 'valibot';
-import { parseSchema, listFilter } from '$lib/schema/helpers';
 import { readOrganizationZero } from '$lib/schema/organization';
 
 export const inputSchema = object({});

@@ -140,10 +140,10 @@ export async function updateTeam({
 	if (parsed.input.name !== undefined) {
 		updates.name = parsed.input.name;
 	}
-	if (Object.prototype.hasOwnProperty.call(parsed.input, 'parentTeamId')) {
+	if (Object.hasOwn(parsed.input, 'parentTeamId')) {
 		updates.parentTeamId = parsed.input.parentTeamId ?? null;
 	}
-	if (Object.prototype.hasOwnProperty.call(parsed.input, 'deletedAt')) {
+	if (Object.hasOwn(parsed.input, 'deletedAt')) {
 		updates.deletedAt = parsed.input.deletedAt ? new Date(parsed.input.deletedAt) : null;
 	}
 	const [result] = await tx.dbTransaction.wrappedTransaction
@@ -159,8 +159,7 @@ export async function updateTeam({
 	if (!result) {
 		throw new Error('Unable to update team');
 	}
-	const softDeleteThisRequest =
-		Object.prototype.hasOwnProperty.call(parsed.input, 'deletedAt') && parsed.input.deletedAt;
+	const softDeleteThisRequest = Object.hasOwn(parsed.input, 'deletedAt') && parsed.input.deletedAt;
 	const queue = await getQueue();
 	if (softDeleteThisRequest) {
 		await queue.triggerWebhook(

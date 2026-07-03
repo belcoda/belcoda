@@ -1,7 +1,7 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, optional, object, nullable, picklist } from 'valibot';
-import { listFilter, parseSchema, type ListFilter, uuid } from '$lib/schema/helpers';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { readPersonZero } from '$lib/schema/person';
 import { decodePersonListCursor } from '$lib/utils/person/cursor';
@@ -133,26 +133,7 @@ function whereClause(
 	const { and, or, exists, cmp } = builder;
 	const filterArr = [cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null)];
 	if (filter.searchString && filter.searchString.length > 0) {
-		if (filter.searchString.includes('@')) {
-			filterArr.push(cmp('emailAddress', 'ILIKE', `%${filter.searchString}%`));
-		} else if (filter.searchString.match(/^\+?[1-9]\d{1,14}$/)) {
-			filterArr.push(cmp('phoneNumber', 'ILIKE', `%${filter.searchString}%`));
-		} else if (filter.searchString.includes(' ')) {
-			const [givenName, familyName] = filter.searchString.split(' ');
-			filterArr.push(
-				or(
-					cmp('givenName', 'ILIKE', `%${givenName}%`),
-					cmp('familyName', 'ILIKE', `%${familyName}%`)
-				)
-			);
-		} else {
-			filterArr.push(
-				or(
-					cmp('givenName', 'ILIKE', `%${filter.searchString}%`),
-					cmp('familyName', 'ILIKE', `%${filter.searchString}%`)
-				)
-			);
-		}
+		filterArr.push(...searchStringConditions(cmp, or, filter.searchString));
 	}
 	if (filter.teamId) {
 		filterArr.push(
@@ -176,28 +157,63 @@ function whereClause(
 		);
 	}
 	if (filter.mostRecentActivity) {
-		if (filter.mostRecentActivity === '7days') {
-			filterArr.push(cmp('mostRecentActivityAt', '>', Date.now() - 7 * 24 * 60 * 60 * 1000));
-		} else if (filter.mostRecentActivity === '30days') {
-			filterArr.push(cmp('mostRecentActivityAt', '>', Date.now() - 30 * 24 * 60 * 60 * 1000));
-		} else if (filter.mostRecentActivity === '90days') {
-			filterArr.push(cmp('mostRecentActivityAt', '>', Date.now() - 90 * 24 * 60 * 60 * 1000));
-		} else if (filter.mostRecentActivity === '1year') {
-			filterArr.push(cmp('mostRecentActivityAt', '>', Date.now() - 365 * 24 * 60 * 60 * 1000));
-		} else if (filter.mostRecentActivity === 'noactivity7days') {
-			filterArr.push(cmp('mostRecentActivityAt', '<', Date.now() - 7 * 24 * 60 * 60 * 1000));
-		} else if (filter.mostRecentActivity === 'noactivity30days') {
-			filterArr.push(cmp('mostRecentActivityAt', '<', Date.now() - 30 * 24 * 60 * 60 * 1000));
-		} else if (filter.mostRecentActivity === 'noactivity90days') {
-			filterArr.push(cmp('mostRecentActivityAt', '<', Date.now() - 90 * 24 * 60 * 60 * 1000));
-		} else if (filter.mostRecentActivity === 'noactivity1year') {
-			filterArr.push(cmp('mostRecentActivityAt', '<', Date.now() - 365 * 24 * 60 * 60 * 1000));
-		}
+		filterArr.push(...mostRecentActivityConditions(cmp, filter.mostRecentActivity));
 	}
-	if (filter.personIdsToExclude) {
+	if (filter.personIdsToExclude && filter.personIdsToExclude.length > 0) {
 		filterArr.push(cmp('id', 'NOT IN', filter.personIdsToExclude));
 	}
 	return and(...filterArr);
+}
+
+type WhereCmp = ExpressionBuilder<'person', Schema>['cmp'];
+type WhereOr = ExpressionBuilder<'person', Schema>['or'];
+
+function searchStringConditions(cmp: WhereCmp, or: WhereOr, searchString: string) {
+	if (searchString.includes('@')) {
+		return [cmp('emailAddress', 'ILIKE', `%${searchString}%`)];
+	}
+	if (searchString.match(/^\+?[1-9]\d{1,14}$/)) {
+		return [cmp('phoneNumber', 'ILIKE', `%${searchString}%`)];
+	}
+	if (searchString.includes(' ')) {
+		const [givenName, familyName] = searchString.split(' ');
+		return [
+			or(cmp('givenName', 'ILIKE', `%${givenName}%`), cmp('familyName', 'ILIKE', `%${familyName}%`))
+		];
+	}
+	return [
+		or(
+			cmp('givenName', 'ILIKE', `%${searchString}%`),
+			cmp('familyName', 'ILIKE', `%${searchString}%`)
+		)
+	];
+}
+
+function mostRecentActivityConditions(
+	cmp: WhereCmp,
+	mostRecentActivity: NonNullable<InferOutput<typeof inputSchema>['mostRecentActivity']>
+) {
+	const day = 24 * 60 * 60 * 1000;
+	switch (mostRecentActivity) {
+		case '7days':
+			return [cmp('mostRecentActivityAt', '>', Date.now() - 7 * day)];
+		case '30days':
+			return [cmp('mostRecentActivityAt', '>', Date.now() - 30 * day)];
+		case '90days':
+			return [cmp('mostRecentActivityAt', '>', Date.now() - 90 * day)];
+		case '1year':
+			return [cmp('mostRecentActivityAt', '>', Date.now() - 365 * day)];
+		case 'noactivity7days':
+			return [cmp('mostRecentActivityAt', '<', Date.now() - 7 * day)];
+		case 'noactivity30days':
+			return [cmp('mostRecentActivityAt', '<', Date.now() - 30 * day)];
+		case 'noactivity90days':
+			return [cmp('mostRecentActivityAt', '<', Date.now() - 90 * day)];
+		case 'noactivity1year':
+			return [cmp('mostRecentActivityAt', '<', Date.now() - 365 * day)];
+		default:
+			return [];
+	}
 }
 
 export const outputSchema = array(readPersonZero);

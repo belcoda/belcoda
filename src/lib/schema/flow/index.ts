@@ -1,5 +1,4 @@
-import { type XYPosition } from '@xyflow/svelte';
-import { type FilterGroupType, filterGroup } from '$lib/schema/person/filter';
+import { filterGroup } from '$lib/schema/person/filter';
 
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';

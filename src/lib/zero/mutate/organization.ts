@@ -1,13 +1,6 @@
-import { type Transaction } from '@rocicorp/zero';
-import { type Schema, builder } from '$lib/zero/schema';
 import { defineMutator } from '@rocicorp/zero';
+import { updateOrganizationZeroMutatorSchema } from '$lib/schema/organization';
 import {
-	type UpdateOrganizationZeroMutatorSchema,
-	updateOrganizationZeroMutatorSchema,
-	type UpdateOrganizationWhatsappSettings
-} from '$lib/schema/organization';
-import {
-	type UpdateThemeZeroMutatorSchema,
 	updateThemeZeroMutatorSchema,
 	updateWhatsappOrganizationSettingsZeroMutatorSchema
 } from '$lib/schema/organization/settings';
