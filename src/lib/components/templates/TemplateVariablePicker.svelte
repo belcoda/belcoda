@@ -165,6 +165,7 @@
 		<Dialog.Content class={cn('w-80 p-0', contentClass)}>
 			<Dialog.Header class="sr-only">
 				<Dialog.Title>{resolvedTriggerLabel}</Dialog.Title>
+				<Dialog.Description>{t`Search for a template variable to insert.`}</Dialog.Description>
 			</Dialog.Header>
 			{@render variableList()}
 		</Dialog.Content>

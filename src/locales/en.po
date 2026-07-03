@@ -5649,3 +5649,7 @@ msgstr "alert"
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "notification"
 msgstr "notification"
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Search for a template variable to insert."
+msgstr "Search for a template variable to insert."
