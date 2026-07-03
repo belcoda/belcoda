@@ -9,6 +9,7 @@
 	import { t } from '$lib/index.svelte';
 	import { defaultUserSettings } from '$lib/schema/user/settings';
 	import type { UserSettingsSchema } from '$lib/schema/user/settings';
+	import { toast } from 'svelte-sonner';
 
 	const userQuery = $derived(appState.user);
 	const currentSettings = $derived(userQuery.data?.settings ?? defaultUserSettings());
@@ -23,20 +24,36 @@
 	});
 
 	async function save(patch: Partial<UserSettingsSchema['notifications']>) {
+		const previous = {
+			digestEnabled,
+			digestFrequency
+		};
+		digestEnabled = patch.digestEnabled ?? digestEnabled;
+		digestFrequency = patch.digestFrequency ?? digestFrequency;
+
 		const updated: UserSettingsSchema = {
 			notifications: {
 				digestEnabled,
-				digestFrequency,
-				...patch
+				digestFrequency
 			}
 		};
-		await fetch('/api/me/settings', {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(updated)
-		});
-		savedIndicator = true;
-		setTimeout(() => (savedIndicator = false), 2000);
+
+		try {
+			const response = await fetch('/api/me/settings', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(updated)
+			});
+			if (!response.ok) {
+				throw new Error(await response.text());
+			}
+			savedIndicator = true;
+			setTimeout(() => (savedIndicator = false), 2000);
+		} catch {
+			digestEnabled = previous.digestEnabled;
+			digestFrequency = previous.digestFrequency;
+			toast.error(t`Failed to save notification preferences`);
+		}
 	}
 </script>
 
@@ -58,7 +75,6 @@
 				<Switch
 					checked={digestEnabled}
 					onCheckedChange={(v) => {
-						digestEnabled = v;
 						save({ digestEnabled: v });
 					}}
 				/>
@@ -81,7 +97,6 @@
 						value={digestFrequency}
 						onValueChange={(v) => {
 							if (v === 'daily' || v === 'weekly') {
-								digestFrequency = v;
 								save({ digestFrequency: v });
 							}
 						}}
