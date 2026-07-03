@@ -82,7 +82,7 @@ const targetingNode = v.object({
 export type TargetingNodeData = v.InferOutput<typeof targetingNode>;
 
 export const whatsappMessageNodeData = v.object({
-	text: v.optional(helpers.mediumString),
+	text: v.optional(helpers.mediumStringEmpty),
 	imageUrl: v.optional(v.nullable(helpers.url)),
 	buttons: v.optional(v.array(v.object({ id: helpers.uuid, label: helpers.mediumString })), [])
 });
