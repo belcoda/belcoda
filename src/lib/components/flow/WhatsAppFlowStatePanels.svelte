@@ -14,6 +14,8 @@
 	import { toast } from 'svelte-sonner';
 	import { tick } from 'svelte';
 	import TestMessageModal from '$lib/components/flow/whatsapp/TestMessageModal.svelte';
+	import CloneThreadModal from '$lib/components/flow/whatsapp/CloneThreadModal.svelte';
+	const { disabled = false }: { disabled?: boolean } = $props();
 	const nodes = useNodes();
 	const templateNode = $derived(nodes.current.find((n) => n.type === 'templateMessage'));
 	const templateIdForRead = $derived(
@@ -72,7 +74,7 @@
 	}
 </script>
 
-{#if showTemplateApprovalBanner}
+{#if showTemplateApprovalBanner && !disabled}
 	<Panel position="top-center" class="pointer-events-auto z-10 max-w-xl px-4">
 		<Alert.Root>
 			<TriangleAlertIcon />
@@ -105,36 +107,39 @@
 
 <Panel position="bottom-right">
 	<div class="flex items-center gap-2">
-		<TestMessageModal />
-		<Button
-			variant="destructive"
-			size="sm"
-			data-testid="flow-discard-button"
-			onclick={discardThread}>{t`Discard`}</Button
-		>
-		{#if !canSend}
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					{#snippet child({ props })}
-						<span {...props} class="inline-flex">
-							<Button
-								variant="default"
-								size="sm"
-								data-testid="flow-send-button"
-								disabled
-								type="button">{t`Send`}</Button
-							>
-						</span>
-					{/snippet}
-				</Tooltip.Trigger>
-				<Tooltip.Content class="max-w-xs" side="top">
-					{t`Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template.`}
-				</Tooltip.Content>
-			</Tooltip.Root>
-		{:else}
-			<Button variant="default" size="sm" data-testid="flow-send-button" onclick={sendThread}
-				>{t`Send`}</Button
+		<CloneThreadModal />
+		{#if !disabled}
+			<TestMessageModal />
+			<Button
+				variant="destructive"
+				size="sm"
+				data-testid="flow-discard-button"
+				onclick={discardThread}>{t`Discard`}</Button
 			>
+			{#if !canSend}
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<span {...props} class="inline-flex">
+								<Button
+									variant="default"
+									size="sm"
+									data-testid="flow-send-button"
+									disabled
+									type="button">{t`Send`}</Button
+								>
+							</span>
+						{/snippet}
+					</Tooltip.Trigger>
+					<Tooltip.Content class="max-w-xs" side="top">
+						{t`Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template.`}
+					</Tooltip.Content>
+				</Tooltip.Root>
+			{:else}
+				<Button variant="default" size="sm" data-testid="flow-send-button" onclick={sendThread}
+					>{t`Send`}</Button
+				>
+			{/if}
 		{/if}
 	</div>
 </Panel>
