@@ -6,11 +6,13 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { wuchale } from 'wuchale/vite';
 import { playwright } from '@vitest/browser-playwright';
 
-import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
+	build: {
+		cssMinify: 'esbuild'
+	},
 	server: {
 		allowedHosts: [
 			'belcoda.com',
@@ -22,14 +24,6 @@ export default defineConfig({
 			'.belcoda.com',
 			...(process.env.PUBLIC_NGROK_DOMAIN ? [process.env.PUBLIC_NGROK_DOMAIN] : [])
 		]
-	},
-	resolve: {
-		alias: {
-			'@noble/ciphers': path.resolve(
-				__dirname,
-				'node_modules/better-auth/node_modules/@noble/ciphers'
-			)
-		}
 	},
 	ssr: {
 		// The @tryghost/kg-lexical-html-renderer chain mixes ESM with extensionless
@@ -56,6 +50,14 @@ export default defineConfig({
 			authToken: process.env.SENTRY_AUTH_TOKEN
 		}),
 		sveltekit(),
+		// SvelteKit overwrites build.cssMinify from build.minify; Vite 8 SSR defaults to
+		// lightningcss, which fails on nested @keyframes in svelte-lexical's ActionBar.css.
+		{
+			name: 'css-minify-esbuild',
+			configResolved(config) {
+				config.build.cssMinify = 'esbuild';
+			}
+		},
 		tailwindcss(),
 		wuchale({ configPath: 'wuchale.config.js' }),
 		devtoolsJson()
