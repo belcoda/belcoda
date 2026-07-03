@@ -20,15 +20,38 @@ export function whereClause(
 ) {
 	const { and, or, cmp, not } = builder;
 
-	const filters =
-		filter.filter.type === 'and'
-			? and(...processFilters(filter.filter.filters, builder))
-			: or(...processFilters(filter.filter.filters, builder));
+	// Partition include filters into individual person selections and everything else.
+	// Individual people should always be additive (OR'd in), so combining them under an
+	// `and` group alongside other conditions would incorrectly intersect them away.
+	const nonPersonFilters = filter.filter.filters.filter((f) => f.type !== 'personId');
+	const personFilters = filter.filter.filters.filter((f) => f.type === 'personId');
 
-	const excludeFilters =
-		filter.filter.exclude.length > 0
-			? not(and(...processExcludeFilters(filter.filter.exclude, builder)))
-			: null;
+	const includeExpressions = [];
+	if (nonPersonFilters.length > 0) {
+		includeExpressions.push(
+			filter.filter.type === 'and'
+				? and(...processFilters(nonPersonFilters, builder))
+				: or(...processFilters(nonPersonFilters, builder))
+		);
+	}
+	if (personFilters.length > 0) {
+		// "include any of these specific people" — always an OR of id comparisons.
+		includeExpressions.push(or(...processFilters(personFilters, builder)));
+	}
+
+	const filters =
+		includeExpressions.length === 0
+			? // No include filters at all: route through the same combinator used today so the
+				// default/empty filter group still resolves to "no recipients".
+				filter.filter.type === 'and'
+				? and(...processFilters(filter.filter.filters, builder))
+				: or(...processFilters(filter.filter.filters, builder))
+			: includeExpressions.length === 1
+				? includeExpressions[0]
+				: or(...includeExpressions);
+
+	const excludePredicates = processExcludeFilters(filter.filter.exclude, builder);
+	const excludeFilters = excludePredicates.length > 0 ? not(or(...excludePredicates)) : null;
 
 	const filterArr = [
 		personReadPermissions(builder, ctx),
@@ -171,6 +194,8 @@ export function processExcludeFilters(
 	builder: ExpressionBuilder<'person', Schema>
 ) {
 	const { and, cmp } = builder; // no exists because we are exclusive (ie: with not in, which doesn't work for exists)
+	// Each predicate becomes one branch of the outer `or` before negation — exclude anyone
+	// who matches any supported exclude filter.
 	const filterArr = [];
 	for (const filter of filters) {
 		switch (filter.type) {
