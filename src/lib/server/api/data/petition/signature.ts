@@ -439,6 +439,8 @@ export async function signPetitionUnsafe({
 }) {
 	const id = petitionSignatureId || uuidv7();
 
+	// A soft-deleted signature may still occupy the (petitionId, personId) unique slot (the
+	// constraint ignores deletedAt), so look up any existing row regardless of deletedAt.
 	const [existingPetitionSignature] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(petitionSignature)
@@ -446,15 +448,17 @@ export async function signPetitionUnsafe({
 			and(
 				eq(petitionSignature.petitionId, petitionRecord.id),
 				eq(petitionSignature.personId, personRecord.id),
-				eq(petitionSignature.organizationId, organizationRecord.id),
-				isNull(petitionSignature.deletedAt)
+				eq(petitionSignature.organizationId, organizationRecord.id)
 			)
 		)
 		.limit(1);
 
-	// On resume/upsert, merge custom fields onto the existing details so partial signatures don't
-	// clobber previously captured answers.
-	const detailsToPersist = existingPetitionSignature
+	// An active existing row is a resume: merge custom fields so partial signatures don't clobber
+	// previously captured answers. A soft-deleted row is a fresh re-signature: start from the
+	// incoming details and reactivate the row (clear deletedAt) so re-signing works on every channel.
+	const hasActiveSignature =
+		existingPetitionSignature != null && existingPetitionSignature.deletedAt == null;
+	const detailsToPersist = hasActiveSignature
 		? mergeSignatureDetails(existingPetitionSignature.details, details)
 		: details;
 
@@ -472,6 +476,7 @@ export async function signPetitionUnsafe({
 	const conflictSet: Partial<typeof petitionSignature.$inferInsert> = {
 		details: petitionSignatureRecord.details,
 		teamId: petitionRecord.teamId,
+		deletedAt: null, // re-activate a previously soft-deleted signature so re-signing works
 		updatedAt: new Date()
 	};
 
@@ -480,8 +485,7 @@ export async function signPetitionUnsafe({
 		.values(petitionSignatureRecord)
 		.onConflictDoUpdate({
 			target: [petitionSignature.petitionId, petitionSignature.personId],
-			set: conflictSet,
-			setWhere: and(isNull(petitionSignature.deletedAt))
+			set: conflictSet
 		})
 		.returning();
 	if (!insertedPetitionSignature) {
@@ -494,8 +498,9 @@ export async function signPetitionUnsafe({
 			personRecord.preferredLanguage || organizationRecord.defaultLanguage
 		);
 		// Use pg-boss directly so enqueue works even if cached queue object predates a new handler export
+		// Use the persisted row id (on upsert/reactivation the existing row keeps its original id).
 		await queue.raw.send('sendPetitionSignatureConfirmation', {
-			petitionSignatureId: id,
+			petitionSignatureId: insertedPetitionSignature.id,
 			locale
 		});
 	}
@@ -505,7 +510,8 @@ export async function signPetitionUnsafe({
 		personId: personRecord.id,
 		organizationId: organizationRecord.id
 	});
-	if (!skipNotifications && !existingPetitionSignature) {
+	// Notify on a brand-new signature or a reactivation of a soft-deleted one — both are fresh signups.
+	if (!skipNotifications && !hasActiveSignature) {
 		const personName =
 			[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') || null;
 		await createNotification({
@@ -530,9 +536,7 @@ export async function signPetitionUnsafe({
 		{
 			organizationId,
 			payload: {
-				type: existingPetitionSignature
-					? 'petition.signature.updated'
-					: 'petition.signature.created',
+				type: hasActiveSignature ? 'petition.signature.updated' : 'petition.signature.created',
 				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		},
