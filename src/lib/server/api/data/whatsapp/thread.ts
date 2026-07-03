@@ -9,7 +9,7 @@ import { builder } from '$lib/zero/schema';
 import { db } from '$lib/server/db';
 import { whatsappThreadReadPermissions } from '$lib/zero/query/whatsapp_thread/permissions';
 import { createMessageFromTemplateAndTemplateMessage } from '$lib/utils/whatsapp/template';
-import { type Flow } from '$lib/schema/flow/index';
+import { type Flow, validateFlowForSending } from '$lib/schema/flow/index';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue/index';
 import {
 	updateWhatsappThread as updateWhatsappThreadSchema,
@@ -239,6 +239,10 @@ export async function sendWhatsappThread({
 	);
 	if (!permissionCheck) {
 		throw new Error('No access to send WhatsApp thread');
+	}
+	const validationIssues = validateFlowForSending(permissionCheck.flow as Flow);
+	if (validationIssues.length > 0) {
+		throw new Error(validationIssues[0].message);
 	}
 	const [claimed] = await tx.dbTransaction.wrappedTransaction
 		.update(whatsappThreadTable)
