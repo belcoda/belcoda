@@ -62,8 +62,11 @@ export function cloneFlow(flow: Flow): Flow {
 			throw new Error(`cloneFlow: edge references unknown target node id "${edge.target}"`);
 		}
 
+		// SvelteFlow may normalise a handleless edge to `sourceHandle: null`, so treat
+		// null and undefined alike (via `!= null`) rather than mistaking null for a real
+		// handle id and throwing on the lookup.
 		let newSourceHandle: string | undefined;
-		if (edge.sourceHandle !== undefined) {
+		if (edge.sourceHandle != null) {
 			newSourceHandle = idMap.get(edge.sourceHandle);
 			if (newSourceHandle === undefined) {
 				throw new Error(
@@ -74,18 +77,24 @@ export function cloneFlow(flow: Flow): Flow {
 
 		// targetHandle is passed through / remapped defensively when present.
 		let newTargetHandle: string | undefined;
-		if (edge.targetHandle !== undefined) {
+		if (edge.targetHandle != null) {
 			newTargetHandle = idMap.get(edge.targetHandle) ?? edge.targetHandle;
 		}
 
-		return {
+		const remapped: Edge = {
 			...edge,
 			id: `xy-edge__${newSourceHandle ?? newSource}--${newTarget}`,
 			source: newSource,
-			target: newTarget,
-			...(newSourceHandle !== undefined ? { sourceHandle: newSourceHandle } : {}),
-			...(newTargetHandle !== undefined ? { targetHandle: newTargetHandle } : {})
+			target: newTarget
 		};
+		// Control handle presence explicitly: the `...edge` spread may carry a null or
+		// stale handle, so drop it when there is no remapped handle rather than leaking
+		// it into the clone.
+		if (newSourceHandle === undefined) delete remapped.sourceHandle;
+		else remapped.sourceHandle = newSourceHandle;
+		if (newTargetHandle === undefined) delete remapped.targetHandle;
+		else remapped.targetHandle = newTargetHandle;
+		return remapped;
 	});
 
 	return { nodes, edges };

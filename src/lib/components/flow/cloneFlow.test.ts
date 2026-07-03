@@ -351,7 +351,7 @@ describe('cloneFlow', () => {
 			expect(node.data.filter).toEqual(defaultFilterGroup);
 		});
 
-		it('throws when an edge references an unknown node id', () => {
+		it('throws when an edge references an unknown target node id', () => {
 			const flow: Flow = {
 				nodes: [
 					{
@@ -370,6 +370,88 @@ describe('cloneFlow', () => {
 				]
 			};
 			expect(() => cloneFlow(flow)).toThrow(/unknown target node id/);
+		});
+
+		it('throws when an edge references an unknown source node id', () => {
+			const flow: Flow = {
+				nodes: [
+					{
+						id: TARGETING_ID,
+						type: 'targeting',
+						position: { x: 0, y: 0 },
+						data: { filter: structuredClone(defaultFilterGroup) }
+					}
+				],
+				edges: [
+					{
+						id: 'dangling',
+						source: MESSAGE_ID, // not present among nodes
+						target: TARGETING_ID
+					}
+				]
+			};
+			expect(() => cloneFlow(flow)).toThrow(/unknown source node id/);
+		});
+
+		it('throws when an edge references an unknown sourceHandle id', () => {
+			const flow: Flow = {
+				nodes: [
+					{
+						id: MESSAGE_ID,
+						type: 'message',
+						position: { x: 0, y: 0 },
+						data: { text: 'hi', imageUrl: null, buttons: [{ id: MSG_BUTTON_A, label: 'Yes' }] }
+					},
+					{
+						id: TAGADD_ID,
+						type: 'tagAdd',
+						position: { x: 100, y: 100 },
+						data: { tagId: TAG_ID }
+					}
+				],
+				edges: [
+					{
+						id: 'dangling-handle',
+						source: MESSAGE_ID,
+						target: TAGADD_ID,
+						sourceHandle: MSG_BUTTON_B // not a button on the source node
+					}
+				]
+			};
+			expect(() => cloneFlow(flow)).toThrow(/unknown sourceHandle id/);
+		});
+
+		it('treats a null sourceHandle as absent rather than throwing', () => {
+			// SvelteFlow can normalise a handleless edge to `sourceHandle: null`.
+			const flow = {
+				nodes: [
+					{
+						id: TARGETING_ID,
+						type: 'targeting',
+						position: { x: 0, y: 0 },
+						data: { filter: structuredClone(defaultFilterGroup) }
+					},
+					{
+						id: TAGADD_ID,
+						type: 'tagAdd',
+						position: { x: 100, y: 100 },
+						data: { tagId: TAG_ID }
+					}
+				],
+				edges: [
+					{
+						id: 'null-handle',
+						source: TARGETING_ID,
+						target: TAGADD_ID,
+						sourceHandle: null
+					}
+				]
+			} as unknown as Flow;
+			const clone = cloneFlow(flow);
+			expect(clone.edges).toHaveLength(1);
+			expect(clone.edges[0].sourceHandle).toBeUndefined();
+			expect(clone.edges[0].source).toBe(clone.nodes[0].id);
+			expect(clone.edges[0].target).toBe(clone.nodes[1].id);
 		});
 	});
 });
