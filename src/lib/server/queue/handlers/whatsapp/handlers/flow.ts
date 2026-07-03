@@ -366,9 +366,11 @@ export async function handleFlowResponse({
 					teamId: petition.teamId ?? undefined,
 					tx,
 					personAction: parsedPersonAction,
-					signatureDetails: { channel: { type: 'whatsapp' } },
+					signatureDetails: {
+						channel: { type: 'whatsapp' },
+						customFields: customFields
+					},
 					organizationId: petition.organizationId,
-					responses: Object.keys(customFields).length > 0 ? customFields : null,
 					skipNotifications: true,
 					whatsappIdentity,
 					whatsappContextWamidId
@@ -672,7 +674,7 @@ function extractPetitionCustomFields(responses?: FlowResponses): Record<string, 
 							{ key, value, type: typeof value },
 							'Unexpected custom field type in petition flow response'
 						);
-						customFields[key] = value as string;
+						customFields[key] = JSON.stringify(value);
 					}
 				}
 			});
@@ -743,9 +745,11 @@ export async function handlePetitionSignatureFlowResponse({
 				? { emailAddress: flowDataForPerson.emailAddress.trim() }
 				: {})
 		},
-		signatureDetails: { channel: { type: 'whatsapp' } },
+		signatureDetails: {
+			channel: { type: 'whatsapp' },
+			customFields: customFields as Record<string, string | number | boolean | string[]>
+		},
 		organizationId: petition.organizationId,
-		responses: Object.keys(customFields).length > 0 ? customFields : null,
 		skipNotifications: true
 	});
 

@@ -196,14 +196,18 @@ type BetterAuth = ReturnType<typeof buildBetterAuth>;
 
 /**
  * If an `authToken` search param is present, verifies it as a one-time token and, on success, sets
- * `event.locals.session` to the resulting session. Verification failures are logged and otherwise
- * ignored, leaving the previously-fetched session in place.
+ * `event.locals.session` to the resulting session, then redirects to the same URL with `authToken`
+ * removed so the browser no longer holds the single-use token (which would otherwise 500 on reuse
+ * from a refresh or follow-up data request). Verification failures are logged and otherwise ignored,
+ * leaving the previously-fetched session in place. This runs for both event and petition public
+ * pages, keeping their token handling identical.
  */
 async function applyOneTimeTokenSession(event: RequestEvent, auth: BetterAuth): Promise<void> {
 	const token = event.url.searchParams.get('authToken');
 	if (!token) {
 		return;
 	}
+	let verified = false;
 	try {
 		log.debug({ pathname: event.url.pathname }, 'One-time auth token found in search params');
 		const session = await auth.api.verifyOneTimeToken({
@@ -211,15 +215,21 @@ async function applyOneTimeTokenSession(event: RequestEvent, auth: BetterAuth): 
 				token: token
 			}
 		});
-		/* event.url.searchParams.delete('authToken'); //kill the token so it can't be used again
-															log.debug({ url: event.url.toString() }, '[DEBUG] Token deleted from search params'); */
 		log.debug(
 			{ verified: session?.session != null, time: Date.now() },
 			'[DEBUG] Session verified from one time token'
 		);
 		event.locals.session = session;
+		verified = true;
 	} catch (error) {
 		log.error(error, 'Error verifying one time token');
+	}
+	// Redirect outside the try/catch so the thrown redirect is not swallowed by error handling.
+	if (verified) {
+		const cleanedUrl = new URL(event.url);
+		cleanedUrl.searchParams.delete('authToken'); //kill the token so it can't be reused
+		log.debug({ url: cleanedUrl.toString() }, '[DEBUG] Redirecting to strip one-time token');
+		redirect(303, cleanedUrl.pathname + cleanedUrl.search + cleanedUrl.hash);
 	}
 }
 

@@ -96,7 +96,7 @@ export function generateStartingColumns(petition: ReadPetitionZero) {
 	};
 }
 
-/** Survey answer values on petition signatures live on `responses` (parallel to event signup `details.customFields`). */
+/** Survey answer values on petition signatures live on `details.customFields` (mirroring event signup `details.customFields`). */
 export function formatSurveyResponseValue(value: unknown): string | null {
 	if (typeof value === 'string') return value;
 	if (typeof value === 'number') return value.toString();
@@ -109,9 +109,11 @@ export function getSignatureResponsesField(
 	signature: ReadPetitionSignatureZeroWithPerson,
 	questionId: string
 ): unknown {
-	const r = signature.responses;
-	if (r == null || typeof r !== 'object' || Array.isArray(r)) return undefined;
-	return (r as Record<string, unknown>)[questionId];
+	const customFields = signature.details?.customFields;
+	if (customFields == null || typeof customFields !== 'object' || Array.isArray(customFields)) {
+		return undefined;
+	}
+	return (customFields as Record<string, unknown>)[questionId];
 }
 
 /** Zero date columns may be unix seconds or milliseconds depending on row. */

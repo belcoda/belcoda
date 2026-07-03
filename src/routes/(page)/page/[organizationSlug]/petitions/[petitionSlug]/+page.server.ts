@@ -47,27 +47,36 @@ export async function load({ params, locals }) {
 		throw error(404, 'Petition not found');
 	}
 
-	// Count signatures
-	const [signatureCount] = await drizzle
-		.select({ count: count() })
-		.from(petitionSignature)
-		.where(eq(petitionSignature.petitionId, petitionData.id));
+	const session = locals.session;
+	const userId = session?.user?.id;
 
-	// Get recent signatures with person details
-	const recentSignatures = await drizzle
-		.select({
-			id: petitionSignature.id,
-			createdAt: petitionSignature.createdAt,
-			givenName: person.givenName,
-			familyName: person.familyName
-		})
-		.from(petitionSignature)
-		.innerJoin(person, eq(petitionSignature.personId, person.id))
-		.where(eq(petitionSignature.petitionId, petitionData.id))
-		.orderBy(desc(petitionSignature.createdAt))
-		.limit(10);
+	// The organization → petition lookups above are sequential (petition depends on org). The
+	// remaining reads are independent of one another, so batch them into a single round of
+	// concurrent queries instead of awaiting one after another.
+	const [signatureCountRows, recentSignatures, actionCode, adminOwnerOrgs] = await Promise.all([
+		// Count signatures
+		drizzle
+			.select({ count: count() })
+			.from(petitionSignature)
+			.where(eq(petitionSignature.petitionId, petitionData.id)),
+		// Get recent signatures with person details
+		drizzle
+			.select({
+				id: petitionSignature.id,
+				createdAt: petitionSignature.createdAt,
+				givenName: person.givenName,
+				familyName: person.familyName
+			})
+			.from(petitionSignature)
+			.innerJoin(person, eq(petitionSignature.personId, person.id))
+			.where(eq(petitionSignature.petitionId, petitionData.id))
+			.orderBy(desc(petitionSignature.createdAt))
+			.limit(10),
+		_getPetitionActionCodeUnsafe({ petitionId: petitionData.id }),
+		userId ? getAdminOwnerOrgs(userId) : Promise.resolve(null)
+	]);
 
-	const actionCode = await _getPetitionActionCodeUnsafe({ petitionId: petitionData.id });
+	const [signatureCount] = signatureCountRows;
 
 	const whatsAppSignupLink = actionCode
 		? generateWhatsAppPetitionLink({
@@ -77,12 +86,9 @@ export async function load({ params, locals }) {
 			})
 		: null;
 
-	const session = locals.session;
-	const userId = session?.user?.id;
 	let isAdmin = false;
-	if (userId) {
-		const { admin, owner } = await getAdminOwnerOrgs(userId);
-		isAdmin = admin.includes(org.id) || owner.includes(org.id);
+	if (adminOwnerOrgs) {
+		isAdmin = adminOwnerOrgs.admin.includes(org.id) || adminOwnerOrgs.owner.includes(org.id);
 	}
 
 	let renderedDescription: string | null = null;
@@ -198,9 +204,9 @@ export const actions = {
 					signatureDetails: {
 						channel: {
 							type: 'petitionPage'
-						}
-					},
-					responses: form.data.customFields
+						},
+						customFields: form.data.customFields
+					}
 				});
 			});
 

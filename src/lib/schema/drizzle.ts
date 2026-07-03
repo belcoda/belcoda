@@ -974,6 +974,9 @@ export const petitionSignature = pgTable(
 			.notNull()
 			.references(() => person.id),
 		details: jsonb('details').$type<PetitionSignatureDetails>().notNull(),
+		// @deprecated Petition custom-field answers now live in `details.customFields` (mirroring
+		// `eventSignup.details`). This column is retained only for legacy/backfill data and is no
+		// longer written to; it is slated for removal in a future migration.
 		responses: jsonb('responses'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
