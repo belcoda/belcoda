@@ -36,7 +36,11 @@ export default defineConfig({
 		// imports (e.g. `lodash/cloneDeep`) that Node's strict ESM resolver rejects, and
 		// CJS @lexical@0.13 packages that use `require` / named exports. Pre-bundling it
 		// with esbuild via optimizeDeps converts the whole subtree into clean ESM.
-		noExternal: ['@tryghost/kg-lexical-html-renderer'],
+		// The whole @tryghost scope must be inlined (not just the renderer): the
+		// renderer imports @tryghost/kg-default-nodes, whose ESM build has the same
+		// extensionless lodash imports, and under vitest transitive deps are
+		// externalized unless they match noExternal themselves.
+		noExternal: [/^@tryghost\//],
 		optimizeDeps: {
 			include: ['@tryghost/kg-lexical-html-renderer'],
 			// jsdom (a transitive dep of the renderer) relies on the CJS `__dirname`
@@ -80,7 +84,26 @@ export default defineConfig({
 					name: 'server',
 					environment: 'node',
 					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
+					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+					// vitest doesn't run Vite's ssr.optimizeDeps prebundling, so the
+					// @tryghost renderer chain (see the ssr config above) needs the same
+					// treatment via vitest's esbuild-based deps optimizer.
+					deps: {
+						optimizer: {
+							ssr: {
+								enabled: true,
+								include: [
+									'@tryghost/kg-lexical-html-renderer',
+									'@tryghost/kg-default-nodes',
+									'@tryghost/kg-default-transforms',
+									'@tryghost/kg-markdown-html-renderer',
+									'@tryghost/kg-clean-basic-html',
+									'@tryghost/kg-utils'
+								],
+								exclude: ['jsdom']
+							}
+						}
+					}
 				}
 			}
 		]
