@@ -491,6 +491,7 @@ msgid "Search..."
 msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/FlowCanvas.svelte
 #: src/lib/components/widgets/person/add_modal/NewPersonForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Back"
@@ -2659,6 +2660,7 @@ msgid "Email Draft"
 msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 #: src/lib/components/forms/whatsapp/templates/EditComponent.svelte
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Discard"
@@ -3976,6 +3978,7 @@ msgstr ""
 msgid "New WhatsApp template"
 msgstr ""
 
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Are you sure you want to send this WhatsApp draft?"
 msgstr ""
@@ -4344,6 +4347,7 @@ msgstr ""
 msgid "Could not update personal information. Please try again."
 msgstr ""
 
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "WhatsApp draft sent successfully"
 msgstr ""
@@ -5000,26 +5004,33 @@ msgid "Manage templates"
 msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Template not approved"
 msgstr ""
 
 #. 0: templateReadQuery.data.name; 1: String(templateStatus)
+#. 0: templateReadQuery.data.name; 1: String(templateStatus)
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "The selected template ({0}) is currently {1}. You can edit this draft, but it cannot be sent until the template is approved."
 msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "This template is not available or is not approved. Select an approved template before sending."
 msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "View template settings"
 msgstr ""
 
 #: src/lib/components/flow/Flow.svelte
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Only approved WhatsApp templates can be sent. Select an approved template or wait for Meta to approve your template."
 msgstr ""
 
+#: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 #: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Failed to send WhatsApp draft"
 msgstr ""
@@ -5471,4 +5482,38 @@ msgstr ""
 
 #: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 msgid "The event you are looking for could not be found."
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "WhatsApp thread copied to a new draft"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Failed to copy WhatsApp thread"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "This creates a new draft with a copy of this thread's messages and steps. The copy always starts as an unsent draft."
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Clone"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Copying…"
+msgstr ""
+
+#~ msgid "Hello! Choose an option"
+#~ msgstr ""
+
+#~ msgid "WhatsApp message:"
+#~ msgstr ""
+
+#: src/lib/components/flow/nodes/Message.svelte
+msgid "Message:"
+msgstr ""
+
+#: src/lib/components/flow/nodes/Message.svelte
+msgid "Type your message..."
 msgstr ""
