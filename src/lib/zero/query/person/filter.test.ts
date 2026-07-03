@@ -194,7 +194,7 @@ describe('person whereClause exclude composition', () => {
 		const result = run({
 			type: 'or',
 			filters: [],
-			exclude: [{ type: 'teamId', teamId: 'team-1', label: 'Team 1' }]
+			exclude: [{ type: 'teamId', teamId: 'team-1', name: 'Team 1', label: 'Team 1' }]
 		});
 
 		expect(excludeExpression(result)).toBeUndefined();
