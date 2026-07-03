@@ -84,13 +84,6 @@
 				<div class="flex items-center justify-between gap-4 px-6 py-4">
 					<div>
 						<Label class="text-sm font-medium">{t`Digest frequency`}</Label>
-						<p class="mt-1 text-xs text-muted-foreground">
-							{#if digestFrequency === 'weekly'}
-								{t`Sent every Sunday at 8:00 AM UTC`}
-							{:else}
-								{t`Sent every morning at 8:00 AM UTC`}
-							{/if}
-						</p>
 					</div>
 					<Select.Root
 						type="single"
