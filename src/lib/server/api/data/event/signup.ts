@@ -705,8 +705,8 @@ export async function signUpForEventUnsafe({
 				sourceKey: `event_signup:${insertedEventSignup.id}`,
 				payload: {
 					personName,
-					eventTitle: eventRecord.title,
-					eventId: eventRecord.id
+					personId: personRecord.id,
+					subjectTitle: eventRecord.title
 				},
 				routing: {
 					recipientUserIds,
