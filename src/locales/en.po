@@ -5668,14 +5668,6 @@ msgid "Digest frequency"
 msgstr "Digest frequency"
 
 #: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Sent every Sunday at 8:00 AM UTC"
-msgstr "Sent every Sunday at 8:00 AM UTC"
-
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Sent every morning at 8:00 AM UTC"
-msgstr "Sent every morning at 8:00 AM UTC"
-
-#: src/routes/(app)/preferences/notifications/+page.svelte
 #: src/routes/(app)/preferences/notifications/+page.svelte
 msgid "Weekly"
 msgstr "Weekly"
@@ -5688,3 +5680,7 @@ msgstr "Daily"
 #: src/routes/(app)/preferences/notifications/+page.svelte
 msgid "Saved"
 msgstr "Saved"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Failed to save notification preferences"
+msgstr "Failed to save notification preferences"
