@@ -4908,6 +4908,7 @@ msgid "Fallback text"
 msgstr ""
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/SvelteLexical.svelte
 msgid "Insert variable"
 msgstr ""
 
