@@ -5460,7 +5460,9 @@ msgstr "Petition signup"
 msgid "Notification"
 msgstr "Notification"
 
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -5648,3 +5650,41 @@ msgstr "alert"
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "notification"
 msgstr "notification"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Digest email"
+msgstr "Digest email"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Send me a digest email"
+msgstr "Send me a digest email"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
+msgstr "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Digest frequency"
+msgstr "Digest frequency"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Sent every Sunday at 8:00 AM UTC"
+msgstr "Sent every Sunday at 8:00 AM UTC"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Sent every morning at 8:00 AM UTC"
+msgstr "Sent every morning at 8:00 AM UTC"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Weekly"
+msgstr "Weekly"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Daily"
+msgstr "Daily"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Saved"
+msgstr "Saved"
