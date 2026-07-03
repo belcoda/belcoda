@@ -2,6 +2,9 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { LOCALES } from '$lib/utils/language';
+import { userSettingsSchema, type UserSettingsSchema } from '$lib/schema/user/settings';
+export { userSettingsSchema, type UserSettingsSchema } from '$lib/schema/user/settings';
+export { defaultUserSettings } from '$lib/schema/user/settings';
 
 export const userRole = v.picklist(['member', 'admin', 'owner']);
 export type UserRole = v.InferOutput<typeof userRole>;
@@ -15,6 +18,7 @@ export const userSchema = v.object({
 	twoFactorEnabled: v.boolean(),
 	stripeCustomerId: v.nullable(helpers.shortString),
 	preferredLanguage: v.nullable(v.picklist(LOCALES, 'Invalid language code')),
+	settings: v.nullable(userSettingsSchema),
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });
@@ -27,6 +31,7 @@ export const readUserRest = v.object({
 	image: userSchema.entries.image,
 	preferredLanguage: userSchema.entries.preferredLanguage,
 	twoFactorEnabled: userSchema.entries.twoFactorEnabled,
+	settings: userSchema.entries.settings,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString
 });
@@ -51,7 +56,8 @@ export const updateUser = v.partial(
 	v.object({
 		name: userSchema.entries.name,
 		image: v.optional(v.nullable(helpers.url), null),
-		preferredLanguage: v.optional(userSchema.entries.preferredLanguage)
+		preferredLanguage: v.optional(userSchema.entries.preferredLanguage),
+		settings: v.optional(userSchema.entries.settings)
 	})
 );
 export type UpdateUser = v.InferInput<typeof updateUser>;
