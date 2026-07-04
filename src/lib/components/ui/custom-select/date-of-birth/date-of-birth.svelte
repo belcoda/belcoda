@@ -2,9 +2,8 @@
 	import Calendar from '$lib/components/ui/calendar/calendar.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
-	import { getLocalTimeZone, today, type CalendarDate, parseDate } from '@internationalized/date';
+	import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 	import { t } from '$lib/index.svelte';
 
 	const id = $props.id();
@@ -17,7 +16,7 @@
 		if (!(input instanceof Date) || Number.isNaN(input.getTime())) {
 			return undefined;
 		}
-		return parseDate(input.toISOString().slice(0, 10));
+		return new CalendarDate(input.getFullYear(), input.getMonth() + 1, input.getDate());
 	}
 
 	let open = $state(false);

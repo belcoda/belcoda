@@ -58,7 +58,9 @@ export async function load({ params, locals }) {
 		drizzle
 			.select({ count: count() })
 			.from(petitionSignature)
-			.where(eq(petitionSignature.petitionId, petitionData.id)),
+			.where(
+				and(eq(petitionSignature.petitionId, petitionData.id), isNull(petitionSignature.deletedAt))
+			),
 		// Get recent signatures with person details
 		drizzle
 			.select({
@@ -69,7 +71,9 @@ export async function load({ params, locals }) {
 			})
 			.from(petitionSignature)
 			.innerJoin(person, eq(petitionSignature.personId, person.id))
-			.where(eq(petitionSignature.petitionId, petitionData.id))
+			.where(
+				and(eq(petitionSignature.petitionId, petitionData.id), isNull(petitionSignature.deletedAt))
+			)
 			.orderBy(desc(petitionSignature.createdAt))
 			.limit(10),
 		_getPetitionActionCodeUnsafe({ petitionId: petitionData.id }),
