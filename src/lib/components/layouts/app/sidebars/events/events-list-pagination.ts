@@ -17,6 +17,10 @@ export function bindEventsListPaginationReset(reset: () => void) {
 	if (ctx) ctx.reset = reset;
 }
 
+export function getEventsListPaginationContext() {
+	return getContext<EventsListPaginationContext | undefined>(EVENTS_LIST_PAGINATION_KEY);
+}
+
 export function resetEventsListPagination() {
-	getContext<EventsListPaginationContext | undefined>(EVENTS_LIST_PAGINATION_KEY)?.reset();
+	getEventsListPaginationContext()?.reset();
 }

@@ -207,7 +207,7 @@ async function processIncomingMessageInTransaction(
 				organizationId,
 				referenceId: insertedWhatsAppMessageId,
 				sourceKey: `whatsapp_message:${insertedWhatsAppMessageId}`,
-				payload: { personId }
+				payload: { personName: senderDisplayName, personId }
 			}
 		});
 	}
