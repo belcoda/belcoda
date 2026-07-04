@@ -39,16 +39,21 @@ export function whereClause(
 		includeExpressions.push(or(...processFilters(personFilters, builder)));
 	}
 
-	const filters =
-		includeExpressions.length === 0
-			? // No include filters at all: route through the same combinator used today so the
-				// default/empty filter group still resolves to "no recipients".
-				filter.filter.type === 'and'
-				? and(...processFilters(filter.filter.filters, builder))
-				: or(...processFilters(filter.filter.filters, builder))
-			: includeExpressions.length === 1
-				? includeExpressions[0]
-				: or(...includeExpressions);
+	// Compose include expressions: empty group uses the filter's and/or combinator
+	// (so the default/empty group still resolves to "no recipients"); a single
+	// expression is used as-is; multiple expressions are OR'd together.
+	let filters;
+	if (includeExpressions.length === 0) {
+		if (filter.filter.type === 'and') {
+			filters = and(...processFilters(filter.filter.filters, builder));
+		} else {
+			filters = or(...processFilters(filter.filter.filters, builder));
+		}
+	} else if (includeExpressions.length === 1) {
+		filters = includeExpressions[0];
+	} else {
+		filters = or(...includeExpressions);
+	}
 
 	const excludePredicates = processExcludeFilters(filter.filter.exclude, builder);
 	const excludeFilters = excludePredicates.length > 0 ? not(or(...excludePredicates)) : null;
