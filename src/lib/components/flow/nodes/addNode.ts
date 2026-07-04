@@ -81,7 +81,7 @@ export function addNode({
 				id: id,
 				type: 'message' as const,
 				position: position,
-				data: { text: 'Your message here', buttons: [], imageUrl: null }
+				data: { text: '', buttons: [], imageUrl: null }
 			};
 		case 'eventSignup':
 			return {
