@@ -57,8 +57,14 @@ export async function parseImportCsv({
 		try {
 			// Map + validate against the create schema. Because country is required on
 			// every row, this always yields canonical identifiers we can match on.
+			// preferredLanguage may be null when the row supplies no recognizable
+			// language; default it to 'en' for the create schema (the update path
+			// gates on the mapped value below, so null never clobbers on update).
 			const personInput = mapCsvRowToPerson(csvRow);
-			const validated = valibotParse(createPerson, personInput);
+			const validated = valibotParse(createPerson, {
+				...personInput,
+				preferredLanguage: personInput.preferredLanguage ?? 'en'
+			});
 
 			// If we're upserting, look for an existing person by canonical email/phone.
 			let existing: typeof person.$inferSelect | undefined = undefined;
@@ -82,18 +88,20 @@ export async function parseImportCsv({
 			try {
 				if (existing) {
 					// Merge update: only touch columns this row actually supplied, so an
-					// omitted/blank cell never clobbers an existing value with null. A field
-					// can also be "provided" (non-empty cell) but still resolve to
-					// null/undefined after transformation (e.g. an unparseable date_of_birth
-					// or phone number); skip those too so a failed transform never clobbers
-					// an existing value.
+					// omitted/blank cell never clobbers an existing value. A field can also
+					// be "provided" (non-empty cell) yet resolve to null after transformation
+					// (unparseable date_of_birth or phone, unrecognized gender, unsupported
+					// language); gate on the *mapped* value so those failed transforms are
+					// left alone, while writing the *validated* (canonical) value.
 					const patch: Partial<typeof person.$inferInsert> = {};
 					for (const field of providedFields(csvRow)) {
-						const value = (validated as Record<string, unknown>)[field];
-						if (value === null || value === undefined) {
+						const mappedValue = (personInput as Record<string, unknown>)[field];
+						if (mappedValue === null || mappedValue === undefined) {
 							continue;
 						}
-						(patch as Record<string, unknown>)[field] = value;
+						(patch as Record<string, unknown>)[field] = (validated as Record<string, unknown>)[
+							field
+						];
 					}
 					await drizzle
 						.update(person)

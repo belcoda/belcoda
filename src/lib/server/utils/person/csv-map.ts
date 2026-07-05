@@ -12,6 +12,16 @@ import ISO6391 from 'iso-639-1';
 
 const log = pino(import.meta.url);
 
+/**
+ * The mapped shape of a CSV row. Identical to `CreatePerson` except that
+ * `preferredLanguage` may be null when the row supplies no recognizable language:
+ * the insert path defaults it to 'en', while the update path leaves the existing
+ * value untouched.
+ */
+export type CsvPersonInput = Omit<CreatePerson, 'preferredLanguage'> & {
+	preferredLanguage: LanguageCode | null;
+};
+
 export interface CsvRow {
 	[key: string]: string;
 }
@@ -130,8 +140,11 @@ function normalizeGender(gender: string | null | undefined): GenderOption | null
 		case 'prefer not to say':
 			return 'not-specified';
 		default:
-			log.debug({ gender }, 'Unrecognized gender value, using not-specified');
-			return 'not-specified';
+			// Unrecognized value: return null so it is treated as "not provided" and
+			// never overwrites an existing gender on update. On insert the nullable
+			// personSchema.gender stores it as null.
+			log.debug({ gender }, 'Unrecognized gender value, leaving unset');
+			return null;
 	}
 }
 
@@ -162,7 +175,7 @@ function parseDateOfBirth(dob: string | null | undefined): Date | null {
  *
  * Throws when `country` is missing/invalid or when a `social_media` blob is malformed.
  */
-export function mapCsvRowToPerson(csvRow: CsvRow): CreatePerson {
+export function mapCsvRowToPerson(csvRow: CsvRow): CsvPersonInput {
 	let country = firstValue(csvRow, CSV_ALIASES.country);
 	if (country) {
 		const lowercased = country.toLowerCase();
@@ -182,16 +195,22 @@ export function mapCsvRowToPerson(csvRow: CsvRow): CreatePerson {
 		throw new Error(t`Country is required`);
 	}
 
+	// Resolve to a supported language when the row supplies a recognizable one,
+	// otherwise null: an absent or unsupported language must not overwrite an
+	// existing value on update. The insert path defaults null to 'en' (see import.ts).
 	const rawLanguage = firstValue(csvRow, CSV_ALIASES.preferredLanguage);
-	let preferredLanguage = (rawLanguage ?? 'en').toLocaleLowerCase() as LanguageCode;
-
-	if (!isSupportedLanguage(preferredLanguage)) {
-		const normalized = rawLanguage ? ISO6391.getCode(rawLanguage) : '';
-		if (normalized && isSupportedLanguage(normalized)) {
-			preferredLanguage = normalized as LanguageCode;
+	let preferredLanguage: LanguageCode | null = null;
+	if (rawLanguage) {
+		const lowercased = rawLanguage.toLocaleLowerCase();
+		if (isSupportedLanguage(lowercased)) {
+			preferredLanguage = lowercased as LanguageCode;
 		} else {
-			log.debug({ language: rawLanguage }, 'Invalid language, using default');
-			preferredLanguage = 'en';
+			const normalized = ISO6391.getCode(rawLanguage);
+			if (normalized && isSupportedLanguage(normalized)) {
+				preferredLanguage = normalized as LanguageCode;
+			} else {
+				log.debug({ language: rawLanguage }, 'Unsupported language, leaving unset');
+			}
 		}
 	}
 

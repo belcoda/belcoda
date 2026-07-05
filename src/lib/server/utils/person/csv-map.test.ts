@@ -4,16 +4,24 @@ import { createPerson } from '$lib/schema/person';
 import { mapCsvRowToPerson, providedFields, type CsvRow } from './csv-map';
 
 /**
- * Build the partial update payload the way parseImportCsv does: map + validate the
- * row, then keep only the fields the row actually supplied.
+ * Build the partial update payload exactly the way parseImportCsv does: map the row,
+ * default preferredLanguage to 'en' for create-schema validation, then keep only the
+ * fields the row supplied — gating on the *mapped* value so a field that resolves to
+ * null after transformation (bad date/phone, unrecognized gender, unsupported
+ * language) is left alone rather than clobbering the existing value.
  */
 function buildUpdatePatch(csvRow: CsvRow): Record<string, unknown> {
-	const validated = valibotParse(createPerson, mapCsvRowToPerson(csvRow)) as Record<
-		string,
-		unknown
-	>;
+	const personInput = mapCsvRowToPerson(csvRow);
+	const validated = valibotParse(createPerson, {
+		...personInput,
+		preferredLanguage: personInput.preferredLanguage ?? 'en'
+	}) as Record<string, unknown>;
+	const mapped = personInput as Record<string, unknown>;
 	const patch: Record<string, unknown> = {};
 	for (const field of providedFields(csvRow)) {
+		if (mapped[field] === null || mapped[field] === undefined) {
+			continue;
+		}
 		patch[field] = validated[field];
 	}
 	return patch;
@@ -75,6 +83,42 @@ describe('update patch construction', () => {
 		expect(patch).not.toHaveProperty('subscribed');
 		expect(patch).not.toHaveProperty('doNotContact');
 	});
+
+	it('does not clobber gender when the supplied value is unrecognized', () => {
+		// A present-but-unrecognized gender must be left alone on update, not written
+		// as a sentinel that would overwrite the existing value.
+		const patch = buildUpdatePatch({ country: 'US', email: 'a@b.com', gender: 'wizard' });
+		expect(patch).not.toHaveProperty('gender');
+	});
+
+	it('does not clobber preferredLanguage when the supplied value is unsupported', () => {
+		const patch = buildUpdatePatch({
+			country: 'US',
+			email: 'a@b.com',
+			preferred_language: 'klingon'
+		});
+		expect(patch).not.toHaveProperty('preferredLanguage');
+	});
+
+	it('updates gender/language when the supplied values are recognized', () => {
+		const patch = buildUpdatePatch({
+			country: 'US',
+			email: 'a@b.com',
+			gender: 'female',
+			preferred_language: 'es'
+		});
+		expect(patch.gender).toBe('female');
+		expect(patch.preferredLanguage).toBe('es');
+	});
+
+	it('does not clobber date_of_birth when the supplied value is unparseable', () => {
+		const patch = buildUpdatePatch({
+			country: 'US',
+			email: 'a@b.com',
+			date_of_birth: 'not-a-date'
+		});
+		expect(patch).not.toHaveProperty('dateOfBirth');
+	});
 });
 
 describe('mapCsvRowToPerson', () => {
@@ -100,5 +144,17 @@ describe('mapCsvRowToPerson', () => {
 			social_media: JSON.stringify({ twitter: 'ada' })
 		});
 		expect(mapped.socialMedia).toMatchObject({ twitter: 'ada' });
+	});
+
+	it('maps unrecognized gender and unsupported/absent language to null', () => {
+		expect(
+			mapCsvRowToPerson({ country: 'US', email: 'a@b.com', gender: 'wizard' }).gender
+		).toBeNull();
+		expect(
+			mapCsvRowToPerson({ country: 'US', email: 'a@b.com', preferred_language: 'klingon' })
+				.preferredLanguage
+		).toBeNull();
+		// Absent language is also null in the mapped shape; the insert path defaults it to 'en'.
+		expect(mapCsvRowToPerson({ country: 'US', email: 'a@b.com' }).preferredLanguage).toBeNull();
 	});
 });
