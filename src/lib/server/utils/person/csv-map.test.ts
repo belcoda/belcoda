@@ -53,6 +53,44 @@ describe('providedFields', () => {
 	});
 });
 
+/**
+ * Build the create-schema-validated values the way the parseImportCsv INSERT branch
+ * does: map the row, then default preferredLanguage to 'en' before validation.
+ */
+function buildInsertValues(csvRow: CsvRow): Record<string, unknown> {
+	const personInput = mapCsvRowToPerson(csvRow);
+	return valibotParse(createPerson, {
+		...personInput,
+		preferredLanguage: personInput.preferredLanguage ?? 'en'
+	}) as Record<string, unknown>;
+}
+
+describe('insert values construction', () => {
+	it('defaults preferredLanguage to en when the row supplies none', () => {
+		expect(buildInsertValues({ country: 'US', email: 'a@b.com' }).preferredLanguage).toBe('en');
+	});
+
+	it('defaults preferredLanguage to en when the supplied language is unsupported', () => {
+		expect(
+			buildInsertValues({ country: 'US', email: 'a@b.com', preferred_language: 'klingon' })
+				.preferredLanguage
+		).toBe('en');
+	});
+
+	it('keeps a supported language on insert', () => {
+		expect(
+			buildInsertValues({ country: 'US', email: 'a@b.com', preferred_language: 'es' })
+				.preferredLanguage
+		).toBe('es');
+	});
+
+	it('stores an unrecognized gender as null on insert', () => {
+		expect(
+			buildInsertValues({ country: 'US', email: 'a@b.com', gender: 'wizard' }).gender
+		).toBeNull();
+	});
+});
+
 describe('update patch construction', () => {
 	it('omits fields the row did not supply so existing values are untouched', () => {
 		// A row that only updates the phone number, keyed by email.
