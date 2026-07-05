@@ -25,11 +25,11 @@ function formatDateForICal(date: Date): string {
  */
 function escapeICalText(text: string): string {
 	return text
-		.replace(/\\/g, '\\\\')
-		.replace(/;/g, '\\;')
-		.replace(/,/g, '\\,')
-		.replace(/\n/g, '\\n')
-		.replace(/\r/g, '');
+		.replaceAll('\\', '\\\\')
+		.replaceAll(';', String.raw`\;`)
+		.replaceAll(',', String.raw`\,`)
+		.replaceAll('\n', String.raw`\n`)
+		.replaceAll('\r', '');
 }
 
 /**

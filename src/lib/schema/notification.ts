@@ -1,12 +1,17 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
+export {
+	notificationPayloadSchema,
+	type NotificationPayload
+} from '$lib/schema/notification/payload';
+
 export const notificationStatuses = ['unread', 'read', 'dismissed'] as const;
 export const notificationStatus = v.picklist(notificationStatuses);
 export type NotificationStatus = v.InferOutput<typeof notificationStatus>;
 
 export const createNotificationRoutingSchema = v.object({
-	recipientUserIds: v.optional(v.array(helpers.uuid), []),
+	recipientUserIds: v.optional(v.array(helpers.uuid)),
 	creatorUserId: v.optional(v.nullable(helpers.uuid), null)
 });
 export type CreateNotificationRoutingSchema = v.InferOutput<typeof createNotificationRoutingSchema>;

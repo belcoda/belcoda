@@ -50,6 +50,7 @@ function messageFromRejectionReason(reason: unknown): string {
 	if (typeof reason === 'string') {
 		return reason;
 	}
+	//reason can be anything, so we return a string representation of it
 	return String(reason ?? '');
 }
 

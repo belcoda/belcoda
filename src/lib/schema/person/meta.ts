@@ -1,14 +1,4 @@
-import {
-	object,
-	optional,
-	pipe,
-	string,
-	maxLength,
-	type InferOutput,
-	variant,
-	literal,
-	nullable
-} from 'valibot';
+import { object, optional, type InferOutput, variant, literal, nullable } from 'valibot';
 import { uuid, mediumStringEmpty } from '$lib/schema/helpers';
 export const socialMedia = object({
 	facebook: optional(nullable(mediumStringEmpty)),

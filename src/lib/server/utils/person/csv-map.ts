@@ -1,6 +1,7 @@
 import pino from '$lib/pino';
 import { type CreatePerson } from '$lib/schema/person';
 import { type CountryCode, isValidCountryCode } from '$lib/utils/country';
+import { inputValueToDate } from '$lib/utils/date';
 import { isSupportedLanguage, type LanguageCode } from '$lib/utils/language';
 import { getCode } from 'country-list';
 import type { SocialMedia } from '$lib/schema/person/meta';
@@ -137,8 +138,16 @@ function normalizeGender(gender: string | null | undefined): GenderOption | null
 function parseDateOfBirth(dob: string | null | undefined): Date | null {
 	if (!dob) return null;
 
+	const trimmed = dob.trim();
+	if (trimmed === '') return null;
+
+	// First try strict ISO-8601 parsing (timezone-safe)
+	const strictDate = inputValueToDate(trimmed);
+	if (strictDate) return strictDate;
+
+	// Fall back to permissive parsing
 	try {
-		const date = new Date(dob);
+		const date = new Date(trimmed);
 		if (isNaN(date.getTime())) return null;
 		return date;
 	} catch {

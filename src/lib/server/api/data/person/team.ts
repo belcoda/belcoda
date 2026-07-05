@@ -4,9 +4,7 @@ import { parse } from 'valibot';
 
 import {
 	addPersonToTeamMutatorSchemaZero,
-	type AddPersonToTeamMutatorSchemaZero
-} from '$lib/schema/person';
-import {
+	type AddPersonToTeamMutatorSchemaZero,
 	removePersonFromTeamMutatorSchemaZero,
 	type RemovePersonFromTeamMutatorSchemaZero
 } from '$lib/schema/person';

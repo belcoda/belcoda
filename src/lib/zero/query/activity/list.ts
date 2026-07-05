@@ -3,7 +3,6 @@ import { builder, type QueryContext } from '$lib/zero/schema';
 import { object, type InferOutput } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { activityReadPermissions } from '$lib/zero/query/activity/permissions';
-import { readActivityZero } from '$lib/schema/activity';
 import { decodeActivityListCursor } from '$lib/utils/activity/cursor';
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -71,4 +70,4 @@ export const listActivity = defineQuery(inputSchema, ({ args, ctx }) => {
 	return listActivityPaginatedQuery({ ctx, input: args });
 });
 
-export const outputSchema = readActivityZero;
+export { readActivityZero as outputSchema } from '$lib/schema/activity';

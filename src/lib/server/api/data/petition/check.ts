@@ -21,7 +21,7 @@ export async function checkPetitionSlug({
 	const result = await drizzle.query.petition.findFirst({
 		where: and(...where)
 	});
-	return result ? true : false;
+	return !!result;
 }
 export async function checkPetitionTitle({
 	title,
@@ -43,7 +43,7 @@ export async function checkPetitionTitle({
 	const result = await drizzle.query.petition.findFirst({
 		where: and(...where)
 	});
-	return result ? true : false;
+	return !!result;
 }
 
 export async function _getPetitionActionCodeUnsafe({ petitionId }: { petitionId: string }) {

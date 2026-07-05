@@ -1,0 +1,69 @@
+name: Security — DAST (Staging)
+
+on:
+  workflow_run:
+    workflows:
+      - 'Fly Deploy Staging'
+    types:
+      - completed
+  schedule:
+    - cron: '0 3 * * 1' # weekly, Monday 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  zap:
+    name: ZAP Baseline
+    permissions:
+      contents: read
+      issues: write
+    # Run after a successful staging deploy, on the weekly schedule, or manually.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: 'https://staging.belcoda.com'
+          allow_issue_writing: true
+          artifact_name: 'zap-report'
+          fail_action: false
+          cmd_options: '-x report_xml.xml'
+
+      - name: Upload to DefectDojo
+        uses: ./.github/actions/dd-upload
+        with:
+          file: report_xml.xml
+          scan_type: ZAP Scan
+          engagement_name: 'CI/CD: DAST - Staging'
+          environment: Staging
+          defectdojo_url: ${{ secrets.DEFECTDOJO_URL }}
+          token: ${{ secrets.DD_TOKEN }}
+
+  nuclei:
+    name: Nuclei
+    permissions:
+      contents: read
+    # Weekly / manual only — don't re-scan on every deploy (ZAP covers that).
+    if: ${{ github.event_name != 'workflow_run' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nuclei scan
+        uses: projectdiscovery/nuclei-action@v3
+        with:
+          args: -u https://staging.belcoda.com -jsonl-export nuclei.jsonl
+
+      - name: Upload to DefectDojo
+        uses: ./.github/actions/dd-upload
+        with:
+          file: nuclei.jsonl
+          scan_type: Nuclei Scan
+          engagement_name: 'CI/CD: DAST - Staging'
+          environment: Staging
+          defectdojo_url: ${{ secrets.DEFECTDOJO_URL }}
+          token: ${{ secrets.DD_TOKEN }}

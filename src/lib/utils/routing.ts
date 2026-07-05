@@ -21,7 +21,7 @@ export function detectSubdomain(host: string, rootDomain: string): string | fals
 	// if it's a single-part domain (eg: example.com), then domain.split('.').length === 2 means it's root
 	if (parts.length < 3) {
 		// note that this will false-negative for domains like .com.au or .co.uk or .co.jp, but they should all be covered by the root check domain above
-		if (!parts[parts.length - 1].includes('localhost')) {
+		if (!parts.at(-1)!.includes('localhost')) {
 			//subdomain.localhost:5173 is a valid subdomain but has less than 3 parts when split by '.' anything else is not a valid subdomain
 			return false;
 		}

@@ -30,7 +30,7 @@ export function createMessageFromTemplateAndTemplateMessage({
 			const baseString = templateHeader.text;
 			//replace the {{n}} in baseString with the values from templateMessage.header.templateStrings
 			const replacedString = baseString.replace(/{{(\d+)}}/g, (match, p1) => {
-				return templateMessage.header?.templateStrings?.[parseInt(p1) - 1] || match;
+				return templateMessage.header?.templateStrings?.[Number.parseInt(p1) - 1] || match;
 			});
 			returnObject.headerText = replacedString;
 		}
@@ -39,7 +39,7 @@ export function createMessageFromTemplateAndTemplateMessage({
 		const baseString = templateBody.text;
 		//replace the {{n}} in baseString with the values from templateMessage.body.templateStrings
 		const replacedString = baseString.replace(/{{(\d+)}}/g, (match, p1) => {
-			return templateMessage.body?.templateStrings?.[parseInt(p1) - 1] || match;
+			return templateMessage.body?.templateStrings?.[Number.parseInt(p1) - 1] || match;
 		});
 		returnObject.text = replacedString;
 	}

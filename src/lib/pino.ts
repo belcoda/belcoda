@@ -2,7 +2,7 @@ import pino from 'pino';
 
 const logger = pino({ level: 'debug' });
 
-export default function (file: string) {
+export default function createChildLogger(file: string) {
 	const child = logger.child({ file });
 	return child;
 }

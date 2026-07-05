@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { slugify } from '$lib/utils/slug';
 import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { petition as petitionTable, actionCode as actionCodeTable } from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
@@ -66,8 +65,7 @@ export function generatePetitions(
 	}
 
 	const actionCodes: (typeof actionCodeTable.$inferInsert)[] = [];
-	for (let i = 0; i < petitions.length; i++) {
-		const petition = petitions[i];
+	for (const petition of petitions) {
 		actionCodes.push({
 			id: nanoid(),
 			organizationId: options.organizationId,

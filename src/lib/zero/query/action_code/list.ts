@@ -3,7 +3,7 @@ import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, nullable, optional } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
-import { readActionCodeZero, actionCodeType } from '$lib/schema/action-code';
+import { readActionCodeZero } from '$lib/schema/action-code';
 
 export const inputSchema = object({
 	organizationId: listFilter.entries.organizationId,

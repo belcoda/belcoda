@@ -1,0 +1,82 @@
+name: 'Upload to DefectDojo'
+description: 'Reimport a scan report into DefectDojo, creating the asset/engagement/test on first run.'
+
+inputs:
+  file:
+    description: 'Path to the scan report file to upload'
+    required: true
+  scan_type:
+    description: 'DefectDojo parser name, e.g. "Trivy Scan", "ZAP Scan", "Checkov Scan"'
+    required: true
+  engagement_name:
+    description: 'Engagement to reimport into (created if missing via auto_create_context)'
+    required: true
+  defectdojo_url:
+    description: 'Base URL of the DefectDojo instance'
+    required: true
+  token:
+    description: 'DefectDojo API v2 token'
+    required: true
+  product_name:
+    description: 'DefectDojo product / "Asset" name'
+    required: false
+    default: 'Belcoda App'
+  environment:
+    description: 'Deployment environment tag (must already exist in DefectDojo)'
+    required: false
+    default: 'Production'
+  close_old_findings:
+    description: 'Auto-close findings that are no longer present in the report'
+    required: false
+    default: 'true'
+  skip_if_unconfigured:
+    description: 'Warn and skip instead of failing when defectdojo_url or token is missing'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Reimport scan into DefectDojo
+      shell: bash
+      env:
+        DEFECTDOJO_URL: ${{ inputs.defectdojo_url }}
+        DD_TOKEN: ${{ inputs.token }}
+        DD_FILE: ${{ inputs.file }}
+        DD_SCAN_TYPE: ${{ inputs.scan_type }}
+        DD_PRODUCT: ${{ inputs.product_name }}
+        DD_ENGAGEMENT: ${{ inputs.engagement_name }}
+        DD_ENVIRONMENT: ${{ inputs.environment }}
+        DD_CLOSE_OLD: ${{ inputs.close_old_findings }}
+        DD_SKIP_IF_UNCONFIGURED: ${{ inputs.skip_if_unconfigured }}
+        DD_UNTRUSTED: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+      run: |
+        set -euo pipefail
+
+        if [ -z "${DEFECTDOJO_URL:-}" ] || [ -z "${DD_TOKEN:-}" ]; then
+          if [ "${DD_SKIP_IF_UNCONFIGURED}" = "true" ] || [ "${DD_UNTRUSTED}" = "true" ]; then
+            echo "::warning::Skipping DefectDojo upload — defectdojo_url and token are not available"
+            exit 0
+          fi
+          echo "::error::defectdojo_url and token inputs must be set (check repo secrets are mapped)"
+          exit 1
+        fi
+
+        if [ ! -f "$DD_FILE" ]; then
+          echo "::error::Scan report '$DD_FILE' not found — did the scan step produce it?"
+          exit 1
+        fi
+
+        echo "Uploading '$DD_FILE' as '$DD_SCAN_TYPE' → engagement '$DD_ENGAGEMENT' ($DD_ENVIRONMENT)"
+
+        # --fail-with-body: fail the step on HTTP error AND print DefectDojo's error message.
+        # ${DEFECTDOJO_URL%/}: strip any trailing slash so we don't build a // path.
+        curl -sS --fail-with-body -X POST "${DEFECTDOJO_URL%/}/api/v2/reimport-scan/" \
+          -H "Authorization: Token ${DD_TOKEN}" \
+          -F "file=@${DD_FILE}" \
+          -F "scan_type=${DD_SCAN_TYPE}" \
+          -F "product_name=${DD_PRODUCT}" \
+          -F "engagement_name=${DD_ENGAGEMENT}" \
+          -F "environment=${DD_ENVIRONMENT}" \
+          -F "close_old_findings=${DD_CLOSE_OLD}" \
+          -F "auto_create_context=true"

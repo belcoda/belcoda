@@ -346,8 +346,6 @@ export function checkDisallowedNames(name: string): void {
 			);
 		}
 	}
-
-	return;
 }
 
 export function renderName({

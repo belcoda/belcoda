@@ -1,15 +1,6 @@
-import { type Transaction } from '@rocicorp/zero';
-import { type Schema, builder } from '$lib/zero/schema';
+import { builder } from '$lib/zero/schema';
 import { defineMutator } from '@rocicorp/zero';
 
-import {
-	type CreateMutatorSchemaZeroOutput,
-	type UpdateMutatorSchemaZeroOutput,
-	type DeleteMutatorSchemaZero,
-	type VerifyMutatorSchemaZero,
-	type SetDefaultSignatureMutatorSchemaZero,
-	type UpdateSystemFromIdentityMutatorSchemaZero
-} from '$lib/schema/email-from-signature';
 import {
 	createMutatorSchema,
 	updateMutatorSchema,

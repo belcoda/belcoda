@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { url, givenName, familyName, longString, mediumString } from '$lib/schema/helpers';
+import { url, givenName, familyName, mediumString } from '$lib/schema/helpers';
 import { countryCodes } from '$lib/utils/country';
 import { genderOptions, ageGroupList } from '$lib/utils/person';
 export const filterTypes = {
@@ -75,7 +75,7 @@ export const filterTypes = {
 		label: mediumString
 	})
 };
-export const filterType = v.variant('type', [...Object.values(filterTypes)]);
+export const filterType = v.variant('type', Object.values(filterTypes));
 export type FilterType = v.InferOutput<typeof filterType>;
 
 export const filterGroup = v.object({

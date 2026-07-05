@@ -1,10 +1,7 @@
 import { env } from '$env/dynamic/private';
 const { POSTMARK_ACCOUNT_TOKEN, MOCK_EXTERNAL_SERVICES, NODE_ENV } = env;
 
-import type {
-	CreateEmailFromSignature,
-	UpdateEmailFromSignature
-} from '$lib/schema/email-from-signature';
+import type { CreateEmailFromSignature } from '$lib/schema/email-from-signature';
 import { object, optional, nullable, boolean, type InferOutput, parse } from 'valibot';
 import { integer, email, mediumString, domainName, shortString } from '$lib/schema/helpers';
 import pino from '$lib/pino';
@@ -113,7 +110,7 @@ export async function verifySendSignature({
 			Name: existing?.Name || `Mock Signature ${emailSignatureExternalId}`,
 			Confirmed: true,
 			ReturnPathDomain: existing?.ReturnPathDomain || null,
-			ReturnPathDomainVerified: existing?.ReturnPathDomain ? true : false
+			ReturnPathDomainVerified: !!existing?.ReturnPathDomain
 		};
 		mockSendSignatures.set(emailSignatureExternalId, mockResult);
 		log.info(
