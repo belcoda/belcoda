@@ -82,12 +82,18 @@ export async function parseImportCsv({
 			try {
 				if (existing) {
 					// Merge update: only touch columns this row actually supplied, so an
-					// omitted/blank cell never clobbers an existing value with null.
+					// omitted/blank cell never clobbers an existing value with null. A field
+					// can also be "provided" (non-empty cell) but still resolve to
+					// null/undefined after transformation (e.g. an unparseable date_of_birth
+					// or phone number); skip those too so a failed transform never clobbers
+					// an existing value.
 					const patch: Partial<typeof person.$inferInsert> = {};
 					for (const field of providedFields(csvRow)) {
-						(patch as Record<string, unknown>)[field] = (validated as Record<string, unknown>)[
-							field
-						];
+						const value = (validated as Record<string, unknown>)[field];
+						if (value === null || value === undefined) {
+							continue;
+						}
+						(patch as Record<string, unknown>)[field] = value;
 					}
 					await drizzle
 						.update(person)
@@ -116,7 +122,6 @@ export async function parseImportCsv({
 					log.debug({ row: line }, 'Person imported successfully');
 				}
 			} catch (error) {
-				log.error({ error }, 'Database insert error');
 				//if it's a postgres unique error, handle that
 				failedCount++;
 				const isPostgresUniqueError =
@@ -127,6 +132,18 @@ export async function parseImportCsv({
 					'code' in error.cause &&
 					typeof error.cause.code === 'string' &&
 					error.cause.code === '23505';
+				// Avoid logging the raw error: on a unique-violation, its cause/detail
+				// typically contains the conflicting email or phone number in plaintext.
+				// Log only safe metadata instead.
+				log.error(
+					{
+						row: line,
+						code: isPostgresUniqueError
+							? (error as { cause: { code: string } }).cause.code
+							: undefined
+					},
+					'Database insert error'
+				);
 				const errorMessage = isPostgresUniqueError
 					? 'A person with this email address or phone number already exists'
 					: 'Database insert error: Unknown error';

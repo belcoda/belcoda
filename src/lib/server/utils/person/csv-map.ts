@@ -129,6 +129,7 @@ function normalizeGender(gender: string | null | undefined): GenderOption | null
 		case 'prefer not to say':
 			return 'not-specified';
 		default:
+			log.debug({ gender }, 'Unrecognized gender value, using not-specified');
 			return 'not-specified';
 	}
 }
