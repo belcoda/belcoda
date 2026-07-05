@@ -511,6 +511,14 @@ export async function signPetitionUnsafe({
 		organizationId: organizationRecord.id
 	});
 	// Notify on a brand-new signature or a reactivation of a soft-deleted one — both are fresh signups.
+	//
+	// Known limitation (accepted for now): on reactivation the upserted row keeps its ORIGINAL id, so
+	// `sourceKey` matches the notification written at the first signup. `createNotification` dedupes via
+	// onConflictDoNothing on (organizationId, userId, sourceKey), and soft-deleting a signature does not
+	// remove its notification, so re-signing after a delete produces NO new in-app notification. The
+	// webhook (petition.signature.created) and confirmation email still fire, so re-signers/integrations
+	// are covered. If re-notifying admins on re-sign becomes desired, add a reactivation discriminator to
+	// the sourceKey (mind retry idempotency) or re-surface the existing notification to unread.
 	if (!skipNotifications && !hasActiveSignature) {
 		const personName =
 			[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') || null;
