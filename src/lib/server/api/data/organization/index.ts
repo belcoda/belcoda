@@ -308,7 +308,7 @@ export async function _resetOrganizationFreeQuotasUnsafe({
 	freeWhatsAppCredits: number;
 	freeEmailCredits: number;
 }) {
-	// first reset free quotas for all organizations to the new values default values
+	// first reset free-plan organizations (plan IS NULL) to the caller-provided default quota values
 	await drizzle
 		.update(organization)
 		.set({
