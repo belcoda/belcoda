@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { LOCALES } from '$lib/utils/language';
-import { userSettingsSchema, type UserSettingsSchema } from '$lib/schema/user/settings';
+import { userSettingsSchema } from '$lib/schema/user/settings';
 export { userSettingsSchema, type UserSettingsSchema } from '$lib/schema/user/settings';
 export { defaultUserSettings } from '$lib/schema/user/settings';
 
@@ -31,7 +31,6 @@ export const readUserRest = v.object({
 	image: userSchema.entries.image,
 	preferredLanguage: userSchema.entries.preferredLanguage,
 	twoFactorEnabled: userSchema.entries.twoFactorEnabled,
-	settings: userSchema.entries.settings,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString
 });
@@ -43,6 +42,12 @@ export const readUserZero = v.object({
 	updatedAt: helpers.dateToTimestamp
 });
 export type ReadUserZero = v.InferOutput<typeof readUserZero>;
+
+export const readUserSelfZero = v.object({
+	...readUserZero.entries,
+	settings: v.nullable(userSettingsSchema)
+});
+export type ReadUserSelfZero = v.InferOutput<typeof readUserSelfZero>;
 
 export const createUser = v.object({
 	name: userSchema.entries.name,
