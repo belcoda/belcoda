@@ -5666,8 +5666,8 @@ msgstr ""
 msgid "Saved"
 msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Failed to save notification preferences"
+#~ msgid "Failed to save notification preferences"
+#~ msgstr ""
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
@@ -5706,3 +5706,6 @@ msgstr ""
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Type your message..."
 msgstr ""
+
+#~ msgid "Failed to load notification preferences"
+#~ msgstr ""
