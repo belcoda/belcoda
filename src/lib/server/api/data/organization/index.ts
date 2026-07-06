@@ -292,8 +292,8 @@ async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
 }
 
 // these are defined here rather than in schema/helpers.ts because they are only used here, whereas the free ones are used in new organizations and seeds.
-const SUPPORTED_ORGANIZATION_FREE_WHATSAPP_MESSAGE_CREDITS = 2500;
-const SUPPORTED_ORGANIZATION_FREE_EMAIL_MESSAGE_CREDITS = 25000;
+const SUPPORTED_ORGANIZATION_FREE_WHATSAPP_MESSAGE_CREDITS = 5000;
+const SUPPORTED_ORGANIZATION_FREE_EMAIL_MESSAGE_CREDITS = 50000;
 
 /**
  * Private function to reset the free quotas for an organization. Called from a daily cron job.
