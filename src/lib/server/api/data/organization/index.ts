@@ -291,6 +291,9 @@ async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
 	}
 }
 
+const SUPPORTED_ORGANIZATION_FREE_WHATSAPP_MESSAGE_CREDITS = 2500;
+const SUPPORTED_ORGANIZATION_FREE_EMAIL_MESSAGE_CREDITS = 25000;
+
 /**
  * Private function to reset the free quotas for an organization. Called from a daily cron job.
  * Sets the quota for a monthly period. Will only reset if the reset date is in the past.
@@ -304,6 +307,7 @@ export async function _resetOrganizationFreeQuotasUnsafe({
 	freeWhatsAppCredits: number;
 	freeEmailCredits: number;
 }) {
+	// first reset free quotas for all organizations to the new values default values
 	await drizzle
 		.update(organization)
 		.set({
@@ -312,11 +316,34 @@ export async function _resetOrganizationFreeQuotasUnsafe({
 			resetFreeQuotasAfter: sql`now() + interval '1 month'`
 		})
 		.where(
-			or(
-				lte(organization.resetFreeQuotasAfter, new Date()),
-				isNull(organization.resetFreeQuotasAfter)
+			and(
+				isNull(organization.plan),
+				or(
+					lte(organization.resetFreeQuotasAfter, new Date()),
+					isNull(organization.resetFreeQuotasAfter)
+				)
 			)
 		);
+
+	//now reset supported organizations to supported organization levels
+	await drizzle
+		.update(organization)
+		.set({
+			freeWhatsAppMessageCredits: SUPPORTED_ORGANIZATION_FREE_WHATSAPP_MESSAGE_CREDITS,
+			freeEmailMessageCredits: SUPPORTED_ORGANIZATION_FREE_EMAIL_MESSAGE_CREDITS,
+			resetFreeQuotasAfter: sql`now() + interval '1 month'`
+		})
+		.where(
+			and(
+				or(
+					lte(organization.resetFreeQuotasAfter, new Date()),
+					isNull(organization.resetFreeQuotasAfter)
+				),
+				eq(organization.plan, 'supported')
+			)
+		);
+
+	//there are no other types of plans, so this covers everything
 }
 /** Atomically decrements free WhatsApp credits when credits remain. Returns whether a credit was claimed. */
 export async function _reduceFreeWhatsAppMessageCredits({
