@@ -8,7 +8,8 @@ import {
 import { organizationNameSchema, organizationSlugSchema } from '$lib/schema/organization/names';
 import { userRole } from '$lib/schema/user';
 
-export const organizationPlanTypeArray = ['supported'] as const;
+export const organizationPlanSupported = 'supported' as const;
+export const organizationPlanTypeArray = [organizationPlanSupported] as const;
 export const organizationPlanType = v.picklist(organizationPlanTypeArray); //null == free
 export type OrganizationPlanType = v.InferOutput<typeof organizationPlanType>;
 export const organizationSchema = v.object({

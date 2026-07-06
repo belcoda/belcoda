@@ -8,7 +8,8 @@ import {
 	updateOrganizationWhatsappSettingsMutatorSchema,
 	type UpdateOrganizationMutatorSchema,
 	type UpdateOrganizationWhatsappSettingsMutatorSchema,
-	organizationApiSchema
+	organizationApiSchema,
+	organizationPlanSupported
 } from '$lib/schema/organization';
 
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
@@ -340,11 +341,9 @@ export async function _resetOrganizationFreeQuotasUnsafe({
 					lte(organization.resetFreeQuotasAfter, new Date()),
 					isNull(organization.resetFreeQuotasAfter)
 				),
-				eq(organization.plan, 'supported')
+				eq(organization.plan, organizationPlanSupported)
 			)
 		);
-
-	//there are no other types of plans, so this covers everything
 }
 /** Atomically decrements free WhatsApp credits when credits remain. Returns whether a credit was claimed. */
 export async function _reduceFreeWhatsAppMessageCredits({
