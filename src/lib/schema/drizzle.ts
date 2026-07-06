@@ -170,6 +170,7 @@ export const user = pgTable('user', {
 	twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
 	stripeCustomerId: text('stripe_customer_id'),
 	preferredLanguage: text('preferred_language').$type<Locale>(),
+	settings: jsonb('settings').$type<JsonSchema>(),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 });
