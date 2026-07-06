@@ -5,55 +5,29 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
-	import { defaultUserSettings } from '$lib/schema/user/settings';
+	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { appState } from '$lib/state.svelte';
 	import type { UserSettingsSchema } from '$lib/schema/user/settings';
-	import { toast } from 'svelte-sonner';
 
-	const userQuery = $derived(appState.user);
-	const currentSettings = $derived(userQuery.data?.settings ?? defaultUserSettings());
-
-	let digestEnabled = $state(true);
-	let digestFrequency = $state<'daily' | 'weekly'>('weekly');
+	const selfQuery = $derived(appState.user);
+	const userSettings = $derived(selfQuery.data?.settings as UserSettingsSchema | null | undefined);
+	let digestEnabled = $derived(userSettings?.notifications?.digestEnabled ?? true);
+	let digestFrequency = $derived(userSettings?.notifications?.digestFrequency ?? 'weekly');
 	let savedIndicator = $state(false);
 
-	$effect(() => {
-		digestEnabled = currentSettings.notifications?.digestEnabled ?? true;
-		digestFrequency = currentSettings.notifications?.digestFrequency ?? 'weekly';
-	});
-
-	async function save(patch: Partial<UserSettingsSchema['notifications']>) {
-		const previous = {
-			digestEnabled,
-			digestFrequency
-		};
-		digestEnabled = patch.digestEnabled ?? digestEnabled;
-		digestFrequency = patch.digestFrequency ?? digestFrequency;
-
-		const updated: UserSettingsSchema = {
-			notifications: {
-				digestEnabled,
-				digestFrequency
-			}
-		};
-
-		try {
-			const response = await fetch('/api/me/settings', {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(updated)
-			});
-			if (!response.ok) {
-				throw new Error(await response.text());
-			}
-			savedIndicator = true;
-			setTimeout(() => (savedIndicator = false), 2000);
-		} catch {
-			digestEnabled = previous.digestEnabled;
-			digestFrequency = previous.digestFrequency;
-			toast.error(t`Failed to save notification preferences`);
-		}
+	function save(patch: Partial<{ digestEnabled: boolean; digestFrequency: 'daily' | 'weekly' }>) {
+		const newEnabled = patch.digestEnabled ?? digestEnabled;
+		const newFrequency = patch.digestFrequency ?? digestFrequency;
+		z.mutate(
+			mutators.user.updateSettings({
+				input: { notifications: { digestEnabled: newEnabled, digestFrequency: newFrequency } },
+				metadata: { userId: appState.userId }
+			})
+		);
+		savedIndicator = true;
+		setTimeout(() => (savedIndicator = false), 2000);
 	}
 </script>
 
