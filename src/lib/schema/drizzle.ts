@@ -46,13 +46,14 @@ import type { EventSchema } from '$lib/schema/event';
 import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
-
+import type { OrganizationPlanType } from '$lib/schema/organization';
 import type { SerializedEditorState } from 'lexical';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
 import type { JsonSchema } from '$lib/schema/helpers';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
+
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import { type FilterGroupType } from '$lib/schema/person/filter';
@@ -95,6 +96,7 @@ export const organization = pgTable(
 			withTimezone: true,
 			mode: 'date'
 		}),
+		plan: text('plan').$type<OrganizationPlanType>(),
 		stripeCustomerId: text('stripe_customer_id').unique(),
 		billingEmail: text('billing_email'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })

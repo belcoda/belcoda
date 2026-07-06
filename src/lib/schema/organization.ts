@@ -8,6 +8,9 @@ import {
 import { organizationNameSchema, organizationSlugSchema } from '$lib/schema/organization/names';
 import { userRole } from '$lib/schema/user';
 
+export const organizationPlanTypeArray = ['supported'] as const;
+export const organizationPlanType = v.picklist(organizationPlanTypeArray); //null == free
+export type OrganizationPlanType = v.InferOutput<typeof organizationPlanType>;
 export const organizationSchema = v.object({
 	id: helpers.uuid,
 	name: organizationNameSchema,
@@ -24,6 +27,7 @@ export const organizationSchema = v.object({
 	resetFreeQuotasAfter: v.nullable(helpers.date), //date and time when the free quotas will be reset
 	stripeCustomerId: v.nullable(helpers.shortString), //stripe customer id for the organization
 	billingEmail: v.nullable(helpers.email), //email address for the organization's billing
+	plan: v.nullable(organizationPlanType),
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });
