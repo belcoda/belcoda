@@ -14,6 +14,7 @@
 	import { toast } from 'svelte-sonner';
 	import { tick } from 'svelte';
 	import TestMessageModal from '$lib/components/flow/whatsapp/TestMessageModal.svelte';
+	import { validateFlowForSending } from '$lib/schema/flow';
 	const nodes = useNodes();
 	const templateNode = $derived(nodes.current.find((n) => n.type === 'templateMessage'));
 	const templateIdForRead = $derived(
@@ -50,6 +51,11 @@
 
 	async function sendThread() {
 		if (!whatsappThreadId) return;
+		const validationIssues = validateFlowForSending({ nodes: nodes.current });
+		if (validationIssues.length > 0) {
+			toast.error(validationIssues[0].message);
+			return;
+		}
 		if (!window.confirm(t`Are you sure you want to send this WhatsApp draft?`)) {
 			return;
 		}

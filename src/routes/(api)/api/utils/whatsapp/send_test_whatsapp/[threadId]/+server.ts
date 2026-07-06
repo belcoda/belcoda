@@ -13,6 +13,7 @@ import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_ap
 import { env as publicEnv } from '$env/dynamic/public';
 import type { Flow, MessageNodeData, TemplateMessageNode } from '$lib/schema/flow';
 import type { TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+import { validateFlowForSending } from '$lib/schema/flow';
 import pino from '$lib/pino';
 import { getWhatsappTemplateById } from '$lib/server/api/data/whatsapp/template.js';
 import {
@@ -119,6 +120,10 @@ export async function POST(event) {
 		}
 
 		const outboundNode = getFirstOutboundNode(thread.flow as Flow);
+		const validationIssues = validateFlowForSending(thread.flow as Flow);
+		if (validationIssues.length > 0) {
+			return error(400, validationIssues[0].message);
+		}
 		const whatsappMessageId = crypto.randomUUID();
 
 		if (outboundNode.type === 'templateMessage') {
