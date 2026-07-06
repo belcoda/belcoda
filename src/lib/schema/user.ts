@@ -68,6 +68,14 @@ export const mutatorMetadata = v.object({
 });
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
+export const updateUserSettingsMutatorSchemaZero = v.object({
+	input: userSettingsSchema,
+	metadata: v.object({ userId: helpers.uuid })
+});
+export type UpdateUserSettingsMutatorSchemaZero = v.InferOutput<
+	typeof updateUserSettingsMutatorSchemaZero
+>;
+
 export const createMutatorSchema = v.object({
 	input: createUser,
 	metadata: mutatorMetadata

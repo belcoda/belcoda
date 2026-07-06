@@ -1,5 +1,6 @@
 import { defineMutators } from '@rocicorp/zero';
 
+import * as user from '$lib/server/api/mutate/user';
 import * as person from '$lib/server/api/mutate/person';
 import * as personNote from '$lib/server/api/mutate/person_note';
 import * as personImport from '$lib/server/api/mutate/person_import';
@@ -19,6 +20,9 @@ import * as whatsappThread from '$lib/server/api/mutate/whatsapp_thread';
 import * as whatsappMessage from '$lib/server/api/mutate/whatsapp_message';
 
 export const mutators = defineMutators({
+	user: {
+		updateSettings: user.updateUserSettings
+	},
 	person: {
 		create: person.createPerson,
 		update: person.updatePerson,
