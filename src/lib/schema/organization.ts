@@ -58,7 +58,7 @@ export const readOrganizationZero = v.omit(
 		createdAt: helpers.dateToTimestamp,
 		updatedAt: helpers.dateToTimestamp
 	}),
-	['stripeCustomerId', 'billingEmail']
+	['stripeCustomerId', 'billingEmail', 'plan']
 );
 export type ReadOrganizationZero = v.InferOutput<typeof readOrganizationZero>;
 
