@@ -10,6 +10,7 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import type { UserSettingsSchema } from '$lib/schema/user/settings';
+	import { toast } from 'svelte-sonner';
 
 	const selfQuery = $derived(appState.user);
 	const userSettings = $derived(selfQuery.data?.settings as UserSettingsSchema | null | undefined);
@@ -17,17 +18,22 @@
 	let digestFrequency = $derived(userSettings?.notifications?.digestFrequency ?? 'weekly');
 	let savedIndicator = $state(false);
 
-	function save(
+	async function save(
 		notificationSettings: Partial<{ digestEnabled: boolean; digestFrequency: 'daily' | 'weekly' }>
 	) {
-		z.mutate(
+		const response = z.mutate(
 			mutators.user.updateSettings({
 				input: { notifications: notificationSettings },
 				metadata: { userId: appState.userId }
 			})
 		);
-		savedIndicator = true;
-		setTimeout(() => (savedIndicator = false), 2000);
+		try {
+			await response.server;
+			savedIndicator = true;
+			setTimeout(() => (savedIndicator = false), 2000);
+		} catch {
+			toast.error(t`Failed to save notification preferences`);
+		}
 	}
 </script>
 
