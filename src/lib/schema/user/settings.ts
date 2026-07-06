@@ -1,12 +1,20 @@
 import * as v from 'valibot';
 
+export const userNotificationSettingsSchema = v.object({
+	digestEnabled: v.boolean(),
+	digestFrequency: v.picklist(['daily', 'weekly'])
+});
+
+export type UserNotificationSettingsSchema = v.InferOutput<typeof userNotificationSettingsSchema>;
+
+export const userNotificationSettingsPatchSchema = v.partial(userNotificationSettingsSchema);
+
+export type UserNotificationSettingsPatchSchema = v.InferOutput<
+	typeof userNotificationSettingsPatchSchema
+>;
+
 export const userSettingsSchema = v.object({
-	notifications: v.optional(
-		v.object({
-			digestEnabled: v.optional(v.boolean(), true),
-			digestFrequency: v.optional(v.picklist(['daily', 'weekly']), 'weekly')
-		})
-	)
+	notifications: v.optional(userNotificationSettingsSchema)
 });
 
 export type UserSettingsSchema = v.InferOutput<typeof userSettingsSchema>;
@@ -16,6 +24,34 @@ export function defaultUserSettings(): UserSettingsSchema {
 		notifications: {
 			digestEnabled: true,
 			digestFrequency: 'weekly'
+		}
+	};
+}
+
+export function parseUserSettings(value: unknown): UserSettingsSchema | undefined {
+	const result = v.safeParse(userSettingsSchema, value);
+	return result.success ? result.output : undefined;
+}
+
+export function mergeUserSettings(
+	current: unknown,
+	patch: { notifications?: UserNotificationSettingsPatchSchema }
+): UserSettingsSchema {
+	const parsed = parseUserSettings(current);
+	const defaults = defaultUserSettings();
+	const base = defaults.notifications!;
+	return {
+		...defaults,
+		...parsed,
+		notifications: {
+			digestEnabled:
+				patch.notifications?.digestEnabled ??
+				parsed?.notifications?.digestEnabled ??
+				base.digestEnabled,
+			digestFrequency:
+				patch.notifications?.digestFrequency ??
+				parsed?.notifications?.digestFrequency ??
+				base.digestFrequency
 		}
 	};
 }

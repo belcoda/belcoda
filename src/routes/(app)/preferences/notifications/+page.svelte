@@ -17,12 +17,12 @@
 	let digestFrequency = $derived(userSettings?.notifications?.digestFrequency ?? 'weekly');
 	let savedIndicator = $state(false);
 
-	function save(patch: Partial<{ digestEnabled: boolean; digestFrequency: 'daily' | 'weekly' }>) {
-		const newEnabled = patch.digestEnabled ?? digestEnabled;
-		const newFrequency = patch.digestFrequency ?? digestFrequency;
+	function save(
+		notificationSettings: Partial<{ digestEnabled: boolean; digestFrequency: 'daily' | 'weekly' }>
+	) {
 		z.mutate(
 			mutators.user.updateSettings({
-				input: { notifications: { digestEnabled: newEnabled, digestFrequency: newFrequency } },
+				input: { notifications: notificationSettings },
 				metadata: { userId: appState.userId }
 			})
 		);

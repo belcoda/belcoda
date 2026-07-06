@@ -2,8 +2,16 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { LOCALES } from '$lib/utils/language';
-import { userSettingsSchema } from '$lib/schema/user/settings';
+import { userSettingsSchema, userNotificationSettingsPatchSchema } from '$lib/schema/user/settings';
 export { userSettingsSchema, type UserSettingsSchema } from '$lib/schema/user/settings';
+export {
+	userNotificationSettingsSchema,
+	type UserNotificationSettingsSchema,
+	userNotificationSettingsPatchSchema,
+	type UserNotificationSettingsPatchSchema,
+	parseUserSettings,
+	mergeUserSettings
+} from '$lib/schema/user/settings';
 export { defaultUserSettings } from '$lib/schema/user/settings';
 
 export const userRole = v.picklist(['member', 'admin', 'owner']);
@@ -74,7 +82,11 @@ export const mutatorMetadata = v.object({
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
 export const updateUserSettingsMutatorSchemaZero = v.object({
-	input: userSettingsSchema,
+	input: v.partial(
+		v.object({
+			notifications: userNotificationSettingsPatchSchema
+		})
+	),
 	metadata: v.object({ userId: helpers.uuid })
 });
 export type UpdateUserSettingsMutatorSchemaZero = v.InferOutput<
