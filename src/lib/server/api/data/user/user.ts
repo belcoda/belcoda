@@ -1,43 +1,38 @@
-import type { ServerTransaction } from '@rocicorp/zero';
 import { drizzle } from '$lib/server/db';
 import { user } from '$lib/schema/drizzle';
-import { eq } from 'drizzle-orm';
-import type { UpdateUserSettingsMutatorSchemaZero } from '$lib/schema/user';
-import { mergeUserSettings } from '$lib/schema/user/settings';
-import type { QueryContext } from '$lib/zero/schema';
+import { eq, sql } from 'drizzle-orm';
+import {
+	defaultUserSettings,
+	type UserNotificationSettingsPatchSchema
+} from '$lib/schema/user/settings';
 
-export async function _getUserByIdUnsafe({
-	userId,
-	tx
-}: {
-	userId: string;
-	tx?: ServerTransaction;
-}) {
-	const database = tx?.dbTransaction.wrappedTransaction ?? drizzle;
-	return database.query.user.findFirst({
+export async function _getUserByIdUnsafe({ userId }: { userId: string }) {
+	return drizzle.query.user.findFirst({
 		where: eq(user.id, userId)
 	});
 }
 
 export async function updateUserSettings({
-	tx,
-	ctx,
-	args
+	userId,
+	notifications
 }: {
-	tx: ServerTransaction;
-	ctx: QueryContext & { userId: string };
-	args: UpdateUserSettingsMutatorSchemaZero;
+	userId: string;
+	notifications: UserNotificationSettingsPatchSchema;
 }) {
-	if (ctx.userId !== args.metadata.userId) {
-		throw new Error('Forbidden');
-	}
+	const defaultNotifications = JSON.stringify(defaultUserSettings().notifications);
+	const notificationPatch = JSON.stringify(notifications);
 
-	const row = await _getUserByIdUnsafe({ userId: args.metadata.userId, tx });
-	const current = row?.settings;
-	const settings = mergeUserSettings(current, args.input);
-
-	await tx.dbTransaction.wrappedTransaction
+	await drizzle
 		.update(user)
-		.set({ settings })
-		.where(eq(user.id, args.metadata.userId));
+		.set({
+			settings: sql`
+				COALESCE(${user.settings}, '{}'::jsonb)
+				|| jsonb_build_object(
+					'notifications',
+					COALESCE(${user.settings}->'notifications', ${defaultNotifications}::jsonb)
+					|| ${notificationPatch}::jsonb
+				)
+			`
+		})
+		.where(eq(user.id, userId));
 }

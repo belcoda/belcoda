@@ -69,8 +69,6 @@ import { listMyTeams } from '$lib/zero/query/team/listMyTeams';
 // user
 import { listUsers } from '$lib/zero/query/user/list';
 import { readUser } from '$lib/zero/query/user/read';
-import { readUserSelf } from '$lib/zero/query/user/readSelf';
-
 // webhook
 import { listWebhooks } from '$lib/zero/query/webhook/list';
 import { readWebhook } from '$lib/zero/query/webhook/read';
@@ -137,7 +135,6 @@ export {
 	// user
 	listUsers,
 	readUser,
-	readUserSelf,
 	// webhook
 	listWebhooks,
 	readWebhook,
@@ -233,8 +230,7 @@ export default defineQueries({
 	},
 	user: {
 		list: listUsers,
-		read: readUser,
-		readSelf: readUserSelf
+		read: readUser
 	},
 	webhook: {
 		list: listWebhooks,
