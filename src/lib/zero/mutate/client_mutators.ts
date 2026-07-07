@@ -2,7 +2,6 @@ import * as person from '$lib/zero/mutate/person';
 import * as personNote from '$lib/zero/mutate/person_note';
 import * as personImport from '$lib/zero/mutate/person_import';
 import * as notification from '$lib/zero/mutate/notification';
-import * as user from '$lib/zero/mutate/user';
 import * as eventSignup from '$lib/zero/mutate/event_signup';
 import * as event from '$lib/zero/mutate/event';
 import * as petition from '$lib/zero/mutate/petition';
@@ -19,9 +18,6 @@ import * as whatsappMessage from '$lib/zero/mutate/whatsapp/message';
 import { defineMutators } from '@rocicorp/zero';
 
 export const mutators = defineMutators({
-	user: {
-		updateSettings: user.updateUserSettings
-	},
 	person: {
 		create: person.createPerson,
 		update: person.updatePerson,

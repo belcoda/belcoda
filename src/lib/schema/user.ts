@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { LOCALES } from '$lib/utils/language';
-import { userSettingsSchema, userNotificationSettingsPatchSchema } from '$lib/schema/user/settings';
+import { userSettingsSchema } from '$lib/schema/user/settings';
 export { userSettingsSchema, type UserSettingsSchema } from '$lib/schema/user/settings';
 export {
 	userNotificationSettingsSchema,
@@ -51,12 +51,6 @@ export const readUserZero = v.object({
 });
 export type ReadUserZero = v.InferOutput<typeof readUserZero>;
 
-export const readUserSelfZero = v.object({
-	...readUserZero.entries,
-	settings: v.nullable(userSettingsSchema)
-});
-export type ReadUserSelfZero = v.InferOutput<typeof readUserSelfZero>;
-
 export const createUser = v.object({
 	name: userSchema.entries.name,
 	email: userSchema.entries.email,
@@ -80,18 +74,6 @@ export const mutatorMetadata = v.object({
 	userId: helpers.uuid
 });
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
-
-export const updateUserSettingsMutatorSchemaZero = v.object({
-	input: v.partial(
-		v.object({
-			notifications: userNotificationSettingsPatchSchema
-		})
-	),
-	metadata: v.object({ userId: helpers.uuid })
-});
-export type UpdateUserSettingsMutatorSchemaZero = v.InferOutput<
-	typeof updateUserSettingsMutatorSchemaZero
->;
 
 export const createMutatorSchema = v.object({
 	input: createUser,
