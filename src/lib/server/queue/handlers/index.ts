@@ -12,3 +12,4 @@ export { sendEmailMessage } from '$lib/server/queue/handlers/email/send_email_me
 export { buildEmailMessageSendQueue } from '$lib/server/queue/handlers/email/build_send_queue';
 export { buildWhatsappThreadSendQueue } from '$lib/server/queue/handlers/whatsapp/build_send_queue';
 export { triggerWebhook, sendWebhook } from '$lib/server/queue/handlers/utils/trigger_webhook';
+export { sendDigest } from '$lib/server/queue/handlers/notification/send_digest';
