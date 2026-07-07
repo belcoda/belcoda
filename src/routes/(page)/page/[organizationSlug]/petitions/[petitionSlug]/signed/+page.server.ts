@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import { drizzle } from '$lib/server/db';
 import { petition, petitionSignature, organization, person } from '$lib/schema/drizzle';
 import { eq, and, isNull, count, desc } from 'drizzle-orm';
-import LexicalHtmlRenderer from '@tryghost/kg-lexical-html-renderer';
+import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
 import pino from '$lib/pino';
 import { superValidate } from 'sveltekit-superforms';
@@ -46,7 +46,9 @@ export async function load({ params }) {
 	const [signatureCount] = await drizzle
 		.select({ count: count() })
 		.from(petitionSignature)
-		.where(eq(petitionSignature.petitionId, petitionData.id));
+		.where(
+			and(eq(petitionSignature.petitionId, petitionData.id), isNull(petitionSignature.deletedAt))
+		);
 
 	const recentSignatures = await drizzle
 		.select({
@@ -57,7 +59,9 @@ export async function load({ params }) {
 		})
 		.from(petitionSignature)
 		.innerJoin(person, eq(petitionSignature.personId, person.id))
-		.where(eq(petitionSignature.petitionId, petitionData.id))
+		.where(
+			and(eq(petitionSignature.petitionId, petitionData.id), isNull(petitionSignature.deletedAt))
+		)
 		.orderBy(desc(petitionSignature.createdAt))
 		.limit(10);
 

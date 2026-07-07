@@ -120,6 +120,20 @@
       "when": 1781692295408,
       "tag": "0016_lyrical_mariko_yashida",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1783072612928,
+      "tag": "0017_superb_black_bird",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1783304878433,
+      "tag": "0018_flippant_blade",
+      "breakpoints": true
     }
   ]
 }

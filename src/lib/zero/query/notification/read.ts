@@ -2,7 +2,6 @@ import { defineQuery } from '@rocicorp/zero';
 import { builder, type QueryContext } from '$lib/zero/schema';
 import { object, type InferOutput } from 'valibot';
 import { uuid } from '$lib/schema/helpers';
-import { readNotificationZero } from '$lib/schema/notification';
 import { notificationReadPermissions } from '$lib/zero/query/notification/permissions';
 
 export const inputSchema = object({
@@ -27,4 +26,4 @@ export const readNotification = defineQuery(inputSchema, ({ ctx, args }) => {
 	return readNotificationQuery({ ctx, input: args });
 });
 
-export const outputSchema = readNotificationZero;
+export { readNotificationZero as outputSchema } from '$lib/schema/notification';

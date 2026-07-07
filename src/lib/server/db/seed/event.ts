@@ -14,21 +14,25 @@ export function generateEvents(
 } {
 	const [startDates, endDates] = generateRandomDatePairs(count);
 	const ids = new Array(count).fill(0).map(() => uuidv7());
-	const events: (typeof eventTable.$inferInsert)[] = [];
 	const usedNames = new Set<string>();
 	const usedSlugs = new Set<string>();
-	for (let i = 0; i < count; i++) {
+
+	const generateUniqueName = (): { eventName: string; slug: string } => {
 		let eventName: string;
 		let slug: string;
-		let isOnline = faker.datatype.boolean(0.5);
-
 		do {
 			eventName = generateEventName();
 			slug = slugify(eventName);
 		} while (usedNames.has(eventName) || usedSlugs.has(slug));
-
 		usedNames.add(eventName);
 		usedSlugs.add(slug);
+		return { eventName, slug };
+	};
+
+	const events: (typeof eventTable.$inferInsert)[] = [];
+	for (let i = 0; i < count; i++) {
+		const { eventName, slug } = generateUniqueName();
+		const isOnline = faker.datatype.boolean(0.5);
 
 		const event: typeof eventTable.$inferInsert = {
 			id: ids[i],
@@ -82,25 +86,35 @@ export function generateEvents(
 		};
 		events.push(event);
 	}
-	const actionCodes: (typeof actionCodeTable.$inferInsert)[] = [];
-	for (let i = 0; i < events.length; i++) {
-		const event = events[i];
-		actionCodes.push({
-			id: nanoid(),
-			organizationId: options.organizationId,
-			referenceId: event.id,
-			type: 'event_signup',
-			createdAt: event.createdAt
-		});
-		actionCodes.push({
-			id: nanoid(),
-			organizationId: options.organizationId,
-			referenceId: event.id,
-			type: 'event_attended',
-			createdAt: event.createdAt
-		});
-	}
+
+	const actionCodes = generateActionCodes(events, options.organizationId);
 	return { events, actionCodes };
+}
+
+function generateActionCodes(
+	events: (typeof eventTable.$inferInsert)[],
+	organizationId: string
+): (typeof actionCodeTable.$inferInsert)[] {
+	const actionCodes: (typeof actionCodeTable.$inferInsert)[] = [];
+	for (const event of events) {
+		actionCodes.push(
+			{
+				id: nanoid(),
+				organizationId,
+				referenceId: event.id,
+				type: 'event_signup',
+				createdAt: event.createdAt
+			},
+			{
+				id: nanoid(),
+				organizationId,
+				referenceId: event.id,
+				type: 'event_attended',
+				createdAt: event.createdAt
+			}
+		);
+	}
+	return actionCodes;
 }
 
 const eventPrefixes = [

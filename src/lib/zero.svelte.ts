@@ -1,19 +1,28 @@
 import { parse } from 'valibot';
 import { Z } from 'zero-svelte';
-
 import { queryContextSchema, schema, type Schema, type QueryContext } from '$lib/zero/schema';
 import { env as publicEnv } from '$env/dynamic/public';
 import { mutators } from '$lib/zero/mutate/client_mutators';
 
+type AppZero = Z<Schema>;
+
+function getZeroEndpoints() {
+	const origin = (typeof location !== 'undefined' && location.origin) || publicEnv.PUBLIC_HOST;
+	return {
+		queryURL: `${origin}/api/utils/zero/query`,
+		mutateURL: `${origin}/api/utils/zero/push`
+	};
+}
+
 class ZeroInstance {
-	#z = $state<Z | null>(null);
+	#z = $state<AppZero | null>(null);
 
 	/** True once {@link #init} has created the client; safe for layout gating (unlike {@link instance}). */
 	get hasInstance(): boolean {
 		return this.#z !== null;
 	}
 
-	get instance(): Z {
+	get instance(): AppZero {
 		if (!this.#z) {
 			throw new Error('Zero instance accessed before initialization!');
 		}
@@ -45,10 +54,7 @@ class ZeroInstance {
 			throw new Error('zero.init: PUBLIC_ZERO_SERVER is not configured');
 		}
 
-		const appOrigin = publicEnv.PUBLIC_HOST?.replace(/\/$/, '');
-		if (!appOrigin) {
-			throw new Error('zero.init: PUBLIC_HOST is not configured');
-		}
+		const { queryURL, mutateURL } = getZeroEndpoints();
 
 		this.#z = new Z({
 			cacheURL,
@@ -58,8 +64,8 @@ class ZeroInstance {
 			context: parsedContext,
 			userID: userId,
 			// Must match ZERO_QUERY_URL / ZERO_MUTATE_URL on the sync server (full URL, not a path).
-			queryURL: `${appOrigin}/api/utils/zero/query`,
-			mutateURL: `${appOrigin}/api/utils/zero/push`
+			queryURL,
+			mutateURL
 		});
 	}
 }
@@ -78,7 +84,7 @@ export const zero = new ZeroInstance();
  * members throw a TypeError if 'this' isn't the original instance.
  * We intercept function calls and manually bind 'this' back to the real instance.
  */
-export const z = new Proxy({} as Z, {
+export const z = new Proxy({} as AppZero, {
 	get(_, prop) {
 		if (!zero.hasInstance) {
 			throw new Error('z proxy used before zero.init()');
@@ -99,6 +105,5 @@ export const z = new Proxy({} as Z, {
 declare module '@rocicorp/zero' {
 	interface DefaultTypes {
 		context: QueryContext;
-		schema: Schema;
 	}
 }

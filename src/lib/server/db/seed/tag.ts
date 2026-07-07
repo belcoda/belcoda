@@ -1,5 +1,4 @@
 import { tag as tagTable } from '$lib/schema/drizzle';
-import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { faker } from '@faker-js/faker';
 const tagNames = [
 	'has_volunteered',

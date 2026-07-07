@@ -80,8 +80,7 @@ export function generatePetitionSignatures(
 			teamId: null,
 			petitionId,
 			personId,
-			details: { channel: { type: 'petitionPage' } },
-			responses: null,
+			details: { channel: { type: 'petitionPage' }, customFields: {} },
 			createdAt,
 			updatedAt: createdAt,
 			deletedAt: null

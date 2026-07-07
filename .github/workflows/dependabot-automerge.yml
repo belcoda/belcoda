@@ -1,0 +1,55 @@
+name: Dependabot Auto-merge
+on:
+  pull_request:
+    branches: [develop] # Dependabot targets develop (see .github/dependabot.yml)
+  workflow_dispatch: # manual trigger for debugging the build/check steps
+
+permissions: {}
+
+jobs:
+  # Runs PR code (npm build/check). No secrets and no write permissions — a
+  # compromised dependency cannot poison a later step that holds DEPENDABOT_PAT.
+  verify:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.user.login == 'dependabot[bot]' }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #v4
+        with:
+          node-version: '24' # matches Dockerfile NODE_VERSION
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      # SvelteKit reads PUBLIC_* env at build time, so set up .env first.
+      - name: Setup environment variables
+        run: cp .env.example .env
+
+      - name: Build
+        run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
+
+      - name: Check sveltekit and typescript issues
+        run: npm run check
+
+  # Trusted job: does not checkout or execute PR code. Only merges after verify
+  # succeeds. --admin bypasses branch protection since verify is the gating check.
+  merge:
+    needs: verify
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]' }}
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Auto-merge Dependabot PRs that build successfully
+        run: gh pr merge --squash --delete-branch --admin "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_PAT }}

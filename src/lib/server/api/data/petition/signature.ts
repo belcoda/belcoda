@@ -15,7 +15,6 @@ import { organizationReadPermissions } from '$lib/zero/query/organizations/permi
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { petitionSignatureReadPermissions } from '$lib/zero/query/petition_signature/permissions';
-import { surveyResponsesSchema } from '$lib/schema/survey/responses';
 
 import { type PersonActionHelper, personActionHelper } from '$lib/schema/person';
 import {
@@ -23,7 +22,7 @@ import {
 	petitionSignatureDetails
 } from '$lib/schema/petition/settings';
 
-import { parse, nullable } from 'valibot';
+import { parse } from 'valibot';
 
 import { petition, petitionSignature, person, organization } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
@@ -47,6 +46,7 @@ import { readPetitionSignatureQuery } from '$lib/zero/query/petition_signature/r
 import type { InferOutput } from 'valibot';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { createWhatsAppMessage } from '../whatsapp/message';
+import { createNotification } from '$lib/server/api/data/notification/notification';
 
 async function applyPetitionTagsToPersonUnsafe({
 	tx,
@@ -68,6 +68,24 @@ async function applyPetitionTagsToPersonUnsafe({
 			organizationId
 		});
 	}
+}
+
+/**
+ * Merge an incoming signature `details` into an existing one on upsert/resume: keep the original
+ * channel and shallow-merge custom fields so partial/resumed signatures don't clobber previously
+ * captured answers. Analogous to the event side's `mergeSignupDetails`.
+ */
+function mergeSignatureDetails(
+	existing: PetitionSignatureDetails,
+	incoming: PetitionSignatureDetails
+): PetitionSignatureDetails {
+	return {
+		channel: existing.channel ?? incoming.channel,
+		customFields: {
+			...(existing.customFields || {}),
+			...(incoming.customFields || {})
+		}
+	};
 }
 
 export async function createPetitionSignature({
@@ -108,24 +126,16 @@ export async function createPetitionSignature({
 		throw new Error('Petition not found');
 	}
 
-	const petitionSignatureRecord: typeof petitionSignature.$inferInsert = {
-		id: parsed.metadata.petitionSignatureId,
-		organizationId: parsed.metadata.organizationId,
-		petitionId: parsed.metadata.petitionId,
-		personId: parsed.metadata.personId,
-		teamId: petition.teamId ?? null,
-		details: parsed.input.details,
-		responses: parsed.input.responses,
-		createdAt: new Date(),
-		updatedAt: new Date()
-	};
-
 	// A previous (soft-deleted) signature may exist for this (petitionId, personId)
 	// pair. The unique constraint `petition_signature_unique` does not consider
 	// `deletedAt`, so a bare insert would fail. Use upsert: if an existing row is
 	// found, re-activate it by clearing `deletedAt` and refreshing mutable fields.
 	const [existingSignature] = await tx.dbTransaction.wrappedTransaction
-		.select({ id: petitionSignature.id, deletedAt: petitionSignature.deletedAt })
+		.select({
+			id: petitionSignature.id,
+			deletedAt: petitionSignature.deletedAt,
+			details: petitionSignature.details
+		})
 		.from(petitionSignature)
 		.where(
 			and(
@@ -135,6 +145,25 @@ export async function createPetitionSignature({
 		)
 		.limit(1);
 
+	// Merge custom fields onto any existing (active) details so we don't clobber previously
+	// captured answers. If the existing row is soft-deleted, reactivation starts fresh from
+	// the incoming details rather than resurrecting stale data from the deleted signature.
+	const detailsToPersist =
+		existingSignature && existingSignature.deletedAt == null
+			? mergeSignatureDetails(existingSignature.details, parsed.input.details)
+			: parsed.input.details;
+
+	const petitionSignatureRecord: typeof petitionSignature.$inferInsert = {
+		id: parsed.metadata.petitionSignatureId,
+		organizationId: parsed.metadata.organizationId,
+		petitionId: parsed.metadata.petitionId,
+		personId: parsed.metadata.personId,
+		teamId: petition.teamId ?? null,
+		details: detailsToPersist,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	};
+
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.insert(petitionSignature)
 		.values(petitionSignatureRecord)
@@ -143,7 +172,6 @@ export async function createPetitionSignature({
 			set: {
 				teamId: petitionSignatureRecord.teamId,
 				details: petitionSignatureRecord.details,
-				responses: petitionSignatureRecord.responses,
 				deletedAt: null,
 				updatedAt: new Date()
 			}
@@ -213,10 +241,16 @@ export async function updatePetitionSignature({
 	if (!petitionSignatureRecord) {
 		throw new Error('Petition signature not found');
 	}
+	// Merge the incoming details onto the existing ones so custom fields accumulate and the channel
+	// is preserved (mirrors the upsert paths).
+	const mergedDetails = mergeSignatureDetails(
+		petitionSignatureRecord.details,
+		parsed.input.details
+	);
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(petitionSignature)
 		.set({
-			responses: args.input.responses,
+			details: mergedDetails,
 			updatedAt: new Date()
 		})
 		.where(
@@ -292,7 +326,6 @@ export async function signPetitionHelper({
 	signatureDetails,
 	organizationId,
 	skipNotifications = false,
-	responses = null,
 	whatsappIdentity,
 	whatsappContextWamidId
 }: {
@@ -302,14 +335,12 @@ export async function signPetitionHelper({
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
-	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
 	whatsappIdentity?: WhatsappIdentityLookup;
 	whatsappContextWamidId?: string;
 }) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
 	const parsedActionHelper = parse(personActionHelper, personAction);
-	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult) {
 		throw new Error('Petition not found');
@@ -345,8 +376,7 @@ export async function signPetitionHelper({
 		personRecord: personRecord,
 		organizationRecord: organizationRecord,
 		details: parsedSignatureDetails,
-		skipNotifications,
-		responses: parsedResponses
+		skipNotifications
 	});
 	return petitionSignatureResult;
 }
@@ -356,18 +386,15 @@ export async function signPetitionWithId({
 	petitionId,
 	personId,
 	organizationId,
-	signupDetails,
-	responses
+	signupDetails
 }: {
 	tx: ServerTransaction;
 	petitionId: string;
 	personId: string;
 	organizationId: string;
 	signupDetails: PetitionSignatureDetails;
-	responses?: Record<string, unknown> | null;
 }) {
 	const parsedSignupDetails = parse(petitionSignatureDetails, signupDetails);
-	const parsedResponses = parse(nullable(surveyResponsesSchema), responses);
 
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
 	if (!petitionResult.published) {
@@ -389,8 +416,7 @@ export async function signPetitionWithId({
 		petitionRecord: petitionResult,
 		personRecord,
 		organizationRecord,
-		details: parsedSignupDetails,
-		responses: parsedResponses
+		details: parsedSignupDetails
 	});
 }
 
@@ -401,8 +427,7 @@ export async function signPetitionUnsafe({
 	organizationRecord,
 	tx,
 	details,
-	skipNotifications = false,
-	responses = null
+	skipNotifications = false
 }: {
 	petitionSignatureId?: string;
 	tx: ServerTransaction;
@@ -410,11 +435,12 @@ export async function signPetitionUnsafe({
 	personRecord: typeof person.$inferSelect;
 	organizationRecord: typeof organization.$inferSelect;
 	details: PetitionSignatureDetails;
-	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
 }) {
 	const id = petitionSignatureId || uuidv7();
 
+	// A soft-deleted signature may still occupy the (petitionId, personId) unique slot (the
+	// constraint ignores deletedAt), so look up any existing row regardless of deletedAt.
 	const [existingPetitionSignature] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(petitionSignature)
@@ -422,11 +448,19 @@ export async function signPetitionUnsafe({
 			and(
 				eq(petitionSignature.petitionId, petitionRecord.id),
 				eq(petitionSignature.personId, personRecord.id),
-				eq(petitionSignature.organizationId, organizationRecord.id),
-				isNull(petitionSignature.deletedAt)
+				eq(petitionSignature.organizationId, organizationRecord.id)
 			)
 		)
 		.limit(1);
+
+	// An active existing row is a resume: merge custom fields so partial signatures don't clobber
+	// previously captured answers. A soft-deleted row is a fresh re-signature: start from the
+	// incoming details and reactivate the row (clear deletedAt) so re-signing works on every channel.
+	const hasActiveSignature =
+		existingPetitionSignature != null && existingPetitionSignature.deletedAt == null;
+	const detailsToPersist = hasActiveSignature
+		? mergeSignatureDetails(existingPetitionSignature.details, details)
+		: details;
 
 	const petitionSignatureRecord: typeof petitionSignature.$inferInsert = {
 		id,
@@ -434,8 +468,7 @@ export async function signPetitionUnsafe({
 		teamId: petitionRecord.teamId,
 		petitionId: petitionRecord.id,
 		personId: personRecord.id,
-		details,
-		responses: responses ?? null,
+		details: detailsToPersist,
 		createdAt: new Date(),
 		updatedAt: new Date()
 	};
@@ -443,8 +476,8 @@ export async function signPetitionUnsafe({
 	const conflictSet: Partial<typeof petitionSignature.$inferInsert> = {
 		details: petitionSignatureRecord.details,
 		teamId: petitionRecord.teamId,
-		updatedAt: new Date(),
-		...(responses == null ? {} : { responses: petitionSignatureRecord.responses }) //strips responses if null or undefined, to avoid overwriting existing responses
+		deletedAt: null, // re-activate a previously soft-deleted signature so re-signing works
+		updatedAt: new Date()
 	};
 
 	const [insertedPetitionSignature] = await tx.dbTransaction.wrappedTransaction
@@ -452,8 +485,7 @@ export async function signPetitionUnsafe({
 		.values(petitionSignatureRecord)
 		.onConflictDoUpdate({
 			target: [petitionSignature.petitionId, petitionSignature.personId],
-			set: conflictSet,
-			setWhere: and(isNull(petitionSignature.deletedAt))
+			set: conflictSet
 		})
 		.returning();
 	if (!insertedPetitionSignature) {
@@ -466,8 +498,9 @@ export async function signPetitionUnsafe({
 			personRecord.preferredLanguage || organizationRecord.defaultLanguage
 		);
 		// Use pg-boss directly so enqueue works even if cached queue object predates a new handler export
+		// Use the persisted row id (on upsert/reactivation the existing row keeps its original id).
 		await queue.raw.send('sendPetitionSignatureConfirmation', {
-			petitionSignatureId: id,
+			petitionSignatureId: insertedPetitionSignature.id,
 			locale
 		});
 	}
@@ -477,7 +510,33 @@ export async function signPetitionUnsafe({
 		personId: personRecord.id,
 		organizationId: organizationRecord.id
 	});
-	//TODO: Implement whatsapp notification
+	// Notify on a brand-new signature or a reactivation of a soft-deleted one — both are fresh signups.
+	//
+	// Known limitation (accepted for now): on reactivation the upserted row keeps its ORIGINAL id, so
+	// `sourceKey` matches the notification written at the first signup. `createNotification` dedupes via
+	// onConflictDoNothing on (organizationId, userId, sourceKey), and soft-deleting a signature does not
+	// remove its notification, so re-signing after a delete produces NO new in-app notification. The
+	// webhook (petition.signature.created) and confirmation email still fire, so re-signers/integrations
+	// are covered. If re-notifying admins on re-sign becomes desired, add a reactivation discriminator to
+	// the sourceKey (mind retry idempotency) or re-surface the existing notification to unread.
+	if (!skipNotifications && !hasActiveSignature) {
+		const personName =
+			[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') || null;
+		await createNotification({
+			tx,
+			args: {
+				type: 'petition_signup',
+				organizationId: organizationRecord.id,
+				referenceId: petitionRecord.id,
+				sourceKey: `petition_signup:${insertedPetitionSignature.id}`,
+				payload: {
+					personName,
+					personId: personRecord.id,
+					subjectTitle: petitionRecord.title
+				}
+			}
+		});
+	}
 
 	const { organizationId, ...sigWebhookData } = insertedPetitionSignature;
 	const queueSig = await getQueue();
@@ -485,9 +544,7 @@ export async function signPetitionUnsafe({
 		{
 			organizationId,
 			payload: {
-				type: existingPetitionSignature
-					? 'petition.signature.updated'
-					: 'petition.signature.created',
+				type: hasActiveSignature ? 'petition.signature.updated' : 'petition.signature.created',
 				data: parse(petitionSignatureApiSchema, sigWebhookData)
 			}
 		},
@@ -504,7 +561,6 @@ export async function completePetitionSignatureHelper({
 	personAction,
 	signatureDetails,
 	organizationId,
-	responses = null,
 	skipNotifications = true,
 	whatsappIdentity,
 	whatsappContextWamidId
@@ -515,7 +571,6 @@ export async function completePetitionSignatureHelper({
 	signatureDetails: PetitionSignatureDetails;
 	organizationId: string;
 	teamId?: string;
-	responses?: Record<string, unknown> | null;
 	skipNotifications?: boolean;
 	whatsappIdentity?: WhatsappIdentityLookup;
 	whatsappContextWamidId?: string;
@@ -528,7 +583,6 @@ export async function completePetitionSignatureHelper({
 		signatureDetails,
 		organizationId,
 		skipNotifications,
-		responses,
 		whatsappIdentity,
 		whatsappContextWamidId
 	});
@@ -627,7 +681,6 @@ export async function createIncompletePetitionSignatureHelper({
 				personAction,
 				signatureDetails: parsedSignatureDetails,
 				organizationId,
-				responses: null,
 				skipNotifications: true,
 				whatsappIdentity,
 				whatsappContextWamidId
@@ -642,7 +695,6 @@ export async function createIncompletePetitionSignatureHelper({
 		personAction,
 		signatureDetails: parsedSignatureDetails,
 		organizationId,
-		responses: null,
 		skipNotifications: true,
 		whatsappIdentity,
 		whatsappContextWamidId

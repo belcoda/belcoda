@@ -206,7 +206,6 @@ export async function deletePerson({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
-	return;
 }
 
 export async function _getPersonByPhoneNumberUnsafe({

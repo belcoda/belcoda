@@ -1,4 +1,9 @@
-import { createPersonRest, personApiSchema, updatePersonRest } from '$lib/schema/person';
+import {
+	bulkUpsertPersonRestSchema,
+	createPersonRest,
+	personApiSchema,
+	updatePersonRest
+} from '$lib/schema/person';
 import {
 	createPersonNoteApi,
 	personNoteApiSchema,
@@ -12,6 +17,7 @@ export async function buildPersonResourceSpec() {
 		personOpenApiSchema,
 		createPersonRequestOpenApiSchema,
 		updatePersonRequestOpenApiSchema,
+		bulkUpsertPersonRequestOpenApiSchema,
 		personNoteOpenApiSchema,
 		createPersonNoteRequestOpenApiSchema,
 		updatePersonNoteRequestOpenApiSchema
@@ -19,6 +25,7 @@ export async function buildPersonResourceSpec() {
 		generateOpenSchemaFromValibot(personApiSchema),
 		generateOpenSchemaFromValibot(createPersonRest),
 		generateOpenSchemaFromValibot(updatePersonRest),
+		generateOpenSchemaFromValibot(bulkUpsertPersonRestSchema),
 		generateOpenSchemaFromValibot(personNoteApiSchema),
 		generateOpenSchemaFromValibot(createPersonNoteApi),
 		generateOpenSchemaFromValibot(updatePersonNoteZero)
@@ -72,6 +79,33 @@ export async function buildPersonResourceSpec() {
 					}
 				}
 			},
+			/* '/api/v1/person/bulk': {
+				put: {
+					tags: ['Person'],
+					summary: 'Bulk upsert people from CSV',
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': {
+								schema: { $ref: '#/components/schemas/BulkUpsertPersonRequest' }
+							}
+						}
+					},
+					responses: {
+						'202': {
+							description: 'Bulk upsert job queued',
+							content: {
+								'application/json': {
+									schema: { $ref: '#/components/schemas/BulkUpsertPersonResponse' }
+								}
+							}
+						},
+						'400': { $ref: '#/components/responses/BadRequest' },
+						'401': { $ref: '#/components/responses/Unauthorized' },
+						'500': { $ref: '#/components/responses/InternalServerError' }
+					}
+				}
+			}, */
 			'/api/v1/person/{personId}': {
 				get: {
 					tags: ['Person'],
@@ -220,6 +254,17 @@ export async function buildPersonResourceSpec() {
 			Person: personOpenApiSchema,
 			CreatePersonRequest: createPersonRequestOpenApiSchema,
 			UpdatePersonRequest: updatePersonRequestOpenApiSchema,
+			/* BulkUpsertPersonRequest: bulkUpsertPersonRequestOpenApiSchema,
+			BulkUpsertPersonResponse: {
+				type: 'object',
+				required: ['queued'],
+				properties: {
+					queued: {
+						type: 'boolean'
+					}
+				},
+				additionalProperties: false
+			}, */
 			PersonNote: personNoteOpenApiSchema,
 			CreatePersonNoteRequest: createPersonNoteRequestOpenApiSchema,
 			UpdatePersonNoteRequest: updatePersonNoteRequestOpenApiSchema,

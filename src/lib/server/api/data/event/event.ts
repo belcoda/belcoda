@@ -445,6 +445,29 @@ export async function listEventsForOrg({
 	return await tx.run(listEventsQuery({ ctx, input }));
 }
 
+function countEventTypeFilter(eventType: InferOutput<typeof listEventsInputSchema>['eventType']) {
+	if (eventType === 'online') {
+		return isNotNull(event.onlineLink);
+	}
+	if (eventType === 'in-person') {
+		return isNotNull(event.addressLine1);
+	}
+	return undefined;
+}
+
+function countStatusFilter(status: InferOutput<typeof listEventsInputSchema>['status']) {
+	if (status === 'draft') {
+		return eq(event.published, false);
+	}
+	if (status === 'published') {
+		return eq(event.published, true);
+	}
+	if (status === 'cancelled') {
+		return isNotNull(event.cancelledAt);
+	}
+	return undefined;
+}
+
 export async function countEventsForOrg({
 	tx,
 	input
@@ -471,21 +494,13 @@ export async function countEventsForOrg({
 	if (input.tagId) {
 		whereParts.push(or(eq(event.signupTag, input.tagId), eq(event.attendanceTag, input.tagId))!);
 	}
-	if (input.eventType) {
-		if (input.eventType === 'online') {
-			whereParts.push(isNotNull(event.onlineLink));
-		} else if (input.eventType === 'in-person') {
-			whereParts.push(isNotNull(event.addressLine1));
-		}
+	const eventTypeFilter = countEventTypeFilter(input.eventType);
+	if (eventTypeFilter) {
+		whereParts.push(eventTypeFilter);
 	}
-	if (input.status) {
-		if (input.status === 'draft') {
-			whereParts.push(eq(event.published, false));
-		} else if (input.status === 'published') {
-			whereParts.push(eq(event.published, true));
-		} else if (input.status === 'cancelled') {
-			whereParts.push(isNotNull(event.cancelledAt));
-		}
+	const statusFilter = countStatusFilter(input.status);
+	if (statusFilter) {
+		whereParts.push(statusFilter);
 	}
 	if (input.dateRange?.start != null) {
 		whereParts.push(gte(event.startsAt, new Date(input.dateRange.start)));

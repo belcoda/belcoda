@@ -23,9 +23,9 @@ import { eventSignupReadPermissions } from '$lib/zero/query/event_signup/permiss
 
 import { parse } from 'valibot';
 
-import { event, eventSignup, person, organization } from '$lib/schema/drizzle';
+import { event, eventSignup, person, organization, member, teamMember } from '$lib/schema/drizzle';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-import { eq, and, sql, ne, count as countRows, isNull, or } from 'drizzle-orm';
+import { eq, and, sql, ne, count as countRows, isNull, or, inArray } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import {
 	findOrCreatePerson,
@@ -36,6 +36,7 @@ import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { clampLocale } from '$lib/utils/language';
 
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
+import { createNotification } from '$lib/server/api/data/notification/notification';
 import { applyTagToPersonUnsafe } from '$lib/server/api/data/person/tag';
 import {
 	inputSchema as listEventSignupsInputSchema,
@@ -45,6 +46,41 @@ import { readEventSignupQuery } from '$lib/zero/query/event_signup/read';
 import type { InferOutput } from 'valibot';
 
 type QueueT = Awaited<ReturnType<typeof getQueue>>;
+
+async function getEventSignupNotificationRecipientUserIds({
+	tx,
+	eventRecord
+}: {
+	tx: ServerTransaction;
+	eventRecord: typeof event.$inferSelect;
+}) {
+	if (eventRecord.teamId) {
+		const eventTeamMembers = await tx.dbTransaction.wrappedTransaction
+			.select({ userId: teamMember.userId })
+			.from(teamMember)
+			.where(eq(teamMember.teamId, eventRecord.teamId));
+
+		if (eventTeamMembers.length > 0) {
+			return [...new Set(eventTeamMembers.map((m) => m.userId))];
+		}
+	}
+
+	const adminOwnerMembers = await tx.dbTransaction.wrappedTransaction
+		.select({ userId: member.userId })
+		.from(member)
+		.where(
+			and(
+				eq(member.organizationId, eventRecord.organizationId),
+				inArray(member.role, ['owner', 'admin'])
+			)
+		);
+
+	if (adminOwnerMembers.length > 0) {
+		return [...new Set(adminOwnerMembers.map((m) => m.userId))];
+	}
+
+	return [];
+}
 
 async function queueEventSignupWebhook(
 	queue: QueueT,
@@ -142,7 +178,9 @@ function isCompleteEventSignupStatus(status: EventSignupStatus | null | undefine
 	return status === 'signup' || status === 'attended' || status === 'noshow';
 }
 
-function getEventHasEnded(eventRecord: typeof event.$inferSelect) {
+function getEventHasEnded(
+	eventRecord: Pick<typeof event.$inferSelect, 'endsAt'> | { endsAt: number }
+) {
 	return eventRecord.endsAt <= new Date();
 }
 
@@ -651,7 +689,32 @@ export async function signUpForEventUnsafe({
 			organizationId: organizationRecord.id
 		});
 	}
-	//TODO: Implement whatsapp notification
+	if (!skipNotifications && !existingEventSignup) {
+		const personName =
+			[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') || null;
+		const recipientUserIds = await getEventSignupNotificationRecipientUserIds({
+			tx,
+			eventRecord
+		});
+		await createNotification({
+			tx,
+			args: {
+				type: 'event_signup',
+				organizationId: organizationRecord.id,
+				referenceId: eventRecord.id,
+				sourceKey: `event_signup:${insertedEventSignup.id}`,
+				payload: {
+					personName,
+					personId: personRecord.id,
+					subjectTitle: eventRecord.title
+				},
+				routing: {
+					recipientUserIds,
+					creatorUserId: null
+				}
+			}
+		});
+	}
 	const queueSignup = await getQueue();
 	await queueEventSignupWebhook(
 		queueSignup,
@@ -914,6 +977,15 @@ export async function updateEventSignupStatus({
 	return result;
 }
 
+function assertSignupAllowedUnlessStaffSession(
+	eventRecord: Pick<typeof event.$inferSelect, 'endsAt'> | { endsAt: number },
+	ctx: QueryContext
+) {
+	if (!ctx.userId && getEventHasEnded(eventRecord)) {
+		throw new Error('Event signup period has ended');
+	}
+}
+
 export async function createEventSignup({
 	tx,
 	ctx,
@@ -953,22 +1025,7 @@ export async function createEventSignup({
 	if (!event) {
 		throw new Error('Event not found');
 	}
-	if (
-		parsed.input.details.channel.type !== 'adminPanel' &&
-		getEventHasEnded({
-			...event,
-			endsAt: new Date(event.endsAt),
-			startsAt: new Date(event.startsAt),
-			createdAt: new Date(event.createdAt),
-			updatedAt: new Date(event.updatedAt),
-			reminderSentAt: event.reminderSentAt ? new Date(event.reminderSentAt) : null,
-			cancelledAt: event.cancelledAt ? new Date(event.cancelledAt) : null,
-			deletedAt: event.deletedAt ? new Date(event.deletedAt) : null,
-			archivedAt: event.archivedAt ? new Date(event.archivedAt) : null
-		})
-	) {
-		throw new Error('Event signup period has ended');
-	}
+	assertSignupAllowedUnlessStaffSession(event, ctx);
 	const [existingEventSignup] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(eventSignup)

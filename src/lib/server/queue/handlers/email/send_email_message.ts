@@ -1,4 +1,3 @@
-import { type ServerTransaction } from '@rocicorp/zero';
 import pino from '$lib/pino';
 import { getQueue } from '$lib/server/queue';
 const log = pino(import.meta.url);

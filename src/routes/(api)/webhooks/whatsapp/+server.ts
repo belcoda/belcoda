@@ -50,12 +50,17 @@ export async function POST({ request, url }) {
 		}
 	} catch (error) {
 		log.error(error, 'Error processing whatsapp webhook');
-	} finally {
-		await drizzle.insert(whatsappLog).values({
+	}
+
+	// Log the webhook payload in the background — must not block the 200 ACK
+	drizzle
+		.insert(whatsappLog)
+		.values({
 			id: uuidv7(),
 			payload: body,
 			createdAt: new Date()
-		});
-		return new Response('OK', { status: 200 }); //we don't want to block the webhook from being processed
-	}
+		})
+		.catch((err) => log.error(err, 'Failed to insert whatsapp log'));
+
+	return new Response('OK', { status: 200 }); //we don't want to block the webhook from being processed
 }

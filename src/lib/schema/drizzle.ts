@@ -28,8 +28,7 @@ import type {
 	WebhookEventTypes,
 	WebhookStatus,
 	WebhookLogPayload,
-	WebhookEvent,
-	WebhookEvents
+	WebhookEvent
 } from '$lib/schema/webhook';
 import type { WebhookLogSchema } from '$lib/schema/webhook-log';
 import type { PersonSchema, Gender } from '$lib/schema/person';
@@ -47,25 +46,27 @@ import type { EventSchema } from '$lib/schema/event';
 import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
-
+import type { OrganizationPlanType } from '$lib/schema/organization';
 import type { SerializedEditorState } from 'lexical';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
 import type { JsonSchema } from '$lib/schema/helpers';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
+
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import { type FilterGroupType } from '$lib/schema/person/filter';
 import type { LedgerEntryMetadataSchema, LedgerSchema } from '$lib/schema/ledger';
 import {
 	type WhatsappMessage,
-	type WhatsappTemplateMessage,
 	type WhatsappMessageActivityType
 } from '$lib/schema/whatsapp/message';
-import { type WhatsappMessageActions } from '$lib/schema/whatsapp/actions';
-import { type EventSettings } from '$lib/schema/event/settings';
-import { type EventSignupDetails, type EventSignupStatus } from '$lib/schema/event/settings';
+import {
+	type EventSettings,
+	type EventSignupDetails,
+	type EventSignupStatus
+} from '$lib/schema/event/settings';
 import { type SocialMedia, type PersonAddedFrom } from '$lib/schema/person/meta';
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
 import type { PetitionSettingsSchema, PetitionSignatureDetails } from './petition/settings';
@@ -95,6 +96,7 @@ export const organization = pgTable(
 			withTimezone: true,
 			mode: 'date'
 		}),
+		plan: text('plan').$type<OrganizationPlanType>(),
 		stripeCustomerId: text('stripe_customer_id').unique(),
 		billingEmail: text('billing_email'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
@@ -168,6 +170,7 @@ export const user = pgTable('user', {
 	twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
 	stripeCustomerId: text('stripe_customer_id'),
 	preferredLanguage: text('preferred_language').$type<Locale>(),
+	settings: jsonb('settings').$type<JsonSchema>(),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 });
@@ -952,8 +955,6 @@ export const petition = pgTable('petition', {
 	featureImage: text('feature_image'),
 
 	settings: jsonb('settings').$type<PetitionSettingsSchema>().notNull(),
-	// TODO: Implement these once flows are ready
-	// flowQuestions: jsonb('flow_questions').$type<PetitionFlowQuestions>(),
 
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
@@ -976,7 +977,9 @@ export const petitionSignature = pgTable(
 			.notNull()
 			.references(() => person.id),
 		details: jsonb('details').$type<PetitionSignatureDetails>().notNull(),
-		// TODO: Define response schema when flows are ready
+		// @deprecated Petition custom-field answers now live in `details.customFields` (mirroring
+		// `eventSignup.details`). This column is retained only for legacy/backfill data and is no
+		// longer written to; it is slated for removal in a future migration.
 		responses: jsonb('responses'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })

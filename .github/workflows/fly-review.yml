@@ -1,0 +1,61 @@
+name: Deploy Review App
+on:
+  # Run this workflow on every PR event. Existing review apps will be updated when the PR is updated.
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  # Set these to your Fly.io organization and preferred region.
+  FLY_REGION: fra
+  FLY_ORG: belcoda
+
+jobs:
+  review_app:
+    # Only run for PRs opened from a branch in this repo, never from forks —
+    # fork PRs must not trigger a deploy that receives the secret set below.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    # Only run one deployment at a time per PR.
+    concurrency:
+      group: pr-${{ github.event.number }}
+
+    # Deploying apps with this "review" environment allows the URL for the app to be displayed in the PR UI.
+    environment:
+      name: review
+      # The script in the `deploy` sets the URL output for each review app.
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
+
+      # Match fly-pr-review-apps app naming: pr-{number}-{owner}-{repo}, lowercased, _ → -
+      - name: Set review app host
+        id: review_host
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          app="pr-${PR_NUMBER}-${REPO_OWNER}-${REPO_NAME}"
+          app=$(echo "$app" | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+          hostname="${app}.fly.dev"
+          echo "app=$app" >> "$GITHUB_OUTPUT"
+          echo "hostname=$hostname" >> "$GITHUB_OUTPUT"
+          echo "url=https://$hostname" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy PR app to Fly.io
+        id: deploy
+        uses: superfly/fly-pr-review-apps@6f79ec3a7d017082ed11e7c464dae298ca75b21b #1.2.1
+        with:
+          config: ./deploy/fly.staging.toml
+          # These are long-lived STAGING secrets (no production/real data), scoped to the
+          # `review` GitHub environment. They are configured as repo/environment secrets, so
+          # GitHub withholds them from fork PRs; the same-repo `if:` guard above is a second layer.
+          secrets: AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }} BETTER_AUTH_TRUSTED_ORIGINS=${{ secrets.BETTER_AUTH_TRUSTED_ORIGINS }} BETTER_AUTH_URL=${{ steps.review_host.outputs.url }} DATABASE_URL=${{ secrets.DATABASE_URL }} DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID=${{ secrets.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID }} EASYCRON_SECRET=${{ secrets.EASYCRON_SECRET }} GOOGLE_AUTH_CLIENT_SECRET=${{ secrets.GOOGLE_AUTH_CLIENT_SECRET }} ONBOARDING_WEBHOOK_URL=${{ secrets.ONBOARDING_WEBHOOK_URL }} POSTMARK_ACCOUNT_TOKEN=${{ secrets.POSTMARK_ACCOUNT_TOKEN }} POSTMARK_MESSAGE_TEMPLATE_ALIAS=${{ secrets.POSTMARK_MESSAGE_TEMPLATE_ALIAS }} POSTMARK_SERVER_TOKEN=${{ secrets.POSTMARK_SERVER_TOKEN }} PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME }} PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_REGION=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_REGION }} PUBLIC_DEFAULT_WHATSAPP_NUMBER=${{ secrets.PUBLIC_DEFAULT_WHATSAPP_NUMBER }} PUBLIC_DEFAULT_WORKSPACE_LOGO=${{ secrets.PUBLIC_DEFAULT_WORKSPACE_LOGO }} PUBLIC_GOOGLE_AUTH_CLIENT_ID=${{ secrets.PUBLIC_GOOGLE_AUTH_CLIENT_ID }} PUBLIC_HOST=${{ steps.review_host.outputs.url }} PUBLIC_POSTMARK_SENDING_DOMAIN=${{ secrets.PUBLIC_POSTMARK_SENDING_DOMAIN }} PUBLIC_ROOT_DOMAIN=${{ steps.review_host.outputs.hostname }} PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN }} PUBLIC_WHATSAPP_APP_ID=${{ secrets.PUBLIC_WHATSAPP_APP_ID }} PUBLIC_WHATSAPP_CONFIG_ID=${{ secrets.PUBLIC_WHATSAPP_CONFIG_ID }} PUBLIC_WHATSAPP_SOLUTION_ID=${{ secrets.PUBLIC_WHATSAPP_SOLUTION_ID }} PUBLIC_ZERO_SERVER=${{ secrets.PUBLIC_ZERO_SERVER }} SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} STRIPE_ENTERPRISE_TIER_PRICE_ID=${{ secrets.STRIPE_ENTERPRISE_TIER_PRICE_ID }} STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} STRIPE_SUPPORTED_TIER_PRICE_ID=${{ secrets.STRIPE_SUPPORTED_TIER_PRICE_ID }} STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }} SYSTEM_WABA_ID=${{ secrets.SYSTEM_WABA_ID }} YCLOUD_API_KEY=${{ secrets.YCLOUD_API_KEY }} YCLOUD_API_URL=${{ secrets.YCLOUD_API_URL }} YCLOUD_WEBHOOK_VERIFY_TOKEN=${{ secrets.YCLOUD_WEBHOOK_VERIFY_TOKEN }} ZERO_MUTATE_FORWARD_COOKIES=${{ secrets.ZERO_MUTATE_FORWARD_COOKIES }} ZERO_MUTATE_URL=${{ secrets.ZERO_MUTATE_URL }} ZERO_QUERY_FORWARD_COOKIES=${{ secrets.ZERO_QUERY_FORWARD_COOKIES }} ZERO_QUERY_URL=${{ secrets.ZERO_QUERY_URL }} ZERO_UPSTREAM_DB=${{ secrets.ZERO_UPSTREAM_DB }}

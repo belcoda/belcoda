@@ -3,7 +3,7 @@ type ConsentState = 'accepted' | 'rejected' | null;
 
 function getCookieValue(name: string): string | null {
 	if (typeof document === 'undefined') return null;
-	const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+	const match = new RegExp('(^| )' + name + '=([^;]+)').exec(document.cookie);
 	return match ? decodeURIComponent(match[2]) : null;
 }
 

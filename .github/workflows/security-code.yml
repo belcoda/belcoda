@@ -1,0 +1,140 @@
+name: Security — Code Scans
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trivy:
+    name: Trivy (dependencies)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
+
+      # scanners: vuln only — Checkov owns IaC, Gitleaks owns secrets, so we
+      # don't double-report. exit-code 0 = report-only (don't fail the PR yet).
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 #0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          format: json
+          output: trivy-fs.json
+          exit-code: '0'
+
+      - name: Upload to DefectDojo
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./.github/actions/dd-upload
+        with:
+          file: trivy-fs.json
+          scan_type: Trivy Scan
+          engagement_name: 'CI/CD: Dependencies'
+          environment: Production
+          defectdojo_url: ${{ secrets.DEFECTDOJO_URL }}
+          token: ${{ secrets.DD_TOKEN }}
+          close_old_findings: ${{ github.event_name != 'pull_request' && 'true' || 'false' }}
+
+  opengrep:
+    name: OpenGrep (SAST)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
+
+      - name: Install OpenGrep
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/main/install.sh | bash
+          echo "$HOME/.opengrep/cli/latest" >> "$GITHUB_PATH"
+
+      - name: OpenGrep scan
+        # exit 0 = clean, 1 = findings (report-only, keep going),
+        # >=2 = real error → fail the job. '--config auto' pulls the default
+        # ruleset; tune this to the rulesets you actually want.
+        run: |
+          opengrep scan --config auto --json --output=opengrep.json . || rc=$?
+          [ "${rc:-0}" -le 1 ] || exit "$rc"
+
+      - name: Upload to DefectDojo
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./.github/actions/dd-upload
+        with:
+          file: opengrep.json
+          scan_type: Semgrep JSON Report
+          engagement_name: 'CI/CD: SAST'
+          environment: Production
+          defectdojo_url: ${{ secrets.DEFECTDOJO_URL }}
+          token: ${{ secrets.DD_TOKEN }}
+          close_old_findings: ${{ github.event_name != 'pull_request' && 'true' || 'false' }}
+
+  checkov:
+    name: Checkov (IaC)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 #v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Checkov
+        run: pip install --no-cache-dir checkov
+
+      - name: Checkov scan
+        # --soft-fail: report-only (exit 0 even when findings exist).
+        run: checkov -d . -o json --soft-fail --compact > checkov.json
+
+      - name: Upload to DefectDojo
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./.github/actions/dd-upload
+        with:
+          file: checkov.json
+          scan_type: Checkov Scan
+          engagement_name: 'CI/CD: IaC'
+          environment: Production
+          defectdojo_url: ${{ secrets.DEFECTDOJO_URL }}
+          token: ${{ secrets.DD_TOKEN }}
+          close_old_findings: ${{ github.event_name != 'pull_request' && 'true' || 'false' }}
+
+  gitleaks:
+    name: Gitleaks (secrets)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          fetch-depth: 0 # full history so secrets in past commits are caught
+          persist-credentials: false
+
+      - name: Gitleaks scan
+        # --exit-code=0: report-only (don't fail the job when leaks are found).
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:latest \
+            detect --source=/repo \
+            --report-format=json --report-path=/repo/gitleaks.json \
+            --exit-code=0
+
+      - name: Upload to DefectDojo
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./.github/actions/dd-upload
+        with:
+          file: gitleaks.json
+          scan_type: Gitleaks Scan
+          engagement_name: 'CI/CD: Secrets'
+          environment: Production
+          defectdojo_url: ${{ secrets.DEFECTDOJO_URL }}
+          token: ${{ secrets.DD_TOKEN }}
+          close_old_findings: ${{ github.event_name != 'pull_request' && 'true' || 'false' }}

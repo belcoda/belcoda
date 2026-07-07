@@ -1,4 +1,4 @@
-import { petition } from '$lib/schema/drizzle';
+import { petition, team } from '$lib/schema/drizzle';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
 
@@ -15,7 +15,6 @@ import {
 } from '$lib/schema/petition/petition';
 import { parse } from 'valibot';
 import { organizationReadPermissions } from '$lib/zero/query/organizations/permissions';
-import { team } from '$lib/schema/drizzle';
 import { and, eq, isNull, isNotNull, ilike, not, inArray, count as countRows } from 'drizzle-orm';
 import { readPetitionQuery } from '$lib/zero/query/petition/read';
 import {
@@ -363,11 +362,9 @@ export async function countPetitionsForOrg({
 	}
 	if (input.status) {
 		if (input.status === 'draft') {
-			whereParts.push(eq(petition.published, false));
-			whereParts.push(isNull(petition.archivedAt));
+			whereParts.push(eq(petition.published, false), isNull(petition.archivedAt));
 		} else if (input.status === 'published') {
-			whereParts.push(eq(petition.published, true));
-			whereParts.push(isNull(petition.archivedAt));
+			whereParts.push(eq(petition.published, true), isNull(petition.archivedAt));
 		} else if (input.status === 'archived') {
 			whereParts.push(isNotNull(petition.archivedAt));
 		}

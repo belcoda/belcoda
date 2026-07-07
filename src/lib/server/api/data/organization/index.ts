@@ -2,13 +2,14 @@ import { organization, member } from '$lib/schema/drizzle';
 import { drizzle } from '$lib/server/db';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { eq, or, isNull, lte, sql, and } from 'drizzle-orm';
-import { type QueryContext, builder } from '$lib/zero/schema';
+import { type QueryContext } from '$lib/zero/schema';
 import {
 	updateOrganizationZeroMutatorSchema,
 	updateOrganizationWhatsappSettingsMutatorSchema,
 	type UpdateOrganizationMutatorSchema,
 	type UpdateOrganizationWhatsappSettingsMutatorSchema,
-	organizationApiSchema
+	organizationApiSchema,
+	organizationPlanSupported
 } from '$lib/schema/organization';
 
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
@@ -291,6 +292,10 @@ async function bindPhoneNumberToWabaWithBusinessCoexistenceOrNot({
 	}
 }
 
+// these are defined here rather than in schema/helpers.ts because they are only used here, whereas the free ones are used in new organizations and seeds.
+const SUPPORTED_ORGANIZATION_FREE_WHATSAPP_MESSAGE_CREDITS = 5000;
+const SUPPORTED_ORGANIZATION_FREE_EMAIL_MESSAGE_CREDITS = 50000;
+
 /**
  * Private function to reset the free quotas for an organization. Called from a daily cron job.
  * Sets the quota for a monthly period. Will only reset if the reset date is in the past.
@@ -304,6 +309,7 @@ export async function _resetOrganizationFreeQuotasUnsafe({
 	freeWhatsAppCredits: number;
 	freeEmailCredits: number;
 }) {
+	// first reset free-plan organizations (plan IS NULL) to the caller-provided default quota values
 	await drizzle
 		.update(organization)
 		.set({
@@ -312,9 +318,30 @@ export async function _resetOrganizationFreeQuotasUnsafe({
 			resetFreeQuotasAfter: sql`now() + interval '1 month'`
 		})
 		.where(
-			or(
-				lte(organization.resetFreeQuotasAfter, new Date()),
-				isNull(organization.resetFreeQuotasAfter)
+			and(
+				isNull(organization.plan),
+				or(
+					lte(organization.resetFreeQuotasAfter, new Date()),
+					isNull(organization.resetFreeQuotasAfter)
+				)
+			)
+		);
+
+	//now reset supported organizations to supported organization levels
+	await drizzle
+		.update(organization)
+		.set({
+			freeWhatsAppMessageCredits: SUPPORTED_ORGANIZATION_FREE_WHATSAPP_MESSAGE_CREDITS,
+			freeEmailMessageCredits: SUPPORTED_ORGANIZATION_FREE_EMAIL_MESSAGE_CREDITS,
+			resetFreeQuotasAfter: sql`now() + interval '1 month'`
+		})
+		.where(
+			and(
+				or(
+					lte(organization.resetFreeQuotasAfter, new Date()),
+					isNull(organization.resetFreeQuotasAfter)
+				),
+				eq(organization.plan, organizationPlanSupported)
 			)
 		);
 }
