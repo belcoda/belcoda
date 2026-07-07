@@ -59,7 +59,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			preferredLanguage: true,
 			twoFactorEnabled: true,
 			stripeCustomerId: false,
-			settings: true,
+			settings: false,
 			createdAt: true,
 			updatedAt: true
 		},
