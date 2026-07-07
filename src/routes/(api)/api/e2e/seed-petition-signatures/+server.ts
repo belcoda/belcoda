@@ -73,8 +73,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				teamId: petition.teamId,
 				petitionId: petition.id,
 				personId: person.id!,
-				details: { channel: { type: 'adminPanel' as const } },
-				responses: null,
+				details: { channel: { type: 'adminPanel' as const }, customFields: {} },
 				createdAt,
 				updatedAt: createdAt
 			};
