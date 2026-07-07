@@ -58,7 +58,7 @@ jobs:
       # later deploy applies services but never (re)allocates. Copy the config to a root
       # `fly.toml` so launch sees the public service at app-creation time.
       - name: Provide root fly.toml for launch-time IP allocation
-        run: cp deploy/fly.staging.toml fly.toml
+        run: cp deploy/fly.review.toml fly.toml
 
       - name: Deploy PR app to Fly.io
         id: deploy
