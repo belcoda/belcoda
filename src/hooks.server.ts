@@ -2,7 +2,12 @@ import * as Sentry from '@sentry/sveltekit';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 
 import { env } from '$env/dynamic/public';
-const { PUBLIC_ROOT_DOMAIN } = env;
+const {
+	PUBLIC_ROOT_DOMAIN,
+	PUBLIC_ZERO_SERVER,
+	PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME,
+	PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_REGION
+} = env;
 import { env as privateEnv } from '$env/dynamic/private';
 const { EASYCRON_SECRET, NODE_ENV } = privateEnv;
 import { svelteKitHandler } from 'better-auth/svelte-kit';
@@ -17,6 +22,12 @@ const log = pino(import.meta.url);
 import { sequence } from '@sveltejs/kit/hooks';
 import { LOCALES, type Locale } from '$lib/utils/language';
 import { buildBetterAuth } from '$lib/server/auth';
+import {
+	augmentContentSecurityPolicy,
+	getZeroSyncConnectSources,
+	getS3UploadConnectSources,
+	isPublicEmbedPage
+} from '$lib/server/csp';
 
 import * as main from './locales/main.loader.server.svelte.js';
 import * as js from './locales/js.loader.server.js';
@@ -285,14 +296,14 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
-	// Anti-clickjacking protection
-	// response.headers.set('X-Frame-Options', 'DENY'); //can't use yet, as we still need framing for google oauth
-
 	// HSTS - Force HTTPS for 1 year
 	response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
 	// Prevent MIME sniffing
 	response.headers.set('X-Content-Type-Options', 'nosniff');
+
+	// Limit referrer data shared with external origins
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
 	// Cross-Origin Resource Policy
 	// Don't set CORP for static assets (/_app/immutable/*) to avoid preload issues in strict browsers
@@ -317,6 +328,24 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const contentType = response.headers.get('content-type') ?? '';
 	if (contentType.includes('text/html')) {
 		response.headers.set('Cache-Control', 'no-cache');
+
+		const csp = response.headers.get('Content-Security-Policy');
+		if (csp) {
+			const augmented = augmentContentSecurityPolicy(csp, {
+				extraConnectSources: [
+					...getZeroSyncConnectSources(PUBLIC_ZERO_SERVER),
+					...getS3UploadConnectSources(
+						PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME,
+						PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_REGION
+					)
+				],
+				allowEmbedding: isPublicEmbedPage(event.url.pathname, event.url.searchParams, {
+					host: event.url.host,
+					rootDomain: PUBLIC_ROOT_DOMAIN
+				})
+			});
+			response.headers.set('Content-Security-Policy', augmented);
+		}
 	}
 
 	return response;
