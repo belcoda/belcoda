@@ -1,27 +1,15 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { safeParse } from 'valibot';
 import type { Actions, PageServerLoad } from './$types';
-import { drizzle } from '$lib/server/db';
-import { user } from '$lib/schema/drizzle';
-import { eq } from 'drizzle-orm';
-import {
-	defaultUserSettings,
-	parseUserSettings,
-	userNotificationSettingsPatchSchema
-} from '$lib/schema/user/settings';
-import { updateUserSettings } from '$lib/server/api/data/user/user';
+import { userNotificationSettingsPatchSchema } from '$lib/schema/user/settings';
+import { getUserSettings, updateUserSettings } from '$lib/server/api/data/user/user';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const userId = locals.session?.user?.id;
 	if (!userId) redirect(302, '/signup');
 
-	const row = await drizzle.query.user.findFirst({
-		where: eq(user.id, userId),
-		columns: { settings: true }
-	});
-
 	return {
-		settings: parseUserSettings(row?.settings) ?? defaultUserSettings()
+		settings: await getUserSettings({ userId })
 	};
 };
 
