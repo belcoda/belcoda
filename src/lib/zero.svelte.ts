@@ -56,9 +56,16 @@ class ZeroInstance {
 
 		const { queryURL, mutateURL } = getZeroEndpoints();
 
+		// in review deployments, we use token authentication for zero. Everywhere else, we use the session token.
+		const authToken =
+			publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review'
+				? localStorage.getItem('belcoda_bearer_token')
+				: undefined;
+
 		this.#z = new Z({
 			cacheURL,
 			schema,
+			...(publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review' ? { auth: authToken } : {}), //only add the auth token in review deployments
 			mutators,
 			kvStore: 'idb',
 			context: parsedContext,

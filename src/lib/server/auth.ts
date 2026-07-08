@@ -11,7 +11,7 @@ import { dev } from '$app/environment';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 
-import { openAPI, organization } from 'better-auth/plugins';
+import { openAPI, organization, bearer } from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
 import { apiKey } from '@better-auth/api-key';
@@ -207,6 +207,7 @@ export function buildBetterAuth(localeInput: string) {
 			}
 		},
 		plugins: [
+			...(publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review' ? [bearer()] : []), //only enable the bearer token in review environments
 			organization({
 				async sendInvitationEmail(data) {
 					try {
