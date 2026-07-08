@@ -28,6 +28,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			settings: true,
 			stripeCustomerId: false,
 			billingEmail: false,
+			plan: false,
 			createdAt: true,
 			updatedAt: true
 		},

@@ -4,7 +4,7 @@ import pino from '$lib/pino';
 import { eq } from 'drizzle-orm';
 import { getCsvFromBucket } from '$lib/server/utils/s3';
 import { env } from '$env/dynamic/public';
-import { parseImportCsv } from '$lib/utils/import';
+import { parseImportCsv } from '$lib/server/utils/person/import';
 
 const log = pino(import.meta.url);
 const { PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME } = env;
@@ -54,7 +54,12 @@ export async function importPeople({
 
 		log.info({ personImportId }, 'Starting CSV parsing and people import');
 
-		const parseResult = await parseImportCsv(csvContent, organizationId, personImportId);
+		const parseResult = await parseImportCsv({
+			csvString: csvContent,
+			organizationId,
+			addedFrom: { type: 'import', importId: personImportId },
+			upsert: false
+		});
 
 		log.info(
 			{

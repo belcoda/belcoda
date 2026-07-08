@@ -253,9 +253,15 @@ Renames and type changes are **expand + contract**: add the new column, migrate 
 
 Any PR that adds or changes Postgres schema via Drizzle migrations must be **database-only** and safe to merge/deploy without touching Zero or the app.
 
+"Database-only" is about the **runtime deploy surface**, not the import graph. The intent is that the PR ships the migration and the schema definition it comes from — and nothing that _uses_ the new shape at runtime (no Zero exposure, no queries/mutators, no code paths that let users read or write the new column). It is **not** a rule against `drizzle.ts` importing from the rest of the app.
+
+In particular, the following are **fine** in a migration-only PR and do not break the rule:
+
+- `drizzle.ts` importing types from application files (e.g. Valibot-derived types via `$type<...>()`, shared enums/constants). These are compile-time only, generate no runtime behaviour beyond the column definition, and don't expose anything to Zero or the app.
+
 **Include only:**
 
-- `src/lib/schema/drizzle.ts` (table/column definitions)
+- `src/lib/schema/drizzle.ts` (table/column definitions, including type-only imports used to shape columns)
 - `drizzle/` migration files (and journal/meta if generated)
 
 **Do not include in the same PR:**

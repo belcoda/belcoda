@@ -11,6 +11,7 @@ import {
 } from 'valibot';
 import { shortString, unixTimestamp } from '$lib/schema/helpers';
 import { surveySchema } from '$lib/schema/survey/collection';
+import { surveyQuestionResponse } from '$lib/schema/survey/questions';
 import { v4 as uuidv4 } from 'uuid';
 
 export const petitionSettingsSchema = object({
@@ -49,6 +50,7 @@ export function defaultPetitionSettings(): PetitionSettingsSchema {
 export const petitionSignatureDetails = object({
 	channel: object({
 		type: picklist(['petitionPage', 'adminPanel', 'whatsapp'])
-	})
+	}),
+	customFields: optional(surveyQuestionResponse, {})
 });
 export type PetitionSignatureDetails = InferOutput<typeof petitionSignatureDetails>;

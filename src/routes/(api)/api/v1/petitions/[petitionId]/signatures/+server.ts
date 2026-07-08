@@ -75,8 +75,7 @@ export async function POST(event) {
 				input: {
 					petitionId,
 					personId: body.personId,
-					details: body.details,
-					responses: body.responses ?? null
+					details: body.details
 				}
 			}
 		});

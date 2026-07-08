@@ -31,6 +31,7 @@
 	import { Spinner } from '$lib/components/ui/spinner/index';
 	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
 	import type { OrganizationSchema } from '$lib/schema/organization';
+	import type { Snippet } from 'svelte';
 
 	type PetitionSignupFormPetition = Pick<
 		ReadPetitionZero,
@@ -45,7 +46,8 @@
 		whatsAppSignupLink,
 		form,
 		layout = 'default',
-		success = false
+		success = false,
+		shareCard
 	}: {
 		petition: PetitionSignupFormPetition;
 		organization: PetitionSignupFormOrganization;
@@ -54,6 +56,7 @@
 		form?: SuperValidated<SurveySchema>;
 		layout?: 'default' | 'embed';
 		success?: boolean;
+		shareCard?: Snippet;
 	} = $props();
 
 	function calculateTarget(currentSignatures: number): number {
@@ -587,4 +590,7 @@
 			</form>
 		{/if}
 	</div>
+	{#if !success}
+		{@render shareCard?.()}
+	{/if}
 </div>

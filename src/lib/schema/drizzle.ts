@@ -46,14 +46,14 @@ import type { EventSchema } from '$lib/schema/event';
 import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
-
+import type { OrganizationPlanType } from '$lib/schema/organization';
 import type { SerializedEditorState } from 'lexical';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
 import type { JsonSchema } from '$lib/schema/helpers';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
-import { type UserSettingsSchema } from '$lib/schema/user/settings';
+
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
 import { type FilterGroupType } from '$lib/schema/person/filter';
@@ -96,6 +96,7 @@ export const organization = pgTable(
 			withTimezone: true,
 			mode: 'date'
 		}),
+		plan: text('plan').$type<OrganizationPlanType>(),
 		stripeCustomerId: text('stripe_customer_id').unique(),
 		billingEmail: text('billing_email'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
@@ -976,6 +977,9 @@ export const petitionSignature = pgTable(
 			.notNull()
 			.references(() => person.id),
 		details: jsonb('details').$type<PetitionSignatureDetails>().notNull(),
+		// @deprecated Petition custom-field answers now live in `details.customFields` (mirroring
+		// `eventSignup.details`). This column is retained only for legacy/backfill data and is no
+		// longer written to; it is slated for removal in a future migration.
 		responses: jsonb('responses'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })

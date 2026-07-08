@@ -14,7 +14,6 @@ export const createPetitionSignature = defineMutator(
 			petitionId: args.metadata.petitionId,
 			personId: args.metadata.personId,
 			details: args.input.details,
-			responses: args.input.responses,
 			createdAt: Date.now(),
 			updatedAt: Date.now()
 		});
@@ -26,7 +25,7 @@ export const updatePetitionSignature = defineMutator(
 	async ({ tx, args, ctx }) => {
 		tx.mutate.petitionSignature.update({
 			id: args.metadata.petitionSignatureId,
-			responses: args.input.responses,
+			details: args.input.details,
 			updatedAt: Date.now()
 		});
 	}
