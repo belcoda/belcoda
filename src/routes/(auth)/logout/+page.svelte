@@ -9,9 +9,9 @@
 	import AuthLayout from '$lib/components/widgets/AuthLayout.svelte';
 	onMount(async () => {
 		try {
-			await dropAllDatabases();
 			// clear the review-env bearer token so it isn't reused by the next session (see zero.svelte.ts / login)
 			localStorage.removeItem('belcoda_bearer_token');
+			await dropAllDatabases();
 			const { data, error } = await authClient.signOut();
 			if (dev) console.log(data, error);
 		} catch (error) {
