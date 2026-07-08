@@ -9,6 +9,7 @@
 		NodeToolbar,
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
+	import GripHorizontalIcon from '@lucide/svelte/icons/grip-horizontal';
 	import { taint } from '$lib/components/flow/flow_state.svelte';
 	import { deleteFlowNode } from '$lib/components/flow/deleteFlowNode';
 	import type { WhatsappMessageData } from '$lib/schema/flow/index';
@@ -23,15 +24,16 @@
 	import TrashIcon from '@lucide/svelte/icons/trash';
 	let { id, data }: NodeProps<Node<WhatsappMessageData, 'message'>> = $props();
 	const { updateNodeData, deleteElements } = useSvelteFlow();
-
+	import { t } from '$lib/index.svelte';
 	// --- State Management ---
-	let text = $state((() => data.text)() ?? 'Hello! Choose an option:');
+	const defaultText = (() => data.text)() ?? '';
+	let text = $state(defaultText);
 	function getText() {
-		return text ?? 'Hello! Choose an option:';
+		return text ?? '';
 	}
 	function setText(newText: string) {
 		taint();
-		text = newText;
+		text = newText ?? '';
 		updateNodeData(id, { text });
 	}
 	let buttons = $state(
@@ -144,16 +146,24 @@
 				/>
 			{/if}
 
+			{#if !imageUrl}
+				<div
+					class="hover:bg-white/50m -mt-1 w-full flex items-center gap-2 border-b border-[#b7e4ac] bg-[#f8f9fa]/50 p-1 px-2 pt-2 text-[11px] font-medium text-[#008069] uppercase transition-colors"
+				>
+					<GripHorizontalIcon size={14} />
+					{t`Message:`}
+				</div>
+			{/if}
 			<Textarea
 				bind:value={getText, setText}
 				data-testid="flow-message-textarea"
 				data-node-id={id}
 				class={cn(
-					'w-full resize-none border-none bg-transparent text-[14.5px] leading-relaxed text-[#111b21] outline-none',
+					'nodrag w-full resize-none border-none bg-transparent text-[14.5px] leading-relaxed text-[#111b21] active:ring-0 focus:ring-0 focus-visible:ring-0',
 					buttons.length > 0 && 'rounded-b-none',
-					imageUrl && 'rounded-t-none'
+					'rounded-t-none'
 				)}
-				placeholder="Type message..."
+				placeholder={t`Type your message...`}
 			></Textarea>
 			{#if buttons.length > 0}
 				<div class="flex flex-col bg-white/50">

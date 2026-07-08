@@ -1,17 +1,22 @@
 import * as v from 'valibot';
 
-export const digestFrequency = v.picklist(['daily', 'weekly']);
-export type DigestFrequency = v.InferOutput<typeof digestFrequency>;
-
-export const userNotificationSettings = v.object({
-	digestEnabled: v.optional(v.boolean(), true),
-	digestFrequency: v.optional(digestFrequency, 'weekly')
+export const userNotificationSettingsSchema = v.object({
+	digestEnabled: v.boolean(),
+	digestFrequency: v.picklist(['daily', 'weekly'])
 });
-export type UserNotificationSettings = v.InferOutput<typeof userNotificationSettings>;
+
+export type UserNotificationSettingsSchema = v.InferOutput<typeof userNotificationSettingsSchema>;
+
+export const userNotificationSettingsPatchSchema = v.partial(userNotificationSettingsSchema);
+
+export type UserNotificationSettingsPatchSchema = v.InferOutput<
+	typeof userNotificationSettingsPatchSchema
+>;
 
 export const userSettingsSchema = v.object({
-	notifications: v.optional(userNotificationSettings, {})
+	notifications: v.optional(userNotificationSettingsSchema)
 });
+
 export type UserSettingsSchema = v.InferOutput<typeof userSettingsSchema>;
 
 export function defaultUserSettings(): UserSettingsSchema {
@@ -21,4 +26,9 @@ export function defaultUserSettings(): UserSettingsSchema {
 			digestFrequency: 'weekly'
 		}
 	};
+}
+
+export function parseUserSettings(value: unknown): UserSettingsSchema | undefined {
+	const result = v.safeParse(userSettingsSchema, value);
+	return result.success ? result.output : undefined;
 }

@@ -2,8 +2,15 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { LOCALES } from '$lib/utils/language';
-import { userSettingsSchema, type UserSettingsSchema } from '$lib/schema/user/settings';
+import { userSettingsSchema } from '$lib/schema/user/settings';
 export { userSettingsSchema, type UserSettingsSchema } from '$lib/schema/user/settings';
+export {
+	userNotificationSettingsSchema,
+	type UserNotificationSettingsSchema,
+	userNotificationSettingsPatchSchema,
+	type UserNotificationSettingsPatchSchema,
+	parseUserSettings
+} from '$lib/schema/user/settings';
 export { defaultUserSettings } from '$lib/schema/user/settings';
 
 export const userRole = v.picklist(['member', 'admin', 'owner']);
@@ -31,7 +38,6 @@ export const readUserRest = v.object({
 	image: userSchema.entries.image,
 	preferredLanguage: userSchema.entries.preferredLanguage,
 	twoFactorEnabled: userSchema.entries.twoFactorEnabled,
-	settings: userSchema.entries.settings,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString
 });

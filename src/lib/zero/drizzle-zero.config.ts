@@ -28,6 +28,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			settings: true,
 			stripeCustomerId: false,
 			billingEmail: false,
+			plan: false,
 			createdAt: true,
 			updatedAt: true
 		},
@@ -59,7 +60,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			preferredLanguage: true,
 			twoFactorEnabled: true,
 			stripeCustomerId: false,
-			settings: true,
+			settings: false,
 			createdAt: true,
 			updatedAt: true
 		},

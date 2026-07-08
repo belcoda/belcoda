@@ -5,53 +5,51 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
-	import { defaultUserSettings } from '$lib/schema/user/settings';
-	import type { UserSettingsSchema } from '$lib/schema/user/settings';
 	import { toast } from 'svelte-sonner';
+	import { deserialize } from '$app/forms';
+	import { untrack } from 'svelte';
+	import type { UserSettingsSchema } from '$lib/schema/user/settings';
 
-	const userQuery = $derived(appState.user);
-	const currentSettings = $derived(userQuery.data?.settings ?? defaultUserSettings());
+	const { data }: { data: { settings: UserSettingsSchema } } = $props();
 
-	let digestEnabled = $state(true);
-	let digestFrequency = $state<'daily' | 'weekly'>('weekly');
+	let digestEnabled = $state(untrack(() => data.settings?.notifications?.digestEnabled ?? true));
+	let digestFrequency = $state<'daily' | 'weekly'>(
+		untrack(() => data.settings?.notifications?.digestFrequency ?? 'weekly')
+	);
 	let savedIndicator = $state(false);
 
-	$effect(() => {
-		digestEnabled = currentSettings.notifications?.digestEnabled ?? true;
-		digestFrequency = currentSettings.notifications?.digestFrequency ?? 'weekly';
-	});
+	async function save(
+		notificationSettings: Partial<{ digestEnabled: boolean; digestFrequency: 'daily' | 'weekly' }>
+	) {
+		const prevEnabled = digestEnabled;
+		const prevFrequency = digestFrequency;
 
-	async function save(patch: Partial<UserSettingsSchema['notifications']>) {
-		const previous = {
-			digestEnabled,
-			digestFrequency
-		};
-		digestEnabled = patch.digestEnabled ?? digestEnabled;
-		digestFrequency = patch.digestFrequency ?? digestFrequency;
+		if ('digestEnabled' in notificationSettings)
+			digestEnabled = notificationSettings.digestEnabled!;
+		if ('digestFrequency' in notificationSettings)
+			digestFrequency = notificationSettings.digestFrequency!;
 
-		const updated: UserSettingsSchema = {
-			notifications: {
-				digestEnabled,
-				digestFrequency
-			}
-		};
+		const formData = new FormData();
+		if ('digestEnabled' in notificationSettings)
+			formData.set('digestEnabled', String(notificationSettings.digestEnabled));
+		if ('digestFrequency' in notificationSettings)
+			formData.set('digestFrequency', notificationSettings.digestFrequency!);
 
 		try {
-			const response = await fetch('/api/me/settings', {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(updated)
-			});
-			if (!response.ok) {
-				throw new Error(await response.text());
+			const response = await fetch('?/save', { method: 'POST', body: formData });
+			const result = deserialize(await response.text());
+			if (result.type === 'failure' || result.type === 'error') {
+				digestEnabled = prevEnabled;
+				digestFrequency = prevFrequency;
+				toast.error(t`Failed to save notification preferences`);
+			} else {
+				savedIndicator = true;
+				setTimeout(() => (savedIndicator = false), 2000);
 			}
-			savedIndicator = true;
-			setTimeout(() => (savedIndicator = false), 2000);
 		} catch {
-			digestEnabled = previous.digestEnabled;
-			digestFrequency = previous.digestFrequency;
+			digestEnabled = prevEnabled;
+			digestFrequency = prevFrequency;
 			toast.error(t`Failed to save notification preferences`);
 		}
 	}

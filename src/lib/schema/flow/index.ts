@@ -82,7 +82,7 @@ const targetingNode = v.object({
 export type TargetingNodeData = v.InferOutput<typeof targetingNode>;
 
 export const whatsappMessageNodeData = v.object({
-	text: v.optional(helpers.mediumString),
+	text: v.optional(helpers.mediumStringEmpty),
 	imageUrl: v.optional(v.nullable(helpers.url)),
 	buttons: v.optional(v.array(v.object({ id: helpers.uuid, label: helpers.mediumString })), [])
 });
@@ -144,3 +144,51 @@ export const flowSchema = v.object({
 });
 
 export type Flow = v.InferOutput<typeof flowSchema>;
+
+export type FlowSendValidationIssue = {
+	nodeId: string;
+	message: string;
+};
+
+type FlowSendValidationNode = {
+	id: string;
+	type?: string;
+	data?: unknown;
+};
+
+export const emptyMessageNodeError =
+	'Message nodes must include message text or an image before sending.';
+export const emptyButtonMessageNodeError =
+	'Message nodes with buttons must include message text before sending.';
+
+export function validateFlowForSending(flow: {
+	nodes: FlowSendValidationNode[];
+}): FlowSendValidationIssue[] {
+	const issues: FlowSendValidationIssue[] = [];
+
+	for (const node of flow.nodes) {
+		if (node.type !== 'message') continue;
+
+		const data = node.data as WhatsappMessageData | undefined;
+		const text = data?.text?.trim() ?? '';
+		const hasImage = !!data?.imageUrl;
+		const hasButtons = (data?.buttons?.length ?? 0) > 0;
+
+		if (hasButtons && !text) {
+			issues.push({
+				nodeId: node.id,
+				message: emptyButtonMessageNodeError
+			});
+			continue;
+		}
+
+		if (!text && !hasImage) {
+			issues.push({
+				nodeId: node.id,
+				message: emptyMessageNodeError
+			});
+		}
+	}
+
+	return issues;
+}

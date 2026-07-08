@@ -4916,6 +4916,7 @@ msgid "Fallback text"
 msgstr "Texto alternativo"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/SvelteLexical.svelte
 msgid "Insert variable"
 msgstr "Inserir variável"
 
@@ -5665,6 +5666,46 @@ msgstr ""
 msgid "Saved"
 msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Failed to save notification preferences"
+#~ msgid "Failed to save notification preferences"
+#~ msgstr ""
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Search for a template variable to insert."
 msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "WhatsApp thread copied to a new draft"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Failed to copy WhatsApp thread"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "This creates a new draft with a copy of this thread's messages and steps. The copy always starts as an unsent draft."
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Clone"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Copying…"
+msgstr ""
+
+#~ msgid "Hello! Choose an option"
+#~ msgstr ""
+
+#~ msgid "WhatsApp message:"
+#~ msgstr ""
+
+#: src/lib/components/flow/nodes/Message.svelte
+msgid "Message:"
+msgstr ""
+
+#: src/lib/components/flow/nodes/Message.svelte
+msgid "Type your message..."
+msgstr ""
+
+#~ msgid "Failed to load notification preferences"
+#~ msgstr ""

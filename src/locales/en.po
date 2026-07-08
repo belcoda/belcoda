@@ -4932,6 +4932,7 @@ msgid "Fallback text"
 msgstr "Fallback text"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/SvelteLexical.svelte
 msgid "Insert variable"
 msgstr "Insert variable"
 
@@ -5681,6 +5682,46 @@ msgstr "Daily"
 msgid "Saved"
 msgstr "Saved"
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Failed to save notification preferences"
-msgstr "Failed to save notification preferences"
+#~ msgid "Failed to save notification preferences"
+#~ msgstr "Failed to save notification preferences"
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Search for a template variable to insert."
+msgstr "Search for a template variable to insert."
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "WhatsApp thread copied to a new draft"
+msgstr "WhatsApp thread copied to a new draft"
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Failed to copy WhatsApp thread"
+msgstr "Failed to copy WhatsApp thread"
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "This creates a new draft with a copy of this thread's messages and steps. The copy always starts as an unsent draft."
+msgstr "This creates a new draft with a copy of this thread's messages and steps. The copy always starts as an unsent draft."
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Clone"
+msgstr "Clone"
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Copying…"
+msgstr "Copying…"
+
+#~ msgid "Hello! Choose an option"
+#~ msgstr "Hello! Choose an option"
+
+#~ msgid "WhatsApp message:"
+#~ msgstr "WhatsApp message:"
+
+#: src/lib/components/flow/nodes/Message.svelte
+msgid "Message:"
+msgstr "Message:"
+
+#: src/lib/components/flow/nodes/Message.svelte
+msgid "Type your message..."
+msgstr "Type your message..."
+
+#~ msgid "Failed to load notification preferences"
+#~ msgstr "Failed to load notification preferences"

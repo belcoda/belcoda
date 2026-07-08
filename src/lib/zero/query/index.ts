@@ -69,7 +69,6 @@ import { listMyTeams } from '$lib/zero/query/team/listMyTeams';
 // user
 import { listUsers } from '$lib/zero/query/user/list';
 import { readUser } from '$lib/zero/query/user/read';
-
 // webhook
 import { listWebhooks } from '$lib/zero/query/webhook/list';
 import { readWebhook } from '$lib/zero/query/webhook/read';

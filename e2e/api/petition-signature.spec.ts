@@ -11,8 +11,7 @@ type PetitionSignatureApi = {
 	id: string;
 	petitionId: string;
 	personId: string;
-	details: { channel: { type: string } };
-	responses: unknown;
+	details: { channel: { type: string }; customFields?: Record<string, unknown> };
 };
 
 function buildPetitionBody() {
@@ -143,24 +142,25 @@ test.describe.serial('API v1 Petition Signature', () => {
 		expect(response.body.data.some((s) => s.id === ids.signatureId)).toBe(true);
 	});
 
-	test('PUT /api/v1/petitions/:petitionId/signatures/:signatureId updates `responses`', async ({
+	test('PUT /api/v1/petitions/:petitionId/signatures/:signatureId updates `details.customFields`', async ({
 		request
 	}) => {
 		const client = makeClient(request);
-		const newResponses = { question1: 'updated answer' };
+		const questionId = randomUUID();
+		const newCustomFields = { [questionId]: 'updated answer' };
 
 		const response = await client.put<PetitionSignatureApi>(
 			`/api/v1/petitions/${ids.petitionId}/signatures/${ids.signatureId}`,
-			{ responses: newResponses }
+			{ details: { channel: { type: 'adminPanel' }, customFields: newCustomFields } }
 		);
 		expect(response.status).toBe(200);
-		expect(response.body.responses).toEqual(newResponses);
+		expect(response.body.details.customFields).toEqual(newCustomFields);
 
 		// Confirm via GET that the change persisted.
 		const re = await client.get<PetitionSignatureApi>(
 			`/api/v1/petitions/${ids.petitionId}/signatures/${ids.signatureId}`
 		);
-		expect(re.body.responses).toEqual(newResponses);
+		expect(re.body.details.customFields).toEqual(newCustomFields);
 	});
 
 	test('DELETE /api/v1/petitions/:petitionId/signatures/:signatureId removes from the list', async ({

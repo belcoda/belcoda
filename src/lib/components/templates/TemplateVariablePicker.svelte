@@ -4,6 +4,7 @@
 	import { t } from '$lib/index.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils.js';
 	import { formatTemplateVariable } from '$lib/utils/template-variables';
@@ -22,7 +23,8 @@
 		triggerLabel,
 		disabled = false,
 		class: className,
-		contentClass
+		contentClass,
+		mode = 'popover'
 	}: {
 		onSelect?: (token: string, variable: TemplateVariable) => void;
 		contexts?: readonly TemplateVariableContext[];
@@ -31,6 +33,7 @@
 		disabled?: boolean;
 		class?: string;
 		contentClass?: string;
+		mode?: 'popover' | 'dialog';
 	} = $props();
 
 	let open = $state(false);
@@ -114,6 +117,11 @@
 			.filter((group) => group.variables.length > 0);
 	});
 
+	export function show() {
+		open = true;
+		searchString = '';
+	}
+
 	function selectVariable(variable: TemplateVariable) {
 		onSelect?.(formatTemplateVariable(variable), variable);
 		open = false;
@@ -123,41 +131,57 @@
 	}
 </script>
 
-<Popover.Root bind:open>
-	<Popover.Trigger bind:ref={triggerRef} class={className}>
-		{#snippet child({ props })}
-			<Button {...props} variant="outline" size="sm" {disabled} aria-label={resolvedTriggerLabel}>
-				<BracesIcon class="size-4" />
-				{resolvedTriggerLabel}
-			</Button>
-		{/snippet}
-	</Popover.Trigger>
-	<Popover.Content class={cn('w-80 p-0', contentClass)} align="end">
-		<Command.Root>
-			<Command.Input bind:value={searchString} placeholder={t`Search variables...`} />
-			<Command.List>
-				{#if visibleGroups.length === 0}
-					<Command.Empty>{t`No variables found.`}</Command.Empty>
-				{:else}
-					{#each visibleGroups as group (group.context)}
-						<Command.Group heading={getContextLabel(group.context)} value={group.context}>
-							{#each group.variables as variable (variable.key)}
-								<Command.Item
-									value={`${getVariableLabel(variable)} ${variable.key}`}
-									onSelect={() => selectVariable(variable)}
-								>
-									<div class="flex min-w-0 flex-1 items-center justify-between gap-3">
-										<span class="truncate">{getVariableLabel(variable)}</span>
-										<code class="text-xs whitespace-nowrap text-muted-foreground">
-											{formatTemplateVariable(variable)}
-										</code>
-									</div>
-								</Command.Item>
-							{/each}
-						</Command.Group>
-					{/each}
-				{/if}
-			</Command.List>
-		</Command.Root>
-	</Popover.Content>
-</Popover.Root>
+{#snippet variableList()}
+	<Command.Root>
+		<Command.Input bind:value={searchString} placeholder={t`Search variables...`} />
+		<Command.List>
+			{#if visibleGroups.length === 0}
+				<Command.Empty>{t`No variables found.`}</Command.Empty>
+			{:else}
+				{#each visibleGroups as group (group.context)}
+					<Command.Group heading={getContextLabel(group.context)} value={group.context}>
+						{#each group.variables as variable (variable.key)}
+							<Command.Item
+								value={`${getVariableLabel(variable)} ${variable.key}`}
+								onSelect={() => selectVariable(variable)}
+							>
+								<div class="flex min-w-0 flex-1 items-center justify-between gap-3">
+									<span class="truncate">{getVariableLabel(variable)}</span>
+									<code class="text-xs whitespace-nowrap text-muted-foreground">
+										{formatTemplateVariable(variable)}
+									</code>
+								</div>
+							</Command.Item>
+						{/each}
+					</Command.Group>
+				{/each}
+			{/if}
+		</Command.List>
+	</Command.Root>
+{/snippet}
+
+{#if mode === 'dialog'}
+	<Dialog.Root bind:open>
+		<Dialog.Content class={cn('w-80 p-0', contentClass)}>
+			<Dialog.Header class="sr-only">
+				<Dialog.Title>{resolvedTriggerLabel}</Dialog.Title>
+				<Dialog.Description>{t`Search for a template variable to insert.`}</Dialog.Description>
+			</Dialog.Header>
+			{@render variableList()}
+		</Dialog.Content>
+	</Dialog.Root>
+{:else}
+	<Popover.Root bind:open>
+		<Popover.Trigger bind:ref={triggerRef} class={className}>
+			{#snippet child({ props })}
+				<Button {...props} variant="outline" size="sm" {disabled} aria-label={resolvedTriggerLabel}>
+					<BracesIcon class="size-4" />
+					{resolvedTriggerLabel}
+				</Button>
+			{/snippet}
+		</Popover.Trigger>
+		<Popover.Content class={cn('w-80 p-0', contentClass)} align="end">
+			{@render variableList()}
+		</Popover.Content>
+	</Popover.Root>
+{/if}
