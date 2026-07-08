@@ -143,7 +143,7 @@ async function applyBalanceTopUpFromStripeEvent(event: Stripe.Event) {
 export function buildBetterAuth(localeInput: string) {
 	const locale = clampLocale(localeInput as LanguageCode);
 
-	const organizationPluginOptions: OrganizationOptions = {
+	const organizationPluginOptions = {
 		async sendInvitationEmail(data) {
 			try {
 				const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
@@ -289,8 +289,8 @@ export function buildBetterAuth(localeInput: string) {
 				}
 			}
 		}
-	};
-	const apiKeyPluginOptions: ApiKeyConfigurationOptions & ApiKeyOptions = {
+	} as const satisfies OrganizationOptions;
+	const apiKeyPluginOptions = {
 		storage: 'secondary-storage',
 		fallbackToDatabase: true,
 		references: 'organization',
@@ -299,8 +299,8 @@ export function buildBetterAuth(localeInput: string) {
 			timeWindow: 60 * 1000, //1 minute
 			maxRequests: 1000 //1000 requests per minute
 		}
-	};
-	const stripePluginOptions: StripeOptions = {
+	} as const satisfies ApiKeyConfigurationOptions & ApiKeyOptions;
+	const stripePluginOptions = {
 		stripeClient,
 		stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET as string,
 		createCustomerOnSignUp: true,
@@ -329,7 +329,7 @@ export function buildBetterAuth(localeInput: string) {
 		onEvent: async (event) => {
 			await applyBalanceTopUpFromStripeEvent(event);
 		}
-	};
+	} as const satisfies StripeOptions;
 
 	/* const reviewPluginsWithBearerMode = [bearer(), ...plugins];
 	const pluginsToUse =
@@ -405,25 +405,14 @@ export function buildBetterAuth(localeInput: string) {
 				ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] // Cloudflare specific header
 			}
 		},
-		plugins:
-			publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review'
-				? [
-						bearer(), //allow bearer on review environment releaes only
-						organization(organizationPluginOptions),
-						apiKey(apiKeyPluginOptions),
-						stripe(stripePluginOptions),
-						openAPI(),
-						oneTimeToken(),
-						sveltekitCookies(getRequestEvent)
-					]
-				: [
-						organization(organizationPluginOptions),
-						apiKey(apiKeyPluginOptions),
-						stripe(stripePluginOptions),
-						openAPI(),
-						oneTimeToken(),
-						sveltekitCookies(getRequestEvent)
-					],
+		plugins: [
+			organization(organizationPluginOptions),
+			apiKey(apiKeyPluginOptions),
+			stripe(stripePluginOptions),
+			openAPI(),
+			oneTimeToken(),
+			sveltekitCookies(getRequestEvent)
+		],
 		emailVerification: {
 			autoSignInAfterVerification: true,
 			sendVerificationEmail: async ({ user, url, token }, request) => {
