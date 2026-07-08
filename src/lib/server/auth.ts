@@ -405,14 +405,25 @@ export function buildBetterAuth(localeInput: string) {
 				ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] // Cloudflare specific header
 			}
 		},
-		plugins: [
-			organization(organizationPluginOptions),
-			apiKey(apiKeyPluginOptions),
-			stripe(stripePluginOptions),
-			openAPI(),
-			oneTimeToken(),
-			sveltekitCookies(getRequestEvent)
-		],
+		plugins:
+			publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review'
+				? [
+						bearer(), //allow bearer on review environment releaes only
+						organization(organizationPluginOptions),
+						apiKey(apiKeyPluginOptions),
+						stripe(stripePluginOptions),
+						openAPI(),
+						oneTimeToken(),
+						sveltekitCookies(getRequestEvent)
+					]
+				: [
+						organization(organizationPluginOptions),
+						apiKey(apiKeyPluginOptions),
+						stripe(stripePluginOptions),
+						openAPI(),
+						oneTimeToken(),
+						sveltekitCookies(getRequestEvent)
+					],
 		emailVerification: {
 			autoSignInAfterVerification: true,
 			sendVerificationEmail: async ({ user, url, token }, request) => {
