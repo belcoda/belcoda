@@ -1,21 +1,30 @@
-import { user as userTable } from '$lib/schema/drizzle';
+import { user as userTable, account as accountTable } from '$lib/schema/drizzle';
 import { faker } from '@faker-js/faker';
+import { hashPassword } from 'better-auth/crypto';
 
-const { OWNER_EMAIL_ADDRESS, OWNER_FAMILY_NAME, OWNER_GIVEN_NAME, OWNER_PROFILE_PIC_URL } =
-	process.env;
+const {
+	OWNER_EMAIL_ADDRESS,
+	OWNER_FAMILY_NAME,
+	OWNER_GIVEN_NAME,
+	OWNER_PROFILE_PIC_URL,
+	OWNER_PASSWORD
+} = process.env;
 
 const EMAIL = OWNER_EMAIL_ADDRESS!.split(',');
 const GIVEN_NAME = OWNER_GIVEN_NAME!.split(',');
 const FAMILY_NAME = OWNER_FAMILY_NAME!.split(',');
 const PROFILE_PICTURE = OWNER_PROFILE_PIC_URL!.split(',');
-
-export function generateUsers({
+const PASSWORD = OWNER_PASSWORD!.split(',');
+export async function generateUsers({
 	organizationId,
 	index = 0
 }: {
 	organizationId: string;
 	index?: number;
-}): (typeof userTable.$inferInsert)[] {
+}): Promise<{
+	users: (typeof userTable.$inferInsert)[];
+	accounts: (typeof accountTable.$inferInsert)[];
+}> {
 	if (
 		EMAIL.length === 0 ||
 		GIVEN_NAME.length === 0 ||
@@ -36,11 +45,24 @@ export function generateUsers({
 		);
 	}
 	const users: (typeof userTable.$inferInsert)[] = [];
+	const accounts: (typeof accountTable.$inferInsert)[] = [];
 
 	// Add the main owner account(s) from .env
 	for (let i = 0; i < EMAIL.length; i++) {
-		const user: typeof userTable.$inferInsert = {
+		const userId = faker.string.uuid();
+		const hashedPassword = await hashPassword(PASSWORD[i]);
+		const account: typeof accountTable.$inferInsert = {
 			id: faker.string.uuid(),
+			accountId: userId, //equal to userId for credential accounts.
+			providerId: 'credential',
+			userId: userId,
+			password: hashedPassword,
+			createdAt: new Date(),
+			updatedAt: new Date()
+		};
+		accounts.push(account);
+		const user: typeof userTable.$inferInsert = {
+			id: userId,
 			name: `${GIVEN_NAME[i]} ${FAMILY_NAME[i]}`,
 			email: EMAIL[i],
 			emailVerified: true,
@@ -72,5 +94,5 @@ export function generateUsers({
 		users.push(user);
 	}
 
-	return users;
+	return { users, accounts };
 }

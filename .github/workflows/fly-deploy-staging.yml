@@ -49,6 +49,7 @@ jobs:
           PUBLIC_DEFAULT_WORKSPACE_LOGO: ${{ vars.PUBLIC_DEFAULT_WORKSPACE_LOGO }}
           OWNER_ORGANIZATION_NAME: ${{ vars.OWNER_ORGANIZATION_NAME }}
           OWNER_ORGANIZATION_SLUG: ${{ vars.OWNER_ORGANIZATION_SLUG }}
+          OWNER_PASSWORD: ${{ secrets.OWNER_PASSWORD }} # comma separated list of passwords
 
       # Zero deploy
       - run: flyctl deploy -c deploy/fly.zero.staging.toml --remote-only
