@@ -127,7 +127,7 @@
 		"pg-boss": "^12.19.1",
 		"postgres": "^3.4.9",
 		"qr": "^0.6.0",
-		"stripe": "^22.2.1",
+		"stripe": "^22.3.0",
 		"svelte-easy-crop": "^5.0.1",
 		"svelte-lexical": "^0.6.4",
 		"svelte-multiselect": "^11.7.2",
