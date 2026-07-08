@@ -43,6 +43,8 @@
 							if (authToken) {
 								localStorage.setItem('belcoda_bearer_token', authToken);
 							} else {
+								// no token returned — clear any stale token so Zero doesn't reuse a previous session's credential
+								localStorage.removeItem('belcoda_bearer_token');
 								console.error('No auth token found in response headers');
 							}
 						}

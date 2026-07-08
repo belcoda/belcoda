@@ -10,11 +10,25 @@ const {
 	OWNER_PASSWORD
 } = process.env;
 
-const EMAIL = OWNER_EMAIL_ADDRESS!.split(',');
-const GIVEN_NAME = OWNER_GIVEN_NAME!.split(',');
-const FAMILY_NAME = OWNER_FAMILY_NAME!.split(',');
-const PROFILE_PICTURE = OWNER_PROFILE_PIC_URL!.split(',');
-const PASSWORD = OWNER_PASSWORD!.split(',');
+// Validate presence before splitting: a missing var would otherwise throw a raw
+// TypeError on `.split` at import time, before any of the checks below could run.
+if (
+	!OWNER_EMAIL_ADDRESS ||
+	!OWNER_GIVEN_NAME ||
+	!OWNER_FAMILY_NAME ||
+	!OWNER_PROFILE_PIC_URL ||
+	!OWNER_PASSWORD
+) {
+	throw new Error(
+		'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL, OWNER_PASSWORD must all be set'
+	);
+}
+
+const EMAIL = OWNER_EMAIL_ADDRESS.split(',');
+const GIVEN_NAME = OWNER_GIVEN_NAME.split(',');
+const FAMILY_NAME = OWNER_FAMILY_NAME.split(',');
+const PROFILE_PICTURE = OWNER_PROFILE_PIC_URL.split(',');
+const PASSWORD = OWNER_PASSWORD.split(',');
 export async function generateUsers({
 	organizationId,
 	index = 0
@@ -25,17 +39,6 @@ export async function generateUsers({
 	users: (typeof userTable.$inferInsert)[];
 	accounts: (typeof accountTable.$inferInsert)[];
 }> {
-	if (
-		EMAIL.length === 0 ||
-		GIVEN_NAME.length === 0 ||
-		FAMILY_NAME.length === 0 ||
-		PROFILE_PICTURE.length === 0 ||
-		PASSWORD.length === 0
-	) {
-		throw new Error(
-			'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL, OWNER_PASSWORD are not set'
-		);
-	}
 	if (
 		EMAIL.length !== GIVEN_NAME.length ||
 		EMAIL.length !== FAMILY_NAME.length ||
