@@ -65,7 +65,7 @@ class ZeroInstance {
 		this.#z = new Z({
 			cacheURL,
 			schema,
-			...(publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review' ? { auth: authToken } : {}), //only add the auth token in review deployments
+			...(authToken ? { auth: authToken } : {}), //only add the auth token in review deployments (authToken is only set there); omit it entirely when no token is stored so we never pass auth: null
 			mutators,
 			kvStore: 'idb',
 			context: parsedContext,
