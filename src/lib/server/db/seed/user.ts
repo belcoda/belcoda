@@ -29,19 +29,21 @@ export async function generateUsers({
 		EMAIL.length === 0 ||
 		GIVEN_NAME.length === 0 ||
 		FAMILY_NAME.length === 0 ||
-		PROFILE_PICTURE.length === 0
+		PROFILE_PICTURE.length === 0 ||
+		PASSWORD.length === 0
 	) {
 		throw new Error(
-			'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL are not set'
+			'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL, OWNER_PASSWORD are not set'
 		);
 	}
 	if (
 		EMAIL.length !== GIVEN_NAME.length ||
 		EMAIL.length !== FAMILY_NAME.length ||
-		EMAIL.length !== PROFILE_PICTURE.length
+		EMAIL.length !== PROFILE_PICTURE.length ||
+		EMAIL.length !== PASSWORD.length
 	) {
 		throw new Error(
-			'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL must have the same length'
+			'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL, OWNER_PASSWORD must have the same length'
 		);
 	}
 	const users: (typeof userTable.$inferInsert)[] = [];
