@@ -2,7 +2,12 @@ import * as Sentry from '@sentry/sveltekit';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 
 import { env } from '$env/dynamic/public';
-const { PUBLIC_ROOT_DOMAIN } = env;
+const {
+	PUBLIC_ROOT_DOMAIN,
+	PUBLIC_ZERO_SERVER,
+	PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME,
+	PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_REGION
+} = env;
 import { env as privateEnv } from '$env/dynamic/private';
 const { EASYCRON_SECRET, NODE_ENV } = privateEnv;
 import { svelteKitHandler } from 'better-auth/svelte-kit';
@@ -17,6 +22,12 @@ const log = pino(import.meta.url);
 import { sequence } from '@sveltejs/kit/hooks';
 import { LOCALES, type Locale } from '$lib/utils/language';
 import { buildBetterAuth } from '$lib/server/auth';
+import {
+	augmentContentSecurityPolicy,
+	getZeroSyncConnectSources,
+	getS3UploadConnectSources,
+	isPublicEmbedPage
+} from '$lib/server/csp';
 
 import * as main from './locales/main.loader.server.svelte.js';
 import * as js from './locales/js.loader.server.js';
@@ -196,14 +207,18 @@ type BetterAuth = ReturnType<typeof buildBetterAuth>;
 
 /**
  * If an `authToken` search param is present, verifies it as a one-time token and, on success, sets
- * `event.locals.session` to the resulting session. Verification failures are logged and otherwise
- * ignored, leaving the previously-fetched session in place.
+ * `event.locals.session` to the resulting session, then redirects to the same URL with `authToken`
+ * removed so the browser no longer holds the single-use token (which would otherwise 500 on reuse
+ * from a refresh or follow-up data request). Verification failures are logged and otherwise ignored,
+ * leaving the previously-fetched session in place. This runs for both event and petition public
+ * pages, keeping their token handling identical.
  */
 async function applyOneTimeTokenSession(event: RequestEvent, auth: BetterAuth): Promise<void> {
 	const token = event.url.searchParams.get('authToken');
 	if (!token) {
 		return;
 	}
+	let verified = false;
 	try {
 		log.debug({ pathname: event.url.pathname }, 'One-time auth token found in search params');
 		const session = await auth.api.verifyOneTimeToken({
@@ -211,15 +226,21 @@ async function applyOneTimeTokenSession(event: RequestEvent, auth: BetterAuth): 
 				token: token
 			}
 		});
-		/* event.url.searchParams.delete('authToken'); //kill the token so it can't be used again
-															log.debug({ url: event.url.toString() }, '[DEBUG] Token deleted from search params'); */
 		log.debug(
 			{ verified: session?.session != null, time: Date.now() },
 			'[DEBUG] Session verified from one time token'
 		);
 		event.locals.session = session;
+		verified = true;
 	} catch (error) {
 		log.error(error, 'Error verifying one time token');
+	}
+	// Redirect outside the try/catch so the thrown redirect is not swallowed by error handling.
+	if (verified) {
+		const cleanedUrl = new URL(event.url);
+		cleanedUrl.searchParams.delete('authToken'); //kill the token so it can't be reused
+		log.debug({ url: cleanedUrl.toString() }, '[DEBUG] Redirecting to strip one-time token');
+		redirect(303, cleanedUrl.pathname + cleanedUrl.search + cleanedUrl.hash);
 	}
 }
 
@@ -285,14 +306,14 @@ const handlebetterAuth: Handle = async ({ event, resolve }) => {
 const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
-	// Anti-clickjacking protection
-	// response.headers.set('X-Frame-Options', 'DENY'); //can't use yet, as we still need framing for google oauth
-
 	// HSTS - Force HTTPS for 1 year
 	response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
 	// Prevent MIME sniffing
 	response.headers.set('X-Content-Type-Options', 'nosniff');
+
+	// Limit referrer data shared with external origins
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
 	// Cross-Origin Resource Policy
 	// Don't set CORP for static assets (/_app/immutable/*) to avoid preload issues in strict browsers
@@ -317,6 +338,24 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const contentType = response.headers.get('content-type') ?? '';
 	if (contentType.includes('text/html')) {
 		response.headers.set('Cache-Control', 'no-cache');
+
+		const csp = response.headers.get('Content-Security-Policy');
+		if (csp) {
+			const augmented = augmentContentSecurityPolicy(csp, {
+				extraConnectSources: [
+					...getZeroSyncConnectSources(PUBLIC_ZERO_SERVER),
+					...getS3UploadConnectSources(
+						PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME,
+						PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_REGION
+					)
+				],
+				allowEmbedding: isPublicEmbedPage(event.url.pathname, event.url.searchParams, {
+					host: event.url.host,
+					rootDomain: PUBLIC_ROOT_DOMAIN
+				})
+			});
+			response.headers.set('Content-Security-Policy', augmented);
+		}
 	}
 
 	return response;

@@ -31,7 +31,7 @@ jobs:
       url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: Get code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
         with:
           persist-credentials: false
 
@@ -62,7 +62,7 @@ jobs:
 
       - name: Deploy PR app to Fly.io
         id: deploy
-        uses: superfly/fly-pr-review-apps@1.2.1
+        uses: superfly/fly-pr-review-apps@6f79ec3a7d017082ed11e7c464dae298ca75b21b #1.2.1
         with:
           config: ./fly.toml
           # These are long-lived STAGING secrets (no production/real data), scoped to the

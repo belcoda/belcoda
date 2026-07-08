@@ -156,6 +156,7 @@
 						{form}
 						{layout}
 						{success}
+						{shareCard}
 					/>
 				</div>
 			</div>
@@ -175,15 +176,13 @@
 	</div>
 {/if}
 
-{#if layout === 'default' && !success}
-	<div class="mx-auto mt-4 max-w-5xl px-4 sm:px-6 lg:px-8">
-		<Card.Root class="ml-auto w-full lg:w-[calc((100%-2rem)/2)]">
-			<Card.Content class="pt-6">
-				<Button variant="outline" class="w-full">
-					<ShareIcon class="mr-2 size-4" />
-					{t`Share this petition`}
-				</Button>
-			</Card.Content>
-		</Card.Root>
-	</div>
-{/if}
+{#snippet shareCard()}
+	<Card.Root class="mt-4">
+		<Card.Content class="pt-6">
+			<Button variant="outline" class="w-full">
+				<ShareIcon class="mr-2 size-4" />
+				{t`Share this petition`}
+			</Button>
+		</Card.Content>
+	</Card.Root>
+{/snippet}
