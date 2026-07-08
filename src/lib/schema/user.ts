@@ -9,8 +9,7 @@ export {
 	type UserNotificationSettingsSchema,
 	userNotificationSettingsPatchSchema,
 	type UserNotificationSettingsPatchSchema,
-	parseUserSettings,
-	mergeUserSettings
+	parseUserSettings
 } from '$lib/schema/user/settings';
 export { defaultUserSettings } from '$lib/schema/user/settings';
 

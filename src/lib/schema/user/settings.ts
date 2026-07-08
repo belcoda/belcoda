@@ -32,26 +32,3 @@ export function parseUserSettings(value: unknown): UserSettingsSchema | undefine
 	const result = v.safeParse(userSettingsSchema, value);
 	return result.success ? result.output : undefined;
 }
-
-export function mergeUserSettings(
-	current: unknown,
-	patch: { notifications?: UserNotificationSettingsPatchSchema }
-): UserSettingsSchema {
-	const parsed = parseUserSettings(current);
-	const defaults = defaultUserSettings();
-	const base = defaults.notifications!;
-	return {
-		...defaults,
-		...parsed,
-		notifications: {
-			digestEnabled:
-				patch.notifications?.digestEnabled ??
-				parsed?.notifications?.digestEnabled ??
-				base.digestEnabled,
-			digestFrequency:
-				patch.notifications?.digestFrequency ??
-				parsed?.notifications?.digestFrequency ??
-				base.digestFrequency
-		}
-	};
-}
