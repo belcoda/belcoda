@@ -11,15 +11,8 @@ import { dev } from '$app/environment';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 
-import {
-	openAPI,
-	organization,
-	bearer,
-	type OrganizationOptions,
-	type OpenAPIOptions,
-	type BearerOptions
-} from 'better-auth/plugins';
-import { oneTimeToken, type OneTimeTokenOptions } from 'better-auth/plugins/one-time-token';
+import { openAPI, organization, bearer, type OrganizationOptions } from 'better-auth/plugins';
+import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
 import { apiKey, type ApiKeyOptions, type ApiKeyConfigurationOptions } from '@better-auth/api-key';
 import { stripe, type StripeOptions } from '@better-auth/stripe';
@@ -331,9 +324,6 @@ export function buildBetterAuth(localeInput: string) {
 		}
 	} as const satisfies StripeOptions;
 
-	/* const reviewPluginsWithBearerMode = [bearer(), ...plugins];
-	const pluginsToUse =
-		publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review' ? reviewPluginsWithBearerMode : plugins; */
 	return betterAuth({
 		appName: 'Belcoda',
 		emailAndPassword: {
