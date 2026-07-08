@@ -93,13 +93,20 @@ function formatPeople(people: { name: string }[], verb: string): string {
 	return `${people[0].name}, ${people[1].name}, and ${extra} other${extra === 1 ? '' : 's'} ${verb}`;
 }
 
+function buildAppUrl(appUrl: string, path: string, organizationId: string): string {
+	const url = new URL(path, appUrl);
+	url.searchParams.set('org', organizationId);
+	return url.toString();
+}
+
 export function buildDigestContext(options: {
 	notifications: NotificationRow[];
 	organizationName: string;
+	organizationId: string;
 	weekOf: string;
 	appUrl: string;
 }): DigestContext {
-	const { notifications, organizationName, weekOf, appUrl } = options;
+	const { notifications, organizationName, organizationId, weekOf, appUrl } = options;
 	const groups = groupNotifications(notifications);
 
 	const sectionMap = new Map<string, { label: string; items: DigestItem[] }>();
@@ -116,7 +123,7 @@ export function buildDigestContext(options: {
 				item = {
 					title: group.subjectTitle ?? 'Event',
 					detail: formatPeople(group.people, 'signed up'),
-					url: `${appUrl}/events/${group.referenceId}`
+					url: buildAppUrl(appUrl, `/events/${group.referenceId}`, organizationId)
 				};
 				break;
 			}
@@ -126,7 +133,7 @@ export function buildDigestContext(options: {
 				item = {
 					title: group.subjectTitle ?? 'Petition',
 					detail: formatPeople(group.people, 'signed'),
-					url: `${appUrl}/petitions/${group.referenceId}`
+					url: buildAppUrl(appUrl, `/petitions/${group.referenceId}`, organizationId)
 				};
 				break;
 			}
@@ -136,8 +143,8 @@ export function buildDigestContext(options: {
 				sectionLabel = 'WhatsApp messages';
 				const person = group.people[0];
 				const personUrl = person?.id
-					? `${appUrl}/community/${person.id}`
-					: `${appUrl}/notifications`;
+					? buildAppUrl(appUrl, `/community/${person.id}`, organizationId)
+					: buildAppUrl(appUrl, '/notifications', organizationId);
 				item = {
 					title: person?.name ?? 'WhatsApp contact',
 					detail: `${group.count} new message${group.count === 1 ? '' : 's'}`,
@@ -151,7 +158,7 @@ export function buildDigestContext(options: {
 				item = {
 					title: group.subjectTitle ?? 'Notification',
 					detail: '',
-					url: `${appUrl}/notifications`
+					url: buildAppUrl(appUrl, '/notifications', organizationId)
 				};
 			}
 		}

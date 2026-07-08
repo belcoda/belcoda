@@ -5,6 +5,9 @@ import { and, eq, isNull, or, sql } from 'drizzle-orm';
 import { buildDigestContext } from '$lib/server/utils/email/digest_context';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { env } from '$env/dynamic/private';
+import { env as publicEnv } from '$env/dynamic/public';
+import { dev } from '$app/environment';
+import { getEmailSignature } from '$lib/server/utils/email/signature';
 
 const log = pino(import.meta.url);
 
@@ -20,14 +23,11 @@ export async function sendDigest({
 }: {
 	frequency?: 'daily' | 'weekly';
 } = {}) {
-	const { POSTMARK_DIGEST_FROM, POSTMARK_DIGEST_TEMPLATE_ALIAS, PUBLIC_POSTMARK_SENDING_DOMAIN } =
-		env;
+	const { POSTMARK_DIGEST_TEMPLATE_ALIAS } = env;
+	const { PUBLIC_ROOT_DOMAIN } = publicEnv;
 
-	const from =
-		POSTMARK_DIGEST_FROM ??
-		`Belcoda <notifications@${PUBLIC_POSTMARK_SENDING_DOMAIN ?? 'belcoda.com'}>`;
 	const template = POSTMARK_DIGEST_TEMPLATE_ALIAS ?? 'notification-digest';
-	const appUrl = 'https://app.belcoda.com';
+	const appUrl = `http${dev ? '' : 's'}://app.${PUBLIC_ROOT_DOMAIN}`;
 
 	const eligibleUsers = await drizzle
 		.select({ id: user.id, email: user.email, name: user.name, settings: user.settings })
@@ -63,7 +63,7 @@ export async function sendDigest({
 					type: notification.type,
 					referenceId: notification.referenceId,
 					organizationId: notification.organizationId,
-					organizationName: organization.name,
+					organization,
 					payload: notification.payload,
 					status: notification.status,
 					createdAt: notification.createdAt
@@ -77,18 +77,27 @@ export async function sendDigest({
 				continue;
 			}
 
-			const byOrg = new Map<string, { orgName: string; notifications: typeof rows }>();
+			const byOrg = new Map<
+				string,
+				{ org: (typeof rows)[number]['organization']; notifications: typeof rows }
+			>();
 			for (const row of rows) {
 				if (!byOrg.has(row.organizationId)) {
-					byOrg.set(row.organizationId, { orgName: row.organizationName, notifications: [] });
+					byOrg.set(row.organizationId, { org: row.organization, notifications: [] });
 				}
 				byOrg.get(row.organizationId)!.notifications.push(row);
 			}
 
-			for (const [, { orgName, notifications: orgRows }] of byOrg) {
+			for (const [, { org, notifications: orgRows }] of byOrg) {
+				const emailSignature = await getEmailSignature({
+					emailFromSignatureId: org.settings.email.defaultFromSignatureId,
+					organization: org
+				});
+				const from = `${emailSignature.name} <${emailSignature.emailAddress}>`;
 				const context = buildDigestContext({
 					notifications: orgRows,
-					organizationName: orgName,
+					organizationName: org.name,
+					organizationId: org.id,
 					weekOf: weekOf(),
 					appUrl
 				});
@@ -98,7 +107,8 @@ export async function sendDigest({
 					from,
 					template,
 					stream: 'broadcast',
-					context
+					context,
+					replyTo: emailSignature.replyTo ?? undefined
 				});
 				sent++;
 			}
