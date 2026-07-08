@@ -155,7 +155,7 @@ export function buildBetterAuth(localeInput: string) {
 					context: emailContext
 				});
 			} catch (e) {
-				log.error({ error: e, email: data.email }, 'Failed to send invitation email');
+				log.error({ error: e }, 'Failed to send invitation email');
 				if (!dev) throw e;
 			}
 		},
