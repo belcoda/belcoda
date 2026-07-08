@@ -19,7 +19,7 @@ import {
 import type { OrganizationSchema } from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
-import type { UserSchema } from '$lib/schema/user';
+import type { UserSchema, UserSettingsSchema } from '$lib/schema/user';
 import type { InvitationSchema } from '$lib/schema/invitation';
 import type { ApiKeySchema } from '$lib/schema/api-key';
 import type {
