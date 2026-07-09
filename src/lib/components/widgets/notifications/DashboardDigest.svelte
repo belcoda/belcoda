@@ -1,11 +1,9 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { locale, t } from '$lib/index.svelte';
-	import { appState, getListFilter } from '$lib/state.svelte';
+	import { appState } from '$lib/state.svelte';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { formatNumber } from '$lib/utils/number';
-	import queries from '$lib/zero/query/index';
-	import { z } from '$lib/zero.svelte';
 
 	const typeLabelMap: Record<string, string> = {
 		whatsapp_unread: t`Unread WhatsApp`,
@@ -16,12 +14,7 @@
 		generic: t`Notification`
 	};
 
-	const digestFilter = $derived.by(() => ({
-		...getListFilter(appState.organizationId, { pageSize: 8 }),
-		status: null
-	}));
-	const digestQuery = $derived.by(() => z.createQuery(queries.notification.list(digestFilter)));
-	const notifications = $derived(digestQuery.data ?? []);
+	const notifications = $derived(appState.notificationItems);
 	const displayedNotifications = $derived(
 		notifications.filter((notification) => notification.status !== 'dismissed')
 	);
@@ -49,9 +42,9 @@
 		</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		{#if digestQuery.details.type === 'unknown'}
+		{#if appState.notifications.details.type === 'unknown'}
 			<p class="text-sm text-muted-foreground">{t`Loading notifications...`}</p>
-		{:else if digestQuery.details.type === 'error'}
+		{:else if appState.notifications.details.type === 'error'}
 			<p class="text-sm text-destructive">{t`Unable to load notifications.`}</p>
 		{:else if recentNotifications.length === 0}
 			<p class="text-sm text-muted-foreground">{t`No notifications to show right now.`}</p>
