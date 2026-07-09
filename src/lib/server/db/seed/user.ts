@@ -1,46 +1,73 @@
-import { user as userTable } from '$lib/schema/drizzle';
+import { user as userTable, account as accountTable } from '$lib/schema/drizzle';
 import { faker } from '@faker-js/faker';
+import { hashPassword } from 'better-auth/crypto';
 
-const { OWNER_EMAIL_ADDRESS, OWNER_FAMILY_NAME, OWNER_GIVEN_NAME, OWNER_PROFILE_PIC_URL } =
-	process.env;
+const {
+	OWNER_EMAIL_ADDRESS,
+	OWNER_FAMILY_NAME,
+	OWNER_GIVEN_NAME,
+	OWNER_PROFILE_PIC_URL,
+	OWNER_PASSWORD
+} = process.env;
 
-const EMAIL = OWNER_EMAIL_ADDRESS!.split(',');
-const GIVEN_NAME = OWNER_GIVEN_NAME!.split(',');
-const FAMILY_NAME = OWNER_FAMILY_NAME!.split(',');
-const PROFILE_PICTURE = OWNER_PROFILE_PIC_URL!.split(',');
+// Validate presence before splitting: a missing var would otherwise throw a raw
+// TypeError on `.split` at import time, before any of the checks below could run.
+if (
+	!OWNER_EMAIL_ADDRESS ||
+	!OWNER_GIVEN_NAME ||
+	!OWNER_FAMILY_NAME ||
+	!OWNER_PROFILE_PIC_URL ||
+	!OWNER_PASSWORD
+) {
+	throw new Error(
+		'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL, OWNER_PASSWORD must all be set'
+	);
+}
 
-export function generateUsers({
+const EMAIL = OWNER_EMAIL_ADDRESS.split(',');
+const GIVEN_NAME = OWNER_GIVEN_NAME.split(',');
+const FAMILY_NAME = OWNER_FAMILY_NAME.split(',');
+const PROFILE_PICTURE = OWNER_PROFILE_PIC_URL.split(',');
+const PASSWORD = OWNER_PASSWORD.split(',');
+export async function generateUsers({
 	organizationId,
 	index = 0
 }: {
 	organizationId: string;
 	index?: number;
-}): (typeof userTable.$inferInsert)[] {
-	if (
-		EMAIL.length === 0 ||
-		GIVEN_NAME.length === 0 ||
-		FAMILY_NAME.length === 0 ||
-		PROFILE_PICTURE.length === 0
-	) {
-		throw new Error(
-			'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL are not set'
-		);
-	}
+}): Promise<{
+	users: (typeof userTable.$inferInsert)[];
+	accounts: (typeof accountTable.$inferInsert)[];
+}> {
 	if (
 		EMAIL.length !== GIVEN_NAME.length ||
 		EMAIL.length !== FAMILY_NAME.length ||
-		EMAIL.length !== PROFILE_PICTURE.length
+		EMAIL.length !== PROFILE_PICTURE.length ||
+		EMAIL.length !== PASSWORD.length
 	) {
 		throw new Error(
-			'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL must have the same length'
+			'OWNER_EMAIL_ADDRESS, OWNER_GIVEN_NAME, OWNER_FAMILY_NAME, OWNER_PROFILE_PIC_URL, OWNER_PASSWORD must have the same length'
 		);
 	}
 	const users: (typeof userTable.$inferInsert)[] = [];
+	const accounts: (typeof accountTable.$inferInsert)[] = [];
 
 	// Add the main owner account(s) from .env
 	for (let i = 0; i < EMAIL.length; i++) {
-		const user: typeof userTable.$inferInsert = {
+		const userId = faker.string.uuid();
+		const hashedPassword = await hashPassword(PASSWORD[i]);
+		const account: typeof accountTable.$inferInsert = {
 			id: faker.string.uuid(),
+			accountId: userId, //equal to userId for credential accounts.
+			providerId: 'credential',
+			userId: userId,
+			password: hashedPassword,
+			createdAt: new Date(),
+			updatedAt: new Date()
+		};
+		accounts.push(account);
+		const user: typeof userTable.$inferInsert = {
+			id: userId,
 			name: `${GIVEN_NAME[i]} ${FAMILY_NAME[i]}`,
 			email: EMAIL[i],
 			emailVerified: true,
@@ -72,5 +99,5 @@ export function generateUsers({
 		users.push(user);
 	}
 
-	return users;
+	return { users, accounts };
 }
