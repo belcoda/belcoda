@@ -17,7 +17,6 @@ export async function buildPersonResourceSpec() {
 		personOpenApiSchema,
 		createPersonRequestOpenApiSchema,
 		updatePersonRequestOpenApiSchema,
-		bulkUpsertPersonRequestOpenApiSchema,
 		personNoteOpenApiSchema,
 		createPersonNoteRequestOpenApiSchema,
 		updatePersonNoteRequestOpenApiSchema
