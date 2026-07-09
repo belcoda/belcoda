@@ -101,7 +101,8 @@ export function transformToWhatsappTemplateParamName(input: string) {
 		.toLowerCase()
 		.replace(/[^a-z_]/g, '_') // Replace unwanted chars with _
 		.replace(/_+/g, '_') // Collapse multiple _ into one
-		.replace(/^_+|_+$/g, ''); // Trim leading/trailing _
+		.replace(/^_+/, '')
+		.replace(/_+$/, ''); // Trim leading/trailing _
 }
 
 export const whatsappTemplateParamName = v.pipe(
