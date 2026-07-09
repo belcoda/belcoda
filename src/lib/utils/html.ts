@@ -1,10 +1,35 @@
+function removeHtmlTags(text: string): string {
+	let result = '';
+	let tagStart = -1;
+
+	for (let index = 0; index < text.length; index += 1) {
+		const character = text[index];
+
+		if (tagStart === -1) {
+			if (character === '<') {
+				tagStart = index;
+			} else {
+				result += character;
+			}
+		} else if (character === '>') {
+			tagStart = -1;
+		}
+	}
+
+	if (tagStart !== -1) {
+		result += text.slice(tagStart);
+	}
+
+	return result;
+}
+
 export function stripHtmlAndTrim(html: string | null | undefined): string {
 	if (html === null || html === undefined || html === '') return '';
 	const withSpaces = html
 		.replace(/<\s*(p|br)[^>]*>/gi, ' ') // Replace <p>, <br> with space
 		.replace(/<\/p>/gi, ' '); // Replace </p> with space
 
-	const noTags = withSpaces.replace(/<[^>]*>/g, ''); // Remove other tags
+	const noTags = removeHtmlTags(withSpaces);
 	const normalized = noTags.replace(/\s+/g, ' ').trim(); // Normalize spaces
 
 	return normalized.slice(0, 90);
@@ -13,7 +38,7 @@ export function stripHtmlTags(html: string | null | undefined): string {
 	if (html === null || html === undefined || html === '') return '';
 	//replace <p> and <br> with line breaks
 	const withLineBreaks = html.replace(/<\s*(p|br)[^>]*>/gi, '\n');
-	const noTags = withLineBreaks.replace(/<[^>]*>/g, ''); // Remove other tags
+	const noTags = removeHtmlTags(withLineBreaks);
 	const normalized = noTags.replace(/[ \t]+/g, ' ').trim(); // Only normalize horizontal whitespace
 
 	return normalized;
@@ -51,7 +76,7 @@ export function htmlToPlaintext(html: string | null | undefined): string {
 	text = text.replace(/<\s*p[^>]*>/gi, '\n\n').replace(/<\s*\/p\s*>/gi, '');
 
 	// Strip all other tags
-	text = text.replace(/<[^>]+>/g, '');
+	text = removeHtmlTags(text);
 
 	// Decode HTML entities
 	text = decodeHTMLEntities(text);
