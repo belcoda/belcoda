@@ -53,9 +53,15 @@ import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
 import type { JsonSchema } from '$lib/schema/helpers';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
-
+import type {
+	WhatsappAccount,
+	WhatsappAccountScope,
+	WhatsappAccountMetadata,
+	WhatsappAccountDetails
+} from '$lib/schema/whatsapp-account';
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+
 import { type FilterGroupType } from '$lib/schema/person/filter';
 import type { LedgerEntryMetadataSchema, LedgerSchema } from '$lib/schema/ledger';
 import {
@@ -1077,6 +1083,29 @@ export const whatsappLog = pgTable('whatsapp_log', {
 	payload: jsonb('payload').notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
 });
+
+export const whatsappAccount = pgTable(
+	'whatsapp_account',
+	{
+		id: uuid('id').primaryKey(),
+		referenceId: uuid('reference_id').notNull(),
+		scope: text('scope').$type<WhatsappAccountScope>().notNull(),
+		identifier: text('identifier').notNull().unique(),
+		details: jsonb('details').$type<WhatsappAccountDetails>().notNull(),
+		metadata: jsonb('metadata').$type<WhatsappAccountMetadata>().notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [index('whatsapp_account_reference_idx').on(table.referenceId)]
+);
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type WhatsappAccountValibotMatchesDrizzle = IsTrue<
+	WhatsappAccount extends typeof whatsappAccount.$inferSelect ? true : false
+>;
+type WhatsappAccountDrizzleMatchesValibot = IsTrue<
+	typeof whatsappAccount.$inferSelect extends WhatsappAccount ? true : false
+>;
 
 // relations for all tables at the end of the file
 
