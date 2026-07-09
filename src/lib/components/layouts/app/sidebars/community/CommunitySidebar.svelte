@@ -40,18 +40,7 @@
 	const personList = $derived.by(() =>
 		z.createQuery(queries.person.list(paginatedPersonList.pageFilter))
 	);
-	const unreadNotificationsQuery = $derived.by(() =>
-		z.createQuery(
-			queries.notification.list({
-				...getListFilter(appState.organizationId, { pageSize: 200 }),
-				status: 'unread'
-			})
-		)
-	);
-	const unreadReferenceIds = $derived.by(
-		() =>
-			new Set((unreadNotificationsQuery.data ?? []).map((notification) => notification.referenceId))
-	);
+	const unreadReferenceIds = $derived(appState.unreadNotificationReferenceIds);
 
 	watch(
 		() => personList.data,
