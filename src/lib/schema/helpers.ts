@@ -202,15 +202,21 @@ export const email = v.pipe(
 	v.email()
 );
 
-// This regex uses a negative lookahead to ensure the email address is NOT a public email domain
-// Also, using belcoda.org or belcoda.com is not allowed, because they would be automatically verified by Postmark
-const PUBLIC_EMAIL_DOMAIN_REGEXP = new RegExp(
-	/^(?!.*@(gmail\.com|yahoo\.com|hotmail\.com|belcoda\.org|belcoda\.com|outlook\.com|aol\.com|icloud\.com)$).+@.+\..+$/
-);
+// Rejects public email providers and belcoda.com/org (which Postmark auto-verifies)
+const BLOCKED_EMAIL_DOMAINS = new Set([
+	'gmail.com',
+	'yahoo.com',
+	'hotmail.com',
+	'belcoda.org',
+	'belcoda.com',
+	'outlook.com',
+	'aol.com',
+	'icloud.com'
+]);
 export const ownedDomainEmail = v.pipe(
 	email,
-	v.regex(
-		PUBLIC_EMAIL_DOMAIN_REGEXP,
+	v.check(
+		(value) => !BLOCKED_EMAIL_DOMAINS.has(value.slice(value.indexOf('@') + 1).toLowerCase()),
 		'Must use a company email address, not a public email service'
 	)
 );
