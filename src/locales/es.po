@@ -5665,23 +5665,3 @@ msgstr ""
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Type your message..."
 msgstr ""
-
-#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
-msgid "WhatsApp thread copied to a new draft"
-msgstr ""
-
-#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
-msgid "Failed to copy WhatsApp thread"
-msgstr ""
-
-#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
-msgid "This creates a new draft with a copy of this thread's messages and steps. The copy always starts as an unsent draft."
-msgstr ""
-
-#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
-msgid "Clone"
-msgstr ""
-
-#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
-msgid "Copying…"
-msgstr ""
