@@ -12,7 +12,7 @@ import type { Flow, Node, Edge } from '$lib/schema/flow/index';
  * - `message`/`templateMessage` button ids are regenerated into the same map.
  * - `targeting` nodes have their `data.filter` reset to `defaultFilterGroup`.
  * - Other node data is preserved untouched.
- * - Edges are remapped through the id map (source/target/sourceHandle) and their
+ * - Edges are remapped through the id map (source/target/sourceHandle/targetHandle) and their
  *   ids regenerated using the SvelteFlow `xy-edge__` convention.
  */
 export function cloneFlow(flow: Flow): Flow {
@@ -75,10 +75,17 @@ export function cloneFlow(flow: Flow): Flow {
 			}
 		}
 
-		// targetHandle is passed through / remapped defensively when present.
+		// targetHandle is remapped through the same id map as sourceHandle; unresolved
+		// handles indicate a dangling reference and should fail loudly, not silently
+		// leak a stale id into the clone.
 		let newTargetHandle: string | undefined;
 		if (edge.targetHandle != null) {
-			newTargetHandle = idMap.get(edge.targetHandle) ?? edge.targetHandle;
+			newTargetHandle = idMap.get(edge.targetHandle);
+			if (newTargetHandle === undefined) {
+				throw new Error(
+					`cloneFlow: edge references unknown targetHandle id "${edge.targetHandle}"`
+				);
+			}
 		}
 
 		const remapped: Edge = {

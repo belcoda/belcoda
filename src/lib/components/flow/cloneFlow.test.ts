@@ -393,6 +393,34 @@ describe('cloneFlow', () => {
 			expect(() => cloneFlow(flow)).toThrow(/unknown source node id/);
 		});
 
+		it('throws when an edge references an unknown targetHandle id', () => {
+			const flow: Flow = {
+				nodes: [
+					{
+						id: MESSAGE_ID,
+						type: 'message',
+						position: { x: 0, y: 0 },
+						data: { text: 'hi', imageUrl: null, buttons: [{ id: MSG_BUTTON_A, label: 'Yes' }] }
+					},
+					{
+						id: TAGADD_ID,
+						type: 'tagAdd',
+						position: { x: 100, y: 100 },
+						data: { tagId: TAG_ID }
+					}
+				],
+				edges: [
+					{
+						id: 'dangling-target-handle',
+						source: MESSAGE_ID,
+						target: TAGADD_ID,
+						targetHandle: MSG_BUTTON_B // not mapped in idMap
+					}
+				]
+			};
+			expect(() => cloneFlow(flow)).toThrow(/unknown targetHandle id/);
+		});
+
 		it('throws when an edge references an unknown sourceHandle id', () => {
 			const flow: Flow = {
 				nodes: [
