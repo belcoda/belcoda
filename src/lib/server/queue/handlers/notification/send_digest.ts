@@ -6,7 +6,6 @@ import { buildDigestContext } from '$lib/server/utils/email/digest_context';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { env } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
-import { dev } from '$app/environment';
 import { getEmailSignature } from '$lib/server/utils/email/signature';
 
 const log = pino(import.meta.url);
@@ -24,10 +23,10 @@ export async function sendDigest({
 	frequency?: 'daily' | 'weekly';
 } = {}) {
 	const { POSTMARK_DIGEST_TEMPLATE_ALIAS } = env;
-	const { PUBLIC_ROOT_DOMAIN } = publicEnv;
+	const { PUBLIC_HOST } = publicEnv;
 
 	const template = POSTMARK_DIGEST_TEMPLATE_ALIAS ?? 'notification-digest';
-	const appUrl = `http${dev ? '' : 's'}://app.${PUBLIC_ROOT_DOMAIN}`;
+	const appUrl = PUBLIC_HOST.replace(/\/$/, '');
 
 	const eligibleUsers = await drizzle
 		.select({ id: user.id, email: user.email, name: user.name, settings: user.settings })
