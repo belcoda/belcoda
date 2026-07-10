@@ -18,9 +18,10 @@
 
 	let open = $state(false);
 	let cloning = $state(false);
+	const flowReady = $derived(nodes.current.length > 0);
 
 	async function makeACopy() {
-		if (cloning) return;
+		if (cloning || !flowReady) return;
 		cloning = true;
 		try {
 			// Snapshot the live SvelteFlow reactive state before cloning: native
@@ -63,12 +64,17 @@
 	description={t`This creates a new draft with a copy of this thread's messages and steps. The copy always starts as an unsent draft.`}
 >
 	{#snippet trigger()}
-		<Button variant="outline" size="sm" data-testid="flow-clone-button">
+		<Button variant="outline" size="sm" disabled={!flowReady} data-testid="flow-clone-button">
 			<CopyIcon />
 			{t`Clone`}
 		</Button>
 	{/snippet}
-	<Button type="button" onclick={makeACopy} disabled={cloning} data-testid="flow-clone-confirm">
+	<Button
+		type="button"
+		onclick={makeACopy}
+		disabled={!flowReady || cloning}
+		data-testid="flow-clone-confirm"
+	>
 		{cloning ? t`Copying…` : t`Make a copy`}
 	</Button>
 </ResponsiveModal>
