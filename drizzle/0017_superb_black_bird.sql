@@ -1,1 +1,1 @@
-ALTER TABLE "user" ADD COLUMN "settings" jsonb;
+-- No-op: user settings moved to member before this migration shipped.
