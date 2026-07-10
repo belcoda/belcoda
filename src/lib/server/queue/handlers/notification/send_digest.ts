@@ -17,17 +17,49 @@ function weekOf(): string {
 	return `${fmt.format(start)} – ${fmt.format(now)}, ${now.getFullYear()}`;
 }
 
+type DigestFrequency = 'daily' | 'weekly';
+type DigestCounts = { sent: number; skipped: number; failed: number };
+
 export async function sendDigest({
 	frequency = 'weekly'
 }: {
-	frequency?: 'daily' | 'weekly';
+	frequency?: DigestFrequency;
 } = {}) {
 	const { POSTMARK_DIGEST_TEMPLATE_ALIAS } = env;
 	const { PUBLIC_HOST } = publicEnv;
 
 	const template = POSTMARK_DIGEST_TEMPLATE_ALIAS ?? 'notification-digest';
 	const appUrl = PUBLIC_HOST.replace(/\/$/, '');
+	const periodLabel = weekOf();
 
+	const targetUsers = await listDigestUsers(frequency);
+
+	log.info({ count: targetUsers.length, frequency }, 'Sending digest');
+
+	const totals: DigestCounts = { sent: 0, skipped: 0, failed: 0 };
+
+	for (const targetUser of targetUsers) {
+		addCounts(
+			totals,
+			await sendDigestForUser({
+				targetUser,
+				template,
+				appUrl,
+				periodLabel
+			})
+		);
+	}
+
+	log.info(totals, 'Digest complete');
+}
+
+function addCounts(totals: DigestCounts, update: DigestCounts) {
+	totals.sent += update.sent;
+	totals.skipped += update.skipped;
+	totals.failed += update.failed;
+}
+
+async function listDigestUsers(frequency: DigestFrequency) {
 	const eligibleUsers = await drizzle
 		.select({ id: user.id, email: user.email, name: user.name, settings: user.settings })
 		.from(user)
@@ -39,83 +71,125 @@ export async function sendDigest({
 			)
 		);
 
-	const targetUsers = eligibleUsers.filter(
+	return eligibleUsers.filter(
 		(u) => (u.settings?.notifications?.digestFrequency ?? 'weekly') === frequency
 	);
+}
 
-	log.info({ count: targetUsers.length, frequency }, 'Sending digest');
+type DigestUser = Awaited<ReturnType<typeof listDigestUsers>>[number];
 
+async function sendDigestForUser({
+	targetUser,
+	template,
+	appUrl,
+	periodLabel
+}: {
+	targetUser: DigestUser;
+	template: string;
+	appUrl: string;
+	periodLabel: string;
+}): Promise<DigestCounts> {
 	let sent = 0;
-	let skipped = 0;
-	let failed = 0;
 
-	for (const targetUser of targetUsers) {
-		try {
-			if (!targetUser.email) {
-				skipped++;
-				continue;
-			}
-
-			const rows = await drizzle
-				.select({
-					id: notification.id,
-					type: notification.type,
-					referenceId: notification.referenceId,
-					organizationId: notification.organizationId,
-					organization,
-					payload: notification.payload,
-					status: notification.status,
-					createdAt: notification.createdAt
-				})
-				.from(notification)
-				.innerJoin(organization, eq(notification.organizationId, organization.id))
-				.where(and(eq(notification.userId, targetUser.id), eq(notification.status, 'unread')));
-
-			if (rows.length === 0) {
-				skipped++;
-				continue;
-			}
-
-			const byOrg = new Map<
-				string,
-				{ org: (typeof rows)[number]['organization']; notifications: typeof rows }
-			>();
-			for (const row of rows) {
-				if (!byOrg.has(row.organizationId)) {
-					byOrg.set(row.organizationId, { org: row.organization, notifications: [] });
-				}
-				byOrg.get(row.organizationId)!.notifications.push(row);
-			}
-
-			for (const { org, notifications: orgRows } of byOrg.values()) {
-				const emailSignature = await getEmailSignature({
-					emailFromSignatureId: org.settings?.email?.defaultFromSignatureId,
-					organization: org
-				});
-				const from = `${emailSignature.name} <${emailSignature.emailAddress}>`;
-				const context = buildDigestContext({
-					notifications: orgRows,
-					organizationName: org.name,
-					organizationId: org.id,
-					weekOf: weekOf(),
-					appUrl
-				});
-
-				await sendTemplateEmail({
-					to: targetUser.email,
-					from,
-					template,
-					stream: 'broadcast',
-					context,
-					replyTo: emailSignature.replyTo ?? undefined
-				});
-				sent++;
-			}
-		} catch (err) {
-			log.error({ err, userId: targetUser.id }, 'Failed to send digest for user');
-			failed++;
+	try {
+		if (!targetUser.email) {
+			return { sent, skipped: 1, failed: 0 };
 		}
+
+		const rows = await listUnreadDigestRows(targetUser.id);
+		if (rows.length === 0) {
+			return { sent, skipped: 1, failed: 0 };
+		}
+
+		for (const digest of groupNotificationsByOrganization(rows)) {
+			await sendOrganizationDigest({
+				digest,
+				to: targetUser.email,
+				template,
+				appUrl,
+				periodLabel
+			});
+			sent++;
+		}
+
+		return { sent, skipped: 0, failed: 0 };
+	} catch (err) {
+		log.error({ err, userId: targetUser.id }, 'Failed to send digest for user');
+		return { sent, skipped: 0, failed: 1 };
+	}
+}
+
+async function listUnreadDigestRows(userId: string) {
+	return drizzle
+		.select({
+			id: notification.id,
+			type: notification.type,
+			referenceId: notification.referenceId,
+			organizationId: notification.organizationId,
+			organization,
+			payload: notification.payload,
+			status: notification.status,
+			createdAt: notification.createdAt
+		})
+		.from(notification)
+		.innerJoin(organization, eq(notification.organizationId, organization.id))
+		.where(and(eq(notification.userId, userId), eq(notification.status, 'unread')));
+}
+
+type UnreadDigestRow = Awaited<ReturnType<typeof listUnreadDigestRows>>[number];
+type OrganizationDigest = {
+	org: UnreadDigestRow['organization'];
+	notifications: UnreadDigestRow[];
+};
+
+function groupNotificationsByOrganization(rows: UnreadDigestRow[]): OrganizationDigest[] {
+	const byOrg = new Map<string, OrganizationDigest>();
+
+	for (const row of rows) {
+		const digest = byOrg.get(row.organizationId);
+		if (digest) {
+			digest.notifications.push(row);
+			continue;
+		}
+
+		byOrg.set(row.organizationId, { org: row.organization, notifications: [row] });
 	}
 
-	log.info({ sent, skipped, failed }, 'Digest complete');
+	return [...byOrg.values()];
+}
+
+async function sendOrganizationDigest({
+	digest,
+	to,
+	template,
+	appUrl,
+	periodLabel
+}: {
+	digest: OrganizationDigest;
+	to: string;
+	template: string;
+	appUrl: string;
+	periodLabel: string;
+}) {
+	const { org, notifications } = digest;
+	const emailSignature = await getEmailSignature({
+		emailFromSignatureId: org.settings?.email?.defaultFromSignatureId,
+		organization: org
+	});
+	const context = buildDigestContext({
+		notifications,
+		organizationName: org.name,
+		organizationId: org.id,
+		weekOf: periodLabel,
+		appUrl
+	});
+
+	await sendTemplateEmail({
+		to,
+		from: `${emailSignature.name} <${emailSignature.emailAddress}>`,
+		template,
+		stream: 'broadcast',
+		context,
+		replyTo: emailSignature.replyTo ?? undefined
+	});
 }
