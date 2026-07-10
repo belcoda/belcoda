@@ -1,27 +1,28 @@
-name: Fly Deploy Staging
+name: Fly Deploy Staging with Stress Test Data
+
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
+    inputs:
+      seed_type:
+        description: 'Type of seeds to run'
+        required: true
+        default: 'stress'
+        type: choice
+        options:
+          - stress
+          - normal
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
-        with:
-          persist-credentials: false
-      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 #v1
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
 
       # Install Node
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '24' # or your preferred version
-
-      - name: Update npm
-        run: |
-          npm install -g npm@^11.10.0
-          npm --version
+          node-version: '24'
 
       - name: Install dependencies
         run: npm ci --include=dev
@@ -35,34 +36,34 @@ jobs:
 
           npx drizzle-kit migrate
           npm run prepare
-          npm run db:seed
+
+          if [ "${{ github.event.inputs.seed_type }}" = "stress" ]; then
+            echo "Running stress test seed..."
+            npm run db:seed:stress
+          else
+            echo "Running normal seed..."
+            npm run db:seed
+          fi
 
           kill $PROXY_PID
         env:
           DATABASE_URL: ${{ secrets.PROXIED_STAGING_DATABASE_URL }}
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-          OWNER_EMAIL_ADDRESS: ${{ vars.SEED_OWNER_EMAIL_ADDRESSES }} # comma separated list of email addresses
-          OWNER_GIVEN_NAME: ${{ vars.SEED_OWNER_GIVEN_NAMES }} # comma separated list of names
-          OWNER_FAMILY_NAME: ${{ vars.SEED_OWNER_FAMILY_NAMES }} # comma separated list of names
-          OWNER_PROFILE_PIC_URL: ${{ vars.SEED_OWNER_PROFILE_PIC_URLS }} # comma separated list of urls
+          OWNER_EMAIL_ADDRESS: ${{ vars.SEED_OWNER_EMAIL_ADDRESSES }}
+          OWNER_ORGANIZATION_NAME: ${{ vars.SEED_OWNER_ORGANIZATION_NAME }}
+          OWNER_ORGANIZATION_SLUG: ${{ vars.SEED_OWNER_ORGANIZATION_SLUG }}
+          OWNER_GIVEN_NAME: ${{ vars.SEED_OWNER_GIVEN_NAMES }}
+          OWNER_FAMILY_NAME: ${{ vars.SEED_OWNER_FAMILY_NAMES }}
+          OWNER_PROFILE_PIC_URL: ${{ vars.SEED_OWNER_PROFILE_PIC_URLS }}
           PUBLIC_DEFAULT_WHATSAPP_NUMBER: ${{ vars.PUBLIC_DEFAULT_WHATSAPP_NUMBER }}
           DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID: ${{ vars.DEFAULT_WHATSAPP_BUSINESS_ACCOUNT_ID }}
           POSTMARK_SENDING_DOMAIN: ${{ vars.POSTMARK_SENDING_DOMAIN }}
           PUBLIC_DEFAULT_WORKSPACE_LOGO: ${{ vars.PUBLIC_DEFAULT_WORKSPACE_LOGO }}
-          OWNER_ORGANIZATION_NAME: ${{ vars.OWNER_ORGANIZATION_NAME }}
-          OWNER_ORGANIZATION_SLUG: ${{ vars.OWNER_ORGANIZATION_SLUG }}
-          OWNER_PASSWORD: ${{ secrets.OWNER_PASSWORD }} # comma separated list of passwords
-
-      # Zero deploy
-      - run: flyctl deploy -c deploy/fly.zero.staging.toml --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       # App deploy
       - name: Deploy app
         run: |
           flyctl deploy -c deploy/fly.staging.toml --remote-only \
-            --build-arg NODE_ENV=staging \
             --build-arg PUBLIC_SENTRY_DSN="$PUBLIC_SENTRY_DSN" \
             --build-arg SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
             --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME="$PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME"
@@ -71,3 +72,8 @@ jobs:
           PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN_STAGING }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_STAGING }}
           PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME: ${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
+
+      # Zero deploy
+      - run: flyctl deploy -c deploy/fly.zero.staging.toml --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
