@@ -48,6 +48,7 @@ const cache = new LRUCache<string, string>({
 
 import { type LanguageCode, clampLocale } from '$lib/utils/language';
 import { organizationSettingsSchema } from '$lib/schema/organization/settings';
+import { memberSettingsSchema } from '$lib/schema/member/settings';
 
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
@@ -347,6 +348,19 @@ export function buildBetterAuth(localeInput: string) {
 							},
 							resetFreeQuotasAfter: {
 								type: 'date',
+								input: false,
+								required: false
+							}
+						}
+					},
+					member: {
+						additionalFields: {
+							settings: {
+								type: 'json',
+								validator: {
+									input: memberSettingsSchema,
+									output: memberSettingsSchema
+								},
 								input: false,
 								required: false
 							}
