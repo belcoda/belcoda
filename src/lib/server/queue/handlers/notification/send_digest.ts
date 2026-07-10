@@ -88,19 +88,10 @@ export async function sendDigest({
 			}
 
 			for (const { org, notifications: orgRows } of byOrg.values()) {
-				const emailFromSignatureId = org.settings.email.defaultFromSignatureId;
 				const emailSignature = await getEmailSignature({
-					emailFromSignatureId,
+					emailFromSignatureId: org.settings?.email?.defaultFromSignatureId,
 					organization: org
 				});
-				if (!emailSignature.name || !emailSignature.emailAddress) {
-					log.error(
-						{ userId: targetUser.id, organizationId: org.id, emailFromSignatureId },
-						'Missing email from signature for digest'
-					);
-					failed++;
-					continue;
-				}
 				const from = `${emailSignature.name} <${emailSignature.emailAddress}>`;
 				const context = buildDigestContext({
 					notifications: orgRows,
