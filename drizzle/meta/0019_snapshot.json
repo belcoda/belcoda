@@ -1,6 +1,6 @@
 {
-  "id": "649c0fab-86a5-4f49-8fe2-779115b8f277",
-  "prevId": "00e8a27b-84c5-4257-9200-0453b50ea419",
+  "id": "2b480870-da5b-4433-8d74-00b72fa75ecb",
+  "prevId": "13e0bf78-487b-4504-a03c-e620a8ed9828",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1465,6 +1465,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "settings": {
+          "name": "settings",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -1770,6 +1776,12 @@
         "reset_free_quotas_after": {
           "name": "reset_free_quotas_after",
           "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plan": {
+          "name": "plan",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
