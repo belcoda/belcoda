@@ -1,47 +1,9 @@
 import { drizzle } from '$lib/server/db';
 import { user } from '$lib/schema/drizzle';
-import { eq, sql } from 'drizzle-orm';
-import {
-	defaultUserSettings,
-	parseUserSettings,
-	type UserNotificationSettingsPatchSchema
-} from '$lib/schema/user/settings';
+import { eq } from 'drizzle-orm';
 
 export async function _getUserByIdUnsafe({ userId }: { userId: string }) {
 	return drizzle.query.user.findFirst({
 		where: eq(user.id, userId)
 	});
-}
-
-export async function getUserSettings({ userId }: { userId: string }) {
-	const row = await drizzle.query.user.findFirst({
-		where: eq(user.id, userId),
-		columns: { settings: true }
-	});
-	return parseUserSettings(row?.settings) ?? defaultUserSettings();
-}
-
-export async function updateUserSettings({
-	userId,
-	notifications
-}: {
-	userId: string;
-	notifications: UserNotificationSettingsPatchSchema;
-}) {
-	const defaultNotifications = JSON.stringify(defaultUserSettings().notifications);
-	const notificationPatch = JSON.stringify(notifications);
-
-	await drizzle
-		.update(user)
-		.set({
-			settings: sql`
-				COALESCE(${user.settings}, '{}'::jsonb)
-				|| jsonb_build_object(
-					'notifications',
-					COALESCE(${user.settings}->'notifications', ${defaultNotifications}::jsonb)
-					|| ${notificationPatch}::jsonb
-				)
-			`
-		})
-		.where(eq(user.id, userId));
 }
