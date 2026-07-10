@@ -5682,8 +5682,10 @@ msgstr "Daily"
 msgid "Saved"
 msgstr "Saved"
 
-#~ msgid "Failed to save notification preferences"
-#~ msgstr "Failed to save notification preferences"
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Failed to save notification preferences"
+msgstr "Failed to save notification preferences"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
