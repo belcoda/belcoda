@@ -134,6 +134,13 @@
       "when": 1783304878433,
       "tag": "0018_flippant_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1783688400000,
+      "tag": "0019_humble_member_settings",
+      "breakpoints": true
     }
   ]
 }

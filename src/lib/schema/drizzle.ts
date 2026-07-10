@@ -20,6 +20,7 @@ import type { OrganizationSchema } from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
 import type { UserSchema, UserSettingsSchema } from '$lib/schema/user';
+import type { MemberSettingsSchema } from '$lib/schema/member/settings';
 import type { InvitationSchema } from '$lib/schema/invitation';
 import type { ApiKeySchema } from '$lib/schema/api-key';
 import type {
@@ -204,6 +205,7 @@ export const member = pgTable(
 			.notNull()
 			.references(() => organization.id),
 		role: text('role').notNull(),
+		settings: jsonb('settings').$type<MemberSettingsSchema>(),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
 	},
 	(table) => [unique('member_user_organization_unique').on(table.userId, table.organizationId)]
