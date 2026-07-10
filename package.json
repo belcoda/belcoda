@@ -95,7 +95,7 @@
 		"@aws-sdk/client-s3": "^3.1070.0",
 		"@aws-sdk/s3-request-presigner": "^3.1077.0",
 		"@better-auth/api-key": "^1.6.23",
-		"@better-auth/stripe": "^1.6.19",
+		"@better-auth/stripe": "^1.6.23",
 		"@emoji-mart/data": "^1.2.1",
 		"@lexical/html": "0.40.0",
 		"@openapi-contrib/json-schema-to-openapi-schema": "^4.3.4",
