@@ -1953,6 +1953,8 @@ msgstr "Ver página da petição"
 msgid "Preview petition page"
 msgstr "Visualizar página da petição"
 
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte

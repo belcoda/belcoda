@@ -137,6 +137,7 @@ const edgeSchema = v.object({
 	sourceHandle: v.optional(helpers.uuid),
 	targetHandle: v.optional(helpers.uuid)
 });
+export type Edge = v.InferOutput<typeof edgeSchema>;
 
 export const flowSchema = v.object({
 	nodes: v.array(nodeSchema),
