@@ -87,6 +87,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			organizationId: true,
 			userId: true,
 			role: true,
+			settings: false,
 			createdAt: true,
 			updatedAt: true
 		},
