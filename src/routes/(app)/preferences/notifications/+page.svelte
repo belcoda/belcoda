@@ -9,7 +9,6 @@
 	import { toast } from 'svelte-sonner';
 	import { deserialize } from '$app/forms';
 	import { untrack } from 'svelte';
-	import { appState } from '$lib/state.svelte';
 	import type { MemberSettingsSchema } from '$lib/schema/member/settings';
 
 	const { data }: { data: { organizationId: string; settings: MemberSettingsSchema } } = $props();
@@ -32,7 +31,7 @@
 			digestFrequency = notificationSettings.digestFrequency!;
 
 		const formData = new FormData();
-		formData.set('organizationId', appState.organizationId || data.organizationId);
+		formData.set('organizationId', data.organizationId);
 		if ('digestEnabled' in notificationSettings)
 			formData.set('digestEnabled', String(notificationSettings.digestEnabled));
 		if ('digestFrequency' in notificationSettings)
