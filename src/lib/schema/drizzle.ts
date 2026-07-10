@@ -16,7 +16,7 @@ import {
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 
-import type { OrganizationSchema } from '$lib/schema/organization';
+import type { OrganizationSchema, OrganizationPlanType } from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
 import type { UserSchema } from '$lib/schema/user';
@@ -46,7 +46,6 @@ import type { EventSchema } from '$lib/schema/event';
 import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
-import type { OrganizationPlanType } from '$lib/schema/organization';
 import type { SerializedEditorState } from 'lexical';
 
 import { type CountryCode } from '$lib/utils/country';

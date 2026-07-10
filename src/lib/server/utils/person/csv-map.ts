@@ -161,7 +161,7 @@ function parseDateOfBirth(dob: string | null | undefined): Date | null {
 	// Fall back to permissive parsing
 	try {
 		const date = new Date(trimmed);
-		if (isNaN(date.getTime())) return null;
+		if (Number.isNaN(date.getTime())) return null;
 		return date;
 	} catch {
 		return null;
