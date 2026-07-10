@@ -16,7 +16,7 @@ import {
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 
-import type { OrganizationSchema } from '$lib/schema/organization';
+import type { OrganizationSchema, OrganizationPlanType } from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
 import type { UserSchema } from '$lib/schema/user';
@@ -46,15 +46,21 @@ import type { EventSchema } from '$lib/schema/event';
 import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
-
 import type { SerializedEditorState } from 'lexical';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
 import type { JsonSchema } from '$lib/schema/helpers';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
+import type {
+	WhatsappAccount,
+	WhatsappAccountScope,
+	WhatsappAccountMetadata,
+	WhatsappAccountDetails
+} from '$lib/schema/whatsapp-account';
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+
 import { type FilterGroupType } from '$lib/schema/person/filter';
 import type { LedgerEntryMetadataSchema, LedgerSchema } from '$lib/schema/ledger';
 import {
@@ -95,6 +101,7 @@ export const organization = pgTable(
 			withTimezone: true,
 			mode: 'date'
 		}),
+		plan: text('plan').$type<OrganizationPlanType>(),
 		stripeCustomerId: text('stripe_customer_id').unique(),
 		billingEmail: text('billing_email'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
@@ -168,6 +175,7 @@ export const user = pgTable('user', {
 	twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
 	stripeCustomerId: text('stripe_customer_id'),
 	preferredLanguage: text('preferred_language').$type<Locale>(),
+	settings: jsonb('settings').$type<JsonSchema>(),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 });
@@ -974,6 +982,9 @@ export const petitionSignature = pgTable(
 			.notNull()
 			.references(() => person.id),
 		details: jsonb('details').$type<PetitionSignatureDetails>().notNull(),
+		// @deprecated Petition custom-field answers now live in `details.customFields` (mirroring
+		// `eventSignup.details`). This column is retained only for legacy/backfill data and is no
+		// longer written to; it is slated for removal in a future migration.
 		responses: jsonb('responses'),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
@@ -1071,6 +1082,29 @@ export const whatsappLog = pgTable('whatsapp_log', {
 	payload: jsonb('payload').notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
 });
+
+export const whatsappAccount = pgTable(
+	'whatsapp_account',
+	{
+		id: uuid('id').primaryKey(),
+		referenceId: uuid('reference_id').notNull(),
+		scope: text('scope').$type<WhatsappAccountScope>().notNull(),
+		identifier: text('identifier').notNull().unique(),
+		details: jsonb('details').$type<WhatsappAccountDetails>().notNull(),
+		metadata: jsonb('metadata').$type<WhatsappAccountMetadata>().notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [index('whatsapp_account_reference_idx').on(table.referenceId)]
+);
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type WhatsappAccountValibotMatchesDrizzle = IsTrue<
+	WhatsappAccount extends typeof whatsappAccount.$inferSelect ? true : false
+>;
+type WhatsappAccountDrizzleMatchesValibot = IsTrue<
+	typeof whatsappAccount.$inferSelect extends WhatsappAccount ? true : false
+>;
 
 // relations for all tables at the end of the file
 

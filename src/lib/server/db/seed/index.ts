@@ -50,7 +50,7 @@ async function seedOrganization(
 		`[Org ${organizationIndex + 1}] Creating org with ${counts.people} people, ${counts.events} events, ${counts.petitions} petitions, ${counts.teams} teams, ${counts.activities} activities`
 	);
 
-	const organization = await generateOrganization({
+	const organization = generateOrganization({
 		id: orgId,
 		defaultWhatsappTemplateId,
 		index: organizationIndex,
@@ -61,9 +61,12 @@ async function seedOrganization(
 	await db.insert(schema.whatsappTemplate).values(whatsappTemplates).execute();
 
 	// create users (always use env user as admin, plus test accounts)
-	const users = await generateUsers({ organizationId: orgId, index: organizationIndex });
+	const { users, accounts } = await generateUsers({
+		organizationId: orgId,
+		index: organizationIndex
+	});
 	await db.insert(schema.user).values(users).execute();
-
+	await db.insert(schema.account).values(accounts).execute();
 	// create memberships
 	const memberValues = users.map((user) => ({
 		id: uuidv7(),
@@ -75,7 +78,7 @@ async function seedOrganization(
 	await db.insert(schema.member).values(memberValues).execute();
 
 	// create events (in batches if large)
-	const { events, actionCodes } = await generateEvents(counts.events, {
+	const { events, actionCodes } = generateEvents(counts.events, {
 		organizationId: orgId,
 		teamId: undefined,
 		pointPersonId: undefined

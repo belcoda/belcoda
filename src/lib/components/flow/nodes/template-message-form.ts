@@ -157,7 +157,7 @@ function applyHeaderDefaults(
 	templateHeader: TemplateMessageComponents[number] | undefined,
 	mergeExisting: boolean
 ): { headerParams: TemplateParamSource[]; headerImageUrl: string | null } {
-	if (!templateHeader || templateHeader.type !== 'HEADER') {
+	if (templateHeader?.type !== 'HEADER') {
 		return { headerParams: [], headerImageUrl: null };
 	}
 	if (

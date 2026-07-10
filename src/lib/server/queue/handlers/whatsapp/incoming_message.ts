@@ -207,7 +207,7 @@ async function processIncomingMessageInTransaction(
 				organizationId,
 				referenceId: insertedWhatsAppMessageId,
 				sourceKey: `whatsapp_message:${insertedWhatsAppMessageId}`,
-				payload: { personId }
+				payload: { personName: senderDisplayName, personId }
 			}
 		});
 	}
@@ -444,7 +444,8 @@ async function handlePetitionSignedActionCode(
 			givenName: senderDisplayName
 		},
 		signatureDetails: {
-			channel: { type: 'whatsapp' }
+			channel: { type: 'whatsapp' },
+			customFields: {}
 		},
 		teamId: petitionRecord.teamId ?? undefined,
 		flowMessageFrom: message.to,

@@ -256,6 +256,7 @@ msgstr "Sistema"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -435,6 +436,7 @@ msgid "Owner"
 msgstr "Proprietário"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Unknown"
 msgstr "Desconhecido"
 
@@ -1258,10 +1260,8 @@ msgstr "Ou continue com"
 msgid "Invited by {0}"
 msgstr "Convidado por {0}"
 
-#. 0: err.message
-#: src/routes/(auth)/organization/RenderInvitation.svelte
-msgid "Error loading invitation: {0}"
-msgstr "Erro ao carregar convite: {0}"
+#~ msgid "Error loading invitation: {0}"
+#~ msgstr "Erro ao carregar convite: {0}"
 
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Welcome to Belcoda"
@@ -2688,6 +2688,7 @@ msgid "Recent Signatures"
 msgstr "Assinaturas recentes"
 
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "signatures"
 msgstr "assinaturas"
 
@@ -3350,6 +3351,7 @@ msgstr "Publicar evento"
 msgid "View full page"
 msgstr "Ver página completa"
 
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 msgid "View all"
 msgstr "Ver tudo"
@@ -3974,9 +3976,8 @@ msgid "New WhatsApp template"
 msgstr ""
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Are you sure you want to send this WhatsApp draft?"
-msgstr ""
+msgstr "Tem certeza de que deseja enviar este rascunho do WhatsApp?"
 
 #: src/routes/(app)/settings/whatsapp/templates/[id]/+page.svelte
 msgid "Edit WhatsApp template"
@@ -4352,7 +4353,6 @@ msgid "Could not update personal information. Please try again."
 msgstr ""
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "WhatsApp draft sent successfully"
 msgstr "Rascunho do WhatsApp enviado com sucesso"
 
@@ -4444,6 +4444,7 @@ msgstr "Obrigado por assinar «{0}». A sua assinatura foi registada. Clique no 
 msgid "Your signature on \"{0}\" was recorded"
 msgstr "A sua assinatura em «{0}» foi registada"
 
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
 msgid "View petition"
 msgstr "Ver petição"
@@ -4616,9 +4617,10 @@ msgstr ""
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 #: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "WhatsApp message"
-msgstr ""
+msgstr "Mensagem de WhatsApp"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "No captions available"
@@ -4822,12 +4824,10 @@ msgid "Signing secret for \"{0}\""
 msgstr "Segredo de assinatura para \"{0}\""
 
 #: src/lib/components/flow/whatsapp/TestMessageModal.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Test WhatsApp"
 msgstr "WhatsApp de teste"
 
 #: src/lib/components/flow/whatsapp/TestMessageModal.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Send a test message before sending this draft."
 msgstr "Envie uma mensagem de teste antes de enviar este rascunho."
 
@@ -4874,6 +4874,7 @@ msgid "Time"
 msgstr "Hora"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Event"
 msgstr "Evento"
@@ -4917,6 +4918,7 @@ msgid "Fallback text"
 msgstr "Texto alternativo"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/SvelteLexical.svelte
 msgid "Insert variable"
 msgstr "Inserir variável"
 
@@ -4929,6 +4931,7 @@ msgid "Sender"
 msgstr "Remetente"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "Petition"
 msgstr "Petição"
 
@@ -5022,7 +5025,6 @@ msgid "Only approved WhatsApp templates can be sent. Select an approved template
 msgstr "Apenas modelos de WhatsApp aprovados podem ser enviados. Selecione um modelo aprovado ou aguarde a aprovação da Meta do seu modelo."
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
-#: src/routes/(app)/communications/whatsapp/drafts/[id]/+page.svelte
 msgid "Failed to send WhatsApp draft"
 msgstr "Falha ao enviar o rascunho de WhatsApp"
 
@@ -5069,16 +5071,20 @@ msgstr "🎨 Autocolante"
 #. 0: formatNumber(paginatedPetitions.items.length, locale.current)
 #. 0: formatNumber(paginatedSignups.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
+#. 0: formatNumber(paginatedSignups.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
-#. 
+#. 0: formatNumber(paginatedTags.items.length, locale.current)
+#. 0: formatNumber(paginatedTeams.items.length, locale.current)
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/PetitionsSidebar.svelte
 #: src/lib/components/widgets/event/EventSignups.svelte
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
+#: src/routes/(app)/events/[eventId]/signups/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
 msgid "{0} shown"
 msgstr "{0} exibidos"
 
@@ -5143,6 +5149,7 @@ msgstr ""
 msgid "Add {0}"
 msgstr ""
 
+#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Enter a valid amount. Minimum purchase is {0}."
 msgstr ""
@@ -5251,13 +5258,11 @@ msgstr "Adicionar imagem"
 msgid "—"
 msgstr "—"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "No active organization"
 msgstr "Nenhuma organização ativa"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/whatsapp_account_state.svelte.ts
 msgid "Failed to load WhatsApp business profile"
 msgstr "Falha ao carregar o perfil comercial do WhatsApp"
 
@@ -5266,6 +5271,7 @@ msgid "WhatsApp business profile saved"
 msgstr "Perfil comercial do WhatsApp salvo"
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/whatsapp_account_state.svelte.ts
 msgid "Failed to save WhatsApp business profile"
 msgstr "Falha ao salvar o perfil comercial do WhatsApp"
 
@@ -5369,9 +5375,8 @@ msgstr "Concluir verificação"
 #~ msgid "Business account details and verification status are shown below."
 #~ msgstr ""
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Failed to load WhatsApp business account details"
-msgstr "Falha ao carregar os detalhes da conta comercial do WhatsApp"
+#~ msgid "Failed to load WhatsApp business account details"
+#~ msgstr "Falha ao carregar os detalhes da conta comercial do WhatsApp"
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
@@ -5414,24 +5419,31 @@ msgstr ""
 msgid "Open notifications"
 msgstr "Abrir notificações"
 
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unread WhatsApp"
 msgstr "WhatsApp não lido"
 
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Flow notification"
 msgstr "Notificação de fluxo"
 
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Event signup"
 msgstr "Inscrição em evento"
 
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Petition signup"
 msgstr "Assinatura de petição"
 
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "Notification"
 msgstr "Notificação"
 
@@ -5443,10 +5455,12 @@ msgstr "Notificações"
 msgid "Mark all as read"
 msgstr "Marcar todas como lidas"
 
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Loading notifications..."
 msgstr "Carregando notificações..."
 
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unable to load notifications."
 msgstr "Não foi possível carregar as notificações."
@@ -5455,6 +5469,7 @@ msgstr "Não foi possível carregar as notificações."
 msgid "No notifications yet."
 msgstr "Ainda não há notificações."
 
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unknown time"
 msgstr "Hora desconhecida"
@@ -5469,10 +5484,194 @@ msgstr "Dispensar"
 
 #: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 msgid "Event Not Found"
-msgstr ""
+msgstr "Evento não encontrado"
 
 #: src/routes/(page)/page/[organizationSlug]/events/+error.svelte
 msgid "The event you are looking for could not be found."
+msgstr "O evento que você está procurando não foi encontrado."
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "View event"
+msgstr "Ver evento"
+
+#~ msgid "View signups"
+#~ msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
+msgid "Sent a WhatsApp message"
+msgstr "Enviou uma mensagem de WhatsApp"
+
+#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
+msgid "View person"
+msgstr "Ver pessoa"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "signups"
+msgstr "inscrições"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "messages"
+msgstr "mensagens"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "alerts"
+msgstr "alertas"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "notifications"
+msgstr "notificações"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "Recent notifications"
+msgstr "Notificações recentes"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "No notifications yet"
+msgstr "Sem notificações ainda"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "and"
+msgstr "e"
+
+#~ msgid "others"
+#~ msgstr "outros"
+
+#~ msgid "other"
+#~ msgstr "outro"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "signed up"
+msgstr "inscreveu-se"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "New signup"
+msgstr "Nova inscrição"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "Email all"
+msgstr "Enviar email a todos"
+
+#~ msgid "signed"
+#~ msgstr "assinou"
+
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "New signature"
+msgstr "Nova assinatura"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid "signed up (plural)"
+msgstr "inscreveram-se"
+
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid ", and 1 other signed up"
+msgstr ", e 1 outro inscreveram-se"
+
+#. 0: formattedExtraSignupCount()
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
+msgid ", and {0} others signed up"
+msgstr ", e {0} outros inscreveram-se"
+
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
+msgid "Notifications Digest"
+msgstr "Resumo de notificações"
+
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
+msgid "No unread notifications"
+msgstr "Nenhuma notificação não lida"
+
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
+msgid "1 unread notification"
+msgstr "1 notificação não lida"
+
+#. 0: formatNumber(unreadCount, locale.current)
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
+msgid "{0} unread notifications"
+msgstr "{0} notificações não lidas"
+
+#: src/lib/components/widgets/notifications/DashboardDigest.svelte
+msgid "No notifications to show right now."
+msgstr "Não há notificações para mostrar neste momento."
+
+#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+msgid "About is required and cannot be empty"
+msgstr ""
+
+#. 0: SIGNER_ONE_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0} signed the petition"
+msgstr "{0} assinou a petição"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0} and {1} signed the petition"
+msgstr "{0} e {1} assinaram a petição"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0}, {1}, and 1 other signed the petition"
+msgstr "{0}, {1} e mais 1 pessoa assinaram a petição"
+
+#. 0: SIGNER_ONE_MARKER; 1: SIGNER_TWO_MARKER; 2: formattedExtraSignerCount()
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
+msgid "{0}, {1}, and {2} others signed the petition"
+msgstr "{0}, {1} e mais {2} pessoas assinaram a petição"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "signup"
+msgstr "inscrição"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "signature"
+msgstr "assinatura"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "message"
+msgstr "mensagem"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "alert"
+msgstr "alerta"
+
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
+msgid "notification"
+msgstr "notificação"
+
+#: src/lib/components/templates/TemplateVariablePicker.svelte
+msgid "Search for a template variable to insert."
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "WhatsApp thread copied to a new draft"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Failed to copy WhatsApp thread"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "This creates a new draft with a copy of this thread's messages and steps. The copy always starts as an unsent draft."
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Clone"
+msgstr ""
+
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+msgid "Copying…"
+msgstr ""
+
+#~ msgid "Hello! Choose an option"
+#~ msgstr ""
+
+#~ msgid "WhatsApp message:"
+#~ msgstr ""
+
+#: src/lib/components/flow/nodes/Message.svelte
+msgid "Message:"
+msgstr ""
+
+#: src/lib/components/flow/nodes/Message.svelte
+msgid "Type your message..."
 msgstr ""
 
 #: src/lib/components/flow/whatsapp/CloneThreadModal.svelte

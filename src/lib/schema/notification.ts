@@ -1,6 +1,11 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
+export {
+	notificationPayloadSchema,
+	type NotificationPayload
+} from '$lib/schema/notification/payload';
+
 export const notificationStatuses = ['unread', 'read', 'dismissed'] as const;
 export const notificationStatus = v.picklist(notificationStatuses);
 export type NotificationStatus = v.InferOutput<typeof notificationStatus>;

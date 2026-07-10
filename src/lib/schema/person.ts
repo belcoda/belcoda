@@ -236,6 +236,11 @@ export type RemovePersonTagMutatorSchemaZero = v.InferOutput<
 	typeof removePersonTagMutatorSchemaZero
 >;
 
+export const bulkUpsertPersonRestSchema = v.object({
+	csvUrl: helpers.url
+});
+export type BulkUpsertPersonRest = v.InferOutput<typeof bulkUpsertPersonRestSchema>;
+
 export const personActionHelper = v.pipe(
 	v.object({
 		givenName: v.optional(v.nullable(personSchema.entries.givenName)),
