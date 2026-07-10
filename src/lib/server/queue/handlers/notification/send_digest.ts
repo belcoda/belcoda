@@ -87,7 +87,7 @@ export async function sendDigest({
 				byOrg.get(row.organizationId)!.notifications.push(row);
 			}
 
-			for (const [, { org, notifications: orgRows }] of byOrg) {
+			for (const { org, notifications: orgRows } of byOrg.values()) {
 				const emailFromSignatureId = org.settings.email.defaultFromSignatureId;
 				const emailSignature = await getEmailSignature({
 					emailFromSignatureId,
