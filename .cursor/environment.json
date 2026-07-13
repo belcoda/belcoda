@@ -1,0 +1,5 @@
+{
+	"install": "bash .cursor/setup.sh",
+	"start": "sudo service postgresql start",
+	"terminals": [{ "name": "dev", "command": "npm run dev" }]
+}
