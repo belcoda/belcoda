@@ -14,6 +14,7 @@ export const whatsappMessageSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
 	whatsappThreadId: v.nullable(helpers.uuid),
+	whatsappAccountId: v.nullable(helpers.uuid),
 	externalId: v.nullable(helpers.mediumString),
 	wamidId: v.nullable(helpers.mediumString),
 	type: whatsappMessageActivityTypeSchema,

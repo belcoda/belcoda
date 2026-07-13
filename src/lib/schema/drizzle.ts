@@ -710,6 +710,7 @@ export const whatsappMessage = pgTable('whatsapp_message', {
 		.references(() => organization.id),
 	whatsappThreadId: uuid('whatsapp_thread_id').references(() => whatsappThread.id), //onlu matters for analytics and stuff
 	// YCloud API message id (send response / webhook `whatsappMessage.id`). Not the Belcoda composite we pass as YCloud `externalId` when sending.
+	whatsappAccountId: uuid('whatsapp_account_id').references(() => whatsappAccount.id),
 	externalId: text('external_id'),
 	wamidId: text('wamid_id'), // wamid id (used for tracking read status, replies, reactions, etc..)
 	type: text('type').$type<WhatsappMessageActivityType>().notNull(),
