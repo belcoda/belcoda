@@ -13,6 +13,7 @@ This document provides AI agents and developers with a comprehensive overview of
 5. [Zero Schema Migrations](#zero-schema-migrations)
 6. [Authentication & Authorization](#authentication--authorization)
 7. [Key Conventions](#key-conventions)
+8. [Cloud Agent Environments](#cloud-agent-environments)
 
 ---
 
@@ -394,6 +395,49 @@ Belcoda serves organizations across multiple locales (en, es, pt, etc), so featu
 - CSV imports etc must respect regional conventions (e.g., European CSVs use semicolons as delimiters because commas are used as decimal separators)
 - Phone number inputs should be parsed and formatted using a library like `awesome-phonenumber`
 - Timezone handling is critical for scheduled events and communications
+
+---
+
+## Cloud Agent Environments
+
+Cloud coding agents (Cursor background agents, Codex cloud) need a working install:
+Postgres, Zero (`zero-cache-dev`), and the app. Setup logic is shared in
+[`scripts/agent-setup.sh`](scripts/agent-setup.sh): it apt-installs Postgres with
+`wal_level=logical` (required — Zero replicates via logical replication and
+`zero-cache` won't start without it), creates the `app`/`belcoda` role and DB,
+then runs `npm ci` → `db:push` → `db:seed`.
+
+Secrets are **not** committed. Set them in each platform's dashboard: at minimum
+`DATABASE_URL` and `ZERO_UPSTREAM_DB` (both `postgres://app:app@localhost:5432/belcoda`),
+the `ZERO_*`, `BETTER_AUTH_*`, and `OWNER_*` (seed) vars, plus
+`MOCK_EXTERNAL_SERVICES=true`. No Zero schema/permissions file is needed: the app
+uses custom `ZERO_QUERY_URL`/`ZERO_MUTATE_URL`, so `zero-cache-dev` runs without one.
+
+### Cursor
+
+Committed config drives it:
+
+- [`.cursor/environment.json`](.cursor/environment.json) — `install` runs
+  `.cursor/setup.sh` (→ shared script), `start` boots Postgres, a `dev` terminal
+  runs `npm run dev`.
+
+### Codex
+
+Configured in the Codex environment UI (no committed manifest). Network is
+available during setup but restricted during the task, so everything installs at
+setup time (the shared script already seeds then).
+
+- **Setup script:** `bash scripts/agent-setup.sh`
+- **Maintenance script** (runs per task): `sudo service postgresql start 2>/dev/null || service postgresql start`
+- **Secrets:** same list as above.
+- To run app + Zero during a task, background it in the maintenance script
+  (`nohup npm run dev &`); otherwise the agent can start it on demand.
+
+### Fallback (no sudo/apt)
+
+[`docker-compose.yaml`](docker-compose.yaml) brings up Postgres with
+`wal_level=logical` for agent containers that can't install it directly. Swap the
+install/setup step to `docker compose up -d && npm ci && npm run db:push && npm run db:seed`.
 
 ---
 
