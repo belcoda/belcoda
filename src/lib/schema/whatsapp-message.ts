@@ -31,7 +31,7 @@ export const whatsappMessageSchema = v.object({
 export type WhatsappMessageSchema = v.InferOutput<typeof whatsappMessageSchema>;
 
 export const whatsappMessageApiSchema = v.object({
-	...v.omit(whatsappMessageSchema, ['organizationId', 'externalId']).entries,
+	...v.omit(whatsappMessageSchema, ['organizationId', 'externalId', 'whatsappAccountId']).entries,
 	deliveredAt: v.nullable(helpers.dateToString),
 	readAt: v.nullable(helpers.dateToString),
 	createdAt: helpers.dateToString,
@@ -39,14 +39,14 @@ export const whatsappMessageApiSchema = v.object({
 });
 
 export const readWhatsappMessageRest = v.object({
-	...v.omit(whatsappMessageSchema, ['organizationId']).entries,
+	...v.omit(whatsappMessageSchema, ['organizationId', 'whatsappAccountId']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString
 });
 export type ReadWhatsappMessageRest = v.InferOutput<typeof readWhatsappMessageRest>;
 
 export const readWhatsappMessageZero = v.object({
-	...whatsappMessageSchema.entries,
+	...v.omit(whatsappMessageSchema, ['whatsappAccountId']).entries,
 	deliveredAt: v.nullable(helpers.unixTimestamp),
 	readAt: v.nullable(helpers.unixTimestamp),
 	createdAt: helpers.unixTimestamp,
