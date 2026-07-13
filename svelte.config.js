@@ -36,6 +36,7 @@ const config = {
 				'connect-src': [
 					"'self'",
 					'https://*.ingest.sentry.io', // Sentry error/event ingestion API
+					'https://*.ingest.de.sentry.io', // Sentry error/event ingestion API (EU region)
 					'https://www.google-analytics.com', // Google Analytics measurement endpoint
 					'https://analytics.google.com', // GA4 / gtag collection endpoint
 					'https://www.googletagmanager.com', // gtag.js measurement and conversion beacons
