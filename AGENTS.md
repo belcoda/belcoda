@@ -433,6 +433,28 @@ setup time (the shared script already seeds then).
 - To run app + Zero during a task, background it in the maintenance script
   (`nohup npm run dev &`); otherwise the agent can start it on demand.
 
+### Claude Code on the web
+
+Configured in the cloud environment UI at [claude.ai/code](https://claude.ai/code)
+(setup script + env vars + network level), but the per-session startup is
+committed to the repo as a SessionStart hook. The base image already ships
+**PostgreSQL 16** and Node (via nvm), so setup only configures/seeds Postgres and
+installs Node 24 — it does not apt-install Postgres.
+
+- **Setup script** (paste into the environment's "Setup script" field, cached):
+  `bash scripts/agent-setup-web.sh` — installs Node 24, enables `wal_level=logical`
+  on the pre-installed Postgres, creates the `app`/`belcoda` role and DB, then
+  `npm ci` → `db:push` → `db:seed`.
+- **Per-session start:** [`scripts/agent-start.sh`](scripts/agent-start.sh), wired
+  as a `SessionStart` hook in [`.claude/settings.json`](.claude/settings.json). The
+  cache stores files, not processes, so it restarts Postgres each session. It is
+  cloud-only (guarded by `CLAUDE_CODE_REMOTE=true`) so it no-ops on local machines.
+- **Secrets:** set as environment variables in the same UI (same list as above).
+  Note there is no dedicated secrets store — env vars are visible to anyone who can
+  edit the environment, so use safe staging values only.
+- **Network:** keep the default **Trusted** level so npm/`nodejs.org` are reachable
+  during setup.
+
 ### Fallback (no sudo/apt)
 
 [`docker-compose.yaml`](docker-compose.yaml) brings up Postgres with
