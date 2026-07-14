@@ -34,6 +34,7 @@ as_postgres() {
 # --- Postgres (Zero needs wal_level=logical for logical replication) ---
 $SUDO apt-get update
 $SUDO apt-get install -y postgresql postgresql-contrib
+wait_for_postgres
 PG_CONF=$(as_postgres psql -tAc "SHOW config_file")
 # Idempotent: only append the wal settings once (avoids growth on re-runs).
 if ! $SUDO grep -q '^wal_level = logical' "$PG_CONF"; then
