@@ -138,7 +138,9 @@
 						<TemplateVariablePicker
 							bind:this={variableDialog}
 							mode="dialog"
-							onSelect={(token) => insertTemplateVariable(activeEditor, token)}
+							onSelect={(token) => {
+								insertTemplateVariable(activeEditor, token);
+							}}
 						/>
 					{/if}
 				{/snippet}
@@ -155,7 +157,9 @@
 			<ImagePlugin />
 			<FloatingLinkEditorPlugin {anchorElem} />
 			<OnChangePlugin
-				onChange={handleChange}
+				onChange={(editorState, editor, tags) => {
+					handleChange(editorState);
+				}}
 				ignoreHistoryMergeTagChange={true}
 				ignoreSelectionChange={true}
 			/>

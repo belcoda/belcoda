@@ -138,8 +138,15 @@
     {
       "idx": 19,
       "version": "7",
-      "when": 1783688400000,
-      "tag": "0019_humble_member_settings",
+      "when": 1783572154989,
+      "tag": "0019_equal_loners",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1784005139831,
+      "tag": "0020_young_fixer",
       "breakpoints": true
     }
   ]

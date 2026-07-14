@@ -51,6 +51,7 @@ jobs:
           PUBLIC_DEFAULT_WORKSPACE_LOGO: ${{ vars.PUBLIC_DEFAULT_WORKSPACE_LOGO }}
           OWNER_ORGANIZATION_NAME: ${{ vars.OWNER_ORGANIZATION_NAME }}
           OWNER_ORGANIZATION_SLUG: ${{ vars.OWNER_ORGANIZATION_SLUG }}
+          OWNER_PASSWORD: ${{ secrets.OWNER_PASSWORD }} # comma separated list of passwords
 
       # Zero deploy
       - run: flyctl deploy -c deploy/fly.zero.staging.toml --remote-only
@@ -58,6 +59,15 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       # App deploy
-      - run: flyctl deploy -c deploy/fly.staging.toml --remote-only --build-arg NODE_ENV=staging --build-arg PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN_STAGING }} --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN_STAGING }} --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
+      - name: Deploy app
+        run: |
+          flyctl deploy -c deploy/fly.staging.toml --remote-only \
+            --build-arg NODE_ENV=staging \
+            --build-arg PUBLIC_SENTRY_DSN="$PUBLIC_SENTRY_DSN" \
+            --build-arg SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+            --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME="$PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN_STAGING }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_STAGING }}
+          PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME: ${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}

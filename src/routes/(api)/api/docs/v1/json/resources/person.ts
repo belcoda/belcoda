@@ -17,7 +17,7 @@ export async function buildPersonResourceSpec() {
 		personOpenApiSchema,
 		createPersonRequestOpenApiSchema,
 		updatePersonRequestOpenApiSchema,
-		bulkUpsertPersonRequestOpenApiSchema,
+		//bulkUpsertPersonRequestOpenApiSchema,
 		personNoteOpenApiSchema,
 		createPersonNoteRequestOpenApiSchema,
 		updatePersonNoteRequestOpenApiSchema
@@ -25,7 +25,7 @@ export async function buildPersonResourceSpec() {
 		generateOpenSchemaFromValibot(personApiSchema),
 		generateOpenSchemaFromValibot(createPersonRest),
 		generateOpenSchemaFromValibot(updatePersonRest),
-		generateOpenSchemaFromValibot(bulkUpsertPersonRestSchema),
+		//generateOpenSchemaFromValibot(bulkUpsertPersonRestSchema),
 		generateOpenSchemaFromValibot(personNoteApiSchema),
 		generateOpenSchemaFromValibot(createPersonNoteApi),
 		generateOpenSchemaFromValibot(updatePersonNoteZero)

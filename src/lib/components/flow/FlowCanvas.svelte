@@ -181,8 +181,8 @@
 			</div>
 		</Panel>
 	{/if}
+	<WhatsAppFlowStatePanels {disabled} />
 	{#if !disabled}
-		<WhatsAppFlowStatePanels />
 		<AppendNode />
 		<StateProvider />
 	{/if}

@@ -1953,6 +1953,8 @@ msgstr "View petition page"
 msgid "Preview petition page"
 msgstr "Preview petition page"
 
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
+#: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 #: src/routes/(app)/events/[eventId]/EventMakeACopy.svelte
 #: src/routes/(app)/petitions/[petitionId]/PetitionActionButton.svelte
@@ -5690,7 +5692,6 @@ msgstr "Failed to save notification preferences"
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
 msgstr "Search for a template variable to insert."
-
 #: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 msgid "WhatsApp thread copied to a new draft"
 msgstr "WhatsApp thread copied to a new draft"

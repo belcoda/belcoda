@@ -28,6 +28,7 @@ const log = pino(import.meta.url);
 
 export async function createWhatsappThread({
 	args,
+	ctx,
 	tx
 }: {
 	args: {
@@ -41,6 +42,12 @@ export async function createWhatsappThread({
 	const parsed = await parse(createWhatsappThreadSchema, args.thread);
 	const insertedId = args.id || uuidv7();
 	const now = new Date();
+
+	//organization permission check
+	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(args.organizationId)) {
+		throw new Error('You are not authorized to insert a WhatsApp thread in this organization');
+	}
+
 	const toInsert: typeof whatsappThreadTable.$inferInsert = {
 		id: insertedId,
 		organizationId: args.organizationId,
