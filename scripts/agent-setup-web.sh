@@ -39,32 +39,13 @@ as_postgres() {
 }
 
 # shellcheck source=agent-postgres-lib.sh
+# Provides wait_for_postgres, bootstrap_postgres_roles, and helpers.
 . "$(dirname "$0")/agent-postgres-lib.sh"
 
-# Fail loudly after a bounded wait; dump status + recent logs for diagnosis.
-wait_for_postgres() {
-	local timeout_sec="${PG_READY_TIMEOUT_SEC:-60}"
-	local deadline=$(($(date +%s) + timeout_sec))
-	until pg_isready -q; do
-		if [ "$(date +%s)" -ge "$deadline" ]; then
-			echo "PostgreSQL did not become ready within ${timeout_sec}s" >&2
-			pg_isready || true
-			service postgresql status || true
-			# Prefer Ubuntu package log paths; fall back to journald.
-			if compgen -G '/var/log/postgresql/*.log' >/dev/null 2>&1; then
-				tail -n 80 /var/log/postgresql/*.log || true
-			elif command -v journalctl >/dev/null 2>&1; then
-				journalctl -u postgresql -n 80 --no-pager || true
-			fi
-			exit 1
-		fi
-		sleep 1
-	done
-}
-
 # --- Configure the pre-installed Postgres for Zero (needs wal_level=logical) ---
+# Idempotent: only append once so cache rebuilds don't accumulate duplicate lines.
 PG_CONF="/etc/postgresql/16/main/postgresql.conf"
-if [ -f "$PG_CONF" ]; then
+if [ -f "$PG_CONF" ] && ! grep -q '^wal_level = logical' "$PG_CONF"; then
 	{
 		echo "wal_level = logical"
 		echo "max_wal_senders = 10"

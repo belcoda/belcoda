@@ -1,5 +1,5 @@
 {
 	"install": "bash .cursor/setup.sh",
-	"start": "sudo service postgresql start",
+	"start": "sudo service postgresql start && for _ in $(seq 1 60); do pg_isready -q && break; sleep 1; done",
 	"terminals": [{ "name": "dev", "command": "npm run dev" }]
 }

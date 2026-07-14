@@ -35,10 +35,13 @@ as_postgres() {
 $SUDO apt-get update
 $SUDO apt-get install -y postgresql postgresql-contrib
 PG_CONF=$(as_postgres psql -tAc "SHOW config_file")
-echo "wal_level = logical"        | $SUDO tee -a "$PG_CONF"
-echo "max_wal_senders = 10"       | $SUDO tee -a "$PG_CONF"
-echo "max_replication_slots = 10" | $SUDO tee -a "$PG_CONF"
+# Idempotent: only append the wal settings once (avoids growth on re-runs).
+if ! $SUDO grep -q '^wal_level = logical' "$PG_CONF"; then
+	printf 'wal_level = logical\nmax_wal_senders = 10\nmax_replication_slots = 10\n' |
+		$SUDO tee -a "$PG_CONF" >/dev/null
+fi
 $SUDO service postgresql restart
+wait_for_postgres
 
 bootstrap_postgres_roles
 
