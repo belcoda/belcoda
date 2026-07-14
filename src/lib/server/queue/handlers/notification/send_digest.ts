@@ -1,6 +1,6 @@
 import pino from '$lib/pino';
 import { drizzle } from '$lib/server/db';
-import { notification, user, organization } from '$lib/schema/drizzle';
+import { notification, user, organization, member } from '$lib/schema/drizzle';
 import { and, eq, isNull, or, sql } from 'drizzle-orm';
 import { buildDigestContext } from '$lib/server/utils/email/digest_context';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
@@ -61,13 +61,14 @@ function addCounts(totals: DigestCounts, update: DigestCounts) {
 
 async function listDigestUsers(frequency: DigestFrequency) {
 	const eligibleUsers = await drizzle
-		.select({ id: user.id, email: user.email, name: user.name, settings: user.settings })
-		.from(user)
+		.select({ id: user.id, email: user.email, name: user.name, settings: member.settings })
+		.from(member)
+		.innerJoin(user, eq(member.userId, user.id))
 		.where(
 			or(
-				isNull(user.settings),
-				sql`(${user.settings}->'notifications'->>'digestEnabled') IS NULL`,
-				sql`(${user.settings}->'notifications'->>'digestEnabled') != 'false'`
+				isNull(member.settings),
+				sql`(${member.settings}->'notifications'->>'digestEnabled') IS NULL`,
+				sql`(${member.settings}->'notifications'->>'digestEnabled') != 'false'`
 			)
 		);
 
