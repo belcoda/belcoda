@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { locale, t } from '$lib/index.svelte';
-	import { appState, getListFilter } from '$lib/state.svelte';
+	import { appState } from '$lib/state.svelte';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
-	import queries from '$lib/zero/query/index';
 	import { z } from '$lib/zero.svelte';
 
 	const typeLabelMap: Record<string, string> = {
@@ -16,19 +15,8 @@
 		generic: t`Notification`
 	};
 
-	const inboxFilter = $derived.by(() => ({
-		...getListFilter(appState.organizationId, { pageSize: 10 }),
-		status: null
-	}));
-	const unreadFilter = $derived.by(() => ({
-		...getListFilter(appState.organizationId, { pageSize: 1 }),
-		status: 'unread' as const
-	}));
-
-	const inboxQuery = $derived.by(() => z.createQuery(queries.notification.list(inboxFilter)));
-	const unreadQuery = $derived.by(() => z.createQuery(queries.notification.list(unreadFilter)));
-	const notifications = $derived(inboxQuery.data ?? []);
-	const hasUnreadNotifications = $derived((unreadQuery.data?.length ?? 0) > 0);
+	const notifications = $derived(appState.notificationItems);
+	const hasUnreadNotifications = $derived(appState.hasUnreadNotifications);
 
 	let busyIds = $state<Record<string, boolean>>({});
 	let markAllBusy = $state(false);
@@ -118,9 +106,9 @@
 	</div>
 
 	<div class="flex-1 overflow-y-auto">
-		{#if inboxQuery.details.type === 'unknown'}
+		{#if appState.notifications.details.type === 'unknown'}
 			<p class="px-4 py-6 text-sm text-muted-foreground">{t`Loading notifications...`}</p>
-		{:else if inboxQuery.details.type === 'error'}
+		{:else if appState.notifications.details.type === 'error'}
 			<p class="px-4 py-6 text-sm text-destructive">{t`Unable to load notifications.`}</p>
 		{:else if notifications.length === 0}
 			<p class="px-4 py-6 text-sm text-muted-foreground">{t`No notifications yet.`}</p>
