@@ -28,6 +28,9 @@ as_postgres() {
 	fi
 }
 
+# shellcheck source=agent-postgres-lib.sh
+. "$(dirname "$0")/agent-postgres-lib.sh"
+
 # --- Postgres (Zero needs wal_level=logical for logical replication) ---
 $SUDO apt-get update
 $SUDO apt-get install -y postgresql postgresql-contrib
@@ -37,10 +40,7 @@ echo "max_wal_senders = 10"       | $SUDO tee -a "$PG_CONF"
 echo "max_replication_slots = 10" | $SUDO tee -a "$PG_CONF"
 $SUDO service postgresql restart
 
-# role + db to match DATABASE_URL / ZERO_UPSTREAM_DB
-# SUPERUSER guarantees the REPLICATION privilege Zero needs.
-as_postgres psql -c "CREATE ROLE app WITH LOGIN SUPERUSER PASSWORD 'app';" || true
-as_postgres psql -c "CREATE DATABASE belcoda OWNER app;" || true
+bootstrap_postgres_roles
 
 # --- App deps + schema + seed ---
 npm ci --include=dev
