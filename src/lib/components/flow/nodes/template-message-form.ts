@@ -151,6 +151,29 @@ function applyBodyDefaults(
 	return bodyParams;
 }
 
+function resolveImageUrl(
+	currentUrl: string | null,
+	exampleUrl: string | undefined,
+	mergeExisting: boolean
+): string | null {
+	return mergeExisting ? currentUrl || exampleUrl || null : (exampleUrl ?? null);
+}
+
+function resolveTextHeaderParams(
+	currentParams: TemplateParamSource[],
+	exampleText: string,
+	mergeExisting: boolean
+): TemplateParamSource[] {
+	if (!mergeExisting) {
+		return exampleText ? [{ type: 'literal', value: exampleText }] : [];
+	}
+	const params = [...currentParams];
+	if (!params[0]) {
+		params[0] = { type: 'literal', value: exampleText };
+	}
+	return params;
+}
+
 function applyHeaderDefaults(
 	currentHeaderParams: TemplateParamSource[],
 	currentHeaderImageUrl: string | null,
@@ -160,34 +183,25 @@ function applyHeaderDefaults(
 	if (templateHeader?.type !== 'HEADER') {
 		return { headerParams: [], headerImageUrl: null };
 	}
-	if (
-		templateHeader.format === 'IMAGE' &&
-		templateHeader.example &&
-		'header_url' in templateHeader.example &&
-		Array.isArray(templateHeader.example.header_url)
-	) {
-		const exampleUrl = templateHeader.example.header_url[0];
-		const headerImageUrl = mergeExisting
-			? currentHeaderImageUrl || exampleUrl || null
-			: (exampleUrl ?? null);
-		return { headerParams: [], headerImageUrl };
+	if (templateHeader.format === 'IMAGE') {
+		return {
+			headerParams: [],
+			headerImageUrl: resolveImageUrl(
+				currentHeaderImageUrl,
+				templateHeader.example.header_url[0],
+				mergeExisting
+			)
+		};
 	}
 	if (templateHeader.format === 'TEXT') {
-		const headerExample = templateHeader.example;
-		const exampleText =
-			headerExample && 'header_text' in headerExample && Array.isArray(headerExample.header_text)
-				? headerExample.header_text[0] || ''
-				: '';
-		let headerParams: TemplateParamSource[];
-		if (mergeExisting) {
-			headerParams = [...currentHeaderParams];
-			if (!headerParams[0]) {
-				headerParams[0] = { type: 'literal', value: exampleText };
-			}
-		} else {
-			headerParams = exampleText ? [{ type: 'literal', value: exampleText }] : [];
-		}
-		return { headerParams, headerImageUrl: null };
+		return {
+			headerParams: resolveTextHeaderParams(
+				currentHeaderParams,
+				templateHeader.example.header_text[0] || '',
+				mergeExisting
+			),
+			headerImageUrl: null
+		};
 	}
 	return { headerParams: [...currentHeaderParams], headerImageUrl: currentHeaderImageUrl };
 }
