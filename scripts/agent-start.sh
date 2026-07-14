@@ -18,7 +18,7 @@ wait_for_postgres() {
 	local timeout_sec="${PG_READY_TIMEOUT_SEC:-60}"
 	local deadline=$(($(date +%s) + timeout_sec))
 	until pg_isready -q; do
-		if [ "$(date +%s)" -ge "$deadline" ]; then
+		if [[ "$(date +%s)" -ge "$deadline" ]]; then
 			echo "PostgreSQL did not become ready within ${timeout_sec}s" >&2
 			pg_isready || true
 			service postgresql status 2>/dev/null || sudo service postgresql status || true
