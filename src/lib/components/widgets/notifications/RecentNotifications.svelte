@@ -3,25 +3,17 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import BellIcon from '@lucide/svelte/icons/bell';
-	import { appState, getListFilter } from '$lib/state.svelte';
+	import { appState } from '$lib/state.svelte';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { locale, t } from '$lib/index.svelte';
-	import queries from '$lib/zero/query/index';
-	import { z } from '$lib/zero.svelte';
 	import type { NotificationPayload } from '$lib/schema/notification/payload';
 	import type { NotificationGroup } from './types';
 	import NotificationGroupEvent from './NotificationGroupEvent.svelte';
 	import NotificationGroupWhatsApp from './NotificationGroupWhatsApp.svelte';
 	import NotificationGroupPetition from './NotificationGroupPetition.svelte';
 
-	const filter = $derived.by(() => ({
-		...getListFilter(appState.organizationId, { pageSize: 10 }),
-		status: null
-	}));
-
-	const query = $derived.by(() => z.createQuery(queries.notification.list(filter)));
-	const notifications = $derived(query.data ?? []);
-	type NotificationItem = NonNullable<(typeof query)['data']>[number];
+	const notifications = $derived(appState.notificationItems);
+	type NotificationItem = (typeof notifications)[number];
 
 	const unreadCount = $derived(notifications.filter((n) => n.status === 'unread').length);
 
@@ -150,7 +142,7 @@
 		</div>
 	</Card.Header>
 	<Card.Content class="pt-0">
-		{#if query.details.type === 'unknown'}
+		{#if appState.notifications.details.type === 'unknown'}
 			<p class="py-4 text-center text-xs text-muted-foreground">{t`Loading...`}</p>
 		{:else if notifications.length === 0}
 			<div class="flex flex-col items-center gap-1.5 py-8 text-center">

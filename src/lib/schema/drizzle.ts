@@ -20,6 +20,7 @@ import type { OrganizationSchema, OrganizationPlanType } from '$lib/schema/organ
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
 import type { UserSchema } from '$lib/schema/user';
+import type { MemberSettingsSchema } from '$lib/schema/member/settings';
 import type { InvitationSchema } from '$lib/schema/invitation';
 import type { ApiKeySchema } from '$lib/schema/api-key';
 import type {
@@ -175,7 +176,6 @@ export const user = pgTable('user', {
 	twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
 	stripeCustomerId: text('stripe_customer_id'),
 	preferredLanguage: text('preferred_language').$type<Locale>(),
-	settings: jsonb('settings').$type<JsonSchema>(),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 });
@@ -209,6 +209,7 @@ export const member = pgTable(
 			.notNull()
 			.references(() => organization.id),
 		role: text('role').notNull(),
+		settings: jsonb('settings').$type<MemberSettingsSchema>(),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
 	},
 	(table) => [unique('member_user_organization_unique').on(table.userId, table.organizationId)]

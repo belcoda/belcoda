@@ -9,20 +9,13 @@
 	import MegaphoneIcon from '@lucide/svelte/icons/megaphone';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import { locale } from '$lib/index.svelte';
-	import { appState, getListFilter } from '$lib/state.svelte';
+	import { appState } from '$lib/state.svelte';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
-	import queries from '$lib/zero/query/index';
 	import { z } from '$lib/zero.svelte';
 
-	const filter = $derived.by(() => ({
-		...getListFilter(appState.organizationId, { pageSize: 20 }),
-		status: null
-	}));
-
-	const query = $derived.by(() => z.createQuery(queries.notification.list(filter)));
-	const all = $derived(query.data ?? []);
-	type NotificationItem = NonNullable<(typeof query)['data']>[number];
+	const all = $derived(appState.notificationItems);
+	type NotificationItem = (typeof appState.notificationItems)[number];
 
 	const whatsappNotifs = $derived(
 		all.filter(
@@ -147,9 +140,9 @@
 	</Card.Header>
 
 	<Card.Content class="p-0">
-		{#if query.details.type === 'unknown'}
+		{#if appState.notifications.details.type === 'unknown'}
 			<p class="px-4 py-8 text-sm text-muted-foreground">Loading...</p>
-		{:else if query.details.type === 'error'}
+		{:else if appState.notifications.details.type === 'error'}
 			<p class="px-4 py-8 text-sm text-destructive">Unable to load notifications.</p>
 		{:else if all.length === 0}
 			<div class="flex flex-col items-center gap-2 px-4 py-12 text-center">
