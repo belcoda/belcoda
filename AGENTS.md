@@ -459,7 +459,7 @@ installs Node 24 — it does not apt-install Postgres.
 
 [`docker-compose.yaml`](docker-compose.yaml) brings up Postgres with
 `wal_level=logical` for agent containers that can't install it directly. Swap the
-install/setup step to `docker compose up -d && npm ci && npm run db:push && npm run db:seed`.
+install/setup step to `docker compose up -d && npm ci --include=dev && npm run db:push && npm run db:seed`.
 
 ---
 
