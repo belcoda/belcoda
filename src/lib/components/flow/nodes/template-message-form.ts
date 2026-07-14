@@ -174,6 +174,20 @@ function resolveTextHeaderParams(
 	return params;
 }
 
+function getImageHeaderExampleUrl(
+	templateHeader: Extract<TemplateMessageComponents[number], { type: 'HEADER'; format: 'IMAGE' }>
+): string | undefined {
+	const headerUrl = templateHeader.example?.header_url;
+	return Array.isArray(headerUrl) ? headerUrl[0] : undefined;
+}
+
+function getTextHeaderExample(
+	templateHeader: Extract<TemplateMessageComponents[number], { type: 'HEADER'; format: 'TEXT' }>
+): string {
+	const headerText = templateHeader.example?.header_text;
+	return Array.isArray(headerText) ? headerText[0] || '' : '';
+}
+
 function applyHeaderDefaults(
 	currentHeaderParams: TemplateParamSource[],
 	currentHeaderImageUrl: string | null,
@@ -188,7 +202,7 @@ function applyHeaderDefaults(
 			headerParams: [],
 			headerImageUrl: resolveImageUrl(
 				currentHeaderImageUrl,
-				templateHeader.example.header_url[0],
+				getImageHeaderExampleUrl(templateHeader),
 				mergeExisting
 			)
 		};
@@ -197,7 +211,7 @@ function applyHeaderDefaults(
 		return {
 			headerParams: resolveTextHeaderParams(
 				currentHeaderParams,
-				templateHeader.example.header_text[0] || '',
+				getTextHeaderExample(templateHeader),
 				mergeExisting
 			),
 			headerImageUrl: null
