@@ -18,10 +18,20 @@ set -euo pipefail
 SUDO=""
 if command -v sudo >/dev/null 2>&1; then SUDO="sudo"; fi
 
+# Run a command as the postgres OS user. Prefer sudo when available; otherwise
+# su (containers that lack sudo but run as root). Never expand to bare `-u postgres`.
+as_postgres() {
+	if [ -n "$SUDO" ]; then
+		$SUDO -u postgres "$@"
+	else
+		su postgres -c "$(printf '%q ' "$@")"
+	fi
+}
+
 # --- Postgres (Zero needs wal_level=logical for logical replication) ---
 $SUDO apt-get update
 $SUDO apt-get install -y postgresql postgresql-contrib
-PG_CONF=$($SUDO -u postgres psql -tAc "SHOW config_file")
+PG_CONF=$(as_postgres psql -tAc "SHOW config_file")
 echo "wal_level = logical"        | $SUDO tee -a "$PG_CONF"
 echo "max_wal_senders = 10"       | $SUDO tee -a "$PG_CONF"
 echo "max_replication_slots = 10" | $SUDO tee -a "$PG_CONF"
@@ -29,8 +39,8 @@ $SUDO service postgresql restart
 
 # role + db to match DATABASE_URL / ZERO_UPSTREAM_DB
 # SUPERUSER guarantees the REPLICATION privilege Zero needs.
-$SUDO -u postgres psql -c "CREATE ROLE app WITH LOGIN SUPERUSER PASSWORD 'app';" || true
-$SUDO -u postgres psql -c "CREATE DATABASE belcoda OWNER app;" || true
+as_postgres psql -c "CREATE ROLE app WITH LOGIN SUPERUSER PASSWORD 'app';" || true
+as_postgres psql -c "CREATE DATABASE belcoda OWNER app;" || true
 
 # --- App deps + schema + seed ---
 npm ci --include=dev
