@@ -303,6 +303,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			id: true,
 			organizationId: true,
 			whatsappThreadId: true,
+			whatsappAccountId: true,
 			externalId: true,
 			wamidId: true,
 			type: true,
