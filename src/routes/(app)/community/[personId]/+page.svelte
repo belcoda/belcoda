@@ -28,7 +28,7 @@
 <ContentLayout
 	rootLink="/community"
 	{header}
-	bodyPadding="p-0"
+	bodyPadding="p-0 gap-y-0"
 	scrollBody={false}
 	hideFooter={!whatsappOnboarded}
 >
