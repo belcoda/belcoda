@@ -34,6 +34,10 @@ as_postgres() {
 # --- Postgres (Zero needs wal_level=logical for logical replication) ---
 $SUDO apt-get update
 $SUDO apt-get install -y postgresql postgresql-contrib
+# apt postinst often skips service starts under policy-rc.d in agent containers;
+# start explicitly before the first readiness wait. Restart later still applies
+# wal_level changes.
+$SUDO service postgresql start
 wait_for_postgres
 PG_CONF=$(as_postgres psql -tAc "SHOW config_file")
 # Idempotent: only append the wal settings once (avoids growth on re-runs).
