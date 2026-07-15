@@ -105,7 +105,7 @@
 		"@tryghost/kg-lexical-html-renderer": "^1.4.3",
 		"@types/country-list": "^2.1.4",
 		"@valibot/to-json-schema": "^1.7.1",
-		"@wuchale/svelte": "^0.20.0",
+		"@wuchale/svelte": "^0.20.4",
 		"@xyflow/svelte": "^1.6.0",
 		"awesome-phonenumber": "^7.8.0",
 		"better-auth": "^1.6.19",
