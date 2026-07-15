@@ -1266,6 +1266,11 @@ export const activityRelations = relations(activity, ({ one }) => ({
 	user: one(user, {
 		fields: [activity.userId],
 		references: [user.id]
+	}),
+	// polymorphic relationship to whatsappMessage (other types of activities are less important to have the relationship mapped but can be added if needed)
+	whatsappMessage: one(whatsappMessage, {
+		fields: [activity.referenceId],
+		references: [whatsappMessage.id]
 	})
 }));
 
