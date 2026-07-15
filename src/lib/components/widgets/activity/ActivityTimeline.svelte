@@ -9,6 +9,9 @@
 	import type { ListActivityInput } from '$lib/zero/query/activity/list';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodeActivityListCursor } from '$lib/utils/activity/cursor';
+	import AccountSelector from './AccountSelector.svelte';
+
+	let selectedAccountId: string = $state('all');
 
 	type ActivityListBaseFilter = Omit<ListActivityInput, 'cursor' | 'pageSize'>;
 
@@ -31,8 +34,12 @@
 	let scrollRestoreTimeout: ReturnType<typeof setTimeout> | null = null;
 	let resizeObserver: ResizeObserver | undefined;
 
+	//the filter schema wants undefined values instead of 'all'
+	const selectedAccountIdForFilter = $derived(
+		selectedAccountId === 'all' ? undefined : selectedAccountId
+	);
 	const paginatedActivities = new PaginatedZeroList<ActivityListBaseFilter, ReadActivityZero>({
-		getBaseFilter: () => ({ personId }),
+		getBaseFilter: () => ({ personId, accountId: selectedAccountIdForFilter }),
 		encodeCursor: encodeActivityCursor,
 		pageSize
 	});
@@ -203,6 +210,8 @@
 		});
 	}
 </script>
+
+<AccountSelector bind:selectedAccountId />
 
 <div class="flex min-h-0 flex-1 flex-col bg-gray-50">
 	<div
