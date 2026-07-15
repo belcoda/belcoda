@@ -1,0 +1,2 @@
+ALTER TABLE "whatsapp_message" ADD COLUMN "whatsapp_account_id" uuid;--> statement-breakpoint
+ALTER TABLE "whatsapp_message" ADD CONSTRAINT "whatsapp_message_whatsapp_account_id_whatsapp_account_id_fk" FOREIGN KEY ("whatsapp_account_id") REFERENCES "public"."whatsapp_account"("id") ON DELETE no action ON UPDATE no action;
