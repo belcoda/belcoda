@@ -1,5 +1,5 @@
 {
-  "id": "ffd5abff-0947-4cdb-abea-8927b5ee45a2",
+  "id": "8fe56224-5123-4384-859a-5056cca52ae2",
   "prevId": "26a983b5-7c26-49af-b728-c715826b0d32",
   "version": "7",
   "dialect": "postgresql",
@@ -1464,6 +1464,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "settings": {
+          "name": "settings",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -3552,12 +3558,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "settings": {
-          "name": "settings",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -4204,12 +4204,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "whatsapp_account_id": {
-          "name": "whatsapp_account_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
         "external_id": {
           "name": "external_id",
           "type": "text",
@@ -4304,19 +4298,6 @@
           "tableTo": "whatsapp_thread",
           "columnsFrom": [
             "whatsapp_thread_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "whatsapp_message_whatsapp_account_id_whatsapp_account_id_fk": {
-          "name": "whatsapp_message_whatsapp_account_id_whatsapp_account_id_fk",
-          "tableFrom": "whatsapp_message",
-          "tableTo": "whatsapp_account",
-          "columnsFrom": [
-            "whatsapp_account_id"
           ],
           "columnsTo": [
             "id"

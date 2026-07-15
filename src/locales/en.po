@@ -5463,7 +5463,9 @@ msgstr "Petition signup"
 msgid "Notification"
 msgstr "Notification"
 
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -5652,6 +5654,41 @@ msgstr "alert"
 msgid "notification"
 msgstr "notification"
 
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Digest email"
+msgstr "Digest email"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Send me a digest email"
+msgstr "Send me a digest email"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
+msgstr "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Digest frequency"
+msgstr "Digest frequency"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Weekly"
+msgstr "Weekly"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Daily"
+msgstr "Daily"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Saved"
+msgstr "Saved"
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Failed to save notification preferences"
+msgstr "Failed to save notification preferences"
+
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
 msgstr "Search for a template variable to insert."
@@ -5688,3 +5725,6 @@ msgstr "Message:"
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Type your message..."
 msgstr "Type your message..."
+
+#~ msgid "Failed to load notification preferences"
+#~ msgstr "Failed to load notification preferences"

@@ -5439,7 +5439,9 @@ msgstr "Firma de petición"
 msgid "Notification"
 msgstr "Notificación"
 
+#: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
 msgid "Notifications"
 msgstr "Notificaciones"
 
@@ -5628,6 +5630,41 @@ msgstr "alerta"
 msgid "notification"
 msgstr "notificación"
 
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Digest email"
+msgstr ""
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Send me a digest email"
+msgstr ""
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
+msgstr ""
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Digest frequency"
+msgstr ""
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Weekly"
+msgstr ""
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Daily"
+msgstr ""
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Saved"
+msgstr ""
+
+#: src/routes/(app)/preferences/notifications/+page.svelte
+#: src/routes/(app)/preferences/notifications/+page.svelte
+msgid "Failed to save notification preferences"
+msgstr "No se pudieron guardar las preferencias de notificación"
+
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
 msgstr ""
@@ -5665,3 +5702,6 @@ msgstr ""
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Type your message..."
 msgstr ""
+
+#~ msgid "Failed to load notification preferences"
+#~ msgstr ""

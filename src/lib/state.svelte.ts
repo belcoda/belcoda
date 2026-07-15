@@ -74,6 +74,36 @@ class AppState {
 		return z.createQuery(queries.user.list(getListFilter(this.#organizationId)));
 	});
 
+	#notifications = $derived.by(() => {
+		if (!this.#queryContext || !this.#organizationId) {
+			return null;
+		}
+		return z.createQuery(
+			queries.notification.list({
+				...getListFilter(this.#organizationId, { pageSize: 200 }),
+				status: null
+			})
+		);
+	});
+	#unreadNotifications = $derived.by(() => {
+		if (!this.#queryContext || !this.#organizationId) {
+			return null;
+		}
+		return z.createQuery(
+			queries.notification.list({
+				...getListFilter(this.#organizationId, { pageSize: 200 }),
+				status: 'unread' as const
+			})
+		);
+	});
+	#notificationItems = $derived(this.#notifications?.data ?? []);
+	#unreadNotificationItems = $derived(this.#unreadNotifications?.data ?? []);
+	#unreadNotificationCount = $derived(this.#unreadNotificationItems.length);
+	#hasUnreadNotifications = $derived(this.#unreadNotificationCount > 0);
+	#unreadNotificationReferenceIds = $derived(
+		new Set(this.#unreadNotificationItems.map((notification) => notification.referenceId))
+	);
+
 	#user = $derived.by(() => {
 		if (!this.#queryContext || !this.#userId) {
 			return null;
@@ -178,6 +208,33 @@ class AppState {
 			throw new Error('Organization users are not set');
 		}
 		return this.#organizationUsers;
+	}
+	get notifications() {
+		if (!this.#notifications) {
+			throw new Error('Notifications are not set');
+		}
+		return this.#notifications;
+	}
+	get notificationItems() {
+		return this.#notificationItems;
+	}
+	get unreadNotifications() {
+		if (!this.#unreadNotifications) {
+			throw new Error('Unread notifications are not set');
+		}
+		return this.#unreadNotifications;
+	}
+	get unreadNotificationItems() {
+		return this.#unreadNotificationItems;
+	}
+	get unreadNotificationCount() {
+		return this.#unreadNotificationCount;
+	}
+	get hasUnreadNotifications() {
+		return this.#hasUnreadNotifications;
+	}
+	get unreadNotificationReferenceIds() {
+		return this.#unreadNotificationReferenceIds;
 	}
 	get user() {
 		if (!this.#user) {

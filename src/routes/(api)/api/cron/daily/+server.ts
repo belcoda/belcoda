@@ -1,6 +1,7 @@
 // things to trigger daily:
 import { _resetOrganizationFreeQuotasUnsafe } from '$lib/server/api/data/organization';
 import { json } from '@sveltejs/kit';
+import { getQueue } from '$lib/server/queue/index';
 import pino from '$lib/pino';
 import {
 	DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
@@ -14,6 +15,10 @@ export async function POST() {
 			freeWhatsAppCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
 			freeEmailCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS
 		});
+
+		const queue = await getQueue();
+		await queue.sendDigest({ frequency: 'daily' });
+
 		return json({ message: 'Daily cron job completed' });
 	} catch (error) {
 		log.error({ error }, 'Daily cron job failed');
