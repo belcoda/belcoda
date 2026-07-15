@@ -488,6 +488,17 @@ export default drizzleZeroConfig(drizzleSchema, {
 			createdAt: true,
 			deletedAt: true
 		},
+		whatsappAccount: {
+			id: true,
+			referenceId: true,
+			scope: true,
+			identifier: true,
+			details: true,
+			metadata: true,
+			createdAt: true,
+			updatedAt: true,
+			deletedAt: true
+		},
 		whatsappLog: false
 	},
 	manyToMany: {

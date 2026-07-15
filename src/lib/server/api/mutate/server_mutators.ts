@@ -17,6 +17,7 @@ import * as team from '$lib/server/api/mutate/team';
 import * as whatsappTemplate from '$lib/server/api/mutate/whatsapp_template';
 import * as whatsappThread from '$lib/server/api/mutate/whatsapp_thread';
 import * as whatsappMessage from '$lib/server/api/mutate/whatsapp_message';
+import * as whatsappAccount from '$lib/server/api/mutate/whatsapp_account';
 
 export const mutators = defineMutators({
 	person: {
@@ -114,5 +115,10 @@ export const mutators = defineMutators({
 		emojiReaction: whatsappMessage.emojiReaction,
 		sendIndividualMessage: whatsappMessage.sendIndividualMessage,
 		sendIndividualTemplateMessage: whatsappMessage.sendIndividualTemplateMessage
+	},
+	whatsappAccount: {
+		create: whatsappAccount.createWhatsappAccount,
+		delete: whatsappAccount.deleteWhatsappAccount,
+		updateMetadata: whatsappAccount.updateWhatsappAccountMetadata
 	}
 });

@@ -1448,3 +1448,19 @@ export const ledgerRelations = relations(ledger, ({ one }) => ({
 		references: [organization.id]
 	})
 }));
+
+// `whatsappAccount.referenceId` is polymorphic: it points at an organization for
+// organization-scoped accounts and at a user for user-scoped accounts. We expose
+// both relationships (there is no DB-level FK for either) so that Zero query
+// permissions can join through them. At query time the `scope` column is used to
+// pick which relationship is meaningful for a given row.
+export const whatsappAccountRelations = relations(whatsappAccount, ({ one }) => ({
+	organization: one(organization, {
+		fields: [whatsappAccount.referenceId],
+		references: [organization.id]
+	}),
+	user: one(user, {
+		fields: [whatsappAccount.referenceId],
+		references: [user.id]
+	})
+}));
