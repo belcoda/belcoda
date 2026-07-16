@@ -2,64 +2,169 @@ import { v4 as uuidv4, v7 as uuidv7 } from 'uuid';
 import { faker } from '@faker-js/faker';
 
 import { selectOneOfArray } from '$lib/server/db/seed/utils';
+import {
+	whatsappMessage as whatsappMessageTable,
+	activity as activityTable
+} from '$lib/schema/drizzle';
 
 type MessageDirection = 'incoming' | 'outgoing';
 
-export function generateWhatsAppMessage({
+export interface WhatsappMessageGeneratorOptions {
+	organizationId: string;
+	peopleIds: string[];
+	accountIds: string[];
+	userIds: string[];
+	count: number;
+}
+
+export interface GeneratedWhatsappMessages {
+	messages: (typeof whatsappMessageTable.$inferInsert)[];
+	activities: (typeof activityTable.$inferInsert)[];
+	/** personIds that received at least one incoming message, for the customer-service window */
+	incomingRecipientIds: Set<string>;
+}
+
+/**
+ * Generates individual (non-thread) WhatsApp messages plus their matching
+ * activity records.
+ *
+ * Messages are produced in short *conversation bursts*: each burst is a single
+ * (person, account) pair with timestamps advancing over a few minutes and the
+ * direction alternating, so an incoming question and its outgoing reply share
+ * the same `whatsappAccountId` and read as a coherent back-and-forth. A person
+ * can still appear in multiple bursts on different accounts, which keeps the
+ * cross-account activity tabs (see `zero/query/activity/list.ts`) exercised.
+ *
+ * Every message is deliberately created *without* a `whatsappThreadId` (null) so
+ * it represents an ad-hoc individual conversation rather than a broadcast
+ * thread.
+ *
+ * For every `whatsapp_message` row we emit a paired `activity` row whose
+ * `referenceId` equals the message id — this is the polymorphic link the app
+ * relies on (`activity.type` `whatsapp_message_incoming` / `_outgoing`).
+ */
+export function generateWhatsappMessagesWithActivities(
+	options: WhatsappMessageGeneratorOptions
+): GeneratedWhatsappMessages {
+	const { organizationId, peopleIds, accountIds, userIds, count } = options;
+
+	const messages: (typeof whatsappMessageTable.$inferInsert)[] = [];
+	const activities: (typeof activityTable.$inferInsert)[] = [];
+	const incomingRecipientIds = new Set<string>();
+
+	if (peopleIds.length === 0 || accountIds.length === 0) {
+		return { messages, activities, incomingRecipientIds };
+	}
+
+	while (messages.length < count) {
+		// a single conversation: one person, one account, advancing timestamps
+		const personId = selectOneOfArray(peopleIds);
+		const whatsappAccountId = selectOneOfArray(accountIds);
+		const remaining = count - messages.length;
+		const burstSize = Math.min(remaining, 1 + Math.floor(Math.random() * 6)); // 1-6
+		let direction: MessageDirection = Math.random() > 0.5 ? 'incoming' : 'outgoing';
+		let timestamp = faker.date.recent({ days: 30 });
+
+		for (let i = 0; i < burstSize; i++) {
+			const messageId = uuidv7();
+			const createdAt = timestamp;
+
+			const message = buildWhatsappMessage({
+				direction,
+				messageId,
+				personId,
+				whatsappAccountId,
+				organizationId,
+				userIds,
+				createdAt
+			});
+			messages.push(message);
+
+			if (direction === 'incoming') {
+				incomingRecipientIds.add(personId);
+			}
+
+			activities.push({
+				id: uuidv7(),
+				organizationId,
+				personId,
+				userId: null,
+				type: direction === 'incoming' ? 'whatsapp_message_incoming' : 'whatsapp_message_outgoing',
+				referenceId: messageId,
+				// incoming messages are more likely to be unread
+				unread: direction === 'incoming' ? Math.random() > 0.4 : false,
+				createdAt
+			});
+
+			// advance the conversation: next reply a few minutes later, alternating side
+			direction = direction === 'incoming' ? 'outgoing' : 'incoming';
+			timestamp = new Date(timestamp.getTime() + (1 + Math.floor(Math.random() * 5)) * 60_000);
+		}
+	}
+
+	return { messages, activities, incomingRecipientIds };
+}
+
+function buildWhatsappMessage({
 	direction,
+	messageId,
 	personId,
-	userId,
-	organizationId
+	whatsappAccountId,
+	organizationId,
+	userIds,
+	createdAt
 }: {
 	direction: MessageDirection;
+	messageId: string;
 	personId: string;
-	userId: string;
+	whatsappAccountId: string;
 	organizationId: string;
-}) {
-	const base = {
-		id: uuidv7(),
-		personId,
-		userId,
-		organizationId,
-		type:
-			direction === 'incoming'
-				? 'incoming_whatsapp_message'
-				: ('outgoing_whatsapp_message' as const),
-		unread: direction === 'outgoing' ? false : Math.random() > 0.5,
-		payload: {
-			platformId: uuidv4(),
-			emojiReaction: null,
-			replyToMessageId: null,
-			message: {
-				image_url:
-					Math.random() > 0.7
-						? faker.image.urlPicsumPhotos({ width: 400, height: 250 })
-						: undefined,
-				text: selectOneOfArray(direction === 'incoming' ? incomingMessages : outgoingMessages)
-			},
-			status: Math.random() > 0.1 ? 'sent' : 'read'
-		},
-		createdAt: faker.date.recent({ days: 30 })
-	};
+	userIds: string[];
+	createdAt: Date;
+}): typeof whatsappMessageTable.$inferInsert {
+	const wamidId = uuidv4();
+	const text = selectOneOfArray(direction === 'incoming' ? incomingMessages : outgoingMessages);
+	const image_url =
+		Math.random() > 0.8 ? faker.image.urlPicsumPhotos({ width: 400, height: 250 }) : undefined;
 
-	if (direction === 'incoming') {
-		return {
-			...base,
-			payload: {
-				...base.payload,
-				wamid: uuidv4()
-			}
-		};
-	} else {
-		return {
-			...base,
-			payload: {
-				...base.payload,
-				wamid: Math.random() > 0.5 ? uuidv4() : null,
-				status: Math.random() > 0.1 ? 'delivered' : 'pending'
-			}
-		};
-	}
+	const status =
+		direction === 'incoming'
+			? 'delivered'
+			: selectOneOfArray(['sent', 'delivered', 'read'] as const);
+
+	const deliveredAt =
+		direction === 'outgoing' && status !== 'sent' ? new Date(createdAt.getTime() + 2000) : null;
+	const readAt =
+		direction === 'incoming' || status === 'read' ? new Date(createdAt.getTime() + 5000) : null;
+
+	return {
+		id: messageId,
+		organizationId,
+		whatsappThreadId: null,
+		whatsappAccountId,
+		externalId: uuidv4(),
+		wamidId,
+		type: direction === 'incoming' ? 'incoming_api_message' : 'outgoing_api_message',
+		message: {
+			id: direction === 'incoming' ? wamidId : messageId,
+			text,
+			image_url,
+			wamid: wamidId,
+			emojiReactions: []
+		},
+		// incoming messages have no sending user; outgoing usually attributed to a user
+		userId:
+			direction === 'outgoing' && userIds.length > 0 && Math.random() > 0.3
+				? selectOneOfArray(userIds)
+				: null,
+		personId,
+		status,
+		statusMessage: null,
+		deliveredAt,
+		readAt,
+		createdAt,
+		updatedAt: createdAt
+	};
 }
 
 const outgoingMessages = [
