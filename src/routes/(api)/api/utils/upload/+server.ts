@@ -2,8 +2,10 @@ import { getSignedPutUrl } from '$lib/server/utils/s3.js';
 import { getOrganization } from '$lib/server/api/data/organization/index.js';
 import {
 	buildUploadKey,
+	isExtensionAllowedForPurpose,
 	isUploadPurpose,
-	sanitizeExtension
+	sanitizeExtension,
+	UPLOAD_SIGNED_URL_EXPIRES_SECONDS
 } from '$lib/server/utils/upload-keys.js';
 import { error, json } from '@sveltejs/kit';
 
@@ -37,6 +39,10 @@ export async function GET(event) {
 		return error(400, 'Invalid extension');
 	}
 
+	if (!isExtensionAllowedForPurpose(purpose, safeExtension)) {
+		return error(400, 'Extension is not allowed for this upload purpose');
+	}
+
 	try {
 		await getOrganization({ userId, organizationId });
 	} catch (e) {
@@ -50,6 +56,10 @@ export async function GET(event) {
 	}
 
 	const key = buildUploadKey({ organizationId, purpose, extension: safeExtension });
-	const signedUrl = await getSignedPutUrl(PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME, key, 3600);
+	const signedUrl = await getSignedPutUrl(
+		PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME,
+		key,
+		UPLOAD_SIGNED_URL_EXPIRES_SECONDS
+	);
 	return json({ key, signedUrl });
 }

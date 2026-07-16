@@ -132,7 +132,7 @@ function extensionFromFile(file: File): string {
 		'image/webp': 'webp',
 		'image/gif': 'gif'
 	};
-	return mimeMap[file.type] ?? 'bin';
+	return mimeMap[file.type] ?? 'jpg';
 }
 
 async function getSignedUploadUrl(file: File) {
