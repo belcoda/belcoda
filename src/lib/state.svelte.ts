@@ -178,6 +178,7 @@ class AppState {
 	}
 	set organizationId(newOrganizationId: string) {
 		this.#organizationId = newOrganizationId;
+		this.#activeWhatsappAccountId = null;
 	}
 
 	get activeWhatsappAccountId() {

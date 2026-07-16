@@ -38,11 +38,11 @@ function listActivityQueryBase({
 			q = q.start(cursor);
 		}
 	}
+	if (input.onlyShowWhatsappMessages) {
+		q = q.where('type', 'IN', ['whatsapp_message_incoming', 'whatsapp_message_outgoing']);
+	}
 	if (input.accountId) {
 		const accountId = input.accountId;
-		if (input.onlyShowWhatsappMessages) {
-			q = q.where('type', 'IN', ['whatsapp_message_incoming', 'whatsapp_message_outgoing']);
-		}
 		q = q.whereExists('whatsappMessage', (expr) => expr.where('whatsappAccountId', '=', accountId));
 	}
 	return q;

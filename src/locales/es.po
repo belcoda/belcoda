@@ -264,7 +264,7 @@ msgstr ""
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Loading..."
-msgstr ""
+msgstr "Cargando..."
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -5707,4 +5707,4 @@ msgstr ""
 
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Nothing here yet"
-msgstr ""
+msgstr "Aún no hay nada aquí"

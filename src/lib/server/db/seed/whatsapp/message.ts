@@ -9,10 +9,17 @@ import {
 
 type MessageDirection = 'incoming' | 'outgoing';
 
+/** The subset of a whatsapp_account row the generator needs to attribute messages correctly. */
+export interface WhatsappAccountRef {
+	id: string;
+	scope: 'organization' | 'user';
+	referenceId: string;
+}
+
 export interface WhatsappMessageGeneratorOptions {
 	organizationId: string;
 	peopleIds: string[];
-	accountIds: string[];
+	accounts: WhatsappAccountRef[];
 	userIds: string[];
 	count: number;
 	/**
@@ -58,7 +65,7 @@ export function generateWhatsappMessagesWithActivities(
 	const {
 		organizationId,
 		peopleIds,
-		accountIds,
+		accounts,
 		userIds,
 		count,
 		minMultiAccountPeople = 10
@@ -68,30 +75,40 @@ export function generateWhatsappMessagesWithActivities(
 	const activities: (typeof activityTable.$inferInsert)[] = [];
 	const incomingRecipientIds = new Set<string>();
 
-	if (peopleIds.length === 0 || accountIds.length === 0) {
+	if (peopleIds.length === 0 || accounts.length === 0) {
 		return { messages, activities, incomingRecipientIds };
 	}
 
+	// A burst is at most 6 messages with up to 5 minutes between each, so at most
+	// 25 minutes end-to-end. Starting the burst a few hours before "now" at the
+	// latest guarantees every message and activity in it lands safely in the past.
+	const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+	const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000);
+
 	// Emits one conversation burst; `maxSize` caps its length (1-6, further capped
 	// by maxSize so the main phase never overshoots `count`).
-	function pushBurst(personId: string, whatsappAccountId: string, maxSize: number) {
+	function pushBurst(personId: string, account: WhatsappAccountRef, maxSize: number) {
 		const burstSize = Math.min(maxSize, 1 + Math.floor(Math.random() * 6)); // 1-6
 		let direction: MessageDirection = Math.random() > 0.5 ? 'incoming' : 'outgoing';
-		let timestamp = faker.date.recent({ days: 30 });
+		let timestamp = faker.date.between({ from: thirtyDaysAgo, to: threeHoursAgo });
 
 		for (let i = 0; i < burstSize; i++) {
 			const messageId = uuidv7();
 			const createdAt = timestamp;
+			// one read decision per incoming message, shared by the message's `readAt`
+			// and the activity's `unread` so the two never disagree
+			const isRead = direction === 'incoming' ? Math.random() > 0.4 : undefined;
 
 			messages.push(
 				buildWhatsappMessage({
 					direction,
 					messageId,
 					personId,
-					whatsappAccountId,
+					account,
 					organizationId,
 					userIds,
-					createdAt
+					createdAt,
+					isRead
 				})
 			);
 
@@ -106,8 +123,7 @@ export function generateWhatsappMessagesWithActivities(
 				userId: null,
 				type: direction === 'incoming' ? 'whatsapp_message_incoming' : 'whatsapp_message_outgoing',
 				referenceId: messageId,
-				// incoming messages are more likely to be unread
-				unread: direction === 'incoming' ? Math.random() > 0.4 : false,
+				unread: direction === 'incoming' ? !isRead : false,
 				createdAt
 			});
 
@@ -119,16 +135,16 @@ export function generateWhatsappMessagesWithActivities(
 
 	// main volume: random person + random account per burst
 	while (messages.length < count) {
-		pushBurst(selectOneOfArray(peopleIds), selectOneOfArray(accountIds), count - messages.length);
+		pushBurst(selectOneOfArray(peopleIds), selectOneOfArray(accounts), count - messages.length);
 	}
 
 	// guarantee: at least `minMultiAccountPeople` people have two bursts on two
 	// distinct accounts (needs at least two accounts to be possible)
-	if (accountIds.length >= 2 && minMultiAccountPeople > 0) {
+	if (accounts.length >= 2 && minMultiAccountPeople > 0) {
 		const targetCount = Math.min(minMultiAccountPeople, peopleIds.length);
 		const chosenPeople = shuffle(peopleIds).slice(0, targetCount);
 		for (const personId of chosenPeople) {
-			const [accountA, accountB] = pickTwoDistinct(accountIds);
+			const [accountA, accountB] = pickTwoDistinct(accounts);
 			pushBurst(personId, accountA, 6);
 			pushBurst(personId, accountB, 6);
 		}
@@ -146,30 +162,33 @@ function shuffle<T>(array: T[]): T[] {
 	return copy;
 }
 
-// caller guarantees `accountIds.length >= 2`
-function pickTwoDistinct(accountIds: string[]): [string, string] {
-	const first = Math.floor(Math.random() * accountIds.length);
-	let second = Math.floor(Math.random() * (accountIds.length - 1));
+// caller guarantees `accounts.length >= 2`
+function pickTwoDistinct<T>(accounts: T[]): [T, T] {
+	const first = Math.floor(Math.random() * accounts.length);
+	let second = Math.floor(Math.random() * (accounts.length - 1));
 	if (second >= first) second += 1;
-	return [accountIds[first], accountIds[second]];
+	return [accounts[first], accounts[second]];
 }
 
 function buildWhatsappMessage({
 	direction,
 	messageId,
 	personId,
-	whatsappAccountId,
+	account,
 	organizationId,
 	userIds,
-	createdAt
+	createdAt,
+	isRead
 }: {
 	direction: MessageDirection;
 	messageId: string;
 	personId: string;
-	whatsappAccountId: string;
+	account: WhatsappAccountRef;
 	organizationId: string;
 	userIds: string[];
 	createdAt: Date;
+	/** For incoming messages only: whether staff has read it (drives `readAt`). */
+	isRead?: boolean;
 }): typeof whatsappMessageTable.$inferInsert {
 	const wamidId = uuidv4();
 	const text = selectOneOfArray(direction === 'incoming' ? incomingMessages : outgoingMessages);
@@ -184,13 +203,30 @@ function buildWhatsappMessage({
 	const deliveredAt =
 		direction === 'outgoing' && status !== 'sent' ? new Date(createdAt.getTime() + 2000) : null;
 	const readAt =
-		direction === 'incoming' || status === 'read' ? new Date(createdAt.getTime() + 5000) : null;
+		direction === 'incoming'
+			? isRead
+				? new Date(createdAt.getTime() + 5000)
+				: null
+			: status === 'read'
+				? new Date(createdAt.getTime() + 5000)
+				: null;
+
+	// incoming messages have no sending user; outgoing messages on a user-scoped
+	// account are attributed to that account's owner, otherwise a random org user
+	const userId =
+		direction === 'outgoing'
+			? account.scope === 'user'
+				? account.referenceId
+				: userIds.length > 0 && Math.random() > 0.3
+					? selectOneOfArray(userIds)
+					: null
+			: null;
 
 	return {
 		id: messageId,
 		organizationId,
 		whatsappThreadId: null,
-		whatsappAccountId,
+		whatsappAccountId: account.id,
 		externalId: uuidv4(),
 		wamidId,
 		type: direction === 'incoming' ? 'incoming_api_message' : 'outgoing_api_message',
@@ -201,11 +237,7 @@ function buildWhatsappMessage({
 			wamid: wamidId,
 			emojiReactions: []
 		},
-		// incoming messages have no sending user; outgoing usually attributed to a user
-		userId:
-			direction === 'outgoing' && userIds.length > 0 && Math.random() > 0.3
-				? selectOneOfArray(userIds)
-				: null,
+		userId,
 		personId,
 		status,
 		statusMessage: null,

@@ -5715,4 +5715,4 @@ msgstr ""
 
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Nothing here yet"
-msgstr ""
+msgstr "Ainda não há nada aqui"

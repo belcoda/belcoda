@@ -230,7 +230,11 @@ async function seedOrganization(
 	} = generateWhatsappMessagesWithActivities({
 		organizationId: orgId,
 		peopleIds: people.map((p) => p.id),
-		accountIds: whatsappAccounts.map((a) => a.id),
+		accounts: whatsappAccounts.map((a) => ({
+			id: a.id,
+			scope: a.scope,
+			referenceId: a.referenceId
+		})),
 		userIds: users.map((u) => u.id),
 		count: counts.whatsappMessages
 	});

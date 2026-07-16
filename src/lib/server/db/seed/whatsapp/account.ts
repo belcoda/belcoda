@@ -4,6 +4,12 @@ import { whatsappAccount as whatsappAccountTable, user as userTable } from '$lib
 
 type SeedUser = Pick<typeof userTable.$inferInsert, 'id' | 'name' | 'image'>;
 
+// `whatsappAccount.identifier` is globally unique across the whole database, but
+// `generateWhatsappAccounts` is invoked once per organization within a single seed
+// run. Module scope (rather than a local Set inside the function) makes uniqueness
+// hold across every call in the run, not just within one organization.
+const usedIdentifiers = new Set<string>();
+
 /**
  * Generates WhatsApp accounts for an organization.
  *
@@ -26,8 +32,6 @@ export function generateWhatsappAccounts({
 	organizationId: string;
 	users: SeedUser[];
 }): (typeof whatsappAccountTable.$inferInsert)[] {
-	const usedIdentifiers = new Set<string>();
-
 	function uniqueIdentifier(): string {
 		let identifier: string;
 		do {
