@@ -15,6 +15,12 @@ export interface WhatsappMessageGeneratorOptions {
 	accountIds: string[];
 	userIds: string[];
 	count: number;
+	/**
+	 * Minimum number of people guaranteed to have more than one conversation
+	 * burst spread across at least two different accounts (added on top of
+	 * `count`, so total messages will exceed `count`).
+	 */
+	minMultiAccountPeople?: number;
 }
 
 export interface GeneratedWhatsappMessages {
@@ -31,9 +37,12 @@ export interface GeneratedWhatsappMessages {
  * Messages are produced in short *conversation bursts*: each burst is a single
  * (person, account) pair with timestamps advancing over a few minutes and the
  * direction alternating, so an incoming question and its outgoing reply share
- * the same `whatsappAccountId` and read as a coherent back-and-forth. A person
- * can still appear in multiple bursts on different accounts, which keeps the
- * cross-account activity tabs (see `zero/query/activity/list.ts`) exercised.
+ * the same `whatsappAccountId` and read as a coherent back-and-forth.
+ *
+ * After the main volume is generated, a guarantee phase gives at least
+ * `minMultiAccountPeople` people two bursts on two different accounts, so the
+ * cross-account activity tabs (see `zero/query/activity/list.ts`) always have
+ * real multi-account conversations to show.
  *
  * Every message is deliberately created *without* a `whatsappThreadId` (null) so
  * it represents an ad-hoc individual conversation rather than a broadcast
@@ -46,7 +55,14 @@ export interface GeneratedWhatsappMessages {
 export function generateWhatsappMessagesWithActivities(
 	options: WhatsappMessageGeneratorOptions
 ): GeneratedWhatsappMessages {
-	const { organizationId, peopleIds, accountIds, userIds, count } = options;
+	const {
+		organizationId,
+		peopleIds,
+		accountIds,
+		userIds,
+		count,
+		minMultiAccountPeople = 10
+	} = options;
 
 	const messages: (typeof whatsappMessageTable.$inferInsert)[] = [];
 	const activities: (typeof activityTable.$inferInsert)[] = [];
@@ -56,12 +72,10 @@ export function generateWhatsappMessagesWithActivities(
 		return { messages, activities, incomingRecipientIds };
 	}
 
-	while (messages.length < count) {
-		// a single conversation: one person, one account, advancing timestamps
-		const personId = selectOneOfArray(peopleIds);
-		const whatsappAccountId = selectOneOfArray(accountIds);
-		const remaining = count - messages.length;
-		const burstSize = Math.min(remaining, 1 + Math.floor(Math.random() * 6)); // 1-6
+	// Emits one conversation burst; `maxSize` caps its length (1-6, further capped
+	// by maxSize so the main phase never overshoots `count`).
+	function pushBurst(personId: string, whatsappAccountId: string, maxSize: number) {
+		const burstSize = Math.min(maxSize, 1 + Math.floor(Math.random() * 6)); // 1-6
 		let direction: MessageDirection = Math.random() > 0.5 ? 'incoming' : 'outgoing';
 		let timestamp = faker.date.recent({ days: 30 });
 
@@ -69,16 +83,17 @@ export function generateWhatsappMessagesWithActivities(
 			const messageId = uuidv7();
 			const createdAt = timestamp;
 
-			const message = buildWhatsappMessage({
-				direction,
-				messageId,
-				personId,
-				whatsappAccountId,
-				organizationId,
-				userIds,
-				createdAt
-			});
-			messages.push(message);
+			messages.push(
+				buildWhatsappMessage({
+					direction,
+					messageId,
+					personId,
+					whatsappAccountId,
+					organizationId,
+					userIds,
+					createdAt
+				})
+			);
 
 			if (direction === 'incoming') {
 				incomingRecipientIds.add(personId);
@@ -102,7 +117,41 @@ export function generateWhatsappMessagesWithActivities(
 		}
 	}
 
+	// main volume: random person + random account per burst
+	while (messages.length < count) {
+		pushBurst(selectOneOfArray(peopleIds), selectOneOfArray(accountIds), count - messages.length);
+	}
+
+	// guarantee: at least `minMultiAccountPeople` people have two bursts on two
+	// distinct accounts (needs at least two accounts to be possible)
+	if (accountIds.length >= 2 && minMultiAccountPeople > 0) {
+		const targetCount = Math.min(minMultiAccountPeople, peopleIds.length);
+		const chosenPeople = shuffle(peopleIds).slice(0, targetCount);
+		for (const personId of chosenPeople) {
+			const [accountA, accountB] = pickTwoDistinct(accountIds);
+			pushBurst(personId, accountA, 6);
+			pushBurst(personId, accountB, 6);
+		}
+	}
+
 	return { messages, activities, incomingRecipientIds };
+}
+
+function shuffle<T>(array: T[]): T[] {
+	const copy = [...array];
+	for (let i = copy.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[copy[i], copy[j]] = [copy[j], copy[i]];
+	}
+	return copy;
+}
+
+// caller guarantees `accountIds.length >= 2`
+function pickTwoDistinct(accountIds: string[]): [string, string] {
+	const first = Math.floor(Math.random() * accountIds.length);
+	let second = Math.floor(Math.random() * (accountIds.length - 1));
+	if (second >= first) second += 1;
+	return [accountIds[first], accountIds[second]];
 }
 
 function buildWhatsappMessage({
