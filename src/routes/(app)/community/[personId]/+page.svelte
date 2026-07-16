@@ -28,12 +28,16 @@
 <ContentLayout
 	rootLink="/community"
 	{header}
+	footer={appState.activeWhatsappAccountId ? footer : undefined}
 	bodyPadding="p-0 gap-y-0"
 	scrollBody={false}
 	hideFooter={!whatsappOnboarded}
 >
 	<ActivityTimeline personId={params.personId} />
-	{#snippet footer()}
+</ContentLayout>
+
+{#snippet footer()}
+	{#if appState.activeWhatsappAccountId}
 		{#if whatsappOnboarded}
 			{#if isLastReceivedAtLessThan24HoursAgo}
 				<SendBusinessApiIndividualMessage personId={params.personId} />
@@ -47,8 +51,8 @@
 				</p>
 			</div>
 		{/if}
-	{/snippet}
-</ContentLayout>
+	{/if}
+{/snippet}
 
 {#snippet header()}
 	<div class="flex items-center justify-between">

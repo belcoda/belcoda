@@ -256,6 +256,7 @@ msgstr "Sistema"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -4599,13 +4600,11 @@ msgstr "Tentar novamente"
 msgid "Home"
 msgstr "Início"
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "Loading activities..."
-msgstr "Carregando atividades..."
+#~ msgid "Loading activities..."
+#~ msgstr "Carregando atividades..."
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "No activities yet"
-msgstr "Ainda não há atividades"
+#~ msgid "No activities yet"
+#~ msgstr "Ainda não há atividades"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the audio tag."
@@ -5713,3 +5712,7 @@ msgstr ""
 
 #~ msgid "Failed to load notification preferences"
 #~ msgstr ""
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Nothing here yet"
+msgstr ""

@@ -1,5 +1,6 @@
 import type { QueryContext } from '$lib/zero/schema';
 import { type ListFilter } from '$lib/schema/helpers';
+import type { ReadWhatsappAccountZero } from '$lib/schema/whatsapp-account';
 
 import { z } from '$lib/zero.svelte';
 import queries from '$lib/zero/query/index';
@@ -27,6 +28,17 @@ class AppState {
 	#activeTeamId = $state<string | null>(null);
 	#userId = $state<string | null>(null);
 	#queryContext: QueryContext | null = $state(null);
+	#activeWhatsappAccountId = $state<string | null>(null);
+
+	#whatsappAccounts = $derived.by(() => {
+		if (!this.#organizationId) {
+			return null;
+		}
+		const q = z.createQuery(
+			queries.whatsappAccount.list({ organizationId: this.#organizationId, isDeleted: false })
+		);
+		return q;
+	});
 
 	#organizations = $derived(
 		this.#queryContext ? z.createQuery(queries.organization.list({})) : null
@@ -168,6 +180,14 @@ class AppState {
 		this.#organizationId = newOrganizationId;
 	}
 
+	get activeWhatsappAccountId() {
+		return this.#activeWhatsappAccountId;
+	}
+
+	set activeWhatsappAccountId(newActiveWhatsappAccountId: string | null) {
+		this.#activeWhatsappAccountId = newActiveWhatsappAccountId;
+	}
+
 	get activeTeamId() {
 		return this.#activeTeamId;
 	}
@@ -247,6 +267,35 @@ class AppState {
 			throw new Error('My teams are not set');
 		}
 		return this.#myTeams;
+	}
+
+	get whatsappAccounts() {
+		if (!this.#whatsappAccounts) {
+			throw new Error('Whatsapp accounts are not set');
+		}
+		return this.#whatsappAccounts;
+	}
+
+	get whatsappAccountsUsableByCurrentUser() {
+		if (!this.#whatsappAccounts) {
+			throw new Error('Whatsapp accounts are not set');
+		}
+		//filter out all accounts of type 'user' which do not belong to the current user
+		const filteredArray =
+			this.#whatsappAccounts.data?.filter(
+				(account) => account.referenceId === this.#userId || account.scope === 'organization'
+			) ?? [];
+		//sort by scope with user accounts first
+		filteredArray.sort((a, b) => {
+			if (a.scope === 'user' && b.scope !== 'user') {
+				return -1;
+			}
+			if (a.scope !== 'user' && b.scope === 'user') {
+				return 1;
+			}
+			return 0;
+		});
+		return filteredArray;
 	}
 
 	get role() {
