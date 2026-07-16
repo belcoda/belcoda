@@ -1,5 +1,5 @@
 import { parse } from 'valibot';
-import { Z } from 'zero-svelte';
+import { Z } from '$lib/zero/binding';
 import { queryContextSchema, schema, type Schema, type QueryContext } from '$lib/zero/schema';
 import { env as publicEnv } from '$env/dynamic/public';
 import { mutators } from '$lib/zero/mutate/client_mutators';
