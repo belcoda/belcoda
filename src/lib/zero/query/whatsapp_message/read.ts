@@ -18,6 +18,8 @@ export function readWhatsappMessageQuery({
 }) {
 	const q = builder.whatsappMessage
 		.where('id', '=', input.whatsappMessageId)
+		.related('whatsappAccount')
+		.related('person')
 		.where((expr) => whatsappMessageReadPermissions(expr, ctx))
 		.one();
 	return q;

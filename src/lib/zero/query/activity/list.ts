@@ -41,9 +41,9 @@ function listActivityQueryBase({
 	if (input.accountId) {
 		const accountId = input.accountId;
 		if (input.onlyShowWhatsappMessages) {
-			q.where('type', 'IN', ['whatsapp_message_incoming', 'whatsapp_message_outgoing']);
+			q = q.where('type', 'IN', ['whatsapp_message_incoming', 'whatsapp_message_outgoing']);
 		}
-		q.whereExists('whatsappMessage', (expr) => expr.where('whatsappAccountId', '=', accountId));
+		q = q.whereExists('whatsappMessage', (expr) => expr.where('whatsappAccountId', '=', accountId));
 	}
 	return q;
 }

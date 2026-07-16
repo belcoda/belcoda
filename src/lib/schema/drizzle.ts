@@ -1323,6 +1323,21 @@ export const whatsappTemplateRelations = relations(whatsappTemplate, ({ one }) =
 	})
 }));
 
+export const whatsappMessageRelations = relations(whatsappMessage, ({ one }) => ({
+	organization: one(organization, {
+		fields: [whatsappMessage.organizationId],
+		references: [organization.id]
+	}),
+	whatsappAccount: one(whatsappAccount, {
+		fields: [whatsappMessage.whatsappAccountId],
+		references: [whatsappAccount.id]
+	}),
+	person: one(person, {
+		fields: [whatsappMessage.personId],
+		references: [person.id]
+	})
+}));
+
 export const whatsappThreadRelations = relations(whatsappThread, ({ many, one }) => ({
 	organization: one(organization, {
 		fields: [whatsappThread.organizationId],

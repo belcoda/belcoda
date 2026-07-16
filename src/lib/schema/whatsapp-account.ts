@@ -8,7 +8,12 @@ export type WhatsappAccountScope = v.InferOutput<typeof whatsappAccountScopeSche
 export const whatsappAccountDetailsSchema = v.any();
 export type WhatsappAccountDetails = v.InferOutput<typeof whatsappAccountDetailsSchema>;
 
-export const whatsappAccountMetadataSchema = v.any();
+export const whatsappAccountMetadataSchema = v.object({
+	displayName: v.optional(h.shortString),
+	isBusiness: v.boolean(),
+	profilePic: v.optional(h.url),
+	status: v.optional(h.mediumString)
+});
 export type WhatsappAccountMetadata = v.InferOutput<typeof whatsappAccountMetadataSchema>;
 
 export const whatsappAccountSchema = v.object({
@@ -33,9 +38,9 @@ export const readWhatsappAccountZero = v.object({
 	scope: whatsappAccountSchema.entries.scope,
 	details: whatsappAccountSchema.entries.details,
 	metadata: whatsappAccountSchema.entries.metadata,
-	createdAt: h.dateToTimestamp,
-	updatedAt: h.dateToTimestamp,
-	deletedAt: v.nullable(h.dateToTimestamp)
+	createdAt: h.unixTimestamp,
+	updatedAt: h.unixTimestamp,
+	deletedAt: v.nullable(h.unixTimestamp)
 });
 export type ReadWhatsappAccountZero = v.InferOutput<typeof readWhatsappAccountZero>;
 

@@ -1,13 +1,17 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput, object } from 'valibot';
+import { array, type InferOutput, object, omit, boolean, optional } from 'valibot';
 import { listFilter } from '$lib/schema/helpers';
 import { whatsappAccountReadPermissions } from '$lib/zero/query/whatsapp_account/permissions';
 import { readWhatsappAccountZero } from '$lib/schema/whatsapp-account';
 
-export const inputSchema = object({
-	...listFilter.entries
-});
+export const inputSchema = omit(
+	object({
+		...listFilter.entries,
+		limitToCurrentUser: optional(boolean())
+	}),
+	['teamId', 'pageSize', 'cursor', 'excludedIds', 'searchString']
+);
 export type ListWhatsappAccountsInput = InferOutput<typeof inputSchema>;
 
 export function listWhatsappAccountsQuery({
@@ -23,12 +27,9 @@ export function listWhatsappAccountsQuery({
 		// view scoping: restrict to accounts belonging to the requested organization,
 		// i.e. the organization's own account plus the accounts of its members
 		.where((expr) => inOrganizationScope(expr, ctx, input.organizationId))
-		.where((expr) => whereClause(expr, { filter: input }))
-		.orderBy('createdAt', 'desc')
-		.limit(input.pageSize || 50);
-	if (input.cursor) {
-		q = q.start({ id: input.cursor });
-	}
+		.where((expr) => whereClause(expr, { filter: input, ctx }))
+		.orderBy('createdAt', 'desc');
+
 	return q;
 }
 
@@ -71,16 +72,13 @@ function inOrganizationScope(
 
 function whereClause(
 	builder: ExpressionBuilder<'whatsappAccount', Schema>,
-	{ filter }: { filter: ListWhatsappAccountsInput }
+	{ filter, ctx }: { filter: ListWhatsappAccountsInput; ctx: QueryContext }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
 	const { and, cmp } = builder;
-	const filterArr = [
-		cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null),
-		cmp('id', 'NOT IN', filter.excludedIds)
-	];
-	if (filter.searchString && filter.searchString.length > 0) {
-		filterArr.push(cmp('identifier', 'ILIKE', `%${filter.searchString}%`));
+	const filterArr = [cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null)];
+	if (filter.limitToCurrentUser && ctx.userId) {
+		filterArr.push(cmp('referenceId', '=', ctx.userId));
 	}
 	return and(...filterArr);
 }
