@@ -49,7 +49,7 @@ loadLocales(js.key, js.loadCount, js.loadCatalog, locales);
  * @returns The selected `Locale` for the request; `'en'` if no supported locale is found
  */
 function detectLocale(event: RequestEvent): Locale {
-	log.debug({ url: event.url.toString() }, 'New incoming request');
+	log.debug({ path: event.url.pathname }, 'New incoming request');
 	const cookieLocale = event.cookies.get('BELCODA_LOCALE');
 	const paramLocale = event.url.searchParams.get('locale');
 
@@ -147,8 +147,7 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 			method: event.request.method,
 			requestId: event.locals.requestId,
 			host: event.url.host,
-			subdomain: subdomainOrFalse,
-			searchParams: event.url.searchParams.toString()
+			subdomain: subdomainOrFalse
 		},
 		'Incoming request'
 	);
@@ -170,12 +169,12 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 	// Handle the page routes (eg: event pages, etc) which should always be on a subdomain and don't need to be authenticated...
 	if (subdomainOrFalse) {
 		log.debug(
-			{ url: event.url.toString() },
+			{ path: event.url.pathname },
 			'Handling page route on subdomain: ' + subdomainOrFalse
 		);
 		const resolved = await resolve(event);
 		log.debug(
-			{ url: event.url.toString(), session: event.locals.session?.session.id },
+			{ path: event.url.pathname, session: event.locals.session?.session.id },
 			'[DEBUG] Page route resolved'
 		);
 		return resolved; //Note: There *may* be a valid session here, but not for sure...
@@ -239,7 +238,7 @@ async function applyOneTimeTokenSession(event: RequestEvent, auth: BetterAuth): 
 	if (verified) {
 		const cleanedUrl = new URL(event.url);
 		cleanedUrl.searchParams.delete('authToken'); //kill the token so it can't be reused
-		log.debug({ url: cleanedUrl.toString() }, '[DEBUG] Redirecting to strip one-time token');
+		log.debug({ path: cleanedUrl.pathname }, '[DEBUG] Redirecting to strip one-time token');
 		redirect(303, cleanedUrl.pathname + cleanedUrl.search + cleanedUrl.hash);
 	}
 }
