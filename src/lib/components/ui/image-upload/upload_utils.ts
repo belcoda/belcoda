@@ -137,10 +137,13 @@ function extensionFromFile(file: File): string {
 
 async function getSignedUploadUrl(file: File) {
 	const searchParams = new URLSearchParams({
-		organizationId: appState.organizationId,
 		purpose: 'imageupload',
 		extension: extensionFromFile(file)
 	});
+	const organizationId = appState.optionalOrganizationId;
+	if (organizationId) {
+		searchParams.set('organizationId', organizationId);
+	}
 	const result = await get({
 		path: `/api/utils/upload?${searchParams}`,
 		schema: object({ key: string(), signedUrl: string() })
