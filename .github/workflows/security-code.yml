@@ -68,7 +68,7 @@ jobs:
           cosign verify-blob \
             --certificate "${INST}/opengrep.cert" \
             --signature "${INST}/opengrep.sig" \
-            --certificate-identity-regexp "https://github.com/opengrep/opengrep/\.github/workflows/rolling-release\.yml@refs/heads/main" \
+            --certificate-identity "https://github.com/opengrep/opengrep/.github/workflows/rolling-release.yml@refs/heads/main" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
             "${INST}/opengrep"
           chmod +x "${INST}/opengrep"
