@@ -78,11 +78,20 @@ export const webhookEventTypes = ['all', ...webhookEvents] as const;
 export const webhookEventTypesSchema = v.array(v.picklist(webhookEventTypes));
 export type WebhookEventTypes = v.InferOutput<typeof webhookEventTypesSchema>;
 
+export const webhookTargetUrlSchema = v.pipe(
+	helpers.url,
+	v.maxLength(2048, 'Webhook URL must be at most 2048 characters'),
+	v.check((value) => {
+		const target = new URL(value);
+		return target.protocol === 'https:' && !target.username && !target.password;
+	}, 'Webhook URL must use HTTPS and must not contain credentials')
+);
+
 export const webhookSchema = v.object({
 	id: helpers.uuid,
 	organizationId: helpers.uuid,
 	name: helpers.mediumString,
-	targetUrl: helpers.url,
+	targetUrl: webhookTargetUrlSchema,
 	secret: helpers.mediumString,
 	verificationMode: v.picklist(webhookVerificationModes),
 	enabled: v.boolean(),
