@@ -5,6 +5,7 @@
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import { locale } from '$lib/index.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
+	import { MAX_LIST_PAGE_SIZE } from '$lib/schema/helpers';
 	import queries from '$lib/zero/query/index';
 	import { z } from '$lib/zero.svelte';
 
@@ -20,7 +21,7 @@
 
 	// Fetch all org signups once and group by eventId
 	const signupsFilter = $derived.by(() => ({
-		...getListFilter(appState.organizationId, { pageSize: 2000 }),
+		...getListFilter(appState.organizationId, { pageSize: MAX_LIST_PAGE_SIZE }),
 		includeDeleted: false,
 		includeIncomplete: false
 	}));

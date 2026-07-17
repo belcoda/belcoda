@@ -437,13 +437,23 @@ export const hexColor = v.pipe(
 	v.regex(/^#([0-9a-fA-F]{6})$/, 'Invalid hex color format')
 );
 
+export const DEFAULT_LIST_PAGE_SIZE = 50;
+export const MAX_LIST_PAGE_SIZE = 200;
+
 export const listFilter = v.object({
 	searchString: v.fallback(v.nullable(v.string()), null),
 	teamId: v.fallback(v.nullable(uuid), null),
 	isDeleted: v.fallback(v.nullable(v.boolean()), null),
 	organizationId: uuid,
 	cursor: v.fallback(v.nullable(v.string()), null),
-	pageSize: v.fallback(integer, 50),
+	pageSize: v.optional(
+		v.pipe(
+			integer,
+			v.minValue(1, 'Page size must be at least 1'),
+			v.maxValue(MAX_LIST_PAGE_SIZE, `Page size must not exceed ${MAX_LIST_PAGE_SIZE}`)
+		),
+		DEFAULT_LIST_PAGE_SIZE
+	),
 	excludedIds: v.fallback(v.array(uuid), [])
 });
 export type ListFilter = v.InferOutput<typeof listFilter>;
