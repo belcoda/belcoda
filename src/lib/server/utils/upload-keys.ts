@@ -49,3 +49,20 @@ export function buildUploadKey({
 	const safeExtension = normalizeExtension(extension);
 	return `organization/${organizationId}/${purpose}/${randomUUID()}.${safeExtension}`;
 }
+
+export function buildUserUploadKey({
+	userId,
+	purpose,
+	extension
+}: {
+	userId: string;
+	purpose: UploadPurpose;
+	extension: string;
+}): string {
+	if (!isExtensionAllowedForPurpose(purpose, extension)) {
+		throw new Error('Extension is not allowed for this upload purpose');
+	}
+
+	const safeExtension = normalizeExtension(extension);
+	return `user/${userId}/${purpose}/${randomUUID()}.${safeExtension}`;
+}
