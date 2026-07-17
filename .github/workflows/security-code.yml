@@ -52,9 +52,27 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 #v4.1.2
+
       - name: Install OpenGrep
+        env:
+          OPENGREP_VERSION: v1.25.0
         run: |
-          curl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/main/install.sh | bash
+          INST="${HOME}/.opengrep/cli/${OPENGREP_VERSION}"
+          mkdir -p "${INST}"
+          BASE="https://github.com/opengrep/opengrep/releases/download/${OPENGREP_VERSION}/opengrep_manylinux_x86"
+          curl -fsSL -o "${INST}/opengrep" "${BASE}"
+          curl -fsSL -o "${INST}/opengrep.cert" "${BASE}.cert"
+          curl -fsSL -o "${INST}/opengrep.sig" "${BASE}.sig"
+          cosign verify-blob \
+            --cert "${INST}/opengrep.cert" \
+            --signature "${INST}/opengrep.sig" \
+            --certificate-identity-regexp "https://github.com/opengrep/opengrep.+" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "${INST}/opengrep"
+          chmod +x "${INST}/opengrep"
+          ln -sf "${INST}" "${HOME}/.opengrep/cli/latest"
           echo "$HOME/.opengrep/cli/latest" >> "$GITHUB_PATH"
 
       - name: OpenGrep scan
