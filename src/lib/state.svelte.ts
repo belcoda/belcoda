@@ -158,6 +158,10 @@ class AppState {
 		);
 	}
 
+	get optionalOrganizationId() {
+		return this.#organizationId;
+	}
+
 	get organizationId() {
 		if (!this.#organizationId) {
 			throw new Error('Organization ID is not set');
