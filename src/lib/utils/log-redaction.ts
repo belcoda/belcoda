@@ -2,10 +2,13 @@ export const REDACTED_LOG_VALUE = '[REDACTED]';
 export const REDACTED_EMAIL_VALUE = '[REDACTED_EMAIL]';
 
 const EMAIL_IN_TEXT = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
-const SENSITIVE_QUERY_VALUE = /([?&][^=&#\s]*(?:token|secret|email)[^=&#\s]*=)[^&#\s]*/gi;
+
+function normalizeLogKey(key: string): string {
+	return key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+}
 
 function isSensitiveLogKey(key: string): boolean {
-	const normalized = key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+	const normalized = normalizeLogKey(key);
 	return (
 		normalized === 'authorization' ||
 		normalized.endsWith('token') ||
@@ -20,10 +23,71 @@ function isSensitiveLogKey(key: string): boolean {
 	);
 }
 
+function isKeyCharacter(character: string): boolean {
+	const code = character.charCodeAt(0);
+	return (
+		(code >= 48 && code <= 57) ||
+		(code >= 65 && code <= 90) ||
+		(code >= 97 && code <= 122) ||
+		character === '_' ||
+		character === '-' ||
+		character === '.'
+	);
+}
+
+function isValueTerminator(character: string, separator: string, key: string): boolean {
+	if (character === '\r' || character === '\n') return true;
+	const normalized = normalizeLogKey(key);
+	if (separator === ':' && (normalized === 'authorization' || normalized.endsWith('cookie'))) {
+		return false;
+	}
+	return (
+		character === '&' ||
+		character === '#' ||
+		character === ';' ||
+		character === ',' ||
+		character === ' ' ||
+		character === '\t'
+	);
+}
+
+function redactSensitiveKeyValues(value: string): string {
+	let redacted = '';
+	let index = 0;
+
+	while (index < value.length) {
+		if (!isKeyCharacter(value[index])) {
+			redacted += value[index];
+			index += 1;
+			continue;
+		}
+
+		const keyStart = index;
+		while (index < value.length && isKeyCharacter(value[index])) index += 1;
+		const key = value.slice(keyStart, index);
+
+		while (index < value.length && (value[index] === ' ' || value[index] === '\t')) index += 1;
+		const separator = value[index];
+
+		if ((separator !== '=' && separator !== ':') || !isSensitiveLogKey(key)) {
+			redacted += value[keyStart];
+			index = keyStart + 1;
+			continue;
+		}
+
+		index += 1;
+		while (index < value.length && (value[index] === ' ' || value[index] === '\t')) index += 1;
+		const valueStart = index;
+		while (index < value.length && !isValueTerminator(value[index], separator, key)) index += 1;
+
+		redacted += value.slice(keyStart, valueStart) + REDACTED_LOG_VALUE;
+	}
+
+	return redacted;
+}
+
 export function redactSensitiveLogText(value: string): string {
-	return value
-		.replace(SENSITIVE_QUERY_VALUE, `$1${REDACTED_LOG_VALUE}`)
-		.replace(EMAIL_IN_TEXT, REDACTED_EMAIL_VALUE);
+	return redactSensitiveKeyValues(value).replace(EMAIL_IN_TEXT, REDACTED_EMAIL_VALUE);
 }
 
 function redactValue(value: unknown, seen: WeakMap<object, unknown>): unknown {

@@ -45,6 +45,26 @@ describe('log redaction', () => {
 		);
 	});
 
+	it('redacts non-URL credential key/value formats in strings', () => {
+		const result = redactSensitiveLogText(
+			[
+				'token=plain-secret',
+				'Authorization: Bearer bearer-secret',
+				'Cookie: session=cookie-secret; theme=light',
+				'contact person@example.com'
+			].join('\n')
+		);
+
+		expect(result).toBe(
+			[
+				`token=${REDACTED_LOG_VALUE}`,
+				`Authorization: ${REDACTED_LOG_VALUE}`,
+				`Cookie: ${REDACTED_LOG_VALUE}`,
+				`contact ${REDACTED_EMAIL_VALUE}`
+			].join('\n')
+		);
+	});
+
 	it('redacts sensitive values from errors', () => {
 		const error = new Error('Reset failed for person@example.com?token=abc123');
 		const [result] = redactLogArguments([{ error }]) as [{ error: Error }];
