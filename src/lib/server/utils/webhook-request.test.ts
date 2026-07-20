@@ -16,6 +16,7 @@ describe('webhook request SSRF protection', () => {
 		'127.0.0.1',
 		'169.254.169.254',
 		'172.16.0.1',
+		'192.88.99.2',
 		'192.168.1.1',
 		'224.0.0.1',
 		'::',
@@ -24,6 +25,7 @@ describe('webhook request SSRF protection', () => {
 		'fc00::1',
 		'fe80::1',
 		'ff02::1',
+		'3fff::1',
 		'2001:db8::1'
 	])('rejects non-public address %s', (address) => {
 		expect(isPublicWebhookAddress(address)).toBe(false);
