@@ -32,7 +32,12 @@ export default async function sendTemplateEmail(options: {
 		})
 	});
 	if (result.ok) {
-		const json: unknown = await result.json();
+		let json: unknown;
+		try {
+			json = await result.json();
+		} catch {
+			json = null;
+		}
 		if (
 			typeof json === 'object' &&
 			json !== null &&

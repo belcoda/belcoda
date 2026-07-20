@@ -76,4 +76,19 @@ describe('sendTemplateEmail logging', () => {
 		expect(JSON.stringify(logger.error.mock.calls)).not.toContain('recipient@example.com');
 		expect(JSON.stringify(logger.error.mock.calls)).not.toContain('secret');
 	});
+
+	it.each([
+		['empty', ''],
+		['malformed', '{not-json']
+	])('uses the generic failure path for %s successful responses', async (_label, body) => {
+		vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(body, { status: 200 })));
+
+		await expect(sendTemplateEmail(options)).rejects.toThrow('Failed to send email');
+		expect(logger.error).toHaveBeenCalledWith(
+			{ templateAlias: 'password-reset' },
+			'Failed to send email'
+		);
+		expect(JSON.stringify(logger.error.mock.calls)).not.toContain('unused-reset-token');
+		expect(JSON.stringify(logger.error.mock.calls)).not.toContain('recipient@example.com');
+	});
 });
