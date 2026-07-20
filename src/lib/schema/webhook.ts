@@ -78,9 +78,11 @@ export const webhookEventTypes = ['all', ...webhookEvents] as const;
 export const webhookEventTypesSchema = v.array(v.picklist(webhookEventTypes));
 export type WebhookEventTypes = v.InferOutput<typeof webhookEventTypesSchema>;
 
+export const WEBHOOK_TARGET_URL_MAX_LENGTH = 2048;
+
 export const webhookTargetUrlSchema = v.pipe(
 	helpers.url,
-	v.maxLength(2048, 'Webhook URL must be at most 2048 characters'),
+	v.maxLength(WEBHOOK_TARGET_URL_MAX_LENGTH, 'Webhook URL must be at most 2048 characters'),
 	v.check((value) => {
 		const target = new URL(value);
 		return target.protocol === 'https:' && !target.username && !target.password;

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Readable } from 'node:stream';
+import { WEBHOOK_TARGET_URL_MAX_LENGTH } from '$lib/schema/webhook';
 import {
 	MAX_WEBHOOK_RESPONSE_BYTES,
 	isPublicWebhookAddress,
@@ -44,6 +45,12 @@ describe('webhook request SSRF protection', () => {
 			/credentials/
 		);
 		expect(parseWebhookTarget('https://example.com/hook').hostname).toBe('example.com');
+	});
+
+	it('rejects over-limit webhook target URLs before URL parsing', () => {
+		const oversizedTarget = 'x'.repeat(WEBHOOK_TARGET_URL_MAX_LENGTH + 1);
+
+		expect(() => parseWebhookTarget(oversizedTarget)).toThrow(/at most 2048 characters/);
 	});
 
 	it('rejects a hostname if any DNS result is non-public', async () => {

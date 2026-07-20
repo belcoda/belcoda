@@ -2,6 +2,7 @@ import type { LookupAddress } from 'node:dns';
 import { lookup as dnsLookup } from 'node:dns/promises';
 import { request as httpsRequest } from 'node:https';
 import { BlockList, isIP, type LookupFunction } from 'node:net';
+import { WEBHOOK_TARGET_URL_MAX_LENGTH } from '$lib/schema/webhook';
 
 export const MAX_WEBHOOK_RESPONSE_BYTES = 16 * 1024;
 
@@ -51,6 +52,9 @@ export function isPublicWebhookAddress(address: string): boolean {
 }
 
 export function parseWebhookTarget(targetUrl: string): URL {
+	if (targetUrl.length > WEBHOOK_TARGET_URL_MAX_LENGTH) {
+		throw new Error(`Webhook target must be at most ${WEBHOOK_TARGET_URL_MAX_LENGTH} characters`);
+	}
 	const url = new URL(targetUrl);
 	if (url.protocol !== 'https:') {
 		throw new Error('Webhook target must use HTTPS');
