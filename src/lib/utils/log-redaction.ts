@@ -23,6 +23,8 @@ function isSensitiveLogKey(key: string): boolean {
 	);
 }
 
+// Keys in text logs can appear as URL params, headers, or loose pairs:
+// `auth_token=...`, `Authorization: Bearer ...`, `x.secret: ...`.
 function isKeyCharacter(character: string): boolean {
 	const code = character.charCodeAt(0);
 	return (
@@ -35,6 +37,8 @@ function isKeyCharacter(character: string): boolean {
 	);
 }
 
+// Query-style values stop at common delimiters (`&`, space, `;`), but header
+// credentials such as `Authorization: Bearer ...` and `Cookie: ...` run to EOL.
 function isValueTerminator(character: string, separator: string, key: string): boolean {
 	if (character === '\r' || character === '\n') return true;
 	const normalized = normalizeLogKey(key);
@@ -51,6 +55,8 @@ function isValueTerminator(character: string, separator: string, key: string): b
 	);
 }
 
+// Linear scanner for sensitive key/value text. It avoids regex backtracking while
+// catching `token=secret`, `?token=secret&x=1`, and `Authorization: Bearer secret`.
 function redactSensitiveKeyValues(value: string): string {
 	let redacted = '';
 	let index = 0;
