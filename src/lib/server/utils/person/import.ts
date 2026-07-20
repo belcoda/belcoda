@@ -129,31 +129,50 @@ async function insertNewPerson(
 	});
 }
 
-function isPostgresUniqueError(error: unknown): error is Error & { cause: { code: string } } {
-	return (
-		error instanceof Error &&
-		'cause' in error &&
-		typeof error.cause === 'object' &&
-		error.cause !== null &&
-		'code' in error.cause &&
-		typeof error.cause.code === 'string' &&
-		error.cause.code === '23505'
-	);
+function getStringProperty(value: unknown, key: string): string | undefined {
+	if (typeof value !== 'object' || value === null || !(key in value)) {
+		return undefined;
+	}
+	const property = value[key as keyof typeof value];
+	return typeof property === 'string' ? property : undefined;
+}
+
+function getDatabaseErrorCode(error: unknown): string | undefined {
+	return getStringProperty(error, 'code') ?? getStringProperty((error as Error)?.cause, 'code');
+}
+
+function isPostgresUniqueError(error: unknown): boolean {
+	return getDatabaseErrorCode(error) === '23505';
+}
+
+function getDatabaseErrorDetails(error: unknown): {
+	message: string;
+	stack?: string;
+	code?: string;
+} {
+	return {
+		message: error instanceof Error ? error.message : 'Unknown error',
+		stack: error instanceof Error ? error.stack : undefined,
+		code: getDatabaseErrorCode(error)
+	};
 }
 
 function getDatabaseErrorMessage(error: unknown): string {
 	return isPostgresUniqueError(error)
 		? 'A person with this email address or phone number already exists'
-		: 'Database insert error: Unknown error';
+		: 'Database error: Unknown error';
 }
 
 function logDatabaseError(error: unknown, line: number): void {
+	const { message, stack, code } = getDatabaseErrorDetails(error);
 	log.error(
 		{
 			row: line,
-			code: isPostgresUniqueError(error) ? error.cause.code : undefined
+			error: message,
+			stack,
+			code
 		},
-		'Database insert error'
+		'Database error importing person'
 	);
 }
 
