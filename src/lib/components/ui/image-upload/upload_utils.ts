@@ -140,7 +140,7 @@ async function getSignedUploadUrl(file: File) {
 		purpose: 'imageupload',
 		extension: extensionFromFile(file)
 	});
-	const organizationId = appState.optionalOrganizationId;
+	const organizationId = appState.appOrganizationContextId;
 	if (organizationId) {
 		searchParams.set('organizationId', organizationId);
 	}

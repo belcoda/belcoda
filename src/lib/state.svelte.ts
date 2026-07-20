@@ -27,6 +27,7 @@ class AppState {
 	#activeTeamId = $state<string | null>(null);
 	#userId = $state<string | null>(null);
 	#queryContext: QueryContext | null = $state(null);
+	#hasAppOrganizationContext = $state(false);
 
 	#organizations = $derived(
 		this.#queryContext ? z.createQuery(queries.organization.list({})) : null
@@ -135,6 +136,14 @@ class AppState {
 		this.#userId = userId;
 		this.#organizationId = organizationId;
 		this.#queryContext = queryContext;
+		this.#hasAppOrganizationContext = true;
+	}
+
+	clearOrganizationContext() {
+		this.#organizationId = null;
+		this.#activeTeamId = null;
+		this.#queryContext = null;
+		this.#hasAppOrganizationContext = false;
 	}
 
 	/**
@@ -160,6 +169,10 @@ class AppState {
 
 	get optionalOrganizationId() {
 		return this.#organizationId;
+	}
+
+	get appOrganizationContextId() {
+		return this.#hasAppOrganizationContext ? this.#organizationId : null;
 	}
 
 	get organizationId() {
