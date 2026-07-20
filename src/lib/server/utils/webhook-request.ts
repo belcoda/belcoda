@@ -9,21 +9,21 @@ const WEBHOOK_RESPONSE_TRUNCATION_MARKER = `\n[response truncated at ${MAX_WEBHO
 
 const blockedIpv4 = new BlockList();
 for (const [network, prefix] of [
-	['0.0.0.0', 8],
-	['10.0.0.0', 8],
-	['100.64.0.0', 10],
-	['127.0.0.0', 8],
-	['169.254.0.0', 16],
-	['172.16.0.0', 12],
-	['192.0.0.0', 24],
-	['192.0.2.0', 24],
-	['192.88.99.0', 24],
-	['192.168.0.0', 16],
-	['198.18.0.0', 15],
-	['198.51.100.0', 24],
-	['203.0.113.0', 24],
-	['224.0.0.0', 4],
-	['240.0.0.0', 4]
+	['0.0.0.0', 8], // Current network / "this host"; not routable as a public endpoint.
+	['10.0.0.0', 8], // RFC1918 private network.
+	['100.64.0.0', 10], // Carrier-grade NAT shared address space.
+	['127.0.0.0', 8], // Loopback addresses.
+	['169.254.0.0', 16], // Link-local metadata/service discovery range.
+	['172.16.0.0', 12], // RFC1918 private network.
+	['192.0.0.0', 24], // IETF protocol assignments, not general public hosting.
+	['192.0.2.0', 24], // TEST-NET-1 documentation range.
+	['192.88.99.0', 24], // Deprecated IPv6-to-IPv4 relay anycast range.
+	['192.168.0.0', 16], // RFC1918 private network.
+	['198.18.0.0', 15], // Benchmark testing range.
+	['198.51.100.0', 24], // TEST-NET-2 documentation range.
+	['203.0.113.0', 24], // TEST-NET-3 documentation range.
+	['224.0.0.0', 4], // Multicast range.
+	['240.0.0.0', 4] // Reserved for future use / limited broadcast space.
 ] as const) {
 	blockedIpv4.addSubnet(network, prefix, 'ipv4');
 }
