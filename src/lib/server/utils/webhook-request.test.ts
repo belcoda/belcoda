@@ -73,7 +73,7 @@ describe('webhook request SSRF protection', () => {
 
 		const body = await readBoundedWebhookResponse(response);
 
-		expect(Buffer.byteLength(body)).toBeLessThan(MAX_WEBHOOK_RESPONSE_BYTES + 100);
+		expect(Buffer.byteLength(body)).toBeLessThanOrEqual(MAX_WEBHOOK_RESPONSE_BYTES);
 		expect(body).toContain(`[response truncated at ${MAX_WEBHOOK_RESPONSE_BYTES} bytes]`);
 		expect(body).not.toContain('internal response');
 	});

@@ -5,6 +5,7 @@ import { BlockList, isIP, type LookupFunction } from 'node:net';
 import { WEBHOOK_TARGET_URL_MAX_LENGTH } from '$lib/schema/webhook';
 
 export const MAX_WEBHOOK_RESPONSE_BYTES = 16 * 1024;
+const WEBHOOK_RESPONSE_TRUNCATION_MARKER = `\n[response truncated at ${MAX_WEBHOOK_RESPONSE_BYTES} bytes]`;
 
 const blockedIpv4 = new BlockList();
 for (const [network, prefix] of [
@@ -81,16 +82,32 @@ export async function resolvePublicWebhookAddress(
 	return addresses[0]!;
 }
 
+function truncateUtf8TextToBytes(value: string, maxBytes: number): string {
+	if (Buffer.byteLength(value) <= maxBytes) return value;
+
+	let result = '';
+	let byteLength = 0;
+	for (const character of value) {
+		const characterByteLength = Buffer.byteLength(character);
+		if (byteLength + characterByteLength > maxBytes) break;
+		result += character;
+		byteLength += characterByteLength;
+	}
+	return result;
+}
+
 export function readBoundedWebhookResponse(response: NodeJS.ReadableStream): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const chunks: Buffer[] = [];
+		const markerByteLength = Buffer.byteLength(WEBHOOK_RESPONSE_TRUNCATION_MARKER);
+		const maxBodyByteLength = MAX_WEBHOOK_RESPONSE_BYTES - markerByteLength;
 		let byteLength = 0;
 		let settled = false;
 
 		response.on('data', (value: Buffer | string) => {
 			if (settled) return;
 			const chunk = Buffer.isBuffer(value) ? value : Buffer.from(value);
-			const remaining = MAX_WEBHOOK_RESPONSE_BYTES - byteLength;
+			const remaining = maxBodyByteLength - byteLength;
 			if (chunk.length <= remaining) {
 				chunks.push(chunk);
 				byteLength += chunk.length;
@@ -100,9 +117,11 @@ export function readBoundedWebhookResponse(response: NodeJS.ReadableStream): Pro
 			if (remaining > 0) chunks.push(chunk.subarray(0, remaining));
 			settled = true;
 			(response as NodeJS.ReadableStream & { destroy(): void }).destroy();
-			resolve(
-				`${Buffer.concat(chunks).toString('utf8')}\n[response truncated at ${MAX_WEBHOOK_RESPONSE_BYTES} bytes]`
+			const body = truncateUtf8TextToBytes(
+				Buffer.concat(chunks).toString('utf8'),
+				maxBodyByteLength
 			);
+			resolve(`${body}${WEBHOOK_RESPONSE_TRUNCATION_MARKER}`);
 		});
 		response.on('end', () => {
 			if (settled) return;
