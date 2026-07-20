@@ -174,7 +174,7 @@ const handleRequest: Handle = async ({ event, resolve }) => {
 		);
 		const resolved = await resolve(event);
 		log.debug(
-			{ path: event.url.pathname, session: event.locals.session?.session.id },
+			{ path: event.url.pathname, hasSession: Boolean(event.locals.session) },
 			'[DEBUG] Page route resolved'
 		);
 		return resolved; //Note: There *may* be a valid session here, but not for sure...
