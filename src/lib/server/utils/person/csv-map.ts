@@ -168,6 +168,54 @@ function parseDateOfBirth(dob: string | null | undefined): Date | null {
 	}
 }
 
+function parseCountry(csvRow: CsvRow): CountryCode {
+	const raw = firstValue(csvRow, CSV_ALIASES.country);
+	if (!raw) {
+		throw new Error(t`Country is required`);
+	}
+
+	const lowercased = raw.toLowerCase();
+	if (isValidCountryCode(lowercased)) {
+		return lowercased.toUpperCase() as CountryCode;
+	}
+
+	const extractedCode = getCode(raw);
+	if (extractedCode && isValidCountryCode(extractedCode)) {
+		return extractedCode.toUpperCase() as CountryCode;
+	}
+
+	throw new Error(t`Invalid country: "${raw}" (must be a valid country code or country name)`);
+}
+
+function parsePreferredLanguage(csvRow: CsvRow): LanguageCode | null {
+	const rawLanguage = firstValue(csvRow, CSV_ALIASES.preferredLanguage);
+	if (!rawLanguage) {
+		return null;
+	}
+
+	const lowercased = rawLanguage.toLocaleLowerCase();
+	if (isSupportedLanguage(lowercased)) {
+		return lowercased as LanguageCode;
+	}
+
+	const normalized = ISO6391.getCode(rawLanguage);
+	if (normalized && isSupportedLanguage(normalized)) {
+		return normalized as LanguageCode;
+	}
+
+	log.debug({ language: rawLanguage }, 'Unsupported language, leaving unset');
+	return null;
+}
+
+function parsePhoneNumber(csvRow: CsvRow, country: CountryCode): string | null {
+	const phoneNumber = firstValue(csvRow, CSV_ALIASES.phoneNumber);
+	if (!phoneNumber) {
+		return null;
+	}
+
+	return getInternationalPhoneNumber(phoneNumber, country, false);
+}
+
 /**
  * Convert a raw CSV row into a create-person input object. All fields are populated
  * (with nulls/defaults where absent) so the result validates against `createPerson`
@@ -176,58 +224,16 @@ function parseDateOfBirth(dob: string | null | undefined): Date | null {
  * Throws when `country` is missing/invalid or when a `social_media` blob is malformed.
  */
 export function mapCsvRowToPerson(csvRow: CsvRow): CsvPersonInput {
-	let country = firstValue(csvRow, CSV_ALIASES.country);
-	if (country) {
-		const lowercased = country.toLowerCase();
-		if (!isValidCountryCode(lowercased)) {
-			const extractedCode = getCode(country);
-			if (extractedCode && isValidCountryCode(extractedCode)) {
-				country = extractedCode.toUpperCase() as CountryCode;
-			} else {
-				throw new Error(
-					t`Invalid country: "${country}" (must be a valid country code or country name)`
-				);
-			}
-		} else {
-			country = lowercased.toUpperCase() as CountryCode;
-		}
-	} else {
-		throw new Error(t`Country is required`);
-	}
-
-	// Resolve to a supported language when the row supplies a recognizable one,
-	// otherwise null: an absent or unsupported language must not overwrite an
-	// existing value on update. The insert path defaults null to 'en' (see import.ts).
-	const rawLanguage = firstValue(csvRow, CSV_ALIASES.preferredLanguage);
-	let preferredLanguage: LanguageCode | null = null;
-	if (rawLanguage) {
-		const lowercased = rawLanguage.toLocaleLowerCase();
-		if (isSupportedLanguage(lowercased)) {
-			preferredLanguage = lowercased as LanguageCode;
-		} else {
-			const normalized = ISO6391.getCode(rawLanguage);
-			if (normalized && isSupportedLanguage(normalized)) {
-				preferredLanguage = normalized as LanguageCode;
-			} else {
-				log.debug({ language: rawLanguage }, 'Unsupported language, leaving unset');
-			}
-		}
-	}
-
-	const phoneNumber = firstValue(csvRow, CSV_ALIASES.phoneNumber);
-	// We don't want to throw an error if the phone number is invalid.
-	// Country code is definitely valid because we checked it above.
-	const normalizedPhoneNumber = phoneNumber
-		? getInternationalPhoneNumber(phoneNumber, country as CountryCode, false)
-		: null;
-
+	const country = parseCountry(csvRow);
+	const preferredLanguage = parsePreferredLanguage(csvRow);
+	const phoneNumber = parsePhoneNumber(csvRow, country);
 	const socialMedia = readSocialMedia(csvRow);
 
 	return {
 		givenName: firstValue(csvRow, CSV_ALIASES.givenName),
 		familyName: firstValue(csvRow, CSV_ALIASES.familyName),
 		emailAddress: firstValue(csvRow, CSV_ALIASES.emailAddress),
-		phoneNumber: normalizedPhoneNumber,
+		phoneNumber,
 		whatsAppUsername: firstValue(csvRow, CSV_ALIASES.whatsAppUsername),
 		workplace: firstValue(csvRow, CSV_ALIASES.workplace),
 		position: firstValue(csvRow, CSV_ALIASES.position),
@@ -236,7 +242,7 @@ export function mapCsvRowToPerson(csvRow: CsvRow): CsvPersonInput {
 		locality: firstValue(csvRow, CSV_ALIASES.locality),
 		region: firstValue(csvRow, CSV_ALIASES.region),
 		postcode: firstValue(csvRow, CSV_ALIASES.postcode),
-		country: country as CountryCode,
+		country,
 		preferredLanguage,
 		gender: normalizeGender(firstValue(csvRow, CSV_ALIASES.gender)),
 		dateOfBirth: parseDateOfBirth(firstValue(csvRow, CSV_ALIASES.dateOfBirth)),

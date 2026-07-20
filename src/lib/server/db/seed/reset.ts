@@ -15,7 +15,7 @@ export default async function main() {
 
 main().then(() => process.exit(0));
 
-import { URL } from 'url';
+import { URL } from 'node:url';
 
 // This is a safety check to ensure we're not accidentally resetting the production database
 function validatePostgresConnectionString(connStr: string) {

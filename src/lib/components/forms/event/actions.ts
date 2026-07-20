@@ -111,20 +111,6 @@ export function convertDateToTimeAtTimezone({
  */
 export function dateTimeToNewTimeZone(dateTime: ZonedDateTime, newTimeZone: string) {
 	const getTimezoneOffset = toTimeZone(dateTime, newTimeZone); //.offset;
-	/* const newZonedDateTime = new ZonedDateTime(
-		// date
-		dateTime.year,
-		dateTime.month,
-		dateTime.day,
-		// timezone and UTC offset
-		newTimeZone,
-		getTimezoneOffset,
-		//time
-		dateTime.hour,
-		dateTime.minute,
-		0,
-		0
-	); */
 	return getTimezoneOffset;
 }
 
