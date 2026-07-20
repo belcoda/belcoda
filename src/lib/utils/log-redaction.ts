@@ -96,33 +96,30 @@ export function redactSensitiveLogText(value: string): string {
 	return redactSensitiveKeyValues(value).replace(EMAIL_IN_TEXT, REDACTED_EMAIL_VALUE);
 }
 
-function redactValue(value: unknown, seen: WeakMap<object, unknown>): unknown {
-	if (typeof value === 'string') return redactSensitiveLogText(value);
-	if (value === null || typeof value !== 'object') return value;
-	if (value instanceof Date || Buffer.isBuffer(value)) return value;
-	if (value instanceof URL) return redactSensitiveLogText(value.toString());
-	if (seen.has(value)) return seen.get(value);
-
-	if (value instanceof Error) {
-		const redactedError = new Error(redactSensitiveLogText(value.message));
-		seen.set(value, redactedError);
-		redactedError.name = value.name;
-		redactedError.stack = value.stack ? redactSensitiveLogText(value.stack) : undefined;
-		for (const [key, nestedValue] of Object.entries(value)) {
-			Object.assign(redactedError, {
-				[key]: isSensitiveLogKey(key) ? REDACTED_LOG_VALUE : redactValue(nestedValue, seen)
-			});
-		}
-		return redactedError;
+function redactError(value: Error, seen: WeakMap<object, unknown>): Error {
+	const redactedError = new Error(redactSensitiveLogText(value.message));
+	seen.set(value, redactedError);
+	redactedError.name = value.name;
+	redactedError.stack = value.stack ? redactSensitiveLogText(value.stack) : undefined;
+	for (const [key, nestedValue] of Object.entries(value)) {
+		Object.assign(redactedError, {
+			[key]: isSensitiveLogKey(key) ? REDACTED_LOG_VALUE : redactValue(nestedValue, seen)
+		});
 	}
+	return redactedError;
+}
 
-	if (Array.isArray(value)) {
-		const redactedArray: unknown[] = [];
-		seen.set(value, redactedArray);
-		for (const item of value) redactedArray.push(redactValue(item, seen));
-		return redactedArray;
-	}
+function redactArray(value: unknown[], seen: WeakMap<object, unknown>): unknown[] {
+	const redactedArray: unknown[] = [];
+	seen.set(value, redactedArray);
+	for (const item of value) redactedArray.push(redactValue(item, seen));
+	return redactedArray;
+}
 
+function redactPlainObject(
+	value: Record<string, unknown>,
+	seen: WeakMap<object, unknown>
+): Record<string, unknown> {
 	const redactedObject: Record<string, unknown> = {};
 	seen.set(value, redactedObject);
 	for (const [key, nestedValue] of Object.entries(value)) {
@@ -131,6 +128,17 @@ function redactValue(value: unknown, seen: WeakMap<object, unknown>): unknown {
 			: redactValue(nestedValue, seen);
 	}
 	return redactedObject;
+}
+
+function redactValue(value: unknown, seen: WeakMap<object, unknown>): unknown {
+	if (typeof value === 'string') return redactSensitiveLogText(value);
+	if (value === null || typeof value !== 'object') return value;
+	if (value instanceof Date || Buffer.isBuffer(value)) return value;
+	if (value instanceof URL) return redactSensitiveLogText(value.toString());
+	if (seen.has(value)) return seen.get(value);
+	if (value instanceof Error) return redactError(value, seen);
+	if (Array.isArray(value)) return redactArray(value, seen);
+	return redactPlainObject(value as Record<string, unknown>, seen);
 }
 
 export function redactLogArguments<T extends unknown[]>(argumentsToLog: T): T {
