@@ -11,6 +11,7 @@ import { sql, eq } from 'drizzle-orm';
 import { webhookLog, webhook as webhookTable } from '$lib/schema/drizzle';
 import { v7 as uuidv7 } from 'uuid';
 import { getQueue } from '$lib/server/queue';
+import { postWebhook } from '$lib/server/utils/webhook-request';
 
 const MAX_RETRY_DELAY = 300; // 300 seconds (5 minutes) (pg-boss counts in seconds)
 const MAX_RETRY_COUNT = 6;
@@ -52,13 +53,13 @@ export async function sendWebhook({
 		data: parsed.data
 	};
 	let responseText: string = 'NOT_SENT';
-	let httpStatusCode: number = 418;
+	let httpStatusCode: number = 0;
 	let responseOk: boolean = false;
 	const controller = new AbortController();
 	const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 	try {
-		const response = await fetch(webhook.targetUrl, {
-			method: 'POST',
+		const response = await postWebhook({
+			targetUrl: webhook.targetUrl,
 			signal: controller.signal,
 			headers: {
 				'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ export async function sendWebhook({
 			body: JSON.stringify(webhookBody)
 		});
 
-		responseText = await response.text();
+		responseText = response.body;
 		httpStatusCode = response.status;
 		responseOk = response.ok;
 		if (responseOk) {
