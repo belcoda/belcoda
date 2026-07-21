@@ -61,3 +61,7 @@ export function checkPublicActionRateLimit({
 
 	return { limited: false };
 }
+
+export function clearPublicActionRateLimitForTest() {
+	publicActionRateLimitCache.clear();
+}
