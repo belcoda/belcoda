@@ -13,6 +13,7 @@ import { sanitize, clearWindow } from 'isomorphic-dompurify';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { getSurveySchema } from '$lib/schema/survey/questions';
+import { checkPublicActionRateLimit } from '$lib/server/api/utils/public-action-rate-limit';
 const log = pino(import.meta.url);
 const lexicalRenderer = new LexicalHtmlRenderer();
 
@@ -140,7 +141,7 @@ export async function load({ params, locals }) {
 }
 
 export const actions = {
-	sign: async ({ request, params }) => {
+	sign: async ({ request, params, getClientAddress, setHeaders }) => {
 		const { organizationSlug, petitionSlug } = params;
 
 		const [org] = await drizzle
@@ -178,6 +179,20 @@ export const actions = {
 		form.data.customFields ||= {};
 		if (!form.valid) {
 			return fail(400, { form });
+		}
+		const rateLimit = checkPublicActionRateLimit({
+			action: 'petition_sign',
+			organizationId: org.id,
+			resourceId: petitionData.id,
+			subject: getClientAddress()
+		});
+		if (rateLimit.limited) {
+			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });
+			return fail(429, {
+				form,
+				error: 'Too many signing attempts. Please try again in a minute.',
+				success: false
+			});
 		}
 		const layoutParam = form.data.theme;
 
