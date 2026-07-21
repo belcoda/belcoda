@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs';
+	import { t } from '$lib/index.svelte';
 	import { appState } from '$lib/state.svelte';
 	function getAccountId() {
 		return appState.activeWhatsappAccountId ?? 'all';
@@ -16,7 +17,7 @@
 
 <Tabs.Root class="w-full" bind:value={getAccountId, setAccountId}>
 	<Tabs.List class="w-full border-b rounded-none">
-		<Tabs.Trigger value="all">Timeline</Tabs.Trigger>
+		<Tabs.Trigger value="all">{t`Timeline`}</Tabs.Trigger>
 		{#each appState.whatsappAccountsUsableByCurrentUser as account (account.id)}
 			<Tabs.Trigger value={account.id} class="flex items-center gap-2">
 				<Avatar

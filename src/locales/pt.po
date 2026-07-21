@@ -5716,3 +5716,7 @@ msgstr ""
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Nothing here yet"
 msgstr "Ainda não há nada aqui"
+
+#: src/lib/components/widgets/activity/AccountSelector.svelte
+msgid "Timeline"
+msgstr ""
