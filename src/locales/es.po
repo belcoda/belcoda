@@ -5710,8 +5710,8 @@ msgstr "Aún no hay nada aquí"
 
 #: src/lib/components/widgets/activity/AccountSelector.svelte
 msgid "Timeline"
-msgstr ""
+msgstr "Línea de tiempo"
 
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
-msgstr ""
+msgstr "WhatsApp no está habilitado para esta organización. Crea una cuenta de WhatsApp Business en la configuración."
