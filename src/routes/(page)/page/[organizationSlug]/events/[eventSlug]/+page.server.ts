@@ -140,7 +140,7 @@ export const actions = {
 			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
 		}
 	},
-	decline: async ({ request, params }) => {
+	decline: async ({ request, params, getClientAddress, setHeaders }) => {
 		const organizationId = await _getOrganizationIdBySlugUnsafe({
 			organizationSlug: params.organizationSlug
 		});
@@ -158,6 +158,19 @@ export const actions = {
 		const form = await superValidate(request, valibot(surveySchema));
 		if (!form.valid) {
 			return fail(400, { form });
+		}
+		const rateLimit = checkPublicActionRateLimit({
+			action: 'event_decline',
+			organizationId,
+			resourceId: eventObj.id,
+			subject: getClientAddress()
+		});
+		if (rateLimit.limited) {
+			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });
+			return fail(429, {
+				form,
+				error: 'Too many decline attempts. Please try again in a minute.'
+			});
 		}
 		try {
 			await db.transaction(async (tx) => {
