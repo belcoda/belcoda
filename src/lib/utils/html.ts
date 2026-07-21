@@ -1,26 +1,7 @@
+import { sanitize } from 'isomorphic-dompurify';
+
 function removeHtmlTags(text: string): string {
-	let result = '';
-	let tagStart = -1;
-
-	for (let index = 0; index < text.length; index += 1) {
-		const character = text[index];
-
-		if (tagStart === -1) {
-			if (character === '<') {
-				tagStart = index;
-			} else {
-				result += character;
-			}
-		} else if (character === '>') {
-			tagStart = -1;
-		}
-	}
-
-	if (tagStart !== -1) {
-		result += text.slice(tagStart);
-	}
-
-	return result;
+	return sanitize(text, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
 }
 
 export function stripHtmlAndTrim(html: string | null | undefined): string {
