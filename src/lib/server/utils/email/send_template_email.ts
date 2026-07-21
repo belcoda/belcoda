@@ -12,7 +12,8 @@ export default async function sendTemplateEmail(options: {
 	replyTo?: string;
 	//returnPath: string;
 }): Promise<string> {
-	log.debug(options, 'Sending template email with Postmark');
+	const logContext = { templateAlias: options.template };
+	log.debug(logContext, 'Sending template email with Postmark');
 
 	const result = await fetch('https://api.postmarkapp.com/email/withTemplate', {
 		method: 'POST',
@@ -31,17 +32,23 @@ export default async function sendTemplateEmail(options: {
 		})
 	});
 	if (result.ok) {
-		const json = await result.json();
-		log.debug({ MessageID: json.MessageID }, 'Email sent successfully');
-		return json.MessageID;
-	} else {
-		if (result.status === 422) {
-			const json = await result.json();
-			log.error({ result: json }, 'Failed to send email (422 error)');
-		} else {
-			const json = await result.json();
-			log.error(json);
+		let json: unknown;
+		try {
+			json = await result.json();
+		} catch {
+			json = null;
 		}
-		throw new Error('Failed to send email');
+		if (
+			typeof json === 'object' &&
+			json !== null &&
+			'MessageID' in json &&
+			typeof json.MessageID === 'string'
+		) {
+			log.debug({ ...logContext, providerMessageId: json.MessageID }, 'Email sent successfully');
+			return json.MessageID;
+		}
 	}
+
+	log.error(logContext, 'Failed to send email');
+	throw new Error('Failed to send email');
 }

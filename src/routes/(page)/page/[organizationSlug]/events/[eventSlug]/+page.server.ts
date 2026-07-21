@@ -22,9 +22,7 @@ import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/pe
 import { checkPublicActionRateLimit } from '$lib/server/api/utils/public-action-rate-limit';
 import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { ServerTransaction } from '@rocicorp/zero';
-const lexicalRenderer = new LexicalHtmlRenderer();
-
-import { sanitize, clearWindow } from 'isomorphic-dompurify';
+import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
 
 export async function load({ locals, params, url }) {
 	log.debug(
@@ -49,18 +47,10 @@ export async function load({ locals, params, url }) {
 	const surveySchema = getSurveySchema(eventObj);
 	const form = await superValidate(valibot(surveySchema));
 
-	let renderedDescription: string | null = null;
-	if (eventObj.description?.root?.children?.length) {
-		try {
-			renderedDescription = await lexicalRenderer.render(eventObj.description);
-			renderedDescription = sanitize(renderedDescription);
-		} catch (err) {
-			log.warn({ err, eventId: eventObj.id }, 'Failed to render event description');
-			renderedDescription = null;
-		} finally {
-			clearWindow(); //Release JSDom resources to avoid memory accumulation
-		}
-	}
+	const renderedDescription = await renderSanitizedDescription({
+		description: eventObj.description,
+		logContext: { eventId: eventObj.id }
+	});
 
 	const renderedEvent = {
 		...eventObj,

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { appState } from '$lib/state.svelte';
 import { env } from '$env/dynamic/public';
 const { PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME } = env;
@@ -123,35 +122,33 @@ export function resizeImageFile(
 
 // --- S3 Upload Helpers ---
 
-/**
- * Gets a signed upload URL from the backend API.
- */
-async function getSignedUploadUrl(fileKey: string) {
-	const result = await get({
-		path: `/api/utils/upload?key=${fileKey}`,
-		schema: object({ signedUrl: string() })
-	});
-	// Add validation here: if (!result.signedUrl) throw new Error(...)
-	return result.signedUrl as string;
+function extensionFromFile(file: File): string {
+	const fromName = file.name.split('.').pop()?.toLowerCase();
+	if (fromName && /^[a-z0-9]+$/.test(fromName)) return fromName;
+
+	const mimeMap: Record<string, string> = {
+		'image/jpeg': 'jpg',
+		'image/png': 'png',
+		'image/webp': 'webp',
+		'image/gif': 'gif'
+	};
+	return mimeMap[file.type] ?? 'jpg';
 }
 
-/**
- * Renames the file with a unique key path for S3 storage.
- */
-function createS3FileKey(file: File) {
-	let fileKey: string;
-	// Attempt to use organization ID if available
-	try {
-		fileKey = `organization/${appState.organizationId}/imageupload/${uuidv4()}-${file.name}`;
-	} catch (err) {
-		// Fallback to a global key if organization data is missing
-		fileKey = `organization/global/imageupload/${uuidv4()}-${file.name}`;
+async function getSignedUploadUrl(file: File) {
+	const searchParams = new URLSearchParams({
+		purpose: 'imageupload',
+		extension: extensionFromFile(file)
+	});
+	const organizationId = appState.appOrganizationContextId;
+	if (organizationId) {
+		searchParams.set('organizationId', organizationId);
 	}
-	// Create a new File object with the S3 key as its name
-	return {
-		fileKey,
-		fileToUpload: new File([file], fileKey, { type: file.type })
-	};
+	const result = await get({
+		path: `/api/utils/upload?${searchParams}`,
+		schema: object({ key: string(), signedUrl: string() })
+	});
+	return result;
 }
 
 /**
@@ -182,12 +179,6 @@ async function uploadToS3(file: File, signedUrl: string, bucketName: string) {
  * @returns A promise that resolves with the final public image URL.
  */
 export async function processAndUploadFile(file: File): Promise<string> {
-	const { fileKey, fileToUpload } = createS3FileKey(file);
-	const signedUrl = await getSignedUploadUrl(fileKey);
-	const finalFileUrl = await uploadToS3(
-		fileToUpload,
-		signedUrl,
-		PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME
-	);
-	return finalFileUrl;
+	const { signedUrl } = await getSignedUploadUrl(file);
+	return await uploadToS3(file, signedUrl, PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME);
 }
