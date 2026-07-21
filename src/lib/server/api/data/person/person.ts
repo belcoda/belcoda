@@ -128,10 +128,14 @@ export async function updatePerson({
 	if (!personRecord) {
 		throw new Error('Person not found');
 	}
-	const updatedDateParsed = {
-		...input.input,
-		dateOfBirth: input.input.dateOfBirth ? new Date(input.input.dateOfBirth) : undefined
-	};
+	const updatedDateParsed = Object.fromEntries(
+		Object.entries(input.input)
+			.filter(([, value]) => value !== undefined)
+			.map(([key, value]) => [
+				key,
+				key === 'dateOfBirth' && typeof value === 'number' ? new Date(value) : value
+			])
+	);
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(person)
 		.set({
