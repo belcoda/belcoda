@@ -12,6 +12,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { getSurveySchema } from '$lib/schema/survey/questions';
 import { checkPublicActionRateLimit } from '$lib/server/api/utils/public-action-rate-limit';
+import { getClientIpFromRequest } from '$lib/server/utils/client-ip';
 import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
 const log = pino(import.meta.url);
 
@@ -173,7 +174,7 @@ export const actions = {
 			action: 'petition_sign',
 			organizationId: org.id,
 			resourceId: petitionData.id,
-			subject: getClientAddress()
+			subject: getClientIpFromRequest(request, getClientAddress)
 		});
 		if (rateLimit.limited) {
 			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });

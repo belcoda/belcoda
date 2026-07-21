@@ -20,6 +20,7 @@ import {
 import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
 import { checkPublicActionRateLimit } from '$lib/server/api/utils/public-action-rate-limit';
+import { getClientIpFromRequest } from '$lib/server/utils/client-ip';
 import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
@@ -92,7 +93,7 @@ export const actions = {
 			action: 'event_signup',
 			organizationId,
 			resourceId: eventObj.id,
-			subject: getClientAddress()
+			subject: getClientIpFromRequest(request, getClientAddress)
 		});
 		if (rateLimit.limited) {
 			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });
@@ -153,7 +154,7 @@ export const actions = {
 			action: 'event_decline',
 			organizationId,
 			resourceId: eventObj.id,
-			subject: getClientAddress()
+			subject: getClientIpFromRequest(request, getClientAddress)
 		});
 		if (rateLimit.limited) {
 			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });
