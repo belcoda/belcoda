@@ -5381,9 +5381,8 @@ msgstr "Concluir verificação"
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 msgstr "Sua conta comercial do WhatsApp está conectada. Revise a verificação e os detalhes da conta abaixo."
 
-#: src/routes/(app)/community/[personId]/+page.svelte
-msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-msgstr "O WhatsApp não está configurado para esta organização. Por favor, contacte o suporte para proceder à ativação."
+#~ msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
+#~ msgstr "O WhatsApp não está configurado para esta organização. Por favor, contacte o suporte para proceder à ativação."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
@@ -5719,4 +5718,8 @@ msgstr "Ainda não há nada aqui"
 
 #: src/lib/components/widgets/activity/AccountSelector.svelte
 msgid "Timeline"
+msgstr ""
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
 msgstr ""

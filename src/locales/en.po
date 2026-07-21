@@ -5397,9 +5397,8 @@ msgstr "Complete verification"
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
 
-#: src/routes/(app)/community/[personId]/+page.svelte
-msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-msgstr "WhatsApp is not onboarded for this organization. Please contact support to onboard."
+#~ msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
+#~ msgstr "WhatsApp is not onboarded for this organization. Please contact support to onboard."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
@@ -5736,3 +5735,7 @@ msgstr "Nothing here yet"
 #: src/lib/components/widgets/activity/AccountSelector.svelte
 msgid "Timeline"
 msgstr "Timeline"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
+msgstr "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
