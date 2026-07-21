@@ -37,7 +37,7 @@ export async function updateOrganization({
 	const parsed = parse(updateOrganizationZeroMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
 
-	const currentOrg = await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId }); // call used for auth check
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({

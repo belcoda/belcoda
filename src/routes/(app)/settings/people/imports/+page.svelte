@@ -54,13 +54,14 @@
 	let selectedImportFailures: { row: number; error: string; data?: any }[] | null = $state(null);
 	let uploading = $state(false);
 
-	async function getUploadUrl(fileKey: string) {
-		const result = await fetch(`/api/utils/upload?key=${fileKey}`).then((res) => res.json());
+	async function getUploadUrl() {
+		const searchParams = new URLSearchParams({
+			organizationId: appState.organizationId,
+			purpose: 'people-imports',
+			extension: 'csv'
+		});
+		const result = await fetch(`/api/utils/upload?${searchParams}`).then((res) => res.json());
 		return result.signedUrl;
-	}
-
-	function createFileKey(file: File) {
-		return `organization/${appState.organizationId}/people-imports/${uuidv4()}.csv`;
 	}
 
 	async function uploadToS3(file: File, signedUrl: string) {
@@ -87,8 +88,7 @@
 		try {
 			uploading = true;
 
-			const fileKey = createFileKey(selectedFile);
-			const signedUrl = await getUploadUrl(fileKey);
+			const signedUrl = await getUploadUrl();
 			const uploadedFilePath = await uploadToS3(selectedFile, signedUrl);
 			const csvUrl = `https://${PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME}.s3.amazonaws.com${uploadedFilePath}`;
 

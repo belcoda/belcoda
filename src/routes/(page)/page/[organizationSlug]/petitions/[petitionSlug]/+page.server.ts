@@ -7,14 +7,12 @@ import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
 import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
 import { _getPetitionActionCodeUnsafe } from '$lib/server/api/data/petition/check';
 import { generateWhatsAppPetitionLink } from '$lib/utils/petitions/link';
-import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
-import { sanitize, clearWindow } from 'isomorphic-dompurify';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { getSurveySchema } from '$lib/schema/survey/questions';
+import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
 const log = pino(import.meta.url);
-const lexicalRenderer = new LexicalHtmlRenderer();
 
 export async function load({ params, locals }) {
 	const { organizationSlug, petitionSlug } = params;
@@ -95,19 +93,10 @@ export async function load({ params, locals }) {
 		isAdmin = adminOwnerOrgs.admin.includes(org.id) || adminOwnerOrgs.owner.includes(org.id);
 	}
 
-	let renderedDescription: string | null = null;
-	const petitionDescription = petitionData.description as SerializedEditorState | null;
-	if (petitionDescription?.root?.children?.length) {
-		try {
-			renderedDescription = await lexicalRenderer.render(petitionDescription);
-			renderedDescription = sanitize(renderedDescription);
-		} catch (err) {
-			log.warn({ err, petitionId: petitionData.id }, 'Failed to render petition description');
-			renderedDescription = null;
-		} finally {
-			clearWindow(); //Release JSDom resources to avoid memory accumulation
-		}
-	}
+	const renderedDescription = await renderSanitizedDescription({
+		description: petitionData.description as SerializedEditorState | null,
+		logContext: { petitionId: petitionData.id }
+	});
 
 	// Serialize dates to avoid serialization issues
 	const serializedPetition = {

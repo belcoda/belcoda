@@ -216,9 +216,6 @@ type SurveySchemaSource = {
 export function getSurveySchema(eventObj: SurveySchemaSource) {
 	const survey = eventObj.settings?.survey?.collections?.[0]?.questions ?? [];
 	const customSurveyQuestions = survey.filter((question) => question.type.startsWith('custom.'));
-	const personSurveyQuestions = survey
-		.filter((question) => question.type.startsWith('person.'))
-		.map((item) => item.type);
 	const customQuestionSurveySchema = v.object(
 		convertQuestionsToValibotSchema(customSurveyQuestions)
 	);

@@ -84,6 +84,51 @@ describe('applyTemplateDefaults', () => {
 		});
 		expect(result.bodyParams).toEqual([{ type: 'literal', value: 'E2E Name' }]);
 	});
+
+	it('tolerates IMAGE headers without example.header_url', () => {
+		const components = [
+			{
+				type: 'HEADER',
+				format: 'IMAGE',
+				example: {}
+			},
+			{
+				type: 'BODY',
+				text: 'Hello {{1}}',
+				example: { body_text: [['Maria']] }
+			}
+		] as TemplateMessageComponents;
+
+		expect(() =>
+			applyTemplateDefaults(emptyFormState(), components, { mergeExisting: false })
+		).not.toThrow();
+		expect(
+			applyTemplateDefaults(emptyFormState(), components, { mergeExisting: false }).headerImageUrl
+		).toBeNull();
+	});
+
+	it('tolerates TEXT headers without example.header_text', () => {
+		const components = [
+			{
+				type: 'HEADER',
+				format: 'TEXT',
+				text: 'Hello {{1}}',
+				example: {}
+			},
+			{
+				type: 'BODY',
+				text: 'Hello {{1}}',
+				example: { body_text: [['Maria']] }
+			}
+		] as TemplateMessageComponents;
+
+		expect(() =>
+			applyTemplateDefaults(emptyFormState(), components, { mergeExisting: false })
+		).not.toThrow();
+		expect(
+			applyTemplateDefaults(emptyFormState(), components, { mergeExisting: false }).headerParams
+		).toEqual([]);
+	});
 });
 
 describe('patchParamSource and patchParamSourceType', () => {

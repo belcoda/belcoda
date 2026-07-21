@@ -320,22 +320,20 @@ export function setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions(
 	schema: typeof personActionHelper,
 	questions: SurveyQuestion[]
 ) {
-	const requiredQuestionTypes = questions
-		.filter((question) => question.required)
-		.map((question) => question.type);
+	const requiredQuestionTypes = new Set(
+		questions.filter((question) => question.required).map((question) => question.type)
+	);
 	const newSchema = v.object({
 		...schema.entries,
-		...(requiredQuestionTypes.includes('person.dateOfBirth')
-			? { dateOfBirth: helpers.pastDate }
-			: {}),
-		...(requiredQuestionTypes.includes('person.gender') ? { gender: helpers.gender } : {}),
-		...(requiredQuestionTypes.includes('person.workplace')
+		...(requiredQuestionTypes.has('person.dateOfBirth') ? { dateOfBirth: helpers.pastDate } : {}),
+		...(requiredQuestionTypes.has('person.gender') ? { gender: helpers.gender } : {}),
+		...(requiredQuestionTypes.has('person.workplace')
 			? { workplace: helpers.mediumStringEmpty }
 			: {}),
-		...(requiredQuestionTypes.includes('person.position')
+		...(requiredQuestionTypes.has('person.position')
 			? { position: helpers.mediumStringEmpty }
 			: {}),
-		...(requiredQuestionTypes.includes('person.address')
+		...(requiredQuestionTypes.has('person.address')
 			? {
 					addressLine1: helpers.mediumStringEmpty,
 					addressLine2: v.optional(helpers.mediumStringEmpty),

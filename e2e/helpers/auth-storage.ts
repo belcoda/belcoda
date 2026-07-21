@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import type { E2EProject } from './config';
 import type { UserRole } from './auth';
 
