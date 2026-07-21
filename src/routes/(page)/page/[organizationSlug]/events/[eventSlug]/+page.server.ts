@@ -19,6 +19,7 @@ import {
 } from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
+import { checkPublicActionRateLimit } from '$lib/server/api/utils/public-action-rate-limit';
 import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { ServerTransaction } from '@rocicorp/zero';
 const lexicalRenderer = new LexicalHtmlRenderer();
@@ -78,7 +79,7 @@ export async function load({ locals, params, url }) {
 }
 
 export const actions = {
-	signup: async ({ request, params }) => {
+	signup: async ({ request, params, getClientAddress, setHeaders }) => {
 		const organizationId = await _getOrganizationIdBySlugUnsafe({
 			organizationSlug: params.organizationSlug
 		});
@@ -96,6 +97,19 @@ export const actions = {
 		const form = await superValidate(request, valibot(surveySchema));
 		if (!form.valid) {
 			return fail(400, { form });
+		}
+		const rateLimit = checkPublicActionRateLimit({
+			action: 'event_signup',
+			organizationId,
+			resourceId: eventObj.id,
+			subject: getClientAddress()
+		});
+		if (rateLimit.limited) {
+			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });
+			return fail(429, {
+				form,
+				error: 'Too many signup attempts. Please try again in a minute.'
+			});
 		}
 		try {
 			await db.transaction(async (tx) => {
