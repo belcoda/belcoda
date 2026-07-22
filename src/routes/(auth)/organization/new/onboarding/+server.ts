@@ -38,9 +38,9 @@ export async function POST(event) {
 		}
 		return json({ success: true });
 	} catch (err) {
-		log.error({ err }, 'Validation for onboarding webhook failed');
+		log.error({ err }, 'Validation for organization creation webhook failed');
 		return error(400, {
-			message: 'Error processing onboarding details. Form details are invalid.'
+			message: 'Error processing organization creation details. Form details are invalid.'
 		});
 	}
 }
