@@ -40,8 +40,9 @@ export class PetitionEditPage {
 
 	private async ensureDangerZoneExpanded(actionButton: Locator) {
 		await this.dangerZone.scrollIntoViewIfNeeded();
-		const isVisible = await actionButton.isVisible().catch(() => false);
-		if (!isVisible) {
+		try {
+			await actionButton.waitFor({ state: 'visible', timeout: 2_000 });
+		} catch {
 			await this.dangerZone.getByText('Danger zone').click();
 			await actionButton.waitFor({ state: 'visible', timeout: 10_000 });
 		}
