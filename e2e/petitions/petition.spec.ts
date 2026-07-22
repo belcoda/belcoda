@@ -108,10 +108,13 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await page.goto('/petitions');
 
 		await page.getByTestId('petitions-sidebar-list').waitFor({ state: 'visible', timeout: 10_000 });
-		const items = page.getByTestId('petition-sidebar-item');
-		await expect(items).toHaveCount(25, { timeout: 15_000 });
+		const visibleItems = page.getByTestId('petition-sidebar-item');
+		const seededItems = visibleItems.filter({
+			hasText: `E2E pagination petition ${seedBody.runId}`
+		});
+		await expect(visibleItems).toHaveCount(25, { timeout: 15_000 });
 
-		await expectSidebarItemCountToReach(items, 30, page, 'petitions-sidebar-scroll-sentinel');
+		await expectSidebarItemCountToReach(seededItems, 30, page, 'petitions-sidebar-scroll-sentinel');
 	});
 
 	test('owner can add a petition and it is saved as draft', async ({ page }) => {
