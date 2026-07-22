@@ -26,6 +26,17 @@ export async function getCurrentCountry(): Promise<CountryCode> {
 	}
 }
 
+function buildOnboardingMetadata(org: NewOrganizationFromWebsiteForm) {
+	const discoverySourceDetail = org.additionalDetails.howDidYouDiscoverDetail.trim();
+
+	return {
+		onboarding: {
+			discoverySource: org.additionalDetails.howDidYouDiscover,
+			discoverySourceDetail: discoverySourceDetail || null
+		}
+	};
+}
+
 export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 	const country = await getCurrentCountry();
 	const languageCode = locale.current;
@@ -51,6 +62,7 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 		defaultLanguage: languageCode,
 		defaultTimezone: timezone,
 		settings,
+		metadata: buildOnboardingMetadata(org),
 		logo,
 		icon
 	});
