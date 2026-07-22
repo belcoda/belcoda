@@ -63,7 +63,7 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 			organizationId: data.id
 		}),
 		post({
-			path: `/organization/new/onboarding`,
+			path: `/api/utils/organization-created`,
 			schema: object({
 				success: boolean()
 			}),
