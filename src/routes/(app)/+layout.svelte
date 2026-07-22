@@ -5,7 +5,7 @@
 	import { safeSessionStorage } from '$lib/utils/storage';
 	import { determineAndPersistActiveOrganizationId } from '$lib/utils/organization';
 	import { zero } from '$lib/zero.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import DeploymentRecoveryReset from '$lib/utils/DeploymentRecoveryReset.svelte';
 
 	const { children, data } = $props();
