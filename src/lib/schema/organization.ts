@@ -81,26 +81,13 @@ export const newOrganizationFromWebsiteForm = v.object({
 	icon: v.optional(organizationSchema.entries.icon, null),
 	website: v.optional(helpers.domainNameOrUrl),
 	additionalDetails: v.object({
-		organizationSize: v.picklist(['1', '2-10', '11-50', '50-500', '500+']),
-		organizationFocus: v.picklist(['community-org-charity', 'business', 'advocacy', 'political']),
 		howDidYouDiscover: v.picklist([
 			'search-engine',
 			'referral',
 			'training-conference',
 			'resources',
 			'social-media'
-		]),
-		features: v.object({
-			storingMemberOrSupporterData: v.boolean(),
-			growingOurListOfSupportersOrMembers: v.boolean(),
-			sendingWhatsAppMessagesToMembersOrSupporters: v.boolean(),
-			sendingEmailsToMembersOrSupporters: v.boolean(),
-			runningEvents: v.boolean(),
-			runningPolicyCampaignsWithOnlinePetitions: v.boolean(),
-			makingSureAllDataIsSyncedAndUpToDate: v.boolean(),
-			other: v.boolean(),
-			otherDetail: helpers.shortStringEmpty
-		})
+		])
 	})
 });
 export type NewOrganizationFromWebsiteForm = v.InferOutput<typeof newOrganizationFromWebsiteForm>;
