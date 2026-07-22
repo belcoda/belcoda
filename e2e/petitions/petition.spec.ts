@@ -184,7 +184,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await detailPage.goto(ids.petitionId);
 		await detailPage.waitForLoaded();
 		await expect(detailPage.titleDisplay).toContainText(ids.petitionTitle);
-		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
+		ids.petitionSlug = slugBeforeEdit;
 	});
 
 	test('owner can publish a petition from the action menu', async ({ page }) => {
@@ -262,7 +262,7 @@ test.describe.serial('Petitions: public page', () => {
 		await expect(page.getByTestId('public-page-navbar')).toBeVisible({ timeout: 10_000 });
 		const editLink = page.getByTestId('public-page-edit-link');
 		await expect(editLink).toBeVisible();
-		await expect(editLink).toContainText('Edit Petition');
+		await expect(editLink).toHaveAttribute('href', new RegExp(`/petitions/${ids.petitionId}$`));
 	});
 
 	test('anonymous visitor does not see the edit navbar on the public petition page', async ({
