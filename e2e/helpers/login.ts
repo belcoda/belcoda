@@ -23,6 +23,13 @@ async function loginViaForm(page: Page, email: string, password: string) {
 	await communityPage.expectLoaded();
 }
 
+async function hasAuthoritativeSession(page: Page): Promise<boolean> {
+	const response = await page.request.get('/api/auth/get-session?disableCookieCache=true');
+	if (!response.ok()) return false;
+	const session = await response.json().catch(() => null);
+	return !!session?.user?.id;
+}
+
 export async function ensureAuthenticated(
 	page: Page,
 	project: E2EProject,
@@ -33,6 +40,13 @@ export async function ensureAuthenticated(
 
 	if (/\/(login|signup)/.test(page.url())) {
 		const user = getTestUsers(project)[role];
+		await loginViaForm(page, user.email, user.password);
+		return communityPage;
+	}
+
+	if (!(await hasAuthoritativeSession(page))) {
+		const user = getTestUsers(project)[role];
+		await signOut(page);
 		await loginViaForm(page, user.email, user.password);
 		return communityPage;
 	}
