@@ -24,10 +24,10 @@ export const updateTeam = defineMutator(updateMutatorSchema, async ({ tx, args, 
 	tx.mutate.team.update({
 		id: args.metadata.teamId,
 		...(args.input.name !== undefined && { name: args.input.name }),
-		...(Object.prototype.hasOwnProperty.call(args.input, 'parentTeamId') && {
+		...(Object.hasOwn(args.input, 'parentTeamId') && {
 			parentTeamId: args.input.parentTeamId ?? null
 		}),
-		...(Object.prototype.hasOwnProperty.call(args.input, 'deletedAt') && {
+		...(Object.hasOwn(args.input, 'deletedAt') && {
 			deletedAt: args.input.deletedAt ? new Date(args.input.deletedAt).getTime() : null
 		}),
 		updatedAt: now

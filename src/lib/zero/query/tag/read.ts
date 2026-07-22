@@ -2,7 +2,7 @@ import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { type InferOutput, object } from 'valibot';
-import { uuid, parseSchema } from '$lib/schema/helpers';
+import { uuid } from '$lib/schema/helpers';
 import { tagReadPermissions } from '$lib/zero/query/tag/permissions';
 import { readTagZero } from '$lib/schema/tag';
 export const inputSchema = object({

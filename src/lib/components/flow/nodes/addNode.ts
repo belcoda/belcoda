@@ -2,7 +2,8 @@ import type { Node } from '@xyflow/svelte';
 import { v4 as uuidv4 } from 'uuid';
 import { findPositionRadial } from '../placeNode';
 import type { Flow, NodeType } from '$lib/schema/flow/index';
-
+import { defaultFilterGroup } from '$lib/schema/person/filter';
+import { structuredClone } from '$lib/utils/structuredClone';
 export function startingNodes({
 	defaultTemplateId
 }: {
@@ -15,7 +16,7 @@ export function startingNodes({
 			id: targetingNodeId,
 			type: 'targeting' as const,
 			position: { x: 0, y: 0 },
-			data: { filter: { type: 'and', filters: [], exclude: [] } }
+			data: { filter: structuredClone(defaultFilterGroup) }
 		}
 	];
 	const position = findPositionRadial(
@@ -80,7 +81,7 @@ export function addNode({
 				id: id,
 				type: 'message' as const,
 				position: position,
-				data: { text: 'Your message here', buttons: [], imageUrl: null }
+				data: { text: '', buttons: [], imageUrl: null }
 			};
 		case 'eventSignup':
 			return {

@@ -32,6 +32,8 @@
 	import { CONTROLLED_TEXT_INSERTION_COMMAND, type EditorState, type LexicalEditor } from 'lexical';
 	import { structuredClone } from '$lib/utils/structuredClone';
 	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
+	import BracesIcon from '@lucide/svelte/icons/braces';
+	import { t } from '$lib/index.svelte';
 	let {
 		value = $bindable(null),
 		onChange,
@@ -45,6 +47,7 @@
 	} = $props();
 
 	let imageDialog: ReturnType<typeof InsertImageCombinedDialog> | undefined = $state(undefined);
+	let variableDialog: ReturnType<typeof TemplateVariablePicker> | undefined = $state(undefined);
 
 	// Helper to check if value has valid content
 	function hasValidEditorState(val: any): boolean {
@@ -121,16 +124,25 @@
 							<i class="icon image"></i>
 							<span class="text">Image</span>
 						</DropDownItem>
+						{#if enableTemplateVariables}
+							<DropDownItem onclick={() => variableDialog?.show()} class="item gap-2 items-center">
+								<BracesIcon class="size-4 shrink-0" />
+								<span class="text">{t`Insert variable`}</span>
+							</DropDownItem>
+						{/if}
 					</InsertDropDown>
-					{#if enableTemplateVariables}
-						<Divider />
-						<TemplateVariablePicker
-							onSelect={(token) => insertTemplateVariable(activeEditor, token)}
-						/>
-					{/if}
 					<Divider />
 					<DropDownAlign />
 					<InsertImageCombinedDialog bind:this={imageDialog} />
+					{#if enableTemplateVariables}
+						<TemplateVariablePicker
+							bind:this={variableDialog}
+							mode="dialog"
+							onSelect={(token) => {
+								insertTemplateVariable(activeEditor, token);
+							}}
+						/>
+					{/if}
 				{/snippet}
 			</Toolbar>
 		{/if}
@@ -145,7 +157,9 @@
 			<ImagePlugin />
 			<FloatingLinkEditorPlugin {anchorElem} />
 			<OnChangePlugin
-				onChange={handleChange}
+				onChange={(editorState, editor, tags) => {
+					handleChange(editorState);
+				}}
 				ignoreHistoryMergeTagChange={true}
 				ignoreSelectionChange={true}
 			/>

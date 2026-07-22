@@ -1,5 +1,6 @@
 import type { QueryContext } from '$lib/zero/schema';
 import { type ListFilter } from '$lib/schema/helpers';
+import type { ReadWhatsappAccountZero } from '$lib/schema/whatsapp-account';
 
 import { z } from '$lib/zero.svelte';
 import queries from '$lib/zero/query/index';
@@ -27,6 +28,19 @@ class AppState {
 	#activeTeamId = $state<string | null>(null);
 	#userId = $state<string | null>(null);
 	#queryContext: QueryContext | null = $state(null);
+	#activeWhatsappAccountId = $state<string | null>(null);
+
+	#whatsappAccounts = $derived.by(() => {
+		if (!this.#organizationId) {
+			return null;
+		}
+		const q = z.createQuery(
+			queries.whatsappAccount.list({ organizationId: this.#organizationId, isDeleted: false })
+		);
+		return q;
+	});
+
+	#hasAppOrganizationContext = $state(false);
 
 	#organizations = $derived(
 		this.#queryContext ? z.createQuery(queries.organization.list({})) : null
@@ -74,6 +88,36 @@ class AppState {
 		return z.createQuery(queries.user.list(getListFilter(this.#organizationId)));
 	});
 
+	#notifications = $derived.by(() => {
+		if (!this.#queryContext || !this.#organizationId) {
+			return null;
+		}
+		return z.createQuery(
+			queries.notification.list({
+				...getListFilter(this.#organizationId, { pageSize: 200 }),
+				status: null
+			})
+		);
+	});
+	#unreadNotifications = $derived.by(() => {
+		if (!this.#queryContext || !this.#organizationId) {
+			return null;
+		}
+		return z.createQuery(
+			queries.notification.list({
+				...getListFilter(this.#organizationId, { pageSize: 200 }),
+				status: 'unread' as const
+			})
+		);
+	});
+	#notificationItems = $derived(this.#notifications?.data ?? []);
+	#unreadNotificationItems = $derived(this.#unreadNotifications?.data ?? []);
+	#unreadNotificationCount = $derived(this.#unreadNotificationItems.length);
+	#hasUnreadNotifications = $derived(this.#unreadNotificationCount > 0);
+	#unreadNotificationReferenceIds = $derived(
+		new Set(this.#unreadNotificationItems.map((notification) => notification.referenceId))
+	);
+
 	#user = $derived.by(() => {
 		if (!this.#queryContext || !this.#userId) {
 			return null;
@@ -105,6 +149,14 @@ class AppState {
 		this.#userId = userId;
 		this.#organizationId = organizationId;
 		this.#queryContext = queryContext;
+		this.#hasAppOrganizationContext = true;
+	}
+
+	clearOrganizationContext() {
+		this.#organizationId = null;
+		this.#activeTeamId = null;
+		this.#queryContext = null;
+		this.#hasAppOrganizationContext = false;
 	}
 
 	/**
@@ -128,6 +180,14 @@ class AppState {
 		);
 	}
 
+	get optionalOrganizationId() {
+		return this.#organizationId;
+	}
+
+	get appOrganizationContextId() {
+		return this.#hasAppOrganizationContext ? this.#organizationId : null;
+	}
+
 	get organizationId() {
 		if (!this.#organizationId) {
 			throw new Error('Organization ID is not set');
@@ -136,6 +196,15 @@ class AppState {
 	}
 	set organizationId(newOrganizationId: string) {
 		this.#organizationId = newOrganizationId;
+		this.#activeWhatsappAccountId = null;
+	}
+
+	get activeWhatsappAccountId() {
+		return this.#activeWhatsappAccountId;
+	}
+
+	set activeWhatsappAccountId(newActiveWhatsappAccountId: string | null) {
+		this.#activeWhatsappAccountId = newActiveWhatsappAccountId;
 	}
 
 	get activeTeamId() {
@@ -179,6 +248,33 @@ class AppState {
 		}
 		return this.#organizationUsers;
 	}
+	get notifications() {
+		if (!this.#notifications) {
+			throw new Error('Notifications are not set');
+		}
+		return this.#notifications;
+	}
+	get notificationItems() {
+		return this.#notificationItems;
+	}
+	get unreadNotifications() {
+		if (!this.#unreadNotifications) {
+			throw new Error('Unread notifications are not set');
+		}
+		return this.#unreadNotifications;
+	}
+	get unreadNotificationItems() {
+		return this.#unreadNotificationItems;
+	}
+	get unreadNotificationCount() {
+		return this.#unreadNotificationCount;
+	}
+	get hasUnreadNotifications() {
+		return this.#hasUnreadNotifications;
+	}
+	get unreadNotificationReferenceIds() {
+		return this.#unreadNotificationReferenceIds;
+	}
 	get user() {
 		if (!this.#user) {
 			throw new Error('User is not set');
@@ -190,6 +286,35 @@ class AppState {
 			throw new Error('My teams are not set');
 		}
 		return this.#myTeams;
+	}
+
+	get whatsappAccounts() {
+		if (!this.#whatsappAccounts) {
+			throw new Error('Whatsapp accounts are not set');
+		}
+		return this.#whatsappAccounts;
+	}
+
+	get whatsappAccountsUsableByCurrentUser() {
+		if (!this.#whatsappAccounts) {
+			throw new Error('Whatsapp accounts are not set');
+		}
+		//filter out all accounts of type 'user' which do not belong to the current user
+		const filteredArray =
+			this.#whatsappAccounts.data?.filter(
+				(account) => account.referenceId === this.#userId || account.scope === 'organization'
+			) ?? [];
+		//sort by scope with user accounts first
+		filteredArray.sort((a, b) => {
+			if (a.scope === 'user' && b.scope !== 'user') {
+				return -1;
+			}
+			if (a.scope !== 'user' && b.scope === 'user') {
+				return 1;
+			}
+			return 0;
+		});
+		return filteredArray;
 	}
 
 	get role() {

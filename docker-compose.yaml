@@ -1,7 +1,22 @@
 # setup script (only used for agent cloud environments (eg: codex etc))
+#
+# Fallback for agent environments that can't install Postgres directly (no
+# sudo/apt). The primary path is .cursor/setup.sh, which apt-installs Postgres.
+# Where that isn't possible, bring this up instead: `docker compose up -d`.
+#
+# `wal_level=logical` (+ replication slots/senders) is required: Zero replicates
+# from this upstream via logical replication and zero-cache won't start without it.
 services:
   postgres:
     image: postgres:16
+    command:
+      - postgres
+      - -c
+      - wal_level=logical
+      - -c
+      - max_wal_senders=10
+      - -c
+      - max_replication_slots=10
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app

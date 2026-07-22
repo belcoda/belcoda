@@ -8,8 +8,8 @@ import {
 	getOrgName,
 	type E2EProject
 } from '../helpers/config';
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 
 const PROJECTS_WITH_AUTH_STORAGE: E2EProject[] = [
 	'community',

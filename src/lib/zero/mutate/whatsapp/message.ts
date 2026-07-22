@@ -24,7 +24,7 @@ export const emojiReaction = defineMutator(emojiReactionMutatorSchema, async ({ 
 	if (existingReactionIndex !== -1) {
 		if (args.emoji) {
 			emojiReactionArray[existingReactionIndex].emoji = args.emoji || null;
-			emojiReactionArray[existingReactionIndex].reactedAt = new Date().getTime();
+			emojiReactionArray[existingReactionIndex].reactedAt = Date.now();
 		} else {
 			emojiReactionArray.splice(existingReactionIndex, 1);
 		}
@@ -36,7 +36,7 @@ export const emojiReaction = defineMutator(emojiReactionMutatorSchema, async ({ 
 				personId: args.personId,
 				phoneNumber: publicEnv.PUBLIC_DEFAULT_WHATSAPP_NUMBER,
 				viaBelcoda: true,
-				reactedAt: new Date().getTime()
+				reactedAt: Date.now()
 			});
 		}
 	}

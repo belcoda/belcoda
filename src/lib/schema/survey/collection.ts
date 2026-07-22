@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-import { surveyQuestionSchema, type SurveyQuestionType } from '$lib/schema/survey/questions';
+import { surveyQuestionSchema } from '$lib/schema/survey/questions';
 
 export const surveyCollectionSchema = v.pipe(
 	v.object({

@@ -13,6 +13,7 @@ This document provides AI agents and developers with a comprehensive overview of
 5. [Zero Schema Migrations](#zero-schema-migrations)
 6. [Authentication & Authorization](#authentication--authorization)
 7. [Key Conventions](#key-conventions)
+8. [Cloud Agent Environments](#cloud-agent-environments)
 
 ---
 
@@ -253,9 +254,15 @@ Renames and type changes are **expand + contract**: add the new column, migrate 
 
 Any PR that adds or changes Postgres schema via Drizzle migrations must be **database-only** and safe to merge/deploy without touching Zero or the app.
 
+"Database-only" is about the **runtime deploy surface**, not the import graph. The intent is that the PR ships the migration and the schema definition it comes from — and nothing that _uses_ the new shape at runtime (no Zero exposure, no queries/mutators, no code paths that let users read or write the new column). It is **not** a rule against `drizzle.ts` importing from the rest of the app.
+
+In particular, the following are **fine** in a migration-only PR and do not break the rule:
+
+- `drizzle.ts` importing types from application files (e.g. Valibot-derived types via `$type<...>()`, shared enums/constants). These are compile-time only, generate no runtime behaviour beyond the column definition, and don't expose anything to Zero or the app.
+
 **Include only:**
 
-- `src/lib/schema/drizzle.ts` (table/column definitions)
+- `src/lib/schema/drizzle.ts` (table/column definitions, including type-only imports used to shape columns)
 - `drizzle/` migration files (and journal/meta if generated)
 
 **Do not include in the same PR:**
@@ -388,6 +395,71 @@ Belcoda serves organizations across multiple locales (en, es, pt, etc), so featu
 - CSV imports etc must respect regional conventions (e.g., European CSVs use semicolons as delimiters because commas are used as decimal separators)
 - Phone number inputs should be parsed and formatted using a library like `awesome-phonenumber`
 - Timezone handling is critical for scheduled events and communications
+
+---
+
+## Cloud Agent Environments
+
+Cloud coding agents (Cursor background agents, Codex cloud) need a working install:
+Postgres, Zero (`zero-cache-dev`), and the app. Setup logic is shared in
+[`scripts/agent-setup.sh`](scripts/agent-setup.sh): it apt-installs Postgres with
+`wal_level=logical` (required — Zero replicates via logical replication and
+`zero-cache` won't start without it), creates the `app`/`belcoda` role and DB,
+then runs `npm ci` → `db:push` → `db:seed`.
+
+Secrets are **not** committed. Set them in each platform's dashboard: at minimum
+`DATABASE_URL` and `ZERO_UPSTREAM_DB` (both `postgres://app:app@localhost:5432/belcoda`),
+the `ZERO_*`, `BETTER_AUTH_*`, and `OWNER_*` (seed) vars, plus
+`MOCK_EXTERNAL_SERVICES=true`. No Zero schema/permissions file is needed: the app
+uses custom `ZERO_QUERY_URL`/`ZERO_MUTATE_URL`, so `zero-cache-dev` runs without one.
+
+### Cursor
+
+Committed config drives it:
+
+- [`.cursor/environment.json`](.cursor/environment.json) — `install` runs
+  `.cursor/setup.sh` (→ shared script), `start` boots Postgres, a `dev` terminal
+  runs `npm run dev`.
+
+### Codex
+
+Configured in the Codex environment UI (no committed manifest). Network is
+available during setup but restricted during the task, so everything installs at
+setup time (the shared script already seeds then).
+
+- **Setup script:** `bash scripts/agent-setup.sh`
+- **Maintenance script** (runs per task): `sudo service postgresql start 2>/dev/null || service postgresql start`
+- **Secrets:** same list as above.
+- To run app + Zero during a task, background it in the maintenance script
+  (`nohup npm run dev &`); otherwise the agent can start it on demand.
+
+### Claude Code on the web
+
+Configured in the cloud environment UI at [claude.ai/code](https://claude.ai/code)
+(setup script + env vars + network level), but the per-session startup is
+committed to the repo as a SessionStart hook. The base image already ships
+**PostgreSQL 16** and Node (via nvm), so setup only configures/seeds Postgres and
+installs Node 24 — it does not apt-install Postgres.
+
+- **Setup script** (paste into the environment's "Setup script" field, cached):
+  `bash scripts/agent-setup-web.sh` — installs Node 24, enables `wal_level=logical`
+  on the pre-installed Postgres, creates the `app`/`belcoda` role and DB, then
+  `npm ci` → `db:push` → `db:seed`.
+- **Per-session start:** [`scripts/agent-start.sh`](scripts/agent-start.sh), wired
+  as a `SessionStart` hook in [`.claude/settings.json`](.claude/settings.json). The
+  cache stores files, not processes, so it restarts Postgres each session. It is
+  cloud-only (guarded by `CLAUDE_CODE_REMOTE=true`) so it no-ops on local machines.
+- **Secrets:** set as environment variables in the same UI (same list as above).
+  Note there is no dedicated secrets store — env vars are visible to anyone who can
+  edit the environment, so use safe staging values only.
+- **Network:** keep the default **Trusted** level so npm/`nodejs.org` are reachable
+  during setup.
+
+### Fallback (no sudo/apt)
+
+[`docker-compose.yaml`](docker-compose.yaml) brings up Postgres with
+`wal_level=logical` for agent containers that can't install it directly. Swap the
+install/setup step to `docker compose up -d && npm ci --include=dev && npm run db:push && npm run db:seed`.
 
 ---
 

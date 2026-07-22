@@ -21,6 +21,40 @@ import { createDefaultTemplate } from '$lib/server/db/seed/whatsapp/template';
  * }
  */
 
+async function createAdditionalMembers(
+	members: unknown,
+	organizationId: string,
+	now: Date
+): Promise<void> {
+	if (!Array.isArray(members) || members.length === 0) return;
+
+	for (const memberData of members) {
+		if (
+			memberData === null ||
+			typeof memberData !== 'object' ||
+			typeof memberData.email !== 'string' ||
+			!memberData.email ||
+			(memberData.role !== 'admin' && memberData.role !== 'member')
+		) {
+			continue;
+		}
+
+		const memberUser = await drizzle.query.user.findFirst({
+			where: eq(schema.user.email, memberData.email)
+		});
+
+		if (!memberUser) continue;
+
+		await drizzle.insert(schema.member).values({
+			id: crypto.randomUUID(),
+			userId: memberUser.id,
+			organizationId,
+			role: memberData.role,
+			createdAt: now
+		});
+	}
+}
+
 export const POST: RequestHandler = async ({ request }) => {
 	if (env.NODE_ENV === 'production') {
 		throw error(403, 'This endpoint is only available in development mode');
@@ -109,23 +143,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			createdAt: now
 		});
 
-		if (Array.isArray(members) && members.length > 0) {
-			for (const memberData of members) {
-				const memberUser = await drizzle.query.user.findFirst({
-					where: eq(schema.user.email, memberData.email)
-				});
-
-				if (memberUser) {
-					await drizzle.insert(schema.member).values({
-						id: crypto.randomUUID(),
-						userId: memberUser.id,
-						organizationId: orgId,
-						role: memberData.role || 'member',
-						createdAt: now
-					});
-				}
-			}
-		}
+		await createAdditionalMembers(members, orgId, now);
 
 		return json({ success: true, id: orgId, message: 'Organization created' });
 	} catch (err) {

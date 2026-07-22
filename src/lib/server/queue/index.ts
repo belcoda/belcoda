@@ -126,7 +126,7 @@ async function initQueue() {
 	return queue;
 }
 export async function getQueue() {
-	if (!global.__queue__) {
+	if (!globalThis.__queue__) {
 		const boss = await initQueue();
 		const queueInstance = {
 			raw: boss,
@@ -141,7 +141,7 @@ export async function getQueue() {
 		const handlers = createHandlers(boss);
 		Object.assign(queueInstance, handlers);
 
-		global.__queue__ = queueInstance;
+		globalThis.__queue__ = queueInstance;
 	} else if (dev) {
 		// NOTE: HMR for queue workers is not supported.
 		// Queue workers run background jobs via pg-boss, and their handler
@@ -151,5 +151,5 @@ export async function getQueue() {
 		log.debug('Queue workers do not support HMR. Restart the server to see handler changes.');
 	}
 
-	return global.__queue__;
+	return globalThis.__queue__;
 }

@@ -10,5 +10,11 @@ export const preferencesItems: {
 		url: '/preferences/language',
 		keywords: ['language', 'preferences', 'config'],
 		permissions: 'member'
+	},
+	{
+		title: () => t`Notifications`,
+		url: '/preferences/notifications',
+		keywords: ['notifications', 'digest', 'email', 'preferences'],
+		permissions: 'member'
 	}
 ];

@@ -1,5 +1,4 @@
 import {
-	type DateValue,
 	CalendarDate,
 	ZonedDateTime,
 	toZoned,
@@ -7,8 +6,7 @@ import {
 	isSameDay,
 	startOfMonth,
 	endOfMonth,
-	fromAbsolute,
-	getLocalTimeZone
+	fromAbsolute
 } from '@internationalized/date';
 
 export function getTodayCalendarDate(timezone: string): CalendarDate {

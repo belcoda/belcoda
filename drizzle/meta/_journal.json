@@ -120,6 +120,41 @@
       "when": 1781692295408,
       "tag": "0016_lyrical_mariko_yashida",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1783072612928,
+      "tag": "0017_superb_black_bird",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1783304878433,
+      "tag": "0018_flippant_blade",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1783572154989,
+      "tag": "0019_equal_loners",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1784005139831,
+      "tag": "0020_young_fixer",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1784090139345,
+      "tag": "0021_serious_sabra",
+      "breakpoints": true
     }
   ]
 }

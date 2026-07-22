@@ -2,10 +2,8 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
 import { petitionSignatureDetails } from '$lib/schema/petition/settings';
-import { readPersonZero } from '$lib/schema/person';
+import { readPersonZero, personActionHelper } from '$lib/schema/person';
 import { personAddedFrom } from '$lib/schema/person/meta';
-
-import { personActionHelper } from '$lib/schema/person';
 
 export const petitionSignatureSchema = v.object({
 	id: helpers.uuid,
@@ -14,7 +12,11 @@ export const petitionSignatureSchema = v.object({
 	petitionId: helpers.uuid,
 	personId: helpers.uuid,
 	details: petitionSignatureDetails,
-	responses: v.nullable(v.any()), // TODO: Define response schema when flows are ready
+	/**
+	 * @deprecated Custom-field answers now live in `details.customFields`. Retained only for legacy
+	 * rows; no longer written or exposed through read/write schemas. Slated for removal.
+	 */
+	responses: v.nullable(v.any()),
 	createdAt: helpers.date,
 	updatedAt: helpers.date,
 	deletedAt: v.nullable(helpers.date)
@@ -22,21 +24,21 @@ export const petitionSignatureSchema = v.object({
 export type PetitionSignatureSchema = v.InferOutput<typeof petitionSignatureSchema>;
 
 export const petitionSignatureApiSchema = v.object({
-	...v.omit(petitionSignatureSchema, ['organizationId']).entries,
+	...v.omit(petitionSignatureSchema, ['organizationId', 'responses']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString,
 	deletedAt: v.nullable(helpers.dateToString)
 });
 
 export const readPetitionSignatureRest = v.object({
-	...v.omit(petitionSignatureSchema, ['organizationId']).entries,
+	...v.omit(petitionSignatureSchema, ['organizationId', 'responses']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString
 });
 export type ReadPetitionSignatureRest = v.InferOutput<typeof readPetitionSignatureRest>;
 
 export const readPetitionSignatureZero = v.object({
-	...petitionSignatureSchema.entries,
+	...v.omit(petitionSignatureSchema, ['responses']).entries,
 	createdAt: helpers.dateToTimestamp,
 	updatedAt: v.nullable(helpers.dateToTimestamp),
 	deletedAt: v.nullable(helpers.dateToTimestamp)
@@ -54,22 +56,22 @@ export type ReadPetitionSignatureZeroWithPerson = v.InferOutput<
 export const createPetitionSignature = v.object({
 	petitionId: petitionSignatureSchema.entries.petitionId,
 	personId: petitionSignatureSchema.entries.personId,
-	details: petitionSignatureSchema.entries.details,
-	responses: v.optional(petitionSignatureSchema.entries.responses, null)
+	details: petitionSignatureSchema.entries.details
 });
 
 export type CreatePetitionSignature = v.InferInput<typeof createPetitionSignature>;
 
+// Custom-field answers now live in `details.customFields`, so an update carries the (merged)
+// details rather than the deprecated `responses` column.
 export const updatePetitionSignature = v.object({
-	responses: petitionSignatureSchema.entries.responses
+	details: petitionSignatureSchema.entries.details
 });
 export type UpdatePetitionSignature = v.InferInput<typeof updatePetitionSignature>;
 
 /** POST body for API; `petitionId` is taken from the URL path. */
 export const createPetitionSignatureApiBody = v.object({
 	personId: petitionSignatureSchema.entries.personId,
-	details: petitionSignatureSchema.entries.details,
-	responses: v.optional(petitionSignatureSchema.entries.responses, null)
+	details: petitionSignatureSchema.entries.details
 });
 
 export const updatePetitionSignatureRest = updatePetitionSignature;

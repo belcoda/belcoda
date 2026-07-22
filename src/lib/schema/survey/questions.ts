@@ -3,7 +3,6 @@ import * as helpers from '$lib/schema/helpers';
 import type { Locale } from '$lib/utils/language';
 
 import {
-	type PersonActionHelper,
 	personActionHelper,
 	setRequiredPersonActionHelperFieldsBasedOnSurveyQuestions
 } from '$lib/schema/person';
@@ -118,49 +117,47 @@ export function convertQuestionsToValibotSchema(questions: SurveyQuestion[]) {
 				[question.id]: schema
 			};
 		},
+		// Survey schemas are dynamically built and heterogeneous (fields output
+		// string | number | boolean | Date | string[]). `any` is load-bearing here:
+		// switching to `unknown` breaks output inference for every customFields consumer.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		{} as Record<string, v.GenericSchema<any, any>>
 	);
 	return result;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- see convertQuestionsToValibotSchema: matches the heterogeneous survey schema output
+function requiredOrOptional<TSchema extends v.GenericSchema<any, any>>(
+	required: boolean,
+	schema: TSchema
+) {
+	return required ? schema : v.optional(v.nullable(schema));
+}
+
 function getSchemaForQuestion(question: SurveyQuestion) {
+	const { required } = question;
 	switch (question.type) {
-		case 'custom.dateInput': {
-			return question.required ? helpers.dateString : v.optional(v.nullable(helpers.dateString));
-		}
-		case 'custom.emailInput': {
-			return question.required ? helpers.email : v.optional(v.nullable(helpers.email));
-		}
-		case 'custom.phoneInput': {
-			return question.required ? helpers.phoneNumber : v.optional(v.nullable(helpers.phoneNumber));
-		}
-		case 'custom.numberInput': {
-			return question.required ? v.number() : v.optional(v.nullable(v.number()));
-		}
-		case 'person.dateOfBirth': {
-			return question.required ? v.date() : v.optional(v.nullable(v.date()));
-		}
-		case 'custom.checkboxGroup': {
-			const options = question.options ?? [];
-			return question.required
-				? v.array(v.picklist(options))
-				: v.optional(v.nullable(v.array(v.picklist(options))));
-		}
-		case 'person.gender': {
-			return question.required ? helpers.gender : v.optional(v.nullable(helpers.gender));
-		}
-		case 'person.address': {
-			return question.required ? helpers.address : v.optional(v.nullable(helpers.address));
-		}
+		case 'custom.dateInput':
+			return requiredOrOptional(required, helpers.dateString);
+		case 'custom.emailInput':
+			return requiredOrOptional(required, helpers.email);
+		case 'custom.phoneInput':
+			return requiredOrOptional(required, helpers.phoneNumber);
+		case 'custom.numberInput':
+			return requiredOrOptional(required, v.number());
+		case 'person.dateOfBirth':
+			return requiredOrOptional(required, v.date());
+		case 'custom.checkboxGroup':
+			return requiredOrOptional(required, v.array(v.picklist(question.options ?? [])));
+		case 'person.gender':
+			return requiredOrOptional(required, helpers.gender);
+		case 'person.address':
+			return requiredOrOptional(required, helpers.address);
 		case 'custom.dropdown':
 		case 'custom.radioGroup':
-			return question.required
-				? v.picklist(question.options)
-				: v.optional(v.nullable(v.picklist(question.options)));
+			return requiredOrOptional(required, v.picklist(question.options));
 		default:
-			return question.required
-				? helpers.mediumString
-				: v.optional(v.nullable(helpers.mediumString));
+			return requiredOrOptional(required, helpers.mediumString);
 	}
 }
 
@@ -219,9 +216,6 @@ type SurveySchemaSource = {
 export function getSurveySchema(eventObj: SurveySchemaSource) {
 	const survey = eventObj.settings?.survey?.collections?.[0]?.questions ?? [];
 	const customSurveyQuestions = survey.filter((question) => question.type.startsWith('custom.'));
-	const personSurveyQuestions = survey
-		.filter((question) => question.type.startsWith('person.'))
-		.map((item) => item.type);
 	const customQuestionSurveySchema = v.object(
 		convertQuestionsToValibotSchema(customSurveyQuestions)
 	);

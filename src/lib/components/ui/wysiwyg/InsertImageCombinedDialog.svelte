@@ -95,7 +95,7 @@
 					<Input
 						id="image-upload"
 						type="file"
-						accept="image/*"
+						accept=".jpg,.jpeg,.png,.webp,.gif"
 						onchange={(e) => onFileSelected(e.currentTarget.files)}
 						disabled={isUploading}
 					/>

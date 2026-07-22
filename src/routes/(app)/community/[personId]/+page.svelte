@@ -23,32 +23,29 @@
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
 			appState.activeOrganization?.data?.settings.whatsApp.number
 	);
+
+	//TODO: Once we implement the account selector tabs, add footer={appState.activeWhatsappAccountId ? footer : undefined} to the content layout.
 </script>
 
-<ContentLayout
-	rootLink="/community"
-	{header}
-	bodyPadding="p-0"
-	scrollBody={false}
-	hideFooter={!whatsappOnboarded}
->
+<ContentLayout rootLink="/community" {header} {footer} bodyPadding="p-0 gap-y-0" scrollBody={false}>
 	<ActivityTimeline personId={params.personId} />
-	{#snippet footer()}
-		{#if whatsappOnboarded}
-			{#if isLastReceivedAtLessThan24HoursAgo}
-				<SendBusinessApiIndividualMessage personId={params.personId} />
-			{:else}
-				<SendBusinessApiTemplateMessage personId={params.personId} />
-			{/if}
-		{:else}
-			<div class="flex items-center justify-center">
-				<p class="text-sm text-muted-foreground">
-					{t`WhatsApp is not onboarded for this organization. Please contact support to onboard.`}
-				</p>
-			</div>
-		{/if}
-	{/snippet}
 </ContentLayout>
+
+{#snippet footer()}
+	{#if whatsappOnboarded}
+		{#if isLastReceivedAtLessThan24HoursAgo}
+			<SendBusinessApiIndividualMessage personId={params.personId} />
+		{:else}
+			<SendBusinessApiTemplateMessage personId={params.personId} />
+		{/if}
+	{:else}
+		<div class="flex items-center justify-center">
+			<p class="text-sm text-muted-foreground">
+				{t`WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings.`}
+			</p>
+		</div>
+	{/if}
+{/snippet}
 
 {#snippet header()}
 	<div class="flex items-center justify-between">

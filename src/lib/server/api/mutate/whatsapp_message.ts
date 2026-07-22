@@ -5,7 +5,6 @@ import {
 } from '$lib/schema/whatsapp-message';
 import { defineMutator } from '@rocicorp/zero';
 import * as dataFunctions from '$lib/server/api/data/whatsapp/message';
-import {} from '$lib/schema/whatsapp-message';
 
 export const emojiReaction = defineMutator(
 	emojiReactionMutatorSchema,

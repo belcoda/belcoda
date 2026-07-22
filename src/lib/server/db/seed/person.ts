@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { randomOrNull } from '$lib/server/db/seed/utils';
+import { randomOrNull, selectOneOfArray } from '$lib/server/db/seed/utils';
 import { countryCodes, type CountryCode } from '$lib/utils/country';
-import { selectOneOfArray } from '$lib/server/db/seed/utils';
 import { person as personTable } from '$lib/schema/drizzle';
 import { DEFAULT_SOCIAL_MEDIA } from '$lib/schema/person/meta';
 export function generatePeople(

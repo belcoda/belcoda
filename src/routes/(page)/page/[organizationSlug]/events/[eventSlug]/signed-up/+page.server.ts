@@ -9,6 +9,7 @@ import {
 } from '$lib/server/api/data/organization';
 export const ssr = false;
 import { db } from '$lib/server/db';
+import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
 
 export async function load({ locals, params, url }) {
 	log.debug(
@@ -27,7 +28,15 @@ export async function load({ locals, params, url }) {
 		params.organizationSlug
 	);
 
-	return { event: eventObj, organization: organizationObj };
+	const renderedDescription = await renderSanitizedDescription({
+		description: eventObj.description,
+		logContext: { eventId: eventObj.id }
+	});
+
+	return {
+		event: { ...eventObj, description: renderedDescription },
+		organization: organizationObj
+	};
 }
 
 async function getDetails(eventSlug: string, organizationSlug: string) {

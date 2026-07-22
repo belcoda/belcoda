@@ -1,6 +1,5 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
-import { get } from '$lib/utils/http';
 
 import { petitionSettingsSchema } from './settings';
 import { generatePetitionTitleAsyncSchema } from './helpers';
@@ -23,10 +22,6 @@ export const petitionSchema = v.object({
 
 	featureImage: v.nullable(helpers.url),
 	settings: petitionSettingsSchema,
-
-	// TODO: Implement these once flows are ready
-	// flowQuestions: v.nullable(v.any()),
-
 	createdAt: helpers.date,
 	updatedAt: helpers.date,
 	deletedAt: v.nullable(helpers.date),

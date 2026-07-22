@@ -15,12 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
 
       # scanners: vuln only — Checkov owns IaC, Gitleaks owns secrets, so we
       # don't double-report. exit-code 0 = report-only (don't fail the PR yet).
       - name: Trivy filesystem scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 #0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -46,11 +48,31 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 #v4.1.2
 
       - name: Install OpenGrep
+        env:
+          OPENGREP_VERSION: v1.25.0
         run: |
-          curl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/main/install.sh | bash
+          INST="${HOME}/.opengrep/cli/${OPENGREP_VERSION}"
+          mkdir -p "${INST}"
+          BASE="https://github.com/opengrep/opengrep/releases/download/${OPENGREP_VERSION}/opengrep_manylinux_x86"
+          curl -fsSL -o "${INST}/opengrep" "${BASE}"
+          curl -fsSL -o "${INST}/opengrep.cert" "${BASE}.cert"
+          curl -fsSL -o "${INST}/opengrep.sig" "${BASE}.sig"
+          cosign verify-blob \
+            --certificate "${INST}/opengrep.cert" \
+            --signature "${INST}/opengrep.sig" \
+            --certificate-identity "https://github.com/opengrep/opengrep/.github/workflows/rolling-release.yml@refs/heads/main" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "${INST}/opengrep"
+          chmod +x "${INST}/opengrep"
+          ln -sf "${INST}" "${HOME}/.opengrep/cli/latest"
           echo "$HOME/.opengrep/cli/latest" >> "$GITHUB_PATH"
 
       - name: OpenGrep scan
@@ -78,9 +100,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 #v5
         with:
           python-version: '3.12'
 
@@ -108,9 +132,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
         with:
           fetch-depth: 0 # full history so secrets in past commits are caught
+          persist-credentials: false
 
       - name: Gitleaks scan
         # --exit-code=0: report-only (don't fail the job when leaks are found).

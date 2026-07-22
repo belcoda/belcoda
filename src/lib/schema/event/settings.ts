@@ -13,7 +13,6 @@ const fieldTypeSchema = picklist(['text', 'number', 'date', 'boolean', 'select',
 import { url, shortString, unixTimestamp } from '$lib/schema/helpers';
 import { surveySchema } from '$lib/schema/survey/collection';
 import { surveyQuestionResponse } from '$lib/schema/survey/questions';
-import { whatsappFlowInternalSchema } from '$lib/schema/whatsapp/flows/schema';
 
 export const eventSettingsSchema = object({
 	displayTimezone: boolean(),

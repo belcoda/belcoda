@@ -8,11 +8,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
+        with:
+          persist-credentials: false
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 #v1
 
       # Install Node
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #v4
         with:
           node-version: '24' # or your preferred version
 
@@ -45,6 +47,14 @@ jobs:
 
       # App deploy
       # Note: This currently uses staging environment variables for Sentry and AWS S3 bucket. These variables are only needed for the build step. But it's true they should be replaced with separate production build arguments in the future.
-      - run: flyctl deploy -c deploy/fly.production.toml --remote-only --build-arg PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN_STAGING }} --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN_STAGING }} --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME=${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}
+      - name: Deploy app
+        run: |
+          flyctl deploy -c deploy/fly.production.toml --remote-only \
+            --build-arg PUBLIC_SENTRY_DSN="$PUBLIC_SENTRY_DSN" \
+            --build-arg SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+            --build-arg PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME="$PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN_STAGING }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_STAGING }}
+          PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME: ${{ secrets.PUBLIC_AWS_S3_SITE_UPLOADS_BUCKET_NAME_STAGING }}

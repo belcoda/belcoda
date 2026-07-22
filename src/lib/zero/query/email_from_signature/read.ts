@@ -2,7 +2,7 @@ import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { type InferOutput, object } from 'valibot';
-import { uuid, parseSchema } from '$lib/schema/helpers';
+import { uuid } from '$lib/schema/helpers';
 import { emailFromSignatureReadPermissions } from '$lib/zero/query/email_from_signature/permissions';
 import { readEmailFromSignatureZero } from '$lib/schema/email-from-signature';
 

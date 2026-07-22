@@ -1,8 +1,7 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
-import { builder, type Schema } from '$lib/zero/schema';
-import type { QueryContext } from '$lib/zero/schema';
+import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, nullable, optional, picklist, boolean } from 'valibot';
-import { listFilter, parseSchema, uuid, unixTimestamp } from '$lib/schema/helpers';
+import { listFilter, uuid, unixTimestamp } from '$lib/schema/helpers';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
 import { readEventZero } from '$lib/schema/event';
 import { decodeEventListCursor } from '$lib/utils/event/cursor';
@@ -90,12 +89,7 @@ function whereClause(
 		cmp('archivedAt', isArchived ? 'IS NOT' : 'IS', null)
 	];
 	if (filter.dateRange) {
-		if (filter.dateRange.start) {
-			filterArr.push(cmp('startsAt', '>=', filter.dateRange.start));
-		}
-		if (filter.dateRange.end) {
-			filterArr.push(cmp('endsAt', '<=', filter.dateRange.end));
-		}
+		filterArr.push(...dateRangeConditions(cmp, filter.dateRange));
 	}
 	if (filter.hasSignups) {
 		filterArr.push(exists('signups'));
@@ -112,22 +106,57 @@ function whereClause(
 		filterArr.push(cmp('teamId', '=', filter.teamId!));
 	}
 	if (filter.eventType) {
-		if (filter.eventType === 'online') {
-			filterArr.push(cmp('onlineLink', 'IS NOT', null));
-		} else if (filter.eventType === 'in-person') {
-			filterArr.push(cmp('addressLine1', 'IS NOT', null));
-		}
+		filterArr.push(...eventTypeConditions(cmp, filter.eventType));
 	}
 	if (filter.status) {
-		if (filter.status === 'draft') {
-			filterArr.push(cmp('published', '=', false));
-		} else if (filter.status === 'published') {
-			filterArr.push(cmp('published', '=', true));
-		} else if (filter.status === 'cancelled') {
-			filterArr.push(cmp('cancelledAt', 'IS NOT', null));
-		}
+		filterArr.push(...statusConditions(cmp, filter.status));
 	}
 	return and(...filterArr);
+}
+
+type WhereCmp = ExpressionBuilder<'event', Schema>['cmp'];
+
+function dateRangeConditions(
+	cmp: WhereCmp,
+	dateRange: NonNullable<InferOutput<typeof inputSchema>['dateRange']>
+) {
+	const conditions = [];
+	if (dateRange.start != null) {
+		conditions.push(cmp('startsAt', '>=', dateRange.start));
+	}
+	if (dateRange.end != null) {
+		conditions.push(cmp('endsAt', '<=', dateRange.end));
+	}
+	return conditions;
+}
+
+function eventTypeConditions(
+	cmp: WhereCmp,
+	eventType: NonNullable<InferOutput<typeof inputSchema>['eventType']>
+) {
+	if (eventType === 'online') {
+		return [cmp('onlineLink', 'IS NOT', null)];
+	}
+	if (eventType === 'in-person') {
+		return [cmp('addressLine1', 'IS NOT', null)];
+	}
+	return [];
+}
+
+function statusConditions(
+	cmp: WhereCmp,
+	status: NonNullable<InferOutput<typeof inputSchema>['status']>
+) {
+	if (status === 'draft') {
+		return [cmp('published', '=', false)];
+	}
+	if (status === 'published') {
+		return [cmp('published', '=', true)];
+	}
+	if (status === 'cancelled') {
+		return [cmp('cancelledAt', 'IS NOT', null)];
+	}
+	return [];
 }
 
 export const outputSchema = array(readEventZero);

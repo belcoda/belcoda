@@ -1,5 +1,4 @@
-import { json } from '@sveltejs/kit';
-import { error } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import { handleMutateRequest } from '@rocicorp/zero/server';
 import { mustGetMutator } from '@rocicorp/zero';
 import { db as dbProvider } from '$lib/server/db/index';

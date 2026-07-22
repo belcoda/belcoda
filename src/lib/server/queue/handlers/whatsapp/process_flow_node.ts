@@ -93,7 +93,8 @@ export async function processFlowNodeAction({
 					personId,
 					organizationId,
 					signupDetails: {
-						channel: { type: 'whatsapp' }
+						channel: { type: 'whatsapp' },
+						customFields: {}
 					}
 				});
 				break;

@@ -69,7 +69,6 @@ import { listMyTeams } from '$lib/zero/query/team/listMyTeams';
 // user
 import { listUsers } from '$lib/zero/query/user/list';
 import { readUser } from '$lib/zero/query/user/read';
-
 // webhook
 import { listWebhooks } from '$lib/zero/query/webhook/list';
 import { readWebhook } from '$lib/zero/query/webhook/read';
@@ -83,6 +82,8 @@ import { listWhatsappTemplates } from '$lib/zero/query/whatsapp_template/list';
 import { readWhatsappThread } from '$lib/zero/query/whatsapp_thread/read';
 import { listWhatsappThreads } from '$lib/zero/query/whatsapp_thread/list';
 import { readWhatsappMessage } from '$lib/zero/query/whatsapp_message/read';
+import { readWhatsappAccount } from '$lib/zero/query/whatsapp_account/read';
+import { listWhatsappAccounts } from '$lib/zero/query/whatsapp_account/list';
 // Re-export all queries
 export {
 	// activity
@@ -148,7 +149,10 @@ export {
 	readWhatsappThread,
 	listWhatsappThreads,
 	// whatsapp message
-	readWhatsappMessage
+	readWhatsappMessage,
+	// whatsapp account
+	readWhatsappAccount,
+	listWhatsappAccounts
 };
 
 export default defineQueries({
@@ -162,6 +166,10 @@ export default defineQueries({
 	whatsappThread: {
 		read: readWhatsappThread,
 		list: listWhatsappThreads
+	},
+	whatsappAccount: {
+		read: readWhatsappAccount,
+		list: listWhatsappAccounts
 	},
 	activity: {
 		list: listActivity

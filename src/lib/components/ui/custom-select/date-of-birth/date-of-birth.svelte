@@ -2,18 +2,25 @@
 	import Calendar from '$lib/components/ui/calendar/calendar.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
-	import { getLocalTimeZone, today, type CalendarDate, parseDate } from '@internationalized/date';
+	import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 	import { t } from '$lib/index.svelte';
 
 	const id = $props.id();
 	let { value = $bindable(null) }: { value: Date | null | undefined } = $props();
-	if (!value) {
-		value = new Date();
+
+	// Derive the local calendar state from the incoming value without writing back to the
+	// $bindable prop. Writes to the parent happen strictly from user interaction (setDate),
+	// mirroring the safe getter/setter pattern used by date-jsdateinput.svelte.
+	function toCalendarDate(input: Date | null | undefined): CalendarDate | undefined {
+		if (!(input instanceof Date) || Number.isNaN(input.getTime())) {
+			return undefined;
+		}
+		return new CalendarDate(input.getFullYear(), input.getMonth() + 1, input.getDate());
 	}
+
 	let open = $state(false);
-	let dateValue = $state<CalendarDate>(parseDate(value.toISOString().slice(0, 10)));
+	let dateValue = $state<CalendarDate | undefined>(toCalendarDate(value));
 
 	function getDate() {
 		return dateValue;
@@ -42,7 +49,7 @@
 	<Popover.Content class="w-auto overflow-hidden p-0" align="start">
 		<Calendar
 			type="single"
-			bind:value={getDate, setDate}
+			bind:value={getDate as () => CalendarDate, setDate}
 			captionLayout="dropdown"
 			onValueChange={() => {
 				open = false;

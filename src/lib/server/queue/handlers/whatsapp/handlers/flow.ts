@@ -366,9 +366,11 @@ export async function handleFlowResponse({
 					teamId: petition.teamId ?? undefined,
 					tx,
 					personAction: parsedPersonAction,
-					signatureDetails: { channel: { type: 'whatsapp' } },
+					signatureDetails: {
+						channel: { type: 'whatsapp' },
+						customFields: customFields
+					},
 					organizationId: petition.organizationId,
-					responses: Object.keys(customFields).length > 0 ? customFields : null,
 					skipNotifications: true,
 					whatsappIdentity,
 					whatsappContextWamidId
@@ -439,7 +441,6 @@ export async function processFlowDataExchange({
 		throw new Error('Missing or invalid phone number in form data');
 	}
 
-	// TODO: This should be done using the "from" phone number that the message came from.
 	// Look up person by phone number
 	const existingPerson = await drizzle.query.person.findFirst({
 		where: eq(personTable.phoneNumber, phone)
@@ -618,19 +619,7 @@ export async function handleEventSignupFlowResponse({
 	return eventSignup;
 }
 
-export async function handlePetitionSignatureFlowResponse({
-	petitionId,
-	givenName,
-	from,
-	responses,
-	tx
-}: {
-	petitionId: string;
-	from: string;
-	givenName: string;
-	responses?: FlowResponses;
-	tx: ServerTransaction;
-}) {
+function extractPetitionCustomFields(responses?: FlowResponses): Record<string, unknown> {
 	const customFields: Record<string, unknown> = {};
 
 	if (responses?.response_json) {
@@ -685,7 +674,7 @@ export async function handlePetitionSignatureFlowResponse({
 							{ key, value, type: typeof value },
 							'Unexpected custom field type in petition flow response'
 						);
-						customFields[key] = value as string;
+						customFields[key] = JSON.stringify(value);
 					}
 				}
 			});
@@ -695,6 +684,24 @@ export async function handlePetitionSignatureFlowResponse({
 			log.error({ error }, 'Failed to parse petition flow response for custom fields');
 		}
 	}
+
+	return customFields;
+}
+
+export async function handlePetitionSignatureFlowResponse({
+	petitionId,
+	givenName,
+	from,
+	responses,
+	tx
+}: {
+	petitionId: string;
+	from: string;
+	givenName: string;
+	responses?: FlowResponses;
+	tx: ServerTransaction;
+}) {
+	const customFields = extractPetitionCustomFields(responses);
 
 	const petition = await _getPetitionByIdUnsafeNoTenantCheck({ petitionId, tx });
 	if (!petition) {
@@ -738,9 +745,11 @@ export async function handlePetitionSignatureFlowResponse({
 				? { emailAddress: flowDataForPerson.emailAddress.trim() }
 				: {})
 		},
-		signatureDetails: { channel: { type: 'whatsapp' } },
+		signatureDetails: {
+			channel: { type: 'whatsapp' },
+			customFields: customFields as Record<string, string | number | boolean | string[]>
+		},
 		organizationId: petition.organizationId,
-		responses: Object.keys(customFields).length > 0 ? customFields : null,
 		skipNotifications: true
 	});
 

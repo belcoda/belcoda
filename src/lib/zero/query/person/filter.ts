@@ -1,7 +1,7 @@
-import { filterGroup, type FilterGroupType, type FilterType } from '$lib/schema/person/filter';
+import { filterGroup, type FilterType } from '$lib/schema/person/filter';
 import { type ExpressionBuilder } from '@rocicorp/zero';
-import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
-import { object, parse, array, type InferOutput } from 'valibot';
+import { type Schema, type QueryContext } from '$lib/zero/schema';
+import { object, array, type InferOutput } from 'valibot';
 import { uuid } from '$lib/schema/helpers';
 import { readPersonZero } from '$lib/schema/person';
 
@@ -20,15 +20,43 @@ export function whereClause(
 ) {
 	const { and, or, cmp, not } = builder;
 
-	const filters =
-		filter.filter.type === 'and'
-			? and(...processFilters(filter.filter.filters, builder))
-			: or(...processFilters(filter.filter.filters, builder));
+	// Partition include filters into individual person selections and everything else.
+	// Individual people should always be additive (OR'd in), so combining them under an
+	// `and` group alongside other conditions would incorrectly intersect them away.
+	const nonPersonFilters = filter.filter.filters.filter((f) => f.type !== 'personId');
+	const personFilters = filter.filter.filters.filter((f) => f.type === 'personId');
 
-	const excludeFilters =
-		filter.filter.exclude.length > 0
-			? not(and(...processExcludeFilters(filter.filter.exclude, builder)))
-			: null;
+	const includeExpressions = [];
+	if (nonPersonFilters.length > 0) {
+		includeExpressions.push(
+			filter.filter.type === 'and'
+				? and(...processFilters(nonPersonFilters, builder))
+				: or(...processFilters(nonPersonFilters, builder))
+		);
+	}
+	if (personFilters.length > 0) {
+		// "include any of these specific people" — always an OR of id comparisons.
+		includeExpressions.push(or(...processFilters(personFilters, builder)));
+	}
+
+	// Compose include expressions: empty group uses the filter's and/or combinator
+	// (so the default/empty group still resolves to "no recipients"); a single
+	// expression is used as-is; multiple expressions are OR'd together.
+	let filters;
+	if (includeExpressions.length === 0) {
+		if (filter.filter.type === 'and') {
+			filters = and(...processFilters(filter.filter.filters, builder));
+		} else {
+			filters = or(...processFilters(filter.filter.filters, builder));
+		}
+	} else if (includeExpressions.length === 1) {
+		filters = includeExpressions[0];
+	} else {
+		filters = or(...includeExpressions);
+	}
+
+	const excludePredicates = processExcludeFilters(filter.filter.exclude, builder);
+	const excludeFilters = excludePredicates.length > 0 ? not(or(...excludePredicates)) : null;
 
 	const filterArr = [
 		personReadPermissions(builder, ctx),
@@ -171,6 +199,8 @@ export function processExcludeFilters(
 	builder: ExpressionBuilder<'person', Schema>
 ) {
 	const { and, cmp } = builder; // no exists because we are exclusive (ie: with not in, which doesn't work for exists)
+	// Each predicate becomes one branch of the outer `or` before negation — exclude anyone
+	// who matches any supported exclude filter.
 	const filterArr = [];
 	for (const filter of filters) {
 		switch (filter.type) {

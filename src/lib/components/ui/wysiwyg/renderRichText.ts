@@ -2,7 +2,7 @@
 // Posted by Theo, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-02-14, License - CC BY-SA 4.0
 
-import { $getRoot, createEditor } from 'lexical';
+import { $getRoot, createEditor, type LexicalEditor } from 'lexical';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 
 export const htmlToJson = (htmlString: string) => {
@@ -17,7 +17,7 @@ export const htmlToJson = (htmlString: string) => {
 			() => {
 				const parser = new DOMParser();
 				const dom = parser.parseFromString(htmlString, 'text/html');
-				const nodes = $generateNodesFromDOM(tempEditor, dom);
+				const nodes = $generateNodesFromDOM(tempEditor as LexicalEditor, dom);
 
 				const root = $getRoot();
 				root.append(...nodes);

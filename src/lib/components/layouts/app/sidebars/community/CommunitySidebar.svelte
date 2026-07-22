@@ -20,6 +20,7 @@
 	import { renderWhatsAppMessagePreview } from '$lib/components/widgets/activity/preview/whatsapp_message';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodePersonListCursor } from '$lib/utils/person/cursor';
+	import EmailIcon from '@lucide/svelte/icons/mail';
 	import { IsInViewport, watch } from 'runed';
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
 	let personListFilter = $state({
@@ -39,18 +40,7 @@
 	const personList = $derived.by(() =>
 		z.createQuery(queries.person.list(paginatedPersonList.pageFilter))
 	);
-	const unreadNotificationsQuery = $derived.by(() =>
-		z.createQuery(
-			queries.notification.list({
-				...getListFilter(appState.organizationId, { pageSize: 200 }),
-				status: 'unread'
-			})
-		)
-	);
-	const unreadReferenceIds = $derived.by(
-		() =>
-			new Set((unreadNotificationsQuery.data ?? []).map((notification) => notification.referenceId))
-	);
+	const unreadReferenceIds = $derived(appState.unreadNotificationReferenceIds);
 
 	watch(
 		() => personList.data,
@@ -233,6 +223,12 @@
 		{:else if activityPreview.type === 'whatsapp_message_outgoing'}
 			<div>
 				{renderWhatsAppMessagePreview(activityPreview.message)}
+			</div>
+		{:else if activityPreview.type === 'email_outgoing'}
+			<div class="flex min-w-0 items-center gap-1">
+				<EmailIcon size={14} class="shrink-0" />
+				<div class="min-w-0 shrink truncate">{activityPreview.subject}</div>
+				<div class="min-w-0 flex-1 truncate">{activityPreview.bodyStart}</div>
 			</div>
 		{:else}
 			{t`Unknown activity ${activityPreview.type}`}

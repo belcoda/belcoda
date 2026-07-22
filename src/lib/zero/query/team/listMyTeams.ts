@@ -2,7 +2,7 @@ import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object } from 'valibot';
-import { parseSchema, uuid } from '$lib/schema/helpers';
+import { uuid } from '$lib/schema/helpers';
 import { teamReadPermissions } from '$lib/zero/query/team/permissions';
 import { readTeamZero } from '$lib/schema/team';
 

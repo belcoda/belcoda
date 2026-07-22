@@ -4,6 +4,6 @@ type DeleteElements = (params: {
 }) => Promise<unknown>;
 
 export async function deleteFlowNode(deleteElements: DeleteElements, nodeId: string) {
-	if (!window.confirm('Are you sure you want to delete this node?')) return;
+	if (!globalThis.confirm('Are you sure you want to delete this node?')) return;
 	await deleteElements({ nodes: [{ id: nodeId }] });
 }

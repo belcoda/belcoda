@@ -1,0 +1,1 @@
+-- No-op: user settings moved to member before this migration shipped.

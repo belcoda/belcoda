@@ -1,15 +1,16 @@
 import { defineQuery } from '@rocicorp/zero';
 import { builder, type QueryContext } from '$lib/zero/schema';
-import { object, type InferOutput } from 'valibot';
+import { object, optional, type InferOutput, boolean } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { activityReadPermissions } from '$lib/zero/query/activity/permissions';
-import { readActivityZero } from '$lib/schema/activity';
 import { decodeActivityListCursor } from '$lib/utils/activity/cursor';
 
 const DEFAULT_PAGE_SIZE = 20;
 
 export const inputSchema = object({
 	personId: uuid,
+	accountId: optional(uuid),
+	onlyShowWhatsappMessages: optional(boolean()),
 	cursor: listFilter.entries.cursor,
 	pageSize: listFilter.entries.pageSize
 });
@@ -36,6 +37,13 @@ function listActivityQueryBase({
 		if (cursor) {
 			q = q.start(cursor);
 		}
+	}
+	if (input.onlyShowWhatsappMessages) {
+		q = q.where('type', 'IN', ['whatsapp_message_incoming', 'whatsapp_message_outgoing']);
+	}
+	if (input.accountId) {
+		const accountId = input.accountId;
+		q = q.whereExists('whatsappMessage', (expr) => expr.where('whatsappAccountId', '=', accountId));
 	}
 	return q;
 }
@@ -71,4 +79,4 @@ export const listActivity = defineQuery(inputSchema, ({ args, ctx }) => {
 	return listActivityPaginatedQuery({ ctx, input: args });
 });
 
-export const outputSchema = readActivityZero;
+export { readActivityZero as outputSchema } from '$lib/schema/activity';

@@ -6,6 +6,14 @@ import { mutators } from '$lib/zero/mutate/client_mutators';
 
 type AppZero = Z<Schema>;
 
+function getZeroEndpoints() {
+	const origin = (typeof location !== 'undefined' && location.origin) || publicEnv.PUBLIC_HOST;
+	return {
+		queryURL: `${origin}/api/utils/zero/query`,
+		mutateURL: `${origin}/api/utils/zero/push`
+	};
+}
+
 class ZeroInstance {
 	#z = $state<AppZero | null>(null);
 
@@ -46,21 +54,25 @@ class ZeroInstance {
 			throw new Error('zero.init: PUBLIC_ZERO_SERVER is not configured');
 		}
 
-		const appOrigin = publicEnv.PUBLIC_HOST?.replace(/\/$/, '');
-		if (!appOrigin) {
-			throw new Error('zero.init: PUBLIC_HOST is not configured');
-		}
+		const { queryURL, mutateURL } = getZeroEndpoints();
+
+		// in review deployments, we use token authentication for zero. Everywhere else, we use the session token.
+		const authToken =
+			publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review'
+				? localStorage.getItem('belcoda_bearer_token')
+				: undefined;
 
 		this.#z = new Z({
 			cacheURL,
 			schema,
+			...(authToken ? { auth: authToken } : {}), //only add the auth token in review deployments (authToken is only set there); omit it entirely when no token is stored so we never pass auth: null
 			mutators,
 			kvStore: 'idb',
 			context: parsedContext,
 			userID: userId,
 			// Must match ZERO_QUERY_URL / ZERO_MUTATE_URL on the sync server (full URL, not a path).
-			queryURL: `${appOrigin}/api/utils/zero/query`,
-			mutateURL: `${appOrigin}/api/utils/zero/push`
+			queryURL,
+			mutateURL
 		});
 	}
 }

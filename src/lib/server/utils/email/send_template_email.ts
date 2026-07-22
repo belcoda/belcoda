@@ -3,7 +3,7 @@ const { POSTMARK_SERVER_TOKEN } = env;
 import { type JsonSchemaObject } from '$lib/schema/helpers';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
-export default async function (options: {
+export default async function sendTemplateEmail(options: {
 	to: string;
 	from: string;
 	template: string;
@@ -12,7 +12,8 @@ export default async function (options: {
 	replyTo?: string;
 	//returnPath: string;
 }): Promise<string> {
-	log.debug(options, 'Sending template email with Postmark');
+	const logContext = { templateAlias: options.template };
+	log.debug(logContext, 'Sending template email with Postmark');
 
 	const result = await fetch('https://api.postmarkapp.com/email/withTemplate', {
 		method: 'POST',
@@ -30,19 +31,24 @@ export default async function (options: {
 			MessageStream: options.stream
 		})
 	});
-	if (!result.ok) {
-		if (result.status === 422) {
-			const json = await result.json();
-			log.error({ result: json }, 'Failed to send email (422 error)');
-		} else {
-			const json = await result.json();
-			log.error(json);
+	if (result.ok) {
+		let json: unknown;
+		try {
+			json = await result.json();
+		} catch {
+			json = null;
 		}
-		throw new Error('Failed to send email');
-	} else {
-		const json = await result.json();
-		log.debug('Email sent successfully');
-		log.debug(json);
-		return json.MessageID;
+		if (
+			typeof json === 'object' &&
+			json !== null &&
+			'MessageID' in json &&
+			typeof json.MessageID === 'string'
+		) {
+			log.debug({ ...logContext, providerMessageId: json.MessageID }, 'Email sent successfully');
+			return json.MessageID;
+		}
 	}
+
+	log.error(logContext, 'Failed to send email');
+	throw new Error('Failed to send email');
 }

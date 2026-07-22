@@ -7,6 +7,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import ErrorAlert from '$lib/components/alerts/Error.svelte';
 	import { goto } from '$app/navigation';
+	import { env } from '$env/dynamic/public';
 
 	import { authClient } from '$lib/auth-client';
 	async function handleGoogleLogin() {
@@ -37,6 +38,16 @@
 					},
 					onSuccess: async (ctx) => {
 						loading = false;
+						if (env.PUBLIC_APPLICATION_ENVIRONMENT === 'review') {
+							const authToken = ctx.response.headers.get('set-auth-token'); // get the token from the response headers
+							if (authToken) {
+								localStorage.setItem('belcoda_bearer_token', authToken);
+							} else {
+								// no token returned — clear any stale token so Zero doesn't reuse a previous session's credential
+								localStorage.removeItem('belcoda_bearer_token');
+								console.error('No auth token found in response headers');
+							}
+						}
 						await goto('/');
 					},
 					onError: (ctx) => {

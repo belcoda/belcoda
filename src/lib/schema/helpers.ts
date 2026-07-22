@@ -6,14 +6,14 @@ export const uuid = v.pipe(v.string(), v.uuid());
 export const SHORT_STRING_MAX_LENGTH = 100;
 export const MEDIUM_STRING_MAX_LENGTH = 500;
 export const LONG_STRING_MAX_LENGTH = 100000;
-export const SLUG_REGEXP = new RegExp('^[a-z0-9-]+(?:-[a-z0-9]+)*$');
-export const UNDERSCORE_SLUG_REGEXP = new RegExp('^[a-z0-9_]+$');
+export const SLUG_REGEXP = /^[a-z0-9-]+(?:-[a-z0-9]+)*$/;
+export const UNDERSCORE_SLUG_REGEXP = /^[a-z0-9_]+$/;
 export const CURRENT_API_VERSION = '2026-04-16';
 export const DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS = 80;
 
 /** Matches PostgreSQL `timestamp + interval '1 month'` (calendar month, not a fixed duration). */
 export function addOneCalendarMonth(date: Date): Date {
-	const result = new Date(date.getTime());
+	const result = new Date(date);
 	const originalDay = result.getDate();
 	result.setDate(1);
 	result.setMonth(result.getMonth() + 1);
@@ -101,7 +101,8 @@ export function transformToWhatsappTemplateParamName(input: string) {
 		.toLowerCase()
 		.replace(/[^a-z_]/g, '_') // Replace unwanted chars with _
 		.replace(/_+/g, '_') // Collapse multiple _ into one
-		.replace(/^_+|_+$/g, ''); // Trim leading/trailing _
+		.replace(/^_+/, '')
+		.replace(/_+$/, ''); // Trim leading/trailing _
 }
 
 export const whatsappTemplateParamName = v.pipe(
@@ -200,18 +201,22 @@ export const email = v.pipe(
 	v.maxLength(MEDIUM_STRING_MAX_LENGTH, `Maximum length is ${MEDIUM_STRING_MAX_LENGTH} characters`),
 	v.email()
 );
-// TODO: Add timezone validation when timezone utilities are implemented
-// export const timezone = v.picklist(timezones, 'Invalid timezone');
 
-// This regex uses a negative lookahead to ensure the email address is NOT a public email domain
-// Also, using belcoda.org or belcoda.com is not allowed, because they would be automatically verified by Postmark
-const PUBLIC_EMAIL_DOMAIN_REGEXP = new RegExp(
-	/^(?!.*@(gmail\.com|yahoo\.com|hotmail\.com|belcoda\.org|belcoda\.com|outlook\.com|aol\.com|icloud\.com)$).+@.+\..+$/
-);
+// Rejects public email providers and belcoda.com/org (which Postmark auto-verifies)
+const BLOCKED_EMAIL_DOMAINS = new Set([
+	'gmail.com',
+	'yahoo.com',
+	'hotmail.com',
+	'belcoda.org',
+	'belcoda.com',
+	'outlook.com',
+	'aol.com',
+	'icloud.com'
+]);
 export const ownedDomainEmail = v.pipe(
 	email,
-	v.regex(
-		PUBLIC_EMAIL_DOMAIN_REGEXP,
+	v.check(
+		(value) => !BLOCKED_EMAIL_DOMAINS.has(value.slice(value.indexOf('@') + 1).toLowerCase()),
 		'Must use a company email address, not a public email service'
 	)
 );
@@ -278,9 +283,9 @@ export const dbDate = v.union([
 	v.pipe(
 		v.string(),
 		//pattern to match YYY7-MM-DD
-		v.regex(new RegExp('\\d{4}-\\d{2}-\\d{2}')),
+		v.regex(/^\d{4}-\d{2}-\d{2}$/),
 		v.transform((input: string) => {
-			new Date(input).toISOString();
+			return new Date(input).toISOString();
 		})
 	),
 	v.pipe(
@@ -312,10 +317,10 @@ export function renderValiError(err: unknown):
 		let messageArr: string[] = [];
 		err.issues.forEach((issue) => {
 			const dotPath = v.getDotPath(issue);
-			if (!dotPath) {
-				messageArr.push(issue.message);
-			} else {
+			if (dotPath) {
 				messageArr.push(`${dotPath} (Received: ${issue.received}): ${issue.message}`);
+			} else {
+				messageArr.push(issue.message);
 			}
 		});
 		return {
@@ -376,7 +381,7 @@ export const password = v.pipe(
 	v.maxLength(800000, 'Password is too long'),
 	v.regex(/[a-z]/, 'Password must contain at least one lowercase letter'),
 	v.regex(/[A-Z]/, 'Password must contain at least one uppercase letter'),
-	v.regex(/[0-9]/, 'Password must contain at least one number')
+	v.regex(/\d/, 'Password must contain at least one number')
 );
 
 export const signupSchema = v.pipe(
@@ -432,13 +437,23 @@ export const hexColor = v.pipe(
 	v.regex(/^#([0-9a-fA-F]{6})$/, 'Invalid hex color format')
 );
 
+export const DEFAULT_LIST_PAGE_SIZE = 50;
+export const MAX_LIST_PAGE_SIZE = 200;
+
 export const listFilter = v.object({
 	searchString: v.fallback(v.nullable(v.string()), null),
 	teamId: v.fallback(v.nullable(uuid), null),
 	isDeleted: v.fallback(v.nullable(v.boolean()), null),
 	organizationId: uuid,
 	cursor: v.fallback(v.nullable(v.string()), null),
-	pageSize: v.fallback(integer, 50),
+	pageSize: v.optional(
+		v.pipe(
+			integer,
+			v.minValue(1, 'Page size must be at least 1'),
+			v.maxValue(MAX_LIST_PAGE_SIZE, `Page size must not exceed ${MAX_LIST_PAGE_SIZE}`)
+		),
+		DEFAULT_LIST_PAGE_SIZE
+	),
 	excludedIds: v.fallback(v.array(uuid), [])
 });
 export type ListFilter = v.InferOutput<typeof listFilter>;

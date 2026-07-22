@@ -21,6 +21,7 @@ async function loginViaForm(page: Page, email: string, password: string) {
 	await loginPage.login(email, password);
 	await expect(page).toHaveURL(/\/community/, { timeout: 30_000 });
 	await communityPage.expectLoaded();
+	return communityPage;
 }
 
 async function hasAuthoritativeSession(page: Page): Promise<boolean> {
@@ -40,8 +41,7 @@ export async function ensureAuthenticated(
 
 	if (/\/(login|signup)/.test(page.url())) {
 		const user = getTestUsers(project)[role];
-		await loginViaForm(page, user.email, user.password);
-		return communityPage;
+		return loginViaForm(page, user.email, user.password);
 	}
 
 	if (!(await hasAuthoritativeSession(page))) {

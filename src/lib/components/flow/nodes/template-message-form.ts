@@ -108,6 +108,118 @@ export function buildNodeData(state: TemplateMessageFormState): WhatsappTemplate
 	};
 }
 
+function applyButtonDefaults(
+	currentButtons: { id: string }[],
+	templateButtons: TemplateMessageComponents[number] | undefined
+): { id: string }[] {
+	let buttons = currentButtons.map((b) => ({ ...b }));
+	if (templateButtons?.type !== 'BUTTONS' || !templateButtons.buttons) {
+		return buttons;
+	}
+	const targetLength = templateButtons.buttons.length;
+	if (buttons.length > targetLength) {
+		buttons = buttons.slice(0, targetLength);
+	}
+	if (buttons.length < targetLength) {
+		buttons = [
+			...buttons,
+			...templateButtons.buttons.slice(buttons.length).map(() => ({ id: uuidv4() }))
+		];
+	}
+	return buttons;
+}
+
+function applyBodyDefaults(
+	currentBodyParams: TemplateParamSource[],
+	templateBody: TemplateMessageComponents[number] | undefined,
+	mergeExisting: boolean
+): TemplateParamSource[] {
+	if (templateBody?.type !== 'BODY' || !templateBody.example) {
+		return [...currentBodyParams];
+	}
+	const bodyTextExamples = templateBody.example.body_text;
+	const examples = Array.isArray(bodyTextExamples?.[0]) ? bodyTextExamples[0] : [];
+	if (!mergeExisting) {
+		return examples.map((value) => ({ type: 'literal' as const, value }));
+	}
+	const bodyParams = [...currentBodyParams];
+	for (let i = 0; i < examples.length; i++) {
+		if (!bodyParams[i]) {
+			bodyParams[i] = { type: 'literal', value: examples[i] };
+		}
+	}
+	return bodyParams;
+}
+
+function resolveImageUrl(
+	currentUrl: string | null,
+	exampleUrl: string | undefined,
+	mergeExisting: boolean
+): string | null {
+	return mergeExisting ? currentUrl || exampleUrl || null : (exampleUrl ?? null);
+}
+
+function resolveTextHeaderParams(
+	currentParams: TemplateParamSource[],
+	exampleText: string,
+	mergeExisting: boolean
+): TemplateParamSource[] {
+	if (!mergeExisting) {
+		return exampleText ? [{ type: 'literal', value: exampleText }] : [];
+	}
+	const params = [...currentParams];
+	if (!params[0]) {
+		params[0] = { type: 'literal', value: exampleText };
+	}
+	return params;
+}
+
+function getImageHeaderExampleUrl(
+	templateHeader: Extract<TemplateMessageComponents[number], { type: 'HEADER'; format: 'IMAGE' }>
+): string | undefined {
+	const headerUrl = templateHeader.example?.header_url;
+	return Array.isArray(headerUrl) ? headerUrl[0] : undefined;
+}
+
+function getTextHeaderExample(
+	templateHeader: Extract<TemplateMessageComponents[number], { type: 'HEADER'; format: 'TEXT' }>
+): string {
+	const headerText = templateHeader.example?.header_text;
+	return Array.isArray(headerText) ? headerText[0] || '' : '';
+}
+
+function applyHeaderDefaults(
+	currentHeaderParams: TemplateParamSource[],
+	currentHeaderImageUrl: string | null,
+	templateHeader: TemplateMessageComponents[number] | undefined,
+	mergeExisting: boolean
+): { headerParams: TemplateParamSource[]; headerImageUrl: string | null } {
+	if (templateHeader?.type !== 'HEADER') {
+		return { headerParams: [], headerImageUrl: null };
+	}
+	if (templateHeader.format === 'IMAGE') {
+		return {
+			headerParams: [],
+			headerImageUrl: resolveImageUrl(
+				currentHeaderImageUrl,
+				getImageHeaderExampleUrl(templateHeader),
+				mergeExisting
+			)
+		};
+	}
+	if (templateHeader.format === 'TEXT') {
+		return {
+			headerParams: resolveTextHeaderParams(
+				currentHeaderParams,
+				getTextHeaderExample(templateHeader),
+				mergeExisting
+			),
+			headerImageUrl: null
+		};
+	}
+	return { headerParams: [...currentHeaderParams], headerImageUrl: currentHeaderImageUrl };
+}
+
 export function applyTemplateDefaults(
 	current: TemplateMessageFormState,
 	components: TemplateMessageComponents,
@@ -117,69 +229,14 @@ export function applyTemplateDefaults(
 	const templateBody = components.find((c) => c.type === 'BODY');
 	const templateButtons = components.find((c) => c.type === 'BUTTONS');
 
-	let headerParams = [...current.headerParams];
-	let bodyParams = [...current.bodyParams];
-	let buttons = current.buttons.map((b) => ({ ...b }));
-	let headerImageUrl = current.headerImageUrl;
-
-	if (templateButtons?.type === 'BUTTONS' && templateButtons.buttons) {
-		const targetLength = templateButtons.buttons.length;
-		if (buttons.length > targetLength) {
-			buttons = buttons.slice(0, targetLength);
-		}
-		if (buttons.length < targetLength) {
-			buttons = [
-				...buttons,
-				...templateButtons.buttons.slice(buttons.length).map(() => ({ id: uuidv4() }))
-			];
-		}
-	}
-
-	if (templateBody?.type === 'BODY' && templateBody.example) {
-		const bodyTextExamples = templateBody.example.body_text;
-		const examples = Array.isArray(bodyTextExamples?.[0]) ? bodyTextExamples[0] : [];
-		if (options.mergeExisting) {
-			bodyParams = [...bodyParams];
-			for (let i = 0; i < examples.length; i++) {
-				if (!bodyParams[i]) {
-					bodyParams[i] = { type: 'literal', value: examples[i] };
-				}
-			}
-		} else {
-			bodyParams = examples.map((value) => ({ type: 'literal' as const, value }));
-		}
-	}
-
-	if (!templateHeader) {
-		headerParams = [];
-		headerImageUrl = null;
-	} else if (
-		templateHeader.format === 'IMAGE' &&
-		templateHeader.example &&
-		'header_url' in templateHeader.example &&
-		Array.isArray(templateHeader.example.header_url)
-	) {
-		const exampleUrl = templateHeader.example.header_url[0];
-		headerImageUrl = options.mergeExisting
-			? headerImageUrl || exampleUrl || null
-			: (exampleUrl ?? null);
-		headerParams = [];
-	} else if (templateHeader.format === 'TEXT') {
-		const headerExample = templateHeader.example;
-		const exampleText =
-			headerExample && 'header_text' in headerExample && Array.isArray(headerExample.header_text)
-				? headerExample.header_text[0] || ''
-				: '';
-		if (options.mergeExisting) {
-			headerParams = [...headerParams];
-			if (!headerParams[0]) {
-				headerParams[0] = { type: 'literal', value: exampleText };
-			}
-		} else {
-			headerParams = exampleText ? [{ type: 'literal', value: exampleText }] : [];
-		}
-		headerImageUrl = null;
-	}
+	const buttons = applyButtonDefaults(current.buttons, templateButtons);
+	const bodyParams = applyBodyDefaults(current.bodyParams, templateBody, options.mergeExisting);
+	const { headerParams, headerImageUrl } = applyHeaderDefaults(
+		current.headerParams,
+		current.headerImageUrl,
+		templateHeader,
+		options.mergeExisting
+	);
 
 	return {
 		...current,

@@ -347,6 +347,4 @@ export function checkDisallowedNames(name: string): void {
 			);
 		}
 	}
-
-	return;
 }

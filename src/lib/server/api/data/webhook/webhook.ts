@@ -2,7 +2,7 @@ import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
 import { webhook, webhookLog } from '$lib/schema/drizzle';
 import { and, eq, ne } from 'drizzle-orm';
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 
 import {
 	type CreateMutatorSchemaZeroOutput,
