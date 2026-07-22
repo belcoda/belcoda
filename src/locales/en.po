@@ -256,6 +256,7 @@ msgstr "System"
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -4615,13 +4616,11 @@ msgstr "Try again"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "Loading activities..."
-msgstr "Loading activities..."
+#~ msgid "Loading activities..."
+#~ msgstr "Loading activities..."
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "No activities yet"
-msgstr "No activities yet"
+#~ msgid "No activities yet"
+#~ msgstr "No activities yet"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the audio tag."
@@ -5398,9 +5397,8 @@ msgstr "Complete verification"
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 msgstr "Your WhatsApp Business Account is connected. Review verification and account details below."
 
-#: src/routes/(app)/community/[personId]/+page.svelte
-msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-msgstr "WhatsApp is not onboarded for this organization. Please contact support to onboard."
+#~ msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
+#~ msgstr "WhatsApp is not onboarded for this organization. Please contact support to onboard."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
@@ -5692,6 +5690,7 @@ msgstr "Failed to save notification preferences"
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
 msgstr "Search for a template variable to insert."
+
 #: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 msgid "WhatsApp thread copied to a new draft"
 msgstr "WhatsApp thread copied to a new draft"
@@ -5728,3 +5727,15 @@ msgstr "Type your message..."
 
 #~ msgid "Failed to load notification preferences"
 #~ msgstr "Failed to load notification preferences"
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Nothing here yet"
+msgstr "Nothing here yet"
+
+#: src/lib/components/widgets/activity/AccountSelector.svelte
+msgid "Timeline"
+msgstr "Timeline"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
+msgstr "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."

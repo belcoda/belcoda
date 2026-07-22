@@ -256,6 +256,7 @@ msgstr ""
 
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
 #: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -263,7 +264,7 @@ msgstr ""
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Loading..."
-msgstr ""
+msgstr "Cargando..."
 
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -4591,13 +4592,11 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "Loading activities..."
-msgstr ""
+#~ msgid "Loading activities..."
+#~ msgstr ""
 
-#: src/lib/components/widgets/activity/ActivityTimeline.svelte
-msgid "No activities yet"
-msgstr ""
+#~ msgid "No activities yet"
+#~ msgstr ""
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the audio tag."
@@ -5374,9 +5373,8 @@ msgstr "Completar verificación"
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 msgstr "Tu cuenta comercial de WhatsApp está conectada. Revisa la verificación y los detalles de la cuenta a continuación."
 
-#: src/routes/(app)/community/[personId]/+page.svelte
-msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-msgstr "WhatsApp no está habilitado para esta organización. Póngase en contacto con soporte para habilitarlo."
+#~ msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
+#~ msgstr "WhatsApp no está habilitado para esta organización. Póngase en contacto con soporte para habilitarlo."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
@@ -5705,3 +5703,15 @@ msgstr ""
 
 #~ msgid "Failed to load notification preferences"
 #~ msgstr ""
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Nothing here yet"
+msgstr "Aún no hay nada aquí"
+
+#: src/lib/components/widgets/activity/AccountSelector.svelte
+msgid "Timeline"
+msgstr "Línea de tiempo"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
+msgstr "WhatsApp no está habilitado para esta organización. Crea una cuenta de WhatsApp Business en la configuración."

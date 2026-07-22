@@ -15,6 +15,10 @@ import { selectOneOfArray } from './utils';
 import { generateTags } from './tag';
 
 import { generateWhatsappTemplates } from '$lib/server/db/seed/whatsapp/template';
+import { generateWhatsappAccounts } from '$lib/server/db/seed/whatsapp/account';
+import { generateWhatsappMessagesWithActivities } from '$lib/server/db/seed/whatsapp/message';
+import { generatePersonWhatsappIdentities } from '$lib/server/db/seed/whatsapp/identity';
+import { inArray } from 'drizzle-orm';
 
 function randomBetween(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -36,14 +40,16 @@ async function seedOrganization(
 				events: randomBetween(50, 250),
 				petitions: randomBetween(50, 250),
 				teams: randomBetween(10, 50),
-				activities: 50000
+				activities: 50000,
+				whatsappMessages: 10000
 			}
 		: {
 				people: 50,
 				events: 20,
 				petitions: 15,
 				teams: 5,
-				activities: 100
+				activities: 100,
+				whatsappMessages: 100
 			};
 
 	console.log(
@@ -206,6 +212,69 @@ async function seedOrganization(
 	for (let i = 0; i < activities.length; i += activitiesBatchSize) {
 		const batch = activities.slice(i, i + activitiesBatchSize);
 		await db.insert(schema.activity).values(batch).execute();
+	}
+
+	// create whatsapp accounts (org-scoped + one per user)
+	const whatsappAccounts = generateWhatsappAccounts({
+		organizationId: orgId,
+		users
+	});
+	await db.insert(schema.whatsappAccount).values(whatsappAccounts).execute();
+
+	// create individual (non-thread) whatsapp messages + their activity records,
+	// split randomly across people and originating whatsapp accounts
+	const {
+		messages: whatsappMessages,
+		activities: whatsappActivities,
+		incomingRecipientIds
+	} = generateWhatsappMessagesWithActivities({
+		organizationId: orgId,
+		peopleIds: people.map((p) => p.id),
+		accounts: whatsappAccounts.map((a) => ({
+			id: a.id,
+			scope: a.scope,
+			referenceId: a.referenceId
+		})),
+		userIds: users.map((u) => u.id),
+		count: counts.whatsappMessages
+	});
+
+	// messages must be inserted before their activities (activity.referenceId -> whatsapp_message.id)
+	const whatsappBatchSize = 100;
+	for (let i = 0; i < whatsappMessages.length; i += whatsappBatchSize) {
+		const batch = whatsappMessages.slice(i, i + whatsappBatchSize);
+		await db.insert(schema.whatsappMessage).values(batch).execute();
+	}
+	for (let i = 0; i < whatsappActivities.length; i += whatsappBatchSize) {
+		const batch = whatsappActivities.slice(i, i + whatsappBatchSize);
+		await db.insert(schema.activity).values(batch).execute();
+	}
+
+	// keep the 24h customer-service window open in dev for people who received an
+	// incoming message, so individual replies can be sent against seeded data
+	const incomingRecipientList = [...incomingRecipientIds];
+	for (let i = 0; i < incomingRecipientList.length; i += whatsappBatchSize) {
+		const batch = incomingRecipientList.slice(i, i + whatsappBatchSize);
+		await db
+			.update(schema.person)
+			.set({ mostRecentWhatsappMessageReceivedAt: new Date() })
+			.where(inArray(schema.person.id, batch))
+			.execute();
+	}
+
+	// create 0-2 whatsapp identities per person, guaranteeing at least one for
+	// anyone with a related whatsapp message so conversations resolve a sender
+	const personIdsWithMessages = new Set(
+		whatsappMessages.map((m) => m.personId).filter((id): id is string => Boolean(id))
+	);
+	const whatsappIdentities = generatePersonWhatsappIdentities({
+		organizationId: orgId,
+		people,
+		personIdsWithMessages
+	});
+	for (let i = 0; i < whatsappIdentities.length; i += whatsappBatchSize) {
+		const batch = whatsappIdentities.slice(i, i + whatsappBatchSize);
+		await db.insert(schema.personWhatsappIdentity).values(batch).execute();
 	}
 }
 

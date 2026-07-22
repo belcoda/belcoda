@@ -9,6 +9,8 @@
 	import type { ListActivityInput } from '$lib/zero/query/activity/list';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodeActivityListCursor } from '$lib/utils/activity/cursor';
+	import AccountSelector from './AccountSelector.svelte';
+	import { appState } from '$lib/state.svelte';
 
 	type ActivityListBaseFilter = Omit<ListActivityInput, 'cursor' | 'pageSize'>;
 
@@ -32,12 +34,17 @@
 	let resizeObserver: ResizeObserver | undefined;
 
 	const paginatedActivities = new PaginatedZeroList<ActivityListBaseFilter, ReadActivityZero>({
-		getBaseFilter: () => ({ personId }),
+		getBaseFilter: () => ({ personId, accountId: appState.activeWhatsappAccountId ?? undefined }),
 		encodeCursor: encodeActivityCursor,
 		pageSize
 	});
 	const activityQuery = $derived.by(() =>
-		z.createQuery(queries.activity.list(paginatedActivities.pageFilter))
+		z.createQuery(
+			queries.activity.list({
+				...paginatedActivities.pageFilter,
+				accountId: appState.activeWhatsappAccountId ?? undefined
+			})
+		)
 	);
 	const chronologicalActivities = $derived([...paginatedActivities.items].reverse());
 
@@ -204,6 +211,7 @@
 	}
 </script>
 
+{#if appState.whatsappAccountsUsableByCurrentUser.length > 0}<AccountSelector />{/if}
 <div class="flex min-h-0 flex-1 flex-col bg-gray-50">
 	<div
 		bind:this={scrollContainer}
@@ -220,9 +228,9 @@
 				{/each}
 			</div>
 		{:else if activityQuery.data}
-			<div class="text-center text-sm text-gray-400">{t`No activities yet`}</div>
+			<div class="text-center text-sm text-gray-400">{t`Nothing here yet`}</div>
 		{:else}
-			<div class="text-center text-sm text-gray-400">{t`Loading activities...`}</div>
+			<div class="text-center text-sm text-gray-400">{t`Loading...`}</div>
 		{/if}
 	</div>
 </div>

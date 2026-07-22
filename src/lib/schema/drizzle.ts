@@ -1266,6 +1266,11 @@ export const activityRelations = relations(activity, ({ one }) => ({
 	user: one(user, {
 		fields: [activity.userId],
 		references: [user.id]
+	}),
+	// polymorphic relationship to whatsappMessage (other types of activities are less important to have the relationship mapped but can be added if needed)
+	whatsappMessage: one(whatsappMessage, {
+		fields: [activity.referenceId],
+		references: [whatsappMessage.id]
 	})
 }));
 
@@ -1315,6 +1320,21 @@ export const whatsappTemplateRelations = relations(whatsappTemplate, ({ one }) =
 	team: one(team, {
 		fields: [whatsappTemplate.teamId],
 		references: [team.id]
+	})
+}));
+
+export const whatsappMessageRelations = relations(whatsappMessage, ({ one }) => ({
+	organization: one(organization, {
+		fields: [whatsappMessage.organizationId],
+		references: [organization.id]
+	}),
+	whatsappAccount: one(whatsappAccount, {
+		fields: [whatsappMessage.whatsappAccountId],
+		references: [whatsappAccount.id]
+	}),
+	person: one(person, {
+		fields: [whatsappMessage.personId],
+		references: [person.id]
 	})
 }));
 
@@ -1446,5 +1466,21 @@ export const ledgerRelations = relations(ledger, ({ one }) => ({
 	organization: one(organization, {
 		fields: [ledger.organizationId],
 		references: [organization.id]
+	})
+}));
+
+// `whatsappAccount.referenceId` is polymorphic: it points at an organization for
+// organization-scoped accounts and at a user for user-scoped accounts. We expose
+// both relationships (there is no DB-level FK for either) so that Zero query
+// permissions can join through them. At query time the `scope` column is used to
+// pick which relationship is meaningful for a given row.
+export const whatsappAccountRelations = relations(whatsappAccount, ({ one }) => ({
+	organization: one(organization, {
+		fields: [whatsappAccount.referenceId],
+		references: [organization.id]
+	}),
+	user: one(user, {
+		fields: [whatsappAccount.referenceId],
+		references: [user.id]
 	})
 }));
