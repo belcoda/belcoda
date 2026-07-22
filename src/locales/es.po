@@ -3450,21 +3450,17 @@ msgstr ""
 msgid "Search engine"
 msgstr ""
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Referral"
-msgstr ""
+#~ msgid "Referral"
+#~ msgstr ""
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Training or conference"
-msgstr ""
+#~ msgid "Training or conference"
+#~ msgstr ""
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Resources"
-msgstr ""
+#~ msgid "Resources"
+#~ msgstr ""
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "How did you discover Belcoda?"
-msgstr ""
+#~ msgid "How did you discover Belcoda?"
+#~ msgstr ""
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select all that apply"
@@ -3495,6 +3491,7 @@ msgid "Making sure all data is synced and up to date"
 msgstr ""
 
 #: src/lib/utils/person/gender/render.ts
+#: src/routes/(auth)/organization/new/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
 msgstr ""
@@ -5715,3 +5712,35 @@ msgstr "Línea de tiempo"
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
 msgstr "WhatsApp no está habilitado para esta organización. Crea una cuenta de WhatsApp Business en la configuración."
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Friend or colleague"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Event or webinar"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Partner organization"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Community group"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Belcoda resources"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "How did you hear about Belcoda?"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Tell us where you heard about Belcoda"
+msgstr ""
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Maximum 500 characters."
+msgstr ""
