@@ -126,6 +126,20 @@ export const newOrganizationFromWebsiteForm = v.object({
 });
 export type NewOrganizationFromWebsiteForm = v.InferOutput<typeof newOrganizationFromWebsiteForm>;
 
+export function buildOrganizationOnboardingMetadata(org: NewOrganizationFromWebsiteForm) {
+	const discoverySourceDetail = org.additionalDetails.howDidYouDiscoverDetail.trim();
+
+	return {
+		onboarding: {
+			discoverySource: org.additionalDetails.howDidYouDiscover,
+			discoverySourceDetail:
+				org.additionalDetails.howDidYouDiscover === 'other' && discoverySourceDetail
+					? discoverySourceDetail
+					: null
+		}
+	} satisfies OrganizationMetadataSchema;
+}
+
 export const updateOrganization = v.partial(
 	v.object({
 		logo: organizationSchema.entries.logo,
