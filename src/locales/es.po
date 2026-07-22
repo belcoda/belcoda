@@ -5715,32 +5715,32 @@ msgstr "WhatsApp no está habilitado para esta organización. Crea una cuenta de
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Friend or colleague"
-msgstr ""
+msgstr "Un amigo o colega"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Event or webinar"
-msgstr ""
+msgstr "Evento o seminario web"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Partner organization"
-msgstr ""
+msgstr "Organización socia"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Community group"
-msgstr ""
+msgstr "Grupo comunitario"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Belcoda resources"
-msgstr ""
+msgstr "Recursos de Belcoda"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "How did you hear about Belcoda?"
-msgstr ""
+msgstr "¿Cómo te enteraste de Belcoda?"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Tell us where you heard about Belcoda"
-msgstr ""
+msgstr "Cuéntanos dónde te enteraste de Belcoda"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Maximum 500 characters."
-msgstr ""
+msgstr "Máximo 500 caracteres."

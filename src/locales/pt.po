@@ -5723,32 +5723,32 @@ msgstr ""
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Friend or colleague"
-msgstr ""
+msgstr "Um amigo ou colega"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Event or webinar"
-msgstr ""
+msgstr "Evento ou webinar"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Partner organization"
-msgstr ""
+msgstr "Organização parceira"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Community group"
-msgstr ""
+msgstr "Grupo comunitário"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Belcoda resources"
-msgstr ""
+msgstr "Recursos da Belcoda"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "How did you hear about Belcoda?"
-msgstr ""
+msgstr "Como você ficou sabendo da Belcoda?"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Tell us where you heard about Belcoda"
-msgstr ""
+msgstr "Conte-nos onde você ficou sabendo da Belcoda"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Maximum 500 characters."
-msgstr ""
+msgstr "Máximo de 500 caracteres."
