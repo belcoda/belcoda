@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class PetitionEditPage {
 	readonly page: Page;
@@ -26,11 +26,8 @@ export class PetitionEditPage {
 	}
 
 	async clearAndFillTitle(title: string) {
-		await this.titleInput.clear();
-		await this.titleInput.click();
-		await this.page.keyboard.press('Meta+A');
-		await this.page.keyboard.press('Backspace');
-		await this.titleInput.pressSequentially(title, { delay: 25 });
+		await this.titleInput.fill(title);
+		await expect(this.titleInput).toHaveValue(title);
 		await this.titleInput.blur();
 	}
 
