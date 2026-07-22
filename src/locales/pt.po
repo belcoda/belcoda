@@ -3391,60 +3391,46 @@ msgstr "O logotipo da sua organização. Deve ser quadrado e ter menos de 2MB"
 msgid "Website (optional)"
 msgstr "Website (opcional)"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Community organization or charity"
-msgstr "Organização comunitária ou caridade"
+#~ msgid "Community organization or charity"
+#~ msgstr "Organização comunitária ou caridade"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Business or corporation"
-msgstr "Empresa ou corporação"
+#~ msgid "Business or corporation"
+#~ msgstr "Empresa ou corporação"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Advocacy or policy campaign"
-msgstr "Campanha de advocacia ou política"
+#~ msgid "Advocacy or policy campaign"
+#~ msgstr "Campanha de advocacia ou política"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Political party & election campaign"
-msgstr "Partido político e campanha eleitoral"
+#~ msgid "Political party & election campaign"
+#~ msgstr "Partido político e campanha eleitoral"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "What is your organization's focus?"
-msgstr "Qual é o foco da sua organização?"
+#~ msgid "What is your organization's focus?"
+#~ msgstr "Qual é o foco da sua organização?"
 
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
-#: src/routes/(auth)/organization/new/+page.svelte
-#: src/routes/(auth)/organization/new/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select an option"
 msgstr "Selecione uma opção"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "1-10 employees"
-msgstr "1-10 funcionários"
+#~ msgid "1-10 employees"
+#~ msgstr "1-10 funcionários"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "11-50 employees"
-msgstr "11-50 funcionários"
+#~ msgid "11-50 employees"
+#~ msgstr "11-50 funcionários"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "50-500 employees"
-msgstr "50-500 funcionários"
+#~ msgid "50-500 employees"
+#~ msgstr "50-500 funcionários"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "500+ employees"
-msgstr "Mais de 500 funcionários"
+#~ msgid "500+ employees"
+#~ msgstr "Mais de 500 funcionários"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "How many people are in your organization?"
-msgstr "Quantas pessoas há na sua organização?"
+#~ msgid "How many people are in your organization?"
+#~ msgstr "Quantas pessoas há na sua organização?"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Only include staff or core volunteers who are actively involved in the organization's main operations."
-msgstr "Inclua apenas funcionários ou voluntários principais que estejam ativamente envolvidos nas operações principais da organização."
+#~ msgid "Only include staff or core volunteers who are actively involved in the organization's main operations."
+#~ msgstr "Inclua apenas funcionários ou voluntários principais que estejam ativamente envolvidos nas operações principais da organização."
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Please provide some additional details about your organization to help us better understand your needs."
-msgstr "Forneça alguns detalhes adicionais sobre sua organização para nos ajudar a entender melhor suas necessidades."
+#~ msgid "Please provide some additional details about your organization to help us better understand your needs."
+#~ msgstr "Forneça alguns detalhes adicionais sobre sua organização para nos ajudar a entender melhor suas necessidades."
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Search engine"
@@ -3466,50 +3452,39 @@ msgstr "Recursos"
 msgid "How did you discover Belcoda?"
 msgstr "Como você descobriu a Belcoda?"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Select all that apply"
-msgstr "Selecione todas as opções que se aplicam"
+#~ msgid "Select all that apply"
+#~ msgstr "Selecione todas as opções que se aplicam"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Storing member or supporter data"
-msgstr "Armazenar dados de membros ou apoiadores"
+#~ msgid "Storing member or supporter data"
+#~ msgstr "Armazenar dados de membros ou apoiadores"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Sending WhatsApp messages to members or supporters"
-msgstr "Enviar mensagens de WhatsApp para membros ou apoiadores"
+#~ msgid "Sending WhatsApp messages to members or supporters"
+#~ msgstr "Enviar mensagens de WhatsApp para membros ou apoiadores"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Sending emails to members or supporters"
-msgstr "Enviar e-mails para membros ou apoiadores"
+#~ msgid "Sending emails to members or supporters"
+#~ msgstr "Enviar e-mails para membros ou apoiadores"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Running events"
-msgstr "Realizar eventos"
+#~ msgid "Running events"
+#~ msgstr "Realizar eventos"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Running policy campaigns with online petitions"
-msgstr "Executar campanhas políticas com petições online"
+#~ msgid "Running policy campaigns with online petitions"
+#~ msgstr "Executar campanhas políticas com petições online"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Making sure all data is synced and up to date"
-msgstr "Garantir que todos os dados estejam sincronizados e atualizados"
+#~ msgid "Making sure all data is synced and up to date"
+#~ msgstr "Garantir que todos os dados estejam sincronizados e atualizados"
 
 #: src/lib/utils/person/gender/render.ts
-#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
 msgstr "Outro"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Other (detail)"
-msgstr "Outro (detalhe)"
+#~ msgid "Other (detail)"
+#~ msgstr "Outro (detalhe)"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "What will you use Belcoda for?"
-msgstr "Para que você usará a Belcoda?"
+#~ msgid "What will you use Belcoda for?"
+#~ msgstr "Para que você usará a Belcoda?"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Growing your list of supporters or members"
-msgstr "Aumentar sua lista de apoiadores ou membros"
+#~ msgid "Growing your list of supporters or members"
+#~ msgstr "Aumentar sua lista de apoiadores ou membros"
 
 #: src/routes/(auth)/organization/new/onboarding/+page.svelte
 msgid "Hit the ground running"
