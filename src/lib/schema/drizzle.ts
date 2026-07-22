@@ -16,7 +16,11 @@ import {
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 
-import type { OrganizationSchema, OrganizationPlanType } from '$lib/schema/organization';
+import type {
+	OrganizationSchema,
+	OrganizationPlanType,
+	OrganizationMetadataSchema
+} from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
 import type { UserSchema } from '$lib/schema/user';
@@ -82,12 +86,6 @@ type Permissions = {
 	[resourceType: string]: ('read' | 'write' | 'delete')[];
 };
 type IsTrue<T extends true> = T;
-type OrganizationMetadata = {
-	onboarding?: {
-		discoverySource?: string;
-		discoverySourceDetail?: string | null;
-	};
-};
 
 export const organization = pgTable(
 	'organization',
@@ -101,7 +99,7 @@ export const organization = pgTable(
 		defaultLanguage: text('default_language').$type<LanguageCode>().notNull(),
 		defaultTimezone: text('default_timezone').notNull(),
 		settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
-		metadata: jsonb('metadata').$type<OrganizationMetadata>(),
+		metadata: jsonb('metadata').$type<OrganizationMetadataSchema>(),
 		balance: integer('balance').notNull().default(0),
 		freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
 		freeEmailMessageCredits: integer('free_email_message_credits'),
@@ -126,12 +124,11 @@ export const organization = pgTable(
 	]
 );
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
-type OrganizationValibotComparableDrizzle = Omit<typeof organization.$inferSelect, 'metadata'>;
 type OrganizationValibotMatchesDrizzle = IsTrue<
-	OrganizationSchema extends OrganizationValibotComparableDrizzle ? true : false
+	OrganizationSchema extends typeof organization.$inferSelect ? true : false
 >;
 type OrganizationDrizzleMatchesValibot = IsTrue<
-	OrganizationValibotComparableDrizzle extends OrganizationSchema ? true : false
+	typeof organization.$inferSelect extends OrganizationSchema ? true : false
 >;
 
 export const tag = pgTable(
