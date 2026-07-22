@@ -16,11 +16,12 @@
 
 	const derivedTimeAgoFormatter = $derived(getTimeAgo(locale.current));
 	const derivedTimeAgo = $derived(t`Saved ${derivedTimeAgoFormatter.format(lastSavedAt())}`);
+	const saving = $derived(isLoading() || isTainted());
 </script>
 
 <Panel position="bottom-left">
 	<div class="text-xs text-muted-foreground" data-testid="flow-save-state">
-		{#if isLoading()}
+		{#if saving}
 			<div class="flex items-center gap-2" data-testid="flow-save-state-saving">
 				<Spinner />
 				{t`Saving...`}

@@ -185,6 +185,7 @@ export const POST: RequestHandler = async () => {
 		return json({ success: true, message: 'Test data cleaned up' });
 	} catch (err) {
 		console.error('Failed to cleanup test data:', err);
-		throw error(500, 'Failed to cleanup test data');
+		const message = err instanceof Error ? err.message : 'Failed to cleanup test data';
+		throw error(500, message);
 	}
 };
