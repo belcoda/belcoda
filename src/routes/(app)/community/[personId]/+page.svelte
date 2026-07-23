@@ -11,7 +11,9 @@
 	import RenderPerson from '$lib/components/widgets/render/RenderPerson.svelte';
 	import NotesAction from '$lib/components/layouts/app/action-menus/person/NotesAction.svelte';
 	import PersonContextPanel from '$lib/components/widgets/person/context/PersonContextPanel.svelte';
+	import PersonContextDetails from '$lib/components/widgets/person/context/PersonContextDetails.svelte';
 	import type { PersonContextPanelState } from '$lib/components/widgets/person/context/person-context-panel';
+	import type { ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
@@ -66,6 +68,7 @@
 				collapsible
 				collapsed={personContextCollapsed}
 				onCollapsedChange={(collapsed) => (personContextCollapsed = collapsed)}
+				content={personContextContent}
 			/>
 		</div>
 	</div>
@@ -126,6 +129,7 @@
 						personId={params.personId}
 						state={personContextState}
 						onClose={() => (personContextDrawerOpen = false)}
+						content={personContextContent}
 					/>
 				</Sheet.Content>
 			</Sheet.Root>
@@ -137,4 +141,8 @@
 			{/if}
 		</div>
 	</div>
+{/snippet}
+
+{#snippet personContextContent(person: ReadPersonOutputWithReadonlyArrays)}
+	<PersonContextDetails {person} />
 {/snippet}
