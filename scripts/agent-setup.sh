@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+cp .env.example.cloud-agents .env
+
 # Shared setup for cloud coding agents (Cursor background agents, Codex cloud, etc).
 # Installs Postgres configured for Zero, creates the dev DB, then installs deps
 # and seeds the database. Runs during the agent's build/setup phase, where the
