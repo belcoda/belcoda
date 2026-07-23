@@ -1025,6 +1025,7 @@ msgstr "Data"
 msgid "Imported by"
 msgstr "Importado por"
 
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Details"
 msgstr "Detalhes"
@@ -1749,12 +1750,14 @@ msgid "Personal details"
 msgstr "Dados pessoais"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Date of birth"
 msgstr "Data de nascimento"
 
 #: src/lib/components/forms/event/render_survey_question.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Gender"
 msgstr "Gênero"
 
@@ -5798,9 +5801,8 @@ msgstr ""
 msgid "This person may have been removed from the organization."
 msgstr ""
 
-#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
-msgid "Overview"
-msgstr ""
+#~ msgid "Overview"
+#~ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Member since"
@@ -5852,4 +5854,12 @@ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Last active"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Organizing"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Work"
 msgstr ""
