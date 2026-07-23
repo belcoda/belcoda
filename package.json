@@ -97,7 +97,7 @@
 		"@better-auth/api-key": "^1.6.23",
 		"@better-auth/stripe": "^1.6.23",
 		"@emoji-mart/data": "^1.2.1",
-		"@lexical/html": "0.40.0",
+		"@lexical/html": "0.47.0",
 		"@openapi-contrib/json-schema-to-openapi-schema": "^4.3.4",
 		"@rocicorp/zero": "0.25.13",
 		"@scalar/sveltekit": "^0.3.10",
