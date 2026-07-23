@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cp .env.example.cloud-agents .env
+
 # Setup script for Claude Code on the web (claude.ai/code).
 #
 # Paste `bash scripts/agent-setup-web.sh` into the cloud environment's

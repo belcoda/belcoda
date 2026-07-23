@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cp .env.example.cloud-agents .env
+
 # Per-session startup for Claude Code on the web, wired in as a SessionStart hook
 # in .claude/settings.json. The environment cache stores files, not running
 # processes, so Postgres (installed + seeded by scripts/agent-setup-web.sh) must
