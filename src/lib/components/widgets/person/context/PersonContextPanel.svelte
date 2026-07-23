@@ -82,7 +82,7 @@
 	</aside>
 {:else}
 	<aside
-		class="flex h-full w-full min-w-0 flex-col bg-background"
+		class="flex h-full w-full min-w-0 flex-col border-s bg-background"
 		aria-label={t`Person profile`}
 		data-testid="person-context-panel"
 	>
