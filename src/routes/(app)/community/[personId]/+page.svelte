@@ -96,6 +96,7 @@
 			><RenderPerson
 				person={person.data}
 				personId={params.personId}
+				loadPerson={false}
 				textClass="text-lg font-medium"
 				testId="person-timeline-display-name"
 			/></a
