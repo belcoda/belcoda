@@ -506,6 +506,7 @@ msgstr "Criar pessoa"
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
 #: src/routes/(app)/settings/teams/+page.svelte
@@ -533,6 +534,7 @@ msgstr "Nenhuma equipe encontrada."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
@@ -1428,6 +1430,7 @@ msgid "Who is this petition directed to? (e.g., \"The Mayor of Springfield\", \"
 msgstr "Para quem esta petição é direcionada? (ex., \"O prefeito de Springfield\", \"O parlamento\")"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Location"
 msgstr "Localização"
 
@@ -1732,6 +1735,7 @@ msgid "Contact details"
 msgstr "Dados de contato"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Preferred language"
 msgstr "Idioma preferido"
 
@@ -5722,4 +5726,93 @@ msgstr ""
 
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/routes/(app)/community/[personId]/+page.svelte
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Show person profile"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Person profile"
+msgstr ""
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Profile information for the current conversation"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "View full profile"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "No contact details"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Hide person profile"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Close person profile"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Loading person profile"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Unable to load person profile"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Try again in a moment."
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Profile unavailable"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "You do not have permission to view this person's profile."
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Person not found"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "This person may have been removed from the organization."
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Overview"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Member since"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Contact"
+msgstr ""
+
+#. 0: hiddenTeamCountLabel
+#. 0: hiddenTagCountLabel
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "+{0} more"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Latest note"
 msgstr ""
