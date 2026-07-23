@@ -81,6 +81,11 @@
 			appState.activeOrganization?.data?.defaultTimezone
 		)
 	);
+	const communicationLabel = $derived(t`Communication`);
+	const organizingLabel = $derived(t`Organizing`);
+	const latestNoteLabel = $derived(t`Latest note`);
+	const detailsLabel = $derived(t`Details`);
+	const contactLabel = $derived(t`Contact`);
 </script>
 
 <div class="space-y-5" data-testid="person-context-details">
@@ -92,17 +97,15 @@
 		</Alert.Root>
 	{/if}
 
-	<section aria-labelledby="person-context-communication-heading">
-		<h2 id="person-context-communication-heading" class="mb-3 text-sm font-semibold">
-			{t`Communication`}
-		</h2>
+	<section aria-label={communicationLabel}>
+		<h2 class="mb-3 text-sm font-semibold">{communicationLabel}</h2>
 		<dl class="space-y-3 text-sm">
 			<div class="flex min-w-0 items-center justify-between gap-3">
 				<dt class="flex min-w-0 items-center gap-3">
 					<MessageCircleIcon class="size-4 shrink-0 text-muted-foreground" />
 					<span>{t`WhatsApp`}</span>
 				</dt>
-				<dd class="shrink-0" data-testid="person-context-whatsapp-status">
+				<dd class="shrink-0" aria-live="polite" data-testid="person-context-whatsapp-status">
 					{#if !whatsappConfigured}
 						<ColorBadge color="gray">{t`Not configured`}</ColorBadge>
 					{:else if !hasWhatsAppContact}
@@ -119,7 +122,7 @@
 					<MailIcon class="size-4 shrink-0 text-muted-foreground" />
 					<span>{t`Email`}</span>
 				</dt>
-				<dd class="shrink-0" data-testid="person-context-email-status">
+				<dd class="shrink-0" aria-live="polite" data-testid="person-context-email-status">
 					{#if !person.emailAddress}
 						<ColorBadge color="gray">{t`Unavailable`}</ColorBadge>
 					{:else if person.subscribed}
@@ -141,10 +144,8 @@
 
 	{#if person.teams.length > 0 || person.tags.length > 0}
 		<Separator />
-		<section aria-labelledby="person-context-organizing-heading">
-			<h2 id="person-context-organizing-heading" class="mb-3 text-sm font-semibold">
-				{t`Organizing`}
-			</h2>
+		<section aria-label={organizingLabel}>
+			<h2 class="mb-3 text-sm font-semibold">{organizingLabel}</h2>
 			<div class="space-y-4">
 				{#if person.teams.length > 0}
 					<div>
@@ -188,13 +189,10 @@
 
 	{#if latestNote}
 		<Separator />
-		<section aria-labelledby="person-context-note-heading">
-			<h2
-				id="person-context-note-heading"
-				class="mb-3 flex items-center gap-2 text-sm font-semibold"
-			>
+		<section aria-label={latestNoteLabel}>
+			<h2 class="mb-3 flex items-center gap-2 text-sm font-semibold">
 				<NotebookPenIcon class="size-4 text-muted-foreground" />
-				{t`Latest note`}
+				{latestNoteLabel}
 			</h2>
 			<p
 				class="line-clamp-4 text-sm break-words whitespace-pre-wrap"
@@ -206,8 +204,8 @@
 	{/if}
 
 	<Separator />
-	<section aria-labelledby="person-context-details-heading">
-		<h2 id="person-context-details-heading" class="mb-3 text-sm font-semibold">{t`Details`}</h2>
+	<section aria-label={detailsLabel}>
+		<h2 class="mb-3 text-sm font-semibold">{detailsLabel}</h2>
 		<dl class="space-y-3 text-sm">
 			<div class="flex items-start gap-3">
 				<CalendarDaysIcon class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
@@ -262,8 +260,8 @@
 
 	{#if person.phoneNumber || person.emailAddress}
 		<Separator />
-		<section aria-labelledby="person-context-contact-heading">
-			<h2 id="person-context-contact-heading" class="mb-3 text-sm font-semibold">{t`Contact`}</h2>
+		<section aria-label={contactLabel}>
+			<h2 class="mb-3 text-sm font-semibold">{contactLabel}</h2>
 			<div class="space-y-3 text-sm">
 				{#if person.phoneNumber}
 					<a

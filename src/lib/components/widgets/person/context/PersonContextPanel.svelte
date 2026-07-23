@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { Snippet } from 'svelte';
 	import AlertCircleIcon from '@lucide/svelte/icons/alert-circle';
 	import PanelRightCloseIcon from '@lucide/svelte/icons/panel-right-close';
@@ -8,6 +9,7 @@
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import { t } from '$lib/index.svelte';
 	import { cn } from '$lib/utils.js';
@@ -36,7 +38,8 @@
 		content
 	}: Props = $props();
 
-	const fullProfileHref = $derived(`/community/${personId}/profile`);
+	const fullProfileHref = $derived(resolve(`/community/${personId}/profile`));
+	const loadingSkeletons = [0, 1, 2];
 
 	function setCollapsed(nextCollapsed: boolean) {
 		onCollapsedChange?.(nextCollapsed);
@@ -49,15 +52,19 @@
 		aria-label={t`Person profile`}
 		data-testid="person-context-panel-collapsed"
 	>
-		<Button
-			variant="ghost"
-			size="icon"
-			aria-label={t`Show person profile`}
-			title={t`Show person profile`}
-			onclick={() => setCollapsed(false)}
-		>
-			<PanelRightOpenIcon />
-		</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				<Button
+					variant="ghost"
+					size="icon"
+					aria-label={t`Show person profile`}
+					onclick={() => setCollapsed(false)}
+				>
+					<PanelRightOpenIcon />
+				</Button>
+			</Tooltip.Trigger>
+			<Tooltip.Content side="left">{t`Show person profile`}</Tooltip.Content>
+		</Tooltip.Root>
 
 		{#if state.status === 'ready'}
 			<a
@@ -117,33 +124,47 @@
 
 			<div class="flex shrink-0 items-center">
 				{#if collapsible}
-					<Button
-						variant="ghost"
-						size="icon"
-						aria-label={t`Hide person profile`}
-						title={t`Hide person profile`}
-						onclick={() => setCollapsed(true)}
-					>
-						<PanelRightCloseIcon />
-					</Button>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Button
+								variant="ghost"
+								size="icon"
+								aria-label={t`Hide person profile`}
+								onclick={() => setCollapsed(true)}
+							>
+								<PanelRightCloseIcon />
+							</Button>
+						</Tooltip.Trigger>
+						<Tooltip.Content side="left">{t`Hide person profile`}</Tooltip.Content>
+					</Tooltip.Root>
 				{/if}
 				{#if onClose}
-					<Button
-						variant="ghost"
-						size="icon"
-						aria-label={t`Close person profile`}
-						title={t`Close person profile`}
-						onclick={onClose}
-					>
-						<XIcon />
-					</Button>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Button
+								variant="ghost"
+								size="icon"
+								aria-label={t`Close person profile`}
+								onclick={onClose}
+							>
+								<XIcon />
+							</Button>
+						</Tooltip.Trigger>
+						<Tooltip.Content side="left">{t`Close person profile`}</Tooltip.Content>
+					</Tooltip.Root>
 				{/if}
 			</div>
 		</header>
 
 		<div class="min-h-0 flex-1 overflow-y-auto p-4">
 			{#if state.status === 'loading'}
-				<div class="space-y-5" aria-label={t`Loading person profile`}>
+				<div
+					class="space-y-5"
+					role="status"
+					aria-live="polite"
+					aria-busy="true"
+					aria-label={t`Loading person profile`}
+				>
 					<div class="flex items-center gap-3">
 						<Skeleton class="size-12 rounded-full" />
 						<div class="flex-1 space-y-2">
@@ -151,7 +172,7 @@
 							<Skeleton class="h-3 w-1/2" />
 						</div>
 					</div>
-					{#each Array(3) as _}
+					{#each loadingSkeletons as skeleton (skeleton)}
 						<div class="space-y-2">
 							<Skeleton class="h-3 w-1/3" />
 							<Skeleton class="h-8 w-full" />
