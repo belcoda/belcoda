@@ -1,25 +1,39 @@
 <script lang="ts">
 	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
+	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
+	import Clock3Icon from '@lucide/svelte/icons/clock-3';
 	import LanguagesIcon from '@lucide/svelte/icons/languages';
 	import MailIcon from '@lucide/svelte/icons/mail';
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
+	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import NotebookPenIcon from '@lucide/svelte/icons/notebook-pen';
 	import PhoneIcon from '@lucide/svelte/icons/phone';
 	import TagsIcon from '@lucide/svelte/icons/tags';
 	import UsersIcon from '@lucide/svelte/icons/users';
 
+	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { locale, t } from '$lib/index.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
 	import { appState } from '$lib/state.svelte';
 	import { renderLocalizedCountryName } from '$lib/utils/country';
+	import { formatShortTimestamp } from '$lib/utils/date';
 	import { getLocalizedLanguageName } from '$lib/utils/language';
 	import { formatNumber } from '$lib/utils/number';
 	import { renderLocalPhoneNumber } from '$lib/utils/phone';
 	import type { ReadPersonOutputWithReadonlyArrays } from '$lib/zero/query/person/read';
 
-	let { person }: { person: ReadPersonOutputWithReadonlyArrays } = $props();
+	let {
+		person,
+		whatsappConfigured,
+		whatsappWindowOpen
+	}: {
+		person: ReadPersonOutputWithReadonlyArrays;
+		whatsappConfigured: boolean;
+		whatsappWindowOpen: boolean;
+	} = $props();
 
 	const memberSince = $derived(
 		new Intl.DateTimeFormat(locale.current, {
@@ -44,9 +58,73 @@
 	const hiddenTeamCount = $derived(Math.max(0, person.teams.length - visibleTeams.length));
 	const hiddenTeamCountLabel = $derived(formatNumber(hiddenTeamCount, locale.current));
 	const latestNote = $derived(person.notes[0]);
+	const hasWhatsAppContact = $derived(Boolean(person.whatsAppUsername || person.phoneNumber));
+	const lastActive = $derived(
+		formatShortTimestamp(
+			person.mostRecentActivityAt,
+			locale.current,
+			appState.activeOrganization?.data?.defaultTimezone
+		)
+	);
 </script>
 
 <div class="space-y-5" data-testid="person-context-details">
+	{#if person.doNotContact}
+		<Alert.Root variant="destructive" data-testid="person-context-do-not-contact">
+			<CircleAlertIcon />
+			<Alert.Title>{t`Do not contact`}</Alert.Title>
+			<Alert.Description>{t`This person should not receive communications.`}</Alert.Description>
+		</Alert.Root>
+	{/if}
+
+	<section aria-labelledby="person-context-communication-heading">
+		<h2 id="person-context-communication-heading" class="mb-3 text-sm font-semibold">
+			{t`Communication`}
+		</h2>
+		<dl class="space-y-3 text-sm">
+			<div class="flex min-w-0 items-center justify-between gap-3">
+				<dt class="flex min-w-0 items-center gap-3">
+					<MessageCircleIcon class="size-4 shrink-0 text-muted-foreground" />
+					<span>{t`WhatsApp`}</span>
+				</dt>
+				<dd class="shrink-0" data-testid="person-context-whatsapp-status">
+					{#if !whatsappConfigured}
+						<ColorBadge color="gray">{t`Not configured`}</ColorBadge>
+					{:else if !hasWhatsAppContact}
+						<ColorBadge color="gray">{t`Unavailable`}</ColorBadge>
+					{:else if whatsappWindowOpen}
+						<ColorBadge color="green">{t`Reply window open`}</ColorBadge>
+					{:else}
+						<ColorBadge color="yellow">{t`Template required`}</ColorBadge>
+					{/if}
+				</dd>
+			</div>
+			<div class="flex min-w-0 items-center justify-between gap-3">
+				<dt class="flex min-w-0 items-center gap-3">
+					<MailIcon class="size-4 shrink-0 text-muted-foreground" />
+					<span>{t`Email`}</span>
+				</dt>
+				<dd class="shrink-0" data-testid="person-context-email-status">
+					{#if !person.emailAddress}
+						<ColorBadge color="gray">{t`Unavailable`}</ColorBadge>
+					{:else if person.subscribed}
+						<ColorBadge color="green">{t`Subscribed`}</ColorBadge>
+					{:else}
+						<ColorBadge color="gray">{t`Unsubscribed`}</ColorBadge>
+					{/if}
+				</dd>
+			</div>
+			<div class="flex min-w-0 items-start gap-3">
+				<Clock3Icon class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+				<div class="min-w-0">
+					<dt class="text-xs text-muted-foreground">{t`Last active`}</dt>
+					<dd>{lastActive}</dd>
+				</div>
+			</div>
+		</dl>
+	</section>
+
+	<Separator />
 	<section aria-labelledby="person-context-overview-heading">
 		<h2 id="person-context-overview-heading" class="mb-3 text-sm font-semibold">{t`Overview`}</h2>
 		<dl class="space-y-3 text-sm">

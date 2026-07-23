@@ -144,5 +144,9 @@
 {/snippet}
 
 {#snippet personContextContent(person: ReadPersonOutputWithReadonlyArrays)}
-	<PersonContextDetails {person} />
+	<PersonContextDetails
+		{person}
+		whatsappConfigured={Boolean(whatsappOnboarded)}
+		whatsappWindowOpen={isLastReceivedAtLessThan24HoursAgo}
+	/>
 {/snippet}

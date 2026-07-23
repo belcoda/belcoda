@@ -726,6 +726,7 @@ msgstr "Ligar"
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
@@ -819,6 +820,7 @@ msgstr "Pessoa excluída"
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
@@ -832,11 +834,13 @@ msgid "Email"
 msgstr "E-mail"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
 msgid "Subscribed"
 msgstr "Inscrito"
 
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
 msgid "Do not contact"
@@ -5815,4 +5819,37 @@ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Latest note"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "This person should not receive communications."
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Communication"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Not configured"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Unavailable"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Reply window open"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Template required"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Unsubscribed"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Last active"
 msgstr ""
