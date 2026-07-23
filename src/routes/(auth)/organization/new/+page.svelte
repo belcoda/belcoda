@@ -10,13 +10,25 @@
 	let error: string | undefined = $state(undefined);
 	import { createOrganization } from './actions';
 	import { newOrganizationFromWebsiteForm as createOrganizationSchema } from '$lib/schema/organization';
+
+	function trackOrganizationCreationConversion() {
+		if (typeof window.gtag !== 'function') return;
+
+		window.gtag('event', 'conversion', {
+			send_to: 'AW-17963790839/zEgdCIevp_sbEPfj5vVC',
+			value: 1.0,
+			currency: 'JPY'
+		});
+	}
+
 	const { form, data, Errors, Debug, errors } = createForm({
 		schema: createOrganizationSchema,
 		onSubmit: async (formData) => {
 			try {
 				loading = true;
-				const created = await createOrganization(formData);
-				await goto(`/organization/new/onboarding?org=${encodeURIComponent(created.id)}`);
+				await createOrganization(formData);
+				trackOrganizationCreationConversion();
+				await goto('/');
 			} catch (err) {
 				console.error(`Error creating organization: ${err}`);
 				error = err instanceof Error ? err.message : t`An unknown error occurred`;

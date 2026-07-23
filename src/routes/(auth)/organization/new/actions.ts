@@ -10,6 +10,7 @@ import { getLocalTimeZone } from '@internationalized/date';
 import { httpsifyUrl } from '$lib/utils/string/domain';
 import { post } from '$lib/utils/http';
 import { object, boolean } from 'valibot';
+import { safeSessionStorage } from '$lib/utils/storage';
 export async function getCurrentCountry(): Promise<CountryCode> {
 	try {
 		//get the country from the IP address of the user
@@ -63,7 +64,7 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 			organizationId: data.id
 		}),
 		post({
-			path: `/organization/new/onboarding`,
+			path: `/api/utils/organization-created`,
 			schema: object({
 				success: boolean()
 			}),
@@ -76,6 +77,8 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 	if (active.error) {
 		throw new Error(active.error.message);
 	}
+
+	safeSessionStorage.setItem('state:organizationId', data.id);
 
 	return data;
 }
