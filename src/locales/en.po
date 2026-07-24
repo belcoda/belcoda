@@ -5785,7 +5785,6 @@ msgid "Hide person profile"
 msgstr "Hide person profile"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
-#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "Close person profile"
 msgstr "Close person profile"
 
