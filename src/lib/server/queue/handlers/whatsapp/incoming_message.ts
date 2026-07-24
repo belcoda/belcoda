@@ -52,23 +52,29 @@ import { v7 as uuidv7 } from 'uuid';
 import { createNotification } from '$lib/server/api/data/notification/notification';
 import { isWhatsappOptOutMessage } from '$lib/server/utils/whatsapp/opt_out';
 export async function handleIncomingMessage(incomingMessage: unknown) {
+	let parsed: IncomingMessage;
 	try {
-		const parsed = parse(incomingMessageSchema, incomingMessage);
-
-		log.debug(parsed, 'Parsed incoming whatsapp message');
-
-		const insertedWhatsAppMessageId: string = uuidv7();
-		await db.transaction(async (tx) => {
-			await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
-		});
+		parsed = parse(incomingMessageSchema, incomingMessage);
 	} catch (err) {
 		const renderedError = renderValiError(err);
 		if (renderedError.isValiError) {
 			log.error(renderedError, 'Failed to parse incoming message');
 			log.debug(incomingMessage, 'Full message');
-		} else {
-			log.error(err, 'Failed to process incoming message');
+			return;
 		}
+		throw err;
+	}
+
+	log.debug(parsed, 'Parsed incoming whatsapp message');
+
+	const insertedWhatsAppMessageId: string = uuidv7();
+	try {
+		await db.transaction(async (tx) => {
+			await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
+		});
+	} catch (err) {
+		log.error(err, 'Failed to process incoming message');
+		throw err;
 	}
 }
 
