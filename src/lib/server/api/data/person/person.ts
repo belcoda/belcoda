@@ -428,7 +428,31 @@ export async function _markPersonDoNotContactUnsafe({
 				isNull(person.deletedAt)
 			)
 		)
-		.returning({ id: person.id });
+		.returning();
 
-	return updated !== undefined;
+	if (!updated) {
+		return false;
+	}
+
+	// Webhook processing failure should not block the opt-out from being applied
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
+				organizationId: args.organizationId,
+				payload: {
+					type: 'person.updated',
+					data: parse(personApiSchema, updated)
+				}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	} catch (error) {
+		log.error(
+			{ error, personId: args.personId, organizationId: args.organizationId },
+			'Failed to enqueue person.updated webhook after WhatsApp opt-out'
+		);
+	}
+
+	return true;
 }
