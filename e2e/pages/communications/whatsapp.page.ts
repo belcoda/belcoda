@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
+import { WHATSAPP_DRAFT_DETAIL_URL } from '../../helpers/config';
 
 export class WhatsAppNavigationPage {
 	readonly page: Page;
@@ -29,7 +30,15 @@ export class WhatsAppNavigationPage {
 
 	async clickComposeWhatsApp() {
 		await this.openComposeMenu();
-		await this.composeWhatsAppLink.click();
+		await Promise.all([
+			this.page.waitForURL(WHATSAPP_DRAFT_DETAIL_URL, { timeout: 30_000 }),
+			this.composeWhatsAppLink.click()
+		]);
+	}
+
+	async gotoNewDraft() {
+		await this.page.goto('/communications/whatsapp/drafts/new');
+		await this.page.waitForURL(WHATSAPP_DRAFT_DETAIL_URL, { timeout: 30_000 });
 	}
 }
 
@@ -109,11 +118,15 @@ export class WhatsAppDraftPage {
 		await this.sendButton.waitFor({ state: 'visible', timeout: 20_000 });
 	}
 
+	async waitForSaved() {
+		await expect(this.page.getByTestId('flow-save-state-saved')).toBeVisible({ timeout: 30_000 });
+		await expect(this.page.getByTestId('flow-save-state-saving')).toHaveCount(0, {
+			timeout: 30_000
+		});
+	}
+
 	async save() {
-		const saving = this.page.getByText(/Saving/);
-		await saving.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {});
-		await saving.waitFor({ state: 'hidden', timeout: 20_000 });
-		await expect(this.page.getByText(/Saved/)).toBeVisible({ timeout: 20_000 });
+		await this.waitForSaved();
 	}
 
 	async sendAndConfirm() {

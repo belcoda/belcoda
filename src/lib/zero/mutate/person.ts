@@ -27,10 +27,12 @@ export const createPerson = defineMutator(createMutatorSchemaZero, async ({ tx, 
 });
 
 export const updatePerson = defineMutator(updateMutatorSchemaZero, async ({ tx, args, ctx }) => {
+	const input = Object.fromEntries(
+		Object.entries(args.input).filter(([, value]) => value !== undefined)
+	);
 	tx.mutate.person.update({
 		id: args.metadata.personId,
-		...args.input,
-		dateOfBirth: args.input.dateOfBirth ? args.input.dateOfBirth : undefined,
+		...input,
 		updatedAt: Date.now()
 	});
 });

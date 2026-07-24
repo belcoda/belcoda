@@ -18,7 +18,9 @@
 
 	const userName = $derived(appState.user.data?.name?.split(' ')[0] ?? '');
 
-	const dateLabel = today.toLocaleDateString('en-GB', {
+	import { locale } from '$lib/index.svelte';
+
+	const dateLabel = today.toLocaleDateString(locale.current, {
 		weekday: 'long',
 		day: 'numeric',
 		month: 'long',
