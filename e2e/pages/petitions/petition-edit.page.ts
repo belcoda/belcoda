@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class PetitionEditPage {
 	readonly page: Page;
@@ -26,11 +26,8 @@ export class PetitionEditPage {
 	}
 
 	async clearAndFillTitle(title: string) {
-		await this.titleInput.clear();
-		await this.titleInput.click();
-		await this.page.keyboard.press('Meta+A');
-		await this.page.keyboard.press('Backspace');
-		await this.titleInput.pressSequentially(title, { delay: 25 });
+		await this.titleInput.fill(title);
+		await expect(this.titleInput).toHaveValue(title);
 		await this.titleInput.blur();
 	}
 
@@ -40,8 +37,9 @@ export class PetitionEditPage {
 
 	private async ensureDangerZoneExpanded(actionButton: Locator) {
 		await this.dangerZone.scrollIntoViewIfNeeded();
-		const isVisible = await actionButton.isVisible().catch(() => false);
-		if (!isVisible) {
+		try {
+			await actionButton.waitFor({ state: 'visible', timeout: 2_000 });
+		} catch {
 			await this.dangerZone.getByText('Danger zone').click();
 			await actionButton.waitFor({ state: 'visible', timeout: 10_000 });
 		}
