@@ -16,10 +16,11 @@ export async function POST(event) {
 		);
 	}
 	try {
-		const queryContext = await getQueryContext(event.locals.session.user.id);
-		const result = await handleMutateRequest(
+		const userID = event.locals.session.user.id;
+		const queryContext = await getQueryContext(userID);
+		const result = await handleMutateRequest({
 			dbProvider,
-			(transact) =>
+			handler: (transact) =>
 				transact((tx, name, args) => {
 					const mutator = mustGetMutator(mutators, name);
 					return mutator.fn({
@@ -28,8 +29,9 @@ export async function POST(event) {
 						ctx: queryContext
 					});
 				}),
-			event.request
-		);
+			request: event.request,
+			userID
+		});
 
 		return json(result);
 	} catch (err) {
