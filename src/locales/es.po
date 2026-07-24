@@ -712,7 +712,7 @@ msgstr ""
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Notes"
-msgstr ""
+msgstr "Notas"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 msgid "Send email"
@@ -5823,11 +5823,11 @@ msgstr ""
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Add note"
-msgstr ""
+msgstr "Añadir nota"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "No notes yet."
-msgstr ""
+msgstr "Aún no hay notas."
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Friend or colleague"

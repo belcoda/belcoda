@@ -5831,11 +5831,11 @@ msgstr ""
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Add note"
-msgstr ""
+msgstr "Adicionar nota"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "No notes yet."
-msgstr ""
+msgstr "Ainda não há notas."
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Friend or colleague"
