@@ -54,14 +54,17 @@
 	>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<Button
-					variant="ghost"
-					size="icon"
-					aria-label={t`Show person profile`}
-					onclick={() => setCollapsed(false)}
-				>
-					<PanelRightOpenIcon />
-				</Button>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="ghost"
+						size="icon"
+						aria-label={t`Show person profile`}
+						onclick={() => setCollapsed(false)}
+					>
+						<PanelRightOpenIcon />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content side="left">{t`Show person profile`}</Tooltip.Content>
 		</Tooltip.Root>
@@ -126,32 +129,30 @@
 				{#if collapsible}
 					<Tooltip.Root>
 						<Tooltip.Trigger>
-							<Button
-								variant="ghost"
-								size="icon"
-								aria-label={t`Hide person profile`}
-								onclick={() => setCollapsed(true)}
-							>
-								<PanelRightCloseIcon />
-							</Button>
+							{#snippet child({ props })}
+								<Button
+									{...props}
+									variant="ghost"
+									size="icon"
+									aria-label={t`Hide person profile`}
+									onclick={() => setCollapsed(true)}
+								>
+									<PanelRightCloseIcon />
+								</Button>
+							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Content side="left">{t`Hide person profile`}</Tooltip.Content>
 					</Tooltip.Root>
 				{/if}
 				{#if onClose}
-					<Tooltip.Root>
-						<Tooltip.Trigger>
-							<Button
-								variant="ghost"
-								size="icon"
-								aria-label={t`Close person profile`}
-								onclick={onClose}
-							>
-								<XIcon />
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content side="left">{t`Close person profile`}</Tooltip.Content>
-					</Tooltip.Root>
+					<Button
+						variant="ghost"
+						size="icon"
+						aria-label={t`Close person profile`}
+						onclick={onClose}
+					>
+						<XIcon />
+					</Button>
 				{/if}
 			</div>
 		</header>
