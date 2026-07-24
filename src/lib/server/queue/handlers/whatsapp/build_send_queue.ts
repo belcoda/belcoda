@@ -3,6 +3,10 @@ import { getPersonRecordsFromFilter } from '$lib/server/api/data/person/filter';
 import { getQueue } from '$lib/server/queue/index';
 import { db } from '$lib/server/db';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
+import pino from '$lib/pino';
+
+const log = pino(import.meta.url);
+
 export async function buildWhatsappThreadSendQueue({
 	thread,
 	sentByUserId
@@ -29,10 +33,23 @@ export async function buildWhatsappThreadSendQueue({
 			userId: sentByUserId
 		});
 	});
+	const eligibleRecipients = recipients.filter((recipient) => !recipient.doNotContact);
+	const optedOutRecipientCount = recipients.length - eligibleRecipients.length;
+
+	if (optedOutRecipientCount > 0) {
+		log.info(
+			{
+				threadId: thread.id,
+				eligibleRecipientCount: eligibleRecipients.length,
+				optedOutRecipientCount
+			},
+			'Excluded opted-out people from WhatsApp broadcast'
+		);
+	}
 
 	const recipientIdsWithWhatsappIdentity = new Set(
 		await db.transaction(async (tx) => {
-			if (recipients.length === 0 || !thread.organizationId) {
+			if (eligibleRecipients.length === 0 || !thread.organizationId) {
 				return [];
 			}
 			const rows = await tx.dbTransaction.wrappedTransaction
@@ -44,7 +61,7 @@ export async function buildWhatsappThreadSendQueue({
 						eq(personWhatsappIdentity.organizationId, thread.organizationId),
 						inArray(
 							personWhatsappIdentity.personId,
-							recipients.map((recipient) => recipient.id)
+							eligibleRecipients.map((recipient) => recipient.id)
 						)
 					)
 				);
@@ -53,7 +70,7 @@ export async function buildWhatsappThreadSendQueue({
 	);
 
 	const queue = await getQueue();
-	for (const recipient of recipients) {
+	for (const recipient of eligibleRecipients) {
 		if (recipient.phoneNumber || recipientIdsWithWhatsappIdentity.has(recipient.id)) {
 			await queue.processFlowNodeAction({
 				nodeId: templateMessageNode.id,
