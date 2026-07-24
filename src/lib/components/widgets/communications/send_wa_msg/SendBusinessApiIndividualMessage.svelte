@@ -33,13 +33,14 @@
 	let sending = $state(false);
 
 	const showImagePreview = $derived(imageLoading || !!messageState.image_url);
+	const canSend = $derived(!sending && (!!messageState.text?.length || !!messageState.image_url));
 
 	function removeImage() {
 		messageState.image_url = undefined;
 	}
 
 	async function sendMessage() {
-		if (sending) return;
+		if (!canSend) return;
 		sending = true;
 		try {
 			await z.mutate(
@@ -148,7 +149,7 @@
 			variant="default"
 			class="ml-auto rounded-full"
 			size="icon-xs"
-			disabled={sending || (messageState.text?.length === 0 && !messageState.image_url)}
+			disabled={!canSend}
 			onclick={sendMessage}
 		>
 			<ArrowUpIcon />
