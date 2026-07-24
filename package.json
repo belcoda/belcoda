@@ -99,7 +99,7 @@
 		"@emoji-mart/data": "^1.2.1",
 		"@lexical/html": "0.40.0",
 		"@openapi-contrib/json-schema-to-openapi-schema": "^4.3.4",
-		"@rocicorp/zero": "0.25.13",
+		"@rocicorp/zero": "1.8.0",
 		"@scalar/sveltekit": "^0.3.10",
 		"@sentry/sveltekit": "^10.58.0",
 		"@tryghost/kg-lexical-html-renderer": "^1.4.3",
@@ -133,7 +133,7 @@
 		"svelte-multiselect": "^11.8.0",
 		"valibot": "^1.4.1",
 		"wuchale": "^0.25.4",
-		"zero-svelte": "^1.2.2"
+		"zero-svelte": "2.0.0"
 	},
 	"overrides": {
 		"vite-plugin-devtools-json": {

@@ -8,15 +8,17 @@ export async function POST(event) {
 	if (!event.locals.session) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
-	const ctx = await getQueryContext(event.locals.session.user.id);
+	const userID = event.locals.session.user.id;
+	const ctx = await getQueryContext(userID);
 
-	const result = await handleQueryRequest(
-		(name, args) => {
+	const result = await handleQueryRequest({
+		handler: (name, args) => {
 			const query = mustGetQuery(queries, name);
 			return query.fn({ args, ctx });
 		},
 		schema,
-		event.request
-	);
+		request: event.request,
+		userID
+	});
 	return json(result);
 }
