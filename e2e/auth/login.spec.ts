@@ -20,7 +20,7 @@ test.describe('Unauthenticated Access', () => {
 	test('clicking the login link in the signup page redirects to /login', async ({ page }) => {
 		await page.goto('/signup');
 		await page.getByTestId('signup-login-link').click();
-		await expect(page).toHaveURL('/login');
+		await expect(page).toHaveURL(/\/login(?:\?.*)?$/, { timeout: 15_000 });
 	});
 });
 

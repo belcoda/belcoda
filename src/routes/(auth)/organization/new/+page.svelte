@@ -10,13 +10,25 @@
 	let error: string | undefined = $state(undefined);
 	import { createOrganization } from './actions';
 	import { newOrganizationFromWebsiteForm as createOrganizationSchema } from '$lib/schema/organization';
+
+	function trackOrganizationCreationConversion() {
+		if (typeof window.gtag !== 'function') return;
+
+		window.gtag('event', 'conversion', {
+			send_to: 'AW-17963790839/zEgdCIevp_sbEPfj5vVC',
+			value: 1.0,
+			currency: 'JPY'
+		});
+	}
+
 	const { form, data, Errors, Debug, errors } = createForm({
 		schema: createOrganizationSchema,
 		onSubmit: async (formData) => {
 			try {
 				loading = true;
-				const created = await createOrganization(formData);
-				await goto(`/organization/new/onboarding?org=${encodeURIComponent(created.id)}`);
+				await createOrganization(formData);
+				trackOrganizationCreationConversion();
+				await goto('/');
 			} catch (err) {
 				console.error(`Error creating organization: ${err}`);
 				error = err instanceof Error ? err.message : t`An unknown error occurred`;
@@ -37,9 +49,7 @@
 	import { env } from '$env/dynamic/public';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
 </script>
 
 <AuthLayout
@@ -160,19 +170,8 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Separator />
-			<h3 class="text-xl font-semibold">{t`Additional details`}</h3>
-			<p class="text-sm text-muted-foreground">
-				{t`Please provide some additional details about your organization to help us better understand your needs.`}
-			</p>
-
-			{@render orgFocus()}
-			{@render orgSize()}
 			{@render howDidYouDiscover()}
 
-			<Separator />
-
-			{@render whatPlans()}
 			<Button type="submit" class="w-auto">{t`Create Organization`}</Button>
 			<Debug {data} />
 		</form>
@@ -183,91 +182,24 @@
 		</div>{/snippet}
 </AuthLayout>
 
-{#snippet orgFocus()}
-	{@const options = [
-		{
-			value: 'community-org-charity',
-			label: t`Community organization or charity`
-		},
-		{ value: 'business', label: t`Business or corporation` },
-		{ value: 'advocacy', label: t`Advocacy or policy campaign` },
-		{ value: 'political', label: t`Political party & election campaign` }
-	]}
-	<Form.Field {form} name="additionalDetails.organizationFocus" class="w-full">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>{t`What is your organization's focus?`}</Form.Label>
-				<Select.Root
-					type="single"
-					bind:value={$data.additionalDetails.organizationFocus}
-					{...props}
-				>
-					<Select.Trigger class="w-full">
-						{options.find((option) => option.value === $data.additionalDetails.organizationFocus)
-							?.label ?? t`Select an option`}
-					</Select.Trigger>
-					<Select.Content>
-						{#each options as option}
-							<Select.Item value={option.value} label={option.label} />
-						{/each}
-					</Select.Content>
-				</Select.Root>
-			{/snippet}
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
-{/snippet}
-
-{#snippet orgSize()}
-	{@const options = [
-		{
-			value: '1',
-			label: t`1-10 employees`
-		},
-		{ value: '2-10', label: t`11-50 employees` },
-		{ value: '11-50', label: t`50-500 employees` },
-		{ value: '500+', label: t`500+ employees` }
-	]}
-	<Form.Field {form} name="additionalDetails.organizationSize" class="w-full">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>{t`How many people are in your organization?`}</Form.Label>
-
-				<Select.Root type="single" bind:value={$data.additionalDetails.organizationSize} {...props}>
-					<Select.Trigger class="w-full">
-						{options.find((option) => option.value === $data.additionalDetails.organizationSize)
-							?.label ?? t`Select an option`}
-					</Select.Trigger>
-					<Select.Content>
-						{#each options as option}
-							<Select.Item value={option.value} label={option.label} />
-						{/each}
-					</Select.Content>
-				</Select.Root>
-				<Form.Description>
-					{t`Only include staff or core volunteers who are actively involved in the organization's main operations.`}
-				</Form.Description>
-			{/snippet}
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
-{/snippet}
-
 {#snippet howDidYouDiscover()}
 	{@const options = [
 		{
 			value: 'search-engine',
 			label: t`Search engine`
 		},
-		{ value: 'referral', label: t`Referral` },
-		{ value: 'training-conference', label: t`Training or conference` },
-		{ value: 'resources', label: t`Resources` },
-		{ value: 'social-media', label: t`Social media` }
+		{ value: 'social-media', label: t`Social media` },
+		{ value: 'friend-or-colleague', label: t`Friend or colleague` },
+		{ value: 'event-or-webinar', label: t`Event or webinar` },
+		{ value: 'partner', label: t`Partner organization` },
+		{ value: 'community-group', label: t`Community group` },
+		{ value: 'belcoda-resources', label: t`Belcoda resources` },
+		{ value: 'other', label: t`Other` }
 	]}
 	<Form.Field {form} name="additionalDetails.howDidYouDiscover" class="w-full">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>{t`How did you discover Belcoda?`}</Form.Label>
+				<Form.Label>{t`How did you hear about Belcoda?`}</Form.Label>
 
 				<Select.Root
 					type="single"
@@ -288,88 +220,20 @@
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
-{/snippet}
-
-{#snippet whatPlans()}
-	<div class="flex flex-col gap-2">
-		<div class="text-xl font-semibold">{t`What will you use Belcoda for?`}</div>
-		<div class="text-sm text-muted-foreground">{t`Select all that apply`}</div>
-		<div class="mt-2 flex flex-col gap-4">
-			<div class="flex items-center gap-2">
-				<Checkbox
-					id="storingMemberOrSupporterData"
-					bind:checked={$data.additionalDetails.features.storingMemberOrSupporterData}
-				/>
-				<Label for="storingMemberOrSupporterData">{t`Storing member or supporter data`}</Label>
-			</div>
-			<div class="flex items-center gap-2">
-				<Checkbox
-					id="growingOurListOfSupportersOrMembers"
-					bind:checked={$data.additionalDetails.features.growingOurListOfSupportersOrMembers}
-				/>
-				<Label for="growingOurListOfSupportersOrMembers"
-					>{t`Growing your list of supporters or members`}</Label
-				>
-			</div>
-			<div class="flex items-center gap-2">
-				<Checkbox
-					id="sendingWhatsAppMessagesToMembersOrSupporters"
-					bind:checked={
-						$data.additionalDetails.features.sendingWhatsAppMessagesToMembersOrSupporters
-					}
-				/>
-				<Label for="sendingWhatsAppMessagesToMembersOrSupporters"
-					>{t`Sending WhatsApp messages to members or supporters`}</Label
-				>
-			</div>
-			<div class="flex items-center gap-2">
-				<Checkbox
-					id="sendingEmailsToMembersOrSupporters"
-					bind:checked={$data.additionalDetails.features.sendingEmailsToMembersOrSupporters}
-				/>
-				<Label for="sendingEmailsToMembersOrSupporters"
-					>{t`Sending emails to members or supporters`}</Label
-				>
-			</div>
-			<div class="flex items-center gap-2">
-				<Checkbox
-					id="runningEvents"
-					bind:checked={$data.additionalDetails.features.runningEvents}
-				/>
-				<Label for="runningEvents">{t`Running events`}</Label>
-			</div>
-			<div class="flex items-center gap-2">
-				<Checkbox
-					id="runningPolicyCampaignsWithOnlinePetitions"
-					bind:checked={$data.additionalDetails.features.runningPolicyCampaignsWithOnlinePetitions}
-				/>
-				<Label for="runningPolicyCampaignsWithOnlinePetitions"
-					>{t`Running policy campaigns with online petitions`}</Label
-				>
-			</div>
-			<div class="flex items-center gap-2">
-				<Checkbox
-					id="makingSureAllDataIsSyncedAndUpToDate"
-					bind:checked={$data.additionalDetails.features.makingSureAllDataIsSyncedAndUpToDate}
-				/>
-				<Label for="makingSureAllDataIsSyncedAndUpToDate"
-					>{t`Making sure all data is synced and up to date`}</Label
-				>
-			</div>
-			<div class="flex items-center gap-2">
-				<Checkbox id="featuresOther" bind:checked={$data.additionalDetails.features.other} />
-				<Label for="featuresOther">{t`Other`}</Label>
-			</div>
-			{#if $data.additionalDetails.features.other}
-				<div>
-					<Label for="other">{t`Other (detail)`}</Label>
-					<Input
-						type="text"
-						class="mt-2"
-						bind:value={$data.additionalDetails.features.otherDetail}
+	{#if $data.additionalDetails.howDidYouDiscover === 'other'}
+		<Form.Field {form} name="additionalDetails.howDidYouDiscoverDetail" class="w-full">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>{t`Tell us where you heard about Belcoda`}</Form.Label>
+					<Textarea
+						{...props}
+						maxlength={500}
+						bind:value={$data.additionalDetails.howDidYouDiscoverDetail}
 					/>
-				</div>
-			{/if}
-		</div>
-	</div>
+					<Form.Description>{t`Maximum 500 characters.`}</Form.Description>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+	{/if}
 {/snippet}

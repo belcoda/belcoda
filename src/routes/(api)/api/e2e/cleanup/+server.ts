@@ -138,6 +138,8 @@ async function deleteTestOrganizationScopedRows(orgId: string) {
 
 	await drizzle.delete(schema.apiKey).where(eq(schema.apiKey.referenceId, orgId));
 
+	await drizzle.delete(schema.notification).where(eq(schema.notification.organizationId, orgId));
+
 	await drizzle.delete(schema.organization).where(eq(schema.organization.id, orgId));
 }
 
@@ -173,6 +175,9 @@ export const POST: RequestHandler = async () => {
 		}
 
 		if (testUserIds.length > 0) {
+			await drizzle
+				.delete(schema.notification)
+				.where(inArray(schema.notification.userId, testUserIds));
 			await drizzle.delete(schema.account).where(inArray(schema.account.userId, testUserIds));
 			await drizzle.delete(schema.user).where(inArray(schema.user.id, testUserIds));
 		}
@@ -180,6 +185,7 @@ export const POST: RequestHandler = async () => {
 		return json({ success: true, message: 'Test data cleaned up' });
 	} catch (err) {
 		console.error('Failed to cleanup test data:', err);
-		throw error(500, 'Failed to cleanup test data');
+		const message = err instanceof Error ? err.message : 'Failed to cleanup test data';
+		throw error(500, message);
 	}
 };

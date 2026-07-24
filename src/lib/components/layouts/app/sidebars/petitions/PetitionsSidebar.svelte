@@ -24,7 +24,7 @@
 		unregisterPetitionsListPaginationReset
 	} from '$lib/components/layouts/app/sidebars/petitions/petitions-list-pagination';
 	import { onDestroy } from 'svelte';
-	import { watch } from 'runed';
+	import { IsInViewport, watch } from 'runed';
 	import { formatNumber } from '$lib/utils/number';
 
 	import PetitionFilter from '$lib/components/layouts/app/sidebars/petitions/filter/PetitionFilter.svelte';
@@ -43,6 +43,8 @@
 	});
 	registerPetitionsListPaginationReset(() => paginatedPetitions.reset());
 	onDestroy(unregisterPetitionsListPaginationReset);
+	let sentinel: HTMLElement | null = $state(null);
+	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 	const petitionList = $derived.by(() =>
 		z.createQuery(queries.petition.list(paginatedPetitions.pageFilter))
 	);
@@ -54,15 +56,19 @@
 		}
 	);
 
-	function handleScroll(e: Event) {
-		const target = e.currentTarget as HTMLElement;
-		if (
-			paginatedPetitions.hasMore &&
-			target.scrollHeight - target.scrollTop - target.clientHeight < 200
-		) {
-			paginatedPetitions.loadMore();
+	watch(
+		() =>
+			[
+				sentinelIsInViewport.current,
+				paginatedPetitions.hasMore,
+				paginatedPetitions.items.length
+			] as const,
+		([isInViewport, hasMore]) => {
+			if (isInViewport && hasMore) {
+				paginatedPetitions.loadMore();
+			}
 		}
-	}
+	);
 
 	function encodePetitionCursor(petition: ReadPetitionZero) {
 		return encodePetitionListCursor({
@@ -89,7 +95,7 @@
 			</div>
 			<PetitionFilter bind:filter={petitionListFilter} />
 		</Sidebar.Header>
-		<Sidebar.Content onscroll={handleScroll} data-testid="petitions-sidebar-scroll">
+		<Sidebar.Content data-testid="petitions-sidebar-scroll">
 			<Sidebar.Group class="p-0">
 				<Sidebar.GroupContent
 					class="h-full overflow-y-auto p-0"
@@ -134,6 +140,13 @@
 							<div class="pt-2 text-center text-xs text-muted-foreground">
 								{t`${formatNumber(paginatedPetitions.items.length, locale.current)} shown`}
 							</div>
+							{#if paginatedPetitions.hasMore}
+								<div
+									bind:this={sentinel}
+									class="h-1"
+									data-testid="petitions-sidebar-scroll-sentinel"
+								></div>
+							{/if}
 						{/if}
 						{#if petitionList.details.type === 'unknown'}
 							{@render petitionItemSkeleton()}

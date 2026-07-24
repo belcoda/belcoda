@@ -5,6 +5,9 @@ export const E2E_MOCK_WABA_ID = 'e2e-mock-waba-id';
 /** @deprecated Use getMockWabaId('community') */
 export const E2E_COMMUNITY_MOCK_WABA_ID = 'e2e-community-mock-waba-id';
 
+/** Matches draft detail URLs including UUID v7 ids from /drafts/new redirects. */
+export const WHATSAPP_DRAFT_DETAIL_URL = /\/communications\/whatsapp\/drafts\/[^/?#]+(?:\?.*)?$/;
+
 export function getMockWabaId(project: E2EProject): string | null {
 	if (project === 'whatsapp-accounts') {
 		return null;

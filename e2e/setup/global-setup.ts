@@ -45,6 +45,10 @@ async function createOrganization(
 		body: JSON.stringify({ name: orgName, ownerEmail, members, wabaId })
 	});
 
+	if (response.status === 409) {
+		return response.json();
+	}
+
 	if (!response.ok) {
 		const err = await response.text();
 		throw new Error(`Failed to create organization: ${response.status} ${err}`);
