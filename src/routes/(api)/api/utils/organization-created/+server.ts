@@ -44,7 +44,7 @@ export async function POST(event) {
 	} catch (err) {
 		log.error({ err }, 'Validation for organization creation webhook failed');
 		return error(400, {
-			message: 'Error processing organization details. Form details are invalid.'
+			message: 'Error processing organization creation details. Form details are invalid.'
 		});
 	}
 }

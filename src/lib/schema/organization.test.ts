@@ -12,21 +12,8 @@ const baseForm: NewOrganizationFromWebsiteForm = {
 	slug: 'community-builders',
 	icon: null,
 	additionalDetails: {
-		organizationSize: '2-10',
-		organizationFocus: 'community-org-charity',
 		howDidYouDiscover: 'friend-or-colleague',
-		howDidYouDiscoverDetail: '',
-		features: {
-			storingMemberOrSupporterData: true,
-			growingOurListOfSupportersOrMembers: false,
-			sendingWhatsAppMessagesToMembersOrSupporters: false,
-			sendingEmailsToMembersOrSupporters: false,
-			runningEvents: true,
-			runningPolicyCampaignsWithOnlinePetitions: false,
-			makingSureAllDataIsSyncedAndUpToDate: false,
-			other: false,
-			otherDetail: ''
-		}
+		howDidYouDiscoverDetail: ''
 	}
 };
 
