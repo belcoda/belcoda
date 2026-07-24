@@ -33,7 +33,9 @@
 	let sending = $state(false);
 
 	const showImagePreview = $derived(imageLoading || !!messageState.image_url);
-	const canSend = $derived(!sending && (!!messageState.text?.length || !!messageState.image_url));
+	const canSend = $derived(
+		!sending && (!!messageState.text?.trim().length || !!messageState.image_url)
+	);
 
 	function removeImage() {
 		messageState.image_url = undefined;
