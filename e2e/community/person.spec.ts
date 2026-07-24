@@ -59,6 +59,51 @@ test.describe.serial('Community and person pages', () => {
 		await expect(personLink).toContainText(ids.familyName);
 	});
 
+	test('owner can use the person context panel on desktop', async ({ page }) => {
+		await page.setViewportSize({ width: 1400, height: 900 });
+		await loginAsOwner(page, PROJECT);
+		await page.goto(ids.personPath);
+
+		const panel = page.getByTestId('person-context-panel');
+		await expect(panel).toBeVisible();
+		await expect(panel.getByTestId('person-context-panel-name')).toHaveText(
+			`${ids.givenName} ${ids.familyName}`
+		);
+		await expect(panel.getByTestId('person-context-details')).toBeVisible();
+		await expect(panel.getByTestId('person-context-email-status')).toBeVisible();
+
+		await panel.getByRole('button', { name: 'Hide person profile' }).click();
+		const collapsedPanel = page.getByTestId('person-context-panel-collapsed');
+		await expect(collapsedPanel).toBeVisible();
+
+		await collapsedPanel.getByRole('button', { name: 'Show person profile' }).click();
+		await expect(panel).toBeVisible();
+
+		await panel.getByTestId('person-context-panel-full-profile').click();
+		await expect(page).toHaveURL(`${ids.personPath}/profile`);
+	});
+
+	test('owner can open and close the person context drawer on a small screen', async ({ page }) => {
+		await loginAsOwner(page, PROJECT);
+		await page.setViewportSize({ width: 390, height: 844 });
+		await page.goto(ids.personPath);
+
+		const drawerTrigger = page.getByTestId('person-context-drawer-trigger');
+		await expect(drawerTrigger).toBeVisible();
+		await expect(page.locator('[data-testid="person-context-panel"]:visible')).toHaveCount(0);
+
+		await drawerTrigger.click();
+		const drawerPanel = page.locator('[data-testid="person-context-panel"]:visible');
+		await expect(drawerPanel).toBeVisible();
+		await expect(drawerPanel.getByTestId('person-context-panel-name')).toHaveText(
+			`${ids.givenName} ${ids.familyName}`
+		);
+		await expect(drawerPanel.getByTestId('person-context-details')).toBeVisible();
+
+		await drawerPanel.getByRole('button', { name: 'Close person profile' }).click();
+		await expect(drawerPanel).toHaveCount(0);
+	});
+
 	test('owner can navigate from the timeline to the profile page', async ({ page }) => {
 		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
