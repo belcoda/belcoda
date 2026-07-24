@@ -3,13 +3,16 @@ import { newOrganizationFromWebsiteForm } from '$lib/schema/organization.js';
 import { parse } from 'valibot';
 import pino from '$lib/pino';
 import { env } from '$env/dynamic/private';
+
 const log = pino(import.meta.url);
+
 export async function POST(event) {
 	try {
 		const body = await event.request.json();
 		const parsed = parse(newOrganizationFromWebsiteForm, body);
 		const userId = event.locals.session?.session.userId;
 		const userEmail = event.locals.session?.user.email;
+
 		try {
 			const webhookResponse = await fetch(`${env.ONBOARDING_WEBHOOK_URL}`, {
 				method: 'POST',
@@ -36,6 +39,7 @@ export async function POST(event) {
 		} catch (error) {
 			log.error({ error }, 'Unable to trigger webhook on workspace creation');
 		}
+
 		return json({ success: true });
 	} catch (err) {
 		log.error({ err }, 'Validation for organization creation webhook failed');

@@ -47,6 +47,7 @@ const cache = new LRUCache<string, string>({
 });
 
 import { type LanguageCode, clampLocale } from '$lib/utils/language';
+import { organizationMetadataSchema } from '$lib/schema/organization';
 import { organizationSettingsSchema } from '$lib/schema/organization/settings';
 import { memberSettingsSchema } from '$lib/schema/member/settings';
 
@@ -259,6 +260,15 @@ export function buildBetterAuth(localeInput: string) {
 						},
 						input: true,
 						required: true
+					},
+					metadata: {
+						type: 'json',
+						validator: {
+							input: organizationMetadataSchema,
+							output: organizationMetadataSchema
+						},
+						input: true,
+						required: false
 					},
 					balance: {
 						type: 'number',

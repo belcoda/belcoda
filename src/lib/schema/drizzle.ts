@@ -16,7 +16,11 @@ import {
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 
-import type { OrganizationSchema, OrganizationPlanType } from '$lib/schema/organization';
+import type {
+	OrganizationSchema,
+	OrganizationPlanType,
+	OrganizationMetadataSchema
+} from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
 import type { UserSchema } from '$lib/schema/user';
@@ -95,6 +99,7 @@ export const organization = pgTable(
 		defaultLanguage: text('default_language').$type<LanguageCode>().notNull(),
 		defaultTimezone: text('default_timezone').notNull(),
 		settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
+		metadata: jsonb('metadata').$type<OrganizationMetadataSchema>(),
 		balance: integer('balance').notNull().default(0),
 		freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
 		freeEmailMessageCredits: integer('free_email_message_credits'),

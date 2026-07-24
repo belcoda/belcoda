@@ -3436,21 +3436,17 @@ msgstr "Select an option"
 msgid "Search engine"
 msgstr "Search engine"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Referral"
-msgstr "Referral"
+#~ msgid "Referral"
+#~ msgstr "Referral"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Training or conference"
-msgstr "Training or conference"
+#~ msgid "Training or conference"
+#~ msgstr "Training or conference"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Resources"
-msgstr "Resources"
+#~ msgid "Resources"
+#~ msgstr "Resources"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "How did you discover Belcoda?"
-msgstr "How did you discover Belcoda?"
+#~ msgid "How did you discover Belcoda?"
+#~ msgstr "How did you discover Belcoda?"
 
 #~ msgid "Select all that apply"
 #~ msgstr "Select all that apply"
@@ -3474,6 +3470,7 @@ msgstr "How did you discover Belcoda?"
 #~ msgstr "Making sure all data is synced and up to date"
 
 #: src/lib/utils/person/gender/render.ts
+#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
 msgstr "Other"
 
@@ -5714,3 +5711,35 @@ msgstr "Timeline"
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
 msgstr "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Friend or colleague"
+msgstr "Friend or colleague"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Event or webinar"
+msgstr "Event or webinar"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Partner organization"
+msgstr "Partner organization"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Community group"
+msgstr "Community group"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Belcoda resources"
+msgstr "Belcoda resources"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "How did you hear about Belcoda?"
+msgstr "How did you hear about Belcoda?"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Tell us where you heard about Belcoda"
+msgstr "Tell us where you heard about Belcoda"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Maximum 500 characters."
+msgstr "Maximum 500 characters."
