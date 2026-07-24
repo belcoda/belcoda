@@ -14,6 +14,7 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
+	import { toast } from 'svelte-sonner';
 
 	const { personId }: { personId: string } = $props();
 
@@ -60,6 +61,8 @@
 				})
 			);
 			messageState = returnDefaultMessageState();
+		} catch {
+			toast.error(t`Failed to send WhatsApp message`);
 		} finally {
 			sending = false;
 		}
