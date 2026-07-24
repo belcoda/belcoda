@@ -108,7 +108,16 @@
 		</InputGroup.Addon>
 	{/if}
 
-	<InputGroup.Textarea placeholder={t`Write your message...`} bind:value={messageState.text} />
+	<InputGroup.Textarea
+		placeholder={t`Write your message...`}
+		bind:value={messageState.text}
+		onkeydown={(event) => {
+			if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+				event.preventDefault();
+				sendMessage();
+			}
+		}}
+	/>
 
 	<InputGroup.Addon align="block-end">
 		<ImageUploadNew
