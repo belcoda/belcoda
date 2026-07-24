@@ -3,9 +3,8 @@ import { getTestUsers, signUpUser, verifyUserEmail, type UserRole } from '../hel
 import { AUTH_DIR, authStoragePath } from '../helpers/auth-storage';
 import {
 	BASE_URL,
-	E2E_COMMUNITY_MOCK_WABA_ID,
-	E2E_MOCK_WABA_ID,
 	E2E_PROJECTS,
+	getMockWabaId,
 	getOrgName,
 	type E2EProject
 } from '../helpers/config';
@@ -142,14 +141,7 @@ async function runE2eGlobalSetup() {
 			console.log(`  ✓ ${user.email} (${role})`);
 		}
 
-		let wabaId: string | null;
-		if (project === 'whatsapp-accounts') {
-			wabaId = null;
-		} else if (project === 'community') {
-			wabaId = E2E_COMMUNITY_MOCK_WABA_ID;
-		} else {
-			wabaId = E2E_MOCK_WABA_ID;
-		}
+		const wabaId = getMockWabaId(project);
 		const org = await createOrganization(
 			users.owner.email,
 			orgName,
