@@ -162,6 +162,13 @@
       "when": 1784741998469,
       "tag": "0022_safe_thing",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1784897861971,
+      "tag": "0023_faithful_kingpin",
+      "breakpoints": true
     }
   ]
 }
