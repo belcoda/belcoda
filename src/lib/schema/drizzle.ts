@@ -80,7 +80,19 @@ import {
 import { type SocialMedia, type PersonAddedFrom } from '$lib/schema/person/meta';
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
 import type { PetitionSettingsSchema, PetitionSignatureDetails } from './petition/settings';
-import type { Flow as FlowSchema } from '$lib/schema/flow';
+import type {
+	Flow as FlowSchema,
+	FlowSchemaVersion,
+	FlowTriggerConfiguration,
+	TriggerType as FlowTriggerType,
+	FlowExecutionStatus,
+	FlowExecutionInput,
+	FlowExecutionError,
+	FlowExecutionStepInput,
+	FlowExecutionStepError,
+	FlowExecutionStepOutput,
+	FlowExecutionStepStatus
+} from '$lib/schema/flow';
 
 type Permissions = {
 	[resourceType: string]: ('read' | 'write' | 'delete')[];
@@ -1112,6 +1124,178 @@ type WhatsappAccountValibotMatchesDrizzle = IsTrue<
 type WhatsappAccountDrizzleMatchesValibot = IsTrue<
 	typeof whatsappAccount.$inferSelect extends WhatsappAccount ? true : false
 >;
+
+export const flowDocument = pgTable(
+	'flow_document',
+	{
+		id: uuid('id').primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		teamId: uuid('team_id').references(() => team.id),
+		draftFlowDefinition: jsonb('draft_flow_definition')
+			.$type<FlowSchema>()
+			.notNull()
+			.default({ nodes: [], edges: [] }), // the nodes and edges as being edited, and displayed in the editor
+		draftRevision: integer('draft_revision').notNull().default(0), // incremented after every save. Used for optimistic locking.
+		schemaVersion: text('schema_version').$type<FlowSchemaVersion>().notNull(), // used to manage different schemas of flow definitions.
+		versionCounter: integer('version_counter').notNull().default(0), // used to give the version number to the new flowVersion resource when published
+		activeVersionId: uuid('active_version_id').references((): AnyPgColumn => flowVersion.id), //the one that should actually be exectuted
+		executionEnabled: boolean('execution_enabled').notNull().default(false), // true if execution is allowed for this flow
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' }),
+		retiredAt: timestamp('retired_at', { withTimezone: true, mode: 'date' }) //retired when standalone flows are deleted, or events deleted
+	},
+	(table) => [
+		check(
+			'flow_document_active_check',
+			sql`${table.executionEnabled} = false OR ${table.activeVersionId} IS NOT NULL`
+		),
+		check(
+			'flow_document_retired_check',
+			sql`${table.retiredAt} IS NULL OR ${table.executionEnabled} = false`
+		)
+	]
+);
+
+// one row per successful publication of a flow document's draftDefinition
+// rows are immutable once published, so this table is APPEND ONLY. A running execution will reference this row, so republishing or rolling back a flow won't affect in-progress executions.
+export const flowVersion = pgTable(
+	'flow_version',
+	{
+		id: uuid('id').primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		flowDocumentId: uuid('flow_document_id')
+			.notNull()
+			.references((): AnyPgColumn => flowDocument.id),
+		versionNumber: integer('version_number').notNull(),
+		flowDefinition: jsonb('flow_definition').$type<FlowSchema>().notNull(),
+		schemaVersion: text('schema_version').$type<FlowSchemaVersion>().notNull(),
+		checksum: text('checksum').notNull(), // SHA256 hash of the flow definition
+		publishedBy: uuid('published_by')
+			.notNull()
+			.references(() => user.id),
+		publishedAt: timestamp('published_at', { withTimezone: true, mode: 'date' }).notNull()
+	},
+	(table) => [unique('flow_version_unique').on(table.flowDocumentId, table.versionNumber)]
+);
+
+export const flowTriggerRegistration = pgTable(
+	'flow_trigger_registration',
+	{
+		id: uuid('id').primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		flowDocumentId: uuid('flow_document_id')
+			.notNull()
+			.references((): AnyPgColumn => flowDocument.id),
+		flowVersionId: uuid('flow_version_id')
+			.notNull()
+			.references((): AnyPgColumn => flowVersion.id),
+		triggerNodeId: uuid('trigger_node_id').notNull(),
+		triggerType: text('trigger_type').$type<FlowTriggerType>().notNull(),
+		referenceId: uuid('reference_id'),
+		configuration: jsonb('configuration').$type<FlowTriggerConfiguration>().notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+		nextRunAt: timestamp('next_run_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [
+		unique('flow_trigger_registration_unique').on(table.flowVersionId, table.triggerNodeId),
+		index('flow_trigger_registration_due_idx')
+			.on(table.nextRunAt)
+			.where(sql`${table.nextRunAt} IS NOT NULL`),
+		index('flow_trigger_reference_idx').on(
+			table.organizationId,
+			table.triggerType,
+			table.referenceId
+		),
+		index('flow_trigger_registration_flow_document_index').on(table.flowDocumentId)
+	]
+);
+
+export const flowExecution = pgTable(
+	'flow_execution',
+	{
+		id: uuid('id').primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		flowDocumentId: uuid('flow_document_id')
+			.notNull()
+			.references((): AnyPgColumn => flowDocument.id),
+		flowVersionId: uuid('flow_version_id')
+			.notNull()
+			.references((): AnyPgColumn => flowVersion.id),
+		triggerNodeId: uuid('trigger_node_id').notNull(),
+		sourceReferenceId: text('source_reference_id'),
+		idempotencyKey: text('idempotency_key').notNull().unique(),
+		personId: uuid('person_id').references(() => person.id),
+		status: text('status').$type<FlowExecutionStatus>().notNull(),
+		input: jsonb('input').$type<FlowExecutionInput>().notNull(),
+		error: jsonb('error').$type<FlowExecutionError>().notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		startedAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [
+		index('flow_execution_document').on(table.flowDocumentId),
+		index('flow_execution_version').on(table.flowVersionId),
+		index('flow_execution_organization').on(table.organizationId, table.status, table.createdAt)
+	]
+);
+
+export const flowExecutionStep = pgTable(
+	'flow_execution_step',
+	{
+		id: uuid('id').primaryKey(),
+		flowExecutionId: uuid('execution_id')
+			.notNull()
+			.references((): AnyPgColumn => flowExecution.id),
+		nodeId: uuid('step_node_id').notNull(),
+		invocationId: uuid('invocation_id').notNull(), // identifies a specific invocation of a node (flows might loop back)
+		attemptNumber: integer('attempt_number').notNull().default(0), // retries share invocationId and increment attemptNumber, but looping back to the same node would have a new invocationId and attemptNumnber 0
+		status: text('status').$type<FlowExecutionStepStatus>().notNull(),
+		input: jsonb('input').$type<FlowExecutionStepInput>().notNull(),
+		output: jsonb('output').$type<FlowExecutionStepOutput>().notNull(),
+		error: jsonb('error').$type<FlowExecutionStepError>().notNull(),
+		scheduledAt: timestamp('scheduled_at', { withTimezone: true, mode: 'date' }),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }),
+		completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [
+		unique('flow_execution_step_unique').on(
+			table.flowExecutionId,
+			table.invocationId,
+			table.attemptNumber
+		),
+		index('flow_execution_step_flow_execution_id_index')
+			.on(table.status, table.scheduledAt)
+			.where(sql`${table.status} in ('scheduled', 'running')`)
+	]
+);
+
+export const flow = pgTable('flow', {
+	id: uuid('id').primaryKey(),
+	organizationId: uuid('organization_id')
+		.notNull()
+		.references(() => organization.id),
+	teamId: uuid('team_id').references(() => team.id),
+	name: text('name').notNull(),
+	description: text('description').notNull(),
+	flowDocumentId: uuid('flow_document_id')
+		.notNull()
+		.references((): AnyPgColumn => flowDocument.id),
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+	archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
+	deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
+});
 
 // relations for all tables at the end of the file
 
