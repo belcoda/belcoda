@@ -4,6 +4,56 @@ import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 import { templateParamSource } from '$lib/schema/template-variables';
 
+export const schemaVersionOptions = ['1.0.0'] as const;
+export const schemaVersion = v.picklist(schemaVersionOptions);
+
+export const triggerTypeOptions = [
+	'cron',
+	'whatsappMessageActionCode',
+	'eventSignup',
+	'eventReminder',
+	'eventFollowUp'
+] as const;
+export const triggerType = v.picklist(triggerTypeOptions);
+export type TriggerType = v.InferOutput<typeof triggerType>;
+
+export const flowTriggerConfigurationSchema = v.object({}); //placeholder
+export type FlowTriggerConfiguration = v.InferOutput<typeof flowTriggerConfigurationSchema>;
+
+export const flowExecutionStatusOptions = [
+	'queued',
+	'pending',
+	'scheduled',
+	'running',
+	'completed',
+	'failed'
+] as const;
+export const flowExecutionStatus = v.picklist(flowExecutionStatusOptions);
+export type FlowExecutionStatus = v.InferOutput<typeof flowExecutionStatus>;
+
+export const flowExecutionInputSchema = v.object({}); //placeholder
+export type FlowExecutionInput = v.InferOutput<typeof flowExecutionInputSchema>;
+export const flowExecutionErrorSchema = v.object({}); //placeholder
+export type FlowExecutionError = v.InferOutput<typeof flowExecutionErrorSchema>;
+
+export const flowExecutionStepInputSchema = v.object({}); //placeholder
+export type FlowExecutionStepInput = v.InferOutput<typeof flowExecutionStepInputSchema>;
+export const flowExecutionStepErrorSchema = v.object({}); //placeholder
+export type FlowExecutionStepError = v.InferOutput<typeof flowExecutionStepErrorSchema>;
+export const flowExecutionStepOutputSchema = v.object({}); //placeholder
+export type FlowExecutionStepOutput = v.InferOutput<typeof flowExecutionStepOutputSchema>;
+
+export const flowExecutionStepStatusOptions = [
+	'queued',
+	'pending',
+	'running',
+	'completed',
+	'failed'
+] as const;
+export const flowExecutionStepStatus = v.picklist(flowExecutionStepStatusOptions);
+export type FlowExecutionStepStatus = v.InferOutput<typeof flowExecutionStepStatus>;
+
+export type FlowSchemaVersion = v.InferOutput<typeof schemaVersion>;
 export const nodeType = v.picklist([
 	'message',
 	'eventSignup',
