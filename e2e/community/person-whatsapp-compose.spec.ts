@@ -18,6 +18,7 @@ type PersonApi = {
 	givenName: string | null;
 	familyName: string | null;
 	phoneNumber: string | null;
+	doNotContact: boolean;
 };
 
 let cachedApiKey: string | null = null;
@@ -139,6 +140,49 @@ test.describe.serial('Community: person WhatsApp compose', () => {
 		await composePage.sendButton(composePage.individualComposer).click();
 
 		await expect(composePage.outgoingMessageText('E2E freeform reply')).toBeVisible({
+			timeout: 20_000
+		});
+	});
+
+	test('inbound STOP marks the person do not contact and remains idempotent', async ({
+		page,
+		request
+	}) => {
+		const client = createApiClient(request, cachedApiKey!);
+		const firstWebhook = buildWhatsAppInboundTextWebhook({
+			wabaId: getMockWabaId(PROJECT)!,
+			from: state.personPhone,
+			to: getE2EDefaultWhatsAppNumber(),
+			body: ' stop! '
+		});
+
+		const firstResponse = await postWhatsAppInboundWebhook(request, firstWebhook);
+		expect(firstResponse.status).toBe(200);
+		await expect
+			.poll(
+				async () => {
+					const response = await client.get<PersonApi>(`/api/v1/person/${state.personId}`);
+					return response.body.doNotContact;
+				},
+				{ timeout: 20_000 }
+			)
+			.toBe(true);
+
+		const repeatedWebhook = buildWhatsAppInboundTextWebhook({
+			wabaId: getMockWabaId(PROJECT)!,
+			from: state.personPhone,
+			to: getE2EDefaultWhatsAppNumber(),
+			body: 'STOP'
+		});
+		const repeatedResponse = await postWhatsAppInboundWebhook(request, repeatedWebhook);
+		expect(repeatedResponse.status).toBe(200);
+
+		const personResponse = await client.get<PersonApi>(`/api/v1/person/${state.personId}`);
+		expect(personResponse.body.doNotContact).toBe(true);
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto(`/community/${state.personId}/profile`);
+		await expect(page.getByText('Do not contact', { exact: true }).first()).toBeVisible({
 			timeout: 20_000
 		});
 	});
