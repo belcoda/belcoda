@@ -2,7 +2,7 @@ app = "belcoda-zero"
 primary_region = "fra"
 
 [build]
-image = "registry.hub.docker.com/rocicorp/zero:0.25.12"
+image = "registry.hub.docker.com/rocicorp/zero:1.8.0"
 
 [http_service]
 internal_port = 4848
