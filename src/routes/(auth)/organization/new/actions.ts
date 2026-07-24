@@ -3,7 +3,10 @@ import {
 	defaultOrganizationSettings,
 	type OrganizationSettingsSchema
 } from '$lib/schema/organization/settings';
-import { type NewOrganizationFromWebsiteForm } from '$lib/schema/organization';
+import {
+	buildOrganizationOnboardingMetadata,
+	type NewOrganizationFromWebsiteForm
+} from '$lib/schema/organization';
 import { authClient } from '$lib/auth-client';
 import { locale } from '$lib/index.svelte';
 import { getLocalTimeZone } from '@internationalized/date';
@@ -52,6 +55,7 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 		defaultLanguage: languageCode,
 		defaultTimezone: timezone,
 		settings,
+		metadata: buildOrganizationOnboardingMetadata(org),
 		logo,
 		icon
 	});
