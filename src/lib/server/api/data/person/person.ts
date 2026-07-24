@@ -403,3 +403,32 @@ export async function _updateMostRecentWhatsappMessageReceivedAtUnsafe({
 		);
 	}
 }
+
+export async function _markPersonDoNotContactUnsafe({
+	tx,
+	args
+}: {
+	tx: ServerTransaction;
+	args: {
+		personId: string;
+		organizationId: string;
+	};
+}): Promise<boolean> {
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(person)
+		.set({
+			doNotContact: true,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(person.id, args.personId),
+				eq(person.organizationId, args.organizationId),
+				eq(person.doNotContact, false),
+				isNull(person.deletedAt)
+			)
+		)
+		.returning({ id: person.id });
+
+	return updated !== undefined;
+}
