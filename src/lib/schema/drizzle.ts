@@ -16,7 +16,11 @@ import {
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 
-import type { OrganizationSchema, OrganizationPlanType } from '$lib/schema/organization';
+import type {
+	OrganizationSchema,
+	OrganizationPlanType,
+	OrganizationMetadataSchema
+} from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
 import type { UserSchema } from '$lib/schema/user';
@@ -95,6 +99,7 @@ export const organization = pgTable(
 		defaultLanguage: text('default_language').$type<LanguageCode>().notNull(),
 		defaultTimezone: text('default_timezone').notNull(),
 		settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
+		metadata: jsonb('metadata').$type<OrganizationMetadataSchema>(),
 		balance: integer('balance').notNull().default(0),
 		freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
 		freeEmailMessageCredits: integer('free_email_message_credits'),
@@ -1266,6 +1271,11 @@ export const activityRelations = relations(activity, ({ one }) => ({
 	user: one(user, {
 		fields: [activity.userId],
 		references: [user.id]
+	}),
+	// polymorphic relationship to whatsappMessage (other types of activities are less important to have the relationship mapped but can be added if needed)
+	whatsappMessage: one(whatsappMessage, {
+		fields: [activity.referenceId],
+		references: [whatsappMessage.id]
 	})
 }));
 
@@ -1315,6 +1325,21 @@ export const whatsappTemplateRelations = relations(whatsappTemplate, ({ one }) =
 	team: one(team, {
 		fields: [whatsappTemplate.teamId],
 		references: [team.id]
+	})
+}));
+
+export const whatsappMessageRelations = relations(whatsappMessage, ({ one }) => ({
+	organization: one(organization, {
+		fields: [whatsappMessage.organizationId],
+		references: [organization.id]
+	}),
+	whatsappAccount: one(whatsappAccount, {
+		fields: [whatsappMessage.whatsappAccountId],
+		references: [whatsappAccount.id]
+	}),
+	person: one(person, {
+		fields: [whatsappMessage.personId],
+		references: [person.id]
 	})
 }));
 
@@ -1446,5 +1471,21 @@ export const ledgerRelations = relations(ledger, ({ one }) => ({
 	organization: one(organization, {
 		fields: [ledger.organizationId],
 		references: [organization.id]
+	})
+}));
+
+// `whatsappAccount.referenceId` is polymorphic: it points at an organization for
+// organization-scoped accounts and at a user for user-scoped accounts. We expose
+// both relationships (there is no DB-level FK for either) so that Zero query
+// permissions can join through them. At query time the `scope` column is used to
+// pick which relationship is meaningful for a given row.
+export const whatsappAccountRelations = relations(whatsappAccount, ({ one }) => ({
+	organization: one(organization, {
+		fields: [whatsappAccount.referenceId],
+		references: [organization.id]
+	}),
+	user: one(user, {
+		fields: [whatsappAccount.referenceId],
+		references: [user.id]
 	})
 }));

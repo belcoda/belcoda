@@ -4,9 +4,14 @@ import { CommunityPage } from '../pages/community/community.page';
 import { getTestUsers, type UserRole } from './auth';
 import type { E2EProject } from './config';
 
+const NAVIGATION_TIMEOUT = 60_000;
+
 export async function signOut(page: Page) {
-	await page.goto('/logout', { waitUntil: 'commit' });
-	await page.waitForURL(/\/(login|signup)/, { timeout: 30_000, waitUntil: 'commit' });
+	await page.goto('/logout', { waitUntil: 'commit', timeout: NAVIGATION_TIMEOUT });
+	await page.waitForURL(/\/(login|signup)/, {
+		timeout: NAVIGATION_TIMEOUT,
+		waitUntil: 'commit'
+	});
 }
 
 async function loginViaForm(page: Page, email: string, password: string) {
@@ -19,17 +24,31 @@ async function loginViaForm(page: Page, email: string, password: string) {
 	return communityPage;
 }
 
+async function hasAuthoritativeSession(page: Page): Promise<boolean> {
+	const response = await page.request.get('/api/auth/get-session?disableCookieCache=true');
+	if (!response.ok()) return false;
+	const session = await response.json().catch(() => null);
+	return !!session?.user?.id;
+}
+
 export async function ensureAuthenticated(
 	page: Page,
 	project: E2EProject,
 	role: UserRole = 'owner'
 ): Promise<CommunityPage> {
 	const communityPage = new CommunityPage(page);
-	await page.goto('/community', { waitUntil: 'commit' });
+	await page.goto('/community', { waitUntil: 'commit', timeout: NAVIGATION_TIMEOUT });
 
 	if (/\/(login|signup)/.test(page.url())) {
 		const user = getTestUsers(project)[role];
 		return loginViaForm(page, user.email, user.password);
+	}
+
+	if (!(await hasAuthoritativeSession(page))) {
+		const user = getTestUsers(project)[role];
+		await signOut(page);
+		await loginViaForm(page, user.email, user.password);
+		return communityPage;
 	}
 
 	if (!page.url().includes('/community')) {

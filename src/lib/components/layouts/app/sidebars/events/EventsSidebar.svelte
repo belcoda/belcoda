@@ -26,7 +26,7 @@
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodeEventListCursor } from '$lib/utils/event/cursor';
 	import { bindEventsListPaginationReset } from '$lib/components/layouts/app/sidebars/events/events-list-pagination';
-	import { watch } from 'runed';
+	import { IsInViewport, watch } from 'runed';
 	import { formatNumber } from '$lib/utils/number';
 
 	const pageSize = 25;
@@ -83,6 +83,8 @@
 		pageSize
 	});
 	bindEventsListPaginationReset(() => paginatedEvents.reset());
+	let sentinel: HTMLElement | null = $state(null);
+	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 	const eventList = $derived.by(() =>
 		z.createQuery(queries.event.list(paginatedEvents.pageFilter))
 	);
@@ -93,15 +95,20 @@
 			paginatedEvents.handlePage(data);
 		}
 	);
-	function handleScroll(e: Event) {
-		const target = e.currentTarget as HTMLElement;
-		if (
-			paginatedEvents.hasMore &&
-			target.scrollHeight - target.scrollTop - target.clientHeight < 200
-		) {
-			paginatedEvents.loadMore();
+
+	watch(
+		() =>
+			[
+				sentinelIsInViewport.current,
+				paginatedEvents.hasMore,
+				paginatedEvents.items.length
+			] as const,
+		([isInViewport, hasMore]) => {
+			if (isInViewport && hasMore) {
+				paginatedEvents.loadMore();
+			}
 		}
-	}
+	);
 
 	function encodeEventCursor(event: ReadEventZero) {
 		return encodeEventListCursor({
@@ -155,7 +162,7 @@
 			/>
 			<EventFilter bind:filter={eventListFilter} />
 		</Sidebar.Header>
-		<Sidebar.Content onscroll={handleScroll} data-testid="events-sidebar-scroll">
+		<Sidebar.Content data-testid="events-sidebar-scroll">
 			<Sidebar.Group class="p-0">
 				<Sidebar.GroupContent class="h-full overflow-y-auto p-0" data-testid="events-sidebar-list">
 					<div class="flex flex-col">
@@ -166,6 +173,13 @@
 							<div class="pt-2 text-center text-xs text-muted-foreground">
 								{t`${formatNumber(paginatedEvents.items.length, locale.current)} shown`}
 							</div>
+							{#if paginatedEvents.hasMore}
+								<div
+									bind:this={sentinel}
+									class="h-1"
+									data-testid="events-sidebar-scroll-sentinel"
+								></div>
+							{/if}
 						{/if}
 						{#if eventList.details.type === 'unknown'}
 							{@render eventItemSkeleton()}

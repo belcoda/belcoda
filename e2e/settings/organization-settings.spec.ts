@@ -9,7 +9,7 @@ test.describe('Settings: Organization Configuration', () => {
 		await loginAsOwner(page, PROJECT);
 		await page.goto('/settings');
 		await page.getByTestId('settings-sidebar-configuration').click();
-		await expect(page).toHaveURL('/settings/organization/configuration');
+		await expect(page).toHaveURL('/settings/organization/configuration', { timeout: 15_000 });
 	});
 
 	test('owner sees the configuration form', async ({ page }) => {

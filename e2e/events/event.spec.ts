@@ -5,7 +5,8 @@ import { EventEditPage } from '../pages/events/event-edit.page';
 import { EventSignupsPage } from '../pages/events/event-signups.page';
 import { EventPublicPage } from '../pages/events/event-public-page.page';
 import { EventSurveyPage } from '../pages/events/event-survey.page';
-import { BASE_URL, getOrgSlug, slugifyTitle } from '../helpers/config';
+import { BASE_URL, getMockWabaId, getOrgSlug, slugifyTitle } from '../helpers/config';
+import { expectSidebarItemCountToReach } from '../helpers/infinite-scroll';
 import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
@@ -49,10 +50,7 @@ test.describe.serial('Events', () => {
 		const items = page.getByTestId('event-sidebar-item');
 		await expect(items).toHaveCount(25, { timeout: 15_000 });
 
-		await items.first().hover();
-		await page.mouse.wheel(0, 10_000);
-
-		await expect(items).toHaveCount(30, { timeout: 30_000 });
+		await expectSidebarItemCountToReach(items, 30, page, 'events-sidebar-scroll-sentinel');
 	});
 
 	test('owner can create an event', async ({ page }) => {
@@ -114,7 +112,9 @@ test.describe.serial('Events', () => {
 		await expectEventSlugPreview(page, ids.eventTitle);
 		await editPage.submit();
 
-		await editPage.waitForModal();
+		await expect(async () => {
+			await expect(editPage.createdModal).toBeVisible();
+		}).toPass({ timeout: 30_000 });
 		await editPage.closeModal();
 
 		await expect(page).toHaveURL(`/events/${ids.eventId}`, { timeout: 10_000 });
@@ -334,6 +334,7 @@ test.describe.serial('Events', () => {
 		const flowGivenName = `WA Flow ${suffix}`;
 
 		const webhookBody = buildWhatsAppInboundFlowReplyWebhook({
+			wabaId: getMockWabaId(PROJECT)!,
 			from: flowPhone,
 			to: getE2EDefaultWhatsAppNumber(),
 			responseJson: {
@@ -476,7 +477,7 @@ test.describe.serial('Event signup fields', () => {
 
 	test('public signup page shows standard address fields', async ({ page }) => {
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, eventSlug);
+		await publicPage.gotoViaPath(ORG_SLUG, eventSlug);
 
 		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
 		await expect(publicPage.addressLine1Input).toBeVisible();
@@ -487,7 +488,7 @@ test.describe.serial('Event signup fields', () => {
 
 	test('public signup page shows the custom question field', async ({ page }) => {
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, eventSlug);
+		await publicPage.gotoViaPath(ORG_SLUG, eventSlug);
 
 		await expect(publicPage.eventTitle).toBeVisible({ timeout: 10_000 });
 		await expect(page.getByLabel(CUSTOM_QUESTION_LABEL)).toBeVisible();
@@ -497,7 +498,7 @@ test.describe.serial('Event signup fields', () => {
 		const suffix = Date.now();
 
 		const publicPage = new EventPublicPage(page);
-		await publicPage.goto(ORG_SLUG, eventSlug);
+		await publicPage.gotoViaPath(ORG_SLUG, eventSlug);
 
 		await publicPage.fillSignupForm({
 			givenName: 'Fields',

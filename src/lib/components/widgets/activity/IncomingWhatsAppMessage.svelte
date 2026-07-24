@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type ReadActivityZero } from '$lib/schema/activity';
-	import { type ReadWhatsappMessageZero } from '$lib/schema/whatsapp-message';
+	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import Reply from '@lucide/svelte/icons/reply';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { locale, t } from '$lib/index.svelte';
@@ -30,121 +30,131 @@
 	{@const emojiReactionFromBelcoda = whatsappMessage.data.message.emojiReactions?.find(
 		(reaction) => reaction.viaBelcoda
 	)}
-	<div class="mb-4 flex items-center gap-1.5">
-		{#if whatsappMessage.data.message.audio_url}
-			<div
-				class="relative w-md rounded-lg bg-gray-50 p-2"
-				class:rounded-b-none={whatsappMessage.data.message.text ||
-					(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
-			>
-				<audio
-					class="w-full"
-					src={whatsappMessage.data.message.audio_url}
-					controls
-					preload="metadata"
+	<div class="mb-4 flex items-end gap-1.5">
+		{#if whatsappMessage.data.person}
+			<Avatar
+				src={whatsappMessage.data.person.profilePicture}
+				name1={whatsappMessage.data.person.givenName ?? ''}
+				name2={whatsappMessage.data.person.familyName}
+				class="size-6"
+			/>
+		{/if}
+		<div class="flex items-center gap-1.5">
+			{#if whatsappMessage.data.message.audio_url}
+				<div
+					class="relative w-md rounded-lg bg-gray-50 p-2"
+					class:rounded-b-none={whatsappMessage.data.message.text ||
+						(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
 				>
-					{t`Your browser does not support the audio tag.`}
-				</audio>
-				<div class="me-4 mt-1 flex w-full justify-end text-[11px] text-[#667781]">
-					{formatShortTimestamp(activity.createdAt, locale.current)}
-				</div>
-				<EmojiReactions
-					reactions={whatsappMessage.data.message.emojiReactions as EmojiReaction[]}
-				/>
-			</div>
-		{:else if whatsappMessage.data.message.sticker_url}
-			<div class="relative max-w-xs rounded-lg">
-				<img
-					src={whatsappMessage.data.message.sticker_url}
-					alt={t`WhatsApp sticker`}
-					class="rounded-xl"
-				/>
-				<div class="me-4 mt-1 flex w-full justify-end text-[11px] text-[#667781]">
-					{formatShortTimestamp(activity.createdAt, locale.current)}
-				</div>
-				<EmojiReactions
-					reactions={whatsappMessage.data.message.emojiReactions as EmojiReaction[]}
-				/>
-			</div>
-		{:else}
-			<div class="message-bubble message-received relative min-w-[150px]">
-				{#if whatsappMessage.data.message.image_url}
-					<img
-						class="h-auto w-full rounded-lg"
-						class:rounded-b-none={whatsappMessage.data.message.text ||
-							(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
-						src={whatsappMessage.data.message.image_url}
-						alt={t`WhatsApp message`}
-					/>
-				{/if}
-				{#if whatsappMessage.data.message.video_url}
-					<video
-						class="h-auto w-full rounded-lg"
-						class:rounded-b-none={whatsappMessage.data.message.text ||
-							(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
-						src={whatsappMessage.data.message.video_url}
+					<audio
+						class="w-full"
+						src={whatsappMessage.data.message.audio_url}
 						controls
 						preload="metadata"
 					>
-						<track
-							kind="captions"
-							src="/utils/empty-captions.vtt"
-							srcLang="en"
-							label={t`No captions available`}
-							default
-						/>
-						{t`Your browser does not support the video tag.`}
-					</video>
-				{/if}
-				{#if whatsappMessage.data.message.text}
-					<div class="message-text">{whatsappMessage.data.message.text}</div>
-				{/if}
-				<div
-					class="message-time flex items-center justify-end gap-2 text-[#667781]"
-					class:absolute={!whatsappMessage.data.message.text}
-					class:bottom-0={!whatsappMessage.data.message.text}
-					class:right-0={!whatsappMessage.data.message.text}
-					class:z-70={!whatsappMessage.data.message.text}
-					class:text-white={!whatsappMessage.data.message.text}
-				>
-					{formatShortTimestamp(activity.createdAt, locale.current)}
-				</div>
-				{#if whatsappMessage.data.message.buttons?.length && whatsappMessage.data.message.buttons.length > 0}
-					<div class="divide-y divide-gray-200 border-t border-gray-200">
-						{#each whatsappMessage.data.message.buttons as button}
-							<button
-								class="relative flex w-full items-center justify-center gap-2 py-1.5 text-center text-sm text-gray-600"
-							>
-								<Reply class="size-4" />
-								{button.text}
-							</button>
-						{/each}
+						{t`Your browser does not support the audio tag.`}
+					</audio>
+					<div class="me-4 mt-1 flex w-full justify-end text-[11px] text-[#667781]">
+						{formatShortTimestamp(activity.createdAt, locale.current)}
 					</div>
-				{/if}
-				<EmojiReactions
-					reactions={whatsappMessage.data.message.emojiReactions as EmojiReaction[]}
-				/>
-			</div>
-		{/if}
-		<EmojiSelector
-			hideIfSelected={true}
-			onTapSelectedEmojiBehaviour="select"
-			onEmojiSelect={(emoji) => {
-				if (!whatsappMessage.data) {
-					return;
-				}
-				z.mutate(
-					mutators.whatsappMessage.emojiReaction({
-						whatsappMessage: $state.snapshot(whatsappMessage.data),
-						emoji: $state.snapshot(emoji),
-						organizationId: appState.organizationId,
-						personId: activity.personId
-					})
-				);
-			}}
-			selectedEmoji={emojiReactionFromBelcoda?.emoji}
-			class="rounded-full p-1 text-gray-400 transition-colors hover:scale-110 hover:bg-gray-100 hover:text-gray-600"
-		/>
+					<EmojiReactions
+						reactions={whatsappMessage.data.message.emojiReactions as EmojiReaction[]}
+					/>
+				</div>
+			{:else if whatsappMessage.data.message.sticker_url}
+				<div class="relative max-w-xs rounded-lg">
+					<img
+						src={whatsappMessage.data.message.sticker_url}
+						alt={t`WhatsApp sticker`}
+						class="rounded-xl"
+					/>
+					<div class="me-4 mt-1 flex w-full justify-end text-[11px] text-[#667781]">
+						{formatShortTimestamp(activity.createdAt, locale.current)}
+					</div>
+					<EmojiReactions
+						reactions={whatsappMessage.data.message.emojiReactions as EmojiReaction[]}
+					/>
+				</div>
+			{:else}
+				<div class="message-bubble message-received relative min-w-[200px]">
+					{#if whatsappMessage.data.message.image_url}
+						<img
+							class="h-auto w-full rounded-lg"
+							class:rounded-b-none={whatsappMessage.data.message.text ||
+								(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
+							src={whatsappMessage.data.message.image_url}
+							alt={t`WhatsApp message`}
+						/>
+					{/if}
+					{#if whatsappMessage.data.message.video_url}
+						<video
+							class="h-auto w-full rounded-lg"
+							class:rounded-b-none={whatsappMessage.data.message.text ||
+								(whatsappMessage.data.message.buttons?.length ?? 0) > 0}
+							src={whatsappMessage.data.message.video_url}
+							controls
+							preload="metadata"
+						>
+							<track
+								kind="captions"
+								src="/utils/empty-captions.vtt"
+								srcLang="en"
+								label={t`No captions available`}
+								default
+							/>
+							{t`Your browser does not support the video tag.`}
+						</video>
+					{/if}
+					{#if whatsappMessage.data.message.text}
+						<div class="message-text">{whatsappMessage.data.message.text}</div>
+					{/if}
+					<div
+						class="message-time flex items-center justify-end gap-2 text-[#667781]"
+						class:absolute={!whatsappMessage.data.message.text}
+						class:bottom-0={!whatsappMessage.data.message.text}
+						class:right-0={!whatsappMessage.data.message.text}
+						class:z-70={!whatsappMessage.data.message.text}
+						class:text-white={!whatsappMessage.data.message.text}
+					>
+						{formatShortTimestamp(activity.createdAt, locale.current)}
+					</div>
+					{#if whatsappMessage.data.message.buttons?.length && whatsappMessage.data.message.buttons.length > 0}
+						<div class="divide-y divide-gray-200 border-t border-gray-200">
+							{#each whatsappMessage.data.message.buttons as button}
+								<button
+									class="relative flex w-full items-center justify-center gap-2 py-1.5 text-center text-sm text-gray-600"
+								>
+									<Reply class="size-4" />
+									{button.text}
+								</button>
+							{/each}
+						</div>
+					{/if}
+					<EmojiReactions
+						reactions={whatsappMessage.data.message.emojiReactions as EmojiReaction[]}
+					/>
+				</div>
+			{/if}
+			<EmojiSelector
+				hideIfSelected={true}
+				onTapSelectedEmojiBehaviour="select"
+				onEmojiSelect={(emoji) => {
+					if (!whatsappMessage.data) {
+						return;
+					}
+					z.mutate(
+						mutators.whatsappMessage.emojiReaction({
+							whatsappMessage: $state.snapshot(whatsappMessage.data),
+							emoji: $state.snapshot(emoji),
+							organizationId: appState.organizationId,
+							personId: activity.personId
+						})
+					);
+				}}
+				selectedEmoji={emojiReactionFromBelcoda?.emoji}
+				class="rounded-full p-1 text-gray-400 transition-colors hover:scale-110 hover:bg-gray-100 hover:text-gray-600"
+			/>
+		</div>
 	</div>
 {/if}
 

@@ -19,6 +19,9 @@ import {
 } from '$lib/server/api/data/event/signup';
 import { db } from '$lib/server/db';
 import { getAdminOwnerOrgs, getAuthedTeams } from '$lib/server/api/utils/auth/permissions.js';
+import { checkPublicActionRateLimit } from '$lib/server/api/utils/public-action-rate-limit';
+import { getClientIpFromRequest } from '$lib/server/utils/client-ip';
+import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
 
@@ -67,7 +70,7 @@ export async function load({ locals, params, url }) {
 }
 
 export const actions = {
-	signup: async ({ request, params }) => {
+	signup: async ({ request, params, getClientAddress, setHeaders }) => {
 		const organizationId = await _getOrganizationIdBySlugUnsafe({
 			organizationSlug: params.organizationSlug
 		});
@@ -85,6 +88,19 @@ export const actions = {
 		const form = await superValidate(request, valibot(surveySchema));
 		if (!form.valid) {
 			return fail(400, { form });
+		}
+		const rateLimit = checkPublicActionRateLimit({
+			action: 'event_signup',
+			organizationId,
+			resourceId: eventObj.id,
+			subject: getClientIpFromRequest(request, getClientAddress)
+		});
+		if (rateLimit.limited) {
+			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });
+			return fail(429, {
+				form,
+				error: 'Too many signup attempts. Please try again in a minute.'
+			});
 		}
 		try {
 			await db.transaction(async (tx) => {
@@ -115,7 +131,7 @@ export const actions = {
 			return fail(400, { form, error: err instanceof Error ? err.message : String(err) });
 		}
 	},
-	decline: async ({ request, params }) => {
+	decline: async ({ request, params, getClientAddress, setHeaders }) => {
 		const organizationId = await _getOrganizationIdBySlugUnsafe({
 			organizationSlug: params.organizationSlug
 		});
@@ -133,6 +149,19 @@ export const actions = {
 		const form = await superValidate(request, valibot(surveySchema));
 		if (!form.valid) {
 			return fail(400, { form });
+		}
+		const rateLimit = checkPublicActionRateLimit({
+			action: 'event_decline',
+			organizationId,
+			resourceId: eventObj.id,
+			subject: getClientIpFromRequest(request, getClientAddress)
+		});
+		if (rateLimit.limited) {
+			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });
+			return fail(429, {
+				form,
+				error: 'Too many decline attempts. Please try again in a minute.'
+			});
 		}
 		try {
 			await db.transaction(async (tx) => {
