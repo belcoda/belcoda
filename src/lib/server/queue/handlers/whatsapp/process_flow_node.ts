@@ -1,6 +1,6 @@
 import { db, drizzle } from '$lib/server/db';
-import { whatsappThread } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { person, whatsappThread } from '$lib/schema/drizzle';
+import { and, eq, isNull } from 'drizzle-orm';
 import { getQueue } from '$lib/server/queue';
 import { _addPersonTagData } from '$lib/server/api/data/person/tag';
 import { _addPersonTeamDataUnsafe } from '$lib/server/api/data/person/team';
@@ -11,8 +11,11 @@ import {
 	sendWhatsappTemplateMessage
 } from '$lib/server/utils/whatsapp/send_message';
 import { convertNodeToFullMessage } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
+import pino from '$lib/pino';
 
 import { v7 as uuidv7 } from 'uuid';
+
+const log = pino(import.meta.url);
 
 export async function processFlowNodeAction({
 	nodeId,
@@ -35,6 +38,17 @@ export async function processFlowNodeAction({
 
 	if (!node) {
 		throw new Error('Node not found');
+	}
+
+	if (
+		(node.type === 'message' || node.type === 'templateMessage') &&
+		(await isPersonOptedOut({ personId, organizationId }))
+	) {
+		log.info(
+			{ threadId, nodeId, personId, organizationId },
+			'Skipped queued WhatsApp message for opted-out person'
+		);
+		return;
 	}
 
 	await db.transaction(async (tx) => {
@@ -157,4 +171,23 @@ export async function processFlowNodeAction({
 			threadId
 		});
 	}
+}
+
+async function isPersonOptedOut({
+	personId,
+	organizationId
+}: {
+	personId: string;
+	organizationId: string;
+}): Promise<boolean> {
+	const personRecord = await drizzle.query.person.findFirst({
+		columns: { doNotContact: true },
+		where: and(
+			eq(person.id, personId),
+			eq(person.organizationId, organizationId),
+			isNull(person.deletedAt)
+		)
+	});
+
+	return personRecord?.doNotContact === true;
 }
