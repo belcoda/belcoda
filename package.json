@@ -120,7 +120,7 @@
 		"javascript-time-ago": "^2.6.4",
 		"jwt-decode": "^4.0.0",
 		"lexical": "0.40.0",
-		"lru-cache": "^11.5.1",
+		"lru-cache": "^11.5.2",
 		"melt": "^0.44.0",
 		"nanoid": "^6.0.0",
 		"papaparse": "^5.5.3",
