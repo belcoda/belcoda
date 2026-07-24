@@ -1,4 +1,4 @@
-const WHATSAPP_OPT_OUT_KEYWORDS = new Set(['STOP']);
+const WHATSAPP_OPT_OUT_KEYWORDS = new Set(['STOP', 'UNSUBSCRIBE']);
 const TRAILING_PUNCTUATION = new Set('.!?,;:');
 
 function stripTrailingPunctuation(message: string): string {
