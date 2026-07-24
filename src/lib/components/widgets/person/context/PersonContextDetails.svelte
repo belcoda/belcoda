@@ -10,14 +10,18 @@
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import NotebookPenIcon from '@lucide/svelte/icons/notebook-pen';
 	import PhoneIcon from '@lucide/svelte/icons/phone';
+	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TagsIcon from '@lucide/svelte/icons/tags';
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import VenusAndMarsIcon from '@lucide/svelte/icons/venus-and-mars';
+	import XIcon from '@lucide/svelte/icons/x';
 
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import PersonNoteForm from '$lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte';
 	import { locale, t } from '$lib/index.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
 	import { appState } from '$lib/state.svelte';
@@ -39,6 +43,7 @@
 		whatsappWindowOpen: boolean;
 	} = $props();
 
+	let addingNote = $state(false);
 	const memberSince = $derived(
 		new Intl.DateTimeFormat(locale.current, {
 			month: 'short',
@@ -62,6 +67,15 @@
 	const hiddenTeamCount = $derived(Math.max(0, person.teams.length - visibleTeams.length));
 	const hiddenTeamCountLabel = $derived(formatNumber(hiddenTeamCount, locale.current));
 	const latestNote = $derived(person.notes[0]);
+	const latestNoteCreatedAt = $derived(
+		latestNote
+			? formatShortTimestamp(
+					latestNote.createdAt,
+					locale.current,
+					appState.activeOrganization?.data?.defaultTimezone
+				)
+			: null
+	);
 	const work = $derived([person.position, person.workplace].filter(Boolean).join(' - '));
 	const dateOfBirth = $derived(
 		person.dateOfBirth
@@ -83,7 +97,7 @@
 	);
 	const communicationLabel = $derived(t`Communication`);
 	const organizingLabel = $derived(t`Organizing`);
-	const latestNoteLabel = $derived(t`Latest note`);
+	const notesLabel = $derived(t`Notes`);
 	const detailsLabel = $derived(t`Details`);
 	const contactLabel = $derived(t`Contact`);
 </script>
@@ -187,21 +201,50 @@
 		</section>
 	{/if}
 
-	{#if latestNote}
-		<Separator />
-		<section aria-label={latestNoteLabel}>
-			<h2 class="mb-3 flex items-center gap-2 text-sm font-semibold">
+	<Separator />
+	<section aria-label={notesLabel}>
+		<div class="mb-3 flex min-h-8 items-center justify-between gap-2">
+			<h2 class="flex items-center gap-2 text-sm font-semibold">
 				<NotebookPenIcon class="size-4 text-muted-foreground" />
-				{latestNoteLabel}
+				{notesLabel}
 			</h2>
-			<p
-				class="line-clamp-4 text-sm break-words whitespace-pre-wrap"
-				data-testid="person-context-note"
+			<Button
+				variant="ghost"
+				size="sm"
+				onclick={() => (addingNote = !addingNote)}
+				aria-expanded={addingNote}
+				data-testid="person-context-add-note"
 			>
-				{latestNote.note}
+				{#if addingNote}
+					<XIcon />
+					{t`Cancel`}
+				{:else}
+					<PlusIcon />
+					{t`Add note`}
+				{/if}
+			</Button>
+		</div>
+
+		{#if addingNote}
+			<PersonNoteForm personId={person.id} onNotesChanged={() => (addingNote = false)} />
+		{:else if latestNote}
+			<div class="border-s-2 border-primary/40 ps-3">
+				<p
+					class="line-clamp-4 text-sm break-words whitespace-pre-wrap"
+					data-testid="person-context-note"
+				>
+					{latestNote.note}
+				</p>
+				{#if latestNoteCreatedAt}
+					<p class="mt-2 text-xs text-muted-foreground">{latestNoteCreatedAt}</p>
+				{/if}
+			</div>
+		{:else}
+			<p class="text-sm text-muted-foreground" data-testid="person-context-no-notes">
+				{t`No notes yet.`}
 			</p>
-		</section>
-	{/if}
+		{/if}
+	</section>
 
 	<Separator />
 	<section aria-label={detailsLabel}>

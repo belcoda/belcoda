@@ -72,6 +72,12 @@ test.describe.serial('Community and person pages', () => {
 		await expect(panel.getByTestId('person-context-details')).toBeVisible();
 		await expect(panel.getByTestId('person-context-email-status')).toBeVisible();
 
+		const noteText = `Context panel note ${Date.now()}`;
+		await panel.getByTestId('person-context-add-note').click();
+		await panel.getByTestId('note-form-textarea').fill(noteText);
+		await panel.getByTestId('note-form-submit').click();
+		await expect(panel.getByTestId('person-context-note')).toHaveText(noteText);
+
 		await panel.getByRole('button', { name: 'Hide person profile' }).click();
 		const collapsedPanel = page.getByTestId('person-context-panel-collapsed');
 		await expect(collapsedPanel).toBeVisible();
@@ -265,6 +271,11 @@ test.describe.serial('Community and person pages', () => {
 
 		await expect(page.getByTestId('person-note-item').first()).toBeVisible({ timeout: 10_000 });
 		await expect(page.getByTestId('person-note-content').first()).toHaveText(noteText);
+
+		await page.keyboard.press('Escape');
+		const contextPanel = page.getByTestId('person-context-panel');
+		await expect(contextPanel).toBeVisible();
+		await expect(contextPanel.getByTestId('person-context-note')).toHaveText(noteText);
 	});
 
 	test('owner can delete the person from the person profile page', async ({ page }) => {

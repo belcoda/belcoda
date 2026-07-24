@@ -83,6 +83,7 @@ msgstr "Cor de destaque para estados de sucesso e elementos secundários em pág
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
@@ -710,6 +711,7 @@ msgstr "Limpar cor"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Notes"
 msgstr "Notas"
 
@@ -5818,9 +5820,8 @@ msgstr ""
 msgid "+{0} more"
 msgstr ""
 
-#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
-msgid "Latest note"
-msgstr ""
+#~ msgid "Latest note"
+#~ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "This person should not receive communications."
@@ -5861,4 +5862,13 @@ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Work"
+msgstr ""
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Add note"
+msgstr ""
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "No notes yet."
 msgstr ""

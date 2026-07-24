@@ -83,6 +83,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
@@ -710,6 +711,7 @@ msgstr "Clear color"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Notes"
 msgstr "Notes"
 
@@ -5834,9 +5836,8 @@ msgstr "Contact"
 msgid "+{0} more"
 msgstr "+{0} more"
 
-#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
-msgid "Latest note"
-msgstr "Latest note"
+#~ msgid "Latest note"
+#~ msgstr "Latest note"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "This person should not receive communications."
@@ -5878,3 +5879,12 @@ msgstr "Organizing"
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Work"
 msgstr "Work"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Add note"
+msgstr "Add note"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "No notes yet."
+msgstr "No notes yet."
