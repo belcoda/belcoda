@@ -5890,3 +5890,11 @@ msgstr "Maximum 500 characters."
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "{0} unread WhatsApp messages"
 msgstr "{0} unread WhatsApp messages"
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Today"
+msgstr "Today"
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Yesterday"
+msgstr "Yesterday"
