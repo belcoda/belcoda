@@ -5735,3 +5735,11 @@ msgstr "Tell us where you heard about Belcoda"
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Maximum 500 characters."
 msgstr "Maximum 500 characters."
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Today"
+msgstr "Today"
+
+#: src/lib/components/widgets/activity/ActivityTimeline.svelte
+msgid "Yesterday"
+msgstr "Yesterday"
