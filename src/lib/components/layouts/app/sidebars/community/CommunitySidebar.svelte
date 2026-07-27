@@ -114,6 +114,8 @@
 
 {#snippet personItem(person: ReadPersonZero)}
 	{@const unreadMessageCount = unreadWhatsappMessageCountsByPersonId.get(person.id) ?? 0}
+	{@const unreadMessageCountDisplay =
+		unreadMessageCount > 99 ? '99+' : formatNumber(unreadMessageCount, locale.current)}
 	<a
 		data-testid="community-person-list-link"
 		data-person-id={person.id}
@@ -142,10 +144,10 @@
 					</span>
 					{#if unreadMessageCount > 0}
 						<span
-							class="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-primary-foreground"
+							class="flex h-5 w-7 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-primary-foreground"
 							title={t`Unread WhatsApp`}
 						>
-							<span aria-hidden="true">{formatNumber(unreadMessageCount, locale.current)}</span>
+							<span aria-hidden="true">{unreadMessageCountDisplay}</span>
 							<span class="sr-only">
 								{t`${formatNumber(unreadMessageCount, locale.current)} unread WhatsApp messages`}
 							</span>
