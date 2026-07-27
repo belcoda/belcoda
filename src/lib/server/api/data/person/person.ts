@@ -403,3 +403,56 @@ export async function _updateMostRecentWhatsappMessageReceivedAtUnsafe({
 		);
 	}
 }
+
+export async function _markPersonUnsubscribedUnsafe({
+	tx,
+	args
+}: {
+	tx: ServerTransaction;
+	args: {
+		personId: string;
+		organizationId: string;
+	};
+}): Promise<boolean> {
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(person)
+		.set({
+			subscribed: false,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(person.id, args.personId),
+				eq(person.organizationId, args.organizationId),
+				eq(person.subscribed, true),
+				isNull(person.deletedAt)
+			)
+		)
+		.returning();
+
+	if (!updated) {
+		return false;
+	}
+
+	// Webhook processing failure should not block the opt-out from being applied
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
+				organizationId: args.organizationId,
+				payload: {
+					type: 'person.updated',
+					data: parse(personApiSchema, updated)
+				}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	} catch (error) {
+		log.error(
+			{ error, personId: args.personId, organizationId: args.organizationId },
+			'Failed to enqueue person.updated webhook after WhatsApp opt-out'
+		);
+	}
+
+	return true;
+}
