@@ -1,5 +1,5 @@
 import type { ServerTransaction } from '@rocicorp/zero';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { parse } from 'valibot';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -9,6 +9,8 @@ import {
 	type CreateNotificationSchema,
 	markNotificationAsReadMutatorSchemaZero,
 	type MarkNotificationAsReadMutatorSchemaZero,
+	markPersonWhatsappNotificationsAsReadMutatorSchemaZero,
+	type MarkPersonWhatsappNotificationsAsReadMutatorSchemaZero,
 	dismissNotificationMutatorSchemaZero,
 	type DismissNotificationMutatorSchemaZero,
 	markAllNotificationsAsReadMutatorSchemaZero,
@@ -199,6 +201,49 @@ export async function dismissNotification({
 		throw new Error('Unable to dismiss notification');
 	}
 	return updated;
+}
+
+export async function markPersonWhatsappNotificationsAsRead({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext & { userId: string };
+	args: MarkPersonWhatsappNotificationsAsReadMutatorSchemaZero;
+}) {
+	const parsed = parse(markPersonWhatsappNotificationsAsReadMutatorSchemaZero, args);
+	await getOrganizationMember({
+		tx,
+		args: { organizationId: parsed.metadata.organizationId, userId: ctx.userId }
+	});
+
+	const now = new Date();
+	return tx.dbTransaction.wrappedTransaction
+		.update(notification)
+		.set({
+			status: 'read',
+			readAt: now,
+			updatedAt: now
+		})
+		.where(
+			and(
+				eq(notification.organizationId, parsed.metadata.organizationId),
+				eq(notification.userId, ctx.userId),
+				eq(notification.status, 'unread'),
+				or(
+					and(
+						eq(notification.type, 'whatsapp_message'),
+						sql`${notification.payload}->>'personId' = ${parsed.metadata.personId}`
+					),
+					and(
+						eq(notification.type, 'whatsapp_unread'),
+						eq(notification.referenceId, parsed.metadata.personId)
+					)
+				)
+			)
+		)
+		.returning();
 }
 
 export async function markAllNotificationsAsRead({

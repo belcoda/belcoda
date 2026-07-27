@@ -65,6 +65,16 @@ export type MarkNotificationAsReadMutatorSchemaZero = v.InferOutput<
 	typeof markNotificationAsReadMutatorSchemaZero
 >;
 
+export const markPersonWhatsappNotificationsAsReadMutatorSchemaZero = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid,
+		personId: helpers.uuid
+	})
+});
+export type MarkPersonWhatsappNotificationsAsReadMutatorSchemaZero = v.InferOutput<
+	typeof markPersonWhatsappNotificationsAsReadMutatorSchemaZero
+>;
+
 export const dismissNotificationMutatorSchemaZero = v.object({
 	metadata: notificationMutatorMetadata
 });
