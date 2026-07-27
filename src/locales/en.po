@@ -83,6 +83,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
@@ -505,6 +506,7 @@ msgstr "Create person"
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Teams.svelte
 #: src/routes/(app)/settings/teams/+page.svelte
@@ -532,6 +534,7 @@ msgstr "No teams found."
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/person/filter/FilterControls.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Tags.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
@@ -707,6 +710,7 @@ msgstr "Clear color"
 
 #: src/lib/components/layouts/app/action-menus/person/NotesAction.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Notes"
 msgstr "Notes"
 
@@ -723,6 +727,7 @@ msgstr "Call"
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
@@ -816,6 +821,7 @@ msgstr "Person deleted"
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
@@ -829,11 +835,13 @@ msgid "Email"
 msgstr "Email"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
 msgid "Subscribed"
 msgstr "Subscribed"
 
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Phone.svelte
 msgid "Do not contact"
@@ -1022,6 +1030,7 @@ msgstr "Date"
 msgid "Imported by"
 msgstr "Imported by"
 
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Details"
 msgstr "Details"
@@ -1433,6 +1442,7 @@ msgid "Who is this petition directed to? (e.g., \"The Mayor of Springfield\", \"
 msgstr "Who is this petition directed to? (e.g., \"The Mayor of Springfield\", \"Parliament\")"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Location"
 msgstr "Location"
 
@@ -1737,6 +1747,7 @@ msgid "Contact details"
 msgstr "Contact details"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Preferred language"
 msgstr "Preferred language"
 
@@ -1746,12 +1757,14 @@ msgid "Personal details"
 msgstr "Personal details"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Date of birth"
 msgstr "Date of birth"
 
 #: src/lib/components/forms/event/render_survey_question.ts
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Gender"
 msgstr "Gender"
 
@@ -5704,6 +5717,142 @@ msgstr "Timeline"
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
 msgstr "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/routes/(app)/community/[personId]/+page.svelte
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Show person profile"
+msgstr "Show person profile"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Person profile"
+msgstr "Person profile"
+
+#: src/routes/(app)/community/[personId]/+page.svelte
+msgid "Profile information for the current conversation"
+msgstr "Profile information for the current conversation"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "View full profile"
+msgstr "View full profile"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "No contact details"
+msgstr "No contact details"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Hide person profile"
+msgstr "Hide person profile"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Close person profile"
+msgstr "Close person profile"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Loading person profile"
+msgstr "Loading person profile"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Unable to load person profile"
+msgstr "Unable to load person profile"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Try again in a moment."
+msgstr "Try again in a moment."
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Profile unavailable"
+msgstr "Profile unavailable"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "You do not have permission to view this person's profile."
+msgstr "You do not have permission to view this person's profile."
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "Person not found"
+msgstr "Person not found"
+
+#: src/lib/components/widgets/person/context/PersonContextPanel.svelte
+msgid "This person may have been removed from the organization."
+msgstr "This person may have been removed from the organization."
+
+#~ msgid "Overview"
+#~ msgstr "Overview"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Member since"
+msgstr "Member since"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Contact"
+msgstr "Contact"
+
+#. 0: hiddenTeamCountLabel
+#. 0: hiddenTagCountLabel
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "+{0} more"
+msgstr "+{0} more"
+
+#~ msgid "Latest note"
+#~ msgstr "Latest note"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "This person should not receive communications."
+msgstr "This person should not receive communications."
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Communication"
+msgstr "Communication"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Not configured"
+msgstr "Not configured"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Unavailable"
+msgstr "Unavailable"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Reply window open"
+msgstr "Reply window open"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Template required"
+msgstr "Template required"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Unsubscribed"
+msgstr "Unsubscribed"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Last active"
+msgstr "Last active"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Organizing"
+msgstr "Organizing"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Work"
+msgstr "Work"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "Add note"
+msgstr "Add note"
+
+#: src/lib/components/widgets/person/context/PersonContextDetails.svelte
+msgid "No notes yet."
+msgstr "No notes yet."
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Friend or colleague"
