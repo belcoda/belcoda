@@ -1,7 +1,6 @@
 import type { QueryContext } from '$lib/zero/schema';
 import { type ListFilter } from '$lib/schema/helpers';
 import type { NotificationPayload } from '$lib/schema/notification/payload';
-import type { ReadWhatsappAccountZero } from '$lib/schema/whatsapp-account';
 import { SvelteMap } from 'svelte/reactivity';
 
 import { z } from '$lib/zero.svelte';
