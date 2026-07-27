@@ -25,8 +25,9 @@ vi.mock('$lib/pino', () => ({
 const organizationId = '11111111-1111-4111-8111-111111111111';
 const threadId = '22222222-2222-4222-8222-222222222222';
 const templateNodeId = '33333333-3333-4333-8333-333333333333';
-const optedOutPersonId = '44444444-4444-4444-8444-444444444444';
-const eligiblePersonId = '55555555-5555-4555-8555-555555555555';
+const unsubscribedPersonId = '44444444-4444-4444-8444-444444444444';
+const doNotContactPersonId = '55555555-5555-4555-8555-555555555555';
+const eligiblePersonId = '66666666-6666-4666-8666-666666666666';
 
 describe('WhatsApp broadcast queue construction', () => {
 	beforeEach(() => {
@@ -35,16 +36,24 @@ describe('WhatsApp broadcast queue construction', () => {
 		vi.mocked(getQueue).mockReset();
 	});
 
-	it('does not enqueue opted-out recipients', async () => {
+	it('does not enqueue unsubscribed or do-not-contact recipients', async () => {
 		vi.mocked(getPersonRecordsFromFilter).mockResolvedValueOnce([
 			{
-				id: optedOutPersonId,
+				id: unsubscribedPersonId,
 				phoneNumber: '+15550000001',
+				subscribed: false,
+				doNotContact: false
+			},
+			{
+				id: doNotContactPersonId,
+				phoneNumber: '+15550000002',
+				subscribed: true,
 				doNotContact: true
 			},
 			{
 				id: eligiblePersonId,
-				phoneNumber: '+15550000002',
+				phoneNumber: '+15550000003',
+				subscribed: true,
 				doNotContact: false
 			}
 		] as never);
@@ -62,14 +71,14 @@ describe('WhatsApp broadcast queue construction', () => {
 				flow: {
 					nodes: [
 						{
-							id: '66666666-6666-4666-8666-666666666666',
+							id: '77777777-7777-4777-8777-777777777777',
 							type: 'targeting',
 							data: { filter: { type: 'and', filters: [], exclude: [] } }
 						},
 						{
 							id: templateNodeId,
 							type: 'templateMessage',
-							data: { templateId: '77777777-7777-4777-8777-777777777777' }
+							data: { templateId: '88888888-8888-4888-8888-888888888888' }
 						}
 					],
 					edges: []
@@ -85,7 +94,10 @@ describe('WhatsApp broadcast queue construction', () => {
 			threadId
 		});
 		expect(processFlowNodeAction).not.toHaveBeenCalledWith(
-			expect.objectContaining({ personId: optedOutPersonId })
+			expect.objectContaining({ personId: unsubscribedPersonId })
+		);
+		expect(processFlowNodeAction).not.toHaveBeenCalledWith(
+			expect.objectContaining({ personId: doNotContactPersonId })
 		);
 	});
 });

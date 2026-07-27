@@ -33,17 +33,19 @@ export async function buildWhatsappThreadSendQueue({
 			userId: sentByUserId
 		});
 	});
-	const eligibleRecipients = recipients.filter((recipient) => !recipient.doNotContact);
-	const optedOutRecipientCount = recipients.length - eligibleRecipients.length;
+	const eligibleRecipients = recipients.filter(
+		(recipient) => recipient.subscribed && !recipient.doNotContact
+	);
+	const ineligibleRecipientCount = recipients.length - eligibleRecipients.length;
 
-	if (optedOutRecipientCount > 0) {
+	if (ineligibleRecipientCount > 0) {
 		log.info(
 			{
 				threadId: thread.id,
 				eligibleRecipientCount: eligibleRecipients.length,
-				optedOutRecipientCount
+				ineligibleRecipientCount
 			},
-			'Excluded opted-out people from WhatsApp broadcast'
+			'Excluded ineligible people from WhatsApp broadcast'
 		);
 	}
 
