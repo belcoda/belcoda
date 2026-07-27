@@ -18,6 +18,7 @@ type PersonApi = {
 	givenName: string | null;
 	familyName: string | null;
 	phoneNumber: string | null;
+	subscribed: boolean;
 	doNotContact: boolean;
 };
 
@@ -144,7 +145,7 @@ test.describe.serial('Community: person WhatsApp compose', () => {
 		});
 	});
 
-	test('inbound STOP marks the person do not contact and remains idempotent', async ({
+	test('inbound STOP unsubscribes the person while individual replies remain available', async ({
 		page,
 		request
 	}) => {
@@ -162,11 +163,14 @@ test.describe.serial('Community: person WhatsApp compose', () => {
 			.poll(
 				async () => {
 					const response = await client.get<PersonApi>(`/api/v1/person/${state.personId}`);
-					return response.body.doNotContact;
+					return {
+						subscribed: response.body.subscribed,
+						doNotContact: response.body.doNotContact
+					};
 				},
 				{ timeout: 20_000 }
 			)
-			.toBe(true);
+			.toEqual({ subscribed: false, doNotContact: false });
 
 		const repeatedWebhook = buildWhatsAppInboundTextWebhook({
 			wabaId: getMockWabaId(PROJECT)!,
@@ -178,11 +182,17 @@ test.describe.serial('Community: person WhatsApp compose', () => {
 		expect(repeatedResponse.status).toBe(200);
 
 		const personResponse = await client.get<PersonApi>(`/api/v1/person/${state.personId}`);
-		expect(personResponse.body.doNotContact).toBe(true);
+		expect(personResponse.body.subscribed).toBe(false);
+		expect(personResponse.body.doNotContact).toBe(false);
 
 		await loginAsOwner(page, PROJECT);
-		await page.goto(`/community/${state.personId}/profile`);
-		await expect(page.getByText('Do not contact', { exact: true }).first()).toBeVisible({
+		const composePage = new PersonWhatsappComposePage(page);
+		await composePage.gotoPersonTimeline(state.personId);
+		await expect(composePage.individualComposer).toBeVisible({ timeout: 15_000 });
+
+		await composePage.individualMessageInput().fill('E2E reply after opt-out');
+		await composePage.sendButton(composePage.individualComposer).click();
+		await expect(composePage.outgoingMessageText('E2E reply after opt-out')).toBeVisible({
 			timeout: 20_000
 		});
 	});
