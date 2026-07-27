@@ -404,7 +404,7 @@ export async function _updateMostRecentWhatsappMessageReceivedAtUnsafe({
 	}
 }
 
-export async function _markPersonDoNotContactUnsafe({
+export async function _markPersonUnsubscribedUnsafe({
 	tx,
 	args
 }: {
@@ -417,14 +417,14 @@ export async function _markPersonDoNotContactUnsafe({
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(person)
 		.set({
-			doNotContact: true,
+			subscribed: false,
 			updatedAt: new Date()
 		})
 		.where(
 			and(
 				eq(person.id, args.personId),
 				eq(person.organizationId, args.organizationId),
-				eq(person.doNotContact, false),
+				eq(person.subscribed, true),
 				isNull(person.deletedAt)
 			)
 		)

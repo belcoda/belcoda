@@ -33,7 +33,7 @@ vi.mock('$lib/server/utils/whatsapp/ycloud/convert_outbound', () => ({
 }));
 
 vi.mock('$lib/server/api/data/person/person', () => ({
-	_markPersonDoNotContactUnsafe: vi.fn(),
+	_markPersonUnsubscribedUnsafe: vi.fn(),
 	_updateMostRecentWhatsappMessageReceivedAtUnsafe: vi.fn()
 }));
 

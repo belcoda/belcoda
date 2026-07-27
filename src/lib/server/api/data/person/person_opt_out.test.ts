@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getQueue } from '$lib/server/queue';
-import { _markPersonDoNotContactUnsafe } from './person';
+import { _markPersonUnsubscribedUnsafe } from './person';
 
 vi.mock('$lib/server/queue', () => ({
 	getQueue: vi.fn(),
@@ -28,7 +28,7 @@ const organizationId = '22222222-2222-4222-8222-222222222222';
 function createTransaction(returnedRows: unknown[]) {
 	const returning = vi.fn().mockResolvedValue(returnedRows);
 	const where = vi.fn(() => ({ returning }));
-	const set = vi.fn(() => ({ where }));
+	const set = vi.fn((_values: Record<string, unknown>) => ({ where }));
 	const update = vi.fn(() => ({ set }));
 	const tx = {
 		dbTransaction: {
@@ -47,12 +47,17 @@ describe('WhatsApp person opt-out updates', () => {
 	});
 
 	it('emits person.updated when the preference changes', async () => {
-		const updatedPerson = { id: personId, organizationId, doNotContact: true };
+		const updatedPerson = {
+			id: personId,
+			organizationId,
+			subscribed: false,
+			doNotContact: false
+		};
 		const { tx, set } = createTransaction([updatedPerson]);
 		const triggerWebhook = vi.fn();
 		vi.mocked(getQueue).mockResolvedValueOnce({ triggerWebhook } as never);
 
-		const changed = await _markPersonDoNotContactUnsafe({
+		const changed = await _markPersonUnsubscribedUnsafe({
 			tx: tx as never,
 			args: { personId, organizationId }
 		});
@@ -60,10 +65,11 @@ describe('WhatsApp person opt-out updates', () => {
 		expect(changed).toBe(true);
 		expect(set).toHaveBeenCalledWith(
 			expect.objectContaining({
-				doNotContact: true,
+				subscribed: false,
 				updatedAt: expect.any(Date)
 			})
 		);
+		expect(set.mock.calls[0][0]).not.toHaveProperty('doNotContact');
 		expect(triggerWebhook).toHaveBeenCalledWith(
 			{
 				organizationId,
@@ -76,10 +82,10 @@ describe('WhatsApp person opt-out updates', () => {
 		);
 	});
 
-	it('does not emit another webhook when the person is already opted out', async () => {
+	it('does not emit another webhook when the person is already unsubscribed', async () => {
 		const { tx } = createTransaction([]);
 
-		const changed = await _markPersonDoNotContactUnsafe({
+		const changed = await _markPersonUnsubscribedUnsafe({
 			tx: tx as never,
 			args: { personId, organizationId }
 		});
@@ -89,10 +95,10 @@ describe('WhatsApp person opt-out updates', () => {
 	});
 
 	it('keeps the opt-out when webhook enqueueing fails', async () => {
-		const { tx } = createTransaction([{ id: personId, organizationId, doNotContact: true }]);
+		const { tx } = createTransaction([{ id: personId, organizationId, subscribed: false }]);
 		vi.mocked(getQueue).mockRejectedValueOnce(new Error('queue unavailable'));
 
-		const changed = await _markPersonDoNotContactUnsafe({
+		const changed = await _markPersonUnsubscribedUnsafe({
 			tx: tx as never,
 			args: { personId, organizationId }
 		});

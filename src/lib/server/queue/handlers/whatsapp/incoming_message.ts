@@ -14,7 +14,7 @@ import { eq } from 'drizzle-orm';
 import { whatsappThread } from '$lib/schema/drizzle';
 import { extractButtonActionString } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
 import {
-	_markPersonDoNotContactUnsafe,
+	_markPersonUnsubscribedUnsafe,
 	_updateMostRecentWhatsappMessageReceivedAtUnsafe
 } from '$lib/server/api/data/person/person';
 const log = pino(import.meta.url);
@@ -170,7 +170,7 @@ async function processIncomingMessageInTransaction(
 		tx
 	});
 	if (routingResult.contactPreferenceAction === 'opt_out') {
-		const changed = await _markPersonDoNotContactUnsafe({
+		const changed = await _markPersonUnsubscribedUnsafe({
 			tx,
 			args: {
 				personId,
