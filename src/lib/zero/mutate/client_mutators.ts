@@ -35,6 +35,7 @@ export const mutators = defineMutators({
 	notification: {
 		markAsRead: notification.markNotificationAsRead,
 		dismiss: notification.dismissNotification,
+		markPersonWhatsappAsRead: notification.markPersonWhatsappNotificationsAsRead,
 		markAllAsRead: notification.markAllNotificationsAsRead
 	},
 	personNote: {
