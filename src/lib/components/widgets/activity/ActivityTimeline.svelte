@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	import ActivityRenderer from './ActivityRenderer.svelte';
@@ -209,6 +209,32 @@
 			id: activity.id
 		});
 	}
+
+	function isSameCalendarDay(firstTimestamp: number, secondTimestamp: number) {
+		const firstDate = new Date(firstTimestamp);
+		const secondDate = new Date(secondTimestamp);
+		return (
+			firstDate.getFullYear() === secondDate.getFullYear() &&
+			firstDate.getMonth() === secondDate.getMonth() &&
+			firstDate.getDate() === secondDate.getDate()
+		);
+	}
+
+	function getDateDividerLabel(timestamp: number) {
+		const date = new Date(timestamp);
+		const today = new Date();
+		if (isSameCalendarDay(timestamp, today.getTime())) return t`Today`;
+
+		const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+		if (isSameCalendarDay(timestamp, yesterday.getTime())) return t`Yesterday`;
+
+		return date.toLocaleDateString(locale.current, {
+			weekday: 'long',
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric'
+		});
+	}
 </script>
 
 {#if appState.whatsappAccountsUsableByCurrentUser.length > 0}<AccountSelector />{/if}
@@ -221,7 +247,17 @@
 	>
 		{#if chronologicalActivities.length > 0}
 			<div bind:this={listContent} class="flex flex-col gap-y-4">
-				{#each chronologicalActivities as activity (activity.id)}
+				{#each chronologicalActivities as activity, index (activity.id)}
+					{@const previousActivity = chronologicalActivities[index - 1]}
+					{#if !previousActivity || !isSameCalendarDay(previousActivity.createdAt, activity.createdAt)}
+						<div class="flex items-center gap-3 py-1" role="separator">
+							<div class="h-px flex-1 bg-border/70"></div>
+							<span class="text-xs font-medium text-muted-foreground">
+								{getDateDividerLabel(activity.createdAt)}
+							</span>
+							<div class="h-px flex-1 bg-border/70"></div>
+						</div>
+					{/if}
 					<div data-activity-id={activity.id}>
 						<ActivityRenderer {activity} />
 					</div>
