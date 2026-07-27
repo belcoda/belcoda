@@ -1,10 +1,10 @@
 {
-	"install": "npm ci && npx playwright install chromium --with-deps",
-	"start": "sudo service docker start || true; docker compose up -d --wait",
+	"install": "bash .cursor/setup.sh && npx playwright install chromium --with-deps",
+	"start": "sudo service postgresql start",
 	"terminals": [
 		{
 			"name": "app-zero",
-			"command": "test -f .env || cp .env.example.cloud-agents .env; npm run db:migrate && npm run db:seed && npm run dev"
+			"command": "test -f .env || cp .env.example.cloud-agents .env; npm run dev"
 		}
 	]
 }

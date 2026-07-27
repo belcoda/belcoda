@@ -418,8 +418,11 @@ uses custom `ZERO_QUERY_URL`/`ZERO_MUTATE_URL`, so `zero-cache-dev` runs without
 Committed config drives it:
 
 - [`.cursor/environment.json`](.cursor/environment.json) — `install` runs
-  `.cursor/setup.sh` (→ shared script), `start` boots Postgres, a `dev` terminal
-  runs `npm run dev`.
+  `.cursor/setup.sh` (→ shared apt-Postgres script) then Playwright Chromium,
+  `start` boots Postgres, and the `app-zero` terminal copies
+  `.env.example.cloud-agents` when needed and runs `npm run dev`.
+  Do **not** use `docker compose` here: nested Docker fails in Cursor VMs
+  (overlayfs whiteout/`operation not permitted`), so the apt path is required.
 
 ### Codex
 
