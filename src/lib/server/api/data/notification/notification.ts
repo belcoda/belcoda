@@ -1,5 +1,5 @@
 import type { ServerTransaction } from '@rocicorp/zero';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { parse } from 'valibot';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -53,7 +53,14 @@ async function resolveNotificationRecipients({
 		}
 	}
 
-	return [];
+	const adminOwnerMemberships = await tx.dbTransaction.wrappedTransaction
+		.select({ userId: member.userId })
+		.from(member)
+		.where(
+			and(eq(member.organizationId, organizationId), inArray(member.role, ['owner', 'admin']))
+		);
+
+	return [...new Set(adminOwnerMemberships.map((membership) => membership.userId))];
 }
 
 export async function createNotification({
