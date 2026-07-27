@@ -105,55 +105,54 @@ test.describe.serial('Settings: Webhooks', () => {
  * Delivery runs asynchronously through the background (pg-boss) queue and is then
  * synced back to the client via Zero, so the log assertion polls with a generous
  * timeout. The recorded status may be `success` or `failed` depending on how the
- * dummy endpoint responds (or whether it's reachable) — either way a log row is
- * written, which is what proves the webhook fired.
+ * dummy endpoint responds (example.com returns 405 for POST, so it's typically
+ * `failed`) — either way a log row is written, which is what proves the webhook
+ * fired.
+ *
+ * The whole flow is a single test wrapped in try/finally: the webhook is subscribed
+ * to all events, so a leaked webhook would keep firing for later specs in the same
+ * org. The finally block deletes it even if an assertion fails.
  */
-test.describe.serial('Settings: Webhook delivery', () => {
-	const state = {
-		webhookId: '',
-		name: '',
-		targetUrl: '',
-		tagName: ''
-	};
+test('webhook fires on a covered action and records a delivery log', async ({ page }) => {
+	// Delivery is asynchronous (queue pickup + external POST + Zero sync), so give the
+	// whole flow a budget well above the poll timeout used for the delivery assertion.
+	test.setTimeout(90_000);
 
-	test('owner can create a webhook to observe deliveries', async ({ page }) => {
-		const webhooksPage = new WebhooksPage(page);
-		const suffix = Date.now();
-		state.name = `E2E Delivery Webhook ${suffix}`;
-		state.targetUrl = `https://example.com/e2e/webhook/delivery/${suffix}`;
+	const webhooksPage = new WebhooksPage(page);
+	const tagsPage = new TagsPage(page);
+	const suffix = Date.now();
+	const name = `E2E Delivery Webhook ${suffix}`;
+	const targetUrl = `https://example.com/e2e/webhook/delivery/${suffix}`;
+	const tagName = `E2E Webhook Trigger ${suffix}`;
 
-		await loginAsOwner(page, PROJECT);
-		await webhooksPage.goto();
-		await webhooksPage.createWebhook(state.name, state.targetUrl);
+	await loginAsOwner(page, PROJECT);
 
-		const row = webhooksPage.webhookRow(state.name, state.targetUrl);
-		await expect(row).toBeVisible({ timeout: 15_000 });
-		state.webhookId = (await row.getAttribute('data-webhook-id')) ?? '';
-		expect(state.webhookId).not.toBe('');
-	});
+	// Create a webhook to observe deliveries (the UI subscribes it to all events).
+	await webhooksPage.goto();
+	await webhooksPage.createWebhook(name, targetUrl);
+	const row = webhooksPage.webhookRow(name, targetUrl);
+	await expect(row).toBeVisible({ timeout: 15_000 });
+	const webhookId = (await row.getAttribute('data-webhook-id')) ?? '';
+	expect(webhookId).not.toBe('');
 
-	test('taking a covered action records a delivery log', async ({ page }) => {
-		const webhooksPage = new WebhooksPage(page);
-		const tagsPage = new TagsPage(page);
-		state.tagName = `E2E Webhook Trigger ${Date.now()}`;
-
-		await loginAsOwner(page, PROJECT);
-
-		// Precondition: a brand-new webhook has not delivered anything yet.
-		await webhooksPage.goto();
-		await webhooksPage.openLogsById(state.webhookId);
+	try {
+		// The webhook hasn't delivered anything for this specific tag yet. Matching on
+		// the unique tag name keeps this precondition independent of any other activity
+		// in the org.
+		await webhooksPage.openLogsById(webhookId);
 		await expect(webhooksPage.logsRoot).toBeVisible({ timeout: 15_000 });
-		await expect(webhooksPage.logsEmptyState).toBeVisible({ timeout: 15_000 });
+		await expect(webhooksPage.logRowForEventContaining('tag.created', tagName)).toHaveCount(0);
 
-		// Take an action covered by the webhook (eventTypes: ['all']) → fires `tag.created`.
+		// Take an action covered by the webhook → fires `tag.created`.
 		await tagsPage.goto();
-		await tagsPage.createTag(state.tagName);
-		await expect(tagsPage.tagRowByName(state.tagName)).toBeVisible({ timeout: 15_000 });
+		await tagsPage.createTag(tagName);
+		await expect(tagsPage.tagRowByName(tagName)).toBeVisible({ timeout: 15_000 });
 
 		// The delivery is processed by the background queue and synced back via Zero,
-		// so poll the logs page until the `tag.created` delivery row appears.
-		await webhooksPage.gotoLogs(state.webhookId);
-		const deliveryRow = webhooksPage.logRowByEventType('tag.created').first();
+		// so poll the logs page until the delivery row for THIS tag appears. `.first()`
+		// guards against a retry inserting a second row for the same tag mid-assertion.
+		await webhooksPage.gotoLogs(webhookId);
+		const deliveryRow = webhooksPage.logRowForEventContaining('tag.created', tagName).first();
 		await expect(deliveryRow).toBeVisible({ timeout: 45_000 });
 
 		// The delivery attempt should have recorded a terminal status.
@@ -161,17 +160,12 @@ test.describe.serial('Settings: Webhook delivery', () => {
 			/success|failed/,
 			{ timeout: 15_000 }
 		);
-	});
-
-	test('owner can delete the delivery webhook', async ({ page }) => {
-		const webhooksPage = new WebhooksPage(page);
-
-		await loginAsOwner(page, PROJECT);
-		await webhooksPage.goto();
-
-		await webhooksPage.deleteWebhookById(state.webhookId);
-		await expect(webhooksPage.webhookRowById(state.webhookId)).toHaveCount(0, {
-			timeout: 15_000
-		});
-	});
+	} finally {
+		// Best-effort cleanup so a mid-test failure doesn't leak an all-events webhook
+		// that keeps firing for later specs in this org. Kept non-throwing so it never
+		// masks a real assertion failure from the try block (deletion itself is covered
+		// by the "owner can delete a webhook" test above).
+		await webhooksPage.goto().catch(() => {});
+		await webhooksPage.deleteWebhookById(webhookId).catch(() => {});
+	}
 });
