@@ -1,6 +1,8 @@
 <script lang="ts">
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
+	import { afterNavigate } from '$app/navigation';
 	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { t } from '$lib/index.svelte';
 	import queries from '$lib/zero/query/index';
 	const { params } = $props();
@@ -23,6 +25,20 @@
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
 			appState.activeOrganization?.data?.settings.whatsApp.number
 	);
+
+	function markPersonWhatsappNotificationsAsRead() {
+		void z
+			.mutate(
+				mutators.notification.markPersonWhatsappAsRead({
+					metadata: { organizationId: appState.organizationId, personId: params.personId }
+				})
+			)
+			.server.catch(() => {});
+	}
+
+	afterNavigate(() => {
+		markPersonWhatsappNotificationsAsRead();
+	});
 
 	//TODO: Once we implement the account selector tabs, add footer={appState.activeWhatsappAccountId ? footer : undefined} to the content layout.
 </script>
