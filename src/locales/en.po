@@ -5736,3 +5736,8 @@ msgstr "Tell us where you heard about Belcoda"
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Maximum 500 characters."
 msgstr "Maximum 500 characters."
+
+#. 0: formatNumber(unreadMessageCount, locale.current)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} unread WhatsApp messages"
+msgstr "{0} unread WhatsApp messages"

@@ -145,7 +145,10 @@
 							class="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-primary-foreground"
 							title={t`Unread WhatsApp`}
 						>
-							{formatNumber(unreadMessageCount, locale.current)}
+							<span aria-hidden="true">{formatNumber(unreadMessageCount, locale.current)}</span>
+							<span class="sr-only">
+								{t`${formatNumber(unreadMessageCount, locale.current)} unread WhatsApp messages`}
+							</span>
 						</span>
 					{/if}
 				</div>
