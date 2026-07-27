@@ -78,7 +78,8 @@ export async function buildWhatsappThreadSendQueue({
 				nodeId: templateMessageNode.id,
 				personId: recipient.id,
 				organizationId: thread.organizationId,
-				threadId: thread.id
+				threadId: thread.id,
+				enforceSubscription: true
 			});
 		}
 	}

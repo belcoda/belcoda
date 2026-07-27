@@ -102,8 +102,9 @@ describe('queued WhatsApp flow messages', () => {
 		vi.mocked(drizzle.query.whatsappThread.findFirst).mockResolvedValue(thread as never);
 	});
 
-	it('skips an already-queued message when the person has opted out', async () => {
+	it('skips an interactive message when the person is do not contact', async () => {
 		vi.mocked(drizzle.query.person.findFirst).mockResolvedValueOnce({
+			subscribed: true,
 			doNotContact: true
 		} as never);
 
@@ -111,7 +112,8 @@ describe('queued WhatsApp flow messages', () => {
 			nodeId: templateNodeId,
 			personId,
 			organizationId,
-			threadId
+			threadId,
+			enforceSubscription: false
 		});
 
 		expect(sendWhatsappTemplateMessage).not.toHaveBeenCalled();
@@ -121,6 +123,7 @@ describe('queued WhatsApp flow messages', () => {
 
 	it('sends the queued message when the person remains eligible', async () => {
 		vi.mocked(drizzle.query.person.findFirst).mockResolvedValueOnce({
+			subscribed: true,
 			doNotContact: false
 		} as never);
 		vi.mocked(db.transaction).mockImplementationOnce(async (callback) =>
@@ -142,5 +145,43 @@ describe('queued WhatsApp flow messages', () => {
 			nodeId: templateNodeId,
 			templateId
 		});
+	});
+
+	it('skips an already-queued broadcast when the person has unsubscribed', async () => {
+		vi.mocked(drizzle.query.person.findFirst).mockResolvedValueOnce({
+			subscribed: false,
+			doNotContact: false
+		} as never);
+
+		await processFlowNodeAction({
+			nodeId: templateNodeId,
+			personId,
+			organizationId,
+			threadId,
+			enforceSubscription: true
+		});
+
+		expect(sendWhatsappTemplateMessage).not.toHaveBeenCalled();
+		expect(db.transaction).not.toHaveBeenCalled();
+	});
+
+	it('allows an interactive flow response when the person has unsubscribed', async () => {
+		vi.mocked(drizzle.query.person.findFirst).mockResolvedValueOnce({
+			subscribed: false,
+			doNotContact: false
+		} as never);
+		vi.mocked(db.transaction).mockImplementationOnce(async (callback) =>
+			callback({} as never, {} as never)
+		);
+
+		await processFlowNodeAction({
+			nodeId: templateNodeId,
+			personId,
+			organizationId,
+			threadId,
+			enforceSubscription: false
+		});
+
+		expect(sendWhatsappTemplateMessage).toHaveBeenCalledOnce();
 	});
 });

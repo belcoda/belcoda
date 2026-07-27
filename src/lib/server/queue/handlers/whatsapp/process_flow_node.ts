@@ -21,12 +21,14 @@ export async function processFlowNodeAction({
 	nodeId,
 	personId,
 	organizationId,
-	threadId
+	threadId,
+	enforceSubscription = true
 }: {
 	nodeId: string;
 	personId: string;
 	organizationId: string;
 	threadId: string;
+	enforceSubscription?: boolean;
 }) {
 	const thread = await drizzle.query.whatsappThread.findFirst({
 		where: and(eq(whatsappThread.id, threadId), eq(whatsappThread.organizationId, organizationId))
@@ -42,11 +44,11 @@ export async function processFlowNodeAction({
 
 	if (
 		(node.type === 'message' || node.type === 'templateMessage') &&
-		(await isPersonOptedOut({ personId, organizationId }))
+		(await shouldSkipPersonMessage({ personId, organizationId, enforceSubscription }))
 	) {
 		log.info(
-			{ threadId, nodeId, personId, organizationId },
-			'Skipped queued WhatsApp message for opted-out person'
+			{ threadId, nodeId, personId, organizationId, enforceSubscription },
+			'Skipped queued WhatsApp message for ineligible person'
 		);
 		return;
 	}
@@ -168,20 +170,23 @@ export async function processFlowNodeAction({
 			nodeId: followUpNodeData.id,
 			personId,
 			organizationId,
-			threadId
+			threadId,
+			enforceSubscription
 		});
 	}
 }
 
-async function isPersonOptedOut({
+async function shouldSkipPersonMessage({
 	personId,
-	organizationId
+	organizationId,
+	enforceSubscription
 }: {
 	personId: string;
 	organizationId: string;
+	enforceSubscription: boolean;
 }): Promise<boolean> {
 	const personRecord = await drizzle.query.person.findFirst({
-		columns: { doNotContact: true },
+		columns: { subscribed: true, doNotContact: true },
 		where: and(
 			eq(person.id, personId),
 			eq(person.organizationId, organizationId),
@@ -189,5 +194,8 @@ async function isPersonOptedOut({
 		)
 	});
 
-	return personRecord?.doNotContact === true;
+	return (
+		personRecord?.doNotContact === true ||
+		(enforceSubscription && personRecord?.subscribed === false)
+	);
 }

@@ -516,7 +516,8 @@ async function processButtonAction(
 		nodeId: nextNode,
 		personId,
 		organizationId: threadObject.organizationId,
-		threadId: threadObject.id
+		threadId: threadObject.id,
+		enforceSubscription: false
 	});
 }
 

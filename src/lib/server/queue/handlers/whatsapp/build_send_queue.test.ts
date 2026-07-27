@@ -91,7 +91,8 @@ describe('WhatsApp broadcast queue construction', () => {
 			nodeId: templateNodeId,
 			personId: eligiblePersonId,
 			organizationId,
-			threadId
+			threadId,
+			enforceSubscription: true
 		});
 		expect(processFlowNodeAction).not.toHaveBeenCalledWith(
 			expect.objectContaining({ personId: unsubscribedPersonId })
