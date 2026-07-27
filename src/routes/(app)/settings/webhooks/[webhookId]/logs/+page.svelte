@@ -37,7 +37,9 @@
 		{#if logRows.details.type !== 'complete' || !logRows.data}
 			<p class="py-8 text-center text-muted-foreground">{t`Loading delivery logs...`}</p>
 		{:else if logRows.data.length === 0}
-			<p class="py-8 text-center text-muted-foreground">{t`No delivery logs yet`}</p>
+			<p class="py-8 text-center text-muted-foreground" data-testid="settings-webhook-logs-empty">
+				{t`No delivery logs yet`}
+			</p>
 		{:else}
 			<Table.Root>
 				<Table.Header>
@@ -53,14 +55,18 @@
 				</Table.Header>
 				<Table.Body>
 					{#each logRows.data as row (row.id)}
-						<Table.Row>
+						<Table.Row data-testid="settings-webhook-logs-row" data-event-type={row.eventType}>
 							<Table.Cell class="align-top text-sm whitespace-nowrap text-muted-foreground"
 								>{formatShortTimestamp(row.createdAt)}</Table.Cell
 							>
-							<Table.Cell class="align-top font-mono text-sm whitespace-nowrap"
-								>{row.eventType}</Table.Cell
+							<Table.Cell
+								class="align-top font-mono text-sm whitespace-nowrap"
+								data-testid="settings-webhook-logs-event-type">{row.eventType}</Table.Cell
 							>
-							<Table.Cell class="align-top text-sm whitespace-nowrap">{row.status}</Table.Cell>
+							<Table.Cell
+								class="align-top text-sm whitespace-nowrap"
+								data-testid="settings-webhook-logs-status">{row.status}</Table.Cell
+							>
 							<Table.Cell class="text-right align-top text-sm whitespace-nowrap tabular-nums"
 								>{row.httpStatusCode ?? '—'}</Table.Cell
 							>
