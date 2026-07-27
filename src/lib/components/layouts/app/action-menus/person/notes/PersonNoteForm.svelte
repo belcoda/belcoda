@@ -15,7 +15,7 @@
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 
 	const { personId, onNotesChanged }: { personId: string; onNotesChanged?: () => void } = $props();
-	const { form, data, errors, Errors, helpers } = createForm({
+	const { form, data } = createForm({
 		schema: createPersonNoteZero,
 		initialData: {
 			note: ''
@@ -66,7 +66,7 @@
 						>
 						<Separator orientation="vertical" class="h-4!" />
 						<InputGroup.Button variant="default" type="submit" data-testid="note-form-submit"
-							><ArrowUpIcon /> Add note</InputGroup.Button
+							><ArrowUpIcon /> {t`Add note`}</InputGroup.Button
 						>
 					</InputGroup.Addon>
 				</InputGroup.Root>
