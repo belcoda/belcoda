@@ -5406,6 +5406,7 @@ msgstr "No approved WhatsApp templates yet."
 msgid "Open notifications"
 msgstr "Open notifications"
 
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unread WhatsApp"
 msgstr "Unread WhatsApp"

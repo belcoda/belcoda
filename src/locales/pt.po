@@ -5390,6 +5390,7 @@ msgstr ""
 msgid "Open notifications"
 msgstr "Abrir notificações"
 
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unread WhatsApp"
 msgstr "WhatsApp não lido"
