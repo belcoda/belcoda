@@ -195,6 +195,7 @@ async function shouldSkipPersonMessage({
 	});
 
 	return (
+		!personRecord ||
 		personRecord?.doNotContact === true ||
 		(enforceSubscription && personRecord?.subscribed === false)
 	);
