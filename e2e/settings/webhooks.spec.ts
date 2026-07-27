@@ -127,15 +127,17 @@ test('webhook fires on a covered action and records a delivery log', async ({ pa
 
 	await loginAsOwner(page, PROJECT);
 
-	// Create a webhook to observe deliveries (the UI subscribes it to all events).
-	await webhooksPage.goto();
-	await webhooksPage.createWebhook(name, targetUrl);
-	const row = webhooksPage.webhookRow(name, targetUrl);
-	await expect(row).toBeVisible({ timeout: 15_000 });
-	const webhookId = (await row.getAttribute('data-webhook-id')) ?? '';
-	expect(webhookId).not.toBe('');
-
+	// Captured inside the try below; kept in scope so `finally` can always clean up.
+	let webhookId = '';
 	try {
+		// Create a webhook to observe deliveries (the UI subscribes it to all events).
+		await webhooksPage.goto();
+		await webhooksPage.createWebhook(name, targetUrl);
+		const row = webhooksPage.webhookRow(name, targetUrl);
+		await expect(row).toBeVisible({ timeout: 15_000 });
+		webhookId = (await row.getAttribute('data-webhook-id')) ?? '';
+		expect(webhookId).not.toBe('');
+
 		// The webhook hasn't delivered anything for this specific tag yet. Matching on
 		// the unique tag name keeps this precondition independent of any other activity
 		// in the org.
@@ -164,8 +166,14 @@ test('webhook fires on a covered action and records a delivery log', async ({ pa
 		// Best-effort cleanup so a mid-test failure doesn't leak an all-events webhook
 		// that keeps firing for later specs in this org. Kept non-throwing so it never
 		// masks a real assertion failure from the try block (deletion itself is covered
-		// by the "owner can delete a webhook" test above).
+		// by the "owner can delete a webhook" test above). Falls back to name/target
+		// lookup when the id wasn't captured (e.g. creation succeeded but the row
+		// assertion failed).
 		await webhooksPage.goto().catch(() => {});
-		await webhooksPage.deleteWebhookById(webhookId).catch(() => {});
+		if (webhookId) {
+			await webhooksPage.deleteWebhookById(webhookId).catch(() => {});
+		} else {
+			await webhooksPage.deleteWebhook(name, targetUrl).catch(() => {});
+		}
 	}
 });
