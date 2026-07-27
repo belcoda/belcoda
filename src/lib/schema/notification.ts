@@ -38,6 +38,10 @@ export const createNotificationSchema = v.variant('type', [
 		...notificationCreateBaseSchema
 	}),
 	v.object({
+		type: v.literal('conversation_mention'),
+		...notificationCreateBaseSchema
+	}),
+	v.object({
 		type: v.literal('event_signup'),
 		...notificationCreateBaseSchema
 	}),
