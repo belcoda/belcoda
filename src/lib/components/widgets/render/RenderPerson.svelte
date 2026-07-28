@@ -8,6 +8,7 @@
 		avatarClass?: string;
 		avatarImageClass?: string;
 		testId?: string;
+		loadPerson?: boolean;
 	};
 	import { z } from '$lib/zero.svelte';
 	import { cn } from '$lib/utils.js';
@@ -17,7 +18,8 @@
 		textClass,
 		avatarClass,
 		avatarImageClass,
-		testId
+		testId,
+		loadPerson = true
 	}: Props = $props();
 	import queries from '$lib/zero/query/index';
 	const person = $derived.by(() => {
@@ -25,6 +27,11 @@
 			return {
 				details: { type: 'complete' },
 				data: personProp
+			};
+		} else if (!loadPerson) {
+			return {
+				details: { type: 'unknown' },
+				data: undefined
 			};
 		} else {
 			return z.createQuery(queries.person.read({ personId }));

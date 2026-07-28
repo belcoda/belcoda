@@ -1,6 +1,6 @@
 import { db, drizzle } from '$lib/server/db';
-import { whatsappThread } from '$lib/schema/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { person, whatsappThread } from '$lib/schema/drizzle';
+import { and, eq, isNull } from 'drizzle-orm';
 import { getQueue } from '$lib/server/queue';
 import { _addPersonTagData } from '$lib/server/api/data/person/tag';
 import { _addPersonTeamDataUnsafe } from '$lib/server/api/data/person/team';
@@ -11,19 +11,24 @@ import {
 	sendWhatsappTemplateMessage
 } from '$lib/server/utils/whatsapp/send_message';
 import { convertNodeToFullMessage } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
+import pino from '$lib/pino';
 
 import { v7 as uuidv7 } from 'uuid';
+
+const log = pino(import.meta.url);
 
 export async function processFlowNodeAction({
 	nodeId,
 	personId,
 	organizationId,
-	threadId
+	threadId,
+	enforceSubscription = true
 }: {
 	nodeId: string;
 	personId: string;
 	organizationId: string;
 	threadId: string;
+	enforceSubscription?: boolean;
 }) {
 	const thread = await drizzle.query.whatsappThread.findFirst({
 		where: and(eq(whatsappThread.id, threadId), eq(whatsappThread.organizationId, organizationId))
@@ -35,6 +40,17 @@ export async function processFlowNodeAction({
 
 	if (!node) {
 		throw new Error('Node not found');
+	}
+
+	if (
+		(node.type === 'message' || node.type === 'templateMessage') &&
+		(await shouldSkipPersonMessage({ personId, organizationId, enforceSubscription }))
+	) {
+		log.info(
+			{ threadId, nodeId, personId, organizationId, enforceSubscription },
+			'Skipped queued WhatsApp message for ineligible person'
+		);
+		return;
 	}
 
 	await db.transaction(async (tx) => {
@@ -154,7 +170,33 @@ export async function processFlowNodeAction({
 			nodeId: followUpNodeData.id,
 			personId,
 			organizationId,
-			threadId
+			threadId,
+			enforceSubscription
 		});
 	}
+}
+
+async function shouldSkipPersonMessage({
+	personId,
+	organizationId,
+	enforceSubscription
+}: {
+	personId: string;
+	organizationId: string;
+	enforceSubscription: boolean;
+}): Promise<boolean> {
+	const personRecord = await drizzle.query.person.findFirst({
+		columns: { subscribed: true, doNotContact: true },
+		where: and(
+			eq(person.id, personId),
+			eq(person.organizationId, organizationId),
+			isNull(person.deletedAt)
+		)
+	});
+
+	return (
+		!personRecord ||
+		personRecord?.doNotContact === true ||
+		(enforceSubscription && personRecord?.subscribed === false)
+	);
 }

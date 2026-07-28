@@ -1,6 +1,7 @@
 import type { QueryContext } from '$lib/zero/schema';
 import { type ListFilter } from '$lib/schema/helpers';
-import type { ReadWhatsappAccountZero } from '$lib/schema/whatsapp-account';
+import type { NotificationPayload } from '$lib/schema/notification/payload';
+import { SvelteMap } from 'svelte/reactivity';
 
 import { z } from '$lib/zero.svelte';
 import queries from '$lib/zero/query/index';
@@ -114,9 +115,22 @@ class AppState {
 	#unreadNotificationItems = $derived(this.#unreadNotifications?.data ?? []);
 	#unreadNotificationCount = $derived(this.#unreadNotificationItems.length);
 	#hasUnreadNotifications = $derived(this.#unreadNotificationCount > 0);
-	#unreadNotificationReferenceIds = $derived(
-		new Set(this.#unreadNotificationItems.map((notification) => notification.referenceId))
-	);
+	#unreadWhatsappMessageCountsByPersonId = $derived.by(() => {
+		const counts = new SvelteMap<string, number>();
+		for (const notification of this.#unreadNotificationItems) {
+			if (notification.type !== 'whatsapp_message' && notification.type !== 'whatsapp_unread') {
+				continue;
+			}
+			const payload = notification.payload as NotificationPayload | null;
+			const personId =
+				payload?.personId ??
+				(notification.type === 'whatsapp_unread' ? notification.referenceId : null);
+			if (personId) {
+				counts.set(personId, (counts.get(personId) ?? 0) + 1);
+			}
+		}
+		return counts;
+	});
 
 	#user = $derived.by(() => {
 		if (!this.#queryContext || !this.#userId) {
@@ -272,8 +286,8 @@ class AppState {
 	get hasUnreadNotifications() {
 		return this.#hasUnreadNotifications;
 	}
-	get unreadNotificationReferenceIds() {
-		return this.#unreadNotificationReferenceIds;
+	get unreadWhatsappMessageCountsByPersonId() {
+		return this.#unreadWhatsappMessageCountsByPersonId;
 	}
 	get user() {
 		if (!this.#user) {

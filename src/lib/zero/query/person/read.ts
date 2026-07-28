@@ -27,9 +27,9 @@ export function readPersonQuery({
 		.related('teams')
 		.limit(100)
 		.orderBy('createdAt', 'desc')
-		.related('notes')
-		.limit(1)
-		.orderBy('createdAt', 'desc')
+		.related('notes', (notes) =>
+			notes.where('deletedAt', 'IS', null).orderBy('createdAt', 'desc').limit(1)
+		)
 		.where((expr) => personReadPermissions(expr, ctx))
 		.one();
 	return q;
