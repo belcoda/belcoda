@@ -93,6 +93,12 @@ import type {
 	FlowExecutionStepOutput,
 	FlowExecutionStepStatus
 } from '$lib/schema/flow';
+import type { FlowDocumentSchema } from '$lib/schema/flow/document';
+import type { FlowVersionSchema } from '$lib/schema/flow/version';
+import type { FlowTriggerRegistrationSchema } from '$lib/schema/flow/trigger-registration';
+import type { FlowExecutionSchema } from '$lib/schema/flow/execution';
+import type { FlowExecutionStepSchema } from '$lib/schema/flow/execution-step';
+import type { FlowResourceSchema } from '$lib/schema/flow/flow';
 
 type Permissions = {
 	[resourceType: string]: ('read' | 'write' | 'delete')[];
@@ -1158,6 +1164,12 @@ export const flowDocument = pgTable(
 		)
 	]
 );
+type FlowDocumentValibotMatchesDrizzle = IsTrue<
+	FlowDocumentSchema extends typeof flowDocument.$inferSelect ? true : false
+>;
+type FlowDocumentDrizzleMatchesValibot = IsTrue<
+	typeof flowDocument.$inferSelect extends FlowDocumentSchema ? true : false
+>;
 
 // one row per successful publication of a flow document's draftDefinition
 // rows are immutable once published, so this table is APPEND ONLY. A running execution will reference this row, so republishing or rolling back a flow won't affect in-progress executions.
@@ -1182,6 +1194,12 @@ export const flowVersion = pgTable(
 	},
 	(table) => [unique('flow_version_unique').on(table.flowDocumentId, table.versionNumber)]
 );
+type FlowVersionValibotMatchesDrizzle = IsTrue<
+	FlowVersionSchema extends typeof flowVersion.$inferSelect ? true : false
+>;
+type FlowVersionDrizzleMatchesValibot = IsTrue<
+	typeof flowVersion.$inferSelect extends FlowVersionSchema ? true : false
+>;
 
 export const flowTriggerRegistration = pgTable(
 	'flow_trigger_registration',
@@ -1217,6 +1235,12 @@ export const flowTriggerRegistration = pgTable(
 		index('flow_trigger_registration_flow_document_index').on(table.flowDocumentId)
 	]
 );
+type FlowTriggerRegistrationValibotMatchesDrizzle = IsTrue<
+	FlowTriggerRegistrationSchema extends typeof flowTriggerRegistration.$inferSelect ? true : false
+>;
+type FlowTriggerRegistrationDrizzleMatchesValibot = IsTrue<
+	typeof flowTriggerRegistration.$inferSelect extends FlowTriggerRegistrationSchema ? true : false
+>;
 
 export const flowExecution = pgTable(
 	'flow_execution',
@@ -1248,6 +1272,12 @@ export const flowExecution = pgTable(
 		index('flow_execution_organization').on(table.organizationId, table.status, table.createdAt)
 	]
 );
+type FlowExecutionValibotMatchesDrizzle = IsTrue<
+	FlowExecutionSchema extends typeof flowExecution.$inferSelect ? true : false
+>;
+type FlowExecutionDrizzleMatchesValibot = IsTrue<
+	typeof flowExecution.$inferSelect extends FlowExecutionSchema ? true : false
+>;
 
 export const flowExecutionStep = pgTable(
 	'flow_execution_step',
@@ -1279,6 +1309,12 @@ export const flowExecutionStep = pgTable(
 			.where(sql`${table.status} in ('scheduled', 'running')`)
 	]
 );
+type FlowExecutionStepValibotMatchesDrizzle = IsTrue<
+	FlowExecutionStepSchema extends typeof flowExecutionStep.$inferSelect ? true : false
+>;
+type FlowExecutionStepDrizzleMatchesValibot = IsTrue<
+	typeof flowExecutionStep.$inferSelect extends FlowExecutionStepSchema ? true : false
+>;
 
 export const flow = pgTable('flow', {
 	id: uuid('id').primaryKey(),
@@ -1296,6 +1332,12 @@ export const flow = pgTable('flow', {
 	archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
 	deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
 });
+type FlowResourceValibotMatchesDrizzle = IsTrue<
+	FlowResourceSchema extends typeof flow.$inferSelect ? true : false
+>;
+type FlowResourceDrizzleMatchesValibot = IsTrue<
+	typeof flow.$inferSelect extends FlowResourceSchema ? true : false
+>;
 
 // relations for all tables at the end of the file
 
