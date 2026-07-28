@@ -1,12 +1,14 @@
 import type { ServerTransaction } from '@rocicorp/zero';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { parse } from 'valibot';
 import { v7 as uuidv7 } from 'uuid';
 
-import { member, notification } from '$lib/schema/drizzle';
+import { member, notification, user } from '$lib/schema/drizzle';
 import {
 	createNotificationSchema,
 	type CreateNotificationSchema,
+	notifyConversationMutatorSchemaZero,
+	type NotifyConversationMutatorSchemaZero,
 	markNotificationAsReadMutatorSchemaZero,
 	type MarkNotificationAsReadMutatorSchemaZero,
 	dismissNotificationMutatorSchemaZero,
@@ -17,6 +19,7 @@ import {
 import { builder, type QueryContext } from '$lib/zero/schema';
 import { notificationReadPermissions } from '$lib/zero/query/notification/permissions';
 import { getOrganizationMember } from '$lib/server/api/data/organization/member';
+import { getPerson } from '$lib/server/api/data/person/person';
 
 async function resolveNotificationRecipients({
 	tx,
@@ -98,6 +101,72 @@ export async function createNotification({
 			target: [notification.organizationId, notification.userId, notification.sourceKey]
 		})
 		.returning();
+}
+
+export async function notifyConversation({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext & { userId: string };
+	args: NotifyConversationMutatorSchemaZero;
+}) {
+	const parsed = parse(notifyConversationMutatorSchemaZero, args);
+	const { organizationId, personId, requestId } = parsed.metadata;
+	const recipientUserIds = [...new Set(parsed.input.recipientUserIds)].filter(
+		(userId) => userId !== ctx.userId
+	);
+
+	if (recipientUserIds.length === 0) {
+		throw new Error('Select at least one other organization member');
+	}
+
+	await getOrganizationMember({ tx, args: { organizationId, userId: ctx.userId } });
+	const personRecord = await getPerson({
+		tx,
+		ctx,
+		args: { organizationId, personId }
+	});
+
+	const recipients = await tx.dbTransaction.wrappedTransaction
+		.select({ userId: member.userId })
+		.from(member)
+		.where(
+			and(eq(member.organizationId, organizationId), inArray(member.userId, recipientUserIds))
+		);
+	if (recipients.length !== recipientUserIds.length) {
+		throw new Error('All recipients must be organization members');
+	}
+
+	const [actor] = await tx.dbTransaction.wrappedTransaction
+		.select({ name: user.name })
+		.from(user)
+		.where(eq(user.id, ctx.userId))
+		.limit(1);
+	if (!actor) {
+		throw new Error('User not found');
+	}
+
+	const personName =
+		[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') ||
+		personRecord.phoneNumber;
+
+	return createNotification({
+		tx,
+		args: {
+			type: 'conversation_mention',
+			organizationId,
+			referenceId: personId,
+			sourceKey: `conversation_mention:${requestId}`,
+			payload: {
+				actorName: actor.name,
+				personId,
+				personName
+			},
+			routing: { recipientUserIds, creatorUserId: null }
+		}
+	});
 }
 
 export async function markNotificationAsRead({

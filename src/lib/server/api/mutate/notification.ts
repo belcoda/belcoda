@@ -2,9 +2,23 @@ import { defineMutator } from '@rocicorp/zero';
 import {
 	markNotificationAsReadMutatorSchemaZero,
 	dismissNotificationMutatorSchemaZero,
-	markAllNotificationsAsReadMutatorSchemaZero
+	markAllNotificationsAsReadMutatorSchemaZero,
+	notifyConversationMutatorSchemaZero
 } from '$lib/schema/notification';
 import * as dataFunctions from '$lib/server/api/data/notification/notification';
+
+export const notifyConversation = defineMutator(
+	notifyConversationMutatorSchemaZero,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server') {
+			throw new Error('notifyConversation can only be called from the server');
+		}
+		if (!ctx.userId) {
+			throw new Error('notifyConversation can only be called by a user');
+		}
+		await dataFunctions.notifyConversation({ tx, ctx: { ...ctx, userId: ctx.userId }, args });
+	}
+);
 
 export const markNotificationAsRead = defineMutator(
 	markNotificationAsReadMutatorSchemaZero,

@@ -56,6 +56,20 @@ export const createNotificationSchema = v.variant('type', [
 ]);
 export type CreateNotificationSchema = v.InferOutput<typeof createNotificationSchema>;
 
+export const notifyConversationMutatorSchemaZero = v.object({
+	input: v.object({
+		recipientUserIds: v.pipe(v.array(helpers.uuid), v.minLength(1), v.maxLength(20))
+	}),
+	metadata: v.object({
+		organizationId: helpers.uuid,
+		personId: helpers.uuid,
+		requestId: helpers.uuid
+	})
+});
+export type NotifyConversationMutatorSchemaZero = v.InferOutput<
+	typeof notifyConversationMutatorSchemaZero
+>;
+
 export const notificationMutatorMetadata = v.object({
 	organizationId: helpers.uuid,
 	notificationId: helpers.uuid

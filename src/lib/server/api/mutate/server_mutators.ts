@@ -39,6 +39,7 @@ export const mutators = defineMutators({
 		triggerQueue: personImport.triggerImportQueue
 	},
 	notification: {
+		notifyConversation: notification.notifyConversation,
 		markAsRead: notification.markNotificationAsRead,
 		dismiss: notification.dismissNotification,
 		markAllAsRead: notification.markAllNotificationsAsRead

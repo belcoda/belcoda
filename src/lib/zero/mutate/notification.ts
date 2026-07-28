@@ -2,8 +2,14 @@ import { defineMutator } from '@rocicorp/zero';
 import {
 	markNotificationAsReadMutatorSchemaZero,
 	dismissNotificationMutatorSchemaZero,
-	markAllNotificationsAsReadMutatorSchemaZero
+	markAllNotificationsAsReadMutatorSchemaZero,
+	notifyConversationMutatorSchemaZero
 } from '$lib/schema/notification';
+
+export const notifyConversation = defineMutator(
+	notifyConversationMutatorSchemaZero,
+	async () => {}
+);
 
 export const markNotificationAsRead = defineMutator(
 	markNotificationAsReadMutatorSchemaZero,
