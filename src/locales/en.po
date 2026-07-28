@@ -258,6 +258,7 @@ msgstr "System"
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -438,6 +439,7 @@ msgid "Owner"
 msgstr "Owner"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -2705,6 +2707,7 @@ msgid "Recent Signatures"
 msgstr "Recent Signatures"
 
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "signatures"
 msgstr "signatures"
 
@@ -3365,6 +3368,7 @@ msgstr "Publish event"
 msgid "View full page"
 msgstr "View full page"
 
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 msgid "View all"
 msgstr "View all"
@@ -4445,6 +4449,7 @@ msgstr "Thank you for signing \"{0}\". Your signature has been recorded. Click t
 msgid "Your signature on \"{0}\" was recorded"
 msgstr "Your signature on \"{0}\" was recorded"
 
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
 msgid "View petition"
 msgstr "View petition"
@@ -4872,6 +4877,7 @@ msgid "Time"
 msgstr "Time"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
 msgid "Event"
 msgstr "Event"
@@ -4927,6 +4933,7 @@ msgid "Sender"
 msgstr "Sender"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "Petition"
 msgstr "Petition"
 
@@ -5436,6 +5443,7 @@ msgstr "Petition signup"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/lib/components/widgets/notifications/RecentNotifications.svelte
 msgid "Notification"
 msgstr "Notification"
 
@@ -5901,19 +5909,15 @@ msgstr "Teammates notified"
 msgid "Unable to notify teammates"
 msgstr "Unable to notify teammates"
 
-#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
-#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
-#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
-msgid "Notify teammates"
-msgstr "Notify teammates"
+#~ msgid "Notify teammates"
+#~ msgstr "Notify teammates"
 
 #: src/lib/components/widgets/communications/NotifyConversationAction.svelte
 msgid "Select organization members to invite to this conversation."
 msgstr "Select organization members to invite to this conversation."
 
-#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
-msgid "Notify"
-msgstr "Notify"
+#~ msgid "Notify"
+#~ msgstr "Notify"
 
 #: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
@@ -5925,6 +5929,8 @@ msgstr "A teammate"
 msgid "this person"
 msgstr "this person"
 
+#. 0: actorName; 1: personName
+#. 0: getPayload(notification.payload)?.actorName ?? t`A teammate`; 1: getPayload(notification.payload)?.personName ?? t`this person`
 #: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} invited you to join the conversation with {1}"
@@ -5939,6 +5945,11 @@ msgstr "View conversation"
 msgid "Conversation invitation"
 msgstr "Conversation invitation"
 
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Failed to send WhatsApp message"
+msgstr "Failed to send WhatsApp message"
+
+#. 0: actor.data.name
 #: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
 msgid "{0} notified teammates about this person"
 msgstr "{0} notified teammates about this person"
@@ -5946,3 +5957,14 @@ msgstr "{0} notified teammates about this person"
 #: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
 msgid "Teammates were notified about this person"
 msgstr "Teammates were notified about this person"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Bring in teammates"
+msgstr "Bring in teammates"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Notify selected"
+msgstr "Notify selected"

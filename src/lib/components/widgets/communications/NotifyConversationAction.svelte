@@ -35,19 +35,21 @@
 <AddUserModal
 	userIdsToExclude={[appState.userId]}
 	onSelected={notifyTeammates}
-	title={t`Notify teammates`}
+	title={t`Bring in teammates`}
 	description={t`Select organization members to invite to this conversation.`}
-	confirmLabel={t`Notify`}
+	confirmLabel={t`Notify selected`}
 >
 	{#snippet trigger()}
 		<Button
 			variant="ghost"
 			size="icon"
-			aria-label={t`Notify teammates`}
-			title={t`Notify teammates`}
+			class="sm:w-auto sm:px-3"
+			aria-label={t`Bring in teammates`}
+			title={t`Bring in teammates`}
 			data-testid="notify-conversation-trigger"
 		>
 			<UserPlusIcon />
+			<span class="hidden sm:inline">{t`Bring in teammates`}</span>
 		</Button>
 	{/snippet}
 </AddUserModal>
