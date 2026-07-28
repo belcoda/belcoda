@@ -14,9 +14,10 @@
 
 	async function notifyTeammates(recipientUserIds: string[]) {
 		try {
-			await z.mutate(
+			const recipients = $state.snapshot(recipientUserIds);
+			const mutation = z.mutate(
 				mutators.notification.notifyConversation({
-					input: { recipientUserIds },
+					input: { recipientUserIds: recipients },
 					metadata: {
 						organizationId: appState.organizationId,
 						personId,
@@ -24,9 +25,14 @@
 					}
 				})
 			);
+			await mutation.client;
+			const serverResult = await mutation.server;
+			if (serverResult.type === 'error') {
+				throw new Error(serverResult.error.message);
+			}
 			toast.success(t`Teammates notified`);
 		} catch (error) {
-			toast.error(t`Unable to notify teammates`);
+			toast.error(error instanceof Error ? error.message : t`Unable to notify teammates`);
 			throw error;
 		}
 	}

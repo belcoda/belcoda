@@ -26,7 +26,12 @@ const requestId = '66666666-6666-4666-8666-666666666666';
 
 function createTx(
 	recipientUserIds: string[],
-	createdNotifications: { id: string }[] = [{ id: 'notification-id' }]
+	createdNotifications: { id: string; userId: string }[] = recipientUserIds.map(
+		(userId, index) => ({
+			id: `notification-${index}`,
+			userId
+		})
+	)
 ) {
 	const returning = vi.fn(async () => createdNotifications);
 	const onConflictDoNothing = vi.fn(() => ({ returning }));
@@ -112,12 +117,21 @@ describe('notifyConversation', () => {
 				type: 'conversation_mention'
 			})
 		]);
-		expect(insertActivity).toHaveBeenCalledWith({
+		expect(insertActivity).toHaveBeenNthCalledWith(1, {
 			organizationId,
 			personId,
 			userId: actorUserId,
 			type: 'conversation_teammates_notified',
-			referenceId: requestId,
+			referenceId: recipientUserId,
+			unread: false,
+			tx
+		});
+		expect(insertActivity).toHaveBeenNthCalledWith(2, {
+			organizationId,
+			personId,
+			userId: actorUserId,
+			type: 'conversation_teammates_notified',
+			referenceId: secondRecipientUserId,
 			unread: false,
 			tx
 		});

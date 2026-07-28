@@ -169,13 +169,13 @@ export async function notifyConversation({
 		}
 	});
 
-	if (createdNotifications.length > 0) {
+	for (const createdNotification of createdNotifications) {
 		await insertActivity({
 			organizationId,
 			personId,
 			userId: ctx.userId,
 			type: 'conversation_teammates_notified',
-			referenceId: requestId,
+			referenceId: createdNotification.userId,
 			unread: false,
 			tx
 		});

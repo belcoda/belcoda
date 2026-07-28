@@ -25,7 +25,7 @@ export const activityTypesList = [
 	'petition_removed',
 
 	'note_added', //referenceId: noteId
-	'conversation_teammates_notified' //referenceId: notification requestId
+	'conversation_teammates_notified' //referenceId: notified user id
 ] as const;
 export const activityType = v.picklist(activityTypesList);
 export type ActivityType = v.InferOutput<typeof activityType>;
