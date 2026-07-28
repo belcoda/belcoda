@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { locale, t } from '$lib/index.svelte';
+	import type { NotificationPayload } from '$lib/schema/notification/payload';
 	import { appState } from '$lib/state.svelte';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
@@ -10,6 +12,7 @@
 		whatsapp_unread: t`Unread WhatsApp`,
 		whatsapp_message: t`WhatsApp message`,
 		flow_notify_user: t`Flow notification`,
+		conversation_mention: t`Conversation invitation`,
 		event_signup: t`Event signup`,
 		petition_signup: t`Petition signup`,
 		generic: t`Notification`
@@ -23,6 +26,10 @@
 
 	function getTypeLabel(type: string) {
 		return typeLabelMap[type] ?? t`Notification`;
+	}
+
+	function getPayload(payload: unknown): NotificationPayload | null {
+		return payload as NotificationPayload | null;
 	}
 
 	function setBusy(notificationId: string, isBusy: boolean) {
@@ -129,8 +136,24 @@
 									: formatShortTimestamp(notification.createdAt, locale.current)}
 							</p>
 						</div>
-						<p class="mb-3 text-xs text-muted-foreground capitalize">{notification.status}</p>
+						{#if notification.type === 'conversation_mention'}
+							<p class="mb-3 text-sm text-muted-foreground">
+								{t`${getPayload(notification.payload)?.actorName ?? t`A teammate`} invited you to join the conversation with ${getPayload(notification.payload)?.personName ?? t`this person`}`}
+							</p>
+						{:else}
+							<p class="mb-3 text-xs text-muted-foreground capitalize">{notification.status}</p>
+						{/if}
 						<div class="flex items-center gap-2">
+							{#if notification.type === 'conversation_mention'}
+								<Button
+									href={resolve(`/community/${notification.referenceId}`)}
+									size="sm"
+									onclick={() => markAsRead(notification.id)}
+									disabled={busyIds[notification.id] || markAllBusy}
+								>
+									{t`View conversation`}
+								</Button>
+							{/if}
 							{#if notification.status === 'unread'}
 								<Button
 									variant="ghost"

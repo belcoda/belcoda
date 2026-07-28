@@ -11,6 +11,7 @@
 	import NotificationGroupEvent from './NotificationGroupEvent.svelte';
 	import NotificationGroupWhatsApp from './NotificationGroupWhatsApp.svelte';
 	import NotificationGroupPetition from './NotificationGroupPetition.svelte';
+	import NotificationGroupConversationMention from './NotificationGroupConversationMention.svelte';
 
 	const notifications = $derived(appState.notificationItems);
 	type NotificationItem = (typeof notifications)[number];
@@ -24,6 +25,7 @@
 			case 'whatsapp_unread':
 				return `whatsapp:${payload?.personId ?? n.id}`;
 			case 'generic':
+			case 'conversation_mention':
 				return n.id;
 			default:
 				return `${n.type}:${n.referenceId}`;
@@ -81,6 +83,7 @@
 		whatsapp_message: { kind: 'message', dotClass: 'bg-emerald-500' },
 		whatsapp_unread: { kind: 'message', dotClass: 'bg-emerald-500' },
 		flow_notify_user: { kind: 'alert', dotClass: 'bg-amber-500' },
+		conversation_mention: { kind: 'notification', dotClass: 'bg-primary' },
 		generic: { kind: 'notification', dotClass: 'bg-muted-foreground' }
 	};
 
@@ -174,6 +177,8 @@
 							<NotificationGroupPetition {group} />
 						{:else if group.type === 'whatsapp_message' || group.type === 'whatsapp_unread'}
 							<NotificationGroupWhatsApp {group} />
+						{:else if group.type === 'conversation_mention'}
+							<NotificationGroupConversationMention {group} />
 						{:else}
 							<p class="text-xs {group.hasUnread ? 'font-medium' : 'text-muted-foreground'}">
 								{(group.notifications[0]?.payload as { message?: string } | null)?.message ??

@@ -5897,3 +5897,27 @@ msgstr "Selecione membros da organização para convidá-los para esta conversa.
 #: src/lib/components/widgets/communications/NotifyConversationAction.svelte
 msgid "Notify"
 msgstr "Notificar"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr "Um membro da equipe"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "this person"
+msgstr "esta pessoa"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} invited you to join the conversation with {1}"
+msgstr "{0} convidou você para participar da conversa com {1}"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View conversation"
+msgstr "Ver conversa"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Conversation invitation"
+msgstr "Convite para conversa"
