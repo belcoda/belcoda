@@ -1,14 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Re-root into the repo (the Setup script field runs from $HOME, not here) so
+# npm/db commands below operate on the checkout, not the invocation CWD.
+cd "$(dirname "$0")/.."
+
 # Setup script for Claude Code on the web (claude.ai/code).
 #
-# Paste `bash scripts/agent-setup-web.sh` into the cloud environment's
-# "Setup script" field. It runs as root on Ubuntu 24.04 before the session
-# starts, and its filesystem result is CACHED — so this installs/seeds once and
-# later sessions start from the snapshot. Per-session service startup lives in
-# the SessionStart hook (scripts/agent-start.sh), because the cache stores files,
-# not running processes.
+# Paste this ABSOLUTE-PATH invocation into the cloud environment's "Setup
+# script" field (the repo is cloned to /home/user/belcoda):
+#
+#     bash /home/user/belcoda/scripts/agent-setup-web.sh
+#
+# The Setup script field does NOT run from the repo root, so a bare
+# `bash scripts/agent-setup-web.sh` fails with exit 127 ("No such file or
+# directory") even though the script exists — the relative path can't be
+# resolved from the invocation CWD. Using the absolute path locates the script,
+# and the `cd` below re-roots into the repo so npm/db commands run in the right
+# place regardless of the invocation CWD.
+#
+# It runs as root on Ubuntu 24.04 before the session starts, and its filesystem
+# result is CACHED — so this installs/seeds once and later sessions start from
+# the snapshot. Per-session service startup lives in the SessionStart hook
+# (scripts/agent-start.sh), because the cache stores files, not running
+# processes.
 #
 # Unlike Cursor/Codex, the base image already ships PostgreSQL 16 and Node (via
 # nvm), so we don't apt-install Postgres — we just configure and seed it.
