@@ -1239,7 +1239,7 @@ export const flowExecution = pgTable(
 		input: jsonb('input').$type<FlowExecutionInput>().notNull(),
 		error: jsonb('error').$type<FlowExecutionError>().notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
-		startedAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }).notNull(),
 		completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' })
 	},
 	(table) => [
@@ -1258,7 +1258,7 @@ export const flowExecutionStep = pgTable(
 			.references((): AnyPgColumn => flowExecution.id),
 		nodeId: uuid('step_node_id').notNull(),
 		invocationId: uuid('invocation_id').notNull(), // identifies a specific invocation of a node (flows might loop back)
-		attemptNumber: integer('attempt_number').notNull().default(0), // retries share invocationId and increment attemptNumber, but looping back to the same node would have a new invocationId and attemptNumnber 0
+		attemptNumber: integer('attempt_number').notNull().default(1), // retries share invocationId and increment attemptNumber, but looping back to the same node would have a new invocationId and attemptNumnber 1
 		status: text('status').$type<FlowExecutionStepStatus>().notNull(),
 		input: jsonb('input').$type<FlowExecutionStepInput>().notNull(),
 		output: jsonb('output').$type<FlowExecutionStepOutput>().notNull(),
