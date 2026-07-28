@@ -16,11 +16,22 @@
 	type Props = {
 		trigger: Snippet;
 		userIdsToExclude: string[];
-		onSelected: (userIds: string[]) => void;
+		onSelected: (userIds: string[]) => void | Promise<void>;
+		title?: string;
+		description?: string;
+		confirmLabel?: string;
 	};
-	let { trigger, userIdsToExclude = [], onSelected }: Props = $props();
+	let {
+		trigger,
+		userIdsToExclude = [],
+		onSelected,
+		title = t`Add User`,
+		description = '',
+		confirmLabel = t`Add to team`
+	}: Props = $props();
 
 	let isOpen = $state(false);
+	let submitting = $state(false);
 	let selectedUserIds = $state<string[]>([]);
 	let selectedUsers = $state<UserDisplay[]>([]);
 
@@ -34,14 +45,24 @@
 	const availableUsers = $derived(
 		(usersQuery.data ?? []).filter((u) => !selectedUserIds.includes(u.id))
 	);
+
+	async function submit() {
+		if (selectedUserIds.length === 0 || submitting) return;
+		submitting = true;
+		try {
+			await onSelected(selectedUserIds);
+			selectedUserIds = [];
+			selectedUsers = [];
+			isOpen = false;
+		} catch {
+			return;
+		} finally {
+			submitting = false;
+		}
+	}
 </script>
 
-<ResponsiveModal
-	title={t`Add User`}
-	description={t`Select organization members to add to the team.`}
-	{trigger}
-	bind:open={isOpen}
->
+<ResponsiveModal {title} {description} {trigger} bind:open={isOpen}>
 	<div class="space-y-2">
 		<ScrollArea class="h-[200px] w-full rounded-md border">
 			{#if usersQuery.details.type === 'error'}
@@ -115,15 +136,11 @@
 			</ScrollArea>
 		{/if}
 		<div class="flex items-center justify-end gap-2 pt-2">
-			<Button variant="outline" onclick={() => (isOpen = false)}>{t`Close`}</Button>
-			<Button
-				disabled={selectedUserIds.length === 0}
-				onclick={() => {
-					onSelected(selectedUserIds);
-					isOpen = false;
-				}}
-			>
-				{t`Add to team`} ({selectedUserIds.length})
+			<Button variant="outline" onclick={() => (isOpen = false)} disabled={submitting}>
+				{t`Close`}
+			</Button>
+			<Button disabled={selectedUserIds.length === 0 || submitting} onclick={submit}>
+				{confirmLabel} ({selectedUserIds.length})
 			</Button>
 		</div>
 	</div>

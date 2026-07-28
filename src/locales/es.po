@@ -3164,9 +3164,8 @@ msgstr ""
 msgid "Add User"
 msgstr ""
 
-#: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
-msgid "Select organization members to add to the team."
-msgstr ""
+#~ msgid "Select organization members to add to the team."
+#~ msgstr ""
 
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Error loading users."
@@ -5868,3 +5867,25 @@ msgstr "Hoy"
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Yesterday"
 msgstr "Ayer"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Teammates notified"
+msgstr "Compañeros de equipo notificados"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Unable to notify teammates"
+msgstr "No se pudo notificar a los compañeros de equipo"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Notify teammates"
+msgstr "Notificar a compañeros de equipo"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Select organization members to invite to this conversation."
+msgstr "Selecciona miembros de la organización para invitarlos a esta conversación."
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Notify"
+msgstr "Notificar"

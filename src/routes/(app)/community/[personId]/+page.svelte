@@ -18,6 +18,7 @@
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import ActivityTimeline from '$lib/components/widgets/activity/ActivityTimeline.svelte';
+	import NotifyConversationAction from '$lib/components/widgets/communications/NotifyConversationAction.svelte';
 	import SendBusinessApiIndividualMessage from '$lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte';
 	import SendBusinessApiTemplateMessage from '$lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte';
 	const lastReceivedAt = $derived(person.data?.mostRecentWhatsappMessageReceivedAt || 0);
@@ -102,6 +103,8 @@
 			/></a
 		>
 		<div class="flex items-center gap-2">
+			<NotifyConversationAction personId={params.personId} />
+
 			<Sheet.Root bind:open={personContextDrawerOpen}>
 				<Sheet.Trigger>
 					{#snippet child({ props })}

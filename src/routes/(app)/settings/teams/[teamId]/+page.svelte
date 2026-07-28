@@ -236,7 +236,11 @@
 						</Table.Body>
 					</Table.Root>
 					<div class="mt-4">
-						<AddUserModal userIdsToExclude={userIdsOnTeam} onSelected={handleAddUsers}>
+						<AddUserModal
+							userIdsToExclude={userIdsOnTeam}
+							onSelected={handleAddUsers}
+							description={t`Select organization members to add to the team.`}
+						>
 							{#snippet trigger()}
 								<Button variant="outline"><UserPlusIcon class="size-4" /> {t`Add user`}</Button>
 							{/snippet}
