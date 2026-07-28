@@ -6,6 +6,7 @@ import { templateParamSource } from '$lib/schema/template-variables';
 
 export const schemaVersionOptions = ['1.0.0'] as const;
 export const schemaVersion = v.picklist(schemaVersionOptions);
+export type FlowSchemaVersion = v.InferOutput<typeof schemaVersion>;
 
 export const triggerTypeOptions = [
 	'cron',
@@ -53,7 +54,6 @@ export const flowExecutionStepStatusOptions = [
 export const flowExecutionStepStatus = v.picklist(flowExecutionStepStatusOptions);
 export type FlowExecutionStepStatus = v.InferOutput<typeof flowExecutionStepStatus>;
 
-export type FlowSchemaVersion = v.InferOutput<typeof schemaVersion>;
 export const nodeType = v.picklist([
 	'message',
 	'eventSignup',
