@@ -28,7 +28,7 @@ const organizationId = '22222222-2222-4222-8222-222222222222';
 function createTransaction(returnedRows: unknown[]) {
 	const returning = vi.fn().mockResolvedValue(returnedRows);
 	const where = vi.fn(() => ({ returning }));
-	const set = vi.fn(() => ({ where }));
+	const set = vi.fn((_values: Record<string, unknown>) => ({ where }));
 	const update = vi.fn(() => ({ set }));
 	const tx = {
 		dbTransaction: {
