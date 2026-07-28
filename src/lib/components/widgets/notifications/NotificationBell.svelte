@@ -4,22 +4,14 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { t } from '$lib/index.svelte';
-	import { appState, getListFilter } from '$lib/state.svelte';
+	import { appState } from '$lib/state.svelte';
 	import { cn } from '$lib/utils';
-	import queries from '$lib/zero/query/index';
-	import { z } from '$lib/zero.svelte';
 
 	let { class: className }: { class?: string } = $props();
 
 	let open = $state(false);
 
-	const unreadFilter = $derived.by(() => ({
-		...getListFilter(appState.organizationId, { pageSize: 100 }),
-		status: 'unread' as const
-	}));
-
-	const unreadQuery = $derived.by(() => z.createQuery(queries.notification.list(unreadFilter)));
-	const unreadCount = $derived(unreadQuery.data?.length ?? 0);
+	const unreadCount = $derived(appState.unreadNotificationCount);
 	const unreadBadgeText = $derived(unreadCount > 99 ? '99+' : `${unreadCount}`);
 </script>
 

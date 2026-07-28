@@ -128,10 +128,14 @@ export async function updatePerson({
 	if (!personRecord) {
 		throw new Error('Person not found');
 	}
-	const updatedDateParsed = {
-		...input.input,
-		dateOfBirth: input.input.dateOfBirth ? new Date(input.input.dateOfBirth) : undefined
-	};
+	const updatedDateParsed = Object.fromEntries(
+		Object.entries(input.input)
+			.filter(([, value]) => value !== undefined)
+			.map(([key, value]) => [
+				key,
+				key === 'dateOfBirth' && typeof value === 'number' ? new Date(value) : value
+			])
+	);
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(person)
 		.set({
@@ -398,4 +402,57 @@ export async function _updateMostRecentWhatsappMessageReceivedAtUnsafe({
 			'Unable to update most recent whatsapp message received at'
 		);
 	}
+}
+
+export async function _markPersonUnsubscribedUnsafe({
+	tx,
+	args
+}: {
+	tx: ServerTransaction;
+	args: {
+		personId: string;
+		organizationId: string;
+	};
+}): Promise<boolean> {
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(person)
+		.set({
+			subscribed: false,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(person.id, args.personId),
+				eq(person.organizationId, args.organizationId),
+				eq(person.subscribed, true),
+				isNull(person.deletedAt)
+			)
+		)
+		.returning();
+
+	if (!updated) {
+		return false;
+	}
+
+	// Webhook processing failure should not block the opt-out from being applied
+	try {
+		const queue = await getQueue();
+		await queue.triggerWebhook(
+			{
+				organizationId: args.organizationId,
+				payload: {
+					type: 'person.updated',
+					data: parse(personApiSchema, updated)
+				}
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	} catch (error) {
+		log.error(
+			{ error, personId: args.personId, organizationId: args.organizationId },
+			'Failed to enqueue person.updated webhook after WhatsApp opt-out'
+		);
+	}
+
+	return true;
 }

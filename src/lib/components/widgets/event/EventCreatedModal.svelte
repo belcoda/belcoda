@@ -100,7 +100,7 @@
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open {onOpenChange}>
-		<Drawer.Content class="max-h-[90vh]">
+		<Drawer.Content class="max-h-[90vh]" data-testid="event-created-modal">
 			<Drawer.Header class="relative text-start">
 				<Drawer.Title>{mode === 'create' ? t`Event Created!` : t`Event Updated!`}</Drawer.Title>
 				<Drawer.Description>

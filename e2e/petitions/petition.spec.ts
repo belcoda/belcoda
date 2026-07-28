@@ -5,7 +5,8 @@ import { PetitionEditPage } from '../pages/petitions/petition-edit.page';
 import { PetitionPublicPage } from '../pages/petitions/petition-public-page.page';
 import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.page';
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
-import { BASE_URL, getOrgSlug, slugifyTitle } from '../helpers/config';
+import { BASE_URL, getMockWabaId, getOrgSlug, slugifyTitle } from '../helpers/config';
+import { expectSidebarItemCountToReach } from '../helpers/infinite-scroll';
 import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
@@ -107,13 +108,13 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await page.goto('/petitions');
 
 		await page.getByTestId('petitions-sidebar-list').waitFor({ state: 'visible', timeout: 10_000 });
-		const items = page.getByTestId('petition-sidebar-item');
-		await expect(items).toHaveCount(25, { timeout: 15_000 });
+		const visibleItems = page.getByTestId('petition-sidebar-item');
+		const seededItems = visibleItems.filter({
+			hasText: `E2E pagination petition ${seedBody.runId}`
+		});
+		await expect(visibleItems).toHaveCount(25, { timeout: 15_000 });
 
-		await items.first().hover();
-		await page.mouse.wheel(0, 10_000);
-
-		await expect(items).toHaveCount(30, { timeout: 30_000 });
+		await expectSidebarItemCountToReach(seededItems, 30, page, 'petitions-sidebar-scroll-sentinel');
 	});
 
 	test('owner can add a petition and it is saved as draft', async ({ page }) => {
@@ -183,7 +184,7 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await detailPage.goto(ids.petitionId);
 		await detailPage.waitForLoaded();
 		await expect(detailPage.titleDisplay).toContainText(ids.petitionTitle);
-		ids.petitionSlug = slugifyTitle(ids.petitionTitle);
+		ids.petitionSlug = slugBeforeEdit;
 	});
 
 	test('owner can publish a petition from the action menu', async ({ page }) => {
@@ -261,7 +262,7 @@ test.describe.serial('Petitions: public page', () => {
 		await expect(page.getByTestId('public-page-navbar')).toBeVisible({ timeout: 10_000 });
 		const editLink = page.getByTestId('public-page-edit-link');
 		await expect(editLink).toBeVisible();
-		await expect(editLink).toContainText('Edit Petition');
+		await expect(editLink).toHaveAttribute('href', new RegExp(`/petitions/${ids.petitionId}$`));
 	});
 
 	test('anonymous visitor does not see the edit navbar on the public petition page', async ({
@@ -347,6 +348,7 @@ test.describe.serial('Petitions: public page', () => {
 		const flowGivenName = `WA Petition ${suffix}`;
 
 		const webhookBody = buildWhatsAppInboundFlowReplyWebhook({
+			wabaId: getMockWabaId(PROJECT)!,
 			from: flowPhone,
 			to: getE2EDefaultWhatsAppNumber(),
 			responseJson: {

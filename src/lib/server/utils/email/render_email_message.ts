@@ -128,7 +128,7 @@ async function renderLexicalBody(lexicalRenderer: LexicalHtmlRenderer, body: unk
 			: undefined;
 	const children = root && Array.isArray(root.children) ? root.children : undefined;
 
-	if (!children || !children.some(isRenderableImageNode)) {
+	if (!children?.some(isRenderableImageNode)) {
 		return lexicalRenderer.render(JSON.stringify(normalized));
 	}
 

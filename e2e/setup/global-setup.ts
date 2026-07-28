@@ -3,14 +3,13 @@ import { getTestUsers, signUpUser, verifyUserEmail, type UserRole } from '../hel
 import { AUTH_DIR, authStoragePath } from '../helpers/auth-storage';
 import {
 	BASE_URL,
-	E2E_COMMUNITY_MOCK_WABA_ID,
-	E2E_MOCK_WABA_ID,
 	E2E_PROJECTS,
+	getMockWabaId,
 	getOrgName,
 	type E2EProject
 } from '../helpers/config';
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 
 const PROJECTS_WITH_AUTH_STORAGE: E2EProject[] = [
 	'community',
@@ -45,6 +44,10 @@ async function createOrganization(
 		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
 		body: JSON.stringify({ name: orgName, ownerEmail, members, wabaId })
 	});
+
+	if (response.status === 409) {
+		return response.json();
+	}
 
 	if (!response.ok) {
 		const err = await response.text();
@@ -142,12 +145,7 @@ async function runE2eGlobalSetup() {
 			console.log(`  ✓ ${user.email} (${role})`);
 		}
 
-		const wabaId =
-			project === 'whatsapp-accounts'
-				? null
-				: project === 'community'
-					? E2E_COMMUNITY_MOCK_WABA_ID
-					: E2E_MOCK_WABA_ID;
+		const wabaId = getMockWabaId(project);
 		const org = await createOrganization(
 			users.owner.email,
 			orgName,

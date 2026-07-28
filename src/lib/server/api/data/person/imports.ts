@@ -4,6 +4,7 @@ import type { QueryContext } from '$lib/zero/schema';
 import { personImport } from '$lib/schema/drizzle';
 
 import { parse } from 'valibot';
+import { eq } from 'drizzle-orm';
 import {
 	createMutatorSchemaZero,
 	type CreateMutatorSchemaZeroOutput,
@@ -13,6 +14,7 @@ import {
 } from '$lib/schema/person-import';
 
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
+import { getOrganizationByIdForAdminOrOwner } from '$lib/server/api/data/organization';
 
 export async function insertPersonImport({
 	tx,
@@ -24,16 +26,24 @@ export async function insertPersonImport({
 	args: CreateMutatorSchemaZeroOutput;
 }) {
 	const input = parse(createMutatorSchemaZero, args);
+	if (!ctx.userId) {
+		throw new Error('You must be logged in to import people');
+	}
+	const organizationRecord = await getOrganizationByIdForAdminOrOwner({
+		tx,
+		ctx,
+		organizationId: input.metadata.organizationId
+	});
 	const importRecord: typeof personImport.$inferInsert = {
 		id: input.metadata.importId,
-		organizationId: input.metadata.organizationId,
+		organizationId: organizationRecord.id,
 		csvUrl: input.input.csvUrl,
 		status: 'pending',
 		totalRows: 0,
 		processedRows: 0,
 		failedRows: 0,
 		failedEntries: null,
-		importedBy: input.metadata.importedBy,
+		importedBy: ctx.userId,
 		createdAt: new Date(),
 		completedAt: null
 	};
@@ -70,9 +80,18 @@ export async function triggerImportQueue({
 	args: TriggerImportQueueMutatorSchemaOutput;
 }) {
 	const parsed = parse(triggerImportQueueMutatorSchema, args);
+	const importRecord = await tx.dbTransaction.wrappedTransaction.query.personImport.findFirst({
+		where: eq(personImport.id, parsed.metadata.importId)
+	});
+	if (!importRecord) {
+		throw new Error('Person import not found');
+	}
+	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(importRecord.organizationId)) {
+		throw new Error('You are not authorized to trigger this person import');
+	}
 	const queue = await getQueue();
 	await queue.importPeople({
-		personImportId: parsed.metadata.importId,
-		organizationId: parsed.metadata.organizationId
+		personImportId: importRecord.id,
+		organizationId: importRecord.organizationId
 	});
 }

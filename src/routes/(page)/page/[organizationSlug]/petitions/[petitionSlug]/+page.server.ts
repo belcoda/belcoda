@@ -7,14 +7,14 @@ import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
 import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
 import { _getPetitionActionCodeUnsafe } from '$lib/server/api/data/petition/check';
 import { generateWhatsAppPetitionLink } from '$lib/utils/petitions/link';
-import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
-import { sanitize, clearWindow } from 'isomorphic-dompurify';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { getSurveySchema } from '$lib/schema/survey/questions';
+import { checkPublicActionRateLimit } from '$lib/server/api/utils/public-action-rate-limit';
+import { getClientIpFromRequest } from '$lib/server/utils/client-ip';
+import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
 const log = pino(import.meta.url);
-const lexicalRenderer = new LexicalHtmlRenderer();
 
 export async function load({ params, locals }) {
 	const { organizationSlug, petitionSlug } = params;
@@ -95,19 +95,10 @@ export async function load({ params, locals }) {
 		isAdmin = adminOwnerOrgs.admin.includes(org.id) || adminOwnerOrgs.owner.includes(org.id);
 	}
 
-	let renderedDescription: string | null = null;
-	const petitionDescription = petitionData.description as SerializedEditorState | null;
-	if (petitionDescription?.root?.children?.length) {
-		try {
-			renderedDescription = await lexicalRenderer.render(petitionDescription);
-			renderedDescription = sanitize(renderedDescription);
-		} catch (err) {
-			log.warn({ err, petitionId: petitionData.id }, 'Failed to render petition description');
-			renderedDescription = null;
-		} finally {
-			clearWindow(); //Release JSDom resources to avoid memory accumulation
-		}
-	}
+	const renderedDescription = await renderSanitizedDescription({
+		description: petitionData.description as SerializedEditorState | null,
+		logContext: { petitionId: petitionData.id }
+	});
 
 	// Serialize dates to avoid serialization issues
 	const serializedPetition = {
@@ -140,7 +131,7 @@ export async function load({ params, locals }) {
 }
 
 export const actions = {
-	sign: async ({ request, params }) => {
+	sign: async ({ request, params, getClientAddress, setHeaders }) => {
 		const { organizationSlug, petitionSlug } = params;
 
 		const [org] = await drizzle
@@ -178,6 +169,20 @@ export const actions = {
 		form.data.customFields ||= {};
 		if (!form.valid) {
 			return fail(400, { form });
+		}
+		const rateLimit = checkPublicActionRateLimit({
+			action: 'petition_sign',
+			organizationId: org.id,
+			resourceId: petitionData.id,
+			subject: getClientIpFromRequest(request, getClientAddress)
+		});
+		if (rateLimit.limited) {
+			setHeaders({ 'Retry-After': String(rateLimit.retryAfterSeconds) });
+			return fail(429, {
+				form,
+				error: 'Too many signing attempts. Please try again in a minute.',
+				success: false
+			});
 		}
 		const layoutParam = form.data.theme;
 

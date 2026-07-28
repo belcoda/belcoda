@@ -8,6 +8,12 @@ updates:
     schedule:
       interval: 'daily'
     target-branch: 'develop'
+    cooldown:
+      default-days: 7
+    groups:
+      vitest:
+        patterns:
+          - '*vitest*'
 
   # Enable version updates for Docker
   - package-ecosystem: 'docker'
@@ -17,3 +23,5 @@ updates:
     schedule:
       interval: 'weekly'
     target-branch: 'develop'
+    cooldown:
+      default-days: 7

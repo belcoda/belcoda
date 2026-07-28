@@ -11,11 +11,11 @@ import { dev } from '$app/environment';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 
-import { openAPI, organization } from 'better-auth/plugins';
+import { openAPI, organization, bearer, type OrganizationOptions } from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
-import { apiKey } from '@better-auth/api-key';
-import { stripe } from '@better-auth/stripe';
+import { apiKey, type ApiKeyOptions, type ApiKeyConfigurationOptions } from '@better-auth/api-key';
+import { stripe, type StripeOptions } from '@better-auth/stripe';
 import type Stripe from 'stripe';
 import { getQueue } from '$lib/server/queue';
 import { stripeClient } from '$lib/server/stripe';
@@ -47,7 +47,9 @@ const cache = new LRUCache<string, string>({
 });
 
 import { type LanguageCode, clampLocale } from '$lib/utils/language';
+import { organizationMetadataSchema } from '$lib/schema/organization';
 import { organizationSettingsSchema } from '$lib/schema/organization/settings';
+import { memberSettingsSchema } from '$lib/schema/member/settings';
 
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
@@ -135,6 +137,217 @@ async function applyBalanceTopUpFromStripeEvent(event: Stripe.Event) {
 
 export function buildBetterAuth(localeInput: string) {
 	const locale = clampLocale(localeInput as LanguageCode);
+
+	const organizationPluginOptions = {
+		async sendInvitationEmail(data) {
+			try {
+				const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
+				const emailContext = organizationInvitation({
+					url: inviteLink,
+					inviterName: data.inviter.user.name,
+					organizationName: data.organization.name,
+					locale,
+					orgIcon: data.organization.logo
+				});
+				await sendTemplateEmail({
+					to: data.email,
+					from: 'Belcoda <noreply@belcoda.com>',
+					template: 'transactional',
+					stream: 'outbound',
+					context: emailContext
+				});
+			} catch (e) {
+				log.error({ error: e }, 'Failed to send invitation email');
+				if (!dev) throw e;
+			}
+		},
+		organizationHooks: {
+			beforeCreateOrganization: async ({ organization }) => {
+				return {
+					data: {
+						...organization,
+						balance: 0,
+						freeWhatsAppMessageCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
+						freeEmailMessageCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
+						resetFreeQuotasAfter: addOneCalendarMonth(new Date())
+					}
+				};
+			},
+			afterAddMember: async ({ member, user, organization }) => {
+				//trigger webhook
+				try {
+					const queue = await getQueue();
+					await queue.triggerWebhook({
+						organizationId: organization.id,
+						payload: {
+							type: 'member.created',
+							data: {
+								organizationId: organization.id,
+								userId: user.id,
+								role: parse(userRole, member.role)
+							}
+						}
+					});
+				} catch (error) {
+					log.error({ error, member, user, organization }, 'Failed to trigger webhook');
+				}
+			},
+			afterRemoveMember: async ({ user, organization }) => {
+				//trigger webhook
+				try {
+					const queue = await getQueue();
+					await queue.triggerWebhook({
+						organizationId: organization.id,
+						payload: {
+							type: 'member.deleted',
+							data: {
+								organizationId: organization.id,
+								userId: user.id
+							}
+						}
+					});
+				} catch (error) {
+					log.error({ error, user, organization }, 'Failed to trigger webhook');
+				}
+			},
+			afterUpdateMemberRole: async ({ member, user, organization }) => {
+				//trigger webhook
+				try {
+					const queue = await getQueue();
+					await queue.triggerWebhook({
+						organizationId: organization.id,
+						payload: {
+							type: 'member.updated',
+							data: {
+								organizationId: organization.id,
+								userId: user.id,
+								role: parse(userRole, member.role)
+							}
+						}
+					});
+				} catch (error) {
+					log.error({ error, member, user, organization }, 'Failed to trigger webhook');
+				}
+			}
+		},
+		schema: {
+			organization: {
+				additionalFields: {
+					icon: {
+						type: 'string',
+						input: true,
+						required: false
+					},
+					country: {
+						type: 'string',
+						input: true,
+						required: true
+					},
+					defaultLanguage: {
+						type: 'string',
+						input: true,
+						required: true
+					},
+					defaultTimezone: {
+						type: 'string',
+						input: true
+					},
+					settings: {
+						type: 'json',
+						validator: {
+							input: organizationSettingsSchema,
+							output: organizationSettingsSchema
+						},
+						input: true,
+						required: true
+					},
+					metadata: {
+						type: 'json',
+						validator: {
+							input: organizationMetadataSchema,
+							output: organizationMetadataSchema
+						},
+						input: true,
+						required: false
+					},
+					balance: {
+						type: 'number',
+						input: false,
+						required: true
+					},
+					freeWhatsAppMessageCredits: {
+						type: 'number',
+						input: false,
+						required: false
+					},
+					freeEmailMessageCredits: {
+						type: 'number',
+						input: false,
+						required: false
+					},
+					resetFreeQuotasAfter: {
+						type: 'date',
+						input: false,
+						required: false
+					}
+				}
+			},
+			member: {
+				additionalFields: {
+					settings: {
+						type: 'json',
+						validator: {
+							input: memberSettingsSchema,
+							output: memberSettingsSchema
+						},
+						input: false,
+						required: false
+					}
+				}
+			}
+		}
+	} as const satisfies OrganizationOptions;
+	const apiKeyPluginOptions = {
+		storage: 'secondary-storage',
+		fallbackToDatabase: true,
+		references: 'organization',
+		rateLimit: {
+			enabled: true,
+			timeWindow: 60 * 1000, //1 minute
+			maxRequests: 1000 //1000 requests per minute
+		}
+	} as const satisfies ApiKeyConfigurationOptions & ApiKeyOptions;
+	const stripePluginOptions = {
+		stripeClient,
+		stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET as string,
+		createCustomerOnSignUp: true,
+		organization: {
+			enabled: true
+		},
+		subscription: {
+			enabled: true,
+			plans: [
+				{
+					name: 'supported',
+					priceId: env.STRIPE_SUPPORTED_TIER_PRICE_ID
+				},
+				{
+					name: 'enterprise',
+					priceId: env.STRIPE_ENTERPRISE_TIER_PRICE_ID
+				}
+			],
+			authorizeReference: async ({ user, referenceId }) => {
+				return canManageOrganizationBilling({
+					userId: user.id,
+					referenceId
+				});
+			}
+		},
+		onEvent: async (event) => {
+			await applyBalanceTopUpFromStripeEvent(event);
+		}
+	} as const satisfies StripeOptions;
+
 	return betterAuth({
 		appName: 'Belcoda',
 		emailAndPassword: {
@@ -206,198 +419,25 @@ export function buildBetterAuth(localeInput: string) {
 				ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] // Cloudflare specific header
 			}
 		},
-		plugins: [
-			organization({
-				async sendInvitationEmail(data) {
-					try {
-						const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
-						const emailContext = organizationInvitation({
-							url: inviteLink,
-							inviterName: data.inviter.user.name,
-							organizationName: data.organization.name,
-							locale,
-							orgIcon: data.organization.logo
-						});
-						await sendTemplateEmail({
-							to: data.email,
-							from: 'Belcoda <noreply@belcoda.com>',
-							template: 'transactional',
-							stream: 'outbound',
-							context: emailContext
-						});
-					} catch (e) {
-						log.error({ error: e, email: data.email }, 'Failed to send invitation email');
-						if (!dev) throw e;
-					}
-				},
-				organizationHooks: {
-					beforeCreateOrganization: async ({ organization }) => {
-						return {
-							data: {
-								...organization,
-								balance: 0,
-								freeWhatsAppMessageCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
-								freeEmailMessageCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
-								resetFreeQuotasAfter: addOneCalendarMonth(new Date())
-							}
-						};
-					},
-					afterAddMember: async ({ member, user, organization }) => {
-						//trigger webhook
-						try {
-							const queue = await getQueue();
-							await queue.triggerWebhook({
-								organizationId: organization.id,
-								payload: {
-									type: 'member.created',
-									data: {
-										organizationId: organization.id,
-										userId: user.id,
-										role: parse(userRole, member.role)
-									}
-								}
-							});
-						} catch (error) {
-							log.error({ error, member, user, organization }, 'Failed to trigger webhook');
-						}
-					},
-					afterRemoveMember: async ({ user, organization }) => {
-						//trigger webhook
-						try {
-							const queue = await getQueue();
-							await queue.triggerWebhook({
-								organizationId: organization.id,
-								payload: {
-									type: 'member.deleted',
-									data: {
-										organizationId: organization.id,
-										userId: user.id
-									}
-								}
-							});
-						} catch (error) {
-							log.error({ error, user, organization }, 'Failed to trigger webhook');
-						}
-					},
-					afterUpdateMemberRole: async ({ member, user, organization }) => {
-						//trigger webhook
-						try {
-							const queue = await getQueue();
-							await queue.triggerWebhook({
-								organizationId: organization.id,
-								payload: {
-									type: 'member.updated',
-									data: {
-										organizationId: organization.id,
-										userId: user.id,
-										role: parse(userRole, member.role)
-									}
-								}
-							});
-						} catch (error) {
-							log.error({ error, member, user, organization }, 'Failed to trigger webhook');
-						}
-					}
-				},
-				schema: {
-					organization: {
-						additionalFields: {
-							icon: {
-								type: 'string',
-								input: true,
-								required: false
-							},
-							country: {
-								type: 'string',
-								input: true,
-								required: true
-							},
-							defaultLanguage: {
-								type: 'string',
-								input: true,
-								required: true
-							},
-							defaultTimezone: {
-								type: 'string',
-								input: true
-							},
-							settings: {
-								type: 'json',
-								validator: {
-									input: organizationSettingsSchema,
-									output: organizationSettingsSchema
-								},
-								input: true,
-								required: true
-							},
-							balance: {
-								type: 'number',
-								input: false,
-								required: true
-							},
-							freeWhatsAppMessageCredits: {
-								type: 'number',
-								input: false,
-								required: false
-							},
-							freeEmailMessageCredits: {
-								type: 'number',
-								input: false,
-								required: false
-							},
-							resetFreeQuotasAfter: {
-								type: 'date',
-								input: false,
-								required: false
-							}
-						}
-					}
-				}
-			}),
-			openAPI(),
-			apiKey({
-				storage: 'secondary-storage',
-				fallbackToDatabase: true,
-				references: 'organization',
-				rateLimit: {
-					enabled: true,
-					timeWindow: 60 * 1000, //1 minute
-					maxRequests: 1000 //1000 requests per minute
-				}
-			}),
-			stripe({
-				stripeClient,
-				stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET as string,
-				createCustomerOnSignUp: true,
-				organization: {
-					enabled: true
-				},
-				subscription: {
-					enabled: true,
-					plans: [
-						{
-							name: 'supported',
-							priceId: env.STRIPE_SUPPORTED_TIER_PRICE_ID
-						},
-						{
-							name: 'enterprise',
-							priceId: env.STRIPE_ENTERPRISE_TIER_PRICE_ID
-						}
+		plugins:
+			publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review'
+				? [
+						bearer(), //allow bearer on review environment releaes only
+						organization(organizationPluginOptions),
+						apiKey(apiKeyPluginOptions),
+						stripe(stripePluginOptions),
+						openAPI(),
+						oneTimeToken(),
+						sveltekitCookies(getRequestEvent)
+					]
+				: [
+						organization(organizationPluginOptions),
+						apiKey(apiKeyPluginOptions),
+						stripe(stripePluginOptions),
+						openAPI(),
+						oneTimeToken(),
+						sveltekitCookies(getRequestEvent)
 					],
-					authorizeReference: async ({ user, referenceId }) => {
-						return canManageOrganizationBilling({
-							userId: user.id,
-							referenceId
-						});
-					}
-				},
-				onEvent: async (event) => {
-					await applyBalanceTopUpFromStripeEvent(event);
-				}
-			}),
-			oneTimeToken(),
-			sveltekitCookies(getRequestEvent)
-		],
 		emailVerification: {
 			autoSignInAfterVerification: true,
 			sendVerificationEmail: async ({ user, url, token }, request) => {

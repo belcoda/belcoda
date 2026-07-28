@@ -5,8 +5,7 @@
 	import { safeSessionStorage } from '$lib/utils/storage';
 	import { determineAndPersistActiveOrganizationId } from '$lib/utils/organization';
 	import { zero } from '$lib/zero.svelte';
-	import Onboarding from '$lib/components/widgets/tutorial/onboarding/Onboarding.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import DeploymentRecoveryReset from '$lib/utils/DeploymentRecoveryReset.svelte';
 
 	const { children, data } = $props();
@@ -62,10 +61,13 @@
 			console.error('Failed to set active organization:', error);
 		}
 	});
+
+	onDestroy(() => {
+		appState.clearOrganizationContext();
+	});
 </script>
 
 {#if zero.hasInstance && appState.layoutBootstrapComplete}
-	<Onboarding />
 	<DeploymentRecoveryReset />
 	{@render children()}
 {:else}

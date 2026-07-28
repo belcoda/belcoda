@@ -86,6 +86,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			organizationId: true,
 			userId: true,
 			role: true,
+			settings: false,
 			createdAt: true,
 			updatedAt: true
 		},
@@ -302,6 +303,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			id: true,
 			organizationId: true,
 			whatsappThreadId: true,
+			whatsappAccountId: true,
 			externalId: true,
 			wamidId: true,
 			type: true,
@@ -485,6 +487,17 @@ export default drizzleZeroConfig(drizzleSchema, {
 			referenceId: true,
 			type: true,
 			createdAt: true,
+			deletedAt: true
+		},
+		whatsappAccount: {
+			id: true,
+			referenceId: true,
+			scope: true,
+			identifier: true,
+			details: true,
+			metadata: true,
+			createdAt: true,
+			updatedAt: true,
 			deletedAt: true
 		},
 		whatsappLog: false

@@ -18,17 +18,21 @@
 	// Skip the first event — it's shown in NextEventCard
 	const upcomingEvents = $derived(eventsQuery.data?.slice(1) ?? []);
 
-	// Fetch all org signups once and group by eventId
-	const signupsFilter = $derived.by(() => ({
-		...getListFilter(appState.organizationId, { pageSize: 2000 }),
-		includeDeleted: false,
-		includeIncomplete: false
-	}));
-	const signupsQuery = $derived.by(() => z.createQuery(queries.eventSignup.list(signupsFilter)));
+	const signupQueries = $derived.by(() =>
+		upcomingEvents.map((event) =>
+			z.createQuery(
+				queries.event.signups({
+					eventId: event.id,
+					includeDeleted: false,
+					includeIncomplete: false
+				})
+			)
+		)
+	);
 	const signupsByEvent = $derived.by(() => {
 		const map: Record<string, number> = {};
-		for (const s of signupsQuery.data ?? []) {
-			if (s.eventId) map[s.eventId] = (map[s.eventId] ?? 0) + 1;
+		for (let i = 0; i < upcomingEvents.length; i++) {
+			map[upcomingEvents[i].id] = signupQueries[i]?.data?.length ?? 0;
 		}
 		return map;
 	});

@@ -15,7 +15,6 @@ export const userSchema = v.object({
 	twoFactorEnabled: v.boolean(),
 	stripeCustomerId: v.nullable(helpers.shortString),
 	preferredLanguage: v.nullable(v.picklist(LOCALES, 'Invalid language code')),
-	settings: v.nullable(helpers.jsonSchema),
 	createdAt: helpers.date,
 	updatedAt: helpers.date
 });

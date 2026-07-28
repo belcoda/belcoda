@@ -15,6 +15,7 @@ import * as team from '$lib/zero/mutate/team';
 import * as whatsappTemplate from '$lib/zero/mutate/whatsapp/template';
 import * as whatsappThread from '$lib/zero/mutate/whatsapp/thread';
 import * as whatsappMessage from '$lib/zero/mutate/whatsapp/message';
+import * as whatsappAccount from '$lib/zero/mutate/whatsapp/account';
 import { defineMutators } from '@rocicorp/zero';
 
 export const mutators = defineMutators({
@@ -34,6 +35,7 @@ export const mutators = defineMutators({
 	notification: {
 		markAsRead: notification.markNotificationAsRead,
 		dismiss: notification.dismissNotification,
+		markPersonWhatsappAsRead: notification.markPersonWhatsappNotificationsAsRead,
 		markAllAsRead: notification.markAllNotificationsAsRead
 	},
 	personNote: {
@@ -113,5 +115,10 @@ export const mutators = defineMutators({
 		emojiReaction: whatsappMessage.emojiReaction,
 		sendIndividualMessage: whatsappMessage.sendIndividualMessage,
 		sendIndividualTemplateMessage: whatsappMessage.sendIndividualTemplateMessage
+	},
+	whatsappAccount: {
+		create: whatsappAccount.createWhatsappAccount,
+		delete: whatsappAccount.deleteWhatsappAccount,
+		updateMetadata: whatsappAccount.updateWhatsappAccountMetadata
 	}
 });

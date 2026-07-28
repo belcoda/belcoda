@@ -2,7 +2,7 @@ import { parse } from 'valibot';
 import { slug } from '$lib/schema/helpers';
 //taken from https://dev.to/bybydev/how-to-slugify-a-string-in-javascript-4o9n
 export function slugify(str: string) {
-	str = str.replace(/^\s+|\s+$/g, ''); // trim leading/trailing white space
+	str = str.trim();
 	if (str.length === 0) {
 		return '';
 	}
@@ -15,7 +15,7 @@ export function slugify(str: string) {
 }
 
 export function slugifyUnderscore(str: string) {
-	str = str.replace(/^\s+|\s+$/g, ''); // trim leading/trailing white space
+	str = str.trim();
 	if (str.length === 0) {
 		return '';
 	}

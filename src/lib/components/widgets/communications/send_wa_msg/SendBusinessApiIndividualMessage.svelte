@@ -14,6 +14,7 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { z } from '$lib/zero.svelte';
 	import { appState } from '$lib/state.svelte';
+	import { toast } from 'svelte-sonner';
 
 	const { personId }: { personId: string } = $props();
 
@@ -33,13 +34,16 @@
 	let sending = $state(false);
 
 	const showImagePreview = $derived(imageLoading || !!messageState.image_url);
+	const canSend = $derived(
+		!sending && (!!messageState.text?.trim().length || !!messageState.image_url)
+	);
 
 	function removeImage() {
 		messageState.image_url = undefined;
 	}
 
 	async function sendMessage() {
-		if (sending) return;
+		if (!canSend) return;
 		sending = true;
 		try {
 			await z.mutate(
@@ -57,6 +61,8 @@
 				})
 			);
 			messageState = returnDefaultMessageState();
+		} catch {
+			toast.error(t`Failed to send WhatsApp message`);
 		} finally {
 			sending = false;
 		}
@@ -108,7 +114,16 @@
 		</InputGroup.Addon>
 	{/if}
 
-	<InputGroup.Textarea placeholder={t`Write your message...`} bind:value={messageState.text} />
+	<InputGroup.Textarea
+		placeholder={t`Write your message...`}
+		bind:value={messageState.text}
+		onkeydown={(event) => {
+			if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+				event.preventDefault();
+				sendMessage();
+			}
+		}}
+	/>
 
 	<InputGroup.Addon align="block-end">
 		<ImageUploadNew
@@ -139,7 +154,7 @@
 			variant="default"
 			class="ml-auto rounded-full"
 			size="icon-xs"
-			disabled={sending || (messageState.text?.length === 0 && !messageState.image_url)}
+			disabled={!canSend}
 			onclick={sendMessage}
 		>
 			<ArrowUpIcon />

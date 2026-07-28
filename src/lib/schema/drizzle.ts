@@ -16,10 +16,15 @@ import {
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 
-import type { OrganizationSchema } from '$lib/schema/organization';
+import type {
+	OrganizationSchema,
+	OrganizationPlanType,
+	OrganizationMetadataSchema
+} from '$lib/schema/organization';
 import type { TagSchema } from '$lib/schema/tag';
 import type { TeamSchema } from '$lib/schema/team';
 import type { UserSchema } from '$lib/schema/user';
+import type { MemberSettingsSchema } from '$lib/schema/member/settings';
 import type { InvitationSchema } from '$lib/schema/invitation';
 import type { ApiKeySchema } from '$lib/schema/api-key';
 import type {
@@ -46,16 +51,21 @@ import type { EventSchema } from '$lib/schema/event';
 import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
-import type { OrganizationPlanType } from '$lib/schema/organization';
 import type { SerializedEditorState } from 'lexical';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
 import type { JsonSchema } from '$lib/schema/helpers';
 import { type OrganizationSettingsSchema } from '$lib/schema/organization/settings';
-
+import type {
+	WhatsappAccount,
+	WhatsappAccountScope,
+	WhatsappAccountMetadata,
+	WhatsappAccountDetails
+} from '$lib/schema/whatsapp-account';
 import { type WhatsappTemplateStatus } from '$lib/schema/whatsapp/template/status';
 import { type TemplateMessageComponents } from '$lib/schema/whatsapp/template';
+
 import { type FilterGroupType } from '$lib/schema/person/filter';
 import type { LedgerEntryMetadataSchema, LedgerSchema } from '$lib/schema/ledger';
 import {
@@ -89,6 +99,7 @@ export const organization = pgTable(
 		defaultLanguage: text('default_language').$type<LanguageCode>().notNull(),
 		defaultTimezone: text('default_timezone').notNull(),
 		settings: jsonb('settings').$type<OrganizationSettingsSchema>().notNull(),
+		metadata: jsonb('metadata').$type<OrganizationMetadataSchema>(),
 		balance: integer('balance').notNull().default(0),
 		freeWhatsAppMessageCredits: integer('free_whatsapp_message_credits'),
 		freeEmailMessageCredits: integer('free_email_message_credits'),
@@ -170,7 +181,6 @@ export const user = pgTable('user', {
 	twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
 	stripeCustomerId: text('stripe_customer_id'),
 	preferredLanguage: text('preferred_language').$type<Locale>(),
-	settings: jsonb('settings').$type<JsonSchema>(),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 });
@@ -204,6 +214,7 @@ export const member = pgTable(
 			.notNull()
 			.references(() => organization.id),
 		role: text('role').notNull(),
+		settings: jsonb('settings').$type<MemberSettingsSchema>(),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
 	},
 	(table) => [unique('member_user_organization_unique').on(table.userId, table.organizationId)]
@@ -705,6 +716,7 @@ export const whatsappMessage = pgTable('whatsapp_message', {
 		.references(() => organization.id),
 	whatsappThreadId: uuid('whatsapp_thread_id').references(() => whatsappThread.id), //onlu matters for analytics and stuff
 	// YCloud API message id (send response / webhook `whatsappMessage.id`). Not the Belcoda composite we pass as YCloud `externalId` when sending.
+	whatsappAccountId: uuid('whatsapp_account_id').references(() => whatsappAccount.id),
 	externalId: text('external_id'),
 	wamidId: text('wamid_id'), // wamid id (used for tracking read status, replies, reactions, etc..)
 	type: text('type').$type<WhatsappMessageActivityType>().notNull(),
@@ -1078,6 +1090,29 @@ export const whatsappLog = pgTable('whatsapp_log', {
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
 });
 
+export const whatsappAccount = pgTable(
+	'whatsapp_account',
+	{
+		id: uuid('id').primaryKey(),
+		referenceId: uuid('reference_id').notNull(),
+		scope: text('scope').$type<WhatsappAccountScope>().notNull(),
+		identifier: text('identifier').notNull().unique(),
+		details: jsonb('details').$type<WhatsappAccountDetails>().notNull(),
+		metadata: jsonb('metadata').$type<WhatsappAccountMetadata>().notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [index('whatsapp_account_reference_idx').on(table.referenceId)]
+);
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type WhatsappAccountValibotMatchesDrizzle = IsTrue<
+	WhatsappAccount extends typeof whatsappAccount.$inferSelect ? true : false
+>;
+type WhatsappAccountDrizzleMatchesValibot = IsTrue<
+	typeof whatsappAccount.$inferSelect extends WhatsappAccount ? true : false
+>;
+
 // relations for all tables at the end of the file
 
 export const organizationRelations = relations(organization, ({ one, many }) => ({
@@ -1236,6 +1271,11 @@ export const activityRelations = relations(activity, ({ one }) => ({
 	user: one(user, {
 		fields: [activity.userId],
 		references: [user.id]
+	}),
+	// polymorphic relationship to whatsappMessage (other types of activities are less important to have the relationship mapped but can be added if needed)
+	whatsappMessage: one(whatsappMessage, {
+		fields: [activity.referenceId],
+		references: [whatsappMessage.id]
 	})
 }));
 
@@ -1285,6 +1325,21 @@ export const whatsappTemplateRelations = relations(whatsappTemplate, ({ one }) =
 	team: one(team, {
 		fields: [whatsappTemplate.teamId],
 		references: [team.id]
+	})
+}));
+
+export const whatsappMessageRelations = relations(whatsappMessage, ({ one }) => ({
+	organization: one(organization, {
+		fields: [whatsappMessage.organizationId],
+		references: [organization.id]
+	}),
+	whatsappAccount: one(whatsappAccount, {
+		fields: [whatsappMessage.whatsappAccountId],
+		references: [whatsappAccount.id]
+	}),
+	person: one(person, {
+		fields: [whatsappMessage.personId],
+		references: [person.id]
 	})
 }));
 
@@ -1416,5 +1471,21 @@ export const ledgerRelations = relations(ledger, ({ one }) => ({
 	organization: one(organization, {
 		fields: [ledger.organizationId],
 		references: [organization.id]
+	})
+}));
+
+// `whatsappAccount.referenceId` is polymorphic: it points at an organization for
+// organization-scoped accounts and at a user for user-scoped accounts. We expose
+// both relationships (there is no DB-level FK for either) so that Zero query
+// permissions can join through them. At query time the `scope` column is used to
+// pick which relationship is meaningful for a given row.
+export const whatsappAccountRelations = relations(whatsappAccount, ({ one }) => ({
+	organization: one(organization, {
+		fields: [whatsappAccount.referenceId],
+		references: [organization.id]
+	}),
+	user: one(user, {
+		fields: [whatsappAccount.referenceId],
+		references: [user.id]
 	})
 }));

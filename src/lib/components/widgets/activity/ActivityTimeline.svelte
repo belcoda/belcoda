@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	import ActivityRenderer from './ActivityRenderer.svelte';
@@ -9,6 +9,8 @@
 	import type { ListActivityInput } from '$lib/zero/query/activity/list';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodeActivityListCursor } from '$lib/utils/activity/cursor';
+	import AccountSelector from './AccountSelector.svelte';
+	import { appState } from '$lib/state.svelte';
 
 	type ActivityListBaseFilter = Omit<ListActivityInput, 'cursor' | 'pageSize'>;
 
@@ -32,12 +34,17 @@
 	let resizeObserver: ResizeObserver | undefined;
 
 	const paginatedActivities = new PaginatedZeroList<ActivityListBaseFilter, ReadActivityZero>({
-		getBaseFilter: () => ({ personId }),
+		getBaseFilter: () => ({ personId, accountId: appState.activeWhatsappAccountId ?? undefined }),
 		encodeCursor: encodeActivityCursor,
 		pageSize
 	});
 	const activityQuery = $derived.by(() =>
-		z.createQuery(queries.activity.list(paginatedActivities.pageFilter))
+		z.createQuery(
+			queries.activity.list({
+				...paginatedActivities.pageFilter,
+				accountId: appState.activeWhatsappAccountId ?? undefined
+			})
+		)
 	);
 	const chronologicalActivities = $derived([...paginatedActivities.items].reverse());
 
@@ -202,8 +209,35 @@
 			id: activity.id
 		});
 	}
+
+	function isSameCalendarDay(firstTimestamp: number, secondTimestamp: number) {
+		const firstDate = new Date(firstTimestamp);
+		const secondDate = new Date(secondTimestamp);
+		return (
+			firstDate.getFullYear() === secondDate.getFullYear() &&
+			firstDate.getMonth() === secondDate.getMonth() &&
+			firstDate.getDate() === secondDate.getDate()
+		);
+	}
+
+	function getDateDividerLabel(timestamp: number) {
+		const date = new Date(timestamp);
+		const today = new Date();
+		if (isSameCalendarDay(timestamp, today.getTime())) return t`Today`;
+
+		const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+		if (isSameCalendarDay(timestamp, yesterday.getTime())) return t`Yesterday`;
+
+		return date.toLocaleDateString(locale.current, {
+			weekday: 'long',
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric'
+		});
+	}
 </script>
 
+{#if appState.whatsappAccountsUsableByCurrentUser.length > 0}<AccountSelector />{/if}
 <div class="flex min-h-0 flex-1 flex-col bg-gray-50">
 	<div
 		bind:this={scrollContainer}
@@ -213,16 +247,26 @@
 	>
 		{#if chronologicalActivities.length > 0}
 			<div bind:this={listContent} class="flex flex-col gap-y-4">
-				{#each chronologicalActivities as activity (activity.id)}
+				{#each chronologicalActivities as activity, index (activity.id)}
+					{@const previousActivity = chronologicalActivities[index - 1]}
+					{#if !previousActivity || !isSameCalendarDay(previousActivity.createdAt, activity.createdAt)}
+						<div class="flex items-center gap-3 py-1" role="separator">
+							<div class="h-px flex-1 bg-border/70"></div>
+							<span class="text-xs font-medium text-muted-foreground">
+								{getDateDividerLabel(activity.createdAt)}
+							</span>
+							<div class="h-px flex-1 bg-border/70"></div>
+						</div>
+					{/if}
 					<div data-activity-id={activity.id}>
 						<ActivityRenderer {activity} />
 					</div>
 				{/each}
 			</div>
 		{:else if activityQuery.data}
-			<div class="text-center text-sm text-gray-400">{t`No activities yet`}</div>
+			<div class="text-center text-sm text-gray-400">{t`Nothing here yet`}</div>
 		{:else}
-			<div class="text-center text-sm text-gray-400">{t`Loading activities...`}</div>
+			<div class="text-center text-sm text-gray-400">{t`Loading...`}</div>
 		{/if}
 	</div>
 </div>

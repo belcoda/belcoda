@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { type ReadActivityZero } from '$lib/schema/activity';
+	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import Reply from '@lucide/svelte/icons/reply';
 	type Props = {
 		activity: ReadActivityZero;
@@ -28,7 +29,7 @@
 	{@const emojiReactionFromBelcoda = whatsappMessage.data.message.emojiReactions?.find(
 		(reaction) => reaction.viaBelcoda
 	)}
-	<div class="mb-4 flex items-center justify-end gap-1.5">
+	<div class="mb-4 flex items-end justify-end gap-2">
 		<div class="message-bubble message-sent">
 			{#if whatsappMessage.data.message.image_url}
 				<img
@@ -71,6 +72,15 @@
 				class="bg-[#dcf8c6]"
 				reactions={whatsappMessage.data.message.emojiReactions as EmojiReaction[]}
 			/>
+		</div>
+		<div class="flex items-end gap-1.5">
+			{#if whatsappMessage.data.whatsappAccount}
+				<Avatar
+					src={whatsappMessage.data.whatsappAccount.metadata.profilePic}
+					name1={whatsappMessage.data.whatsappAccount.metadata.displayName ?? 'WA'}
+					class="size-6"
+				/>
+			{/if}
 		</div>
 	</div>
 {/if}

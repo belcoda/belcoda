@@ -1,4 +1,12 @@
 # setup script (only used for agent cloud environments (eg: codex etc))
+#
+# Fallback for agent environments that can't install Postgres directly (no
+# sudo/apt). The primary path is .cursor/setup.sh, which apt-installs Postgres.
+# Where that isn't possible, bring this up instead: `docker compose up -d`.
+#
+# `wal_level=logical` (+ replication slots/senders) is required: Zero replicates
+# from this upstream via logical replication and zero-cache won't start without it.
+# Used by cloud agents (Cursor / Codex / Claude) and local docker
 services:
   postgres:
     image: postgres:16
@@ -8,3 +16,16 @@ services:
       POSTGRES_DB: belcoda
     ports:
       - '5432:5432'
+    command:
+      - postgres
+      - -c
+      - wal_level=logical
+      - -c
+      - max_replication_slots=10
+      - -c
+      - max_wal_senders=10
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U app -d belcoda']
+      interval: 2s
+      timeout: 5s
+      retries: 30

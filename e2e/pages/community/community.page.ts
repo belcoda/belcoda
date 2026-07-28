@@ -26,7 +26,7 @@ export class CommunityPage {
 	}
 
 	async expectLoaded() {
-		await this.page.getByTestId('nav-community').waitFor({ state: 'visible' });
+		await this.communitySearchInput.waitFor({ state: 'visible' });
 	}
 
 	async searchCommunityList(query: string) {

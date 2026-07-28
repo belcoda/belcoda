@@ -12,6 +12,30 @@ export const organizationPlanSupported = 'supported' as const;
 export const organizationPlanTypeArray = [organizationPlanSupported] as const;
 export const organizationPlanType = v.picklist(organizationPlanTypeArray); //null == free
 export type OrganizationPlanType = v.InferOutput<typeof organizationPlanType>;
+
+export const organizationDiscoverySourceArray = [
+	'search-engine',
+	'social-media',
+	'friend-or-colleague',
+	'event-or-webinar',
+	'partner',
+	'community-group',
+	'belcoda-resources',
+	'other'
+] as const;
+export const organizationDiscoverySource = v.picklist(organizationDiscoverySourceArray);
+export type OrganizationDiscoverySource = v.InferOutput<typeof organizationDiscoverySource>;
+
+export const organizationMetadataSchema = v.object({
+	onboarding: v.optional(
+		v.object({
+			discoverySource: v.optional(organizationDiscoverySource),
+			discoverySourceDetail: v.optional(v.nullable(helpers.mediumStringEmpty), null)
+		})
+	)
+});
+export type OrganizationMetadataSchema = v.InferOutput<typeof organizationMetadataSchema>;
+
 export const organizationSchema = v.object({
 	id: helpers.uuid,
 	name: organizationNameSchema,
@@ -22,6 +46,7 @@ export const organizationSchema = v.object({
 	defaultLanguage: helpers.languageCode,
 	defaultTimezone: helpers.shortString,
 	settings: organizationSettingsSchema,
+	metadata: v.nullable(organizationMetadataSchema),
 	balance: helpers.count, //cached balance in usd hundreths of cents (real balance is calculated from the ledger)
 	freeWhatsAppMessageCredits: v.nullable(helpers.count), //monthly allowance of free whatsapp messages
 	freeEmailMessageCredits: v.nullable(helpers.count), //monthly allowance of free email messages
@@ -71,7 +96,8 @@ export const createOrganization = v.object({
 	country: organizationSchema.entries.country,
 	defaultLanguage: organizationSchema.entries.defaultLanguage,
 	defaultTimezone: organizationSchema.entries.defaultTimezone,
-	settings: v.optional(organizationSettingsSchema, defaultOrganizationSettings())
+	settings: v.optional(organizationSettingsSchema, defaultOrganizationSettings()),
+	metadata: v.optional(organizationMetadataSchema)
 });
 export type CreateOrganization = v.InferInput<typeof createOrganization>;
 
@@ -81,29 +107,25 @@ export const newOrganizationFromWebsiteForm = v.object({
 	icon: v.optional(organizationSchema.entries.icon, null),
 	website: v.optional(helpers.domainNameOrUrl),
 	additionalDetails: v.object({
-		organizationSize: v.picklist(['1', '2-10', '11-50', '50-500', '500+']),
-		organizationFocus: v.picklist(['community-org-charity', 'business', 'advocacy', 'political']),
-		howDidYouDiscover: v.picklist([
-			'search-engine',
-			'referral',
-			'training-conference',
-			'resources',
-			'social-media'
-		]),
-		features: v.object({
-			storingMemberOrSupporterData: v.boolean(),
-			growingOurListOfSupportersOrMembers: v.boolean(),
-			sendingWhatsAppMessagesToMembersOrSupporters: v.boolean(),
-			sendingEmailsToMembersOrSupporters: v.boolean(),
-			runningEvents: v.boolean(),
-			runningPolicyCampaignsWithOnlinePetitions: v.boolean(),
-			makingSureAllDataIsSyncedAndUpToDate: v.boolean(),
-			other: v.boolean(),
-			otherDetail: helpers.shortStringEmpty
-		})
+		howDidYouDiscover: organizationDiscoverySource,
+		howDidYouDiscoverDetail: v.optional(helpers.mediumStringEmpty, '')
 	})
 });
 export type NewOrganizationFromWebsiteForm = v.InferOutput<typeof newOrganizationFromWebsiteForm>;
+
+export function buildOrganizationOnboardingMetadata(org: NewOrganizationFromWebsiteForm) {
+	const discoverySourceDetail = org.additionalDetails.howDidYouDiscoverDetail.trim();
+
+	return {
+		onboarding: {
+			discoverySource: org.additionalDetails.howDidYouDiscover,
+			discoverySourceDetail:
+				org.additionalDetails.howDidYouDiscover === 'other' && discoverySourceDetail
+					? discoverySourceDetail
+					: null
+		}
+	} satisfies OrganizationMetadataSchema;
+}
 
 export const updateOrganization = v.partial(
 	v.object({

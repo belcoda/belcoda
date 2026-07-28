@@ -2,15 +2,11 @@ import { error } from '@sveltejs/kit';
 import { drizzle } from '$lib/server/db';
 import { petition, petitionSignature, organization, person } from '$lib/schema/drizzle';
 import { eq, and, isNull, count, desc } from 'drizzle-orm';
-import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { SerializedEditorState } from 'lexical';
-import pino from '$lib/pino';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { getSurveySchema } from '$lib/schema/survey/questions';
-
-const log = pino(import.meta.url);
-const lexicalRenderer = new LexicalHtmlRenderer();
+import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
 
 export const ssr = false;
 
@@ -65,16 +61,10 @@ export async function load({ params }) {
 		.orderBy(desc(petitionSignature.createdAt))
 		.limit(10);
 
-	let renderedDescription: string | null = null;
-	const petitionDescription = petitionData.description as SerializedEditorState | null;
-	if (petitionDescription?.root?.children?.length) {
-		try {
-			renderedDescription = await lexicalRenderer.render(petitionDescription);
-		} catch (err) {
-			log.warn({ err, petitionId: petitionData.id }, 'Failed to render petition description');
-			renderedDescription = null;
-		}
-	}
+	const renderedDescription = await renderSanitizedDescription({
+		description: petitionData.description as SerializedEditorState | null,
+		logContext: { petitionId: petitionData.id }
+	});
 
 	const serializedPetition = {
 		...petitionData,

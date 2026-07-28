@@ -40,17 +40,8 @@
 	const personList = $derived.by(() =>
 		z.createQuery(queries.person.list(paginatedPersonList.pageFilter))
 	);
-	const unreadNotificationsQuery = $derived.by(() =>
-		z.createQuery(
-			queries.notification.list({
-				...getListFilter(appState.organizationId, { pageSize: 200 }),
-				status: 'unread'
-			})
-		)
-	);
-	const unreadReferenceIds = $derived.by(
-		() =>
-			new Set((unreadNotificationsQuery.data ?? []).map((notification) => notification.referenceId))
+	const unreadWhatsappMessageCountsByPersonId = $derived(
+		appState.unreadWhatsappMessageCountsByPersonId
 	);
 
 	watch(
@@ -122,6 +113,9 @@
 </Sidebar.Root>
 
 {#snippet personItem(person: ReadPersonZero)}
+	{@const unreadMessageCount = unreadWhatsappMessageCountsByPersonId.get(person.id) ?? 0}
+	{@const unreadMessageCountDisplay =
+		unreadMessageCount > 99 ? '99+' : formatNumber(unreadMessageCount, locale.current)}
 	<a
 		data-testid="community-person-list-link"
 		data-person-id={person.id}
@@ -148,8 +142,16 @@
 							country: person.country
 						})}
 					</span>
-					{#if unreadReferenceIds.has(person.id)}
-						<span class="size-2 shrink-0 rounded-full bg-primary"></span>
+					{#if unreadMessageCount > 0}
+						<span
+							class="flex h-5 w-7 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-primary-foreground"
+							title={t`Unread WhatsApp`}
+						>
+							<span aria-hidden="true">{unreadMessageCountDisplay}</span>
+							<span class="sr-only">
+								{t`${formatNumber(unreadMessageCount, locale.current)} unread WhatsApp messages`}
+							</span>
+						</span>
 					{/if}
 				</div>
 				<div class="truncate text-xs text-muted-foreground">
