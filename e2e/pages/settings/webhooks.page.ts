@@ -120,4 +120,42 @@ export class WebhooksPage {
 	get secretValueInput(): Locator {
 		return this.page.getByTestId('settings-webhooks-secret-value');
 	}
+
+	logsTrigger(webhookId: string): Locator {
+		return this.webhookRowById(webhookId).getByTestId('settings-webhooks-logs');
+	}
+
+	async gotoLogs(webhookId: string) {
+		await this.page.goto(`/settings/webhooks/${webhookId}/logs`);
+	}
+
+	async openLogsById(webhookId: string) {
+		await this.logsTrigger(webhookId).click();
+		await this.page.waitForURL(new RegExp(`/settings/webhooks/${webhookId}/logs`));
+	}
+
+	get logsRoot(): Locator {
+		return this.page.getByTestId('settings-webhook-logs');
+	}
+
+	get logRows(): Locator {
+		return this.page.getByTestId('settings-webhook-logs-row');
+	}
+
+	logRowByEventType(eventType: string): Locator {
+		return this.page.locator(
+			`[data-testid="settings-webhook-logs-row"][data-event-type="${eventType}"]`
+		);
+	}
+
+	/**
+	 * A delivery-log row for a given event type whose rendered payload contains the
+	 * given unique substring (e.g. the name of the entity that triggered the event).
+	 * Because the webhook is subscribed to all events, matching on the unique payload
+	 * text ties the assertion to the specific action this test took, rather than to
+	 * any `tag.created` row that might exist.
+	 */
+	logRowForEventContaining(eventType: string, payloadSubstring: string): Locator {
+		return this.logRowByEventType(eventType).filter({ hasText: payloadSubstring });
+	}
 }

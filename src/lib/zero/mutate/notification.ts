@@ -2,8 +2,9 @@ import { defineMutator } from '@rocicorp/zero';
 import {
 	markNotificationAsReadMutatorSchemaZero,
 	dismissNotificationMutatorSchemaZero,
+	markPersonWhatsappNotificationsAsReadMutatorSchemaZero,
 	markAllNotificationsAsReadMutatorSchemaZero,
-	notifyConversationMutatorSchemaZero
+  notifyConversationMutatorSchemaZero
 } from '$lib/schema/notification';
 
 export const notifyConversation = defineMutator(
@@ -33,6 +34,11 @@ export const dismissNotification = defineMutator(
 			updatedAt: Date.now()
 		});
 	}
+);
+
+export const markPersonWhatsappNotificationsAsRead = defineMutator(
+	markPersonWhatsappNotificationsAsReadMutatorSchemaZero,
+	async () => {}
 );
 
 export const markAllNotificationsAsRead = defineMutator(

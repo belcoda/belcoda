@@ -13,7 +13,10 @@ import pino from '$lib/pino';
 import { eq } from 'drizzle-orm';
 import { whatsappThread } from '$lib/schema/drizzle';
 import { extractButtonActionString } from '$lib/server/utils/whatsapp/ycloud/convert_outbound';
-import { _updateMostRecentWhatsappMessageReceivedAtUnsafe } from '$lib/server/api/data/person/person';
+import {
+	_markPersonUnsubscribedUnsafe,
+	_updateMostRecentWhatsappMessageReceivedAtUnsafe
+} from '$lib/server/api/data/person/person';
 const log = pino(import.meta.url);
 import { _getActionCodeUnsafe } from '$lib/server/api/data/action/check';
 import { extractActionCode } from '$lib/server/queue/handlers/whatsapp/incoming_message_actions/action_code';
@@ -47,24 +50,31 @@ import { convertIncomingWhatsAppMessage } from '$lib/server/queue/handlers/whats
 
 import { v7 as uuidv7 } from 'uuid';
 import { createNotification } from '$lib/server/api/data/notification/notification';
+import { isWhatsappOptOutMessage } from '$lib/server/utils/whatsapp/opt_out';
 export async function handleIncomingMessage(incomingMessage: unknown) {
+	let parsed: IncomingMessage;
 	try {
-		const parsed = parse(incomingMessageSchema, incomingMessage);
-
-		log.debug(parsed, 'Parsed incoming whatsapp message');
-
-		const insertedWhatsAppMessageId: string = uuidv7();
-		await db.transaction(async (tx) => {
-			await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
-		});
+		parsed = parse(incomingMessageSchema, incomingMessage);
 	} catch (err) {
 		const renderedError = renderValiError(err);
 		if (renderedError.isValiError) {
 			log.error(renderedError, 'Failed to parse incoming message');
 			log.debug(incomingMessage, 'Full message');
-		} else {
-			log.error(err, 'Failed to process incoming message');
+			return;
 		}
+		throw err;
+	}
+
+	log.debug(parsed, 'Parsed incoming whatsapp message');
+
+	const insertedWhatsAppMessageId: string = uuidv7();
+	try {
+		await db.transaction(async (tx) => {
+			await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
+		});
+	} catch (err) {
+		log.error(err, 'Failed to process incoming message');
+		throw err;
 	}
 }
 
@@ -159,6 +169,16 @@ async function processIncomingMessageInTransaction(
 		senderDisplayName,
 		tx
 	});
+	if (routingResult.contactPreferenceAction === 'opt_out') {
+		const changed = await _markPersonUnsubscribedUnsafe({
+			tx,
+			args: {
+				personId,
+				organizationId
+			}
+		});
+		log.info({ personId, organizationId, changed }, 'Processed inbound WhatsApp opt-out request');
+	}
 	const convertedMessage = await convertIncomingWhatsAppMessage({
 		inboundMessage: parsed as IncomingMessage,
 		organizationId
@@ -230,6 +250,7 @@ type MessageRoutingResult = {
 	personId?: string;
 	organizationId?: string;
 	logActivity?: boolean;
+	contactPreferenceAction?: 'opt_out';
 };
 
 type TextMessage = Extract<IncomingMessageObject, { type: 'text' }>;
@@ -242,6 +263,9 @@ async function handleTextMessage(
 	ctx: MessageRoutingContext
 ): Promise<MessageRoutingResult> {
 	const { tx } = ctx;
+	if (isWhatsappOptOutMessage(message.text.body)) {
+		return { contactPreferenceAction: 'opt_out' };
+	}
 	const actionCode = extractActionCode(message.text.body);
 	log.info({ actionCode, text: message.text.body }, 'Extracted action code from message');
 	if (!actionCode) {
@@ -492,7 +516,8 @@ async function processButtonAction(
 		nodeId: nextNode,
 		personId,
 		organizationId: threadObject.organizationId,
-		threadId: threadObject.id
+		threadId: threadObject.id,
+		enforceSubscription: false
 	});
 }
 

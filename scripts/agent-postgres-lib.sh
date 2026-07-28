@@ -181,19 +181,20 @@ bootstrap_postgres_roles() {
 	*) echo "warning: DATABASE_URL host '$app_host' is not local; these scripts only bootstrap the local Postgres cluster" >&2 ;;
 	esac
 
-	# Least-privilege application role (no SUPERUSER). Replication for Zero stays on
-	# a separate role when ZERO_UPSTREAM_DB uses a different user; if both URLs share
-	# a user, grant REPLICATION on that role (still without SUPERUSER).
+	# Cloud agent envs are ephemeral and agent-only: Zero needs SUPERUSER on the
+	# upstream role to CREATE PUBLICATION … FOR TABLES IN SCHEMA. When both URLs
+	# share a user, that role also needs REPLICATION; when split, only the upstream
+	# role gets SUPERUSER + REPLICATION.
 	if [ "$app_user" = "$upstream_user" ]; then
 		# One role has one password: a shared user with divergent passwords can't work.
 		if [ "$app_password" != "$upstream_password" ]; then
 			echo "DATABASE_URL and ZERO_UPSTREAM_DB share user '$app_user' but have different passwords" >&2
 			exit 1
 		fi
-		ensure_role "$app_user" "LOGIN REPLICATION" "$app_password"
+		ensure_role "$app_user" "LOGIN REPLICATION SUPERUSER" "$app_password"
 	else
 		ensure_role "$app_user" "LOGIN" "$app_password"
-		ensure_role "$upstream_user" "LOGIN REPLICATION" "$upstream_password"
+		ensure_role "$upstream_user" "LOGIN REPLICATION SUPERUSER" "$upstream_password"
 		# Let the replication role read the app-owned tables Zero must snapshot.
 		# Membership in the owner role inherits SELECT on current and future objects.
 		as_postgres psql -v ON_ERROR_STOP=1 -c \

@@ -5409,6 +5409,7 @@ msgstr ""
 msgid "Open notifications"
 msgstr "Abrir notificações"
 
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Unread WhatsApp"
 msgstr "WhatsApp não lido"
@@ -5875,6 +5876,11 @@ msgstr "Conte-nos onde você ficou sabendo da Belcoda"
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Maximum 500 characters."
 msgstr "Máximo de 500 caracteres."
+
+#. 0: formatNumber(unreadMessageCount, locale.current)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} unread WhatsApp messages"
+msgstr "{0} mensagens não lidas do WhatsApp"
 
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Today"
