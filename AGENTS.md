@@ -418,8 +418,10 @@ uses custom `ZERO_QUERY_URL`/`ZERO_MUTATE_URL`, so `zero-cache-dev` runs without
 Committed config drives it:
 
 - [`.cursor/environment.json`](.cursor/environment.json) — `install` runs
-  `.cursor/setup.sh` (→ shared script), `start` boots Postgres, a `dev` terminal
-  runs `npm run dev`.
+  `.cursor/setup.sh` (→ shared `scripts/agent-setup.sh`: apt-installs Postgres with
+  `wal_level=logical`, then `npm ci` → `db:push` → `db:seed`) and installs Playwright
+  Chromium; `start` runs `sudo service postgresql start`; an `app-zero` terminal
+  ensures `.env` exists and runs `npm run dev`.
 
 ### Codex
 
