@@ -413,6 +413,15 @@ the `ZERO_*`, `BETTER_AUTH_*`, and `OWNER_*` (seed) vars, plus
 `MOCK_EXTERNAL_SERVICES=true`. No Zero schema/permissions file is needed: the app
 uses custom `ZERO_QUERY_URL`/`ZERO_MUTATE_URL`, so `zero-cache-dev` runs without one.
 
+**Install vs runtime:** Cursor environment secrets apply to both the `install`
+snapshot build and the agent runtime — there is no separate “runtime-only”
+store. `OWNER_*` must be available during **install** because that is when
+`npm run db:seed` creates the loginable owner. If those secrets are omitted,
+`scripts/agent-setup.sh` (and `agent-setup-web.sh`) copy
+`.env.example.cloud-agents` → `.env` before seed so cloud agents still get the
+default `dev@localhost.test` owner. Dashboard secrets override `.env` values
+when present (dotenv does not replace already-set env vars).
+
 ### Cursor
 
 Committed config drives it:
