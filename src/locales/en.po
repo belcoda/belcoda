@@ -5968,3 +5968,8 @@ msgstr "Bring in teammates"
 #: src/lib/components/widgets/communications/NotifyConversationAction.svelte
 msgid "Notify selected"
 msgstr "Notify selected"
+
+#. 0: actor.data.name; 1: teammate.data.name
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "{0} brought {1} into the conversation"
+msgstr "{0} brought {1} into the conversation"

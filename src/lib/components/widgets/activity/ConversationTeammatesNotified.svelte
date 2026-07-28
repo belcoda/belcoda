@@ -11,6 +11,7 @@
 	const actor = $derived.by(() =>
 		activity.userId ? z.createQuery(queries.user.read({ userId: activity.userId })) : null
 	);
+	const teammate = $derived(z.createQuery(queries.user.read({ userId: activity.referenceId })));
 </script>
 
 <div class="w-full px-4 py-2 text-center text-sm text-gray-400">
@@ -19,7 +20,9 @@
 	</div>
 	<div class="flex items-center justify-center gap-1">
 		<UserPlusIcon class="size-3" />
-		{#if actor?.data}
+		{#if actor?.data && teammate.data}
+			{t`${actor.data.name} brought ${teammate.data.name} into the conversation`}
+		{:else if actor?.data}
 			{t`${actor.data.name} notified teammates about this person`}
 		{:else}
 			{t`Teammates were notified about this person`}
