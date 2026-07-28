@@ -422,6 +422,14 @@ store. `OWNER_*` must be available during **install** because that is when
 default `dev@localhost.test` owner. Dashboard secrets override `.env` values
 when present (dotenv does not replace already-set env vars).
 
+**Localhost login caveat:** If dashboard secrets set production values for
+`PUBLIC_ROOT_DOMAIN` / `BETTER_AUTH_URL` / `PUBLIC_HOST` / `PUBLIC_ZERO_SERVER`,
+better-auth will emit `Secure` cookies scoped to the production domain, and
+browser login on `http://localhost:5173` will fail (session never sticks). For
+cloud agents, either set those secrets to the localhost values from
+`.env.example.cloud-agents`, or rely on the `app-zero` terminal which sources
+`.env` (overriding) before `npm run dev`.
+
 ### Cursor
 
 Committed config drives it:
