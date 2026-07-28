@@ -11,6 +11,7 @@
 	import PetitionSigned from './PetitionSigned.svelte';
 	import IncomingWhatsAppMessage from './IncomingWhatsAppMessage.svelte';
 	import OutgoingWhatsAppMessage from './OutgoingWhatsAppMessage.svelte';
+	import ConversationTeammatesNotified from './ConversationTeammatesNotified.svelte';
 
 	import { dev } from '$app/environment';
 
@@ -41,6 +42,8 @@
 	<IncomingWhatsAppMessage {activity} />
 {:else if activity.type === 'whatsapp_message_outgoing'}
 	<OutgoingWhatsAppMessage {activity} />
+{:else if activity.type === 'conversation_teammates_notified'}
+	<ConversationTeammatesNotified {activity} />
 {:else if dev}
 	<div class="text-xs text-orange-500">Unhandled activity type: {activity.type}</div>
 {/if}

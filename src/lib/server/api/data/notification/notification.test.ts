@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getOrganizationMember } from '$lib/server/api/data/organization/member';
 import { getPerson } from '$lib/server/api/data/person/person';
+import { insertActivity } from '$lib/server/api/data/activity/activity';
 import { notifyConversation } from './notification';
 
 vi.mock('$lib/server/api/data/organization/member', () => ({
@@ -12,6 +13,10 @@ vi.mock('$lib/server/api/data/person/person', () => ({
 	getPerson: vi.fn()
 }));
 
+vi.mock('$lib/server/api/data/activity/activity', () => ({
+	insertActivity: vi.fn()
+}));
+
 const organizationId = '11111111-1111-4111-8111-111111111111';
 const personId = '22222222-2222-4222-8222-222222222222';
 const actorUserId = '33333333-3333-4333-8333-333333333333';
@@ -19,8 +24,11 @@ const recipientUserId = '44444444-4444-4444-8444-444444444444';
 const secondRecipientUserId = '55555555-5555-4555-8555-555555555555';
 const requestId = '66666666-6666-4666-8666-666666666666';
 
-function createTx(recipientUserIds: string[]) {
-	const returning = vi.fn(async () => [{ id: 'notification-id' }]);
+function createTx(
+	recipientUserIds: string[],
+	createdNotifications: { id: string }[] = [{ id: 'notification-id' }]
+) {
+	const returning = vi.fn(async () => createdNotifications);
 	const onConflictDoNothing = vi.fn(() => ({ returning }));
 	const values = vi.fn(() => ({ onConflictDoNothing }));
 	const insert = vi.fn(() => ({ values }));
@@ -69,6 +77,7 @@ describe('notifyConversation', () => {
 	beforeEach(() => {
 		vi.mocked(getOrganizationMember).mockReset();
 		vi.mocked(getPerson).mockReset();
+		vi.mocked(insertActivity).mockReset();
 		vi.mocked(getOrganizationMember).mockResolvedValue({} as never);
 		vi.mocked(getPerson).mockResolvedValue({
 			givenName: 'Yusra',
@@ -103,6 +112,15 @@ describe('notifyConversation', () => {
 				type: 'conversation_mention'
 			})
 		]);
+		expect(insertActivity).toHaveBeenCalledWith({
+			organizationId,
+			personId,
+			userId: actorUserId,
+			type: 'conversation_teammates_notified',
+			referenceId: requestId,
+			unread: false,
+			tx
+		});
 	});
 
 	it('rejects recipients who are not organization members', async () => {
@@ -117,5 +135,18 @@ describe('notifyConversation', () => {
 		).rejects.toThrow('All recipients must be organization members');
 
 		expect(insert).not.toHaveBeenCalled();
+		expect(insertActivity).not.toHaveBeenCalled();
+	});
+
+	it('does not duplicate the activity when notification creation is deduplicated', async () => {
+		const { tx } = createTx([recipientUserId], []);
+
+		await notifyConversation({
+			tx: tx as never,
+			ctx,
+			args: args([recipientUserId])
+		});
+
+		expect(insertActivity).not.toHaveBeenCalled();
 	});
 });

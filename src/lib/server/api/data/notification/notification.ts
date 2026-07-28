@@ -20,6 +20,7 @@ import { builder, type QueryContext } from '$lib/zero/schema';
 import { notificationReadPermissions } from '$lib/zero/query/notification/permissions';
 import { getOrganizationMember } from '$lib/server/api/data/organization/member';
 import { getPerson } from '$lib/server/api/data/person/person';
+import { insertActivity } from '$lib/server/api/data/activity/activity';
 
 async function resolveNotificationRecipients({
 	tx,
@@ -152,7 +153,7 @@ export async function notifyConversation({
 		[personRecord.givenName, personRecord.familyName].filter(Boolean).join(' ') ||
 		personRecord.phoneNumber;
 
-	return createNotification({
+	const createdNotifications = await createNotification({
 		tx,
 		args: {
 			type: 'conversation_mention',
@@ -167,6 +168,20 @@ export async function notifyConversation({
 			routing: { recipientUserIds, creatorUserId: null }
 		}
 	});
+
+	if (createdNotifications.length > 0) {
+		await insertActivity({
+			organizationId,
+			personId,
+			userId: ctx.userId,
+			type: 'conversation_teammates_notified',
+			referenceId: requestId,
+			unread: false,
+			tx
+		});
+	}
+
+	return createdNotifications;
 }
 
 export async function markNotificationAsRead({

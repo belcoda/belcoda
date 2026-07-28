@@ -230,6 +230,8 @@
 				<div class="min-w-0 shrink truncate">{activityPreview.subject}</div>
 				<div class="min-w-0 flex-1 truncate">{activityPreview.bodyStart}</div>
 			</div>
+		{:else if activityPreview.type === 'conversation_teammates_notified'}
+			<div>{t`Teammates notified`}</div>
 		{:else}
 			{t`Unknown activity ${activityPreview.type}`}
 		{/if}

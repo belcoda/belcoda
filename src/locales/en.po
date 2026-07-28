@@ -5892,6 +5892,7 @@ msgstr "Today"
 msgid "Yesterday"
 msgstr "Yesterday"
 
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/widgets/communications/NotifyConversationAction.svelte
 msgid "Teammates notified"
 msgstr "Teammates notified"
@@ -5937,3 +5938,11 @@ msgstr "View conversation"
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Conversation invitation"
 msgstr "Conversation invitation"
+
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "{0} notified teammates about this person"
+msgstr "{0} notified teammates about this person"
+
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "Teammates were notified about this person"
+msgstr "Teammates were notified about this person"

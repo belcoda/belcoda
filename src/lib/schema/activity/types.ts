@@ -24,7 +24,8 @@ export const activityTypesList = [
 	'petition_signed',
 	'petition_removed',
 
-	'note_added' //referenceId: noteId
+	'note_added', //referenceId: noteId
+	'conversation_teammates_notified' //referenceId: notification requestId
 ] as const;
 export const activityType = v.picklist(activityTypesList);
 export type ActivityType = v.InferOutput<typeof activityType>;
@@ -139,6 +140,9 @@ export const activityPreviewPayloads = v.variant('type', [
 		notePreview: shortString,
 		userName: mediumString,
 		noteId: uuid
+	}),
+	v.object({
+		type: v.literal('conversation_teammates_notified')
 	})
 ]);
 export type ActivityPreviewPayload = v.InferOutput<typeof activityPreviewPayloads>;

@@ -35,6 +35,8 @@ export async function generatePreview({
 		case 'whatsapp_message_incoming':
 		case 'whatsapp_message_outgoing':
 			return generateWhatsappPreview(type, referenceId);
+		case 'conversation_teammates_notified':
+			return { type };
 		default: {
 			throw new Error(`Unsupported activity type: ${type}`);
 		}
