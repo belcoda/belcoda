@@ -58,6 +58,15 @@ wait_for_postgres
 bootstrap_postgres_roles
 
 # --- App deps + schema + seed (cached into the snapshot) ---
+# Seed needs OWNER_* (and related) from process.env / .env. Cloud env secrets
+# may supply them; otherwise copy the committed example before db:seed so
+# install still produces a loginable owner account.
+if [ ! -f .env ]; then
+	cp .env.example.cloud-agents .env
+fi
+
 npm ci --include=dev
-npm run db:push
+# drizzle.config.ts sets strict: true (interactive confirm). Agent/cloud setup
+# has no TTY, so push would hang/fail without --force.
+npx drizzle-kit push --force
 npm run db:seed
