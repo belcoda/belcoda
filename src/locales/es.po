@@ -20,26 +20,18 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
-#: src/routes/(app)/preferences/language/+page.svelte
-#: src/routes/(app)/settings/(account)/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
 msgstr ""
 
-#: src/routes/(app)/preferences/language/+page.svelte
-#: src/routes/(app)/settings/(account)/language/+page.svelte
-msgid "Languages"
-msgstr ""
+#~ msgid "Languages"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/language/+page.svelte
-#: src/routes/(app)/settings/(account)/language/+page.svelte
-msgid "Update your preferred language:"
-msgstr ""
+#~ msgid "Update your preferred language:"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/language/+page.svelte
-#: src/routes/(app)/settings/(account)/language/+page.svelte
-msgid "This will update your language for all the pages in the application."
-msgstr ""
+#~ msgid "This will update your language for all the pages in the application."
+#~ msgstr ""
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
@@ -50,49 +42,39 @@ msgid "Settings"
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email from signatures"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Display Settings"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Customize how your workspace appears on public pages like event calendars and event signup pages."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Tab Icon URL"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "URL to an icon that will appear in browser tabs for public pages. Recommended size: 32x32px or 64x64px."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Primary Color"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Main color for buttons, links, and primary accents on public pages."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Secondary Color"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Accent color for success states and secondary elements on public pages."
 msgstr ""
@@ -113,14 +95,6 @@ msgstr ""
 #: src/routes/(app)/events/new/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
 #: src/routes/(app)/petitions/new/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/(workspace)/organization/configuration/+page.svelte
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
@@ -140,93 +114,73 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Save Changes"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Failed to load organization settings."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Theme Settings"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Are you sure you want to delete this email signature?"
 msgstr ""
 
 #. 0: organization.data?.settings.email.systemFromIdentity?.name || systemEmailAddress
-#. 0: organization.data?.settings.email.systemFromIdentity?.name || systemEmailAddress
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "System ({0})"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "System send signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "This is the default send signature provided to every organization. You can customize the name and reply-to address."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Default send signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Choose which email signature will be used by default when sending emails. You can override this for individual emails."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Select default signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Updating..."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Custom send signatures"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Additional email signatures that you can use to send emails. These must be verified with Postmark."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Name & Email"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Reply-to"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Return path"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "The return path domain is used for bounce handling."
 msgstr ""
@@ -234,10 +188,6 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
 #: src/lib/components/layouts/app/sidebars/petitions/filter/PetitionFilterControl.svelte
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -248,16 +198,12 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Verification status from Postmark."
 msgstr ""
 
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -271,10 +217,6 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -282,10 +224,6 @@ msgstr ""
 msgid "Verified"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -293,32 +231,24 @@ msgstr ""
 msgid "Not verified"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "Not set"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Edit signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Verify signature status"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Delete signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "System"
@@ -328,8 +258,6 @@ msgstr ""
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
@@ -337,7 +265,6 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
@@ -345,22 +272,14 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Add Email from signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Create a new email signature that will be verified with Postmark."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
@@ -377,10 +296,6 @@ msgstr ""
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 #: src/lib/components/templates/TemplateVariablePicker.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
@@ -389,7 +304,6 @@ msgid "Email address"
 msgstr ""
 
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(auth)/login/+page.svelte
 #: src/routes/(auth)/login/forgot_password/+page.svelte
@@ -397,80 +311,60 @@ msgstr ""
 msgid "email@example.com"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "The email address must be verified with Postmark."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "Reply-to address"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "reply@example.com"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Optional. If not set, replies will go to the email address above."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Return path domain"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "bounce.example.com"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Optional. The return path domain is used for bounce handling."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Create signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "This email address cannot be changed."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Edit Email from signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Update the email signature details."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "The email address cannot be changed."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/tags/EditTag.svelte
 #: src/routes/(app)/settings/teams/EditTeam.svelte
@@ -500,7 +394,6 @@ msgid "Selected"
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/preferences/PreferencesSidebar.svelte
-#: src/routes/(app)/preferences/+page.svelte
 msgid "Preferences"
 msgstr ""
 
@@ -521,9 +414,6 @@ msgid "Invite?"
 msgstr ""
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -531,9 +421,6 @@ msgid "Admin"
 msgstr ""
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -541,9 +428,6 @@ msgid "Member"
 msgstr ""
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -592,7 +476,6 @@ msgid "Team"
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Subscription"
 msgstr ""
@@ -751,7 +634,6 @@ msgstr ""
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload"
 msgstr ""
@@ -938,8 +820,6 @@ msgstr ""
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1067,7 +947,6 @@ msgstr ""
 #: src/routes/(app)/events/new/+page.svelte
 #: src/routes/(app)/petitions/[petitionId]/edit/+page.svelte
 #: src/routes/(app)/petitions/new/+page.svelte
-#: src/routes/(app)/settings/(workspace)/organization/configuration/+page.svelte
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
@@ -1122,18 +1001,14 @@ msgstr ""
 msgid "Select a gender"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Please select a CSV file"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "No imports yet"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "New Import"
@@ -1144,93 +1019,75 @@ msgstr ""
 #: src/lib/components/forms/event/EventSignupSurvey.svelte
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
 #: src/lib/components/forms/petition/PetitionSignupSurvey.svelte
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Date"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Imported by"
 msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Details"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "imported"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "failed"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "View Failures"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "People Imports"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "New People Import"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload a CSV file to import people"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "CSV file"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Download sample"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Selected:"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Uploading..."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Import Failures"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Detailed information about failed import entries"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Row"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Row Data:"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "No failure details available"
 msgstr ""
@@ -1241,7 +1098,6 @@ msgstr ""
 #: src/lib/components/widgets/person/add_modal/AddPersonModal.svelte
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
@@ -1294,7 +1150,6 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Sent"
 msgstr ""
@@ -1428,7 +1283,6 @@ msgstr ""
 msgid "Create an account to get started"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -1657,7 +1511,6 @@ msgstr ""
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
-#: src/routes/(app)/settings/(workspace)/organization/configuration/OrgConfigForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Country"
 msgstr ""
@@ -2017,7 +1870,6 @@ msgid "Upload error!"
 msgstr ""
 
 #: src/lib/components/ui/image-upload/ImageUpload.svelte
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -2797,7 +2649,6 @@ msgid "Successful"
 msgstr ""
 
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Failed"
 msgstr ""
@@ -2922,7 +2773,6 @@ msgid "Imports"
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/(workspace)/people/exports/+page.svelte
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports"
 msgstr ""
@@ -2944,64 +2794,51 @@ msgid "WhatsApp accounts"
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/(workspace)/organization/configuration/+page.svelte
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
 msgid "Configuration"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/exports/+page.svelte
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports are not currently supported, but will be added in a future update. "
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Free"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Not available"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Contact form URL is not configured."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "You don't have permission to manage billing. Only organization owners can access this page."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Current subscription"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Your organization's Stripe subscription status and plan information."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Loading subscription..."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Plan"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "No active paid subscription"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Current period ends"
 msgstr ""
@@ -3012,22 +2849,18 @@ msgstr ""
 #~ msgid "Manage in Stripe"
 #~ msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Need a different plan?"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Everyone starts on the Free tier. To move to Supported or Enterprise, submit a contact form and our team will follow up."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Contact us for Supported tier"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Contact us for Enterprise tier"
 msgstr ""
@@ -3109,25 +2942,18 @@ msgstr ""
 msgid "Person created successfully"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "You don't have permission to manage users. Only admins and owners can access this page."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Members"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Users who are part of this organization."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
@@ -3135,97 +2961,78 @@ msgstr ""
 msgid "Role"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Joined"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "No members found."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Loading members..."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Pending Invitations"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Invitations that have been sent but not yet accepted."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "No pending invitations."
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Users"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Please enter an email address"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Invite User"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Send an invitation to join your organization."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Invite"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "user@example.com"
 msgstr ""
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Send invitation"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Edit Role"
 msgstr ""
 
 #. 0: userName
-#. 0: userName
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Change the role for {0}."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Edit role"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Saving..."
 msgstr ""
@@ -3247,34 +3054,27 @@ msgstr ""
 msgid "e.g., Sales team"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "You cannot remove yourself from the organization"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Remove member"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Remove Member"
 msgstr ""
 
 #. 0: userName
-#. 0: userName
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Are you sure you want to remove {0} from this organization? They will lose access to all organization resources immediately."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Removing..."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
@@ -3371,42 +3171,34 @@ msgstr ""
 msgid "No users available to add."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/configuration/OrgConfigForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Organization configuration updated successfully"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/configuration/OrgConfigForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Default Language"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/configuration/OrgConfigForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Default Timezone"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/configuration/OrgConfigForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Organization logo"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/configuration/OrgConfigForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "URL to the organization logo. It will be displayed on some public pages (depending on other settings). Recommended size: 16:9 ratio. Max size: 2MB."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/configuration/OrgConfigForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Organization icon"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/configuration/OrgConfigForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "URL to the organization icon. It will be used in the menu and other Belcoda pages.Recommended size: 128x128px or 256x256px. Max size: 2MB."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/configuration/+page.svelte
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
 msgid "Are you sure you want to cancel?"
 msgstr ""
@@ -4186,27 +3978,22 @@ msgid "Select a sent message from the list to view its details"
 msgstr ""
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/(workspace)/+layout.svelte
 msgid "You are not authorized to access this page."
 msgstr ""
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/(workspace)/+layout.svelte
 msgid "You need to be an organization admin or owner to access this page."
 msgstr ""
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/(workspace)/+layout.svelte
 msgid "Go to dashboard"
 msgstr ""
 
-#: src/routes/(app)/preferences/+page.svelte
-msgid "User preferences"
-msgstr ""
+#~ msgid "User preferences"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/+page.svelte
-msgid "Manage your user preferences, including language"
-msgstr ""
+#~ msgid "Manage your user preferences, including language"
+#~ msgstr ""
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -4265,7 +4052,6 @@ msgstr ""
 msgid "Limit exceeded"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Pending"
@@ -4334,47 +4120,36 @@ msgid "An error occurred while deleting the API key"
 msgstr ""
 
 #. 0: userName
-#. 0: userName
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Role updated for {0}"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Failed to update role"
 msgstr ""
 
 #. 0: email.trim()
-#. 0: email.trim()
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Invitation sent to {0}"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Failed to send invitation"
 msgstr ""
 
 #. 0: userName
-#. 0: userName
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "{0} has been removed from the organization"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Failed to remove member"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Invitation cancelled"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Failed to cancel invitation"
 msgstr ""
@@ -4409,42 +4184,34 @@ msgstr ""
 msgid "Could not update profile picture. Please try again."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Import started successfully"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Completed"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Processing"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Organization settings not found"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Theme settings saved successfully."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/organization/themes/+page.svelte
 msgid "Failed to save theme settings"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/billing/subscription/+page.svelte
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Failed to load subscription"
 msgstr ""
@@ -4473,37 +4240,30 @@ msgid ""
 "\t\t\t\tand create a WhatsApp Business Account."
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email signature verification status updated"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Failed to verify email signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email signature deleted successfully"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Failed to delete email signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Default send signature updated successfully"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Failed to update default send signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid ""
 "Email from signatures are the names and email addresses that are used to send emails on behalf\n"
@@ -4515,32 +4275,26 @@ msgstr ""
 msgid "Cancelled"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Email signature created successfully"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Failed to create email signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "System signature updated successfully"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 msgid "Failed to update system signature"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Email signature updated successfully"
 msgstr ""
 
-#: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 msgid "Failed to update email signature"
 msgstr ""
@@ -5469,13 +5223,11 @@ msgstr ""
 msgid "—"
 msgstr ""
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "No active organization"
 msgstr ""
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/whatsapp_account_state.svelte.ts
 msgid "Failed to load WhatsApp business profile"
 msgstr ""
 
@@ -5484,6 +5236,7 @@ msgid "WhatsApp business profile saved"
 msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/whatsapp_account_state.svelte.ts
 msgid "Failed to save WhatsApp business profile"
 msgstr ""
 
@@ -5587,9 +5340,8 @@ msgstr ""
 #~ msgid "Business account details and verification status are shown below."
 #~ msgstr ""
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Failed to load WhatsApp business account details"
-msgstr ""
+#~ msgid "Failed to load WhatsApp business account details"
+#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
@@ -5655,7 +5407,6 @@ msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
 msgid "Notifications"
 msgstr ""
 
@@ -5844,51 +5595,29 @@ msgstr ""
 msgid "notification"
 msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-msgid "Digest email"
-msgstr ""
+#~ msgid "Digest email"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-msgid "Send me a digest email"
-msgstr ""
+#~ msgid "Send me a digest email"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
-msgstr ""
+#~ msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-msgid "Digest frequency"
-msgstr ""
+#~ msgid "Digest frequency"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-msgid "Weekly"
-msgstr ""
+#~ msgid "Weekly"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-msgid "Daily"
-msgstr ""
+#~ msgid "Daily"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-msgid "Saved"
-msgstr ""
+#~ msgid "Saved"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-#: src/routes/(app)/settings/(account)/notifications/+page.svelte
-msgid "Failed to save notification preferences"
-msgstr ""
+#~ msgid "Failed to save notification preferences"
+#~ msgstr ""
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
@@ -6146,6 +5875,14 @@ msgstr "Todos en {0}"
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Everyone in your workspace"
 msgstr "Todos en tu espacio de trabajo"
+
+#: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
+msgid "Only affects you. Other teammates keep their own settings."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
+msgid "Affects everyone in your workspace. Admin only."
+msgstr ""
 
 #: src/routes/(app)/settings/+page.svelte
 msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
