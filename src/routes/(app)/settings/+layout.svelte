@@ -17,12 +17,13 @@
 		);
 	});
 
-	const canAccess = $derived(
-		!currentItem ||
-			currentItem.permissions === 'member' ||
-			appState.isOwner ||
-			(appState.isAdmin && currentItem.permissions === 'admin')
-	);
+const canAccess = $derived(
+  page.url.pathname === '/settings' ||
+    (currentItem !== undefined &&
+      (currentItem.permissions === 'member' ||
+        appState.isOwner ||
+        (appState.isAdmin && currentItem.permissions === 'admin')))
+);
 </script>
 
 {#if canAccess}
