@@ -105,7 +105,7 @@ export const newOrganizationFromWebsiteForm = v.object({
 	name: organizationSchema.entries.name,
 	slug: organizationSchema.entries.slug,
 	icon: v.optional(organizationSchema.entries.icon, null),
-	website: v.optional(helpers.domainNameOrUrl),
+	website: v.optional(v.nullable(helpers.domainNameOrUrl), null),
 	additionalDetails: v.object({
 		howDidYouDiscover: organizationDiscoverySource,
 		howDidYouDiscoverDetail: v.optional(helpers.mediumStringEmpty, '')
