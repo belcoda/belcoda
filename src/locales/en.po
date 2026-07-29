@@ -3167,8 +3167,9 @@ msgstr "Delete signup"
 msgid "Add User"
 msgstr "Add User"
 
-#~ msgid "Select organization members to add to the team."
-#~ msgstr "Select organization members to add to the team."
+#: src/routes/(app)/settings/teams/[teamId]/+page.svelte
+msgid "Select organization members to add to the team."
+msgstr "Select organization members to add to the team."
 
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Error loading users."
