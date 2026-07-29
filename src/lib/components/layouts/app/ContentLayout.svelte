@@ -26,6 +26,7 @@
 	import type { SettingsScope } from '$lib/components/layouts/app/sidebars/settings/items';
 
 	const settingsScope = getContext<(() => SettingsScope | undefined) | undefined>('settings-scope');
+	const currentScope = $derived(settingsScope?.());
 </script>
 
 <div class="relative flex h-screen flex-col overflow-hidden">
@@ -39,8 +40,8 @@
 		</header>
 	{/if}
 
-	{#if settingsScope?.()}
-		<ScopeBanner scope={settingsScope()} />
+	{#if currentScope}
+		<ScopeBanner scope={currentScope} />
 	{/if}
 
 	<div
