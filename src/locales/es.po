@@ -18,6 +18,7 @@ msgstr ""
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
 #: src/routes/(app)/preferences/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
@@ -5417,6 +5418,7 @@ msgstr ""
 msgid "Notification"
 msgstr ""
 
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Notifications"
 msgstr ""

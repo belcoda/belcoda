@@ -1,6 +1,10 @@
 import { t } from '$lib/index.svelte';
+
+export type SettingsScope = 'account' | 'workspace';
+
 export const settingsItems: {
 	title: () => string;
+	scope: SettingsScope;
 	group: () => string;
 	url: string;
 	keywords: string[];
@@ -8,7 +12,26 @@ export const settingsItems: {
 	dataTestId?: string;
 }[] = [
 	{
+		title: () => t`Language`,
+		scope: 'account',
+		group: () => t`Account`,
+		url: '/settings/language',
+		keywords: ['language', 'preferences', 'config'],
+		permissions: 'member',
+		dataTestId: 'settings-sidebar-language'
+	},
+	{
+		title: () => t`Notifications`,
+		scope: 'account',
+		group: () => t`Account`,
+		url: '/settings/notifications',
+		keywords: ['notifications', 'digest', 'email', 'preferences'],
+		permissions: 'member',
+		dataTestId: 'settings-sidebar-notifications'
+	},
+	{
 		title: () => t`Configuration`,
+		scope: 'workspace',
 		group: () => t`Organization`,
 		url: '/settings/organization/configuration',
 		keywords: ['organization', 'settings', 'preferences', 'config'],
@@ -17,6 +40,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Themes & colors`,
+		scope: 'workspace',
 		group: () => t`Organization`,
 		url: '/settings/organization/themes',
 		keywords: ['themes', 'colors', 'icon', 'logo', 'branding'],
@@ -25,6 +49,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Users`,
+		scope: 'workspace',
 		group: () => t`Organization`,
 		url: '/settings/users',
 		keywords: ['users', 'members', 'invite', 'roles', 'permissions'],
@@ -32,6 +57,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Email from signatures`,
+		scope: 'workspace',
 		group: () => t`Email`,
 		url: '/settings/email/send_signatures',
 		keywords: ['email', 'from', 'address', 'send', 'signature'],
@@ -39,6 +65,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Tags`,
+		scope: 'workspace',
 		group: () => t`Community`,
 		url: '/settings/tags',
 		keywords: ['tags', 'people', 'tag', 'tagging'],
@@ -47,6 +74,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Teams`,
+		scope: 'workspace',
 		group: () => t`Community`,
 		url: '/settings/teams',
 		keywords: ['teams', 'people', 'team'],
@@ -55,6 +83,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Imports`,
+		scope: 'workspace',
 		group: () => t`Community`,
 		url: '/settings/people/imports',
 		keywords: ['imports', 'people', 'import', 'csv'],
@@ -63,6 +92,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Exports`,
+		scope: 'workspace',
 		group: () => t`Community`,
 		url: '/settings/people/exports',
 		keywords: ['exports', 'people', 'export', 'csv'],
@@ -71,6 +101,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Subscription`,
+		scope: 'workspace',
 		group: () => t`Billing`,
 		url: '/settings/billing/subscription',
 		keywords: ['subscription', 'billing', 'payments'],
@@ -78,6 +109,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Account balance`,
+		scope: 'workspace',
 		group: () => t`Billing`,
 		url: '/settings/billing/credit',
 		keywords: ['balance', 'billing', 'payments', 'recharge', 'funds', 'usd'],
@@ -85,6 +117,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`Webhooks`,
+		scope: 'workspace',
 		group: () => t`Developer`,
 		url: '/settings/webhooks',
 		keywords: ['webhooks', 'hooks', 'api', 'events'],
@@ -92,6 +125,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`API keys`,
+		scope: 'workspace',
 		group: () => t`Developer`,
 		url: '/settings/api-keys',
 		keywords: ['api', 'api-key', 'api-keys'],
@@ -99,6 +133,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`WhatsApp templates`,
+		scope: 'workspace',
 		group: () => t`WhatsApp`,
 		url: '/settings/whatsapp/templates',
 		keywords: ['whatsapp', 'templates'],
@@ -106,6 +141,7 @@ export const settingsItems: {
 	},
 	{
 		title: () => t`WhatsApp accounts`,
+		scope: 'workspace',
 		group: () => t`WhatsApp`,
 		url: '/settings/whatsapp/accounts',
 		keywords: ['whatsapp', 'accounts', 'onboarding', 'meta', 'embedded', 'wa'],
