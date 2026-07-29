@@ -21,12 +21,6 @@
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
-	import { getContext } from 'svelte';
-	import ScopeBanner from '$lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte';
-	import type { SettingsScope } from '$lib/components/layouts/app/sidebars/settings/items';
-
-	const settingsScope = getContext<(() => SettingsScope | undefined) | undefined>('settings-scope');
-	const currentScope = $derived(settingsScope?.());
 </script>
 
 <div class="relative flex h-screen flex-col overflow-hidden">
@@ -38,10 +32,6 @@
 			{/if}
 			<div class="w-full">{@render header?.()}</div>
 		</header>
-	{/if}
-
-	{#if currentScope}
-		<ScopeBanner scope={currentScope} />
 	{/if}
 
 	<div
