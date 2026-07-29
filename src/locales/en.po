@@ -5920,3 +5920,11 @@ msgstr "Everyone in {0}"
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Everyone in your workspace"
 msgstr "Everyone in your workspace"
+
+#: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
+msgid "Only affects you. Other teammates keep their own settings."
+msgstr "Only affects you. Other teammates keep their own settings."
+
+#: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
+msgid "Affects everyone in your workspace. Admin only."
+msgstr "Affects everyone in your workspace. Admin only."

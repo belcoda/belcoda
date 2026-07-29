@@ -5896,3 +5896,11 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Everyone in your workspace"
 msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
+msgid "Only affects you. Other teammates keep their own settings."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
+msgid "Affects everyone in your workspace. Admin only."
+msgstr ""
