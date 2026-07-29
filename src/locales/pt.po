@@ -6209,33 +6209,33 @@ msgstr "{0} mensagens não lidas do WhatsApp"
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Account"
-msgstr ""
+msgstr "Conta"
 
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Just you"
-msgstr ""
+msgstr "Só você"
 
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Workspace"
-msgstr ""
+msgstr "Espaço de trabalho"
 
 #. 0: orgName
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Everyone in {0}"
-msgstr ""
+msgstr "Todos em {0}"
 
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Everyone in your workspace"
-msgstr ""
+msgstr "Todos no seu espaço de trabalho"
 
 #: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
 msgid "Only affects you. Other teammates keep their own settings."
-msgstr ""
+msgstr "Afeta apenas você. O restante da equipe mantém suas próprias configurações."
 
 #: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
 msgid "Affects everyone in your workspace. Admin only."
-msgstr ""
+msgstr "Afeta todos no seu espaço de trabalho. Somente administradores."
 
 #: src/routes/(app)/settings/+page.svelte
 msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
-msgstr ""
+msgstr "Gerencie suas preferências pessoais de conta e, se você for administrador, as configurações do seu espaço de trabalho."

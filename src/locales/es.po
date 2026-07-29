@@ -6128,33 +6128,33 @@ msgstr "Ayer"
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Account"
-msgstr ""
+msgstr "Cuenta"
 
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Just you"
-msgstr ""
+msgstr "Solo tú"
 
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Workspace"
-msgstr ""
+msgstr "Espacio de trabajo"
 
 #. 0: orgName
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Everyone in {0}"
-msgstr ""
+msgstr "Todos en {0}"
 
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 msgid "Everyone in your workspace"
-msgstr ""
+msgstr "Todos en tu espacio de trabajo"
 
 #: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
 msgid "Only affects you. Other teammates keep their own settings."
-msgstr ""
+msgstr "Solo te afecta a ti. El resto del equipo mantiene su propia configuración."
 
 #: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
 msgid "Affects everyone in your workspace. Admin only."
-msgstr ""
+msgstr "Afecta a todos en tu espacio de trabajo. Solo administradores."
 
 #: src/routes/(app)/settings/+page.svelte
 msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
-msgstr ""
+msgstr "Gestiona tus preferencias personales de cuenta y, si eres administrador, la configuración de tu espacio de trabajo."
