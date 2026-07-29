@@ -56,22 +56,32 @@
 
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { t } from '$lib/index.svelte';
+	import UserIcon from '@lucide/svelte/icons/user';
+	import BuildingIcon from '@lucide/svelte/icons/building';
+	import type { Component } from 'svelte';
 </script>
 
 {#snippet scopeSection(
+	Icon: Component,
 	label: string,
 	subtitle: string,
 	groups: typeof accountGroups,
-	showGroupLabel: boolean
+	showGroupLabel: boolean,
+	withDivider: boolean
 )}
 	{#if groups.length}
-		<div class="px-4 pt-4 pb-1">
-			<p class="text-sm font-medium">{label}</p>
-			<p class="text-xs text-muted-foreground">{subtitle}</p>
+		<div class="px-3 pt-4 pb-1 {withDivider ? 'mt-2 border-t border-sidebar-border pt-5' : ''}">
+			<div class="flex items-center gap-2">
+				<Icon class="size-4 text-muted-foreground" />
+				<span class="text-xs font-semibold tracking-wide text-foreground uppercase">{label}</span>
+			</div>
+			<p class="mt-0.5 pl-6 text-xs text-muted-foreground">{subtitle}</p>
 		</div>
 		{#each groups as group}
-			<Sidebar.Group>
-				{#if showGroupLabel}<Sidebar.GroupLabel>{group.group}</Sidebar.GroupLabel>{/if}
+			<Sidebar.Group class="py-1 pl-3">
+				{#if showGroupLabel}<Sidebar.GroupLabel class="text-[0.7rem] tracking-wide uppercase"
+						>{group.group}</Sidebar.GroupLabel
+					>{/if}
 				<Sidebar.GroupContent>
 					<Sidebar.Menu>
 						{#each group.items as item (item.url)}
@@ -110,11 +120,13 @@
 			</InputGroup.Root>
 		</Sidebar.Header>
 		<Sidebar.Content>
-			{@render scopeSection(t`Account`, t`Just you`, accountGroups, false)}
+			{@render scopeSection(UserIcon, t`Account`, t`Just you`, accountGroups, false, false)}
 			{@render scopeSection(
+				BuildingIcon,
 				t`Workspace`,
 				orgName ? t`Everyone in ${orgName}` : t`Everyone in your workspace`,
 				workspaceGroups,
+				true,
 				true
 			)}
 		</Sidebar.Content>
