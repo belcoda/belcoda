@@ -15,41 +15,80 @@
 
 	const fuse = new Fuse(settingsItems, {
 		includeScore: true,
-		keys: ['title', 'keywords', 'items.title', 'items.keywords'],
+		keys: ['title', 'keywords'],
 		threshold: 0.2
 	});
 
-	const result = $derived.by(() => {
-		if (searchString === '') {
-			const filteredItems = settingsItems.filter((item) => {
-				if (appState.isOwner) {
-					return true;
-				} else if (appState.isAdmin) {
-					return item.permissions === 'admin' || item.permissions === 'member';
-				} else {
-					return false;
-				}
-			});
-			return groupBy(filteredItems, 'group');
-		} else {
-			const results = fuse.search(searchString).map((item) => {
-				return item.item;
-			});
-			const filteredResults = results.filter((item) => {
-				if (appState.isOwner) {
-					return true;
-				} else if (appState.isAdmin) {
-					return item.permissions === 'admin' || item.permissions === 'member';
-				} else {
-					return false;
-				}
-			});
-			return groupBy(filteredResults, 'group');
-		}
+	const filtered = $derived.by(() => {
+		const base =
+			searchString === '' ? settingsItems : fuse.search(searchString).map((item) => item.item);
+		return base.filter((item) => {
+			if (item.scope === 'account') {
+				return true;
+			} else if (appState.isOwner) {
+				return true;
+			} else if (appState.isAdmin) {
+				return item.permissions === 'admin' || item.permissions === 'member';
+			} else {
+				return false;
+			}
+		});
 	});
+
+	const accountGroups = $derived(
+		groupBy(
+			filtered.filter((item) => item.scope === 'account'),
+			'group'
+		)
+	);
+	const workspaceGroups = $derived(
+		groupBy(
+			filtered.filter((item) => item.scope === 'workspace'),
+			'group'
+		)
+	);
+
+	const orgName = $derived(
+		appState.activeOrganization.details.type === 'complete'
+			? appState.activeOrganization.data?.name
+			: undefined
+	);
+
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { t } from '$lib/index.svelte';
 </script>
+
+{#snippet scopeSection(
+	label: string,
+	subtitle: string,
+	groups: typeof accountGroups,
+	showGroupLabel: boolean
+)}
+	{#if groups.length}
+		<div class="px-4 pt-4 pb-1">
+			<p class="text-sm font-medium">{label}</p>
+			<p class="text-xs text-muted-foreground">{subtitle}</p>
+		</div>
+		{#each groups as group}
+			<Sidebar.Group>
+				{#if showGroupLabel}<Sidebar.GroupLabel>{group.group}</Sidebar.GroupLabel>{/if}
+				<Sidebar.GroupContent>
+					<Sidebar.Menu>
+						{#each group.items as item (item.url)}
+							<Sidebar.MenuItem>
+								<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
+									{#snippet child({ props })}
+										<a href={item.url} {...props} data-testid={item.dataTestId}>{item.title()}</a>
+									{/snippet}
+								</Sidebar.MenuButton>
+							</Sidebar.MenuItem>
+						{/each}
+					</Sidebar.Menu>
+				</Sidebar.GroupContent>
+			</Sidebar.Group>
+		{/each}
+	{/if}
+{/snippet}
 
 <Sidebar.Root
 	collapsible={!isMobile.current ? 'icon' : 'none'}
@@ -71,24 +110,13 @@
 			</InputGroup.Root>
 		</Sidebar.Header>
 		<Sidebar.Content>
-			{#each result as group}
-				<Sidebar.Group>
-					<Sidebar.GroupLabel>{group.group}</Sidebar.GroupLabel>
-					<Sidebar.GroupContent>
-						<Sidebar.Menu>
-							{#each group.items as item (item.url)}
-								<Sidebar.MenuItem>
-									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
-										{#snippet child({ props })}
-											<a href={item.url} {...props} data-testid={item.dataTestId}>{item.title()}</a>
-										{/snippet}
-									</Sidebar.MenuButton>
-								</Sidebar.MenuItem>
-							{/each}
-						</Sidebar.Menu>
-					</Sidebar.GroupContent>
-				</Sidebar.Group>
-			{/each}
+			{@render scopeSection(t`Account`, t`Just you`, accountGroups, false)}
+			{@render scopeSection(
+				t`Workspace`,
+				orgName ? t`Everyone in ${orgName}` : t`Everyone in your workspace`,
+				workspaceGroups,
+				true
+			)}
 		</Sidebar.Content>
 	</Sidebar.Root>
 </Sidebar.Root>
