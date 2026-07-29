@@ -5937,7 +5937,7 @@ msgstr "Convite para conversa"
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Failed to send WhatsApp message"
-msgstr ""
+msgstr "Falha ao enviar a mensagem do WhatsApp"
 
 #. 0: actor.data.name
 #: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
@@ -5953,11 +5953,11 @@ msgstr "Os membros da equipe foram notificados sobre esta pessoa"
 #: src/lib/components/widgets/communications/NotifyConversationAction.svelte
 #: src/lib/components/widgets/communications/NotifyConversationAction.svelte
 msgid "Bring in teammates"
-msgstr ""
+msgstr "Adicionar colegas de equipe"
 
 #: src/lib/components/widgets/communications/NotifyConversationAction.svelte
 msgid "Notify selected"
-msgstr ""
+msgstr "Notificar selecionados"
 
 #. 0: actor.data.name; 1: teammate.data.name
 #: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
