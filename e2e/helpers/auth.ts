@@ -57,13 +57,20 @@ export async function verifyUserEmail(email: string): Promise<void> {
 	}
 
 	const contentType = response.headers.get('content-type') ?? '';
+	const body = await response.text();
 	if (!contentType.includes('application/json')) {
-		const body = await response.text();
 		throw new Error(
 			`Failed to verify email for ${email}: expected JSON but got ${response.status} ${contentType}: ${body.slice(0, 200)}`
 		);
 	}
 
+	try {
+		JSON.parse(body);
+	} catch {
+		throw new Error(
+			`Failed to verify email for ${email}: invalid JSON response: ${body.slice(0, 200)}`
+		);
+	}
 	console.log(`  ✓ Email verified for ${email}`);
 }
 export async function signUpUser(user: TestUser): Promise<Response> {
