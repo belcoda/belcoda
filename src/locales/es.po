@@ -118,6 +118,9 @@ msgstr ""
 #: src/routes/(app)/settings/(workspace)/organization/configuration/+page.svelte
 #: src/routes/(app)/settings/(workspace)/organization/themes/+page.svelte
 #: src/routes/(app)/settings/(workspace)/people/imports/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
@@ -253,6 +256,8 @@ msgstr ""
 #: src/lib/components/widgets/event/signups/SignupTable.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTable.svelte
 #: src/routes/(app)/settings/(workspace)/email/send_signatures/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
@@ -375,6 +380,7 @@ msgstr ""
 #: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/SystemSignature.svelte
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
@@ -464,6 +470,7 @@ msgid "The email address cannot be changed."
 msgstr ""
 
 #: src/routes/(app)/settings/(workspace)/email/send_signatures/_components/EditModal.svelte
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/tags/EditTag.svelte
 #: src/routes/(app)/settings/teams/EditTeam.svelte
@@ -514,6 +521,9 @@ msgid "Invite?"
 msgstr ""
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -521,6 +531,9 @@ msgid "Admin"
 msgstr ""
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -528,6 +541,9 @@ msgid "Member"
 msgstr ""
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -922,6 +938,8 @@ msgstr ""
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Email.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
@@ -1276,6 +1294,7 @@ msgstr ""
 #: src/lib/components/layouts/app/sidebars/communications/WhatsAppList.svelte
 #: src/routes/(app)/communications/+page.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Sent"
 msgstr ""
@@ -1409,6 +1428,7 @@ msgstr ""
 msgid "Create an account to get started"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -1997,6 +2017,7 @@ msgid "Upload error!"
 msgstr ""
 
 #: src/lib/components/ui/image-upload/ImageUpload.svelte
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -2901,6 +2922,7 @@ msgid "Imports"
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/(workspace)/people/exports/+page.svelte
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports"
 msgstr ""
@@ -2927,6 +2949,7 @@ msgstr ""
 msgid "Configuration"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/people/exports/+page.svelte
 #: src/routes/(app)/settings/people/exports/+page.svelte
 msgid "Exports are not currently supported, but will be added in a future update. "
 msgstr ""
@@ -3086,18 +3109,25 @@ msgstr ""
 msgid "Person created successfully"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "You don't have permission to manage users. Only admins and owners can access this page."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Members"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Users who are part of this organization."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
@@ -3105,78 +3135,97 @@ msgstr ""
 msgid "Role"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Joined"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "No members found."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Loading members..."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Pending Invitations"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Invitations that have been sent but not yet accepted."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "No pending invitations."
 msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Users"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Please enter an email address"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Invite User"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Send an invitation to join your organization."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Invite"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "user@example.com"
 msgstr ""
 
 #: src/lib/components/forms/email/SendTestEmail.svelte
 #: src/lib/components/forms/whatsapp/SendTestWhatsApp.svelte
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Sending..."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Send invitation"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Edit Role"
 msgstr ""
 
 #. 0: userName
+#. 0: userName
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Change the role for {0}."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Edit role"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Saving..."
 msgstr ""
@@ -3198,27 +3247,34 @@ msgstr ""
 msgid "e.g., Sales team"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "You cannot remove yourself from the organization"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Remove member"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Remove Member"
 msgstr ""
 
 #. 0: userName
+#. 0: userName
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Are you sure you want to remove {0} from this organization? They will lose access to all organization resources immediately."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Removing..."
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
@@ -4278,36 +4334,47 @@ msgid "An error occurred while deleting the API key"
 msgstr ""
 
 #. 0: userName
+#. 0: userName
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Role updated for {0}"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 msgid "Failed to update role"
 msgstr ""
 
 #. 0: email.trim()
+#. 0: email.trim()
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Invitation sent to {0}"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/InviteUserModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Failed to send invitation"
 msgstr ""
 
 #. 0: userName
+#. 0: userName
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "{0} has been removed from the organization"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 msgid "Failed to remove member"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Invitation cancelled"
 msgstr ""
 
+#: src/routes/(app)/settings/(workspace)/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 msgid "Failed to cancel invitation"
 msgstr ""
