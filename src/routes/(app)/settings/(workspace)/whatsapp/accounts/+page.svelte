@@ -12,7 +12,7 @@
 	const whatsappConfigured = $derived(
 		Boolean(
 			appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
-				appState.activeOrganization?.data?.settings.whatsApp.number
+			appState.activeOrganization?.data?.settings.whatsApp.number
 		)
 	);
 

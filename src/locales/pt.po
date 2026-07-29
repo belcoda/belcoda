@@ -3984,17 +3984,14 @@ msgid "Select a sent message from the list to view its details"
 msgstr "Selecione uma mensagem enviada da lista para ver os seus detalhes"
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/+layout.svelte
 msgid "You are not authorized to access this page."
 msgstr "Você não tem autorização para acessar esta página."
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/+layout.svelte
 msgid "You need to be an organization admin or owner to access this page."
 msgstr "Você precisa ser um administrador ou proprietário da organização para acessar esta página."
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/+layout.svelte
 msgid "Go to dashboard"
 msgstr "Ir para o painel"
 
@@ -5884,3 +5881,26 @@ msgstr "Hoje"
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Yesterday"
 msgstr "Ontem"
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Account"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Just you"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Workspace"
+msgstr ""
+
+#. 0: orgName
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Everyone in {0}"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Everyone in your workspace"
+msgstr ""
