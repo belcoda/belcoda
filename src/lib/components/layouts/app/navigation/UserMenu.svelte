@@ -79,9 +79,9 @@
 		<DropdownMenu.Group>
 			<DropdownMenu.Item>
 				{#snippet child({ props })}
-					<a href="/preferences" {...props}>
+					<a href="/settings/language" {...props}>
 						<SettingsIcon />
-						{t`Preferences`}
+						{t`Settings`}
 					</a>
 				{/snippet}
 			</DropdownMenu.Item>

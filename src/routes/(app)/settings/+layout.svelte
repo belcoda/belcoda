@@ -9,12 +9,12 @@
 	import { setContext } from 'svelte';
 	const { children } = $props();
 
-	const scope = $derived.by<SettingsScope>(() => {
+	const scope = $derived.by<SettingsScope | undefined>(() => {
 		const pathname = page.url.pathname;
 		const match = settingsItems.find(
 			(item) => pathname === item.url || pathname.startsWith(item.url + '/')
 		);
-		return match?.scope ?? 'workspace';
+		return match?.scope;
 	});
 
 	setContext('settings-scope', () => scope);

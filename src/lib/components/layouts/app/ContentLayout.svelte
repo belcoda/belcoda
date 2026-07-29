@@ -25,7 +25,7 @@
 	import ScopeBanner from '$lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte';
 	import type { SettingsScope } from '$lib/components/layouts/app/sidebars/settings/items';
 
-	const settingsScope = getContext<(() => SettingsScope) | undefined>('settings-scope');
+	const settingsScope = getContext<(() => SettingsScope | undefined) | undefined>('settings-scope');
 </script>
 
 <div class="relative flex h-screen flex-col overflow-hidden">
@@ -39,7 +39,7 @@
 		</header>
 	{/if}
 
-	{#if settingsScope}
+	{#if settingsScope?.()}
 		<ScopeBanner scope={settingsScope()} />
 	{/if}
 

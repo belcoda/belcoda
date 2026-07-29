@@ -5869,11 +5869,6 @@ msgstr "Conte-nos onde você ficou sabendo da Belcoda"
 msgid "Maximum 500 characters."
 msgstr "Máximo de 500 caracteres."
 
-#. 0: formatNumber(unreadMessageCount, locale.current)
-#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
-msgid "{0} unread WhatsApp messages"
-msgstr "{0} mensagens não lidas do WhatsApp"
-
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Today"
 msgstr "Hoje"
@@ -5881,6 +5876,84 @@ msgstr "Hoje"
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Yesterday"
 msgstr "Ontem"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Teammates notified"
+msgstr "Membros da equipe notificados"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Unable to notify teammates"
+msgstr "Não foi possível notificar os membros da equipe"
+
+#~ msgid "Notify teammates"
+#~ msgstr "Notificar membros da equipe"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Select organization members to invite to this conversation."
+msgstr "Selecione membros da organização para convidá-los para esta conversa."
+
+#~ msgid "Notify"
+#~ msgstr "Notificar"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr "Um membro da equipe"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "this person"
+msgstr "esta pessoa"
+
+#. 0: actorName; 1: personName
+#. 0: getPayload(notification.payload)?.actorName ?? t`A teammate`; 1: getPayload(notification.payload)?.personName ?? t`this person`
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} invited you to join the conversation with {1}"
+msgstr "{0} convidou você para participar da conversa com {1}"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View conversation"
+msgstr "Ver conversa"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Conversation invitation"
+msgstr "Convite para conversa"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Failed to send WhatsApp message"
+msgstr "Falha ao enviar a mensagem do WhatsApp"
+
+#. 0: actor.data.name
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "{0} notified teammates about this person"
+msgstr "{0} notificou os membros da equipe sobre esta pessoa"
+
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "Teammates were notified about this person"
+msgstr "Os membros da equipe foram notificados sobre esta pessoa"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Bring in teammates"
+msgstr "Adicionar colegas de equipe"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Notify selected"
+msgstr "Notificar selecionados"
+
+#. 0: actor.data.name; 1: teammate.data.name
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "{0} brought {1} into the conversation"
+msgstr "{0} trouxe {1} para a conversa"
+
+#. 0: formatNumber(unreadMessageCount, locale.current)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} unread WhatsApp messages"
+msgstr "{0} mensagens não lidas do WhatsApp"
 
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
