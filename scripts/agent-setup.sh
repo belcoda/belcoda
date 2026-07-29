@@ -51,6 +51,9 @@ wait_for_postgres
 bootstrap_postgres_roles
 
 # --- App deps + schema + seed ---
+# `db:push` runs headless here (no TTY), so pass --force to auto-approve drizzle-kit's
+# confirmation prompt; without it drizzle-kit aborts with "Interactive prompts require
+# a TTY terminal" and applies nothing.
 npm ci --include=dev
-npm run db:push
+npm run db:push -- --force
 npm run db:seed
