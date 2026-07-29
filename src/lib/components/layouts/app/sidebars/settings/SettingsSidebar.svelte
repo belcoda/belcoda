@@ -23,82 +23,23 @@
 		const base =
 			searchString === '' ? settingsItems : fuse.search(searchString).map((item) => item.item);
 		return base.filter((item) => {
-			if (item.scope === 'account') {
+			if (item.permissions === 'member') {
 				return true;
 			} else if (appState.isOwner) {
 				return true;
 			} else if (appState.isAdmin) {
-				return item.permissions === 'admin' || item.permissions === 'member';
+				return item.permissions === 'admin';
 			} else {
 				return false;
 			}
 		});
 	});
 
-	const accountGroups = $derived(
-		groupBy(
-			filtered.filter((item) => item.scope === 'account'),
-			'group'
-		)
-	);
-	const workspaceGroups = $derived(
-		groupBy(
-			filtered.filter((item) => item.scope === 'workspace'),
-			'group'
-		)
-	);
-
-	const orgName = $derived(
-		appState.activeOrganization.details.type === 'complete'
-			? appState.activeOrganization.data?.name
-			: undefined
-	);
+	const groups = $derived(groupBy(filtered, 'group'));
 
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { t } from '$lib/index.svelte';
-	import UserIcon from '@lucide/svelte/icons/user';
-	import BuildingIcon from '@lucide/svelte/icons/building';
-	import type { Component } from 'svelte';
 </script>
-
-{#snippet scopeSection(
-	Icon: Component,
-	label: string,
-	subtitle: string,
-	groups: typeof accountGroups,
-	showGroupLabel: boolean,
-	withDivider: boolean
-)}
-	{#if groups.length}
-		<div class="px-3 pt-4 pb-1 {withDivider ? 'mt-2 border-t border-sidebar-border pt-5' : ''}">
-			<div class="flex items-center gap-2">
-				<Icon class="size-4 text-muted-foreground" />
-				<span class="text-xs font-semibold tracking-wide text-foreground uppercase">{label}</span>
-			</div>
-			<p class="mt-0.5 pl-6 text-xs text-muted-foreground">{subtitle}</p>
-		</div>
-		{#each groups as group}
-			<Sidebar.Group class="py-1 pl-3">
-				{#if showGroupLabel}<Sidebar.GroupLabel class="text-[0.7rem] tracking-wide uppercase"
-						>{group.group}</Sidebar.GroupLabel
-					>{/if}
-				<Sidebar.GroupContent>
-					<Sidebar.Menu>
-						{#each group.items as item (item.url)}
-							<Sidebar.MenuItem>
-								<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
-									{#snippet child({ props })}
-										<a href={item.url} {...props} data-testid={item.dataTestId}>{item.title()}</a>
-									{/snippet}
-								</Sidebar.MenuButton>
-							</Sidebar.MenuItem>
-						{/each}
-					</Sidebar.Menu>
-				</Sidebar.GroupContent>
-			</Sidebar.Group>
-		{/each}
-	{/if}
-{/snippet}
 
 <Sidebar.Root
 	collapsible={!isMobile.current ? 'icon' : 'none'}
@@ -120,15 +61,24 @@
 			</InputGroup.Root>
 		</Sidebar.Header>
 		<Sidebar.Content>
-			{@render scopeSection(UserIcon, t`Account`, t`Just you`, accountGroups, false, false)}
-			{@render scopeSection(
-				BuildingIcon,
-				t`Workspace`,
-				orgName ? t`Everyone in ${orgName}` : t`Everyone in your workspace`,
-				workspaceGroups,
-				true,
-				true
-			)}
+			{#each groups as group}
+				<Sidebar.Group>
+					<Sidebar.GroupLabel>{group.group}</Sidebar.GroupLabel>
+					<Sidebar.GroupContent>
+						<Sidebar.Menu>
+							{#each group.items as item (item.url)}
+								<Sidebar.MenuItem>
+									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
+										{#snippet child({ props })}
+											<a href={item.url} {...props} data-testid={item.dataTestId}>{item.title()}</a>
+										{/snippet}
+									</Sidebar.MenuButton>
+								</Sidebar.MenuItem>
+							{/each}
+						</Sidebar.Menu>
+					</Sidebar.GroupContent>
+				</Sidebar.Group>
+			{/each}
 		</Sidebar.Content>
 	</Sidebar.Root>
 </Sidebar.Root>
