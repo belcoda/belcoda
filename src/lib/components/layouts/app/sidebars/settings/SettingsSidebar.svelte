@@ -3,6 +3,7 @@
 	import DesktopNavSidebar from '$lib/components/layouts/app/navigation/DesktopNavSidebar.svelte';
 	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	const isMobile = new IsMobile();
 	import Fuse from 'fuse.js';
 	let searchString = $state('');
@@ -61,7 +62,7 @@
 			</InputGroup.Root>
 		</Sidebar.Header>
 		<Sidebar.Content>
-			{#each groups as group}
+			{#each groups as group (group.group)}
 				<Sidebar.Group>
 					<Sidebar.GroupLabel>{group.group}</Sidebar.GroupLabel>
 					<Sidebar.GroupContent>
@@ -70,7 +71,9 @@
 								<Sidebar.MenuItem>
 									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 										{#snippet child({ props })}
-											<a href={item.url} {...props} data-testid={item.dataTestId}>{item.title()}</a>
+											<a href={resolve(item.url as any)} {...props} data-testid={item.dataTestId}
+												>{item.title()}</a
+											>
 										{/snippet}
 									</Sidebar.MenuButton>
 								</Sidebar.MenuItem>

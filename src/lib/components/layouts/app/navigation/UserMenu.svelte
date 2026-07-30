@@ -11,6 +11,7 @@
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
 	import { t } from '$lib/index.svelte';
+	import { resolve } from '$app/paths';
 	const userQuery = $derived.by(() =>
 		z.createQuery(queries.user.read({ userId: appState.userId }))
 	);
@@ -79,7 +80,7 @@
 		<DropdownMenu.Group>
 			<DropdownMenu.Item>
 				{#snippet child({ props })}
-					<a href="/settings/language" {...props}>
+					<a href={resolve('/settings/language')} {...props}>
 						<SettingsIcon />
 						{t`Settings`}
 					</a>
@@ -103,7 +104,7 @@
 		{/if} -->
 		<DropdownMenu.Item>
 			<a
-				href="/logout"
+				href={resolve('/logout')}
 				class="flex w-full items-center gap-2"
 				data-sveltekit-preload-data="tap"
 				data-testid="user-menu-logout"
