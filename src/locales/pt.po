@@ -5885,8 +5885,8 @@ msgstr "Ontem"
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Failed to send WhatsApp message"
-msgstr ""
+msgstr "Falha ao enviar mensagem do WhatsApp"
 
 #: src/lib/components/widgets/activity/NoteAdded.svelte
 msgid "Note added"
-msgstr ""
+msgstr "Nota adicionada"
