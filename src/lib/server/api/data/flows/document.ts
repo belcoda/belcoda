@@ -16,7 +16,7 @@ import {
 } from '$lib/schema/flow/version';
 
 import { type CreateFlowTriggerRegistrationSchemaInput } from '$lib/schema/flow/trigger-registration';
-import { type Flow } from '$lib/schema/flow';
+import { type Flow } from '$lib/schema/flow/node/index';
 
 import { createHash } from 'node:crypto';
 import pino from '$lib/pino';
@@ -98,9 +98,7 @@ export async function publishFlowDocument({
 		throw new Error('Flow document not found');
 	}
 
-	const checksum = createHash('sha256')
-		.update(JSON.stringify(flowDocumentResult.draftFlowDefinition))
-		.digest('hex');
+	const checksum = createFlowDefinitionChecksum(flowDocumentResult.draftFlowDefinition);
 	const flowVersionToCreate: typeof flowVersion.$inferInsert = {
 		id: newFlowVersionId,
 		organizationId: parsed.organizationId,
@@ -229,4 +227,25 @@ export function extractTriggerNodes(
 	// TODO: Implement logic for extracting trigger nodes from the flow definition and generating trigger registrations.
 	const output: CreateFlowTriggerRegistrationSchemaInput[] = [];
 	return [];
+}
+
+export function createFlowDefinitionChecksum(flowDefinition: Flow): string {
+	function stable(value: unknown): unknown {
+		if (Array.isArray(value)) {
+			return value.map(stable);
+		}
+
+		if (value && typeof value === 'object') {
+			return Object.fromEntries(
+				Object.entries(value)
+					.sort(([a], [b]) => a.localeCompare(b))
+					.map(([k, v]) => [k, stable(v)])
+			);
+		}
+
+		return value;
+	}
+
+	const json = JSON.stringify(stable(flowDefinition));
+	return createHash('sha256').update(json).digest('hex');
 }
