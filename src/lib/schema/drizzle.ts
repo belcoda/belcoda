@@ -41,6 +41,7 @@ import type { PersonWhatsappIdentitySchema } from '$lib/schema/person-whatsapp-i
 import type { PersonImportSchema, PersonImportStatus } from '$lib/schema/person-import';
 import type { ActivitySchema } from '$lib/schema/activity';
 import type { NotificationSchema, NotificationStatus } from '$lib/schema/notification';
+import type { FavouriteReferenceType, MemberFavouriteSchema } from '$lib/schema/favourite';
 import type { WhatsappGroupSchema } from '$lib/schema/whatsapp-group';
 import type { WhatsappTemplateSchema } from '$lib/schema/whatsapp-template';
 import type { WhatsappThreadSchema } from '$lib/schema/whatsapp-thread';
@@ -230,7 +231,7 @@ export const memberFavourite = pgTable(
 		memberId: uuid('member_id')
 			.notNull()
 			.references(() => member.id, { onDelete: 'cascade' }),
-		referenceType: text('reference_type').notNull(),
+		referenceType: text('reference_type').$type<FavouriteReferenceType>().notNull(),
 		referenceId: uuid('reference_id').notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
 	},
@@ -252,6 +253,10 @@ export const memberFavourite = pgTable(
 		)
 	]
 );
+export type MemberFavouriteSchemaTypeChecks = [
+	IsTrue<MemberFavouriteSchema extends typeof memberFavourite.$inferSelect ? true : false>,
+	IsTrue<typeof memberFavourite.$inferSelect extends MemberFavouriteSchema ? true : false>
+];
 
 export const teamMember = pgTable('team_member', {
 	id: uuid('id').primaryKey(),
@@ -1150,6 +1155,7 @@ type WhatsappAccountDrizzleMatchesValibot = IsTrue<
 
 export const organizationRelations = relations(organization, ({ one, many }) => ({
 	memberships: many(member),
+	memberFavourites: many(memberFavourite),
 	teams: many(team),
 	invitations: many(invitation)
 }));
@@ -1161,7 +1167,7 @@ export const subscriptionRelations = relations(subscription, ({ one }) => ({
 	})
 }));
 
-export const memberRelations = relations(member, ({ one }) => ({
+export const memberRelations = relations(member, ({ one, many }) => ({
 	organization: one(organization, {
 		fields: [member.organizationId],
 		references: [organization.id]
@@ -1169,6 +1175,18 @@ export const memberRelations = relations(member, ({ one }) => ({
 	user: one(user, {
 		fields: [member.userId],
 		references: [user.id]
+	}),
+	favourites: many(memberFavourite)
+}));
+
+export const memberFavouriteRelations = relations(memberFavourite, ({ one }) => ({
+	organization: one(organization, {
+		fields: [memberFavourite.organizationId],
+		references: [organization.id]
+	}),
+	member: one(member, {
+		fields: [memberFavourite.memberId],
+		references: [member.id]
 	})
 }));
 
