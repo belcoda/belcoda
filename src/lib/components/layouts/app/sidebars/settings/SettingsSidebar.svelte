@@ -3,14 +3,17 @@
 	import DesktopNavSidebar from '$lib/components/layouts/app/navigation/DesktopNavSidebar.svelte';
 	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 	import { page } from '$app/state';
-	import { resolve } from '$app/paths';
 	const isMobile = new IsMobile();
 	import Fuse from 'fuse.js';
 	let searchString = $state('');
 
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import SearchIcon from '@lucide/svelte/icons/search';
-	import { settingsItems, groupBy } from '$lib/components/layouts/app/sidebars/settings/items';
+	import {
+		groupBy,
+		resolveSettingsItemPath,
+		settingsItems
+	} from '$lib/components/layouts/app/sidebars/settings/items';
 
 	import { appState } from '$lib/state.svelte';
 
@@ -71,8 +74,10 @@
 								<Sidebar.MenuItem>
 									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 										{#snippet child({ props })}
-											<a href={resolve(item.url as any)} {...props} data-testid={item.dataTestId}
-												>{item.title()}</a
+											<a
+												href={resolveSettingsItemPath(item.url)}
+												{...props}
+												data-testid={item.dataTestId}>{item.title()}</a
 											>
 										{/snippet}
 									</Sidebar.MenuButton>
