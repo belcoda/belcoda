@@ -81,7 +81,6 @@ import { type SocialMedia, type PersonAddedFrom } from '$lib/schema/person/meta'
 import { type ActivityType, type ActivityPreviewPayload } from '$lib/schema/activity/types';
 import type { PetitionSettingsSchema, PetitionSignatureDetails } from './petition/settings';
 import type {
-	Flow as FlowSchema,
 	FlowSchemaVersion,
 	FlowTriggerConfiguration,
 	TriggerType as FlowTriggerType,
@@ -93,6 +92,7 @@ import type {
 	FlowExecutionStepOutput,
 	FlowExecutionStepStatus
 } from '$lib/schema/flow';
+import type { Flow as FlowSchema } from '$lib/schema/flow/node';
 import type { FlowDocumentSchema } from '$lib/schema/flow/document';
 import type { FlowVersionSchema } from '$lib/schema/flow/version';
 import type { FlowTriggerRegistrationSchema } from '$lib/schema/flow/trigger-registration';
