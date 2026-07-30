@@ -90,6 +90,14 @@ export default drizzleZeroConfig(drizzleSchema, {
 			createdAt: true,
 			updatedAt: true
 		},
+		memberFavourite: {
+			id: true,
+			organizationId: true,
+			memberId: true,
+			referenceType: true,
+			referenceId: true,
+			createdAt: true
+		},
 		teamMember: {
 			id: true,
 			organizationId: true,
