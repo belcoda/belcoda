@@ -3979,15 +3979,15 @@ msgstr ""
 
 #: src/routes/(app)/communications/+layout.svelte
 msgid "You are not authorized to access this page."
-msgstr ""
+msgstr "No tienes autorización para acceder a esta página."
 
 #: src/routes/(app)/communications/+layout.svelte
 msgid "You need to be an organization admin or owner to access this page."
-msgstr ""
+msgstr "Debes ser administrador o propietario de la organización para acceder a esta página."
 
 #: src/routes/(app)/communications/+layout.svelte
 msgid "Go to dashboard"
-msgstr ""
+msgstr "Ir al panel"
 
 #~ msgid "User preferences"
 #~ msgstr ""
