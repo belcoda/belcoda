@@ -64,7 +64,7 @@ function createTransaction({
 		}
 	};
 
-	return { tx, run, values, findFirst, deleteRow };
+	return { tx, run, values, onConflictDoNothing, findFirst, deleteRow };
 }
 
 describe('member favourites', () => {
@@ -113,7 +113,7 @@ describe('member favourites', () => {
 			referenceType: 'person',
 			referenceId
 		};
-		const { tx, findFirst } = createTransaction({ existingRow: existing });
+		const { tx, onConflictDoNothing, findFirst } = createTransaction({ existingRow: existing });
 
 		const result = await addFavourite({
 			tx: tx as never,
@@ -121,6 +121,7 @@ describe('member favourites', () => {
 			args: { metadata }
 		});
 
+		expect(onConflictDoNothing).toHaveBeenCalledWith();
 		expect(findFirst).toHaveBeenCalledOnce();
 		expect(result).toBe(existing);
 	});

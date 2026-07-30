@@ -105,9 +105,7 @@ export async function addFavourite({
 			referenceId: parsed.metadata.referenceId,
 			createdAt: new Date()
 		})
-		.onConflictDoNothing({
-			target: [memberFavourite.memberId, memberFavourite.referenceType, memberFavourite.referenceId]
-		})
+		.onConflictDoNothing()
 		.returning();
 	if (inserted) {
 		return inserted;
