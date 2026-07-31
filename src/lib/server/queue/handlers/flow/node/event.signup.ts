@@ -63,7 +63,7 @@ export async function processFlowNodeEventSignup({
 					flowExecutionId,
 					nodeId: nextNodeToProcess
 				},
-				getQueueSendOptionsFromTransaction(tx)
+				queueSendOptionsFromTransaction(tx)
 			);
 		}
 	});
