@@ -15,3 +15,4 @@ export { triggerWebhook, sendWebhook } from '$lib/server/queue/handlers/utils/tr
 export { sendDigest } from '$lib/server/queue/handlers/notification/send_digest';
 export { apiBulkUpsert } from '$lib/server/queue/handlers/people/api_bulk_upsert';
 export { processFlowNode } from '$lib/server/queue/handlers/flow/node/index';
+export { processFlowNodeTrigger } from '$lib/server/queue/handlers/flow/node/trigger/index';
