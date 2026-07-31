@@ -105,7 +105,7 @@ function isPublicRoutePath(pathname: string): boolean {
 		pathname === '/api/auth' ||
 		pathname.startsWith('/api/auth/') || //this is for the better-auth api which handles its own authentication
 		// E2E testing endpoints — fail closed: only public under an explicit dev/test allowlist
-		((NODE_ENV === 'development' || NODE_ENV === 'test') &&
+		((NODE_ENV === 'development' || NODE_ENV === 'test' || NODE_ENV === 'staging') &&
 			(pathname === '/api/e2e' || pathname.startsWith('/api/e2e/'))) ||
 		pathname === '/webhooks' ||
 		pathname.startsWith('/webhooks/') ||
