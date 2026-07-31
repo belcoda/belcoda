@@ -67,6 +67,7 @@
 						})
 					);
 			await result.client;
+			saving = false;
 			const serverResult = await result.server;
 			if (serverResult.type === 'error') {
 				throw new Error(serverResult.error.message);
