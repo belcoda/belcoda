@@ -5,11 +5,11 @@ import {
 	person as personTable
 } from '$lib/schema/drizzle';
 import { type Node } from '$lib/schema/flow/node/index';
-import { _getFlowExecutionUnsafe } from '$lib/server/api/data/flows/execution';
-import { _getFlowExecutionStepUnsafe } from '$lib/server/api/data/flows/execution_step';
-import { _getFlowVersionUnsafe } from '$lib/server/api/data/flows/version';
+import { _getFlowExecutionUnsafe } from '$lib/server/api/data/flow/execution';
+import { _getFlowExecutionStepUnsafe } from '$lib/server/api/data/flow/execution_step';
+import { _getFlowVersionUnsafe } from '$lib/server/api/data/flow/version';
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
-import { createFlowDefinitionChecksum } from '$lib/server/api/data/flows/document';
+import { createFlowDefinitionChecksum } from '$lib/server/api/data/flow/document';
 
 import { LRUCache } from 'lru-cache';
 
