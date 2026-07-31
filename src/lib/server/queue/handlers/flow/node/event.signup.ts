@@ -1,6 +1,6 @@
 //node processing imports
 import { db } from '$lib/server/db';
-import { getQueue } from '$lib/server/queue/index';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue/index';
 import {
 	type NodeHandlerProps,
 	getNextNodeToProcess
@@ -48,23 +48,23 @@ export async function processFlowNodeEventSignup({
 			flowExecutionStepId,
 			status: 'completed'
 		});
-	});
-
-	//finally, queue the next node to process if it exists
-	const nextNodeToProcess = getNextNodeToProcess({
-		nodeId,
-		flow: flowDetails.flowVersion.flowDefinition
-	});
-
-	if (nextNodeToProcess) {
-		//queue the next node to process
-		const queue = await getQueue();
-		await queue.processFlowNode({
-			flowVersionId,
-			personId,
-			organizationId,
-			flowExecutionId,
-			nodeId: nextNodeToProcess
+		const nextNodeToProcess = getNextNodeToProcess({
+			nodeId,
+			flow: flowDetails.flowVersion.flowDefinition
 		});
-	}
+		if (nextNodeToProcess) {
+			//queue the next node to process
+			const queue = await getQueue();
+			await queue.processFlowNode(
+				{
+					flowVersionId,
+					personId,
+					organizationId,
+					flowExecutionId,
+					nodeId: nextNodeToProcess
+				},
+				getQueueSendOptionsFromTransaction(tx)
+			);
+		}
+	});
 }
