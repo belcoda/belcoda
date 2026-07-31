@@ -1,0 +1,75 @@
+import { db } from '$lib/server/db';
+import { getQueue } from '$lib/server/queue';
+import { flowTriggerRegistration, flowVersion } from '$lib/schema/drizzle';
+import { parseCronExpression } from 'cron-schedule';
+import { eq, and, lte, isNotNull } from 'drizzle-orm';
+
+// can be called by a cron job that runs every 10 minutes
+// it finds any flow trigger registrations that have a nextRunAt that is in the past and are of type cron
+// it then finds the cron trigger node for each triggerRegistration and triggers the node processing job (queued)...
+// it then updates the nextRunAt for each triggerRegistration to the next run date and finishes
+export async function processCronTrigger() {
+	await db.transaction(async (tx) => {
+		const triggerNodes = await tx.dbTransaction.wrappedTransaction
+			.select()
+			.from(flowTriggerRegistration)
+			.innerJoin(flowVersion, eq(flowTriggerRegistration.flowVersionId, flowVersion.id))
+			.where(
+				and(
+					eq(flowTriggerRegistration.triggerType, 'cron'),
+					isNotNull(flowTriggerRegistration.nextRunAt),
+					lte(flowTriggerRegistration.nextRunAt, new Date())
+				)
+			)
+			.for('update', { skipLocked: true });
+		// get the next node for each triggerNode
+
+		// queue the next node for each triggerNode in the trigger
+		const queue = await getQueue();
+		const promises = triggerNodes.map(async (triggerNode) => {
+			queue.processFlowNodeTrigger({
+				flowTriggerRegistrationId: triggerNode.flow_trigger_registration.id
+			});
+		});
+		await Promise.all(promises);
+
+		// update the nextRunAt for each triggerRegistration
+		const mapCronUpdatePromises = triggerNodes.map((triggerNode) => {
+			const cronTriggerNode = triggerNode.flow_version.flowDefinition.nodes.find(
+				(node) => node.id === triggerNode.flow_trigger_registration.triggerNodeId
+			);
+			if (!cronTriggerNode) {
+				throw new Error(
+					`Cron trigger node not found for trigger registration ${triggerNode.flow_trigger_registration.id}`
+				);
+			}
+			if (cronTriggerNode.data.type !== 'trigger') {
+				throw new Error(
+					`Cron trigger node is not a trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
+				);
+			}
+			if (!cronTriggerNode.data.trigger) {
+				throw new Error(
+					`Cron trigger node is not a cron trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
+				);
+			}
+			if (cronTriggerNode.data.trigger.type !== 'utils.cron') {
+				throw new Error(
+					`Cron trigger node is not a cron trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
+				);
+			}
+			const cron = parseCronExpression(cronTriggerNode.data.trigger.cronExpression);
+			const nextRunAt = cron.getNextDate(
+				triggerNode.flow_trigger_registration.nextRunAt ?? undefined
+			);
+			return tx.dbTransaction.wrappedTransaction
+				.update(flowTriggerRegistration)
+				.set({
+					nextRunAt: nextRunAt,
+					updatedAt: new Date()
+				})
+				.where(eq(flowTriggerRegistration.id, triggerNode.flow_trigger_registration.id));
+		});
+		await Promise.all(mapCronUpdatePromises);
+	});
+}
