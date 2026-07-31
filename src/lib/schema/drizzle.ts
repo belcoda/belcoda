@@ -1717,3 +1717,103 @@ export const whatsappAccountRelations = relations(whatsappAccount, ({ one }) => 
 		references: [user.id]
 	})
 }));
+
+export const flowDocumentRelations = relations(flowDocument, ({ one, many }) => ({
+	organization: one(organization, {
+		fields: [flowDocument.organizationId],
+		references: [organization.id]
+	}),
+	team: one(team, {
+		fields: [flowDocument.teamId],
+		references: [team.id]
+	}),
+	activeVersion: one(flowVersion, {
+		fields: [flowDocument.activeVersionId],
+		references: [flowVersion.id],
+		relationName: 'flowDocumentActiveVersion'
+	}),
+	flow: one(flow, {
+		fields: [flowDocument.id],
+		references: [flow.flowDocumentId]
+	}),
+	versions: many(flowVersion, {
+		relationName: 'flowDocumentVersions'
+	}),
+	triggerRegistrations: many(flowTriggerRegistration),
+	executions: many(flowExecution)
+}));
+
+export const flowVersionRelations = relations(flowVersion, ({ one, many }) => ({
+	organization: one(organization, {
+		fields: [flowVersion.organizationId],
+		references: [organization.id]
+	}),
+	flowDocument: one(flowDocument, {
+		fields: [flowVersion.flowDocumentId],
+		references: [flowDocument.id],
+		relationName: 'flowDocumentVersions'
+	}),
+	publishedBy: one(user, {
+		fields: [flowVersion.publishedBy],
+		references: [user.id]
+	}),
+	triggerRegistrations: many(flowTriggerRegistration),
+	executions: many(flowExecution)
+}));
+
+export const flowTriggerRegistrationRelations = relations(flowTriggerRegistration, ({ one }) => ({
+	organization: one(organization, {
+		fields: [flowTriggerRegistration.organizationId],
+		references: [organization.id]
+	}),
+	flowDocument: one(flowDocument, {
+		fields: [flowTriggerRegistration.flowDocumentId],
+		references: [flowDocument.id]
+	}),
+	flowVersion: one(flowVersion, {
+		fields: [flowTriggerRegistration.flowVersionId],
+		references: [flowVersion.id]
+	})
+}));
+
+export const flowExecutionRelations = relations(flowExecution, ({ one, many }) => ({
+	organization: one(organization, {
+		fields: [flowExecution.organizationId],
+		references: [organization.id]
+	}),
+	flowDocument: one(flowDocument, {
+		fields: [flowExecution.flowDocumentId],
+		references: [flowDocument.id]
+	}),
+	flowVersion: one(flowVersion, {
+		fields: [flowExecution.flowVersionId],
+		references: [flowVersion.id]
+	}),
+	person: one(person, {
+		fields: [flowExecution.personId],
+		references: [person.id]
+	}),
+	steps: many(flowExecutionStep)
+}));
+
+export const flowExecutionStepRelations = relations(flowExecutionStep, ({ one }) => ({
+	flowExecution: one(flowExecution, {
+		fields: [flowExecutionStep.flowExecutionId],
+		references: [flowExecution.id]
+	})
+}));
+
+export const flowRelations = relations(flow, ({ one }) => ({
+	organization: one(organization, {
+		fields: [flow.organizationId],
+		references: [organization.id]
+	}),
+	team: one(team, {
+		fields: [flow.teamId],
+		references: [team.id]
+	}),
+	flowDocument: one(flowDocument, {
+		fields: [flow.flowDocumentId],
+		references: [flowDocument.id]
+	})
+}));
