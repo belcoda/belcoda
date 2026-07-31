@@ -1,0 +1,1 @@
+ALTER TABLE "flow_execution_step" ADD COLUMN "updated_at" timestamp with time zone NOT NULL;
