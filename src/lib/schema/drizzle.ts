@@ -1257,7 +1257,7 @@ export const flowExecution = pgTable(
 			.notNull()
 			.references((): AnyPgColumn => flowVersion.id),
 		triggerNodeId: uuid('trigger_node_id').notNull(),
-		sourceReferenceId: text('source_reference_id'),
+		sourceReferenceId: text('source_reference_id'), //references an action code or whatsapp message or anything else
 		idempotencyKey: text('idempotency_key').notNull().unique(),
 		personId: uuid('person_id').references(() => person.id),
 		status: text('status').$type<FlowExecutionStatus>().notNull(),
