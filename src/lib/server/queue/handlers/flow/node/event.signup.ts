@@ -5,8 +5,8 @@ import {
 	type NodeHandlerProps,
 	getNextNodeToProcess
 } from '$lib/server/queue/handlers/flow/node/index';
-import { _getFlowDetailsUnsafe } from '$lib/server/api/data/flows/utils';
-import { _updateFlowExecutionStep } from '$lib/server/api/data/flows/execution_step';
+import { _getFlowDetailsUnsafe } from '$lib/server/api/data/flow/utils';
+import { _updateFlowExecutionStep } from '$lib/server/api/data/flow/execution_step';
 
 // imports for specific handler action
 import { signUpForEventWithId } from '$lib/server/api/data/event/signup';
