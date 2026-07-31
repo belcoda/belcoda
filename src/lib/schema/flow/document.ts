@@ -38,8 +38,8 @@ export const updateFlowDocumentSchema = v.partial(
 		teamId: v.optional(flowDocumentSchema.entries.teamId, null),
 		draftFlowDefinition: v.optional(flowSchema),
 		executionEnabled: v.optional(v.boolean()),
-		activeVersionId: v.optional(h.uuid),
-		retiredAt: v.optional(h.date)
+		activeVersionId: v.optional(flowDocumentSchema.entries.activeVersionId),
+		retiredAt: v.optional(flowDocumentSchema.entries.retiredAt)
 	})
 );
 export type UpdateFlowDocumentSchema = v.InferOutput<typeof updateFlowDocumentSchema>;
