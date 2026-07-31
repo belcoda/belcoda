@@ -79,7 +79,8 @@ const triggerDataSchema = v.variant('type', triggerData);
 export type TriggerData = v.InferOutput<typeof triggerDataSchema>;
 
 export const triggerNode = v.object({
-	type: v.literal('trigger')
+	type: v.literal('trigger'),
+	trigger: triggerDataSchema
 });
 export type TriggerNode = v.InferOutput<typeof triggerNode>;
 
@@ -120,7 +121,8 @@ export const nodeData = [
 	v.object({
 		type: v.literal('utils.merge'),
 		numberOfHandlesIn: h.count
-	})
+	}),
+	triggerNode
 ];
 export const nodeDataSchema = v.variant('type', nodeData);
 export type NodeData = v.InferOutput<typeof nodeDataSchema>;
