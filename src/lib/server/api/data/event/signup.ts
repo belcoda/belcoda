@@ -710,7 +710,11 @@ export async function signUpForEventUnsafe({
 				},
 				routing: {
 					recipientUserIds,
-					creatorUserId: null
+					creatorUserId: null,
+					relatedResources: [
+						{ referenceType: 'event', referenceId: eventRecord.id },
+						{ referenceType: 'person', referenceId: personRecord.id }
+					]
 				}
 			}
 		});
