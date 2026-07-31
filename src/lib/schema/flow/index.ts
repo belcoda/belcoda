@@ -8,13 +8,7 @@ export const schemaVersionOptions = ['1.0.0'] as const;
 export const schemaVersion = v.picklist(schemaVersionOptions);
 export type FlowSchemaVersion = v.InferOutput<typeof schemaVersion>;
 
-export const triggerTypeOptions = [
-	'cron',
-	'whatsappMessageActionCode',
-	'eventSignup',
-	'eventReminder',
-	'eventFollowUp'
-] as const;
+export const triggerTypeOptions = ['cron', 'whatsappMessageActionCode'] as const;
 export const triggerType = v.picklist(triggerTypeOptions);
 export type TriggerType = v.InferOutput<typeof triggerType>;
 
