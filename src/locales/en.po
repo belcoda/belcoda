@@ -5919,3 +5919,11 @@ msgstr "Affects everyone in your workspace. Admin only."
 #: src/routes/(app)/settings/+page.svelte
 msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
 msgstr "Manage your personal account preferences and, if you're an admin, your workspace settings."
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Failed to send WhatsApp message"
+msgstr "Failed to send WhatsApp message"
+
+#: src/lib/components/widgets/activity/NoteAdded.svelte
+msgid "Note added"
+msgstr "Note added"

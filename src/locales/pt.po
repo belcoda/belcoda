@@ -5973,3 +5973,11 @@ msgstr "Afeta todos no seu espaço de trabalho. Somente administradores."
 #: src/routes/(app)/settings/+page.svelte
 msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
 msgstr "Gerencie suas preferências pessoais de conta e, se você for administrador, as configurações do seu espaço de trabalho."
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Failed to send WhatsApp message"
+msgstr "Falha ao enviar mensagem do WhatsApp"
+
+#: src/lib/components/widgets/activity/NoteAdded.svelte
+msgid "Note added"
+msgstr "Nota adicionada"

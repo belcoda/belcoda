@@ -41,14 +41,36 @@ export async function verifyUserEmail(email: string): Promise<void> {
 	const response = await fetch(`${BASE_URL}/api/e2e/verify-email`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
-		body: JSON.stringify({ email })
+		body: JSON.stringify({ email }),
+		redirect: 'manual'
 	});
+
+	if (response.status >= 300 && response.status < 400) {
+		throw new Error(
+			`Failed to verify email for ${email}: redirected to ${response.headers.get('location')} (is /api/e2e public on this host?)`
+		);
+	}
 
 	if (!response.ok) {
 		const error = await response.text();
 		throw new Error(`Failed to verify email for ${email}: ${response.status} ${error}`);
 	}
 
+	const contentType = response.headers.get('content-type') ?? '';
+	const body = await response.text();
+	if (!contentType.includes('application/json')) {
+		throw new Error(
+			`Failed to verify email for ${email}: expected JSON but got ${response.status} ${contentType}: ${body.slice(0, 200)}`
+		);
+	}
+
+	try {
+		JSON.parse(body);
+	} catch {
+		throw new Error(
+			`Failed to verify email for ${email}: invalid JSON response: ${body.slice(0, 200)}`
+		);
+	}
 	console.log(`  ✓ Email verified for ${email}`);
 }
 export async function signUpUser(user: TestUser): Promise<Response> {

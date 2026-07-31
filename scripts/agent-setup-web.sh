@@ -33,6 +33,26 @@ if command -v nvm >/dev/null 2>&1; then
 	nvm use 24
 fi
 
+# --- IPv6 listen fallback for the IPv6-less sandbox ---
+# This VM's kernel boots with `ipv6.disable=1`, so any process that hard-codes an
+# IPv6 (`::`) listen bind fails with EAFNOSUPPORT — notably @rocicorp/zero's
+# zero-cache. Rather than patch that package (version-pinned, breaks on upgrade),
+# preload a shim that rewrites `::` -> 0.0.0.0 at Node's core net layer. Wire it
+# via NODE_OPTIONS in a login-shell drop-in so it reaches `npm run dev` and the
+# zero-cache workers it spawns. Guarded on both the shim existing and IPv6 being
+# absent, so it can never point `node` at a missing --require, and is a no-op on
+# any dual-stack machine.
+cat >/etc/profile.d/zero-ipv6-fallback.sh <<'EOF'
+_shim=/home/user/belcoda/scripts/ipv6-listen-fallback.cjs
+if [ ! -e /proc/net/if_inet6 ] && [ -f "$_shim" ]; then
+	case ":$NODE_OPTIONS:" in
+		*"$_shim"*) ;;
+		*) export NODE_OPTIONS="${NODE_OPTIONS:+$NODE_OPTIONS }--require $_shim" ;;
+	esac
+fi
+unset _shim
+EOF
+
 # Run psql as the postgres OS user (root setup → su, matching other agent scripts).
 as_postgres() {
 	su postgres -c "$(printf '%q ' "$@")"
