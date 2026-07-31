@@ -5898,3 +5898,11 @@ msgstr "Today"
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Yesterday"
 msgstr "Yesterday"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Failed to send WhatsApp message"
+msgstr "Failed to send WhatsApp message"
+
+#: src/lib/components/widgets/activity/NoteAdded.svelte
+msgid "Note added"
+msgstr "Note added"
