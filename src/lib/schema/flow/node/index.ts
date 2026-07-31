@@ -15,7 +15,7 @@ export const nodeTypes = [
 	'utils.split',
 	'utils.filter',
 	'utils.merge'
-];
+] as const;
 export const nodeType = v.picklist(nodeTypes);
 export type NodeType = v.InferOutput<typeof nodeType>;
 
@@ -38,7 +38,7 @@ export const triggerTypes = [
 	'whatsapp.messageReceived.actionCode',
 	'person.created',
 	'person.addedToTeam'
-];
+] as const;
 export const triggerType = v.picklist(triggerTypes);
 export type TriggerType = v.InferOutput<typeof triggerType>;
 
