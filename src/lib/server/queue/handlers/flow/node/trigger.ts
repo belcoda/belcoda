@@ -26,7 +26,7 @@ export async function processFlowNodeTriggerCron({
 		nodeId
 	});
 	if (flowDetails.node.data.type !== 'trigger') {
-		throw new Error(`Node is not an trigger node for flow version ${flowVersionId}`);
+		throw new Error(`Node is not a trigger node for flow version ${flowVersionId}`);
 	}
 	switch (flowDetails.node.data.trigger.type) {
 		case 'utils.cron':
