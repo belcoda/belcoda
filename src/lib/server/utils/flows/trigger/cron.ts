@@ -26,8 +26,8 @@ export async function processCronTrigger() {
 
 		// queue the next node for each triggerNode in the trigger
 		const queue = await getQueue();
-		const promises = triggerNodes.map(async (triggerNode) => {
-			queue.processFlowNodeTrigger({
+		const promises = triggerNodes.map((triggerNode) => {
+			return queue.processFlowNodeTrigger({
 				flowTriggerRegistrationId: triggerNode.flow_trigger_registration.id
 			});
 		});
