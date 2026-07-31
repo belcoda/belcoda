@@ -20,10 +20,35 @@ type FlowDetailsCacheValue = {
 	node: Node;
 };
 
+// a very very simple cache to just avoid re-fetching the same data over and over again.
 const flowDetailsCache = new LRUCache<string, FlowDetailsCacheValue>({
 	max: 100,
-	ttl: 1000 * 30 // 30 seconds
+	ttl: 1000 * 10 // 10 seconds
 });
+
+// invalidate to be used when resources are updated. This is probably mostly useful when updating person records from inside an execution, which may impact the next steps..
+export function invalidateFlowDetailsCache({
+	flowExecutionId,
+	personId,
+	nodeId,
+	organizationId,
+	flowVersionId
+}: {
+	flowExecutionId: string;
+	personId: string;
+	nodeId: string;
+	organizationId: string;
+	flowVersionId: string;
+}) {
+	const cacheKey = getFlowDetailsCacheKey({
+		flowExecutionId,
+		personId,
+		nodeId,
+		organizationId,
+		flowVersionId
+	});
+	flowDetailsCache.delete(cacheKey);
+}
 
 function getFlowDetailsCacheKey({
 	flowExecutionId,
