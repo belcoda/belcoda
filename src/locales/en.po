@@ -5918,3 +5918,11 @@ msgstr "Added to favourites"
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
 msgid "Could not update favourites. Please try again."
 msgstr "Could not update favourites. Please try again."
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Failed to send WhatsApp message"
+msgstr "Failed to send WhatsApp message"
+
+#: src/lib/components/widgets/activity/NoteAdded.svelte
+msgid "Note added"
+msgstr "Note added"
