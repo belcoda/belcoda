@@ -220,6 +220,39 @@ export const member = pgTable(
 	(table) => [unique('member_user_organization_unique').on(table.userId, table.organizationId)]
 );
 
+export const memberFavourite = pgTable(
+	'member_favourite',
+	{
+		id: uuid('id').primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id, { onDelete: 'cascade' }),
+		memberId: uuid('member_id')
+			.notNull()
+			.references(() => member.id, { onDelete: 'cascade' }),
+		referenceType: text('reference_type').notNull(),
+		referenceId: uuid('reference_id').notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
+	},
+	(table) => [
+		uniqueIndex('member_favourite_member_reference_unique').on(
+			table.memberId,
+			table.referenceType,
+			table.referenceId
+		),
+		index('member_favourite_organization_reference').on(
+			table.organizationId,
+			table.referenceType,
+			table.referenceId
+		),
+		index('member_favourite_member_type_created_at').on(
+			table.memberId,
+			table.referenceType,
+			table.createdAt.desc()
+		)
+	]
+);
+
 export const teamMember = pgTable('team_member', {
 	id: uuid('id').primaryKey(),
 	userId: uuid('user_id')
