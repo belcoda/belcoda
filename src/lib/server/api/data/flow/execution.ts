@@ -1,7 +1,7 @@
 import { flowExecution } from '$lib/schema/drizzle';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { eq, or, isNull, lte, sql, and } from 'drizzle-orm';
-import type { FlowExecutionStatus } from '$lib/schema/flow';
+import type { FlowExecutionStatus, FlowExecutionError } from '$lib/schema/flow';
 import { v7 as uuidv7 } from 'uuid';
 export async function _getFlowExecutionUnsafe({
 	tx,
@@ -48,6 +48,15 @@ export async function _createFlowExecutionUnsafe({
 	sourceReferenceId?: string;
 	status?: FlowExecutionStatus;
 }) {
+	const now = new Date();
+	// The idempotency key is bucketed to minute resolution (seconds/ms zeroed). This is a
+	// deliberate compromise: two executions for the same org + person + flow version fired
+	// within the same minute collide on the unique idempotencyKey, so the second insert throws
+	// — which safely dedupes accidental double-fires. Legitimate re-triggers more than a minute
+	// apart get distinct keys and succeed. Revisit if intentional sub-minute re-triggering of
+	// the same flow for the same person is ever needed.
+	const minuteBucket = new Date(now);
+	minuteBucket.setSeconds(0, 0);
 	const insertData: typeof flowExecution.$inferInsert = {
 		id: flowExecutionId,
 		organizationId,
@@ -56,12 +65,12 @@ export async function _createFlowExecutionUnsafe({
 		flowVersionId,
 		triggerNodeId,
 		sourceReferenceId,
-		idempotencyKey: `${organizationId}-${personId}-${flowVersionId}`, //Do we maybe want to think about what happens if triggering the same workflow multiple times is desired?
+		idempotencyKey: `${organizationId}-${personId}-${flowVersionId}-${minuteBucket.toISOString()}`,
 		status,
 		input: {},
 		error: {},
-		createdAt: new Date(),
-		startedAt: new Date(),
+		createdAt: now,
+		startedAt: now,
 		completedAt: null
 	};
 	const [result] = await tx.dbTransaction.wrappedTransaction
@@ -70,6 +79,34 @@ export async function _createFlowExecutionUnsafe({
 		.returning();
 	if (!result) {
 		throw new Error(`Failed to create flow execution for id: ${flowExecutionId}`);
+	}
+	return result;
+}
+
+export async function _updateFlowExecutionUnsafe({
+	tx,
+	flowExecutionId,
+	status,
+	error,
+	completedAt
+}: {
+	tx: ServerTransaction;
+	flowExecutionId: string;
+	status: FlowExecutionStatus;
+	error?: FlowExecutionError;
+	completedAt?: Date | null;
+}): Promise<typeof flowExecution.$inferSelect> {
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.update(flowExecution)
+		.set({
+			status,
+			...(error !== undefined ? { error } : {}),
+			...(completedAt !== undefined ? { completedAt } : {})
+		})
+		.where(eq(flowExecution.id, flowExecutionId))
+		.returning();
+	if (!result) {
+		throw new Error(`Failed to update flow execution for id: ${flowExecutionId}`);
 	}
 	return result;
 }

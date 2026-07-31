@@ -7,6 +7,8 @@ import type { ServerTransaction } from '@rocicorp/zero';
 import { v7 as uuidv7 } from 'uuid';
 import { queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { db } from '$lib/server/db';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 //function to process a cron trigger node... creates an execution record for each person in the target filter and queues the node processing job for each person
 export async function processCronTrigger({
 	nodeId,
@@ -43,18 +45,28 @@ export async function processCronTrigger({
 	});
 	const queue = await getQueue();
 	for (const personId of personIds) {
-		await db.transaction(async (tx) => {
-			const promises = createExecutionContextAndTriggerJob({
-				nodeId,
-				flowVersionId,
-				organizationId,
-				personId,
-				flowDocumentId,
-				queue,
-				tx
+		// Isolate each person: a single person's failure (e.g. an idempotencyKey collision from a
+		// duplicate fire) is logged and skipped so the remaining people in the target filter still
+		// get processed, rather than one failure aborting the whole cron run.
+		try {
+			await db.transaction(async (tx) => {
+				const promises = createExecutionContextAndTriggerJob({
+					nodeId,
+					flowVersionId,
+					organizationId,
+					personId,
+					flowDocumentId,
+					queue,
+					tx
+				});
+				await Promise.all(promises);
 			});
-			await Promise.all(promises);
-		});
+		} catch (error) {
+			log.error(
+				{ error, personId, nodeId, flowVersionId, flowDocumentId, organizationId },
+				'Failed to create flow execution for person in cron trigger'
+			);
+		}
 	}
 }
 

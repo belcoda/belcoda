@@ -41,6 +41,7 @@ export type FlowExecutionStepOutput = v.InferOutput<typeof flowExecutionStepOutp
 export const flowExecutionStepStatusOptions = [
 	'queued',
 	'pending',
+	'scheduled',
 	'running',
 	'completed',
 	'failed'

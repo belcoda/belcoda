@@ -112,7 +112,7 @@ export async function _getFlowDetailsUnsafe({
 	}
 	if (!node) {
 		throw new Error(
-			`Node ${nodeId} not found in flow ${result.flowVersion.flowDefinition} for execution ${result.flowExecution.id}`
+			`Node ${nodeId} not found in flow version ${result.flowVersion.id} for execution ${result.flowExecution.id}`
 		);
 	}
 	const output = {
