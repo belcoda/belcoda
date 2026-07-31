@@ -103,9 +103,6 @@ export async function _getFlowDetailsUnsafe({
 		};
 	});
 	const node = result.flowVersion.flowDefinition.nodes.find((node) => node.id === nodeId);
-	if (!node) {
-		throw new Error(`Node ${nodeId} not found`);
-	}
 	if (
 		result.flowVersion.checksum !== createFlowDefinitionChecksum(result.flowVersion.flowDefinition)
 	) {
