@@ -3,7 +3,8 @@ import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { parse } from 'valibot';
 import { v7 as uuidv7 } from 'uuid';
 
-import { member, notification } from '$lib/schema/drizzle';
+import { member, memberFavourite, notification } from '$lib/schema/drizzle';
+import type { FavouriteReference } from '$lib/schema/favourite';
 import {
 	createNotificationSchema,
 	type CreateNotificationSchema,
@@ -20,19 +21,69 @@ import { builder, type QueryContext } from '$lib/zero/schema';
 import { notificationReadPermissions } from '$lib/zero/query/notification/permissions';
 import { getOrganizationMember } from '$lib/server/api/data/organization/member';
 
-async function resolveNotificationRecipients({
+async function getFavouriteRecipientUserIds({
+	tx,
+	organizationId,
+	relatedResources
+}: {
+	tx: ServerTransaction;
+	organizationId: string;
+	relatedResources: FavouriteReference[];
+}): Promise<string[]> {
+	if (relatedResources.length === 0) {
+		return [];
+	}
+
+	const referenceFilters = relatedResources.map((reference) =>
+		and(
+			eq(memberFavourite.referenceType, reference.referenceType),
+			eq(memberFavourite.referenceId, reference.referenceId)
+		)
+	);
+	const favouriteMemberships = await tx.dbTransaction.wrappedTransaction
+		.select({ userId: member.userId })
+		.from(memberFavourite)
+		.innerJoin(
+			member,
+			and(
+				eq(member.id, memberFavourite.memberId),
+				eq(member.organizationId, memberFavourite.organizationId)
+			)
+		)
+		.where(
+			and(
+				eq(memberFavourite.organizationId, organizationId),
+				referenceFilters.length === 1 ? referenceFilters[0] : or(...referenceFilters)
+			)
+		);
+
+	return [...new Set(favouriteMemberships.map((membership) => membership.userId))];
+}
+
+export async function resolveNotificationRecipients({
 	tx,
 	organizationId,
 	recipientUserIds,
-	creatorUserId
+	creatorUserId,
+	relatedResources = []
 }: {
 	tx: ServerTransaction;
 	organizationId: string;
 	recipientUserIds: string[] | undefined;
 	creatorUserId: string | null;
+	relatedResources?: FavouriteReference[];
 }): Promise<string[]> {
+	const favouriteRecipientUserIds = await getFavouriteRecipientUserIds({
+		tx,
+		organizationId,
+		relatedResources
+	});
+	const includeFavouriteRecipients = (existingRecipientUserIds: string[]) => [
+		...new Set([...existingRecipientUserIds, ...favouriteRecipientUserIds])
+	];
+
 	if (recipientUserIds !== undefined) {
-		return [...new Set(recipientUserIds)];
+		return includeFavouriteRecipients(recipientUserIds);
 	}
 
 	const memberships = await tx.dbTransaction.wrappedTransaction
@@ -41,7 +92,7 @@ async function resolveNotificationRecipients({
 		.where(eq(member.organizationId, organizationId));
 
 	if (memberships.length === 1) {
-		return [memberships[0].userId];
+		return includeFavouriteRecipients([memberships[0].userId]);
 	}
 
 	if (creatorUserId) {
@@ -51,7 +102,7 @@ async function resolveNotificationRecipients({
 			.where(and(eq(member.organizationId, organizationId), eq(member.userId, creatorUserId)))
 			.limit(1);
 		if (creatorMembership) {
-			return [creatorMembership.userId];
+			return includeFavouriteRecipients([creatorMembership.userId]);
 		}
 	}
 
@@ -62,7 +113,7 @@ async function resolveNotificationRecipients({
 			and(eq(member.organizationId, organizationId), inArray(member.role, ['owner', 'admin']))
 		);
 
-	return [...new Set(adminOwnerMemberships.map((membership) => membership.userId))];
+	return includeFavouriteRecipients(adminOwnerMemberships.map((membership) => membership.userId));
 }
 
 export async function createNotification({
@@ -77,7 +128,8 @@ export async function createNotification({
 		tx,
 		organizationId: parsed.organizationId,
 		recipientUserIds: parsed.routing?.recipientUserIds,
-		creatorUserId: parsed.routing?.creatorUserId ?? null
+		creatorUserId: parsed.routing?.creatorUserId ?? null,
+		relatedResources: parsed.routing?.relatedResources
 	});
 
 	if (recipients.length === 0) {
