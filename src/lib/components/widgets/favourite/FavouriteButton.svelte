@@ -30,11 +30,7 @@
 	);
 	const isFavourite = $derived(Boolean(favourite.data));
 	const queryReady = $derived(favourite.details.type === 'complete');
-	const label = $derived(
-		isFavourite
-			? t`Remove from favourites and stop receiving related notifications`
-			: t`Add to favourites and receive related notifications`
-	);
+	const label = $derived(isFavourite ? t`Remove from favourites` : t`Add to favourites`);
 	let saving = $state(false);
 
 	async function toggleFavourite() {

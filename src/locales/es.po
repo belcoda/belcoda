@@ -5876,12 +5876,12 @@ msgid "Yesterday"
 msgstr "Ayer"
 
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
-msgid "Remove from favourites and stop receiving related notifications"
-msgstr "Eliminar de favoritos y dejar de recibir notificaciones relacionadas"
+msgid "Remove from favourites"
+msgstr "Eliminar de favoritos"
 
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
-msgid "Add to favourites and receive related notifications"
-msgstr "Añadir a favoritos y recibir notificaciones relacionadas"
+msgid "Add to favourites"
+msgstr "Añadir a favoritos"
 
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
 msgid "Removed from favourites"
