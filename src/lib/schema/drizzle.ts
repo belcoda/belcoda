@@ -92,6 +92,7 @@ import type {
 	FlowExecutionStepOutput,
 	FlowExecutionStepStatus
 } from '$lib/schema/flow';
+import type { Flow as WhatsAppThreadFlowSchema } from '$lib/schema/flow';
 import type { Flow as FlowSchema } from '$lib/schema/flow/node';
 import type { FlowDocumentSchema } from '$lib/schema/flow/document';
 import type { FlowVersionSchema } from '$lib/schema/flow/version';
@@ -703,7 +704,7 @@ export const whatsappThread = pgTable('whatsapp_thread', {
 		.notNull()
 		.references(() => organization.id),
 	teamId: uuid('team_id').references(() => team.id),
-	flow: jsonb('flow').$type<FlowSchema>().notNull(),
+	flow: jsonb('flow').$type<WhatsAppThreadFlowSchema>().notNull(),
 	sentBy: uuid('sent_by').references(() => user.id),
 	title: text('title'), // used for interface purposes
 	description: text('description'), // used for interface purposes
@@ -1296,7 +1297,8 @@ export const flowExecutionStep = pgTable(
 		scheduledAt: timestamp('scheduled_at', { withTimezone: true, mode: 'date' }),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }),
-		completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' })
+		completedAt: timestamp('completed_at', { withTimezone: true, mode: 'date' }),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull()
 	},
 	(table) => [
 		unique('flow_execution_step_unique').on(
