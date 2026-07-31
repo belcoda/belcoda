@@ -32,11 +32,7 @@
 	const queryReady = $derived(favourite.details.type === 'complete');
 	const queryFailed = $derived(favourite.details.type === 'error');
 	const canToggle = $derived(queryReady || queryFailed);
-	const label = $derived(
-		isFavourite
-			? t`Remove from favourites and stop receiving related notifications`
-			: t`Add to favourites and receive related notifications`
-	);
+	const label = $derived(isFavourite ? t`Remove from favourites` : t`Add to favourites`);
 	let saving = $state(false);
 
 	async function toggleFavourite() {
@@ -69,6 +65,7 @@
 						})
 					);
 			await result.client;
+			saving = false;
 			const serverResult = await result.server;
 			if (serverResult.type === 'error') {
 				throw new Error(serverResult.error.message);

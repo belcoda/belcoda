@@ -5876,12 +5876,12 @@ msgid "Yesterday"
 msgstr "Ayer"
 
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
-msgid "Remove from favourites and stop receiving related notifications"
-msgstr "Eliminar de favoritos y dejar de recibir notificaciones relacionadas"
+msgid "Remove from favourites"
+msgstr "Eliminar de favoritos"
 
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
-msgid "Add to favourites and receive related notifications"
-msgstr "Añadir a favoritos y recibir notificaciones relacionadas"
+msgid "Add to favourites"
+msgstr "Añadir a favoritos"
 
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
 msgid "Removed from favourites"
@@ -5894,3 +5894,11 @@ msgstr "Añadido a favoritos"
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
 msgid "Could not update favourites. Please try again."
 msgstr "No se pudieron actualizar los favoritos. Inténtalo de nuevo."
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Failed to send WhatsApp message"
+msgstr "Error al enviar el mensaje de WhatsApp"
+
+#: src/lib/components/widgets/activity/NoteAdded.svelte
+msgid "Note added"
+msgstr "Nota añadida"
