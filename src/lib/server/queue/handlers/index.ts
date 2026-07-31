@@ -14,3 +14,4 @@ export { buildWhatsappThreadSendQueue } from '$lib/server/queue/handlers/whatsap
 export { triggerWebhook, sendWebhook } from '$lib/server/queue/handlers/utils/trigger_webhook';
 export { sendDigest } from '$lib/server/queue/handlers/notification/send_digest';
 export { apiBulkUpsert } from '$lib/server/queue/handlers/people/api_bulk_upsert';
+export { processFlowNode } from '$lib/server/queue/handlers/flow/node/index';
