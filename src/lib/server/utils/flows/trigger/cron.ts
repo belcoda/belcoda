@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { getQueue } from '$lib/server/queue';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { flowTriggerRegistration, flowVersion } from '$lib/schema/drizzle';
 import { parseCronExpression } from 'cron-schedule';
 import { eq, and, lte, isNotNull } from 'drizzle-orm';
@@ -27,9 +27,12 @@ export async function processCronTrigger() {
 		// queue the next node for each triggerNode in the trigger
 		const queue = await getQueue();
 		const promises = triggerNodes.map((triggerNode) => {
-			return queue.processFlowNodeTrigger({
-				flowTriggerRegistrationId: triggerNode.flow_trigger_registration.id
-			});
+			return queue.processFlowNodeTrigger(
+				{
+					flowTriggerRegistrationId: triggerNode.flow_trigger_registration.id
+				},
+				queueSendOptionsFromTransaction(tx)
+			);
 		});
 		await Promise.all(promises);
 
