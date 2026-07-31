@@ -1,11 +1,12 @@
 import { db } from '$lib/server/db';
 import { type Flow } from '$lib/schema/flow/node/index';
-import { _getFlowDetailsUnsafe } from '$lib/server/api/data/flows/utils';
+import { _getFlowDetailsUnsafe } from '$lib/server/api/data/flow/utils';
 import {
 	_createFlowExecutionStep,
 	_updateFlowExecutionStep
-} from '$lib/server/api/data/flows/execution_step';
-import { processFlowNodeEventSignup } from './eventSignup';
+} from '$lib/server/api/data/flow/execution_step';
+import { processFlowNodeEventSignup } from '$lib/server/queue/handlers/flow/node/event.signup';
+import { processFlowNodeTriggerCron } from '$lib/server/queue/handlers/flow/node/trigger.js';
 
 export type ProcessFlowNodeProps = {
 	flowVersionId: string;
@@ -47,6 +48,17 @@ export async function processFlowNode({
 	try {
 		// the bulk of the logic of the handlers should sit in here...
 		switch (node.data.type) {
+			case 'trigger': {
+				await processFlowNodeTriggerCron({
+					flowVersionId,
+					personId,
+					organizationId,
+					flowExecutionId,
+					flowExecutionStepId: flowExecutionStep.id,
+					nodeId
+				});
+				break;
+			}
 			case 'event.signup': {
 				await processFlowNodeEventSignup({
 					flowVersionId,
