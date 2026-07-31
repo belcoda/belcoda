@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import * as h from '$lib/schema/helpers';
-import { flowSchema, schemaVersion, schemaVersionOptions } from '$lib/schema/flow';
+import { schemaVersion, schemaVersionOptions } from '$lib/schema/flow';
+import { flowSchema } from '$lib/schema/flow/node';
 
 export const flowDocumentSchema = v.object({
 	id: h.uuid,

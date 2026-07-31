@@ -20,7 +20,8 @@ export const flowExecutionStepSchema = v.object({
 	scheduledAt: v.nullable(h.date),
 	createdAt: h.date,
 	startedAt: v.nullable(h.date),
-	completedAt: v.nullable(h.date)
+	completedAt: v.nullable(h.date),
+	updatedAt: h.date
 });
 export type FlowExecutionStepSchema = v.InferOutput<typeof flowExecutionStepSchema>;
 

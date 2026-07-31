@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import * as h from '$lib/schema/helpers';
-import { flowSchema, schemaVersion } from '$lib/schema/flow';
+import { schemaVersion } from '$lib/schema/flow';
+import { flowSchema } from '$lib/schema/flow/node';
 
 // one row per successful publication of a flow document's draftDefinition.
 // rows are immutable once published (APPEND ONLY), so there is no update schema.
