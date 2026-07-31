@@ -32,10 +32,7 @@ export async function createFlowDocument({
 	args: CreateFlowDocumentSchemaInput;
 }) {
 	const parsed = parse(createFlowDocumentSchema, args);
-	if (
-		!ctx.adminOrgs.includes(parsed.organizationId) ||
-		!ctx.ownerOrgs.includes(parsed.organizationId)
-	) {
+	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(parsed.organizationId)) {
 		throw new Error('You are not authorized to publish this flow document');
 	}
 	const id = uuidv7();
@@ -66,10 +63,7 @@ export async function publishFlowDocument({
 }) {
 	const parsed = parse(createFlowVersionSchema, args);
 
-	if (
-		!ctx.adminOrgs.includes(parsed.organizationId) ||
-		!ctx.ownerOrgs.includes(parsed.organizationId)
-	) {
+	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(parsed.organizationId)) {
 		throw new Error('You are not authorized to publish this flow document');
 	}
 
@@ -103,7 +97,7 @@ export async function publishFlowDocument({
 		id: newFlowVersionId,
 		organizationId: parsed.organizationId,
 		flowDocumentId: parsed.flowDocumentId,
-		versionNumber: flowDocumentResult.versionCounter + 1,
+		versionNumber: flowDocumentResult.versionCounter,
 		flowDefinition: flowDocumentResult.draftFlowDefinition,
 		schemaVersion: flowDocumentResult.schemaVersion,
 		checksum: checksum,
@@ -114,9 +108,12 @@ export async function publishFlowDocument({
 		.insert(flowVersion)
 		.values(flowVersionToCreate)
 		.returning();
+	if (!insertedFlowVersion) {
+		throw new Error('Failed to publish flow version');
+	}
 
 	// scrap the existing triggers for the flow document, and publish new ones derived from the published flow version
-	await await _rationalizeTriggerRegistrations({
+	await _rationalizeTriggerRegistrations({
 		flowDocumentId: parsed.flowDocumentId,
 		organizationId: parsed.organizationId,
 		flowVersionId: newFlowVersionId,
@@ -163,10 +160,12 @@ export async function _rationalizeTriggerRegistrations({
 				organizationId: organizationId
 			};
 		});
-	await tx.dbTransaction.wrappedTransaction
-		.insert(flowTriggerRegistration)
-		.values(triggerNodesToPublish)
-		.returning();
+	if (triggerNodesToPublish.length > 0) {
+		await tx.dbTransaction.wrappedTransaction
+			.insert(flowTriggerRegistration)
+			.values(triggerNodesToPublish)
+			.returning();
+	}
 }
 
 export async function rollbackFlowDocument({
@@ -182,10 +181,7 @@ export async function rollbackFlowDocument({
 		flowVersionId: string;
 	};
 }) {
-	if (
-		!ctx.adminOrgs.includes(args.organizationId) ||
-		!ctx.ownerOrgs.includes(args.organizationId)
-	) {
+	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(args.organizationId)) {
 		throw new Error('You are not authorized to rollback this flow document');
 	}
 	if (!ctx.userId) {
@@ -203,12 +199,21 @@ export async function rollbackFlowDocument({
 		throw new Error('Flow version not found');
 	}
 
-	const [flowDocumentResult] = await tx.dbTransaction.wrappedTransaction.update(flowDocument).set({
-		versionCounter: sql`${flowVersionToRollbackTo.versionNumber}`,
-		updatedAt: new Date(),
-		activeVersionId: flowVersionToRollbackTo.id,
-		executionEnabled: true
-	});
+	const [flowDocumentResult] = await tx.dbTransaction.wrappedTransaction
+		.update(flowDocument)
+		.set({
+			versionCounter: sql`${flowVersionToRollbackTo.versionNumber}`,
+			updatedAt: new Date(),
+			activeVersionId: flowVersionToRollbackTo.id,
+			executionEnabled: true
+		})
+		.where(
+			and(
+				eq(flowDocument.id, args.flowDocumentId),
+				eq(flowDocument.organizationId, args.organizationId)
+			)
+		)
+		.returning();
 
 	await _rationalizeTriggerRegistrations({
 		flowDocumentId: args.flowDocumentId,
