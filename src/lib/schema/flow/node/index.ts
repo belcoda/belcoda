@@ -30,12 +30,13 @@ export const nodeBase = v.object({
 });
 export type NodeBase = v.InferOutput<typeof nodeBase>;
 
+// keep in exact 1:1 sync with the triggerData variants below
 export const triggerTypes = [
 	'event.signup',
 	'utils.cron',
 	'utils.manualTrigger',
-	'utils.webhook',
 	'whatsapp.messageReceived.actionCode',
+	'whatsapp.messageReceived.triggerWords',
 	'person.created',
 	'person.addedToTeam'
 ] as const;
