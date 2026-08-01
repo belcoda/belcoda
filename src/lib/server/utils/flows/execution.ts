@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import type { ServerTransaction } from '@rocicorp/zero';
 import { _updateFlowExecutionUnsafe } from '$lib/server/api/data/flow/execution';
 import { _updateFlowExecutionStep } from '$lib/server/api/data/flow/execution_step';
 import pino from '$lib/pino';
@@ -11,28 +11,28 @@ const log = pino(import.meta.url);
 export async function failFlowExecution({
 	flowExecutionId,
 	flowExecutionStepId,
+	tx,
 	error
 }: {
 	flowExecutionId: string;
 	flowExecutionStepId?: string;
+	tx: ServerTransaction;
 	error: unknown;
 }): Promise<void> {
 	const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-	await db.transaction(async (tx) => {
-		if (flowExecutionStepId) {
-			await _updateFlowExecutionStep({
-				tx,
-				flowExecutionStepId,
-				status: 'failed',
-				error: { message: errorMessage }
-			});
-		}
-		await _updateFlowExecutionUnsafe({
+	if (flowExecutionStepId) {
+		await _updateFlowExecutionStep({
 			tx,
-			flowExecutionId,
+			flowExecutionStepId,
 			status: 'failed',
-			completedAt: new Date()
+			error: { message: errorMessage }
 		});
+	}
+	await _updateFlowExecutionUnsafe({
+		tx,
+		flowExecutionId,
+		status: 'failed',
+		completedAt: new Date()
 	});
 	log.error({ error, flowExecutionId, flowExecutionStepId }, 'Flow execution failed');
 }
