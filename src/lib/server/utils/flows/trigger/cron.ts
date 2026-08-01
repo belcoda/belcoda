@@ -1,8 +1,10 @@
 import { db } from '$lib/server/db';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { flowTriggerRegistration, flowVersion } from '$lib/schema/drizzle';
-import { parseCronExpression } from 'cron-schedule';
+import { getNextCronRunAtUtc } from '$lib/server/utils/flows/trigger/schedule';
 import { eq, and, lte, isNotNull } from 'drizzle-orm';
+import pino from '$lib/pino';
+const log = pino(import.meta.url);
 
 // can be called by a cron job that runs every 10 minutes
 // it finds any flow trigger registrations that have a nextRunAt that is in the past and are of type cron
@@ -39,46 +41,61 @@ export async function processCronTrigger() {
 		});
 		await Promise.all(promises);
 
-		// update the nextRunAt for each triggerRegistration
-		const mapCronUpdatePromises = triggerNodes.map((triggerNode) => {
-			const cronTriggerNode = triggerNode.flow_version.flowDefinition.nodes.find(
-				(node) => node.id === triggerNode.flow_trigger_registration.triggerNodeId
-			);
-			if (!cronTriggerNode) {
-				throw new Error(
-					`Cron trigger node not found for trigger registration ${triggerNode.flow_trigger_registration.id}`
-				);
-			}
-			if (cronTriggerNode.data.type !== 'trigger') {
-				throw new Error(
-					`Cron trigger node is not a trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
-				);
-			}
-			if (!cronTriggerNode.data.trigger) {
-				throw new Error(
-					`Cron trigger node is not a cron trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
-				);
-			}
-			if (cronTriggerNode.data.trigger.type !== 'utils.cron') {
-				throw new Error(
-					`Cron trigger node is not a cron trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
-				);
-			}
-			const cron = parseCronExpression(cronTriggerNode.data.trigger.cronExpression);
-			// Anchor to the later of the previous nextRunAt and now. If a registration was overdue
-			// (e.g. the worker was down), computing purely from the stale nextRunAt could still land in
-			// the past, so it would be re-selected and re-fired every cycle until it caught up.
-			const previousRunAt = triggerNode.flow_trigger_registration.nextRunAt ?? now;
-			const anchor = previousRunAt > now ? previousRunAt : now;
-			const nextRunAt = cron.getNextDate(anchor);
-			return tx.dbTransaction.wrappedTransaction
-				.update(flowTriggerRegistration)
-				.set({
-					nextRunAt: nextRunAt,
-					updatedAt: new Date()
-				})
-				.where(eq(flowTriggerRegistration.id, triggerNode.flow_trigger_registration.id));
-		});
+		// update the nextRunAt for each triggerRegistration. A single malformed registration is
+		// logged and skipped rather than thrown, so one bad registration can't roll back the whole
+		// batch (poison pill). A skipped registration keeps its stale nextRunAt and will simply be
+		// re-selected on the next cycle — acceptable for now; more robust disabling/notifying later.
+		const mapCronUpdatePromises = triggerNodes
+			.map((triggerNode) => {
+				try {
+					const cronTriggerNode = triggerNode.flow_version.flowDefinition.nodes.find(
+						(node) => node.id === triggerNode.flow_trigger_registration.triggerNodeId
+					);
+					if (!cronTriggerNode) {
+						throw new Error(
+							`Cron trigger node not found for trigger registration ${triggerNode.flow_trigger_registration.id}`
+						);
+					}
+					if (cronTriggerNode.data.type !== 'trigger') {
+						throw new Error(
+							`Cron trigger node is not a trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
+						);
+					}
+					if (!cronTriggerNode.data.trigger) {
+						throw new Error(
+							`Cron trigger node is not a cron trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
+						);
+					}
+					if (cronTriggerNode.data.trigger.type !== 'utils.cron') {
+						throw new Error(
+							`Cron trigger node is not a cron trigger node for trigger registration ${triggerNode.flow_trigger_registration.id}`
+						);
+					}
+					// Anchor to the later of the previous nextRunAt and now. If a registration was overdue
+					// (e.g. the worker was down), computing purely from the stale nextRunAt could still land
+					// in the past, so it would be re-selected and re-fired every cycle until it caught up.
+					const previousRunAt = triggerNode.flow_trigger_registration.nextRunAt ?? now;
+					const anchor = previousRunAt > now ? previousRunAt : now;
+					const nextRunAt = getNextCronRunAtUtc(
+						cronTriggerNode.data.trigger.cronExpression,
+						anchor
+					);
+					return tx.dbTransaction.wrappedTransaction
+						.update(flowTriggerRegistration)
+						.set({
+							nextRunAt: nextRunAt,
+							updatedAt: new Date()
+						})
+						.where(eq(flowTriggerRegistration.id, triggerNode.flow_trigger_registration.id));
+				} catch (error) {
+					log.error(
+						{ error, flowTriggerRegistrationId: triggerNode.flow_trigger_registration.id },
+						'Skipping malformed cron trigger registration during nextRunAt update'
+					);
+					return null;
+				}
+			})
+			.filter((promise): promise is NonNullable<typeof promise> => promise !== null);
 		await Promise.all(mapCronUpdatePromises);
 	});
 }
