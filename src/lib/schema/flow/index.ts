@@ -28,7 +28,7 @@ export type FlowExecutionStatus = v.InferOutput<typeof flowExecutionStatus>;
 
 export const flowExecutionInputSchema = v.object({}); //placeholder
 export type FlowExecutionInput = v.InferOutput<typeof flowExecutionInputSchema>;
-export const flowExecutionErrorSchema = v.object({}); //placeholder
+export const flowExecutionErrorSchema = v.object({ message: v.optional(v.string()) }); //placeholder
 export type FlowExecutionError = v.InferOutput<typeof flowExecutionErrorSchema>;
 
 export const flowExecutionStepInputSchema = v.object({}); //placeholder

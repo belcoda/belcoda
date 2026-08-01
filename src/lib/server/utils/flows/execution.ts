@@ -32,6 +32,8 @@ export async function failFlowExecution({
 		tx,
 		flowExecutionId,
 		status: 'failed',
+		// persist the reason on the execution too, so step-less failures remain diagnosable
+		error: { message: errorMessage },
 		completedAt: new Date()
 	});
 	log.error({ error, flowExecutionId, flowExecutionStepId }, 'Flow execution failed');
