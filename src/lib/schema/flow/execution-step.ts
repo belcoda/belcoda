@@ -47,6 +47,7 @@ export const updateFlowExecutionStepSchema = v.partial(
 		output: v.optional(flowExecutionStepOutputSchema),
 		error: v.optional(flowExecutionStepErrorSchema),
 		scheduledAt: v.optional(flowExecutionStepSchema.entries.scheduledAt),
+		startedAt: v.optional(flowExecutionStepSchema.entries.startedAt),
 		completedAt: v.optional(flowExecutionStepSchema.entries.completedAt)
 	})
 );
