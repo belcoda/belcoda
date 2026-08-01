@@ -18,9 +18,9 @@
 			<Empty.Media variant="icon">
 				<CogIcon />
 			</Empty.Media>
-			<Empty.Title>{t`Edit workspace settings`}</Empty.Title>
+			<Empty.Title>{t`Settings`}</Empty.Title>
 			<Empty.Description
-				>{t`Manage your workspace settings, including branding, email settings, and more.`}</Empty.Description
+				>{t`Manage your personal account preferences and, if you're an admin, your workspace settings.`}</Empty.Description
 			>
 		</Empty.Header>
 	</Empty.Root>

@@ -9,44 +9,38 @@
 
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import SearchIcon from '@lucide/svelte/icons/search';
-	import { settingsItems, groupBy } from '$lib/components/layouts/app/sidebars/settings/items';
+	import {
+		groupBy,
+		resolveSettingsItemPath,
+		settingsItems
+	} from '$lib/components/layouts/app/sidebars/settings/items';
 
 	import { appState } from '$lib/state.svelte';
 
 	const fuse = new Fuse(settingsItems, {
 		includeScore: true,
-		keys: ['title', 'keywords', 'items.title', 'items.keywords'],
+		keys: ['title', 'keywords'],
 		threshold: 0.2
 	});
 
-	const result = $derived.by(() => {
-		if (searchString === '') {
-			const filteredItems = settingsItems.filter((item) => {
-				if (appState.isOwner) {
-					return true;
-				} else if (appState.isAdmin) {
-					return item.permissions === 'admin' || item.permissions === 'member';
-				} else {
-					return false;
-				}
-			});
-			return groupBy(filteredItems, 'group');
-		} else {
-			const results = fuse.search(searchString).map((item) => {
-				return item.item;
-			});
-			const filteredResults = results.filter((item) => {
-				if (appState.isOwner) {
-					return true;
-				} else if (appState.isAdmin) {
-					return item.permissions === 'admin' || item.permissions === 'member';
-				} else {
-					return false;
-				}
-			});
-			return groupBy(filteredResults, 'group');
-		}
+	const filtered = $derived.by(() => {
+		const base =
+			searchString === '' ? settingsItems : fuse.search(searchString).map((item) => item.item);
+		return base.filter((item) => {
+			if (item.permissions === 'member') {
+				return true;
+			} else if (appState.isOwner) {
+				return true;
+			} else if (appState.isAdmin) {
+				return item.permissions === 'admin';
+			} else {
+				return false;
+			}
+		});
 	});
+
+	const groups = $derived(groupBy(filtered, 'group'));
+
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { t } from '$lib/index.svelte';
 </script>
@@ -71,7 +65,7 @@
 			</InputGroup.Root>
 		</Sidebar.Header>
 		<Sidebar.Content>
-			{#each result as group}
+			{#each groups as group (group.group)}
 				<Sidebar.Group>
 					<Sidebar.GroupLabel>{group.group}</Sidebar.GroupLabel>
 					<Sidebar.GroupContent>
@@ -80,7 +74,11 @@
 								<Sidebar.MenuItem>
 									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 										{#snippet child({ props })}
-											<a href={item.url} {...props} data-testid={item.dataTestId}>{item.title()}</a>
+											<a
+												href={resolveSettingsItemPath(item.url)}
+												{...props}
+												data-testid={item.dataTestId}>{item.title()}</a
+											>
 										{/snippet}
 									</Sidebar.MenuButton>
 								</Sidebar.MenuItem>

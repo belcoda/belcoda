@@ -18,26 +18,25 @@ msgstr "Data e hora"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
-#: src/routes/(app)/preferences/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
 msgstr "Idioma"
 
-#: src/routes/(app)/preferences/language/+page.svelte
-msgid "Languages"
-msgstr "Idiomas"
+#~ msgid "Languages"
+#~ msgstr "Idiomas"
 
-#: src/routes/(app)/preferences/language/+page.svelte
-msgid "Update your preferred language:"
-msgstr "Atualize seu idioma preferido:"
+#~ msgid "Update your preferred language:"
+#~ msgstr "Atualize seu idioma preferido:"
 
-#: src/routes/(app)/preferences/language/+page.svelte
-msgid "This will update your language for all the pages in the application."
-msgstr "Isso atualizará seu idioma para todas as páginas do aplicativo."
+#~ msgid "This will update your language for all the pages in the application."
+#~ msgstr "Isso atualizará seu idioma para todas as páginas do aplicativo."
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/layouts/app/navigation/UserMenu.svelte
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+#: src/routes/(app)/settings/+page.svelte
 #: src/routes/(app)/settings/+page.svelte
 msgid "Settings"
 msgstr "Configurações"
@@ -394,9 +393,7 @@ msgstr "Erro ao carregar pessoas"
 msgid "Selected"
 msgstr "Selecionado"
 
-#: src/lib/components/layouts/app/navigation/UserMenu.svelte
 #: src/lib/components/layouts/app/sidebars/preferences/PreferencesSidebar.svelte
-#: src/routes/(app)/preferences/+page.svelte
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -2903,13 +2900,11 @@ msgstr "Todas as suas pessoas e equipas num só lugar."
 msgid "Learn more about Belcoda's community module"
 msgstr "Saiba mais sobre o módulo de comunidade da Belcoda"
 
-#: src/routes/(app)/settings/+page.svelte
-msgid "Edit workspace settings"
-msgstr "Editar configurações do espaço de trabalho"
+#~ msgid "Edit workspace settings"
+#~ msgstr "Editar configurações do espaço de trabalho"
 
-#: src/routes/(app)/settings/+page.svelte
-msgid "Manage your workspace settings, including branding, email settings, and more."
-msgstr "Gerencie as configurações do seu espaço de trabalho, incluindo marca, configurações de e-mail e muito mais."
+#~ msgid "Manage your workspace settings, including branding, email settings, and more."
+#~ msgstr "Gerencie as configurações do seu espaço de trabalho, incluindo marca, configurações de e-mail e muito mais."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later."
@@ -3983,27 +3978,22 @@ msgid "Select a sent message from the list to view its details"
 msgstr "Selecione uma mensagem enviada da lista para ver os seus detalhes"
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/+layout.svelte
 msgid "You are not authorized to access this page."
 msgstr "Você não tem autorização para acessar esta página."
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/+layout.svelte
 msgid "You need to be an organization admin or owner to access this page."
 msgstr "Você precisa ser um administrador ou proprietário da organização para acessar esta página."
 
 #: src/routes/(app)/communications/+layout.svelte
-#: src/routes/(app)/settings/+layout.svelte
 msgid "Go to dashboard"
 msgstr "Ir para o painel"
 
-#: src/routes/(app)/preferences/+page.svelte
-msgid "User preferences"
-msgstr "Preferências do usuário"
+#~ msgid "User preferences"
+#~ msgstr "Preferências do usuário"
 
-#: src/routes/(app)/preferences/+page.svelte
-msgid "Manage your user preferences, including language"
-msgstr "Gerencie suas preferências de usuário, incluindo o idioma"
+#~ msgid "Manage your user preferences, including language"
+#~ msgstr "Gerencie suas preferências de usuário, incluindo o idioma"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
@@ -4062,8 +4052,8 @@ msgstr "Não enviado"
 msgid "Limit exceeded"
 msgstr "Limite excedido"
 
-#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
+#: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Pending"
 msgstr "Pendente"
 
@@ -5241,13 +5231,11 @@ msgstr "Adicionar imagem"
 msgid "—"
 msgstr "—"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "No active organization"
 msgstr "Nenhuma organização ativa"
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/whatsapp_account_state.svelte.ts
 msgid "Failed to load WhatsApp business profile"
 msgstr "Falha ao carregar o perfil comercial do WhatsApp"
 
@@ -5256,6 +5244,7 @@ msgid "WhatsApp business profile saved"
 msgstr "Perfil comercial do WhatsApp salvo"
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/whatsapp_account_state.svelte.ts
 msgid "Failed to save WhatsApp business profile"
 msgstr "Falha ao salvar o perfil comercial do WhatsApp"
 
@@ -5359,9 +5348,8 @@ msgstr "Concluir verificação"
 #~ msgid "Business account details and verification status are shown below."
 #~ msgstr ""
 
-#: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
-msgid "Failed to load WhatsApp business account details"
-msgstr "Falha ao carregar os detalhes da conta comercial do WhatsApp"
+#~ msgid "Failed to load WhatsApp business account details"
+#~ msgstr "Falha ao carregar os detalhes da conta comercial do WhatsApp"
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
@@ -5425,6 +5413,7 @@ msgstr "Assinatura de petição"
 msgid "Notification"
 msgstr "Notificação"
 
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Notifications"
 msgstr "Notificações"
@@ -5614,40 +5603,29 @@ msgstr "alerta"
 msgid "notification"
 msgstr "notificação"
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Digest email"
-msgstr ""
+#~ msgid "Digest email"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Send me a digest email"
-msgstr ""
+#~ msgid "Send me a digest email"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
-msgstr ""
+#~ msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Digest frequency"
-msgstr ""
+#~ msgid "Digest frequency"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Weekly"
-msgstr ""
+#~ msgid "Weekly"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Daily"
-msgstr ""
+#~ msgid "Daily"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Saved"
-msgstr ""
+#~ msgid "Saved"
+#~ msgstr ""
 
-#: src/routes/(app)/preferences/notifications/+page.svelte
-#: src/routes/(app)/preferences/notifications/+page.svelte
-msgid "Failed to save notification preferences"
-msgstr "Falha ao salvar preferências de notificação"
+#~ msgid "Failed to save notification preferences"
+#~ msgstr "Falha ao salvar preferências de notificação"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
@@ -5902,6 +5880,119 @@ msgstr "Adicionado aos favoritos"
 #: src/lib/components/widgets/favourite/FavouriteButton.svelte
 msgid "Could not update favourites. Please try again."
 msgstr "Não foi possível atualizar os favoritos. Tente novamente."
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Teammates notified"
+msgstr "Membros da equipe notificados"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Unable to notify teammates"
+msgstr "Não foi possível notificar os membros da equipe"
+
+#~ msgid "Notify teammates"
+#~ msgstr "Notificar membros da equipe"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Select organization members to invite to this conversation."
+msgstr "Selecione membros da organização para convidá-los para esta conversa."
+
+#~ msgid "Notify"
+#~ msgstr "Notificar"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr "Um membro da equipe"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "this person"
+msgstr "esta pessoa"
+
+#. 0: actorName; 1: personName
+#. 0: getPayload(notification.payload)?.actorName ?? t`A teammate`; 1: getPayload(notification.payload)?.personName ?? t`this person`
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} invited you to join the conversation with {1}"
+msgstr "{0} convidou você para participar da conversa com {1}"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View conversation"
+msgstr "Ver conversa"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Conversation invitation"
+msgstr "Convite para conversa"
+
+#: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
+msgid "Failed to send WhatsApp message"
+msgstr "Falha ao enviar a mensagem do WhatsApp"
+
+#. 0: actor.data.name
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "{0} notified teammates about this person"
+msgstr "{0} notificou os membros da equipe sobre esta pessoa"
+
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "Teammates were notified about this person"
+msgstr "Os membros da equipe foram notificados sobre esta pessoa"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Bring in teammates"
+msgstr "Adicionar colegas de equipe"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Notify selected"
+msgstr "Notificar selecionados"
+
+#. 0: actor.data.name; 1: teammate.data.name
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "{0} brought {1} into the conversation"
+msgstr "{0} trouxe {1} para a conversa"
+
+#. 0: formatNumber(unreadMessageCount, locale.current)
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "{0} unread WhatsApp messages"
+msgstr "{0} mensagens não lidas do WhatsApp"
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "Account"
+msgstr "Conta"
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Just you"
+msgstr "Só você"
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Workspace"
+msgstr "Espaço de trabalho"
+
+#. 0: orgName
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Everyone in {0}"
+msgstr "Todos em {0}"
+
+#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
+msgid "Everyone in your workspace"
+msgstr "Todos no seu espaço de trabalho"
+
+#: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
+msgid "Only affects you. Other teammates keep their own settings."
+msgstr "Afeta apenas você. O restante da equipe mantém suas próprias configurações."
+
+#: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
+msgid "Affects everyone in your workspace. Admin only."
+msgstr "Afeta todos no seu espaço de trabalho. Somente administradores."
+
+#: src/routes/(app)/settings/+page.svelte
+msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
+msgstr "Gerencie suas preferências pessoais de conta e, se você for administrador, as configurações do seu espaço de trabalho."
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte
 msgid "Failed to send WhatsApp message"

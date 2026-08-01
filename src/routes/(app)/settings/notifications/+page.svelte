@@ -56,7 +56,7 @@
 	}
 </script>
 
-<ContentLayout rootLink="/preferences" {header}>
+<ContentLayout rootLink="/settings" {header}>
 	<Card.Root>
 		<Card.Header class="pb-3">
 			<Card.Title class="text-sm font-medium text-muted-foreground uppercase tracking-wide">
