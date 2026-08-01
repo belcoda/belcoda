@@ -73,13 +73,14 @@ export async function publishFlowDocument({
 
 	const newFlowVersionId = uuidv7();
 
-	const [flowDocumentResult] = await tx.dbTransaction.wrappedTransaction
+	// Bump the version counter first so the new version can take its number. We deliberately do NOT
+	// set activeVersionId in this update: flow_document.active_version_id has a non-deferrable FK to
+	// flow_version, so the version row must be inserted before the document can point at it.
+	const [countedDocument] = await tx.dbTransaction.wrappedTransaction
 		.update(flowDocument)
 		.set({
 			versionCounter: sql`${flowDocument.versionCounter} + 1`,
-			updatedAt: new Date(),
-			activeVersionId: newFlowVersionId,
-			executionEnabled: true
+			updatedAt: new Date()
 		})
 		.where(
 			and(
@@ -88,18 +89,18 @@ export async function publishFlowDocument({
 			)
 		)
 		.returning();
-	if (!flowDocumentResult) {
+	if (!countedDocument) {
 		throw new Error('Flow document not found');
 	}
 
-	const checksum = createFlowDefinitionChecksum(flowDocumentResult.draftFlowDefinition);
+	const checksum = createFlowDefinitionChecksum(countedDocument.draftFlowDefinition);
 	const flowVersionToCreate: typeof flowVersion.$inferInsert = {
 		id: newFlowVersionId,
 		organizationId: parsed.organizationId,
 		flowDocumentId: parsed.flowDocumentId,
-		versionNumber: flowDocumentResult.versionCounter,
-		flowDefinition: flowDocumentResult.draftFlowDefinition,
-		schemaVersion: flowDocumentResult.schemaVersion,
+		versionNumber: countedDocument.versionCounter,
+		flowDefinition: countedDocument.draftFlowDefinition,
+		schemaVersion: countedDocument.schemaVersion,
 		checksum: checksum,
 		publishedBy: ctx.userId,
 		publishedAt: new Date()
@@ -112,12 +113,31 @@ export async function publishFlowDocument({
 		throw new Error('Failed to publish flow version');
 	}
 
+	// Now that the flow version row exists, point the document at it and enable execution.
+	const [flowDocumentResult] = await tx.dbTransaction.wrappedTransaction
+		.update(flowDocument)
+		.set({
+			activeVersionId: newFlowVersionId,
+			executionEnabled: true,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(flowDocument.id, parsed.flowDocumentId),
+				eq(flowDocument.organizationId, parsed.organizationId)
+			)
+		)
+		.returning();
+	if (!flowDocumentResult) {
+		throw new Error('Flow document not found');
+	}
+
 	// scrap the existing triggers for the flow document, and publish new ones derived from the published flow version
 	await _rationalizeTriggerRegistrations({
 		flowDocumentId: parsed.flowDocumentId,
 		organizationId: parsed.organizationId,
 		flowVersionId: newFlowVersionId,
-		flowDefinition: flowDocumentResult.draftFlowDefinition,
+		flowDefinition: countedDocument.draftFlowDefinition,
 		tx
 	});
 
@@ -192,17 +212,20 @@ export async function rollbackFlowDocument({
 		await tx.dbTransaction.wrappedTransaction.query.flowVersion.findFirst({
 			where: and(
 				eq(flowVersion.id, args.flowVersionId),
-				eq(flowVersion.organizationId, args.organizationId)
+				eq(flowVersion.organizationId, args.organizationId),
+				eq(flowVersion.flowDocumentId, args.flowDocumentId)
 			)
 		});
 	if (!flowVersionToRollbackTo) {
 		throw new Error('Flow version not found');
 	}
 
+	// Repoint the active version without rewinding versionCounter: versions are append-only, so the
+	// counter must stay monotonic — otherwise the next publish would reuse an existing versionNumber
+	// and violate the flow_version_unique (flowDocumentId, versionNumber) constraint.
 	const [flowDocumentResult] = await tx.dbTransaction.wrappedTransaction
 		.update(flowDocument)
 		.set({
-			versionCounter: sql`${flowVersionToRollbackTo.versionNumber}`,
 			updatedAt: new Date(),
 			activeVersionId: flowVersionToRollbackTo.id,
 			executionEnabled: true
@@ -214,6 +237,9 @@ export async function rollbackFlowDocument({
 			)
 		)
 		.returning();
+	if (!flowDocumentResult) {
+		throw new Error('Flow document not found');
+	}
 
 	await _rationalizeTriggerRegistrations({
 		flowDocumentId: args.flowDocumentId,

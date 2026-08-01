@@ -38,10 +38,13 @@ export async function processCronTrigger({
 	}
 
 	const ctx = getApiQueryContext(organizationId);
+	// Flow signup/WhatsApp/etc. nodes don't require an email address, so don't filter targets to
+	// people with an email (the default) — that would silently drop email-less people.
 	const personIds = await getPersonIdsFromFilter({
 		ctx,
 		organizationId,
-		filter: cronTrigger.data.trigger.targets
+		filter: cronTrigger.data.trigger.targets,
+		requireEmailAddress: false
 	});
 	const queue = await getQueue();
 	for (const personId of personIds) {

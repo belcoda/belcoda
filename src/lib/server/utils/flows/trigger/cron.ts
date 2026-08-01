@@ -10,6 +10,7 @@ import { eq, and, lte, isNotNull } from 'drizzle-orm';
 // it then updates the nextRunAt for each triggerRegistration to the next run date and finishes
 export async function processCronTrigger() {
 	await db.transaction(async (tx) => {
+		const now = new Date();
 		const triggerNodes = await tx.dbTransaction.wrappedTransaction
 			.select()
 			.from(flowTriggerRegistration)
@@ -18,10 +19,12 @@ export async function processCronTrigger() {
 				and(
 					eq(flowTriggerRegistration.triggerType, 'cron'),
 					isNotNull(flowTriggerRegistration.nextRunAt),
-					lte(flowTriggerRegistration.nextRunAt, new Date())
+					lte(flowTriggerRegistration.nextRunAt, now)
 				)
 			)
-			.for('update', { skipLocked: true });
+			// Scope the row lock to flowTriggerRegistration; without `of`, the FOR UPDATE would also
+			// lock the joined flowVersion rows, needlessly blocking unrelated operations on them.
+			.for('update', { of: flowTriggerRegistration, skipLocked: true });
 		// get the next node for each triggerNode
 
 		// queue the next node for each triggerNode in the trigger
@@ -62,9 +65,12 @@ export async function processCronTrigger() {
 				);
 			}
 			const cron = parseCronExpression(cronTriggerNode.data.trigger.cronExpression);
-			const nextRunAt = cron.getNextDate(
-				triggerNode.flow_trigger_registration.nextRunAt ?? undefined
-			);
+			// Anchor to the later of the previous nextRunAt and now. If a registration was overdue
+			// (e.g. the worker was down), computing purely from the stale nextRunAt could still land in
+			// the past, so it would be re-selected and re-fired every cycle until it caught up.
+			const previousRunAt = triggerNode.flow_trigger_registration.nextRunAt ?? now;
+			const anchor = previousRunAt > now ? previousRunAt : now;
+			const nextRunAt = cron.getNextDate(anchor);
 			return tx.dbTransaction.wrappedTransaction
 				.update(flowTriggerRegistration)
 				.set({
