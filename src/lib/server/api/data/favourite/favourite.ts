@@ -149,7 +149,6 @@ export async function removeFavourite({
 		.delete(memberFavourite)
 		.where(
 			and(
-				eq(memberFavourite.id, parsed.metadata.favouriteId),
 				eq(memberFavourite.organizationId, parsed.metadata.organizationId),
 				eq(memberFavourite.memberId, membership.id),
 				eq(memberFavourite.referenceType, parsed.metadata.referenceType),

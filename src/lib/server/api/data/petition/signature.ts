@@ -533,6 +533,13 @@ export async function signPetitionUnsafe({
 					personName,
 					personId: personRecord.id,
 					subjectTitle: petitionRecord.title
+				},
+				routing: {
+					creatorUserId: null,
+					relatedResources: [
+						{ referenceType: 'petition', referenceId: petitionRecord.id },
+						{ referenceType: 'person', referenceId: personRecord.id }
+					]
 				}
 			}
 		});

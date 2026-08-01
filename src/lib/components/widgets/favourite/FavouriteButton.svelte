@@ -30,11 +30,13 @@
 	);
 	const isFavourite = $derived(Boolean(favourite.data));
 	const queryReady = $derived(favourite.details.type === 'complete');
+	const queryFailed = $derived(favourite.details.type === 'error');
+	const canToggle = $derived(queryReady || queryFailed);
 	const label = $derived(isFavourite ? t`Remove from favourites` : t`Add to favourites`);
 	let saving = $state(false);
 
 	async function toggleFavourite() {
-		if (!queryReady || saving) return;
+		if (!canToggle || saving) return;
 
 		const existingFavourite = favourite.data;
 		saving = true;
@@ -81,7 +83,7 @@
 	variant="outline"
 	size="icon"
 	class={isFavourite ? 'text-amber-500' : undefined}
-	disabled={!queryReady || saving}
+	disabled={!canToggle || saving}
 	aria-label={label}
 	aria-pressed={isFavourite}
 	title={label}
