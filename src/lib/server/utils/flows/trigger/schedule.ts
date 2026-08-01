@@ -20,6 +20,14 @@ import { fromDate, CalendarDateTime } from '@internationalized/date';
  * that lands in a local DST gap could be normalized; production runs in UTC, where this can't occur.
  */
 export function getNextCronRunAtUtc(cronExpression: string, from: Date = new Date()): Date {
+	// The courier step below is only exact when the runtime is at UTC offset. Rather than silently
+	// computing a wrong schedule on a misconfigured non-UTC runtime, fail fast.
+	if (from.getTimezoneOffset() !== 0) {
+		throw new Error(
+			'getNextCronRunAtUtc requires the process to run in UTC (TZ=UTC); refusing to compute a cron schedule on a non-UTC runtime'
+		);
+	}
+
 	const cron = parseCronExpression(cronExpression);
 
 	// 1. anchor instant -> UTC calendar fields (month is 1-based on ZonedDateTime)
