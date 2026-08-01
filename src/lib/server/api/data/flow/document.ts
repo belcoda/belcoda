@@ -314,7 +314,9 @@ export function createFlowDefinitionChecksum(flowDefinition: Flow): string {
 		if (value && typeof value === 'object') {
 			return Object.fromEntries(
 				Object.entries(value)
-					.sort(([a], [b]) => a.localeCompare(b))
+					// code-unit comparison, not localeCompare: the sort order (and therefore the
+					// checksum) must be identical across runtimes/locales
+					.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
 					.map(([k, v]) => [k, stable(v)])
 			);
 		}
