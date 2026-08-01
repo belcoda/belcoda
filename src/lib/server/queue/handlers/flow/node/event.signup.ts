@@ -39,7 +39,8 @@ export async function processFlowNodeEventSignup({
 			tx,
 			signupDetails: {
 				channel: {
-					type: 'whatsapp'
+					// this signup was created by a flow automation, not a direct WhatsApp/page/admin action
+					type: 'automationFlow'
 				},
 				customFields: {}
 			}
