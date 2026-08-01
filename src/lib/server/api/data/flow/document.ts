@@ -17,6 +17,7 @@ import {
 
 import { type CreateFlowTriggerRegistrationSchemaInput } from '$lib/schema/flow/trigger-registration';
 import { type Flow } from '$lib/schema/flow/node/index';
+import { getNextCronRunAtUtc } from '$lib/server/utils/flows/trigger/schedule';
 
 import { createHash } from 'node:crypto';
 import pino from '$lib/pino';
@@ -252,12 +253,46 @@ export async function rollbackFlowDocument({
 	return flowDocumentResult;
 }
 
+// Scan the flow definition for trigger nodes and produce a trigger registration for each one whose
+// trigger type has a corresponding registration type. Trigger node types that don't yet map to a
+// registration type (manual, trigger words, person.created, person.addedToTeam, event.signup) are
+// skipped — they are handled by other mechanisms, not the registration/cron table.
 export function extractTriggerNodes(
 	flowDefinition: Flow
 ): CreateFlowTriggerRegistrationSchemaInput[] {
-	// TODO: Implement logic for extracting trigger nodes from the flow definition and generating trigger registrations.
-	const output: CreateFlowTriggerRegistrationSchemaInput[] = [];
-	return [];
+	const registrations: CreateFlowTriggerRegistrationSchemaInput[] = [];
+	for (const node of flowDefinition.nodes) {
+		if (node.data.type !== 'trigger') {
+			continue;
+		}
+		const trigger = node.data.trigger;
+		switch (trigger.type) {
+			case 'utils.cron': {
+				registrations.push({
+					triggerNodeId: node.id,
+					triggerType: 'cron',
+					referenceId: null,
+					configuration: {},
+					// seed the initial nextRunAt so the 10-minute cron job can pick it up
+					nextRunAt: getNextCronRunAtUtc(trigger.cronExpression)
+				});
+				break;
+			}
+			case 'whatsapp.messageReceived.actionCode': {
+				registrations.push({
+					triggerNodeId: node.id,
+					triggerType: 'whatsappMessageActionCode',
+					referenceId: trigger.actionCodeId,
+					configuration: {},
+					nextRunAt: null
+				});
+				break;
+			}
+			default:
+				break;
+		}
+	}
+	return registrations;
 }
 
 export function createFlowDefinitionChecksum(flowDefinition: Flow): string {
