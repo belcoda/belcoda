@@ -22,13 +22,39 @@ const PROJECTS_WITH_AUTH_STORAGE: E2EProject[] = [
 
 export const STORAGE_STATE_PATH = path.join(import.meta.dirname, '../.auth/cookie-consent.json');
 
+async function readJsonResponse<T = unknown>(response: Response, action: string): Promise<T> {
+	const contentType = response.headers.get('content-type') ?? '';
+	const body = await response.text();
+	if (!contentType.includes('application/json')) {
+		throw new Error(
+			`${action}: expected JSON from ${response.url} but got ${response.status} ${contentType || 'unknown content-type'}: ${body.slice(0, 200)}`
+		);
+	}
+	try {
+		return JSON.parse(body) as T;
+	} catch {
+		throw new Error(
+			`${action}: invalid JSON from ${response.url} (${response.status}): ${body.slice(0, 200)}`
+		);
+	}
+}
+
 async function cleanup() {
 	console.log('  Cleaning up existing test data...');
-	const response = await fetch(`${BASE_URL}/api/e2e/cleanup`, { method: 'POST' });
+	const response = await fetch(`${BASE_URL}/api/e2e/cleanup`, {
+		method: 'POST',
+		redirect: 'manual'
+	});
+	if (response.status >= 300 && response.status < 400) {
+		throw new Error(
+			`Cleanup failed: redirected to ${response.headers.get('location')} (is /api/e2e public on this host?)`
+		);
+	}
 	if (!response.ok) {
 		const err = await response.text();
 		throw new Error(`Cleanup failed: ${response.status} ${err}`);
 	}
+	await readJsonResponse(response, 'Cleanup');
 	console.log('  ✓ Test data cleaned up');
 }
 
@@ -42,11 +68,18 @@ async function createOrganization(
 	const response = await fetch(`${BASE_URL}/api/e2e/create-organization`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', origin: BASE_URL },
-		body: JSON.stringify({ name: orgName, ownerEmail, members, wabaId })
+		body: JSON.stringify({ name: orgName, ownerEmail, members, wabaId }),
+		redirect: 'manual'
 	});
 
+	if (response.status >= 300 && response.status < 400) {
+		throw new Error(
+			`Failed to create organization: redirected to ${response.headers.get('location')} (is /api/e2e public on this host?)`
+		);
+	}
+
 	if (response.status === 409) {
-		return response.json();
+		return readJsonResponse<{ id: string }>(response, 'Create organization');
 	}
 
 	if (!response.ok) {
@@ -54,7 +87,7 @@ async function createOrganization(
 		throw new Error(`Failed to create organization: ${response.status} ${err}`);
 	}
 
-	return response.json();
+	return readJsonResponse<{ id: string }>(response, 'Create organization');
 }
 
 async function saveCookieConsentState() {
