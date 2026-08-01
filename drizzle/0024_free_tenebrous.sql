@@ -42,6 +42,7 @@ CREATE TABLE "flow_execution" (
 	"input" jsonb NOT NULL,
 	"error" jsonb NOT NULL,
 	"created_at" timestamp with time zone NOT NULL,
+	"started_at" timestamp with time zone NOT NULL,
 	"completed_at" timestamp with time zone,
 	CONSTRAINT "flow_execution_idempotency_key_unique" UNIQUE("idempotency_key")
 );
@@ -51,15 +52,16 @@ CREATE TABLE "flow_execution_step" (
 	"execution_id" uuid NOT NULL,
 	"step_node_id" uuid NOT NULL,
 	"invocation_id" uuid NOT NULL,
-	"attempt_number" integer DEFAULT 0 NOT NULL,
+	"attempt_number" integer DEFAULT 1 NOT NULL,
 	"status" text NOT NULL,
 	"input" jsonb NOT NULL,
-	"output" jsonb NOT NULL,
-	"error" jsonb NOT NULL,
+	"output" jsonb,
+	"error" jsonb,
 	"scheduled_at" timestamp with time zone,
 	"created_at" timestamp with time zone NOT NULL,
 	"started_at" timestamp with time zone,
 	"completed_at" timestamp with time zone,
+	"updated_at" timestamp with time zone NOT NULL,
 	CONSTRAINT "flow_execution_step_unique" UNIQUE("execution_id","invocation_id","attempt_number")
 );
 --> statement-breakpoint
@@ -108,6 +110,7 @@ ALTER TABLE "flow_trigger_registration" ADD CONSTRAINT "flow_trigger_registratio
 ALTER TABLE "flow_version" ADD CONSTRAINT "flow_version_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organization"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "flow_version" ADD CONSTRAINT "flow_version_flow_document_id_flow_document_id_fk" FOREIGN KEY ("flow_document_id") REFERENCES "public"."flow_document"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "flow_version" ADD CONSTRAINT "flow_version_published_by_user_id_fk" FOREIGN KEY ("published_by") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE UNIQUE INDEX "flow_document_id_unique" ON "flow" USING btree ("flow_document_id") WHERE "flow"."deleted_at" is null;--> statement-breakpoint
 CREATE INDEX "flow_execution_document" ON "flow_execution" USING btree ("flow_document_id");--> statement-breakpoint
 CREATE INDEX "flow_execution_version" ON "flow_execution" USING btree ("flow_version_id");--> statement-breakpoint
 CREATE INDEX "flow_execution_organization" ON "flow_execution" USING btree ("organization_id","status","created_at");--> statement-breakpoint
