@@ -1,15 +1,32 @@
 <script lang="ts">
 	import UniversalLayout from '$lib/components/layouts/app/UniversalLayout.svelte';
 	import SettingsSidebar from '$lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte';
-	const { children } = $props();
+	import { settingsItems } from '$lib/components/layouts/app/sidebars/settings/items';
 	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import CogIcon from '@lucide/svelte/icons/cog';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { page } from '$app/state';
+	const { children } = $props();
+
+	const currentItem = $derived.by(() => {
+		const pathname = page.url.pathname;
+		return settingsItems.find(
+			(item) => pathname === item.url || pathname.startsWith(item.url + '/')
+		);
+	});
+
+const canAccess = $derived(
+  page.url.pathname === '/settings' ||
+    (currentItem !== undefined &&
+      (currentItem.permissions === 'member' ||
+        appState.isOwner ||
+        (appState.isAdmin && currentItem.permissions === 'admin')))
+);
 </script>
 
-{#if appState.isAdminOrOwner}
+{#if canAccess}
 	{#snippet sidebar()}
 		<SettingsSidebar />
 	{/snippet}

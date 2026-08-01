@@ -79,8 +79,7 @@
 							href="https://support.belcoda.com/docs/getting-started/whatsapp-business-verification"
 							target="_blank"
 							rel="noopener noreferrer"
-							class="ml-1 underline"
-							>{t`Complete verification`}</a
+							class="ml-1 underline">{t`Complete verification`}</a
 						>
 					</Alert.Description>
 				</Alert.Root>
