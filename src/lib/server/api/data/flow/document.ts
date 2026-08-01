@@ -1,4 +1,4 @@
-import { flowDocument, flowTriggerRegistration, flowVersion } from '$lib/schema/drizzle';
+import { flowDocument, flowTriggerRegistration, flowVersion, team } from '$lib/schema/drizzle';
 import { drizzle } from '$lib/server/db';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { eq, or, isNull, lte, sql, and } from 'drizzle-orm';
@@ -35,6 +35,16 @@ export async function createFlowDocument({
 	const parsed = parse(createFlowDocumentSchema, args);
 	if (![...ctx.adminOrgs, ...ctx.ownerOrgs].includes(parsed.organizationId)) {
 		throw new Error('You are not authorized to publish this flow document');
+	}
+	// if a team is supplied, verify it belongs to this organization — the FK only enforces that the
+	// team exists, not that it's in the same tenant, so an unscoped teamId could cross organizations
+	if (parsed.teamId) {
+		const teamRecord = await tx.dbTransaction.wrappedTransaction.query.team.findFirst({
+			where: and(eq(team.id, parsed.teamId), eq(team.organizationId, parsed.organizationId))
+		});
+		if (!teamRecord) {
+			throw new Error('Team not found for this organization');
+		}
 	}
 	const id = uuidv7();
 	const flowToCreate: typeof flowDocument.$inferInsert = {
