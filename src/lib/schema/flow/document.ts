@@ -35,7 +35,7 @@ export type CreateFlowDocumentSchemaInput = v.InferInput<typeof createFlowDocume
 
 export const updateFlowDocumentSchema = v.partial(
 	v.object({
-		teamId: v.optional(flowDocumentSchema.entries.teamId, null),
+		teamId: v.optional(flowDocumentSchema.entries.teamId),
 		draftFlowDefinition: v.optional(flowSchema),
 		executionEnabled: v.optional(v.boolean()),
 		activeVersionId: v.optional(flowDocumentSchema.entries.activeVersionId),
