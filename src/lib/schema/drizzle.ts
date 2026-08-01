@@ -1292,8 +1292,10 @@ export const flowExecutionStep = pgTable(
 		attemptNumber: integer('attempt_number').notNull().default(1), // retries share invocationId and increment attemptNumber, but looping back to the same node would have a new invocationId and attemptNumnber 1
 		status: text('status').$type<FlowExecutionStepStatus>().notNull(),
 		input: jsonb('input').$type<FlowExecutionStepInput>().notNull(),
-		output: jsonb('output').$type<FlowExecutionStepOutput>().notNull(),
-		error: jsonb('error').$type<FlowExecutionStepError>().notNull(),
+		// output/error are nullable: a queued/scheduled/running step has no meaningful output or error
+		// yet, so status stays the source of truth rather than forcing empty-object placeholders
+		output: jsonb('output').$type<FlowExecutionStepOutput>(),
+		error: jsonb('error').$type<FlowExecutionStepError>(),
 		scheduledAt: timestamp('scheduled_at', { withTimezone: true, mode: 'date' }),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }),
@@ -1318,22 +1320,31 @@ type FlowExecutionStepDrizzleMatchesValibot = IsTrue<
 	typeof flowExecutionStep.$inferSelect extends FlowExecutionStepSchema ? true : false
 >;
 
-export const flow = pgTable('flow', {
-	id: uuid('id').primaryKey(),
-	organizationId: uuid('organization_id')
-		.notNull()
-		.references(() => organization.id),
-	teamId: uuid('team_id').references(() => team.id),
-	name: text('name').notNull(),
-	description: text('description').notNull(),
-	flowDocumentId: uuid('flow_document_id')
-		.notNull()
-		.references((): AnyPgColumn => flowDocument.id),
-	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
-	updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
-	archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
-	deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
-});
+export const flow = pgTable(
+	'flow',
+	{
+		id: uuid('id').primaryKey(),
+		organizationId: uuid('organization_id')
+			.notNull()
+			.references(() => organization.id),
+		teamId: uuid('team_id').references(() => team.id),
+		name: text('name').notNull(),
+		description: text('description').notNull(),
+		flowDocumentId: uuid('flow_document_id')
+			.notNull()
+			.references((): AnyPgColumn => flowDocument.id),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
+		archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
+		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
+	},
+	(table) => [
+		// at most one live (non-deleted) flow resource may point at a given flow document
+		uniqueIndex('flow_document_id_unique')
+			.on(table.flowDocumentId)
+			.where(sql`${table.deletedAt} is null`)
+	]
+);
 type FlowResourceValibotMatchesDrizzle = IsTrue<
 	FlowResourceSchema extends typeof flow.$inferSelect ? true : false
 >;
