@@ -27,6 +27,7 @@
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 	import ArchiveIcon from '@lucide/svelte/icons/archive';
 	import { t } from '$lib/index.svelte';
+	import FavouriteButton from '$lib/components/widgets/favourite/FavouriteButton.svelte';
 </script>
 
 <ContentLayout rootLink="/events" {header}>
@@ -83,8 +84,9 @@
 				<Skeleton class="h-10 w-20 rounded-lg" />
 			{/if}
 		</div>
-		<div>
+		<div class="flex items-center gap-2">
 			{#if event.data}
+				<FavouriteButton referenceType="event" referenceId={event.data.id} />
 				<EventActionButton event={event.data} />
 			{:else}
 				<Skeleton class="h-10 w-16 rounded-lg" />

@@ -5885,6 +5885,26 @@ msgstr "Today"
 msgid "Yesterday"
 msgstr "Yesterday"
 
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Remove from favourites"
+msgstr "Remove from favourites"
+
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Add to favourites"
+msgstr "Add to favourites"
+
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Removed from favourites"
+msgstr "Removed from favourites"
+
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Added to favourites"
+msgstr "Added to favourites"
+
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Could not update favourites. Please try again."
+msgstr "Could not update favourites. Please try again."
+
 #: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts

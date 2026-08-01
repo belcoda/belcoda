@@ -20,6 +20,7 @@
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import ActivityTimeline from '$lib/components/widgets/activity/ActivityTimeline.svelte';
+	import FavouriteButton from '$lib/components/widgets/favourite/FavouriteButton.svelte';
 	import SendBusinessApiIndividualMessage from '$lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte';
 	import SendBusinessApiTemplateMessage from '$lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte';
 	const lastReceivedAt = $derived(person.data?.mostRecentWhatsappMessageReceivedAt || 0);
@@ -152,6 +153,7 @@
 			</Sheet.Root>
 
 			{#if person.data}
+				<FavouriteButton referenceType="person" referenceId={person.data.id} />
 				<NotesAction person={person.data} currentPage="timeline" />
 			{:else}
 				<Skeleton class="h-10 w-20 rounded-lg" />

@@ -5861,6 +5861,26 @@ msgstr "Hoje"
 msgid "Yesterday"
 msgstr "Ontem"
 
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Remove from favourites"
+msgstr "Remover dos favoritos"
+
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Add to favourites"
+msgstr "Adicionar aos favoritos"
+
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Removed from favourites"
+msgstr "Removido dos favoritos"
+
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Added to favourites"
+msgstr "Adicionado aos favoritos"
+
+#: src/lib/components/widgets/favourite/FavouriteButton.svelte
+msgid "Could not update favourites. Please try again."
+msgstr "Não foi possível atualizar os favoritos. Tente novamente."
+
 #: src/lib/components/widgets/communications/NotifyConversationAction.svelte
 msgid "Teammates notified"
 msgstr "Membros da equipe notificados"
