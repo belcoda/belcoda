@@ -1,12 +1,37 @@
 import { t } from '$lib/index.svelte';
-export const settingsItems: {
+import { resolve } from '$app/paths';
+import type { Pathname } from '$app/types';
+
+export type SettingsItem = {
 	title: () => string;
 	group: () => string;
-	url: string;
+	url: Pathname;
 	keywords: string[];
 	permissions: 'admin' | 'owner' | 'member';
 	dataTestId?: string;
-}[] = [
+};
+
+export function resolveSettingsItemPath(path: Pathname): string {
+	return (resolve as (route: Pathname) => string)(path);
+}
+
+export const settingsItems: SettingsItem[] = [
+	{
+		title: () => t`Language`,
+		group: () => t`Account`,
+		url: '/settings/language',
+		keywords: ['language', 'preferences', 'config'],
+		permissions: 'member',
+		dataTestId: 'settings-sidebar-language'
+	},
+	{
+		title: () => t`Notifications`,
+		group: () => t`Account`,
+		url: '/settings/notifications',
+		keywords: ['notifications', 'digest', 'email', 'preferences'],
+		permissions: 'member',
+		dataTestId: 'settings-sidebar-notifications'
+	},
 	{
 		title: () => t`Configuration`,
 		group: () => t`Organization`,
