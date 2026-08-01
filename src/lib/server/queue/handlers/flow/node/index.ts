@@ -1,11 +1,8 @@
 import { db } from '$lib/server/db';
 import { type Flow } from '$lib/schema/flow/node/index';
 import { _getFlowDetailsUnsafe } from '$lib/server/api/data/flow/utils';
-import {
-	_createFlowExecutionStep,
-	_updateFlowExecutionStep
-} from '$lib/server/api/data/flow/execution_step';
-import { _updateFlowExecutionUnsafe } from '$lib/server/api/data/flow/execution';
+import { _createFlowExecutionStep } from '$lib/server/api/data/flow/execution_step';
+import { failFlowExecution } from '$lib/server/utils/flows/execution';
 import { processFlowNodeEventSignup } from '$lib/server/queue/handlers/flow/node/event.signup';
 import { processFlowNodeTriggerCron } from '$lib/server/queue/handlers/flow/node/trigger.js';
 
@@ -27,26 +24,33 @@ export async function processFlowNode({
 	flowExecutionId,
 	nodeId
 }: ProcessFlowNodeProps): Promise<void> {
-	const { node } = await _getFlowDetailsUnsafe({
-		flowExecutionId,
-		personId,
-		nodeId,
-		organizationId,
-		flowVersionId
-	});
-
-	//1 create an step execution record in the database
-	const flowExecutionStep = await db.transaction(async (tx) => {
-		return await _createFlowExecutionStep({
-			tx,
-			flowExecutionId,
-			nodeId,
-			status: 'pending',
-			attemptNumber: 1
-		});
-	});
-
+	// The whole setup + dispatch is wrapped so that a failure anywhere — resolving flow details,
+	// creating the step record, or the handler itself — marks the execution failed via one path.
+	// We do NOT queue the next node (that only happens inside a handler's own success path, so
+	// throwing already prevents it) and do NOT rethrow: the execution is terminal-failed rather
+	// than retried by the queue.
+	let flowExecutionStepId: string | undefined;
 	try {
+		const { node } = await _getFlowDetailsUnsafe({
+			flowExecutionId,
+			personId,
+			nodeId,
+			organizationId,
+			flowVersionId
+		});
+
+		//1 create an step execution record in the database
+		const flowExecutionStep = await db.transaction(async (tx) => {
+			return await _createFlowExecutionStep({
+				tx,
+				flowExecutionId,
+				nodeId,
+				status: 'pending',
+				attemptNumber: 1
+			});
+		});
+		flowExecutionStepId = flowExecutionStep.id;
+
 		// the bulk of the logic of the handlers should sit in here...
 		switch (node.data.type) {
 			case 'trigger': {
@@ -76,27 +80,8 @@ export async function processFlowNode({
 			}
 		}
 	} catch (error) {
-		let errorMessage = '';
-		if (error instanceof Error) {
-			errorMessage = error.message;
-		}
-		// A node handler threw: mark both the failed step and the overall execution as failed in
-		// one transaction, and stop here. We do NOT queue the next node (the next-node enqueue only
-		// happens inside a handler's own success path, so throwing already prevents it), and we do
-		// NOT rethrow — the execution is terminal-failed rather than retried by the queue.
 		await db.transaction(async (tx) => {
-			await _updateFlowExecutionStep({
-				tx,
-				flowExecutionStepId: flowExecutionStep.id,
-				status: 'failed',
-				error: { message: errorMessage }
-			});
-			await _updateFlowExecutionUnsafe({
-				tx,
-				flowExecutionId,
-				status: 'failed',
-				completedAt: new Date()
-			});
+			return await failFlowExecution({ tx, flowExecutionId, flowExecutionStepId, error });
 		});
 	}
 }
