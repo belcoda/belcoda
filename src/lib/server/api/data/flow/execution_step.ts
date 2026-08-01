@@ -85,7 +85,9 @@ export async function _updateFlowExecutionStep({
 		.set({
 			status,
 			error: error ?? {},
-			updatedAt: new Date()
+			updatedAt: new Date(),
+			// stamp completion time when the step reaches a terminal status
+			...(status === 'completed' || status === 'failed' ? { completedAt: new Date() } : {})
 		})
 		.where(eq(flowExecutionStep.id, flowExecutionStepId))
 		.returning();
