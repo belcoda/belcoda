@@ -5,8 +5,12 @@ import { member } from '$lib/schema/drizzle';
 import {
 	defaultMemberSettings,
 	parseMemberSettings,
-	type MemberNotificationSettingsPatchSchema
+	type MemberNotificationSettingsPatchSchema,
+	type UpdatePeopleSidebarSettingsZeroMutatorSchema,
+	updatePeopleSidebarSettingsZeroMutatorSchema
 } from '$lib/schema/member/settings';
+import type { QueryContext } from '$lib/zero/schema';
+import { parse } from 'valibot';
 
 export async function getOrganizationMember({
 	tx,
@@ -68,4 +72,45 @@ export async function updateMemberSettings({
 	if (!updated.length) {
 		throw new Error('Member not found');
 	}
+}
+
+export async function updatePeopleSidebarSettings({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext & { userId: string };
+	args: UpdatePeopleSidebarSettingsZeroMutatorSchema;
+}) {
+	const parsed = parse(updatePeopleSidebarSettingsZeroMutatorSchema, args);
+	const organizationId = parsed.metadata.organizationId;
+	const membership = await getOrganizationMember({
+		tx,
+		args: { organizationId, userId: ctx.userId }
+	});
+
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(member)
+		.set({
+			settings: sql`
+				COALESCE(${member.settings}, '{}'::jsonb)
+				|| jsonb_build_object(
+					'sidebar',
+					COALESCE(${member.settings}->'sidebar', '{}'::jsonb)
+					|| jsonb_build_object(
+						'prioritizePeopleFavourites',
+						${parsed.input.prioritizePeopleFavourites}
+					)
+				)
+			`
+		})
+		.where(and(eq(member.id, membership.id), eq(member.organizationId, organizationId)))
+		.returning({ settings: member.settings });
+
+	if (!updated) {
+		throw new Error('Failed to update people sidebar settings');
+	}
+
+	return parseMemberSettings(updated.settings) ?? defaultMemberSettings();
 }
