@@ -1187,6 +1187,11 @@ export const memberFavouriteRelations = relations(memberFavourite, ({ one }) => 
 	member: one(member, {
 		fields: [memberFavourite.memberId],
 		references: [member.id]
+	}),
+	personReference: one(person, {
+		fields: [memberFavourite.referenceId],
+		references: [person.id],
+		relationName: 'personFavourites'
 	})
 }));
 
@@ -1268,6 +1273,7 @@ export const personRelations = relations(person, ({ one, many }) => ({
 		fields: [person.organizationId],
 		references: [organization.id]
 	}),
+	favourites: many(memberFavourite, { relationName: 'personFavourites' }),
 	whatsappIdentities: many(personWhatsappIdentity),
 	teamMemberships: many(personTeam),
 	personTags: many(personTag),
