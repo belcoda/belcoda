@@ -8,6 +8,7 @@ import { decodePersonListCursor } from '$lib/utils/person/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
+	favouriteMode: optional(picklist(['all', 'only', 'exclude']), 'all'),
 	tagId: optional(nullable(uuid)),
 	signupEventId: optional(nullable(uuid)),
 	mostRecentActivity: optional(
@@ -41,7 +42,14 @@ function listPersonsQueryBase({
 	let q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
+		.where((expr) => whereClause(expr, { filter: input, ctx }))
+		.related('favourites', (favourite) =>
+			favourite
+				.where('organizationId', '=', input.organizationId)
+				.where('referenceType', '=', 'person')
+				.whereExists('member', (member) => member.where('userId', '=', ctx.userId ?? ''))
+				.limit(1)
+		)
 		.orderBy('mostRecentActivityAt', 'desc')
 		.orderBy('id', 'desc')
 		.limit(limit);
@@ -125,13 +133,24 @@ export const listPersonByIdsArray = defineQuery(object({ ids: array(uuid) }), ({
 	return listPersonByIdsArrayQuery({ ctx, input: args });
 });
 
-function whereClause(
+export function whereClause(
 	builder: ExpressionBuilder<'person', Schema>,
-	{ filter }: { filter: InferOutput<typeof inputSchema> }
+	{ filter, ctx }: { filter: InferOutput<typeof inputSchema>; ctx: QueryContext }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
-	const { and, or, exists, cmp } = builder;
+	const { and, or, exists, cmp, not } = builder;
 	const filterArr = [cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null)];
+	const isFavourite = exists('favourites', (favourite) =>
+		favourite
+			.where('organizationId', '=', filter.organizationId)
+			.where('referenceType', '=', 'person')
+			.whereExists('member', (member) => member.where('userId', '=', ctx.userId ?? ''))
+	);
+	if (filter.favouriteMode === 'only') {
+		filterArr.push(isFavourite);
+	} else if (filter.favouriteMode === 'exclude') {
+		filterArr.push(not(isFavourite));
+	}
 	if (filter.searchString && filter.searchString.length > 0) {
 		filterArr.push(...searchStringConditions(cmp, or, filter.searchString));
 	}
