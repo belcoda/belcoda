@@ -5,6 +5,7 @@ import * as personNote from '$lib/server/api/mutate/person_note';
 import * as personImport from '$lib/server/api/mutate/person_import';
 import * as notification from '$lib/server/api/mutate/notification';
 import * as favourite from '$lib/server/api/mutate/favourite';
+import * as memberSettings from '$lib/server/api/mutate/member_settings';
 import * as eventSignup from '$lib/server/api/mutate/event_signup';
 import * as event from '$lib/server/api/mutate/event';
 import * as petition from '$lib/server/api/mutate/petition';
@@ -21,6 +22,9 @@ import * as whatsappMessage from '$lib/server/api/mutate/whatsapp_message';
 import * as whatsappAccount from '$lib/server/api/mutate/whatsapp_account';
 
 export const mutators = defineMutators({
+	memberSettings: {
+		updatePeopleSidebar: memberSettings.updatePeopleSidebarSettings
+	},
 	favourite: {
 		add: favourite.addFavourite,
 		remove: favourite.removeFavourite

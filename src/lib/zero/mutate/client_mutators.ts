@@ -3,6 +3,7 @@ import * as personNote from '$lib/zero/mutate/person_note';
 import * as personImport from '$lib/zero/mutate/person_import';
 import * as notification from '$lib/zero/mutate/notification';
 import * as favourite from '$lib/zero/mutate/favourite';
+import * as memberSettings from '$lib/zero/mutate/member_settings';
 import * as eventSignup from '$lib/zero/mutate/event_signup';
 import * as event from '$lib/zero/mutate/event';
 import * as petition from '$lib/zero/mutate/petition';
@@ -20,6 +21,9 @@ import * as whatsappAccount from '$lib/zero/mutate/whatsapp/account';
 import { defineMutators } from '@rocicorp/zero';
 
 export const mutators = defineMutators({
+	memberSettings: {
+		updatePeopleSidebar: memberSettings.updatePeopleSidebarSettings
+	},
 	favourite: {
 		add: favourite.addFavourite,
 		remove: favourite.removeFavourite
