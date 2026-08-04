@@ -35,6 +35,7 @@
 		onSubmit: (data: CreateEventZero | UpdateEventZero) => void | Promise<void>;
 	} = $props();
 	import { generateEventTitleAsyncSchema } from '$lib/schema/event/helpers';
+	import { defaultCountryCode } from '$lib/utils/country';
 	/* svelte-ignore state_referenced_locally */
 	const { title, slug } = generateEventTitleAsyncSchema(appState.organizationId, event?.id);
 	const eventTeamId = $derived.by(() => {
@@ -66,6 +67,9 @@
 						title: title,
 						slug: slug
 					}),
+					initialData: {
+						country: appState.activeOrganization.data?.country || defaultCountryCode
+					} as CreateEventZero,
 					validateOnLoad: false,
 					onSubmit: async (data) => {
 						await onSubmit(data);

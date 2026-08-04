@@ -24,7 +24,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 </script>
 
-<ContentLayout rootLink="/preferences" {header}>
+<ContentLayout rootLink="/settings" {header}>
 	<Card.Root data-testid="preferences-language-page">
 		<Card.Content>
 			<Label class="ms-0.5 mb-3">{t`Update your preferred language:`}</Label>

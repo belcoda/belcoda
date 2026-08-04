@@ -11,6 +11,7 @@ const baseForm: NewOrganizationFromWebsiteForm = {
 	name: 'Community Builders',
 	slug: 'community-builders',
 	icon: null,
+	website: null,
 	additionalDetails: {
 		howDidYouDiscover: 'friend-or-colleague',
 		howDidYouDiscoverDetail: ''

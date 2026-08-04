@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
+import { favouriteReferenceSchema } from '$lib/schema/favourite';
 
 export {
 	notificationPayloadSchema,
@@ -12,7 +13,8 @@ export type NotificationStatus = v.InferOutput<typeof notificationStatus>;
 
 export const createNotificationRoutingSchema = v.object({
 	recipientUserIds: v.optional(v.array(helpers.uuid)),
-	creatorUserId: v.optional(v.nullable(helpers.uuid), null)
+	creatorUserId: v.optional(v.nullable(helpers.uuid), null),
+	relatedResources: v.optional(v.array(favouriteReferenceSchema))
 });
 export type CreateNotificationRoutingSchema = v.InferOutput<typeof createNotificationRoutingSchema>;
 

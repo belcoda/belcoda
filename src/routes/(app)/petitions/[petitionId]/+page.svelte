@@ -13,6 +13,7 @@
 	import PetitionActionButton from './PetitionActionButton.svelte';
 	import PetitionListItem from './PetitionListItem.svelte';
 	import * as Alert from '$lib/components/ui/alert/index.js';
+	import FavouriteButton from '$lib/components/widgets/favourite/FavouriteButton.svelte';
 </script>
 
 <ContentLayout rootLink="/petitions" {header}>
@@ -45,8 +46,9 @@
 				<Skeleton class="h-10 w-20 rounded-lg" />
 			{/if}
 		</div>
-		<div>
+		<div class="flex items-center gap-2">
 			{#if petition.data}
+				<FavouriteButton referenceType="petition" referenceId={petition.data.id} />
 				<PetitionActionButton petition={petition.data} />
 			{:else}
 				<Skeleton class="h-10 w-16 rounded-lg" />

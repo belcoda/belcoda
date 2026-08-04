@@ -18,6 +18,9 @@ import { readEmailMessage } from '$lib/zero/query/email_message/read';
 import { listEvents } from '$lib/zero/query/event/list';
 import { readEvent } from '$lib/zero/query/event/read';
 
+// member_favourite
+import { readFavourite } from '$lib/zero/query/member_favourite/read';
+
 // event_signup
 import { listEventSignups, listEventSignupsByEvent } from '$lib/zero/query/event_signup/list';
 import { readEventSignup } from '$lib/zero/query/event_signup/read';
@@ -99,6 +102,8 @@ export {
 	// event
 	listEvents,
 	readEvent,
+	// member_favourite
+	readFavourite,
 	// event_signup
 	listEventSignups,
 	listEventSignupsByEvent,
@@ -189,6 +194,9 @@ export default defineQueries({
 		list: listEvents,
 		read: readEvent,
 		signups: listEventSignupsByEvent
+	},
+	favourite: {
+		read: readFavourite
 	},
 	eventSignup: {
 		list: listEventSignups,

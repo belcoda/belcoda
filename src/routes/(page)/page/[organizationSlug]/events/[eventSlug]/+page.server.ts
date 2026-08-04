@@ -24,6 +24,7 @@ import { getClientIpFromRequest } from '$lib/server/utils/client-ip';
 import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical-html-renderer';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
+import type { SurveySchema } from '$lib/schema/survey/questions';
 
 export async function load({ locals, params, url }) {
 	log.debug(
@@ -46,7 +47,10 @@ export async function load({ locals, params, url }) {
 	});
 
 	const surveySchema = getSurveySchema(eventObj);
-	const form = await superValidate(valibot(surveySchema));
+	const form = await superValidate(
+		{ person: { country: eventObj.country } } as SurveySchema,
+		valibot(surveySchema)
+	);
 
 	const renderedDescription = await renderSanitizedDescription({
 		description: eventObj.description,

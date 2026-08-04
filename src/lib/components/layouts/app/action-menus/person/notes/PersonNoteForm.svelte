@@ -20,6 +20,7 @@
 		initialData: {
 			note: ''
 		},
+		validateOnLoad: false,
 		onSubmit: async (data) => {
 			const parsed = parse(createMutatorSchemaZero, {
 				input: {

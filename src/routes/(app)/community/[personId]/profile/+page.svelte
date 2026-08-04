@@ -29,6 +29,7 @@
 	import TeamsRow from './rows/Teams.svelte';
 	import TagsRow from './rows/Tags.svelte';
 	import { t } from '$lib/index.svelte';
+	import FavouriteButton from '$lib/components/widgets/favourite/FavouriteButton.svelte';
 </script>
 
 <ContentLayout rootLink={`/community/${params.personId}`} {header}>
@@ -85,8 +86,9 @@
 </ContentLayout>
 
 {#snippet header()}
-	<div class="flex items-center justify-end">
+	<div class="flex items-center justify-end gap-2">
 		{#if person.data}
+			<FavouriteButton referenceType="person" referenceId={person.data.id} />
 			<NotesAction person={person.data} currentPage="profile" />
 		{:else}
 			<Skeleton class="h-10 w-20 rounded-lg" />

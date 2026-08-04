@@ -150,6 +150,14 @@ class AppState {
 	#isAdmin = $derived(this.#role === 'admin');
 	#isOwner = $derived(this.#role === 'owner');
 	#isAdminOrOwner = $derived(this.#isAdmin || this.#isOwner);
+	#memberId = $derived.by(() => {
+		const memberships = this.#activeOrganization?.data?.memberships;
+		const userId = this.#userId;
+		if (!memberships || !userId) {
+			return null;
+		}
+		return memberships.find((membership) => membership.userId === userId)?.id ?? null;
+	});
 
 	init({
 		userId,
@@ -336,6 +344,12 @@ class AppState {
 			throw new Error('Role is not set');
 		}
 		return this.#role;
+	}
+	get memberId() {
+		if (!this.#memberId) {
+			throw new Error('Member ID is not set');
+		}
+		return this.#memberId;
 	}
 	get isAdmin() {
 		return this.#isAdmin;
