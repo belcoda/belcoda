@@ -34,7 +34,8 @@
 				memberships: data.memberships,
 				setOrganizationIdState
 			}),
-			queryContext
+			queryContext,
+			memberSidebarSettingsByOrganization: data.memberSidebarSettingsByOrganization
 		});
 		initialized = true;
 	});

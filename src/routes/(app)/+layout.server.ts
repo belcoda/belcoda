@@ -5,6 +5,7 @@ import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { _listOrganizationMembershipsByUserIdUnsafe } from '$lib/server/api/data/organization';
 import { inferOrganizationIdFromUrl } from '$lib/server/api/utils/infer_organization';
 import { queryContextSchema, type QueryContext } from '$lib/zero/schema';
+import { defaultMemberSidebarSettings, parseMemberSettings } from '$lib/schema/member/settings';
 
 /**
  * Builds page data from the current session, the user's organization memberships, and a validated query context.
@@ -82,6 +83,12 @@ export async function load({ locals, url }) {
 	}
 
 	const organizations = memberships.map((m) => ({ organizationId: m.organizationId }));
+	const memberSidebarSettingsByOrganization = Object.fromEntries(
+		memberships.map((membership) => [
+			membership.organizationId,
+			parseMemberSettings(membership.settings)?.sidebar ?? defaultMemberSidebarSettings()
+		])
+	);
 
 	return {
 		userId,
@@ -90,6 +97,7 @@ export async function load({ locals, url }) {
 		queryParamOrganizationId,
 		organizations,
 		memberships: organizations,
+		memberSidebarSettingsByOrganization,
 		queryContext
 	};
 }

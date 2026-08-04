@@ -6,6 +6,10 @@ import { SvelteMap } from 'svelte/reactivity';
 import { z } from '$lib/zero.svelte';
 import queries from '$lib/zero/query/index';
 import { structuredClone } from '$lib/utils/structuredClone';
+import {
+	defaultMemberSidebarSettings,
+	type MemberSidebarSettingsSchema
+} from '$lib/schema/member/settings';
 
 const DEFAULT_LIST_FILTER: ListFilter = {
 	organizationId: '',
@@ -30,6 +34,7 @@ class AppState {
 	#userId = $state<string | null>(null);
 	#queryContext: QueryContext | null = $state(null);
 	#activeWhatsappAccountId = $state<string | null>(null);
+	#memberSidebarSettingsByOrganization = $state<Record<string, MemberSidebarSettingsSchema>>({});
 
 	#whatsappAccounts = $derived.by(() => {
 		if (!this.#organizationId) {
@@ -162,15 +167,18 @@ class AppState {
 	init({
 		userId,
 		organizationId,
-		queryContext
+		queryContext,
+		memberSidebarSettingsByOrganization
 	}: {
 		userId: string;
 		organizationId: string;
 		queryContext: QueryContext;
+		memberSidebarSettingsByOrganization: Record<string, MemberSidebarSettingsSchema>;
 	}) {
 		this.#userId = userId;
 		this.#organizationId = organizationId;
 		this.#queryContext = queryContext;
+		this.#memberSidebarSettingsByOrganization = memberSidebarSettingsByOrganization;
 		this.#hasAppOrganizationContext = true;
 	}
 
@@ -178,6 +186,7 @@ class AppState {
 		this.#organizationId = null;
 		this.#activeTeamId = null;
 		this.#queryContext = null;
+		this.#memberSidebarSettingsByOrganization = {};
 		this.#hasAppOrganizationContext = false;
 	}
 
@@ -215,6 +224,27 @@ class AppState {
 			throw new Error('Organization ID is not set');
 		}
 		return this.#organizationId;
+	}
+
+	get prioritizePeopleFavourites() {
+		if (!this.#organizationId) {
+			return defaultMemberSidebarSettings().prioritizePeopleFavourites;
+		}
+		return (
+			this.#memberSidebarSettingsByOrganization[this.#organizationId]?.prioritizePeopleFavourites ??
+			defaultMemberSidebarSettings().prioritizePeopleFavourites
+		);
+	}
+
+	set prioritizePeopleFavourites(prioritizePeopleFavourites: boolean) {
+		if (!this.#organizationId) {
+			throw new Error('Organization ID is not set');
+		}
+		this.#memberSidebarSettingsByOrganization[this.#organizationId] = {
+			...(this.#memberSidebarSettingsByOrganization[this.#organizationId] ??
+				defaultMemberSidebarSettings()),
+			prioritizePeopleFavourites
+		};
 	}
 	set organizationId(newOrganizationId: string) {
 		this.#organizationId = newOrganizationId;
