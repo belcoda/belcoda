@@ -64,15 +64,19 @@
 	let preferenceRequest = 0;
 
 	watch(
-		() => favouritePersonList?.data,
-		(data) => {
-			paginatedPersonList.handleFavouritePage(data);
+		() => [favouritePersonList?.details.type, favouritePersonList?.data] as const,
+		([queryState, data]) => {
+			if (queryState === 'complete' || data?.length) {
+				paginatedPersonList.handleFavouritePage(data ?? []);
+			}
 		}
 	);
 	watch(
-		() => remainingPersonList?.data,
-		(data) => {
-			paginatedPersonList.handleRemainingPage(data);
+		() => [remainingPersonList?.details.type, remainingPersonList?.data] as const,
+		([queryState, data]) => {
+			if (queryState === 'complete' || data?.length) {
+				paginatedPersonList.handleRemainingPage(data ?? []);
+			}
 		}
 	);
 	watch(

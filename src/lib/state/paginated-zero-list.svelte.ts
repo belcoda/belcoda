@@ -11,7 +11,7 @@ type PaginatedZeroListOptions<TFilter extends Record<string, unknown>, TItem ext
 };
 
 type FavouriteFirstPaginatedZeroListOptions<
-	TFilter extends Record<string, unknown>,
+	TFilter extends Record<string, unknown> & { excludedIds: string[] },
 	TItem extends RowWithId
 > = PaginatedZeroListOptions<TFilter, TItem> & {
 	getPrioritizeFavourites: () => boolean;
@@ -20,7 +20,7 @@ type FavouriteFirstPaginatedZeroListOptions<
 type FavouritePageFilter<TFilter extends Record<string, unknown>> = TFilter & {
 	cursor: string | null;
 	pageSize: number;
-	favouriteMode: 'all' | 'only' | 'exclude';
+	favouriteMode: 'all' | 'only';
 };
 
 export function processPage<T>(rows: readonly T[], pageSize: number) {
@@ -132,14 +132,14 @@ export class PaginatedZeroList<TFilter extends Record<string, unknown>, TItem ex
  * can continue reacting to Zero updates.
  */
 export class FavouriteFirstPaginatedZeroList<
-	TFilter extends Record<string, unknown>,
+	TFilter extends Record<string, unknown> & { excludedIds: string[] },
 	TItem extends RowWithId
 > {
 	#getBaseFilter: () => TFilter;
 	#getPrioritizeFavourites: () => boolean;
 	#encodeCursor: (row: TItem) => string;
 	#pageSize: number;
-	#baseFilterKey: string;
+	#baseFilterKey = $state('');
 	#favouriteItems = $state<TItem[]>([]);
 	#remainingItems = $state<TItem[]>([]);
 	#favouriteCursor = $state<string | null>(null);
@@ -206,7 +206,10 @@ export class FavouriteFirstPaginatedZeroList<
 		const baseFilter = this.#getBaseFilter();
 		return {
 			...baseFilter,
-			favouriteMode: prioritizeFavourites ? 'exclude' : 'all',
+			excludedIds: prioritizeFavourites
+				? [...new Set([...baseFilter.excludedIds, ...this.#favouriteItems.map((item) => item.id)])]
+				: baseFilter.excludedIds,
+			favouriteMode: 'all',
 			cursor: filterMatches ? this.#remainingCursor : null,
 			pageSize: this.#pageSize
 		};

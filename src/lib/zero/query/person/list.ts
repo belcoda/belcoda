@@ -8,7 +8,7 @@ import { decodePersonListCursor } from '$lib/utils/person/cursor';
 
 export const inputSchema = object({
 	...listFilter.entries,
-	favouriteMode: optional(picklist(['all', 'only', 'exclude']), 'all'),
+	favouriteMode: optional(picklist(['all', 'only']), 'all'),
 	tagId: optional(nullable(uuid)),
 	signupEventId: optional(nullable(uuid)),
 	mostRecentActivity: optional(
@@ -138,7 +138,7 @@ export function whereClause(
 	{ filter, ctx }: { filter: InferOutput<typeof inputSchema>; ctx: QueryContext }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
-	const { and, or, exists, cmp, not } = builder;
+	const { and, or, exists, cmp } = builder;
 	const filterArr = [cmp('deletedAt', isDeleted ? 'IS NOT' : 'IS', null)];
 	const isFavourite = exists('favourites', (favourite) =>
 		favourite
@@ -148,8 +148,6 @@ export function whereClause(
 	);
 	if (filter.favouriteMode === 'only') {
 		filterArr.push(isFavourite);
-	} else if (filter.favouriteMode === 'exclude') {
-		filterArr.push(not(isFavourite));
 	}
 	if (filter.searchString && filter.searchString.length > 0) {
 		filterArr.push(...searchStringConditions(cmp, or, filter.searchString));
@@ -178,8 +176,9 @@ export function whereClause(
 	if (filter.mostRecentActivity) {
 		filterArr.push(...mostRecentActivityConditions(cmp, filter.mostRecentActivity));
 	}
-	if (filter.personIdsToExclude && filter.personIdsToExclude.length > 0) {
-		filterArr.push(cmp('id', 'NOT IN', filter.personIdsToExclude));
+	const personIdsToExclude = [...filter.excludedIds, ...(filter.personIdsToExclude ?? [])];
+	if (personIdsToExclude.length > 0) {
+		filterArr.push(cmp('id', 'NOT IN', personIdsToExclude));
 	}
 	return and(...filterArr);
 }

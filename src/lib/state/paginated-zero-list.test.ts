@@ -62,9 +62,26 @@ describe('PaginatedZeroList', () => {
 });
 
 describe('FavouriteFirstPaginatedZeroList', () => {
+	it('starts the remaining query after an empty favourites page completes', () => {
+		const paginator = new FavouriteFirstPaginatedZeroList({
+			getBaseFilter: () => ({ organizationId: 'org_1', excludedIds: [] }),
+			getPrioritizeFavourites: () => true,
+			encodeCursor: (row: { id: string }) => row.id,
+			pageSize: 2
+		});
+
+		paginator.handleFavouritePage([]);
+
+		expect(paginator.remainingPageFilter).toMatchObject({
+			favouriteMode: 'all',
+			excludedIds: [],
+			cursor: null
+		});
+	});
+
 	it('paginates all favourites before starting the remaining rows', () => {
 		const paginator = new FavouriteFirstPaginatedZeroList({
-			getBaseFilter: () => ({ organizationId: 'org_1' }),
+			getBaseFilter: () => ({ organizationId: 'org_1', excludedIds: [] }),
 			getPrioritizeFavourites: () => true,
 			encodeCursor: (row: { id: string }) => row.id,
 			pageSize: 2
@@ -83,7 +100,8 @@ describe('FavouriteFirstPaginatedZeroList', () => {
 		paginator.handleFavouritePage([{ id: 'f3' }]);
 
 		expect(paginator.remainingPageFilter).toMatchObject({
-			favouriteMode: 'exclude',
+			favouriteMode: 'all',
+			excludedIds: ['f1', 'f2', 'f3'],
 			cursor: null
 		});
 		paginator.handleRemainingPage([{ id: 'r1' }, { id: 'r2' }]);
@@ -98,7 +116,7 @@ describe('FavouriteFirstPaginatedZeroList', () => {
 
 	it('uses the normal all-rows query when prioritization is off', () => {
 		const paginator = new FavouriteFirstPaginatedZeroList({
-			getBaseFilter: () => ({ organizationId: 'org_1' }),
+			getBaseFilter: () => ({ organizationId: 'org_1', excludedIds: [] }),
 			getPrioritizeFavourites: () => false,
 			encodeCursor: (row: { id: string }) => row.id,
 			pageSize: 2
@@ -116,7 +134,7 @@ describe('FavouriteFirstPaginatedZeroList', () => {
 	it('restarts with the all-rows query when prioritization is turned off', () => {
 		let prioritizeFavourites = true;
 		const paginator = new FavouriteFirstPaginatedZeroList({
-			getBaseFilter: () => ({ organizationId: 'org_1' }),
+			getBaseFilter: () => ({ organizationId: 'org_1', excludedIds: [] }),
 			getPrioritizeFavourites: () => prioritizeFavourites,
 			encodeCursor: (row: { id: string }) => row.id,
 			pageSize: 2
@@ -135,9 +153,33 @@ describe('FavouriteFirstPaginatedZeroList', () => {
 		expect(paginator.items).toEqual([{ id: 'r2' }]);
 	});
 
+	it('restarts the remaining query when prioritization is turned back on', () => {
+		let prioritizeFavourites = true;
+		const paginator = new FavouriteFirstPaginatedZeroList({
+			getBaseFilter: () => ({ organizationId: 'org_1', excludedIds: [] }),
+			getPrioritizeFavourites: () => prioritizeFavourites,
+			encodeCursor: (row: { id: string }) => row.id,
+			pageSize: 2
+		});
+
+		paginator.handleFavouritePage([{ id: 'f1' }]);
+		paginator.handleRemainingPage([{ id: 'r1' }]);
+		prioritizeFavourites = false;
+		paginator.handleRemainingPage([{ id: 'f1' }, { id: 'r1' }]);
+		prioritizeFavourites = true;
+
+		expect(paginator.remainingPageFilter).toBeNull();
+		paginator.handleFavouritePage([{ id: 'f1' }]);
+		expect(paginator.remainingPageFilter).toMatchObject({
+			favouriteMode: 'all',
+			excludedIds: ['f1'],
+			cursor: null
+		});
+	});
+
 	it('keeps favourites first and deduplicates during live page updates', () => {
 		const paginator = new FavouriteFirstPaginatedZeroList({
-			getBaseFilter: () => ({ organizationId: 'org_1' }),
+			getBaseFilter: () => ({ organizationId: 'org_1', excludedIds: [] }),
 			getPrioritizeFavourites: () => true,
 			encodeCursor: (row: { id: string }) => row.id,
 			pageSize: 3
@@ -153,7 +195,7 @@ describe('FavouriteFirstPaginatedZeroList', () => {
 	it('restarts with favourites when filters change', () => {
 		let searchString: string | null = null;
 		const paginator = new FavouriteFirstPaginatedZeroList({
-			getBaseFilter: () => ({ organizationId: 'org_1', searchString }),
+			getBaseFilter: () => ({ organizationId: 'org_1', searchString, excludedIds: [] }),
 			getPrioritizeFavourites: () => true,
 			encodeCursor: (row: { id: string }) => row.id,
 			pageSize: 2

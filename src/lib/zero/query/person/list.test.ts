@@ -65,7 +65,7 @@ const ctx: QueryContext = {
 	otherOrgs: [organizationId]
 };
 
-function run(favouriteMode: 'all' | 'only' | 'exclude') {
+function run(favouriteMode: 'all' | 'only') {
 	const filter = parse(inputSchema, { organizationId, favouriteMode });
 	return whereClause(createFakeBuilder(), { filter, ctx }) as unknown as Node;
 }
@@ -103,10 +103,16 @@ describe('person list favourite modes', () => {
 		});
 	});
 
-	it('excludes current-member person favourites', () => {
-		expect(favouriteExpression(run('exclude'))).toMatchObject({
-			op: 'not',
-			condition: { op: 'exists', relationship: 'favourites' }
+	it('excludes explicit person ids without a relationship negation', () => {
+		const filter = parse(inputSchema, { organizationId, excludedIds: [userId] });
+		const result = whereClause(createFakeBuilder(), { filter, ctx }) as unknown as Node;
+
+		expect(result).toMatchObject({
+			op: 'and',
+			conditions: [
+				{ op: 'cmp', field: 'deletedAt', comparator: 'IS', value: null },
+				{ op: 'cmp', field: 'id', comparator: 'NOT IN', value: [userId] }
+			]
 		});
 	});
 });
