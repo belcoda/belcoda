@@ -18,11 +18,20 @@
 	import { formatNumber } from '$lib/utils/number';
 	import { renderName } from '$lib/utils/name';
 	import { renderWhatsAppMessagePreview } from '$lib/components/widgets/activity/preview/whatsapp_message';
-	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
+	import { FavouriteFirstPaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodePersonListCursor } from '$lib/utils/person/cursor';
 	import EmailIcon from '@lucide/svelte/icons/mail';
+	import StarIcon from '@lucide/svelte/icons/star';
 	import { IsInViewport, watch } from 'runed';
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
+	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { toast } from 'svelte-sonner';
+
+	type SidebarPerson = ReadPersonZero & {
+		readonly favourites: readonly { readonly id: string }[];
+	};
+
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		tagId: null,
@@ -32,22 +41,38 @@
 	const pageSize = 25;
 	let sentinel: HTMLElement | null = $state(null);
 	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
-	const paginatedPersonList = new PaginatedZeroList({
+	const paginatedPersonList = new FavouriteFirstPaginatedZeroList({
 		getBaseFilter: () => personListFilter,
+		getPrioritizeFavourites: () => appState.prioritizePeopleFavourites,
 		encodeCursor: encodePersonCursor,
 		pageSize
 	});
-	const personList = $derived.by(() =>
-		z.createQuery(queries.person.list(paginatedPersonList.pageFilter))
+	const favouritePersonList = $derived.by(() => {
+		const filter = paginatedPersonList.favouritePageFilter;
+		return filter ? z.createQuery(queries.person.list(filter)) : null;
+	});
+	const remainingPersonList = $derived.by(() => {
+		const filter = paginatedPersonList.remainingPageFilter;
+		return filter ? z.createQuery(queries.person.list(filter)) : null;
+	});
+	const personListFailed = $derived(
+		favouritePersonList?.details.type === 'error' || remainingPersonList?.details.type === 'error'
 	);
 	const unreadWhatsappMessageCountsByPersonId = $derived(
 		appState.unreadWhatsappMessageCountsByPersonId
 	);
+	let preferenceRequest = 0;
 
 	watch(
-		() => personList.data,
+		() => favouritePersonList?.data,
 		(data) => {
-			paginatedPersonList.handlePage(data);
+			paginatedPersonList.handleFavouritePage(data);
+		}
+	);
+	watch(
+		() => remainingPersonList?.data,
+		(data) => {
+			paginatedPersonList.handleRemainingPage(data);
 		}
 	);
 	watch(
@@ -64,11 +89,37 @@
 		}
 	);
 
-	function encodePersonCursor(person: ReadPersonZero) {
+	function encodePersonCursor(person: SidebarPerson) {
 		return encodePersonListCursor({
 			id: person.id,
 			mostRecentActivityAt: person.mostRecentActivityAt
 		});
+	}
+
+	async function updatePrioritizeFavourites(prioritizeFavourites: boolean) {
+		const previousValue = appState.prioritizePeopleFavourites;
+		const organizationId = appState.organizationId;
+		const request = ++preferenceRequest;
+		appState.prioritizePeopleFavourites = prioritizeFavourites;
+
+		try {
+			const result = z.mutate(
+				mutators.memberSettings.updatePeopleSidebar({
+					metadata: { organizationId },
+					input: { prioritizePeopleFavourites: prioritizeFavourites }
+				})
+			);
+			await result.client;
+			const serverResult = await result.server;
+			if (serverResult.type === 'error') {
+				throw new Error(serverResult.error.message);
+			}
+		} catch {
+			if (request === preferenceRequest && organizationId === appState.organizationId) {
+				appState.prioritizePeopleFavourites = previousValue;
+				toast.error(t`Could not save the favourite ordering preference. Please try again.`);
+			}
+		}
 	}
 </script>
 
@@ -85,12 +136,25 @@
 				<div class="text-2xl font-bold text-foreground">{t`Community`}</div>
 				<ActionsMenu />
 			</div>
+			<div class="flex items-center justify-between gap-3 text-sm">
+				<label for="prioritize-people-favourites" class="flex items-center gap-2">
+					<StarIcon class="size-4 text-amber-500" fill="currentColor" />
+					<span>{t`Prioritize favourites`}</span>
+				</label>
+				<Switch
+					id="prioritize-people-favourites"
+					checked={appState.prioritizePeopleFavourites}
+					onCheckedChange={updatePrioritizeFavourites}
+					aria-label={t`Prioritize favourites`}
+					data-testid="prioritize-people-favourites-toggle"
+				/>
+			</div>
 			<PersonFilter bind:filter={personListFilter} />
 		</Sidebar.Header>
 		<Sidebar.Content>
 			<Sidebar.Group class="p-0">
 				<Sidebar.GroupContent class="p-0">
-					{#if personList.details.type === 'error'}
+					{#if personListFailed}
 						<div class="px-2"><ErrorAlert>{t`Error loading persons`}</ErrorAlert></div>
 					{/if}
 					{#each paginatedPersonList.items as person (person.id)}
@@ -112,13 +176,15 @@
 	</Sidebar.Root>
 </Sidebar.Root>
 
-{#snippet personItem(person: ReadPersonZero)}
+{#snippet personItem(person: SidebarPerson)}
 	{@const unreadMessageCount = unreadWhatsappMessageCountsByPersonId.get(person.id) ?? 0}
+	{@const isFavourite = person.favourites.length > 0}
 	{@const unreadMessageCountDisplay =
 		unreadMessageCount > 99 ? '99+' : formatNumber(unreadMessageCount, locale.current)}
 	<a
 		data-testid="community-person-list-link"
 		data-person-id={person.id}
+		data-favourite={isFavourite}
 		href={`/community/${person.id}`}
 		class:bg-sidebar-accent={page.url.pathname.startsWith(`/community/${person.id}`)}
 		class:text-sidebar-accent-foreground={page.url.pathname.startsWith(`/community/${person.id}`)}
@@ -142,6 +208,15 @@
 							country: person.country
 						})}
 					</span>
+					{#if isFavourite}
+						<StarIcon
+							class="size-3.5 shrink-0 text-amber-500"
+							fill="currentColor"
+							aria-hidden="true"
+							data-testid="community-person-favourite-indicator"
+						/>
+						<span class="sr-only">{t`Favourite`}</span>
+					{/if}
 					{#if unreadMessageCount > 0}
 						<span
 							class="flex h-5 w-7 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-primary-foreground"
