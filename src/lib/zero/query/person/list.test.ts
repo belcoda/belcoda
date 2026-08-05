@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { ExpressionBuilder } from '@rocicorp/zero';
+import { asQueryInternals } from '@rocicorp/zero/bindings';
 import { parse } from 'valibot';
 
 import type { QueryContext, Schema } from '$lib/zero/schema';
-import { inputSchema, whereClause } from './list';
+import { inputSchema, listPersonsPaginatedQuery, whereClause } from './list';
 
 type QueryFilter =
 	| { type: 'where'; field: string; comparator: string; value: unknown }
@@ -78,11 +79,29 @@ function favouriteExpression(result: Node) {
 
 describe('person list favourite modes', () => {
 	it('defaults to returning all people', () => {
-		expect(parse(inputSchema, { organizationId }).favouriteMode).toBe('all');
+		expect(parse(inputSchema, { organizationId })).toMatchObject({
+			favouriteMode: 'all',
+			includeFavourites: false
+		});
 		expect(run('all')).toEqual({
 			op: 'and',
 			conditions: [{ op: 'cmp', field: 'deletedAt', comparator: 'IS', value: null }]
 		});
+	});
+
+	it('includes the favourites relation only when requested', () => {
+		const withoutFavourites = listPersonsPaginatedQuery({
+			ctx,
+			input: parse(inputSchema, { organizationId })
+		});
+		const withFavourites = listPersonsPaginatedQuery({
+			ctx,
+			input: parse(inputSchema, { organizationId, includeFavourites: true })
+		});
+
+		expect(asQueryInternals(withoutFavourites).ast.related).toBeUndefined();
+		expect(asQueryInternals(withFavourites).ast.related).toHaveLength(1);
+		expect(asQueryInternals(withFavourites).ast.related?.[0]?.subquery.alias).toBe('favourites');
 	});
 
 	it('includes only current-member person favourites', () => {

@@ -35,6 +35,7 @@
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		favouriteMode: 'all' as const,
+		includeFavourites: true,
 		tagId: null,
 		signupEventId: null,
 		mostRecentActivity: null

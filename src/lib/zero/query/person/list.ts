@@ -1,6 +1,6 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput, optional, object, nullable, picklist } from 'valibot';
+import { array, boolean, type InferOutput, optional, object, nullable, picklist } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { readPersonZero } from '$lib/schema/person';
@@ -9,6 +9,7 @@ import { decodePersonListCursor } from '$lib/utils/person/cursor';
 export const inputSchema = object({
 	...listFilter.entries,
 	favouriteMode: optional(picklist(['all', 'only']), 'all'),
+	includeFavourites: optional(boolean(), false),
 	tagId: optional(nullable(uuid)),
 	signupEventId: optional(nullable(uuid)),
 	mostRecentActivity: optional(
@@ -39,17 +40,20 @@ function listPersonsQueryBase({
 	input: InferOutput<typeof inputSchema>;
 	limit: number;
 }) {
-	let q = builder.person
+	const baseQuery = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input, ctx }))
-		.related('favourites', (favourite) =>
-			favourite
-				.where('organizationId', '=', input.organizationId)
-				.where('referenceType', '=', 'person')
-				.whereExists('member', (member) => member.where('userId', '=', ctx.userId ?? ''))
-				.limit(1)
-		)
+		.where((expr) => whereClause(expr, { filter: input, ctx }));
+	const queryWithRelations = input.includeFavourites
+		? baseQuery.related('favourites', (favourite) =>
+				favourite
+					.where('organizationId', '=', input.organizationId)
+					.where('referenceType', '=', 'person')
+					.whereExists('member', (member) => member.where('userId', '=', ctx.userId ?? ''))
+					.limit(1)
+			)
+		: baseQuery;
+	let q = queryWithRelations
 		.orderBy('mostRecentActivityAt', 'desc')
 		.orderBy('id', 'desc')
 		.limit(limit);
