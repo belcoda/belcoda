@@ -24,8 +24,9 @@
 	let sentinel: HTMLElement | null = $state(null);
 	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 
-	let filter = $state<ListEventSignupsInput>({
+	let filter = $state<ListEventSignupsInput & { favouriteMode: 'all' | 'only' }>({
 		...getListFilter(appState.organizationId),
+		favouriteMode: 'all',
 		includeIncomplete: false,
 		/* svelte-ignore state_referenced_locally */
 		eventId: event.id

@@ -335,7 +335,7 @@ export async function listPersons({
 	input: ListFilter;
 	tx: ServerTransaction;
 }) {
-	return await tx.run(listPersonsQuery({ ctx, input }));
+	return await tx.run(listPersonsQuery({ ctx, input: { ...input, favouriteMode: 'all' } }));
 }
 
 export async function _countPersons({

@@ -17,8 +17,9 @@
 	let sentinel: HTMLElement | null = $state(null);
 	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 
-	let filter: PetitionSignatureListFilter = $state({
+	let filter: PetitionSignatureListFilter & { favouriteMode: 'all' | 'only' } = $state({
 		...getListFilter(appState.organizationId),
+		favouriteMode: 'all',
 		/* svelte-ignore state_referenced_locally */
 		petitionId: petition.id
 	});
