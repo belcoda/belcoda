@@ -87,6 +87,17 @@ export type DeleteWhatsappAccountMutatorSchema = v.InferOutput<
 	typeof deleteWhatsappAccountMutatorSchema
 >;
 
+// --- unlink ---
+// Unlinking soft-deletes the account (stamps `deletedAt`). It differs from a plain
+// delete in intent: eventually it should also detach the account at the WhatsApp
+// provider via their API (see the `// todo: unlink with API` markers in the mutators).
+export const unlinkWhatsappAccountMutatorSchema = v.object({
+	metadata: whatsappAccountMutatorMetadata
+});
+export type UnlinkWhatsappAccountMutatorSchema = v.InferOutput<
+	typeof unlinkWhatsappAccountMutatorSchema
+>;
+
 // --- update metadata ---
 export const updateWhatsappAccountMetadataInput = v.object({
 	metadata: whatsappAccountMetadataSchema
@@ -105,3 +116,31 @@ export type UpdateWhatsappAccountMetadataMutatorSchemaInput = v.InferInput<
 export type UpdateWhatsappAccountMetadataMutatorSchemaOutput = v.InferOutput<
 	typeof updateWhatsappAccountMetadataMutatorSchema
 >;
+
+// ----------------------------------------------------------------------------
+// Link account (unofficial WhatsApp Linked Devices API)
+// ----------------------------------------------------------------------------
+
+// The signup / linking code (OTP) the user enters to link an existing account.
+export const LINK_ACCOUNT_CODE_LENGTH = 6;
+export const linkWhatsappAccountCodeSchema = v.pipe(
+	v.string(),
+	v.trim(),
+	v.length(LINK_ACCOUNT_CODE_LENGTH, `The code must be ${LINK_ACCOUNT_CODE_LENGTH} characters`)
+);
+
+// Request body sent to POST /api/utils/whatsapp/link_account.
+export const linkWhatsappAccountRequestSchema = v.object({
+	code: linkWhatsappAccountCodeSchema,
+	scope: whatsappAccountScopeSchema
+});
+export type LinkWhatsappAccountRequest = v.InferOutput<typeof linkWhatsappAccountRequestSchema>;
+
+// Shape returned by the link endpoint on success: the details of the freshly
+// linked WhatsApp account, which the client uses to create the local record.
+export const linkWhatsappAccountResultSchema = v.object({
+	identifier: whatsappAccountSchema.entries.identifier,
+	details: whatsappAccountDetailsSchema,
+	metadata: whatsappAccountMetadataSchema
+});
+export type LinkWhatsappAccountResult = v.InferOutput<typeof linkWhatsappAccountResultSchema>;
