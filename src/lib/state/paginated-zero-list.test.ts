@@ -189,7 +189,32 @@ describe('FavouriteFirstPaginatedZeroList', () => {
 		paginator.handleRemainingPage([{ id: 'r1' }, { id: 'r2' }]);
 		paginator.handleFavouritePage([{ id: 'r1' }, { id: 'f1' }]);
 
-		expect(paginator.items).toEqual([{ id: 'r1' }, { id: 'f1' }, { id: 'r2' }]);
+		expect(paginator.items).toEqual([{ id: 'r1' }, { id: 'f1' }]);
+		expect(paginator.remainingPageFilter?.cursor).toBeNull();
+	});
+
+	it('restarts remaining pagination when a person is unfavourited', () => {
+		const paginator = new FavouriteFirstPaginatedZeroList({
+			getBaseFilter: () => ({ organizationId: 'org_1', excludedIds: [] }),
+			getPrioritizeFavourites: () => true,
+			encodeCursor: (row: { id: string }) => row.id,
+			pageSize: 2
+		});
+
+		paginator.handleFavouritePage([{ id: 'f1' }]);
+		paginator.handleRemainingPage([{ id: 'r1' }, { id: 'r2' }, { id: 'r3' }]);
+		paginator.loadMore();
+		expect(paginator.remainingPageFilter?.cursor).toBe('r2');
+
+		paginator.handleFavouritePage([]);
+
+		expect(paginator.items).toEqual([]);
+		expect(paginator.remainingPageFilter).toMatchObject({
+			excludedIds: [],
+			cursor: null
+		});
+		paginator.handleRemainingPage([{ id: 'f1' }, { id: 'r1' }]);
+		expect(paginator.items).toEqual([{ id: 'f1' }, { id: 'r1' }]);
 	});
 
 	it('restarts with favourites when filters change', () => {

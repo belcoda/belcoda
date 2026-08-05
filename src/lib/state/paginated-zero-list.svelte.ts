@@ -221,10 +221,16 @@ export class FavouriteFirstPaginatedZeroList<
 		}
 		this.#resetIfBaseFilterChanged();
 		const page = processPage(rows, this.#pageSize);
-		this.#favouriteItems =
+		const nextFavouriteItems =
 			this.#favouriteCursor === null
 				? page.items
 				: dedupeById([...this.#favouriteItems, ...page.items]);
+		if (!haveSameIds(this.#favouriteItems, nextFavouriteItems)) {
+			this.#remainingItems = [];
+			this.#remainingCursor = null;
+			this.#remainingHasMore = false;
+		}
+		this.#favouriteItems = nextFavouriteItems;
 		this.#favouriteHasMore = page.hasMore;
 		this.#favouritesComplete = !page.hasMore;
 		this.#loadingMore = false;
@@ -295,6 +301,12 @@ function dedupeById<T extends RowWithId>(items: readonly T[]) {
 		seen.add(item.id);
 		return true;
 	});
+}
+
+function haveSameIds<T extends RowWithId>(left: readonly T[], right: readonly T[]) {
+	if (left.length !== right.length) return false;
+	const leftIds = new Set(left.map((item) => item.id));
+	return right.every((item) => leftIds.has(item.id));
 }
 
 function stableStringify(value: unknown) {
