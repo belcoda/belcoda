@@ -7,6 +7,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import type { ListEventSignupsInput } from '$lib/zero/query/event_signup/list';
+	import type { ListPersonsInput } from '$lib/zero/query/person/list';
 	import queries from '$lib/zero/query/index';
 	import { type ReadEventSignupZeroWithPerson } from '$lib/schema/event-signup';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
@@ -24,9 +25,12 @@
 	let sentinel: HTMLElement | null = $state(null);
 	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 
-	let filter = $state<ListEventSignupsInput & { favouriteMode: 'all' | 'only' }>({
+	let filter = $state<
+		ListEventSignupsInput & Pick<ListPersonsInput, 'favouriteMode' | 'includeFavourites'>
+	>({
 		...getListFilter(appState.organizationId),
 		favouriteMode: 'all',
+		includeFavourites: false,
 		includeIncomplete: false,
 		/* svelte-ignore state_referenced_locally */
 		eventId: event.id

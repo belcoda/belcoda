@@ -238,4 +238,10 @@ function mostRecentActivityConditions(
 	}
 }
 
-export const outputSchema = array(readPersonZero);
+export const readPersonListItemZero = object({
+	...readPersonZero.entries,
+	favourites: optional(array(object({ id: uuid })))
+});
+export type ReadPersonListItemZero = InferOutput<typeof readPersonListItemZero>;
+
+export const outputSchema = array(readPersonListItemZero);

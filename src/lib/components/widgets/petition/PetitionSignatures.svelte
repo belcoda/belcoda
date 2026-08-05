@@ -6,6 +6,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import type { PetitionSignatureListFilter } from '$lib/zero/query/petition_signature/list';
+	import type { ListPersonsInput } from '$lib/zero/query/person/list';
 	import queries from '$lib/zero/query/index';
 	import { type ReadPetitionSignatureZeroWithPerson } from '$lib/schema/petition/petition-signature';
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
@@ -17,9 +18,11 @@
 	let sentinel: HTMLElement | null = $state(null);
 	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
 
-	let filter: PetitionSignatureListFilter & { favouriteMode: 'all' | 'only' } = $state({
+	let filter: PetitionSignatureListFilter &
+		Pick<ListPersonsInput, 'favouriteMode' | 'includeFavourites'> = $state({
 		...getListFilter(appState.organizationId),
 		favouriteMode: 'all',
+		includeFavourites: false,
 		/* svelte-ignore state_referenced_locally */
 		petitionId: petition.id
 	});

@@ -6,7 +6,6 @@
 	const isMobile = new IsMobile();
 	import Avatar from '$lib/components/widgets/avatar/Avatar.svelte';
 	import { page } from '$app/state';
-	import { type ReadPersonZero } from '$lib/schema/person';
 	import { type PersonAddedFrom } from '$lib/schema/person/meta';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
@@ -20,6 +19,7 @@
 	import { renderWhatsAppMessagePreview } from '$lib/components/widgets/activity/preview/whatsapp_message';
 	import { FavouriteFirstPaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodePersonListCursor } from '$lib/utils/person/cursor';
+	import { type ListPersonsInput, type ReadPersonListItemZero } from '$lib/zero/query/person/list';
 	import EmailIcon from '@lucide/svelte/icons/mail';
 	import StarIcon from '@lucide/svelte/icons/star';
 	import { IsInViewport, watch } from 'runed';
@@ -28,13 +28,9 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { toast } from 'svelte-sonner';
 
-	type SidebarPerson = ReadPersonZero & {
-		readonly favourites: readonly { readonly id: string }[];
-	};
-
-	let personListFilter = $state({
+	let personListFilter = $state<ListPersonsInput>({
 		...getListFilter(appState.organizationId),
-		favouriteMode: 'all' as const,
+		favouriteMode: 'all',
 		includeFavourites: true,
 		tagId: null,
 		signupEventId: null,
@@ -43,7 +39,10 @@
 	const pageSize = 25;
 	let sentinel: HTMLElement | null = $state(null);
 	const sentinelIsInViewport = $derived(new IsInViewport(() => sentinel));
-	const paginatedPersonList = new FavouriteFirstPaginatedZeroList({
+	const paginatedPersonList = new FavouriteFirstPaginatedZeroList<
+		ListPersonsInput,
+		ReadPersonListItemZero
+	>({
 		getBaseFilter: () => personListFilter,
 		getPrioritizeFavourites: () => appState.prioritizePeopleFavourites,
 		encodeCursor: encodePersonCursor,
@@ -95,7 +94,7 @@
 		}
 	);
 
-	function encodePersonCursor(person: SidebarPerson) {
+	function encodePersonCursor(person: ReadPersonListItemZero) {
 		return encodePersonListCursor({
 			id: person.id,
 			mostRecentActivityAt: person.mostRecentActivityAt
@@ -182,9 +181,9 @@
 	</Sidebar.Root>
 </Sidebar.Root>
 
-{#snippet personItem(person: SidebarPerson)}
+{#snippet personItem(person: ReadPersonListItemZero)}
 	{@const unreadMessageCount = unreadWhatsappMessageCountsByPersonId.get(person.id) ?? 0}
-	{@const isFavourite = person.favourites.length > 0}
+	{@const isFavourite = (person.favourites?.length ?? 0) > 0}
 	{@const unreadMessageCountDisplay =
 		unreadMessageCount > 99 ? '99+' : formatNumber(unreadMessageCount, locale.current)}
 	<a

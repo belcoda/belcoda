@@ -27,6 +27,7 @@
 		return {
 			...getListFilter(appState.organizationId),
 			favouriteMode: 'all' as const,
+			includeFavourites: false,
 			tagId: null,
 			signupEventId: null,
 			mostRecentActivity: null,
