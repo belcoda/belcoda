@@ -1134,14 +1134,21 @@ export const whatsappAccount = pgTable(
 		id: uuid('id').primaryKey(),
 		referenceId: uuid('reference_id').notNull(),
 		scope: text('scope').$type<WhatsappAccountScope>().notNull(),
-		identifier: text('identifier').notNull().unique(),
+		identifier: text('identifier').notNull(),
 		details: jsonb('details').$type<WhatsappAccountDetails>().notNull(),
 		metadata: jsonb('metadata').$type<WhatsappAccountMetadata>().notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
 		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
 	},
-	(table) => [index('whatsapp_account_reference_idx').on(table.referenceId)]
+	(table) => [
+		index('whatsapp_account_reference_idx').on(table.referenceId),
+		// identifier is unique only among active (non-soft-deleted) accounts, so an
+		// unlinked account's identifier can be re-linked later.
+		uniqueIndex('whatsapp_account_identifier_active_idx')
+			.on(table.identifier)
+			.where(sql`${table.deletedAt} IS NULL`)
+	]
 );
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
 type WhatsappAccountValibotMatchesDrizzle = IsTrue<

@@ -1,0 +1,2 @@
+ALTER TABLE "whatsapp_account" DROP CONSTRAINT "whatsapp_account_identifier_unique";--> statement-breakpoint
+CREATE UNIQUE INDEX "whatsapp_account_identifier_active_idx" ON "whatsapp_account" USING btree ("identifier") WHERE "whatsapp_account"."deleted_at" IS NULL;

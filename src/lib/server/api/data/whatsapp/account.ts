@@ -70,11 +70,19 @@ export async function createWhatsappAccount({
 		referenceId: parsed.input.referenceId
 	});
 
-	// identifier (phone number / whatsapp username) is globally unique
+	// identifier (phone number / whatsapp username) is unique among *active* accounts.
+	// Soft-deleted (unlinked) rows keep their identifier, so they must be excluded here
+	// and by the DB's partial unique index — otherwise an unlinked account could never
+	// be re-linked.
 	const [existing] = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(whatsappAccount)
-		.where(eq(whatsappAccount.identifier, parsed.input.identifier))
+		.where(
+			and(
+				eq(whatsappAccount.identifier, parsed.input.identifier),
+				isNull(whatsappAccount.deletedAt)
+			)
+		)
 		.limit(1);
 	if (existing) {
 		throw new Error('A WhatsApp account with this identifier already exists');

@@ -6158,6 +6158,7 @@ msgstr "Leia antes de continuar"
 msgid "Belcoda links accounts using the unofficial WhatsApp Linked Devices API, which is not endorsed or supported by Meta Platforms, Inc. While we aim to comply with all relevant policies, using a WhatsApp account in Belcoda via the Linked Devices API may violate Meta's terms of service. We cannot guarantee there is no risk of the account being suspended or banned as a result of using it via Belcoda."
 msgstr "O Belcoda vincula contas usando a API não oficial de Dispositivos Conectados do WhatsApp, que não é endossada nem suportada pela Meta Platforms, Inc. Embora busquemos cumprir todas as políticas aplicáveis, usar uma conta do WhatsApp no Belcoda por meio da API de Dispositivos Conectados pode violar os termos de serviço da Meta. Não podemos garantir que não haja risco de a conta ser suspensa ou banida como consequência do uso por meio do Belcoda."
 
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
 #: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
 msgid "I understand and certify that I am linking a WhatsApp account to Belcoda at my own risk, and that I am aware of the risk of suspension or banning of the account."
 msgstr "Entendo e certifico que estou vinculando uma conta do WhatsApp ao Belcoda por minha conta e risco, e que estou ciente do risco de suspensão ou banimento da conta."

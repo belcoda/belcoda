@@ -12,6 +12,7 @@
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
@@ -25,13 +26,15 @@
 	const LIST_URL = '/settings/whatsapp/_accounts';
 
 	let code = $state('');
+	let certified = $state(false);
 	let submitting = $state(false);
 	let errorMessage = $state<string | null>(null);
 
 	const isComplete = $derived(code.length === LINK_ACCOUNT_CODE_LENGTH);
+	const canSubmit = $derived(isComplete && certified && !submitting);
 
 	async function handleSubmit() {
-		if (!isComplete || submitting) return;
+		if (!canSubmit) return;
 		errorMessage = null;
 		submitting = true;
 		try {
@@ -122,6 +125,7 @@
 				{t`Enter the ${String(LINK_ACCOUNT_CODE_LENGTH)}-digit code to link your WhatsApp account.`}
 			</p>
 			<InputOTP.Root
+				inputId="link-code"
 				maxlength={LINK_ACCOUNT_CODE_LENGTH}
 				bind:value={code}
 				disabled={submitting}
@@ -137,6 +141,13 @@
 			</InputOTP.Root>
 		</div>
 
+		<div class="flex items-start gap-2">
+			<Checkbox id="link-certify" bind:checked={certified} data-testid="link-whatsapp-certify" />
+			<Label for="link-certify" class="cursor-pointer text-sm font-normal leading-snug">
+				{t`I understand and certify that I am linking a WhatsApp account to Belcoda at my own risk, and that I am aware of the risk of suspension or banning of the account.`}
+			</Label>
+		</div>
+
 		{#if errorMessage}
 			<Alert.Root variant="destructive" data-testid="link-whatsapp-error">
 				<TriangleAlertIcon class="size-4" />
@@ -144,7 +155,7 @@
 			</Alert.Root>
 		{/if}
 
-		<Button type="submit" disabled={!isComplete || submitting} data-testid="link-whatsapp-submit">
+		<Button type="submit" disabled={!canSubmit} data-testid="link-whatsapp-submit">
 			{#if submitting}
 				<Spinner />
 			{/if}

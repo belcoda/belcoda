@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { z } from '$lib/zero.svelte';
 	import queries from '$lib/zero/query/index';
@@ -14,7 +15,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 
 	const { params } = $props();
-	const LIST_URL = '/settings/whatsapp/_accounts';
+	const LIST_URL = resolve('/settings/whatsapp/_accounts') as `/${string}`;
 
 	const account = $derived.by(() =>
 		z.createQuery(queries.whatsappAccount.read({ whatsappAccountId: params.id }))

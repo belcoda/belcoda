@@ -1,4 +1,5 @@
 import { json, error } from '@sveltejs/kit';
+import { dev } from '$app/environment';
 import { parse, ValiError } from 'valibot';
 import {
 	linkWhatsappAccountRequestSchema,
@@ -17,6 +18,12 @@ const log = pino(import.meta.url);
 export async function POST(event) {
 	if (!event.locals.session?.user?.id) {
 		return error(401, 'Unauthorized');
+	}
+
+	// This linking flow is dev-only (the UI is guarded by the _accounts +layout.ts
+	// redirect); keep the endpoint unavailable in production too.
+	if (!dev) {
+		return error(404, 'Not found');
 	}
 
 	let body: unknown;
