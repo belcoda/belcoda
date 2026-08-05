@@ -71,17 +71,19 @@
 					<Sidebar.GroupContent>
 						<Sidebar.Menu>
 							{#each group.items as item (item.url)}
-								<Sidebar.MenuItem>
-									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
-										{#snippet child({ props })}
-											<a
-												href={resolveSettingsItemPath(item.url)}
-												{...props}
-												data-testid={item.dataTestId}>{item.title()}</a
-											>
-										{/snippet}
-									</Sidebar.MenuButton>
-								</Sidebar.MenuItem>
+								{#if item.enabled !== false}
+									<Sidebar.MenuItem>
+										<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
+											{#snippet child({ props })}
+												<a
+													href={resolveSettingsItemPath(item.url)}
+													{...props}
+													data-testid={item.dataTestId}>{item.title()}</a
+												>
+											{/snippet}
+										</Sidebar.MenuButton>
+									</Sidebar.MenuItem>
+								{/if}
 							{/each}
 						</Sidebar.Menu>
 					</Sidebar.GroupContent>
