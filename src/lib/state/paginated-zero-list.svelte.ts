@@ -1,5 +1,3 @@
-import { SvelteSet } from 'svelte/reactivity';
-
 type RowWithId = {
 	id: string;
 };
@@ -293,7 +291,7 @@ export class FavouriteFirstPaginatedZeroList<
 }
 
 function dedupeById<T extends RowWithId>(items: readonly T[]) {
-	const seen = new SvelteSet<string>();
+	const seen = new Set<string>();
 	return items.filter((item) => {
 		if (seen.has(item.id)) {
 			return false;
