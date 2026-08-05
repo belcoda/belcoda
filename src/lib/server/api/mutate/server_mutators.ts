@@ -125,6 +125,7 @@ export const mutators = defineMutators({
 	whatsappAccount: {
 		create: whatsappAccount.createWhatsappAccount,
 		delete: whatsappAccount.deleteWhatsappAccount,
+		unlink: whatsappAccount.unlinkWhatsappAccount,
 		updateMetadata: whatsappAccount.updateWhatsappAccountMetadata
 	}
 });
