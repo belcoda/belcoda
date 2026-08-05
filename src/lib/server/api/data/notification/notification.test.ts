@@ -1,7 +1,17 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { memberFavourite } from '$lib/schema/drizzle';
+import { isFavouriteReferenceReadable } from '$lib/server/api/data/favourite/reference-permissions';
+import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { resolveNotificationRecipients } from './notification';
+
+vi.mock('$lib/server/api/data/favourite/reference-permissions', () => ({
+	isFavouriteReferenceReadable: vi.fn()
+}));
+
+vi.mock('$lib/server/api/utils/auth/permissions', () => ({
+	getQueryContext: vi.fn()
+}));
 
 const organizationId = '11111111-1111-4111-8111-111111111111';
 const explicitUserId = '22222222-2222-4222-8222-222222222222';
@@ -47,6 +57,19 @@ function createTransaction({
 }
 
 describe('notification recipient routing', () => {
+	beforeEach(() => {
+		vi.mocked(getQueryContext).mockReset();
+		vi.mocked(getQueryContext).mockResolvedValue({
+			userId: favouriteUserId,
+			authTeams: [],
+			adminOrgs: [],
+			ownerOrgs: [],
+			otherOrgs: [organizationId]
+		});
+		vi.mocked(isFavouriteReferenceReadable).mockReset();
+		vi.mocked(isFavouriteReferenceReadable).mockResolvedValue(true);
+	});
+
 	it('keeps existing explicit routing unchanged when there are no related resources', async () => {
 		const { tx, select } = createTransaction();
 
