@@ -178,7 +178,7 @@ class AppState {
 		this.#userId = userId;
 		this.#organizationId = organizationId;
 		this.#queryContext = queryContext;
-		this.#memberSidebarSettingsByOrganization = memberSidebarSettingsByOrganization;
+		this.#memberSidebarSettingsByOrganization = { ...memberSidebarSettingsByOrganization };
 		this.#hasAppOrganizationContext = true;
 	}
 
