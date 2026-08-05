@@ -20,6 +20,7 @@ const adminUserId = '44444444-4444-4444-8444-444444444444';
 const otherMemberUserId = '55555555-5555-4555-8555-555555555555';
 const personId = '66666666-6666-4666-8666-666666666666';
 const eventId = '77777777-7777-4777-8777-777777777777';
+const petitionId = '88888888-8888-4888-8888-888888888888';
 
 function createTransaction({
 	favouriteMemberships = [],
@@ -102,6 +103,110 @@ describe('notification recipient routing', () => {
 
 		expect(favouriteWhere).toHaveBeenCalledOnce();
 		expect(recipients).toEqual([explicitUserId, favouriteUserId]);
+		expect(isFavouriteReferenceReadable).toHaveBeenCalledTimes(4);
+	});
+
+	it('excludes a favourite recipient who can no longer read the related resource', async () => {
+		const { tx } = createTransaction({
+			favouriteMemberships: [{ userId: favouriteUserId }]
+		});
+		vi.mocked(isFavouriteReferenceReadable).mockResolvedValue(false);
+
+		const recipients = await resolveNotificationRecipients({
+			tx: tx as never,
+			organizationId,
+			recipientUserIds: [],
+			creatorUserId: null,
+			relatedResources: [{ referenceType: 'person', referenceId: personId }]
+		});
+
+		expect(recipients).toEqual([]);
+	});
+
+	it('requires access to both the event and person disclosed by an event signup', async () => {
+		const { tx } = createTransaction({
+			favouriteMemberships: [{ userId: favouriteUserId }]
+		});
+		vi.mocked(isFavouriteReferenceReadable).mockImplementation(
+			async ({ reference }) => reference.referenceType === 'event'
+		);
+
+		const recipients = await resolveNotificationRecipients({
+			tx: tx as never,
+			organizationId,
+			recipientUserIds: [],
+			creatorUserId: null,
+			relatedResources: [
+				{ referenceType: 'event', referenceId: eventId },
+				{ referenceType: 'person', referenceId: personId }
+			]
+		});
+
+		expect(recipients).toEqual([]);
+		expect(isFavouriteReferenceReadable).toHaveBeenCalledTimes(2);
+	});
+
+	it('requires access to both the petition and person disclosed by a petition signup', async () => {
+		const { tx } = createTransaction({
+			favouriteMemberships: [{ userId: favouriteUserId }]
+		});
+		vi.mocked(isFavouriteReferenceReadable).mockImplementation(
+			async ({ reference }) => reference.referenceType === 'petition'
+		);
+
+		const recipients = await resolveNotificationRecipients({
+			tx: tx as never,
+			organizationId,
+			recipientUserIds: [],
+			creatorUserId: null,
+			relatedResources: [
+				{ referenceType: 'petition', referenceId: petitionId },
+				{ referenceType: 'person', referenceId: personId }
+			]
+		});
+
+		expect(recipients).toEqual([]);
+		expect(isFavouriteReferenceReadable).toHaveBeenCalledTimes(2);
+	});
+
+	it('preserves explicit recipients when a favourite-derived candidate is stale', async () => {
+		const { tx } = createTransaction({
+			favouriteMemberships: [{ userId: favouriteUserId }]
+		});
+		vi.mocked(isFavouriteReferenceReadable).mockResolvedValue(false);
+
+		const recipients = await resolveNotificationRecipients({
+			tx: tx as never,
+			organizationId,
+			recipientUserIds: [explicitUserId],
+			creatorUserId: null,
+			relatedResources: [{ referenceType: 'person', referenceId: personId }]
+		});
+
+		expect(recipients).toEqual([explicitUserId]);
+	});
+
+	it('deduplicates favourite candidates and related resources before validating access', async () => {
+		const { tx } = createTransaction({
+			favouriteMemberships: [{ userId: favouriteUserId }, { userId: favouriteUserId }]
+		});
+
+		const recipients = await resolveNotificationRecipients({
+			tx: tx as never,
+			organizationId,
+			recipientUserIds: [],
+			creatorUserId: null,
+			relatedResources: [
+				{ referenceType: 'event', referenceId: eventId },
+				{ referenceType: 'event', referenceId: eventId },
+				{ referenceType: 'person', referenceId: personId },
+				{ referenceType: 'person', referenceId: personId }
+			]
+		});
+
+		expect(recipients).toEqual([favouriteUserId]);
+		expect(getQueryContext).toHaveBeenCalledOnce();
+		expect(isFavouriteReferenceReadable).toHaveBeenCalledTimes(2);
 	});
 
 	it('extends the admin fallback without replacing it', async () => {
@@ -122,5 +227,26 @@ describe('notification recipient routing', () => {
 		});
 
 		expect(recipients).toEqual([adminUserId, favouriteUserId]);
+	});
+
+	it('preserves the admin fallback when a favourite-derived candidate is stale', async () => {
+		const { tx } = createTransaction({
+			favouriteMemberships: [{ userId: favouriteUserId }],
+			memberQueryResults: [
+				[{ userId: adminUserId }, { userId: otherMemberUserId }],
+				[{ userId: adminUserId }]
+			]
+		});
+		vi.mocked(isFavouriteReferenceReadable).mockResolvedValue(false);
+
+		const recipients = await resolveNotificationRecipients({
+			tx: tx as never,
+			organizationId,
+			recipientUserIds: undefined,
+			creatorUserId: null,
+			relatedResources: [{ referenceType: 'person', referenceId: personId }]
+		});
+
+		expect(recipients).toEqual([adminUserId]);
 	});
 });
