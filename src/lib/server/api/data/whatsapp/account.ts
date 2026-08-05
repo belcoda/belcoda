@@ -7,9 +7,11 @@ import { parse } from 'valibot';
 import {
 	type CreateWhatsappAccountMutatorSchemaOutput,
 	type DeleteWhatsappAccountMutatorSchema,
+	type UnlinkWhatsappAccountMutatorSchema,
 	type UpdateWhatsappAccountMetadataMutatorSchemaOutput,
 	createWhatsappAccountMutatorSchema,
 	deleteWhatsappAccountMutatorSchema,
+	unlinkWhatsappAccountMutatorSchema,
 	updateWhatsappAccountMetadataMutatorSchema
 } from '$lib/schema/whatsapp-account';
 
@@ -123,6 +125,42 @@ export async function deleteWhatsappAccount({
 
 	assertCanMutate(ctx, record);
 
+	const now = new Date();
+	await tx.dbTransaction.wrappedTransaction
+		.update(whatsappAccount)
+		.set({ deletedAt: now, updatedAt: now })
+		.where(
+			and(
+				eq(whatsappAccount.id, parsed.metadata.whatsappAccountId),
+				isNull(whatsappAccount.deletedAt)
+			)
+		);
+}
+
+/**
+ * Unlinks a WhatsApp account. Like {@link deleteWhatsappAccount} this is a soft
+ * delete (stamps `deletedAt`), but it is a distinct operation because unlinking
+ * should eventually also detach the account at the WhatsApp provider.
+ */
+export async function unlinkWhatsappAccount({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UnlinkWhatsappAccountMutatorSchema;
+}) {
+	const parsed = parse(unlinkWhatsappAccountMutatorSchema, args);
+
+	const record = await getWhatsappAccountById(tx, parsed.metadata.whatsappAccountId);
+	if (!record) {
+		throw new Error('WhatsApp account not found');
+	}
+
+	assertCanMutate(ctx, record);
+
+	// todo: unlink with API
 	const now = new Date();
 	await tx.dbTransaction.wrappedTransaction
 		.update(whatsappAccount)
