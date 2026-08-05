@@ -20,18 +20,22 @@ msgstr "Data e hora"
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/routes/(app)/settings/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
 msgstr "Idioma"
 
-#~ msgid "Languages"
-#~ msgstr "Idiomas"
+#: src/routes/(app)/settings/language/+page.svelte
+msgid "Languages"
+msgstr "Idiomas"
 
-#~ msgid "Update your preferred language:"
-#~ msgstr "Atualize seu idioma preferido:"
+#: src/routes/(app)/settings/language/+page.svelte
+msgid "Update your preferred language:"
+msgstr "Atualize seu idioma preferido:"
 
-#~ msgid "This will update your language for all the pages in the application."
-#~ msgstr "Isso atualizará seu idioma para todas as páginas do aplicativo."
+#: src/routes/(app)/settings/language/+page.svelte
+msgid "This will update your language for all the pages in the application."
+msgstr "Isso atualizará seu idioma para todas as páginas do aplicativo."
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
@@ -5431,6 +5435,7 @@ msgstr "Notificação"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Notifications"
 msgstr "Notificações"
 
@@ -5636,9 +5641,11 @@ msgid "Digest frequency"
 msgstr ""
 
 #: src/routes/(app)/settings/notifications/+page.svelte
+#: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Weekly"
 msgstr ""
 
+#: src/routes/(app)/settings/notifications/+page.svelte
 #: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Daily"
 msgstr ""
@@ -5647,6 +5654,7 @@ msgstr ""
 msgid "Saved"
 msgstr ""
 
+#: src/routes/(app)/settings/notifications/+page.svelte
 #: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Failed to save notification preferences"
 msgstr "Falha ao salvar preferências de notificação"
@@ -6046,7 +6054,7 @@ msgstr "Você ainda não tem acesso a nenhuma conta do WhatsApp."
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "WhatsApp Linked Accounts"
-msgstr ""
+msgstr "Contas vinculadas do WhatsApp"
 
 #: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
 msgid "Are you sure you want to unlink this WhatsApp account?"
@@ -6096,9 +6104,43 @@ msgstr "Desvincular conta"
 msgid "You don't have permission to edit this WhatsApp account."
 msgstr "Você não tem permissão para editar esta conta do WhatsApp."
 
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
 #: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
 msgid "Link account"
 msgstr "Vincular conta"
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "We couldn't link that account. Please check the code and try again."
+msgstr "Não conseguimos vincular essa conta. Verifique o código e tente novamente."
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Something went wrong while linking the account. Please try again."
+msgstr "Algo deu errado ao vincular a conta. Tente novamente."
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Link at your own risk"
+msgstr "Vincule por sua conta e risco"
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Belcoda links your account using the unofficial WhatsApp Linked Devices API, which is not endorsed or supported by Meta Platforms, Inc. Using a WhatsApp account in Belcoda this way may violate Meta's terms of service, and we cannot rule out the risk of your account being suspended or banned. Only link an account you are comfortable putting at that risk."
+msgstr "O Belcoda vincula sua conta usando a API não oficial de Dispositivos Conectados do WhatsApp, que não é endossada nem suportada pela Meta Platforms, Inc. Usar uma conta do WhatsApp no Belcoda dessa forma pode violar os termos de serviço da Meta, e não podemos descartar o risco de sua conta ser suspensa ou banida. Vincule apenas uma conta que você esteja disposto a expor a esse risco."
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Read the FAQ"
+msgstr "Leia as perguntas frequentes"
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Using a new account? Read our warm-up tips"
+msgstr "Usando uma conta nova? Leia nossas dicas de preparação"
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Signup code"
+msgstr "Código de cadastro"
+
+#. 0: String(LINK_ACCOUNT_CODE_LENGTH)
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Enter the {0}-digit code to link your WhatsApp account."
+msgstr "Digite o código de {0} dígitos para vincular sua conta do WhatsApp."
 
 #: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
 msgid "Link a WhatsApp account"
@@ -6129,6 +6171,7 @@ msgid "Personal (user) account"
 msgstr "Conta pessoal (de usuário)"
 
 #: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/new/user/+page.svelte
 msgid "Only you will be able to send and receive messages using this account."
 msgstr "Apenas você poderá enviar e receber mensagens usando esta conta."
 
@@ -6137,12 +6180,9 @@ msgid "Organization account"
 msgstr "Conta da organização"
 
 #: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/new/organization/+page.svelte
 msgid "Any Belcoda user in your organization will be able to send and receive messages using this account."
 msgstr "Qualquer usuário do Belcoda na sua organização poderá enviar e receber mensagens usando esta conta."
-
-#: src/routes/(app)/settings/whatsapp/_accounts/new/user/+page.svelte
-msgid "Link a personal WhatsApp account"
-msgstr "Vincular uma conta pessoal do WhatsApp"
 
 #: src/routes/(app)/settings/whatsapp/_accounts/new/organization/+page.svelte
 msgid "Link an organization WhatsApp account"
@@ -6152,34 +6192,6 @@ msgstr "Vincular uma conta do WhatsApp da organização"
 msgid "Only organization admins and owners can link an organization WhatsApp account."
 msgstr "Apenas administradores e proprietários da organização podem vincular uma conta do WhatsApp da organização."
 
-#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
-msgid "We couldn't link that account. Please check the code and try again."
-msgstr "Não conseguimos vincular essa conta. Verifique o código e tente novamente."
-
-#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
-msgid "Something went wrong while linking the account. Please try again."
-msgstr "Algo deu errado ao vincular a conta. Tente novamente."
-
-#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
-msgid "Link at your own risk"
-msgstr "Vincule por sua conta e risco"
-
-#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
-msgid "Belcoda links your account using the unofficial WhatsApp Linked Devices API, which is not endorsed or supported by Meta Platforms, Inc. Using a WhatsApp account in Belcoda this way may violate Meta's terms of service, and we cannot rule out the risk of your account being suspended or banned. Only link an account you are comfortable putting at that risk."
-msgstr "O Belcoda vincula sua conta usando a API não oficial de Dispositivos Conectados do WhatsApp, que não é endossada nem suportada pela Meta Platforms, Inc. Usar uma conta do WhatsApp no Belcoda dessa forma pode violar os termos de serviço da Meta, e não podemos descartar o risco de sua conta ser suspensa ou banida. Vincule apenas uma conta que você esteja disposto a expor a esse risco."
-
-#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
-msgid "Read the FAQ"
-msgstr "Leia as perguntas frequentes"
-
-#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
-msgid "Using a new account? Read our warm-up tips"
-msgstr "Usando uma conta nova? Leia nossas dicas de preparação"
-
-#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
-msgid "Signup code"
-msgstr "Código de cadastro"
-
-#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
-msgid "Enter the {0}-digit code to link your WhatsApp account."
-msgstr "Digite o código de {0} dígitos para vincular sua conta do WhatsApp."
+#: src/routes/(app)/settings/whatsapp/_accounts/new/user/+page.svelte
+msgid "Link a personal WhatsApp account"
+msgstr "Vincular uma conta pessoal do WhatsApp"

@@ -33,21 +33,21 @@
 	let displayName = $state('');
 	let profilePic = $state('');
 	let status = $state('');
-	let initialized = $state(false);
+	let initializedId = $state<string | null>(null);
 
 	$effect(() => {
 		const record = account.data;
-		if (record && !initialized) {
+		if (record && record.id !== initializedId) {
 			displayName = record.metadata.displayName ?? '';
 			profilePic = record.metadata.profilePic ?? '';
 			status = record.metadata.status ?? '';
-			initialized = true;
+			initializedId = record.id;
 		}
 	});
 
 	async function handleSave(record: ReadWhatsappAccountZero) {
 		// Preserve `isBusiness`; coerce empty optional fields back to `undefined`.
-		await z.mutate(
+		const result = z.mutate(
 			mutators.whatsappAccount.updateMetadata({
 				metadata: { whatsappAccountId: record.id },
 				input: {
@@ -60,6 +60,7 @@
 				}
 			})
 		);
+		await result.client;
 		await goto(LIST_URL);
 	}
 
@@ -67,11 +68,12 @@
 		if (!window.confirm(t`Are you sure you want to unlink this WhatsApp account?`)) {
 			return;
 		}
-		await z.mutate(
+		const result = z.mutate(
 			mutators.whatsappAccount.unlink({
 				metadata: { whatsappAccountId: record.id }
 			})
 		);
+		await result.client;
 		await goto(LIST_URL);
 	}
 </script>

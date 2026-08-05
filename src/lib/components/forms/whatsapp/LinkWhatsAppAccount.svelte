@@ -42,9 +42,9 @@
 			});
 
 			if (!response.ok) {
-				const detail = await response.text().catch(() => '');
+				const parsed = await response.json().catch(() => null);
 				errorMessage =
-					detail || t`We couldn't link that account. Please check the code and try again.`;
+					parsed?.message || t`We couldn't link that account. Please check the code and try again.`;
 				return;
 			}
 
@@ -54,7 +54,7 @@
 			// organization (organization scope). The server re-checks this authorization.
 			const referenceId = scope === 'user' ? appState.userId : appState.organizationId;
 
-			await z.mutate(
+			const mutation = z.mutate(
 				mutators.whatsappAccount.create({
 					input: {
 						scope,
@@ -66,9 +66,10 @@
 					metadata: { whatsappAccountId: uuidv7() }
 				})
 			);
+			await mutation.server;
 
 			await goto(LIST_URL);
-		} catch (err) {
+		} catch {
 			errorMessage = t`Something went wrong while linking the account. Please try again.`;
 		} finally {
 			submitting = false;
