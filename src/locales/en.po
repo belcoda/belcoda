@@ -5947,3 +5947,13 @@ msgstr "Failed to send WhatsApp message"
 #: src/lib/components/widgets/activity/NoteAdded.svelte
 msgid "Note added"
 msgstr "Note added"
+
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+msgid "Favourite"
+msgstr "Favourite"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+msgid "Favourites only"
+msgstr "Favourites only"
