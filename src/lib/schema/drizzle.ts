@@ -504,8 +504,10 @@ export const personWhatsappIdentity = pgTable(
 		personId: uuid('person_id')
 			.notNull()
 			.references(() => person.id),
-		wabaId: text('waba_id').notNull(),
-		bsuid: text('bsuid').notNull(),
+		whatsappAccountId: uuid('whatsapp_account_id').references(() => whatsappAccount.id), //linked devices api account
+		jid: text('jid'), //used by linked device api (can be account scoped or a phone number)
+		wabaId: text('waba_id'), //used by business cloud api
+		bsuid: text('bsuid'), //used by business cloud api
 		parentUserId: text('parent_user_id'),
 		waPhone: text('wa_phone'),
 		displayName: text('display_name'),
