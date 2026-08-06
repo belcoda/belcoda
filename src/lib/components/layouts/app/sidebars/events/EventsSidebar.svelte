@@ -73,6 +73,7 @@
 		tagId: null,
 		eventType: null,
 		hasSignups: false,
+		favouritesOnly: false,
 		status: null,
 		isArchived: false
 	});
