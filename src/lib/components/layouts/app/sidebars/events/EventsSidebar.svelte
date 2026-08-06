@@ -7,6 +7,7 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import CalendarPlusIcon from '@lucide/svelte/icons/calendar-plus';
+	import StarIcon from '@lucide/svelte/icons/star';
 	import EventCalendar from '$lib/components/layouts/app/sidebars/events/calendar/EventCalendar.svelte';
 	import EventFilter from '$lib/components/layouts/app/sidebars/events/filter/EventFilter.svelte';
 	import { type DateRange } from 'bits-ui';
@@ -205,15 +206,33 @@
 							<Empty.Root>
 								<Empty.Header>
 									<Empty.Media variant="icon">
-										<CalendarPlusIcon />
+										{#if eventListFilter.favouritesOnly}
+											<StarIcon />
+										{:else}
+											<CalendarPlusIcon />
+										{/if}
 									</Empty.Media>
-									<Empty.Title>{t`No events found`}</Empty.Title>
-									<Empty.Description>
-										{t`No events found. Create a new event to get started.`}
-									</Empty.Description>
-									<Empty.Content>
-										<Button href="/events/new">{t`Create Event`}</Button>
-									</Empty.Content>
+									{#if eventListFilter.favouritesOnly}
+										<Empty.Title>{t`No favourite events`}</Empty.Title>
+										<Empty.Description>
+											{t`Favourite an event using the star in its header to see it here.`}
+										</Empty.Description>
+										<Empty.Content>
+											<Button
+												variant="outline"
+												onclick={() => (eventListFilter.favouritesOnly = false)}
+												>{t`Show all events`}</Button
+											>
+										</Empty.Content>
+									{:else}
+										<Empty.Title>{t`No events found`}</Empty.Title>
+										<Empty.Description>
+											{t`No events found. Create a new event to get started.`}
+										</Empty.Description>
+										<Empty.Content>
+											<Button href="/events/new">{t`Create Event`}</Button>
+										</Empty.Content>
+									{/if}
 								</Empty.Header>
 							</Empty.Root>
 						{/if}

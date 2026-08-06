@@ -5957,3 +5957,15 @@ msgstr "Favourite"
 #: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
 msgid "Favourites only"
 msgstr "Favourites only"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "No favourite events"
+msgstr "No favourite events"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Favourite an event using the star in its header to see it here."
+msgstr "Favourite an event using the star in its header to see it here."
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Show all events"
+msgstr "Show all events"
