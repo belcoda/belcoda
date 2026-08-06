@@ -169,6 +169,13 @@
       "when": 1785415604827,
       "tag": "0023_short_ben_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1785559345798,
+      "tag": "0024_free_tenebrous",
+      "breakpoints": true
     }
   ]
 }

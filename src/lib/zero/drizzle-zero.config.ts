@@ -508,7 +508,14 @@ export default drizzleZeroConfig(drizzleSchema, {
 			updatedAt: true,
 			deletedAt: true
 		},
-		whatsappLog: false
+		whatsappLog: false,
+		// flow/automation tables are server-side only and are not synced to Zero
+		flowDocument: false,
+		flowVersion: false,
+		flowTriggerRegistration: false,
+		flowExecution: false,
+		flowExecutionStep: false,
+		flow: false
 	},
 	manyToMany: {
 		tag: {

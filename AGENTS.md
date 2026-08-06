@@ -425,15 +425,19 @@ Committed config drives it:
 
 ### Codex
 
-Configured in the Codex environment UI (no committed manifest). Network is
-available during setup but restricted during the task, so everything installs at
-setup time (the shared script already seeds then).
+Codex cloud environments are configured in the Codex environment UI, not by a committed manifest.
 
-- **Setup script:** `bash scripts/agent-setup.sh`
-- **Maintenance script** (runs per task): `sudo service postgresql start 2>/dev/null || service postgresql start`
-- **Secrets:** same list as above. See .env.example.cloud-agents for local env vars
-- To run app + Zero during a task, background it in the maintenance script
-  (`nohup npm run dev &`); otherwise the agent can start it on demand.
+Use these settings:
+
+- **Setup script:**
+  ```bash
+  bash scripts/agent-setup.sh
+  npx playwright install chromium --with-deps
+  ```
+
+To verify the environment: `bash scripts/agent-smoke-test.sh`
+
+To run the app during a task: `nohup npm run dev > /tmp/belcoda-dev.log 2>&1 &`
 
 ### Claude Code on the web
 

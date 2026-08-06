@@ -12,7 +12,19 @@ on:
 
 jobs:
   e2e:
-    if: ${{ github.event.pull_request.draft == false }}
+    # Skip Dependabot: bumps already get build/check via dependabot-automerge,
+    # and a daily batch of Dependabot PRs would otherwise all contend for
+    # shared staging at once (same pattern as fly-review.yml).
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    # All e2e jobs hit the same shared staging DB and call /api/e2e/cleanup at
+    # start. Parallel runs race each other (signup 500s, "Owner user not found",
+    # mid-test data wipes). Job-level concurrency so only eligible e2e jobs
+    # acquire the staging lock; do not cancel in-progress runs from other PRs.
+    concurrency:
+      group: e2e-staging
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:

@@ -32,22 +32,24 @@ export async function countPersonsFromFilter({
 export async function getPersonIdsFromFilter({
 	filter,
 	organizationId,
-	ctx
+	ctx,
+	requireEmailAddress = true
 }: {
 	filter: FilterGroupType;
 	organizationId: string;
 	ctx: QueryContext;
+	// Defaults to true to preserve behaviour for email-recipient callers. Flow triggers
+	// (event signup, WhatsApp, etc.) don't require an email address, so they pass false.
+	requireEmailAddress?: boolean;
 }): Promise<string[]> {
-	const result = await db.run(
-		builder.person
-			.where((expr) =>
-				whereClause(expr, {
-					filter: { filter, organizationId },
-					ctx
-				})
-			)
-			.where('emailAddress', 'IS NOT', null)
+	const baseQuery = builder.person.where((expr) =>
+		whereClause(expr, {
+			filter: { filter, organizationId },
+			ctx
+		})
 	);
+	const query = requireEmailAddress ? baseQuery.where('emailAddress', 'IS NOT', null) : baseQuery;
+	const result = await db.run(query);
 
 	return result.map((p) => p.id);
 }

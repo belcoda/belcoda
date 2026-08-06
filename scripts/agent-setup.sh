@@ -18,6 +18,17 @@ set -euo pipefail
 SUDO=""
 if command -v sudo >/dev/null 2>&1; then SUDO="sudo"; fi
 
+
+# --- App deps + schema + seed ---
+# Seed (and drizzle-kit via vite dotenv) need OWNER_* / DATABASE_URL etc.
+# Cursor/Codex may inject those as environment secrets. If not, fall back to
+# the committed cloud-agent example so install can still create a loginable
+# owner. The terminal start command also copies this file, but that runs
+# *after* install — too late for db:seed.
+if [ ! -f .env ]; then
+	cp .env.example.cloud-agents .env
+fi
+
 # Run a command as the postgres OS user. Prefer sudo when available; otherwise
 # su (containers that lack sudo but run as root). Never expand to bare `-u postgres`.
 as_postgres() {
@@ -50,17 +61,9 @@ wait_for_postgres
 
 bootstrap_postgres_roles
 
-# --- App deps + schema + seed ---
-# Seed (and drizzle-kit via vite dotenv) need OWNER_* / DATABASE_URL etc.
-# Cursor/Codex may inject those as environment secrets. If not, fall back to
-# the committed cloud-agent example so install can still create a loginable
-# owner. The terminal start command also copies this file, but that runs
-# *after* install — too late for db:seed.
-if [ ! -f .env ]; then
-	cp .env.example.cloud-agents .env
-fi
 
 npm ci --include=dev
+npx playwright install chromium --with-deps
 # drizzle.config.ts sets strict: true (interactive confirm). Agent install has
 # no TTY, so push would hang/fail without --force.
 npx drizzle-kit push --force
