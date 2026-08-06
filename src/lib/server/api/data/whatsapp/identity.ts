@@ -94,25 +94,43 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 	parentUserId,
 	waPhone,
 	displayName,
+	whatsappAccountId,
+	jid,
 	tx
 }: {
 	organizationId: string;
 	personId: string;
-	wabaId: string;
-	bsuid: string;
+	wabaId?: string;
+	bsuid?: string;
 	parentUserId?: string | null;
 	waPhone?: string | null;
 	displayName?: string | null;
+	whatsappAccountId?: string | null;
+	jid?: string | null;
 	tx: ServerTransaction;
 }) {
 	const now = new Date();
 
-	const existingIdentity = await findWhatsappIdentityByBsuidUnsafe({
-		organizationId,
-		wabaId,
-		bsuid,
-		tx
-	});
+	if (wabaId && bsuid) {
+		const existingIdentity = await findWhatsappIdentityByBsuidUnsafe({
+			organizationId,
+			wabaId,
+			bsuid,
+			tx
+		});
+		if (existingIdentity && existingIdentity.personId !== personId) {
+			log.warn(
+				{
+					organizationId,
+					wabaId,
+					bsuid,
+					oldPersonId: existingIdentity.personId,
+					newPersonId: personId
+				},
+				'Relinking WhatsApp BSUID identity to resolved person'
+			);
+		}
+	}
 
 	const [upserted] = await tx.dbTransaction.wrappedTransaction
 		.insert(personWhatsappIdentity)
@@ -151,19 +169,6 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 
 	if (!upserted) {
 		throw new Error('Failed to upsert WhatsApp identity');
-	}
-
-	if (existingIdentity && existingIdentity.personId !== personId) {
-		log.warn(
-			{
-				organizationId,
-				wabaId,
-				bsuid,
-				oldPersonId: existingIdentity.personId,
-				newPersonId: personId
-			},
-			'Relinking WhatsApp BSUID identity to resolved person'
-		);
 	}
 
 	return upserted;
@@ -404,6 +409,32 @@ async function findActiveWhatsappIdentityByPersonUnsafe({
 				eq(personWhatsappIdentity.organizationId, organizationId),
 				eq(personWhatsappIdentity.wabaId, wabaId),
 				eq(personWhatsappIdentity.personId, personId)
+			)
+		)
+		.orderBy(desc(personWhatsappIdentity.lastSeenAt));
+	return identity;
+}
+
+export async function findActiveWhatsappIdentityByPersonAndAccountIdUnsafe({
+	organizationId,
+	personId,
+	accountId,
+	tx
+}: {
+	organizationId: string;
+	personId: string;
+	accountId: string;
+	tx: ServerTransaction;
+}) {
+	const [identity] = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(personWhatsappIdentity)
+		.where(
+			and(
+				isNull(personWhatsappIdentity.deletedAt),
+				eq(personWhatsappIdentity.organizationId, organizationId),
+				eq(personWhatsappIdentity.personId, personId),
+				eq(personWhatsappIdentity.whatsappAccountId, accountId)
 			)
 		)
 		.orderBy(desc(personWhatsappIdentity.lastSeenAt));
