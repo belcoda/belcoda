@@ -88,6 +88,18 @@
 	const eventList = $derived.by(() =>
 		z.createQuery(queries.event.list(paginatedEvents.pageFilter))
 	);
+	const eventFavourites = $derived.by(() =>
+		z.createQuery(
+			queries.favourite.listByReferenceIds({
+				organizationId: appState.organizationId,
+				referenceType: 'event',
+				referenceIds: paginatedEvents.items.map((event) => event.id)
+			})
+		)
+	);
+	const favouriteEventIds = $derived(
+		new Set(eventFavourites.data.map((favourite) => favourite.referenceId))
+	);
 
 	watch(
 		() => eventList.data,
@@ -168,7 +180,7 @@
 					<div class="flex flex-col">
 						{#if paginatedEvents.items.length > 0}
 							{#each paginatedEvents.items as event (event.id)}
-								<RenderEvent {event} />
+								<RenderEvent {event} isFavourite={favouriteEventIds.has(event.id)} />
 							{/each}
 							<div class="pt-2 text-center text-xs text-muted-foreground">
 								{t`${formatNumber(paginatedEvents.items.length, locale.current)} shown`}
