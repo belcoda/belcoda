@@ -42,6 +42,7 @@ import { listPersonImports } from '$lib/zero/query/person_import/list';
 
 // person_note
 import { listPersonNotes } from '$lib/zero/query/person_note/list';
+import { readPersonNote } from '$lib/zero/query/person_note/read';
 
 // person_tag
 import { listPersonTags } from '$lib/zero/query/person_tag/list';
@@ -122,6 +123,7 @@ export {
 	listPersonImports,
 	// person_note
 	listPersonNotes,
+	readPersonNote,
 	// person_tag
 	listPersonTags,
 	// person_team
@@ -219,7 +221,8 @@ export default defineQueries({
 		list: listPersonImports
 	},
 	personNote: {
-		list: listPersonNotes
+		list: listPersonNotes,
+		read: readPersonNote
 	},
 	personTag: {
 		list: listPersonTags
