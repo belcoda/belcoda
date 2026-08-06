@@ -19,6 +19,7 @@ import { listEvents } from '$lib/zero/query/event/list';
 import { readEvent } from '$lib/zero/query/event/read';
 
 // member_favourite
+import { listFavouritesByReferenceIds } from '$lib/zero/query/member_favourite/list';
 import { readFavourite } from '$lib/zero/query/member_favourite/read';
 
 // event_signup
@@ -103,6 +104,7 @@ export {
 	listEvents,
 	readEvent,
 	// member_favourite
+	listFavouritesByReferenceIds,
 	readFavourite,
 	// event_signup
 	listEventSignups,
@@ -196,6 +198,7 @@ export default defineQueries({
 		signups: listEventSignupsByEvent
 	},
 	favourite: {
+		listByReferenceIds: listFavouritesByReferenceIds,
 		read: readFavourite
 	},
 	eventSignup: {
