@@ -415,7 +415,7 @@ async function findActiveWhatsappIdentityByPersonUnsafe({
 	return identity;
 }
 
-export async function findActiveWhatsappIdentityByPersonAndAccountIdUnsafe({
+export async function findActiveWhatsappIdentitiesByPersonAndAccountIdUnsafe({
 	organizationId,
 	personId,
 	accountId,
@@ -426,7 +426,7 @@ export async function findActiveWhatsappIdentityByPersonAndAccountIdUnsafe({
 	accountId: string;
 	tx: ServerTransaction;
 }) {
-	const [identity] = await tx.dbTransaction.wrappedTransaction
+	const identity = await tx.dbTransaction.wrappedTransaction
 		.select()
 		.from(personWhatsappIdentity)
 		.where(
