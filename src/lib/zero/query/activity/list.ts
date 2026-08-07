@@ -29,6 +29,17 @@ function listActivityQueryBase({
 	let q = builder.activity
 		.where('personId', '=', input.personId)
 		.where((expr) => activityReadPermissions(expr, ctx))
+		// A deleted note leaves its note_added activity behind (soft delete, not a real
+		// removal), which would otherwise render as an empty timeline row and could leave
+		// a date divider with nothing under it. Exclude it here rather than downstream in
+		// the component, so it never consumes a pagination slot either.
+		.where((expr) => {
+			const { or, cmp, exists } = expr;
+			return or(
+				cmp('type', '!=', 'note_added'),
+				exists('personNote', (n) => n.where('deletedAt', 'IS', null))
+			);
+		})
 		.orderBy('createdAt', 'desc')
 		.orderBy('id', 'desc')
 		.limit(limit);
