@@ -43,7 +43,15 @@ function listActivityQueryBase({
 	}
 	if (input.accountId) {
 		const accountId = input.accountId;
-		q = q.whereExists('whatsappMessage', (expr) => expr.where('whatsappAccountId', '=', accountId));
+		q = q.where((expr) => {
+			const { or, exists, cmp } = expr;
+			return or(
+				exists('whatsappMessage', (m) => m.where('whatsappAccountId', '=', accountId)),
+				// Notes are about the person, not any one WhatsApp number, so they stay
+				// visible in every account tab rather than only the one active when saved.
+				cmp('type', '=', 'note_added')
+			);
+		});
 	}
 	return q;
 }
