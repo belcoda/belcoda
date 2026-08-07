@@ -21,8 +21,8 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import ActivityTimeline from '$lib/components/widgets/activity/ActivityTimeline.svelte';
 	import FavouriteButton from '$lib/components/widgets/favourite/FavouriteButton.svelte';
-	import SendBusinessApiIndividualMessage from '$lib/components/widgets/communications/send_wa_msg/SendBusinessApiIndividualMessage.svelte';
-	import SendBusinessApiTemplateMessage from '$lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte';
+	import ConversationComposer from '$lib/components/widgets/notes/ConversationComposer.svelte';
+	import { renderName } from '$lib/utils/name';
 	const lastReceivedAt = $derived(person.data?.mostRecentWhatsappMessageReceivedAt || 0);
 	const lastReceivedAtDate = $derived(new Date((() => lastReceivedAt)()));
 	const isLastReceivedAtLessThan24HoursAgo = $derived(
@@ -33,6 +33,16 @@
 		appState.activeOrganization?.data?.settings.whatsApp.wabaId &&
 			appState.activeOrganization?.data?.settings.whatsApp.number
 	);
+
+	const personDisplayName = $derived.by(() => {
+		if (!person.data?.givenName && !person.data?.familyName) return undefined;
+		return renderName({
+			givenName: person.data.givenName,
+			familyName: person.data.familyName,
+			country: person.data.country
+		});
+	});
+
 	let personContextCollapsed = $state(false);
 	let personContextDrawerOpen = $state(false);
 	const personContextState: PersonContextPanelState = $derived.by(() => {
@@ -62,16 +72,19 @@
 		markPersonWhatsappNotificationsAsRead();
 	});
 
-	//TODO: Once we implement the account selector tabs, add footer={appState.activeWhatsappAccountId ? footer : undefined} to the content layout.
+	//TODO: Once we implement the account selector tabs, only render the ConversationComposer when appState.activeWhatsappAccountId is set.
 </script>
 
 <ContentLayout rootLink="/community" {header} bodyPadding="p-0 gap-y-0" scrollBody={false}>
 	<div class="flex min-h-0 flex-1">
 		<div class="flex min-w-0 flex-1 flex-col">
 			<ActivityTimeline personId={params.personId} />
-			<footer class="flex shrink-0 items-center gap-2 border-t bg-background p-4">
-				{@render footer()}
-			</footer>
+			<ConversationComposer
+				personId={params.personId}
+				{personDisplayName}
+				whatsappConfigured={Boolean(whatsappOnboarded)}
+				whatsappWindowOpen={isLastReceivedAtLessThan24HoursAgo}
+			/>
 		</div>
 
 		<div
@@ -90,22 +103,6 @@
 		</div>
 	</div>
 </ContentLayout>
-
-{#snippet footer()}
-	{#if whatsappOnboarded}
-		{#if isLastReceivedAtLessThan24HoursAgo}
-			<SendBusinessApiIndividualMessage personId={params.personId} />
-		{:else}
-			<SendBusinessApiTemplateMessage personId={params.personId} />
-		{/if}
-	{:else}
-		<div class="flex items-center justify-center">
-			<p class="text-sm text-muted-foreground">
-				{t`WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings.`}
-			</p>
-		</div>
-	{/if}
-{/snippet}
 
 {#snippet header()}
 	<div class="flex items-center justify-between">
