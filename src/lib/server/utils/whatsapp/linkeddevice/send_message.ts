@@ -9,7 +9,7 @@ import { v7 as uuidv7 } from 'uuid';
 import { type WhatsappMessage } from '$lib/schema/whatsapp/message';
 import { db } from '$lib/server/db';
 import { convertOutboundMessage } from '$lib/server/utils/whatsapp/linkeddevice/convert_outbound';
-import { sendWhatsappMessageToLinkedDeviceGateway } from '$lib/server/utils/whatsapp/linkeddevice/linkeddevice_api';
+import { sendWhatsappMessageToLinkedDeviceGateway } from '$lib/server/utils/whatsapp/linkeddevice/linked_device_api';
 import { whatsappMessage as whatsappMessageTable } from '$lib/schema/drizzle';
 import { createActivityWhatsAppMessageOutgoing } from '$lib/server/api/data/activity/activity';
 import { updateLatestActivity } from '$lib/server/api/data/person/latestActivity';
@@ -181,7 +181,7 @@ export async function sendWhatsappMessage({
 			tx
 		});
 		const titanMessage = convertOutboundMessage({ message: whatsappMessage });
-		const titanResponse = await sendWhatsappMessageToTitan({ message: titanMessage });
+		const titanResponse = await sendWhatsappMessageToLinkedDeviceGateway({ message: titanMessage });
 		if (!titanResponse.id) {
 			throw new Error('Failed to send message to Titan');
 		}

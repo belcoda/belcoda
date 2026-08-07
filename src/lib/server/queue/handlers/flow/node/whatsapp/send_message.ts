@@ -7,7 +7,7 @@ import { _updateFlowExecutionUnsafe } from '$lib/server/api/data/flow/execution'
 import { queueNextNode } from '$lib/server/queue/handlers/flow/node/utils/queue_next_node';
 
 // imports for specific handler action
-import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/titan/send_message';
+import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/linkeddevice/send_message';
 import { v7 as uuidv7 } from 'uuid';
 
 export async function processFlowNodeWhatsappSendMessage({
