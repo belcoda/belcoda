@@ -67,7 +67,10 @@
 				{:else}
 					<span class="icon-[ph--chat-centered-bold]"></span>
 				{/if}
-				{t`Notes`}</Button
+				{t`Notes`}
+				{#if person.notes.length > 0}
+					<span class="font-normal text-muted-foreground">{person.notes.length}</span>
+				{/if}</Button
 			>
 		{/snippet}
 	</NotesDrawer>

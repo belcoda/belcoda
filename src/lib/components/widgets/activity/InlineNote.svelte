@@ -70,7 +70,7 @@
 {#if note && !note.deletedAt}
 	<div
 		id={`note-${note.id}`}
-		class="rounded-lg border border-amber-300 border-l-[3px] border-l-amber-600 bg-amber-50 px-3 py-2"
+		class="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2"
 		data-testid="inline-note"
 		data-note-id={note.id}
 	>
