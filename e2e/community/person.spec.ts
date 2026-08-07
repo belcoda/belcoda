@@ -276,10 +276,14 @@ test.describe.serial('Community and person pages', () => {
 		await textarea.fill(noteText);
 		await composer.getByTestId('note-form-submit').click();
 
-		// The note lands in the timeline itself, not only in the drawer.
-		await expect(page.getByTestId('inline-note').last()).toContainText(noteText, {
-			timeout: 10_000
-		});
+		// The note lands in the timeline itself, as a structured internal-note card...
+		const inlineNote = page.getByTestId('inline-note').last();
+		await expect(inlineNote).toContainText(noteText, { timeout: 10_000 });
+		await expect(inlineNote).toContainText('Internal note');
+
+		// ...and never as a WhatsApp message bubble. This is the property the mode switch
+		// exists for: a note must never be mistaken for something sent to the person.
+		await expect(page.locator('.message-text').filter({ hasText: noteText })).toHaveCount(0);
 
 		// The drawer lists it too.
 		await page.getByTestId('notes-action-notes-btn').click();
@@ -290,6 +294,27 @@ test.describe.serial('Community and person pages', () => {
 		const contextPanel = page.getByTestId('person-context-panel');
 		await expect(contextPanel).toBeVisible();
 		await expect(contextPanel.getByTestId('person-context-note')).toHaveText(noteText);
+	});
+
+	test('composer mode resets to message after navigating away and back', async ({ page }) => {
+		await loginAsOwner(page, PROJECT);
+		await page.goto(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+
+		const composer = page.getByTestId('conversation-composer');
+		await expect(composer).toHaveAttribute('data-mode', 'message');
+		await composer.getByTestId('composer-mode-note').click();
+		await expect(composer).toHaveAttribute('data-mode', 'note');
+
+		// Navigate to the profile page and back, rather than reloading, so a note-mode
+		// session on this person can never leak into a later visit to their timeline.
+		await page.getByTestId('person-timeline-display-name').click();
+		await expect(page).toHaveURL(`${ids.personPath}/profile`);
+
+		await page.goBack();
+		await expect(page).toHaveURL(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+		await expect(page.getByTestId('conversation-composer')).toHaveAttribute('data-mode', 'message');
 	});
 
 	test('owner can add a note from the notes drawer on the timeline', async ({ page }) => {
