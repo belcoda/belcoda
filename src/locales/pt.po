@@ -5603,29 +5603,37 @@ msgstr "alerta"
 msgid "notification"
 msgstr "notificação"
 
-#~ msgid "Digest email"
-#~ msgstr ""
+#: src/routes/(app)/settings/notifications/+page.svelte
+msgid "Digest email"
+msgstr "E-mail de resumo"
 
-#~ msgid "Send me a digest email"
-#~ msgstr ""
+#: src/routes/(app)/settings/notifications/+page.svelte
+msgid "Send me a digest email"
+msgstr "Enviar um e-mail de resumo"
 
-#~ msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
-#~ msgstr ""
+#: src/routes/(app)/settings/notifications/+page.svelte
+msgid "Receive a summary of your unread notifications — new signups, petition signatures, and WhatsApp messages."
+msgstr "Receba um resumo das suas notificações não lidas — novas inscrições, assinaturas de petição e mensagens de WhatsApp."
 
-#~ msgid "Digest frequency"
-#~ msgstr ""
+#: src/routes/(app)/settings/notifications/+page.svelte
+msgid "Digest frequency"
+msgstr "Frequência do resumo"
 
-#~ msgid "Weekly"
-#~ msgstr ""
+#: src/routes/(app)/settings/notifications/+page.svelte
+msgid "Weekly"
+msgstr "Semanal"
 
-#~ msgid "Daily"
-#~ msgstr ""
+#: src/routes/(app)/settings/notifications/+page.svelte
+msgid "Daily"
+msgstr "Diário"
 
-#~ msgid "Saved"
-#~ msgstr ""
+#: src/routes/(app)/settings/notifications/+page.svelte
+msgid "Saved"
+msgstr "Salvo"
 
-#~ msgid "Failed to save notification preferences"
-#~ msgstr "Falha ao salvar preferências de notificação"
+#: src/routes/(app)/settings/notifications/+page.svelte
+msgid "Failed to save notification preferences"
+msgstr "Falha ao salvar preferências de notificação"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
@@ -5678,134 +5686,134 @@ msgstr ""
 
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
-msgstr ""
+msgstr "O WhatsApp não está configurado para esta organização. Crie uma conta comercial do WhatsApp nas configurações."
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 #: src/routes/(app)/community/[personId]/+page.svelte
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "Show person profile"
-msgstr ""
+msgstr "Mostrar perfil da pessoa"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "Person profile"
-msgstr ""
+msgstr "Perfil da pessoa"
 
 #: src/routes/(app)/community/[personId]/+page.svelte
 msgid "Profile information for the current conversation"
-msgstr ""
+msgstr "Informações de perfil da conversa atual"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "View full profile"
-msgstr ""
+msgstr "Ver perfil completo"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "No contact details"
-msgstr ""
+msgstr "Sem dados de contacto"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "Hide person profile"
-msgstr ""
+msgstr "Ocultar perfil da pessoa"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "Close person profile"
-msgstr ""
+msgstr "Fechar perfil da pessoa"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "Loading person profile"
-msgstr ""
+msgstr "Carregando perfil da pessoa"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "Unable to load person profile"
-msgstr ""
+msgstr "Não foi possível carregar o perfil da pessoa"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "Try again in a moment."
-msgstr ""
+msgstr "Tente novamente em instantes."
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "Profile unavailable"
-msgstr ""
+msgstr "Perfil indisponível"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "You do not have permission to view this person's profile."
-msgstr ""
+msgstr "Você não tem permissão para ver o perfil desta pessoa."
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "Person not found"
-msgstr ""
+msgstr "Pessoa não encontrada"
 
 #: src/lib/components/widgets/person/context/PersonContextPanel.svelte
 msgid "This person may have been removed from the organization."
-msgstr ""
+msgstr "Esta pessoa pode ter sido removida da organização."
 
 #~ msgid "Overview"
 #~ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Member since"
-msgstr ""
+msgstr "Membro desde"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Contact"
-msgstr ""
+msgstr "Contacto"
 
 #. 0: hiddenTeamCountLabel
 #. 0: hiddenTagCountLabel
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "+{0} more"
-msgstr ""
+msgstr "+{0} mais"
 
 #~ msgid "Latest note"
 #~ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "This person should not receive communications."
-msgstr ""
+msgstr "Esta pessoa não deve receber comunicações."
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Communication"
-msgstr ""
+msgstr "Comunicação"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Not configured"
-msgstr ""
+msgstr "Não configurado"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Unavailable"
-msgstr ""
+msgstr "Indisponível"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Reply window open"
-msgstr ""
+msgstr "Janela de resposta aberta"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Template required"
-msgstr ""
+msgstr "Template obrigatório"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Unsubscribed"
-msgstr ""
+msgstr "Desinscrito"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Last active"
-msgstr ""
+msgstr "Última atividade"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Organizing"
-msgstr ""
+msgstr "Organização"
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Work"
-msgstr ""
+msgstr "Trabalho"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
@@ -6001,3 +6009,25 @@ msgstr "Falha ao enviar mensagem do WhatsApp"
 #: src/lib/components/widgets/activity/NoteAdded.svelte
 msgid "Note added"
 msgstr "Nota adicionada"
+
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+msgid "Favourite"
+msgstr "Favorito"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+msgid "Favourites only"
+msgstr "Apenas favoritos"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "No favourite events"
+msgstr "Nenhum evento favorito"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Favourite an event using the star in its header to see it here."
+msgstr "Marque um evento como favorito usando a estrela no cabeçalho para vê-lo aqui."
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Show all events"
+msgstr "Mostrar todos os eventos"
