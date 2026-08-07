@@ -6043,3 +6043,7 @@ msgstr "Nota interna sobre {0}"
 #: src/lib/components/widgets/notes/NoteComposer.svelte
 msgid "Save note"
 msgstr "Salvar nota"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Failed to save note"
+msgstr "Falha ao salvar a nota"

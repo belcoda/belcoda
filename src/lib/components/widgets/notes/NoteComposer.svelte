@@ -8,6 +8,7 @@
 	import { createMutatorSchemaZero, createPersonNoteZero } from '$lib/schema/person-note';
 	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
+	import { toast } from 'svelte-sonner';
 
 	import { v7 as uuidv7 } from 'uuid';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
@@ -49,9 +50,13 @@
 		},
 		validateOnLoad: false,
 		onSubmit: async (data) => {
-			z.mutate(mutators.personNote.create(buildCreateNoteArgs(data.note)));
-			onSaved?.();
-			form.reset();
+			try {
+				await z.mutate(mutators.personNote.create(buildCreateNoteArgs(data.note))).server;
+				onSaved?.();
+				form.reset();
+			} catch {
+				toast.error(t`Failed to save note`);
+			}
 		}
 	});
 

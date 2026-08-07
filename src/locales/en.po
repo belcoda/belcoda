@@ -5989,3 +5989,7 @@ msgstr "Internal note about {0}"
 #: src/lib/components/widgets/notes/NoteComposer.svelte
 msgid "Save note"
 msgstr "Save note"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Failed to save note"
+msgstr "Failed to save note"
