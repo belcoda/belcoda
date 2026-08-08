@@ -5,7 +5,6 @@ import { _createFlowExecutionStep } from '$lib/server/api/data/flow/execution_st
 import { failFlowExecution } from '$lib/server/utils/flows/execution';
 import { processFlowNodeEventSignup } from '$lib/server/queue/handlers/flow/node/event.signup';
 import { processFlowNodeTriggerCron } from '$lib/server/queue/handlers/flow/node/trigger.js';
-import { type NodeType } from '$lib/schema/flow/node/index';
 
 export type ProcessFlowNodeProps = {
 	flowVersionId: string;

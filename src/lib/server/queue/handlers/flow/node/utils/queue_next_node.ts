@@ -24,7 +24,7 @@ export async function queueNextNode({
 		nodeId,
 		flow
 	});
-	if (nextNodeToProcess?.id) {
+	if (nextNodeToProcess) {
 		// if it's sending a whatsapp message, set a group id to make sure only one message from the same account is sent at a time
 		const options =
 			nextNodeToProcess.data.type === 'whatsapp.sendMessage'

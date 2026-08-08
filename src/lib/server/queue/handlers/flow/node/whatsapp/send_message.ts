@@ -3,7 +3,6 @@ import { db } from '$lib/server/db';
 import { type NodeHandlerProps } from '$lib/server/queue/handlers/flow/node/index';
 import { _getFlowDetailsUnsafe } from '$lib/server/api/data/flow/utils';
 import { _updateFlowExecutionStep } from '$lib/server/api/data/flow/execution_step';
-import { _updateFlowExecutionUnsafe } from '$lib/server/api/data/flow/execution';
 import { queueNextNode } from '$lib/server/queue/handlers/flow/node/utils/queue_next_node';
 
 // imports for specific handler action
