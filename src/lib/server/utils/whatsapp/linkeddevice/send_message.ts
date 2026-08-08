@@ -195,6 +195,8 @@ export async function sendWhatsappMessage({
 			externalId: titanResponse.id,
 			status: 'pending',
 			wamidId: null,
+			whatsappAccountId,
+			whatsappThreadId: threadId,
 			createdAt: new Date(),
 			updatedAt: new Date()
 		};
