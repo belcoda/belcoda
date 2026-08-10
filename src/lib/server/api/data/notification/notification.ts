@@ -35,16 +35,15 @@ function uniqueReferences(relatedResources: FavouriteReference[]): FavouriteRefe
 
 async function canReadAllRelatedResources({
 	tx,
-	userId,
+	ctx,
 	organizationId,
 	relatedResources
 }: {
 	tx: ServerTransaction;
-	userId: string;
+	ctx: QueryContext;
 	organizationId: string;
 	relatedResources: FavouriteReference[];
 }): Promise<boolean> {
-	const ctx = await getQueryContext(userId);
 	for (const reference of relatedResources) {
 		if (!(await isFavouriteReferenceReadable({ tx, ctx, organizationId, reference }))) {
 			return false;
@@ -93,12 +92,17 @@ async function getFavouriteRecipientUserIds({
 		...new Set(favouriteMemberships.map((membership) => membership.userId))
 	];
 	const referencesToValidate = uniqueReferences(relatedResources);
+
+	const candidates = await Promise.all(
+		candidateUserIds.map(async (userId) => ({ userId, ctx: await getQueryContext(userId) }))
+	);
+
 	const recipientUserIds: string[] = [];
-	for (const userId of candidateUserIds) {
+	for (const { userId, ctx } of candidates) {
 		if (
 			await canReadAllRelatedResources({
 				tx,
-				userId,
+				ctx,
 				organizationId,
 				relatedResources: referencesToValidate
 			})
