@@ -2,9 +2,10 @@
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
 	import ClockIcon from '@lucide/svelte/icons/clock';
 	import LinkIcon from '@lucide/svelte/icons/link';
+	import StarIcon from '@lucide/svelte/icons/star';
 	import type { ReadEventZero } from '$lib/schema/event';
 
-	let { event }: { event: ReadEventZero } = $props();
+	let { event, isFavourite = false }: { event: ReadEventZero; isFavourite?: boolean } = $props();
 	import { renderEventTime } from '$lib/utils/date';
 	import { renderAddress, isAddressComplete } from '$lib/utils/string/address';
 	import { appState } from '$lib/state.svelte';
@@ -36,6 +37,17 @@
 	<div class="grow">
 		<div class="flex w-full items-center justify-start gap-2">
 			<div class="line-clamp-1 text-sm font-medium">{event.title}</div>
+			{#if isFavourite}
+				<span
+					class="shrink-0 text-amber-500"
+					role="img"
+					aria-label={t`Favourite`}
+					title={t`Favourite`}
+					data-testid="favourite-event-indicator"
+				>
+					<StarIcon class="size-4" fill="currentColor" aria-hidden="true" />
+				</span>
+			{/if}
 		</div>
 		<RenderEventDetails {event} />
 	</div>

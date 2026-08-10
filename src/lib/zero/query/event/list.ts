@@ -3,6 +3,7 @@ import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
 import { array, type InferOutput, object, nullable, optional, picklist, boolean } from 'valibot';
 import { listFilter, uuid, unixTimestamp } from '$lib/schema/helpers';
 import { eventReadPermissions } from '$lib/zero/query/event/permissions';
+import { memberFavouriteReadPermissions } from '$lib/zero/query/member_favourite/permissions';
 import { readEventZero } from '$lib/schema/event';
 import { decodeEventListCursor } from '$lib/utils/event/cursor';
 
@@ -12,6 +13,7 @@ export const inputSchema = object({
 	eventType: optional(nullable(picklist(['online', 'in-person']))),
 	status: optional(nullable(picklist(['draft', 'published', 'cancelled']))),
 	hasSignups: optional(nullable(boolean())),
+	favouritesOnly: optional(nullable(boolean())),
 	isArchived: optional(nullable(boolean())),
 	dateRange: optional(
 		nullable(
@@ -33,7 +35,7 @@ function listEventsQueryBase({
 	let q = builder.event
 		.where((expr) => eventReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
+		.where((expr) => whereClause(expr, { ctx, filter: input }))
 		.orderBy('startsAt', 'asc')
 		.orderBy('id', 'asc')
 		.limit(limit);
@@ -79,7 +81,7 @@ export const listEvents = defineQuery(inputSchema, ({ ctx, args }) => {
 
 function whereClause(
 	builder: ExpressionBuilder<'event', Schema>,
-	{ filter }: { filter: InferOutput<typeof inputSchema> }
+	{ ctx, filter }: { ctx: QueryContext; filter: InferOutput<typeof inputSchema> }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
 	const isArchived = filter.isArchived ?? false;
@@ -93,6 +95,15 @@ function whereClause(
 	}
 	if (filter.hasSignups) {
 		filterArr.push(exists('signups'));
+	}
+	if (filter.favouritesOnly) {
+		filterArr.push(
+			exists('favourites', (favourite) =>
+				favourite
+					.where('referenceType', '=', 'event')
+					.where((expr) => memberFavouriteReadPermissions(expr, ctx))
+			)
+		);
 	}
 	if (filter.searchString && filter.searchString.length > 0) {
 		filterArr.push(cmp('title', 'ILIKE', `%${filter.searchString}%`));

@@ -5915,6 +5915,28 @@ msgstr "Error al enviar el mensaje de WhatsApp"
 #~ msgid "Note added"
 #~ msgstr "Nota añadida"
 
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+msgid "Favourite"
+msgstr "Favorito"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+msgid "Favourites only"
+msgstr "Solo favoritos"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "No favourite events"
+msgstr "No hay eventos favoritos"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Favourite an event using the star in its header to see it here."
+msgstr "Marca un evento como favorito usando la estrella de su encabezado para verlo aquí."
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Show all events"
+msgstr "Mostrar todos los eventos"
+
 #: src/lib/components/widgets/activity/InlineNote.svelte
 msgid "User"
 msgstr "Usuario"

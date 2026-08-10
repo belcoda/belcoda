@@ -1426,6 +1426,11 @@ export const memberFavouriteRelations = relations(memberFavourite, ({ one }) => 
 	member: one(member, {
 		fields: [memberFavourite.memberId],
 		references: [member.id]
+	}),
+	event: one(event, {
+		fields: [memberFavourite.referenceId],
+		references: [event.id],
+		relationName: 'eventFavourites'
 	})
 }));
 
@@ -1685,7 +1690,8 @@ export const eventRelations = relations(event, ({ one, many }) => ({
 		fields: [event.teamId],
 		references: [team.id]
 	}),
-	signups: many(eventSignup)
+	signups: many(eventSignup),
+	favourites: many(memberFavourite, { relationName: 'eventFavourites' })
 }));
 
 export const eventSignupRelations = relations(eventSignup, ({ one }) => ({

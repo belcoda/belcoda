@@ -162,6 +162,15 @@
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
 			<DropdownMenu.CheckboxItem
+				checked={filter.favouritesOnly ?? false}
+				onCheckedChange={(checked) => {
+					filter.favouritesOnly = checked;
+				}}>{t`Favourites only`}</DropdownMenu.CheckboxItem
+			>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.CheckboxItem
 				checked={filter.hasSignups ?? false}
 				onCheckedChange={(checked) => {
 					filter.hasSignups = checked;
