@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import * as helpers from './helpers';
 import { readUserZero } from './user';
+import { readPersonNoteMentionZero } from './person-note-mention';
 
 export const personNoteSchema = v.object({
 	id: helpers.uuid,
@@ -29,7 +30,8 @@ export const readPersonNoteZero = v.object({
 	userId: personNoteSchema.entries.userId,
 	createdAt: helpers.unixTimestamp,
 	updatedAt: helpers.unixTimestamp,
-	deletedAt: v.nullable(helpers.unixTimestamp)
+	deletedAt: v.nullable(helpers.unixTimestamp),
+	mentions: v.array(readPersonNoteMentionZero)
 });
 export type ReadPersonNoteZero = v.InferOutput<typeof readPersonNoteZero>;
 
@@ -41,7 +43,8 @@ export const readPersonNoteWithUserZero = v.object({
 	createdAt: helpers.unixTimestamp,
 	updatedAt: helpers.unixTimestamp,
 	deletedAt: v.nullable(helpers.unixTimestamp),
-	user: readUserZero
+	user: readUserZero,
+	mentions: v.array(readPersonNoteMentionZero)
 });
 export type ReadPersonNoteWithUserZero = v.InferOutput<typeof readPersonNoteWithUserZero>;
 

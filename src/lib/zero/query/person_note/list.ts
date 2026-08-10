@@ -27,6 +27,7 @@ function listPersonNotesQueryBase({
 	let q = builder.personNote
 		.where((expr) => personNoteReadPermissions(expr, ctx))
 		.related('user', (expr) => expr.one())
+		.related('mentions', (mentions) => mentions.orderBy('startIndex', 'asc'))
 		.where('organizationId', '=', input.organizationId)
 		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')

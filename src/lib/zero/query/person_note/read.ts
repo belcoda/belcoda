@@ -20,6 +20,7 @@ export function readPersonNoteQuery({
 	const q = builder.personNote
 		.where('id', '=', input.personNoteId)
 		.related('user', (expr) => expr.one())
+		.related('mentions', (mentions) => mentions.orderBy('startIndex', 'asc'))
 		.where((expr) => personNoteReadPermissions(expr, ctx))
 		.one();
 	return q;
