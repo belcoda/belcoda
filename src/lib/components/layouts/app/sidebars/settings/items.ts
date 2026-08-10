@@ -9,6 +9,7 @@ export type SettingsItem = {
 	keywords: string[];
 	permissions: 'admin' | 'owner' | 'member';
 	dataTestId?: string;
+	enabled?: boolean;
 };
 
 export function resolveSettingsItemPath(path: Pathname): string {
@@ -136,6 +137,15 @@ export const settingsItems: SettingsItem[] = [
 		keywords: ['whatsapp', 'accounts', 'onboarding', 'meta', 'embedded', 'wa'],
 		permissions: 'admin',
 		dataTestId: 'settings-sidebar-whatsapp-accounts'
+	},
+	{
+		title: () => t`WhatsApp Linked Accounts`,
+		group: () => t`WhatsApp`,
+		url: '/settings/whatsapp/_accounts',
+		keywords: ['whatsapp', 'accounts', 'onboarding', 'link', 'qr code', 'wa'],
+		permissions: 'admin',
+		dataTestId: 'settings-sidebar-whatsapp-linked-accounts',
+		enabled: false
 	}
 ];
 

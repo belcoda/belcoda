@@ -2,6 +2,7 @@ import { defineMutator } from '@rocicorp/zero';
 import {
 	createWhatsappAccountMutatorSchema,
 	deleteWhatsappAccountMutatorSchema,
+	unlinkWhatsappAccountMutatorSchema,
 	updateWhatsappAccountMetadataMutatorSchema
 } from '$lib/schema/whatsapp-account';
 import * as dataFunctions from '$lib/server/api/data/whatsapp/account';
@@ -23,6 +24,16 @@ export const deleteWhatsappAccount = defineMutator(
 			throw new Error('deleteWhatsappAccount can only be called from the server');
 		}
 		await dataFunctions.deleteWhatsappAccount({ tx, ctx, args });
+	}
+);
+
+export const unlinkWhatsappAccount = defineMutator(
+	unlinkWhatsappAccountMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server') {
+			throw new Error('unlinkWhatsappAccount can only be called from the server');
+		}
+		await dataFunctions.unlinkWhatsappAccount({ tx, ctx, args });
 	}
 );
 
