@@ -1571,6 +1571,12 @@ export const activityRelations = relations(activity, ({ one }) => ({
 	whatsappMessage: one(whatsappMessage, {
 		fields: [activity.referenceId],
 		references: [whatsappMessage.id]
+	}),
+	// polymorphic relationship to personNote, used to exclude note_added activities
+	// whose note has been deleted from the activity list query
+	personNote: one(personNote, {
+		fields: [activity.referenceId],
+		references: [personNote.id]
 	})
 }));
 

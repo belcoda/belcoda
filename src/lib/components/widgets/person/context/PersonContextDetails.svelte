@@ -21,7 +21,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
-	import PersonNoteForm from '$lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte';
+	import NoteComposer from '$lib/components/widgets/notes/NoteComposer.svelte';
 	import { locale, t } from '$lib/index.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
 	import { appState } from '$lib/state.svelte';
@@ -226,7 +226,7 @@
 		</div>
 
 		{#if addingNote}
-			<PersonNoteForm personId={person.id} onNotesChanged={() => (addingNote = false)} />
+			<NoteComposer personId={person.id} onSaved={() => (addingNote = false)} />
 		{:else if latestNote}
 			<div class="border-s-2 border-primary/40 ps-3">
 				<p

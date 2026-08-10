@@ -6006,9 +6006,8 @@ msgstr "Gerencie suas preferências pessoais de conta e, se você for administra
 msgid "Failed to send WhatsApp message"
 msgstr "Falha ao enviar mensagem do WhatsApp"
 
-#: src/lib/components/widgets/activity/NoteAdded.svelte
-msgid "Note added"
-msgstr "Nota adicionada"
+#~ msgid "Note added"
+#~ msgstr "Nota adicionada"
 
 #: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
 #: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
@@ -6031,3 +6030,50 @@ msgstr "Marque um evento como favorito usando a estrela no cabeçalho para vê-l
 #: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
 msgid "Show all events"
 msgstr "Mostrar todos os eventos"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "User"
+msgstr "Usuário"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Internal note"
+msgstr "Nota interna"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "Note actions"
+msgstr "Ações da nota"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "Only your team can see this"
+msgstr "Somente sua equipe pode ver isso"
+
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Note"
+msgstr "Nota"
+
+#. 0: personDisplayName
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Internal note — {0} will not see this"
+msgstr "Nota interna — {0} não verá isso"
+
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Internal note — the person will not see this"
+msgstr "Nota interna — a pessoa não verá isso"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Write an internal note..."
+msgstr "Escreva uma nota interna..."
+
+#. 0: personDisplayName
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Internal note about {0}"
+msgstr "Nota interna sobre {0}"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Save note"
+msgstr "Salvar nota"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Failed to save note"
+msgstr "Falha ao salvar a nota"
