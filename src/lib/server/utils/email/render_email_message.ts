@@ -2,6 +2,7 @@ import { LexicalHTMLRenderer as LexicalHtmlRenderer } from '@tryghost/kg-lexical
 import { organization as organizationTable, person, user as userTable } from '$lib/schema/drizzle';
 import { templateVariableKeys, type TemplateVariableKey } from '$lib/schema/template-variables';
 import { isRenderableImageNode, normalizeLexicalBody } from './normalize_lexical_body';
+import { escapeHtml } from '$lib/utils/escape-html';
 
 const templateVariableKeySet = new Set<string>(templateVariableKeys);
 const templateVariableTokenPattern = /\{\{\s*([a-z_]+\.[a-z_]+)\s*\}\}/g;
@@ -33,15 +34,6 @@ function buildEmailTemplateValues({
 		'sender.name': sender?.name,
 		'sender.email': sender?.email
 	};
-}
-
-function escapeHtml(value: string) {
-	return value
-		.replaceAll('&', '&amp;')
-		.replaceAll('<', '&lt;')
-		.replaceAll('>', '&gt;')
-		.replaceAll('"', '&quot;')
-		.replaceAll("'", '&#39;');
 }
 
 function renderTemplateVariables({

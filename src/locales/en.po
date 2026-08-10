@@ -5944,6 +5944,52 @@ msgstr "Manage your personal account preferences and, if you're an admin, your w
 msgid "Failed to send WhatsApp message"
 msgstr "Failed to send WhatsApp message"
 
-#: src/lib/components/widgets/activity/NoteAdded.svelte
-msgid "Note added"
-msgstr "Note added"
+#~ msgid "Note added"
+#~ msgstr "Note added"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "User"
+msgstr "User"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Internal note"
+msgstr "Internal note"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "Note actions"
+msgstr "Note actions"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "Only your team can see this"
+msgstr "Only your team can see this"
+
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Note"
+msgstr "Note"
+
+#. 0: personDisplayName
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Internal note — {0} will not see this"
+msgstr "Internal note — {0} will not see this"
+
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Internal note — the person will not see this"
+msgstr "Internal note — the person will not see this"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Write an internal note..."
+msgstr "Write an internal note..."
+
+#. 0: personDisplayName
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Internal note about {0}"
+msgstr "Internal note about {0}"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Save note"
+msgstr "Save note"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Failed to save note"
+msgstr "Failed to save note"
