@@ -183,6 +183,13 @@
       "when": 1786325689512,
       "tag": "0025_sharp_shinko_yamashiro",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1786390318054,
+      "tag": "0026_plain_doctor_octopus",
+      "breakpoints": true
     }
   ]
 }

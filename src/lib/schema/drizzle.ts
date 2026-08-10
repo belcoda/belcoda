@@ -1002,6 +1002,28 @@ type PersonNoteDrizzleMatchesValibot = IsTrue<
 	typeof personNote.$inferSelect extends PersonNoteSchema ? true : false
 >;
 
+export const personNoteMention = pgTable(
+	'person_note_mention',
+	{
+		id: uuid('id').primaryKey(),
+		personNoteId: uuid('person_note_id')
+			.notNull()
+			.references(() => personNote.id, { onDelete: 'cascade' }),
+		mentionedUserId: uuid('mentioned_user_id')
+			.notNull()
+			.references(() => user.id),
+		startIndex: integer('start_index').notNull(),
+		length: integer('length').notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
+	},
+	(table) => [
+		unique('person_note_mention_position_unique').on(table.personNoteId, table.startIndex),
+		index('person_note_mention_user_note_idx').on(table.mentionedUserId, table.personNoteId),
+		check('person_note_mention_start_index_check', sql`${table.startIndex} >= 0`),
+		check('person_note_mention_length_check', sql`${table.length} > 0`)
+	]
+);
+
 // petition schema
 export const petition = pgTable('petition', {
 	id: uuid('id').primaryKey(),
@@ -1451,7 +1473,8 @@ export const tagRelations = relations(tag, ({ one, many }) => ({
 
 export const userRelations = relations(user, ({ one, many }) => ({
 	orgMemberships: many(member),
-	teamMemberships: many(teamMember)
+	teamMemberships: many(teamMember),
+	personNoteMentions: many(personNoteMention)
 }));
 
 export const teamRelations = relations(team, ({ one, many }) => ({
@@ -1743,7 +1766,7 @@ export const petitionSignatureRelations = relations(petitionSignature, ({ one })
 	})
 }));
 
-export const personNoteRelations = relations(personNote, ({ one }) => ({
+export const personNoteRelations = relations(personNote, ({ one, many }) => ({
 	person: one(person, {
 		fields: [personNote.personId],
 		references: [person.id]
@@ -1755,6 +1778,18 @@ export const personNoteRelations = relations(personNote, ({ one }) => ({
 	organization: one(organization, {
 		fields: [personNote.organizationId],
 		references: [organization.id]
+	}),
+	mentions: many(personNoteMention)
+}));
+
+export const personNoteMentionRelations = relations(personNoteMention, ({ one }) => ({
+	personNote: one(personNote, {
+		fields: [personNoteMention.personNoteId],
+		references: [personNote.id]
+	}),
+	mentionedUser: one(user, {
+		fields: [personNoteMention.mentionedUserId],
+		references: [user.id]
 	})
 }));
 
