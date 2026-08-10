@@ -19,6 +19,7 @@ import { listEvents } from '$lib/zero/query/event/list';
 import { readEvent } from '$lib/zero/query/event/read';
 
 // member_favourite
+import { listFavouritesByReferenceIds } from '$lib/zero/query/member_favourite/list';
 import { readFavourite } from '$lib/zero/query/member_favourite/read';
 
 // event_signup
@@ -42,6 +43,7 @@ import { listPersonImports } from '$lib/zero/query/person_import/list';
 
 // person_note
 import { listPersonNotes } from '$lib/zero/query/person_note/list';
+import { readPersonNote } from '$lib/zero/query/person_note/read';
 
 // person_tag
 import { listPersonTags } from '$lib/zero/query/person_tag/list';
@@ -103,6 +105,7 @@ export {
 	listEvents,
 	readEvent,
 	// member_favourite
+	listFavouritesByReferenceIds,
 	readFavourite,
 	// event_signup
 	listEventSignups,
@@ -122,6 +125,7 @@ export {
 	listPersonImports,
 	// person_note
 	listPersonNotes,
+	readPersonNote,
 	// person_tag
 	listPersonTags,
 	// person_team
@@ -196,6 +200,7 @@ export default defineQueries({
 		signups: listEventSignupsByEvent
 	},
 	favourite: {
+		listByReferenceIds: listFavouritesByReferenceIds,
 		read: readFavourite
 	},
 	eventSignup: {
@@ -219,7 +224,8 @@ export default defineQueries({
 		list: listPersonImports
 	},
 	personNote: {
-		list: listPersonNotes
+		list: listPersonNotes,
+		read: readPersonNote
 	},
 	personTag: {
 		list: listPersonTags

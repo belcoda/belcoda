@@ -35,9 +35,18 @@ export const eventSettingsSchema = object({
 
 export type EventSettings = InferOutput<typeof eventSettingsSchema>;
 
+export const signupChannelTypes = [
+	'eventPage',
+	'adminPanel',
+	'whatsapp',
+	'automationFlow'
+] as const;
+export const signupChannelType = picklist(signupChannelTypes);
+export type SignupChannelType = (typeof signupChannelTypes)[number];
+
 export const eventSignupDetails = object({
 	channel: object({
-		type: picklist(['eventPage', 'adminPanel', 'whatsapp'])
+		type: signupChannelType
 	}),
 	customFields: optional(surveyQuestionResponse, {})
 });

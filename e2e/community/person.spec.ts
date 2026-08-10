@@ -259,20 +259,34 @@ test.describe.serial('Community and person pages', () => {
 		await expect(page.getByTestId('person-note-item')).toHaveCount(30, { timeout: 15_000 });
 	});
 
-	test('owner can add a note from the notes drawer on the timeline', async ({ page }) => {
+	test('owner can add a note from the conversation composer on the timeline', async ({ page }) => {
 		const noteText = `E2E test note ${Date.now()}`;
 
 		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
 		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
 
-		await page.getByTestId('notes-action-notes-btn').click();
+		const composer = page.getByTestId('conversation-composer');
+		await expect(composer).toHaveAttribute('data-mode', 'message');
+		await composer.getByTestId('composer-mode-note').click();
+		await expect(composer).toHaveAttribute('data-mode', 'note');
 
-		const textarea = page.getByTestId('note-form-textarea');
+		const textarea = composer.getByTestId('note-form-textarea');
 		await expect(textarea).toBeVisible({ timeout: 10_000 });
 		await textarea.fill(noteText);
-		await page.getByTestId('note-form-submit').click();
+		await composer.getByTestId('note-form-submit').click();
 
+		// The note lands in the timeline itself, as a structured internal-note card...
+		const inlineNote = page.getByTestId('inline-note').last();
+		await expect(inlineNote).toContainText(noteText, { timeout: 10_000 });
+		await expect(inlineNote).toContainText('Internal note');
+
+		// ...and never as a WhatsApp message bubble. This is the property the mode switch
+		// exists for: a note must never be mistaken for something sent to the person.
+		await expect(page.locator('.message-text').filter({ hasText: noteText })).toHaveCount(0);
+
+		// The drawer lists it too.
+		await page.getByTestId('notes-action-notes-btn').click();
 		await expect(page.getByTestId('person-note-item').first()).toBeVisible({ timeout: 10_000 });
 		await expect(page.getByTestId('person-note-content').first()).toHaveText(noteText);
 
@@ -280,6 +294,52 @@ test.describe.serial('Community and person pages', () => {
 		const contextPanel = page.getByTestId('person-context-panel');
 		await expect(contextPanel).toBeVisible();
 		await expect(contextPanel.getByTestId('person-context-note')).toHaveText(noteText);
+	});
+
+	test('composer mode resets to message after navigating away and back', async ({ page }) => {
+		await loginAsOwner(page, PROJECT);
+		await page.goto(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+
+		const composer = page.getByTestId('conversation-composer');
+		await expect(composer).toHaveAttribute('data-mode', 'message');
+		await composer.getByTestId('composer-mode-note').click();
+		await expect(composer).toHaveAttribute('data-mode', 'note');
+
+		// Navigate to the profile page and back, rather than reloading, so a note-mode
+		// session on this person can never leak into a later visit to their timeline.
+		await page.getByTestId('person-timeline-display-name').click();
+		await expect(page).toHaveURL(`${ids.personPath}/profile`);
+
+		await page.goBack();
+		await expect(page).toHaveURL(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+		await expect(page.getByTestId('conversation-composer')).toHaveAttribute('data-mode', 'message');
+	});
+
+	test('owner can add a note from the notes drawer on the timeline', async ({ page }) => {
+		const noteText = `E2E drawer note ${Date.now()}`;
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto(ids.personPath);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible();
+
+		await page.getByTestId('notes-action-notes-btn').click();
+
+		// Scoped to the drawer: the conversation composer uses the same testids.
+		const drawer = page.getByTestId('person-notes-drawer');
+		const textarea = drawer.getByTestId('note-form-textarea');
+		await expect(textarea).toBeVisible({ timeout: 10_000 });
+		await textarea.fill(noteText);
+		await drawer.getByTestId('note-form-submit').click();
+
+		await expect(drawer.getByTestId('person-note-item').first()).toBeVisible({ timeout: 10_000 });
+		await expect(drawer.getByTestId('person-note-content').first()).toHaveText(noteText);
+
+		await page.keyboard.press('Escape');
+		await expect(page.getByTestId('inline-note').last()).toContainText(noteText, {
+			timeout: 10_000
+		});
 	});
 
 	test('owner can delete the person from the person profile page', async ({ page }) => {

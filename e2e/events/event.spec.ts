@@ -7,6 +7,7 @@ import { EventPublicPage } from '../pages/events/event-public-page.page';
 import { EventSurveyPage } from '../pages/events/event-survey.page';
 import { BASE_URL, getMockWabaId, getOrgSlug, slugifyTitle } from '../helpers/config';
 import { expectSidebarItemCountToReach } from '../helpers/infinite-scroll';
+import { authStoragePath } from '../helpers/auth-storage';
 import { loginAsOwner } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
@@ -22,6 +23,23 @@ async function expectEventSlugPreview(page: Page, title: string) {
 	await expect(async () => {
 		await expect(page.getByTestId('event-slug-preview')).toContainText(`/events/${expectedSlug}`);
 	}).toPass({ timeout: 15_000 });
+}
+
+async function setEventFavourite(detailPage: EventDetailPage, shouldBeFavourite: boolean) {
+	const { favouriteButton, page } = detailPage;
+	await expect(favouriteButton).toBeEnabled({ timeout: 15_000 });
+	const expectedState = shouldBeFavourite.toString();
+	if ((await favouriteButton.getAttribute('aria-pressed')) === expectedState) return;
+
+	await favouriteButton.click();
+	await expect(favouriteButton).toHaveAttribute('aria-pressed', expectedState, { timeout: 15_000 });
+	await expect(
+		page
+			.getByText(shouldBeFavourite ? 'Added to favourites' : 'Removed from favourites', {
+				exact: true
+			})
+			.last()
+	).toBeVisible({ timeout: 15_000 });
 }
 
 test.describe.serial('Events', () => {
@@ -420,6 +438,66 @@ test.describe.serial('Events', () => {
 		} finally {
 			await anon.close();
 		}
+	});
+});
+
+test.describe('Event favourites', () => {
+	test('event favourites persist and remain private to each member', async ({
+		page,
+		browser,
+		request
+	}) => {
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-events`, {
+			data: { count: 1 }
+		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedBody = (await seedResponse.json()) as { eventIds: string[] };
+		const eventId = seedBody.eventIds[0];
+		expect(eventId).toBeTruthy();
+
+		await loginAsOwner(page, PROJECT);
+		const ownerDetailPage = new EventDetailPage(page);
+		await ownerDetailPage.goto(eventId!);
+		await ownerDetailPage.waitForLoaded();
+
+		await setEventFavourite(ownerDetailPage, true);
+		await page.reload();
+		await ownerDetailPage.waitForLoaded();
+		await expect(ownerDetailPage.favouriteButton).toHaveAttribute('aria-pressed', 'true', {
+			timeout: 15_000
+		});
+
+		const adminContext = await browser.newContext({
+			baseURL: BASE_URL,
+			storageState: authStoragePath(PROJECT, 'admin')
+		});
+		const adminPage = await adminContext.newPage();
+		try {
+			const adminDetailPage = new EventDetailPage(adminPage);
+			await adminDetailPage.goto(eventId!);
+			await adminDetailPage.waitForLoaded();
+			await expect(adminDetailPage.favouriteButton).toHaveAttribute('aria-pressed', 'false', {
+				timeout: 15_000
+			});
+
+			await setEventFavourite(adminDetailPage, true);
+			await setEventFavourite(adminDetailPage, false);
+		} finally {
+			await adminContext.close();
+		}
+
+		await page.reload();
+		await ownerDetailPage.waitForLoaded();
+		await expect(ownerDetailPage.favouriteButton).toHaveAttribute('aria-pressed', 'true', {
+			timeout: 15_000
+		});
+
+		await setEventFavourite(ownerDetailPage, false);
+		await page.reload();
+		await ownerDetailPage.waitForLoaded();
+		await expect(ownerDetailPage.favouriteButton).toHaveAttribute('aria-pressed', 'false', {
+			timeout: 15_000
+		});
 	});
 });
 

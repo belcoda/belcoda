@@ -111,6 +111,7 @@
 		"awesome-phonenumber": "^7.8.0",
 		"better-auth": "^1.6.19",
 		"country-list": "^2.4.1",
+		"cron-schedule": "^6.0.0",
 		"drizzle-seed": "^0.3.1",
 		"drizzle-valibot": "^0.4.2",
 		"drizzle-zero": "^0.20.0",

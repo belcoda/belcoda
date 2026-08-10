@@ -78,6 +78,14 @@ export const whatsappMessage = v.object({
 });
 export type WhatsappMessage = v.InferOutput<typeof whatsappMessage>;
 
+export const outgoingWhatsAppMessageDataSchema = v.object({
+	text: whatsappMessage.entries.text,
+	image_url: whatsappMessage.entries.image_url,
+	sticker_url: whatsappMessage.entries.sticker_url,
+	video_url: whatsappMessage.entries.video_url,
+	audio_url: whatsappMessage.entries.audio_url
+});
+
 export const whatsappTemplateMessage = v.object({
 	id: uuid,
 	header: v.optional(
