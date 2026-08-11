@@ -15,7 +15,7 @@
 </script>
 
 <div class="text-sm leading-relaxed whitespace-pre-wrap {className ?? ''}" data-testid={testId}>
-	{#each segments as segment}
+	{#each segments as segment, index (`${segment.isMention}:${segment.text}:${index}`)}
 		{#if segment.isMention}
 			<strong class="font-semibold" data-note-mention>{segment.text}</strong>
 		{:else}
