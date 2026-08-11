@@ -68,8 +68,11 @@
 				<div>
 					<DropdownMenu.Root>
 						<DropdownMenu.Trigger>
-							<Button size="icon" class="px-1 py-0.5 text-muted-foreground" variant="ghost"
-								><EllipsisIcon /></Button
+							<Button
+								size="icon"
+								class="px-1 py-0.5 text-muted-foreground"
+								variant="ghost"
+								aria-label={t`Note actions`}><EllipsisIcon /></Button
 							>
 						</DropdownMenu.Trigger>
 						<DropdownMenu.Content>
