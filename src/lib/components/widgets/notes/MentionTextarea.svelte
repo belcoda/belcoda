@@ -32,6 +32,7 @@
 		onkeydown,
 		onkeyup,
 		onclick,
+		onscroll,
 		onblur,
 		...textareaProps
 	}: Props = $props();
@@ -40,6 +41,7 @@
 	let activeQuery = $state<ActiveMentionQuery | null>(null);
 	let selectedIndex = $state(0);
 	let previousNote = value;
+	let pickerPosition = $state({ left: 0, top: 0, width: 320 });
 
 	const usersFilter = $derived(
 		getListFilter(appState.organizationId, {
@@ -63,6 +65,78 @@
 			selectedIndex = 0;
 		}
 		activeQuery = nextQuery;
+		if (nextQuery) updatePickerPosition(textarea);
+	}
+
+	function updatePickerPosition(textarea: HTMLTextAreaElement) {
+		const container = textarea.parentElement;
+		if (!container) return;
+		const caret = getTextareaCaretPosition(textarea, textarea.selectionStart);
+		const computedStyle = getComputedStyle(textarea);
+		const lineHeight = Number.parseFloat(computedStyle.lineHeight);
+		const resolvedLineHeight = Number.isFinite(lineHeight)
+			? lineHeight
+			: Number.parseFloat(computedStyle.fontSize) * 1.2;
+		const width = Math.min(320, container.clientWidth);
+		const caretLeft = textarea.offsetLeft + caret.left - textarea.scrollLeft;
+
+		pickerPosition = {
+			left: Math.min(Math.max(0, caretLeft), Math.max(0, container.clientWidth - width)),
+			top: textarea.offsetTop + caret.top - textarea.scrollTop + resolvedLineHeight,
+			width
+		};
+	}
+
+	function getTextareaCaretPosition(textarea: HTMLTextAreaElement, position: number) {
+		const mirror = document.createElement('div');
+		const marker = document.createElement('span');
+		const computedStyle = getComputedStyle(textarea);
+		const copiedProperties = [
+			'box-sizing',
+			'width',
+			'border-top-width',
+			'border-right-width',
+			'border-bottom-width',
+			'border-left-width',
+			'padding-top',
+			'padding-right',
+			'padding-bottom',
+			'padding-left',
+			'font-family',
+			'font-size',
+			'font-style',
+			'font-variant',
+			'font-weight',
+			'font-stretch',
+			'line-height',
+			'letter-spacing',
+			'text-align',
+			'text-indent',
+			'text-transform',
+			'tab-size',
+			'word-spacing'
+		];
+
+		for (const property of copiedProperties) {
+			mirror.style.setProperty(property, computedStyle.getPropertyValue(property));
+		}
+		mirror.style.position = 'absolute';
+		mirror.style.visibility = 'hidden';
+		mirror.style.overflow = 'hidden';
+		mirror.style.whiteSpace = 'pre-wrap';
+		mirror.style.overflowWrap = 'break-word';
+		mirror.style.top = '0';
+		mirror.style.left = '-9999px';
+
+		mirror.textContent = textarea.value.slice(0, position);
+		if (mirror.textContent.endsWith('\n')) mirror.textContent += '\u200b';
+		marker.textContent = textarea.value.slice(position) || '\u200b';
+		mirror.append(marker);
+		document.body.append(mirror);
+
+		const coordinates = { left: marker.offsetLeft, top: marker.offsetTop };
+		mirror.remove();
+		return coordinates;
 	}
 
 	function selectUser(user: { id: string; name: string }) {
@@ -142,6 +216,10 @@
 		updateActiveQuery(event.currentTarget);
 		onclick?.(event);
 	}}
+	onscroll={(event) => {
+		if (activeQuery) updatePickerPosition(event.currentTarget);
+		onscroll?.(event);
+	}}
 	onblur={(event) => {
 		activeQuery = null;
 		onblur?.(event);
@@ -153,7 +231,10 @@
 		id={listboxId}
 		role="listbox"
 		aria-label={t`Mention a user`}
-		class="absolute top-full right-0 left-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+		class="absolute z-50 mt-1 max-h-64 overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+		style:left={`${pickerPosition.left}px`}
+		style:top={`${pickerPosition.top}px`}
+		style:width={`${pickerPosition.width}px`}
 		data-testid="note-mention-picker"
 	>
 		{#if usersQuery?.details.type === 'error'}
