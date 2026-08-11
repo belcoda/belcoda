@@ -1,9 +1,9 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
 
-import { personNote } from '$lib/schema/drizzle';
+import { member, personNote, personNoteMention } from '$lib/schema/drizzle';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
-import { eq, and, isNull, count, ilike } from 'drizzle-orm';
+import { eq, and, isNull, count, ilike, inArray } from 'drizzle-orm';
 
 import { parse } from 'valibot';
 import {
@@ -15,6 +15,7 @@ import {
 	type DeleteMutatorSchemaZero,
 	personNoteApiSchema
 } from '$lib/schema/person-note';
+import type { WritePersonNoteMentionZero } from '$lib/schema/person-note-mention';
 
 import { getPerson } from '$lib/server/api/data/person/person';
 import { getOrganizationMember } from '$lib/server/api/data/organization/member';
@@ -24,6 +25,29 @@ import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
+
+async function requireMentionedUsersInOrganization({
+	tx,
+	organizationId,
+	mentions
+}: {
+	tx: ServerTransaction;
+	organizationId: string;
+	mentions: readonly WritePersonNoteMentionZero[];
+}) {
+	const mentionedUserIds = [...new Set(mentions.map((mention) => mention.mentionedUserId))];
+	if (mentionedUserIds.length === 0) return;
+
+	const memberships = await tx.dbTransaction.wrappedTransaction
+		.select({ userId: member.userId })
+		.from(member)
+		.where(
+			and(eq(member.organizationId, organizationId), inArray(member.userId, mentionedUserIds))
+		);
+	if (memberships.length !== mentionedUserIds.length) {
+		throw new Error('Every mentioned user must be a member of the organization');
+	}
+}
 
 export async function createPersonNote({
 	tx,
@@ -48,6 +72,11 @@ export async function createPersonNote({
 		ctx,
 		args: { organizationId: parsed.metadata.organizationId, personId: parsed.metadata.personId }
 	});
+	await requireMentionedUsersInOrganization({
+		tx,
+		organizationId: parsed.metadata.organizationId,
+		mentions: parsed.input.mentions
+	});
 	const personNoteToCreate: typeof personNote.$inferInsert = {
 		id: args.metadata.personNoteId,
 		organizationId: args.metadata.organizationId,
@@ -64,6 +93,15 @@ export async function createPersonNote({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to create person note');
+	}
+	if (parsed.input.mentions.length > 0) {
+		await tx.dbTransaction.wrappedTransaction.insert(personNoteMention).values(
+			parsed.input.mentions.map((mention) => ({
+				...mention,
+				personNoteId: result.id,
+				createdAt: new Date()
+			}))
+		);
 	}
 	const queue = await getQueue();
 	queue.insertActivity({
@@ -108,12 +146,18 @@ export async function updatePersonNote({
 	if (!personNoteRecord) {
 		throw new Error('Person note not found');
 	}
+	await requireMentionedUsersInOrganization({
+		tx,
+		organizationId: parsed.metadata.organizationId,
+		mentions: parsed.input.mentions
+	});
 	const result = await _updatePersonNoteNoPermissionsCheckUnsafe({
 		tx,
 		personId: personNoteRecord.personId,
 		noteId: parsed.metadata.personNoteId,
 		organizationId: parsed.metadata.organizationId,
-		note: parsed.input.note
+		note: parsed.input.note,
+		mentions: parsed.input.mentions
 	});
 	return result;
 }
@@ -123,13 +167,15 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 	noteId,
 	organizationId,
 	personId,
-	note
+	note,
+	mentions
 }: {
 	tx: ServerTransaction;
 	noteId: string;
 	personId: string;
 	organizationId: string;
 	note: string;
+	mentions?: readonly WritePersonNoteMentionZero[];
 }) {
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(personNote)
@@ -148,6 +194,20 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to update person note');
+	}
+	if (mentions !== undefined) {
+		await tx.dbTransaction.wrappedTransaction
+			.delete(personNoteMention)
+			.where(eq(personNoteMention.personNoteId, noteId));
+		if (mentions.length > 0) {
+			await tx.dbTransaction.wrappedTransaction.insert(personNoteMention).values(
+				mentions.map((mention) => ({
+					...mention,
+					personNoteId: noteId,
+					createdAt: new Date()
+				}))
+			);
+		}
 	}
 	const queue = await getQueue();
 	await queue.triggerWebhook(
