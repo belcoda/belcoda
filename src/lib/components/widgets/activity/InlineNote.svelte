@@ -43,7 +43,8 @@
 		note
 			? ({
 					...note,
-					user: { ...note.user!, twoFactorEnabled: note.user?.twoFactorEnabled ?? false }
+					user: { ...note.user!, twoFactorEnabled: note.user?.twoFactorEnabled ?? false },
+					mentions: [...note.mentions]
 				} as ReadPersonNoteWithUserZero)
 			: undefined
 	);
