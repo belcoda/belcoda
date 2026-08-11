@@ -18,6 +18,7 @@
 	import MentionTextarea from '$lib/components/widgets/notes/MentionTextarea.svelte';
 	import type { WritePersonNoteMentionZero } from '$lib/schema/person-note-mention';
 	import { adjustMentionsForTrimmedNote } from '$lib/utils/person-note/mentions';
+	import { untrack } from 'svelte';
 
 	let {
 		note,
@@ -31,12 +32,14 @@
 	import { toast } from 'svelte-sonner';
 
 	let mentions = $state<WritePersonNoteMentionZero[]>(
-		note.mentions.map(({ id, mentionedUserId, startIndex, length }) => ({
-			id,
-			mentionedUserId,
-			startIndex,
-			length
-		}))
+		untrack(() =>
+			note.mentions.map(({ id, mentionedUserId, startIndex, length }) => ({
+				id,
+				mentionedUserId,
+				startIndex,
+				length
+			}))
+		)
 	);
 
 	const { form, data, errors, Errors, helpers } = createForm({
@@ -49,7 +52,7 @@
 				const parsed = parse(updateMutatorSchemaZero, {
 					input: {
 						note: data.note,
-						mentions: adjustMentionsForTrimmedNote($data.note ?? data.note, data.note, mentions)
+						mentions: adjustMentionsForTrimmedNote(currentNote, data.note, mentions)
 					},
 					metadata: {
 						personId: note.personId,
@@ -67,6 +70,7 @@
 			}
 		}
 	});
+	let currentNote = $derived($data.note ?? '');
 </script>
 
 <form use:form.enhance>
