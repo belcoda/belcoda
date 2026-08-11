@@ -772,15 +772,18 @@ msgid "Add a note or comment..."
 msgstr "Adicione uma nota ou comentário..."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
 msgid "Are you sure you want to delete this note?"
 msgstr "Tem certeza de que deseja excluir esta nota?"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
 msgid "Note deleted"
 msgstr "Nota excluída"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Name.svelte
 #: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
@@ -790,6 +793,7 @@ msgstr "Editar"
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -1398,6 +1402,7 @@ msgstr "Digite o assunto do e-mail..."
 
 #: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
 msgstr "Mensagem"
@@ -5641,9 +5646,11 @@ msgid "Digest frequency"
 msgstr "Frequência do resumo"
 
 #: src/routes/(app)/settings/notifications/+page.svelte
+#: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Weekly"
 msgstr "Semanal"
 
+#: src/routes/(app)/settings/notifications/+page.svelte
 #: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Daily"
 msgstr "Diário"
@@ -5652,6 +5659,7 @@ msgstr "Diário"
 msgid "Saved"
 msgstr "Salvo"
 
+#: src/routes/(app)/settings/notifications/+page.svelte
 #: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Failed to save notification preferences"
 msgstr "Falha ao salvar preferências de notificação"
@@ -5705,7 +5713,7 @@ msgstr "Ainda não há nada aqui"
 msgid "Timeline"
 msgstr ""
 
-#: src/routes/(app)/community/[personId]/+page.svelte
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
 msgstr "O WhatsApp não está configurado para esta organização. Crie uma conta comercial do WhatsApp nas configurações."
 
@@ -6192,6 +6200,7 @@ msgstr "Apenas administradores e proprietários da organização podem vincular 
 #: src/routes/(app)/settings/whatsapp/_accounts/new/user/+page.svelte
 msgid "Link a personal WhatsApp account"
 msgstr "Vincular uma conta pessoal do WhatsApp"
+
 #: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
 #: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
 msgid "Favourite"
@@ -6223,6 +6232,7 @@ msgstr "Usuário"
 msgid "Internal note"
 msgstr "Nota interna"
 
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/lib/components/widgets/activity/InlineNote.svelte
 msgid "Note actions"
 msgstr "Ações da nota"
@@ -6260,3 +6270,27 @@ msgstr "Salvar nota"
 #: src/lib/components/widgets/notes/NoteComposer.svelte
 msgid "Failed to save note"
 msgstr "Falha ao salvar a nota"
+
+#: src/lib/components/widgets/notes/MentionTextarea.svelte
+msgid "Mention a user"
+msgstr ""
+
+#: src/lib/components/widgets/notes/MentionTextarea.svelte
+msgid "Unable to load organization members."
+msgstr ""
+
+#: src/lib/components/widgets/notes/MentionTextarea.svelte
+msgid "Loading users..."
+msgstr ""
+
+#: src/lib/components/widgets/notes/MentionTextarea.svelte
+msgid "No users found."
+msgstr ""
+
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+msgid "Note updated"
+msgstr ""
+
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+msgid "Failed to update note"
+msgstr ""
