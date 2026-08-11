@@ -1,7 +1,11 @@
 import * as v from 'valibot';
 import * as helpers from './helpers';
 import { readUserZero } from './user';
-import { readPersonNoteMentionZero } from './person-note-mention';
+import {
+	hasValidMentionSpans,
+	readPersonNoteMentionZero,
+	writePersonNoteMentionZero
+} from './person-note-mention';
 
 export const personNoteSchema = v.object({
 	id: helpers.uuid,
@@ -70,6 +74,17 @@ export const updatePersonNoteZero = v.object({
 });
 export type UpdatePersonNoteZero = v.InferOutput<typeof updatePersonNoteZero>;
 
+const writePersonNoteWithMentionsZero = v.pipe(
+	v.object({
+		note: personNoteSchema.entries.note,
+		mentions: v.optional(v.array(writePersonNoteMentionZero), [])
+	}),
+	v.check(
+		(input) => hasValidMentionSpans(input.note, input.mentions),
+		'Mentions must point to non-overlapping @-prefixed ranges within the note'
+	)
+);
+
 export const mutatorMetadata = v.object({
 	personNoteId: helpers.uuid,
 	organizationId: helpers.uuid,
@@ -79,13 +94,13 @@ export const mutatorMetadata = v.object({
 export type MutatorMetadata = v.InferOutput<typeof mutatorMetadata>;
 
 export const createMutatorSchemaZero = v.object({
-	input: createPersonNoteZero,
+	input: writePersonNoteWithMentionsZero,
 	metadata: mutatorMetadata
 });
 export type CreateMutatorSchemaZero = v.InferOutput<typeof createMutatorSchemaZero>;
 
 export const updateMutatorSchemaZero = v.object({
-	input: updatePersonNoteZero,
+	input: writePersonNoteWithMentionsZero,
 	metadata: mutatorMetadata
 });
 export type UpdateMutatorSchemaZero = v.InferOutput<typeof updateMutatorSchemaZero>;
