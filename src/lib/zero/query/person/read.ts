@@ -57,5 +57,7 @@ export type ReadPersonOutputWithReadonlyArrays = Omit<
 > & {
 	readonly tags: readonly ReadPersonOutput['tags'][number][];
 	readonly teams: readonly ReadPersonOutput['teams'][number][];
-	readonly notes: readonly ReadPersonOutput['notes'][number][];
+	readonly notes: readonly (Omit<ReadPersonOutput['notes'][number], 'mentions'> & {
+		readonly mentions: readonly ReadPersonOutput['notes'][number]['mentions'][number][];
+	})[];
 };
