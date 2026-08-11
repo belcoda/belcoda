@@ -15,6 +15,9 @@
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 	import { t } from '$lib/index.svelte';
+	import MentionTextarea from '$lib/components/widgets/notes/MentionTextarea.svelte';
+	import type { WritePersonNoteMentionZero } from '$lib/schema/person-note-mention';
+	import { adjustMentionsForTrimmedNote } from '$lib/utils/person-note/mentions';
 
 	let {
 		note,
@@ -26,27 +29,42 @@
 		onNotesChanged?: () => void;
 	} = $props();
 	import { toast } from 'svelte-sonner';
+
+	let mentions = $state<WritePersonNoteMentionZero[]>(
+		note.mentions.map(({ id, mentionedUserId, startIndex, length }) => ({
+			id,
+			mentionedUserId,
+			startIndex,
+			length
+		}))
+	);
+
 	const { form, data, errors, Errors, helpers } = createForm({
 		schema: updatePersonNoteZero,
 		initialData: {
 			note: (() => note.note ?? '')()
 		},
 		onSubmit: async (data) => {
-			const parsed = parse(updateMutatorSchemaZero, {
-				input: {
-					note: data.note
-				},
-				metadata: {
-					personId: note.personId,
-					userId: appState.userId,
-					organizationId: appState.organizationId,
-					personNoteId: note.id
-				}
-			});
-			z.mutate(mutators.personNote.update(parsed));
-			onNotesChanged?.();
-			toast.success('Note updated');
-			editOpen = false;
+			try {
+				const parsed = parse(updateMutatorSchemaZero, {
+					input: {
+						note: data.note,
+						mentions: adjustMentionsForTrimmedNote($data.note ?? data.note, data.note, mentions)
+					},
+					metadata: {
+						personId: note.personId,
+						userId: appState.userId,
+						organizationId: appState.organizationId,
+						personNoteId: note.id
+					}
+				});
+				await z.mutate(mutators.personNote.update(parsed)).server;
+				onNotesChanged?.();
+				toast.success(t`Note updated`);
+				editOpen = false;
+			} catch {
+				toast.error(t`Failed to update note`);
+			}
 		}
 	});
 </script>
@@ -56,10 +74,11 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<InputGroup.Root>
-					<InputGroup.Textarea
+					<MentionTextarea
 						{...props}
 						placeholder={t`Edit note...`}
 						bind:value={$data.note}
+						bind:mentions
 						onkeydown={(e) => {
 							if (e.key === 'Enter' && !e.shiftKey && (e.metaKey || e.ctrlKey)) {
 								e.preventDefault();
