@@ -14,6 +14,8 @@
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
+	import MentionTextarea from '$lib/components/widgets/notes/MentionTextarea.svelte';
+	import type { WritePersonNoteMentionZero } from '$lib/schema/person-note-mention';
 
 	type Props = {
 		personId: string;
@@ -25,14 +27,13 @@
 
 	const { personId, personDisplayName, autofocus = false, onSaved }: Props = $props();
 
-	/**
-	 * Single place where the note text becomes mutator arguments. Mentions will add a
-	 * `mentionedUserIds` field here and nowhere else in this component.
-	 */
-	function buildCreateNoteArgs(note: string) {
+	let mentions = $state<WritePersonNoteMentionZero[]>([]);
+
+	function buildCreateNoteArgs(note: string, noteMentions: WritePersonNoteMentionZero[]) {
 		return parse(createMutatorSchemaZero, {
 			input: {
-				note
+				note,
+				mentions: noteMentions
 			},
 			metadata: {
 				personId: personId,
@@ -43,6 +44,17 @@
 		});
 	}
 
+	function mentionsForSubmittedNote(note: string) {
+		const currentNote = $data.note ?? note;
+		if (currentNote === note || currentNote.trim() !== note) return mentions;
+
+		const removedFromStart = currentNote.length - currentNote.trimStart().length;
+		return mentions.map((mention) => ({
+			...mention,
+			startIndex: mention.startIndex - removedFromStart
+		}));
+	}
+
 	const { form, data } = createForm({
 		schema: createPersonNoteZero,
 		initialData: {
@@ -51,8 +63,13 @@
 		validateOnLoad: false,
 		onSubmit: async (data) => {
 			try {
-				await z.mutate(mutators.personNote.create(buildCreateNoteArgs(data.note))).server;
+				await z.mutate(
+					mutators.personNote.create(
+						buildCreateNoteArgs(data.note, mentionsForSubmittedNote(data.note))
+					)
+				).server;
 				onSaved?.();
+				mentions = [];
 				form.reset();
 			} catch {
 				toast.error(t`Failed to save note`);
@@ -68,7 +85,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<InputGroup.Root class="border-amber-300 bg-amber-50 focus-within:border-amber-500">
-					<InputGroup.Textarea
+					<MentionTextarea
 						{...props}
 						{autofocus}
 						placeholder={t`Write an internal note...`}
@@ -77,6 +94,7 @@
 							: t`Internal note`}
 						class="text-amber-950 placeholder:text-amber-700/60"
 						bind:value={$data.note}
+						bind:mentions
 						data-testid="note-form-textarea"
 						onkeydown={(e) => {
 							if (e.key === 'Enter' && !e.shiftKey && (e.metaKey || e.ctrlKey)) {
