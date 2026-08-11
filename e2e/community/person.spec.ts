@@ -326,6 +326,14 @@ test.describe.serial('Community and person pages', () => {
 
 		const picker = composer.getByTestId('note-mention-picker');
 		await expect(picker).toBeVisible({ timeout: 10_000 });
+		const [textareaBox, pickerBox] = await Promise.all([
+			textarea.boundingBox(),
+			picker.boundingBox()
+		]);
+		expect(textareaBox).not.toBeNull();
+		expect(pickerBox).not.toBeNull();
+		expect(pickerBox!.y).toBeGreaterThan(textareaBox!.y);
+		expect(pickerBox!.y).toBeLessThan(textareaBox!.y + textareaBox!.height);
 		await picker.getByRole('option', { name: new RegExp(mentionedUser.name) }).click();
 		await textarea.press('End');
 		await textarea.pressSequentially(' please review');
