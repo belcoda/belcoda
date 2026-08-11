@@ -16,6 +16,7 @@
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 	import MentionTextarea from '$lib/components/widgets/notes/MentionTextarea.svelte';
 	import type { WritePersonNoteMentionZero } from '$lib/schema/person-note-mention';
+	import { adjustMentionsForTrimmedNote } from '$lib/utils/person-note/mentions';
 
 	type Props = {
 		personId: string;
@@ -46,13 +47,7 @@
 
 	function mentionsForSubmittedNote(note: string) {
 		const currentNote = $data.note ?? note;
-		if (currentNote === note || currentNote.trim() !== note) return mentions;
-
-		const removedFromStart = currentNote.length - currentNote.trimStart().length;
-		return mentions.map((mention) => ({
-			...mention,
-			startIndex: mention.startIndex - removedFromStart
-		}));
+		return adjustMentionsForTrimmedNote(currentNote, note, mentions);
 	}
 
 	const { form, data } = createForm({
