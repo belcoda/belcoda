@@ -42,7 +42,7 @@
 		)
 	);
 
-	const { form, data, errors, Errors, helpers } = createForm({
+	const { form, data } = createForm({
 		schema: updatePersonNoteZero,
 		initialData: {
 			note: (() => note.note ?? '')()
