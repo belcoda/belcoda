@@ -1,0 +1,88 @@
+import type { WritePersonNoteMentionZero } from '$lib/schema/person-note-mention';
+
+export type ActiveMentionQuery = {
+	startIndex: number;
+	endIndex: number;
+	searchString: string;
+};
+
+export function findActiveMentionQuery(
+	note: string,
+	cursor: number,
+	mentions: readonly WritePersonNoteMentionZero[]
+): ActiveMentionQuery | null {
+	if (cursor < 1 || cursor > note.length) return null;
+
+	const startIndex = note.lastIndexOf('@', cursor - 1);
+	if (startIndex < 0) return null;
+	const precedingCharacter = note[startIndex - 1];
+	if (precedingCharacter && !/[\s([{]/u.test(precedingCharacter)) return null;
+
+	const searchString = note.slice(startIndex + 1, cursor);
+	if (!/^[\p{L}\p{N} .'-]*$/u.test(searchString)) return null;
+	if (mentions.some((mention) => mention.startIndex === startIndex)) return null;
+
+	return { startIndex, endIndex: cursor, searchString };
+}
+
+export function adjustMentionsForTextChange(
+	previousNote: string,
+	nextNote: string,
+	mentions: readonly WritePersonNoteMentionZero[]
+): WritePersonNoteMentionZero[] {
+	let prefixLength = 0;
+	while (
+		prefixLength < previousNote.length &&
+		prefixLength < nextNote.length &&
+		previousNote[prefixLength] === nextNote[prefixLength]
+	) {
+		prefixLength += 1;
+	}
+
+	let suffixLength = 0;
+	while (
+		suffixLength < previousNote.length - prefixLength &&
+		suffixLength < nextNote.length - prefixLength &&
+		previousNote[previousNote.length - 1 - suffixLength] ===
+			nextNote[nextNote.length - 1 - suffixLength]
+	) {
+		suffixLength += 1;
+	}
+
+	const previousChangeEnd = previousNote.length - suffixLength;
+	const delta = nextNote.length - previousNote.length;
+
+	return mentions.flatMap((mention) => {
+		const mentionEnd = mention.startIndex + mention.length;
+		if (previousChangeEnd <= mention.startIndex) {
+			return [{ ...mention, startIndex: mention.startIndex + delta }];
+		}
+		if (prefixLength >= mentionEnd) return [mention];
+		return [];
+	});
+}
+
+export function insertMention(
+	note: string,
+	query: ActiveMentionQuery,
+	mentions: readonly WritePersonNoteMentionZero[],
+	user: { id: string; name: string },
+	mentionId: string
+) {
+	const mentionText = `@${user.name}`;
+	const nextNote = `${note.slice(0, query.startIndex)}${mentionText}${note.slice(query.endIndex)}`;
+	const adjustedMentions = adjustMentionsForTextChange(note, nextNote, mentions);
+	return {
+		note: nextNote,
+		cursor: query.startIndex + mentionText.length,
+		mentions: [
+			...adjustedMentions,
+			{
+				id: mentionId,
+				mentionedUserId: user.id,
+				startIndex: query.startIndex,
+				length: mentionText.length
+			}
+		].sort((a, b) => a.startIndex - b.startIndex)
+	};
+}
