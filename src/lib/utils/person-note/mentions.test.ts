@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { WritePersonNoteMentionZero } from '$lib/schema/person-note-mention';
-import { adjustMentionsForTextChange, findActiveMentionQuery, insertMention } from './mentions';
+import {
+	adjustMentionsForTextChange,
+	adjustMentionsForTrimmedNote,
+	findActiveMentionQuery,
+	insertMention
+} from './mentions';
 
 const userId = '019cdd3b-6c54-70d8-8ea7-8ff0f922691f';
 const mentionId = '019cdd3b-6c54-70d8-8ea7-8ff0f9226920';
@@ -40,6 +45,16 @@ describe('adjustMentionsForTextChange', () => {
 
 	it('removes mention metadata when its visible text is edited', () => {
 		expect(adjustMentionsForTextChange('Hello @Ada', 'Hello @Ava', [adaMention])).toEqual([]);
+	});
+});
+
+describe('adjustMentionsForTrimmedNote', () => {
+	it('accounts for leading whitespace removed by note validation', () => {
+		expect(
+			adjustMentionsForTrimmedNote('  Hello @Ada  ', 'Hello @Ada', [
+				{ ...adaMention, startIndex: 8 }
+			])
+		).toEqual([adaMention]);
 	});
 });
 

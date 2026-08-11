@@ -86,3 +86,17 @@ export function insertMention(
 		].sort((a, b) => a.startIndex - b.startIndex)
 	};
 }
+
+export function adjustMentionsForTrimmedNote(
+	previousNote: string,
+	trimmedNote: string,
+	mentions: readonly WritePersonNoteMentionZero[]
+) {
+	if (previousNote === trimmedNote || previousNote.trim() !== trimmedNote) return [...mentions];
+
+	const removedFromStart = previousNote.length - previousNote.trimStart().length;
+	return mentions.map((mention) => ({
+		...mention,
+		startIndex: mention.startIndex - removedFromStart
+	}));
+}
