@@ -4,7 +4,8 @@ import {
 	adjustMentionsForTextChange,
 	adjustMentionsForTrimmedNote,
 	findActiveMentionQuery,
-	insertMention
+	insertMention,
+	splitNoteByMentions
 } from './mentions';
 
 const userId = '019cdd3b-6c54-70d8-8ea7-8ff0f922691f';
@@ -16,6 +17,35 @@ const adaMention: WritePersonNoteMentionZero = {
 	startIndex: 6,
 	length: 4
 };
+
+describe('splitNoteByMentions', () => {
+	it('splits plain text and confirmed mentions in display order', () => {
+		expect(
+			splitNoteByMentions('Hello @Ada and @Grace', [
+				adaMention,
+				{ ...adaMention, startIndex: 15, length: 6 }
+			])
+		).toEqual([
+			{ text: 'Hello ', isMention: false },
+			{ text: '@Ada', isMention: true },
+			{ text: ' and ', isMention: false },
+			{ text: '@Grace', isMention: true }
+		]);
+	});
+
+	it('renders invalid or overlapping ranges as ordinary text', () => {
+		expect(
+			splitNoteByMentions('Hello @Ada', [
+				{ ...adaMention, startIndex: 6, length: 4 },
+				{ ...adaMention, startIndex: 7, length: 3 },
+				{ ...adaMention, startIndex: 20, length: 4 }
+			])
+		).toEqual([
+			{ text: 'Hello ', isMention: false },
+			{ text: '@Ada', isMention: true }
+		]);
+	});
+});
 
 describe('findActiveMentionQuery', () => {
 	it('finds a partial, multi-word mention at the cursor', () => {

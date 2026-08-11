@@ -15,6 +15,7 @@
 	import { toast } from 'svelte-sonner';
 	import { appState } from '$lib/state.svelte';
 	import { locale, t } from '$lib/index.svelte';
+	import NoteBody from '$lib/components/widgets/notes/NoteBody.svelte';
 	const timeAgo = getTimeAgo(locale.current);
 	const {
 		note,
@@ -84,7 +85,12 @@
 		{#if editOpen}
 			<EditNote {note} bind:editOpen {onNotesChanged} />
 		{:else}
-			<div class="prose prose-sm" data-testid="person-note-content">{note.note}</div>
+			<NoteBody
+				note={note.note}
+				mentions={note.mentions}
+				class="prose prose-sm"
+				testId="person-note-content"
+			/>
 		{/if}
 	</Item.Content>
 </Item.Root>
