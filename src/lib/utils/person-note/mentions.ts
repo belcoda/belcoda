@@ -6,6 +6,42 @@ export type ActiveMentionQuery = {
 	searchString: string;
 };
 
+export type NoteMentionSegment = {
+	text: string;
+	isMention: boolean;
+};
+
+export function splitNoteByMentions(
+	note: string,
+	mentions: readonly Pick<WritePersonNoteMentionZero, 'startIndex' | 'length'>[]
+): NoteMentionSegment[] {
+	const segments: NoteMentionSegment[] = [];
+	let cursor = 0;
+
+	for (const mention of [...mentions].sort((a, b) => a.startIndex - b.startIndex)) {
+		const end = mention.startIndex + mention.length;
+		if (
+			mention.startIndex < cursor ||
+			mention.startIndex < 0 ||
+			mention.length < 1 ||
+			end > note.length ||
+			note[mention.startIndex] !== '@'
+		) {
+			continue;
+		}
+		if (mention.startIndex > cursor) {
+			segments.push({ text: note.slice(cursor, mention.startIndex), isMention: false });
+		}
+		segments.push({ text: note.slice(mention.startIndex, end), isMention: true });
+		cursor = end;
+	}
+
+	if (cursor < note.length || segments.length === 0) {
+		segments.push({ text: note.slice(cursor), isMention: false });
+	}
+	return segments;
+}
+
 export function findActiveMentionQuery(
 	note: string,
 	cursor: number,
