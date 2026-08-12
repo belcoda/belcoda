@@ -33,6 +33,11 @@ export class CommunityPage {
 		await this.communitySearchInput.fill(query);
 	}
 
+	async toggleFavouritesOnly() {
+		await this.page.getByRole('button', { name: 'Filter' }).click();
+		await this.page.getByTestId('people-favourites-filter').click();
+	}
+
 	personListLink(personId: string): Locator {
 		return this.page.locator(
 			`[data-testid="community-person-list-link"][data-person-id="${personId}"]`

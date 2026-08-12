@@ -182,6 +182,7 @@
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
 			<DropdownMenu.CheckboxItem
+				data-testid="people-favourites-filter"
 				checked={filter.favouritesOnly ?? false}
 				onCheckedChange={(checked) => {
 					filter.favouritesOnly = checked;
