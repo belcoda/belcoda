@@ -260,17 +260,36 @@ test.describe.serial('Community and person pages', () => {
 		await expect(page.getByTestId('person-note-item')).toHaveCount(30, { timeout: 15_000 });
 	});
 
-	test('owner can open an older note from a cold deep link', async ({ page, request }) => {
-		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-person-notes`, {
-			data: { personId: ids.personId, count: 30, includeActivities: true }
-		});
-		expect(seedResponse.ok()).toBeTruthy();
-		const seedResult = (await seedResponse.json()) as { oldestNoteId: string };
-
+	test('owner can open an older note from a cold deep link', async ({ page }) => {
 		await loginAsOwner(page, PROJECT);
-		await page.goto(`${ids.personPath}#note-${seedResult.oldestNoteId}`);
+		const personId = await page.evaluate(async () => {
+			const response = await fetch('/api/e2e/seed-persons', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ count: 1 })
+			});
+			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
+			const result = (await response.json()) as { personIds: string[] };
+			return result.personIds[0];
+		});
+		const oldestNoteId = await page.evaluate(async (seedPersonId) => {
+			const response = await fetch('/api/e2e/seed-person-notes', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					personId: seedPersonId,
+					count: 30,
+					includeActivities: true
+				})
+			});
+			if (!response.ok) throw new Error(`Failed to seed notes: ${response.status}`);
+			const result = (await response.json()) as { oldestNoteId: string };
+			return result.oldestNoteId;
+		}, personId);
 
-		const targetNote = page.locator(`[data-note-id="${seedResult.oldestNoteId}"]`);
+		await page.goto(`/community/${personId}#note-${oldestNoteId}`);
+
+		const targetNote = page.locator(`[data-note-id="${oldestNoteId}"]`);
 		await expect(targetNote).toBeVisible({ timeout: 30_000 });
 		await expect(targetNote).toBeInViewport();
 	});
