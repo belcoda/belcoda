@@ -6199,7 +6199,8 @@ msgid "Favourite"
 msgstr "Favorito"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte
 msgid "Favourites only"
 msgstr "Solo favoritos"
 
