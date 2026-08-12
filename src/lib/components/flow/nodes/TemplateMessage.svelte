@@ -22,7 +22,7 @@
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
 	import { t } from '$lib/index.svelte';
-	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import { taint, pruneEdgesForButtons } from '$lib/components/flow/flow_state.svelte';
 	import Combobox from './template/Combobox.svelte';
 	import { parseTemplate } from './template/parseTemplate';
 	import { z } from '$lib/zero.svelte';
@@ -56,9 +56,9 @@
 	const savedTemplateIdOnMount = savedDataOnMount.templateId;
 	const hasSavedParams = Boolean(
 		(savedDataOnMount.body?.templateParams?.length ?? 0) > 0 ||
-			(savedDataOnMount.header?.templateParams?.length ?? 0) > 0 ||
-			(savedDataOnMount.body?.templateStrings?.length ?? 0) > 0 ||
-			(savedDataOnMount.header?.templateStrings?.length ?? 0) > 0
+		(savedDataOnMount.header?.templateParams?.length ?? 0) > 0 ||
+		(savedDataOnMount.body?.templateStrings?.length ?? 0) > 0 ||
+		(savedDataOnMount.header?.templateStrings?.length ?? 0) > 0
 	);
 
 	function commit() {
@@ -72,6 +72,11 @@
 		});
 		updateNodeData(id, payload);
 		updateNodeInternals(id);
+		// Selecting a template resets buttons to [] and re-hydration regenerates
+		// fresh button ids; a shrunk template truncates them. In every case, drop
+		// edges left wired to button ids this node no longer has. A no-op for
+		// param-only edits, where the button set is unchanged.
+		pruneEdgesForButtons(id, payload.buttons ?? []);
 	}
 
 	const template = $derived.by(() => z.createQuery(queries.whatsappTemplate.read({ templateId })));
@@ -183,8 +188,7 @@
 											class={cn(
 												'rounded-sm px-2 py-0.5 text-sm font-medium text-white outline-none',
 												param?.type === 'variable' ? 'bg-violet-600/90' : 'bg-blue-600/90'
-											)}
-											>{@render paramBadgeContent(headerParams, 0, `{{${item.id}}}`)}</span
+											)}>{@render paramBadgeContent(headerParams, 0, `{{${item.id}}}`)}</span
 										>
 									{/snippet}
 								</Popover.Trigger>
@@ -237,6 +241,16 @@
 							>
 								{btn.text}
 							</div>
+							<!--
+								Known, accepted edge case: during the brief pre-hydration window
+								`buttons` can be shorter than the template's button list, so this
+								handle falls back to an ephemeral uuid that isn't persisted in
+								`data.buttons`. An edge a user manages to draw from it in that window
+								carries an unknown id and will be pruned (by pruneEdgesForButtons /
+								cloneFlow) — but that removal is reactive and visible on the canvas,
+								not silent data loss, and hydration normally fills `buttons` before
+								any interaction. We're comfortable leaving this for now.
+							-->
 							<Handle
 								type="source"
 								id={buttons[i]?.id || uuidv4()}
@@ -376,7 +390,7 @@
 		{param.value || placeholder}
 	{:else}
 		{getVariableLabel(param.key)}{#if param.fallback?.trim()}
-			 → {param.fallback}
+			→ {param.fallback}
 		{/if}
 	{/if}
 {/snippet}
