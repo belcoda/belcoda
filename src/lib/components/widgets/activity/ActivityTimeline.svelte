@@ -174,7 +174,9 @@
 			) {
 				return;
 			}
-			getAnchorElement(activity.id)?.scrollIntoView({ block: 'center' });
+			const activityElement = getAnchorElement(activity.id);
+			if (!activityElement) return;
+			activityElement.scrollIntoView({ block: 'center' });
 			pendingNoteId = null;
 			return;
 		}
