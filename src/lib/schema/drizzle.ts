@@ -1460,6 +1460,11 @@ export const memberFavouriteRelations = relations(memberFavourite, ({ one }) => 
 		fields: [memberFavourite.referenceId],
 		references: [event.id],
 		relationName: 'eventFavourites'
+	}),
+	person: one(person, {
+		fields: [memberFavourite.referenceId],
+		references: [person.id],
+		relationName: 'personFavourites'
 	})
 }));
 
@@ -1548,7 +1553,8 @@ export const personRelations = relations(person, ({ one, many }) => ({
 	eventSignups: many(eventSignup),
 	petitionSignatures: many(petitionSignature),
 	whatsappGroupMemberships: many(whatsappGroupMember),
-	notes: many(personNote)
+	notes: many(personNote),
+	favourites: many(memberFavourite, { relationName: 'personFavourites' })
 }));
 
 export const personWhatsappIdentityRelations = relations(personWhatsappIdentity, ({ one }) => ({
