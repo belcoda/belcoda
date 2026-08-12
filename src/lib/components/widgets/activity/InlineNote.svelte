@@ -43,7 +43,8 @@
 		note
 			? ({
 					...note,
-					user: { ...note.user!, twoFactorEnabled: note.user?.twoFactorEnabled ?? false }
+					user: { ...note.user!, twoFactorEnabled: note.user?.twoFactorEnabled ?? false },
+					mentions: [...note.mentions]
 				} as ReadPersonNoteWithUserZero)
 			: undefined
 	);
@@ -117,7 +118,7 @@
 				<EditNote note={noteForEdit} bind:editOpen />
 			</div>
 		{:else}
-			<NoteBody note={note.note} class="mt-1 text-amber-950" />
+			<NoteBody note={note.note} mentions={note.mentions} class="mt-1 text-amber-950" />
 		{/if}
 
 		<div class="mt-1.5 flex items-center gap-1.5 text-[11px] text-amber-700">

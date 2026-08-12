@@ -22,6 +22,7 @@
 	import ColorBadge from '$lib/components/ui/colorbadge/badge.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import NoteComposer from '$lib/components/widgets/notes/NoteComposer.svelte';
+	import NoteBody from '$lib/components/widgets/notes/NoteBody.svelte';
 	import { locale, t } from '$lib/index.svelte';
 	import type { CountryCode } from '$lib/schema/helpers';
 	import { appState } from '$lib/state.svelte';
@@ -229,12 +230,12 @@
 			<NoteComposer personId={person.id} onSaved={() => (addingNote = false)} />
 		{:else if latestNote}
 			<div class="border-s-2 border-primary/40 ps-3">
-				<p
+				<NoteBody
+					note={latestNote.note}
+					mentions={latestNote.mentions}
 					class="line-clamp-4 text-sm break-words whitespace-pre-wrap"
-					data-testid="person-context-note"
-				>
-					{latestNote.note}
-				</p>
+					testId="person-context-note"
+				/>
 				{#if latestNoteCreatedAt}
 					<p class="mt-2 text-xs text-muted-foreground">{latestNoteCreatedAt}</p>
 				{/if}

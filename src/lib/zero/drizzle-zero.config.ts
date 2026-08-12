@@ -464,6 +464,14 @@ export default drizzleZeroConfig(drizzleSchema, {
 			updatedAt: true,
 			deletedAt: true
 		},
+		personNoteMention: {
+			id: true,
+			personNoteId: true,
+			mentionedUserId: true,
+			startIndex: true,
+			length: true,
+			createdAt: true
+		},
 		webhook: {
 			id: true,
 			organizationId: true,

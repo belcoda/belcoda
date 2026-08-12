@@ -20,6 +20,7 @@ export async function PUT(event) {
 			personId: event.params.personId,
 			organizationId,
 			note: input.note,
+			mentions: [],
 			tx
 		});
 		return note;

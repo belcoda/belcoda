@@ -28,7 +28,11 @@ export function readPersonQuery({
 		.limit(100)
 		.orderBy('createdAt', 'desc')
 		.related('notes', (notes) =>
-			notes.where('deletedAt', 'IS', null).orderBy('createdAt', 'desc').limit(1)
+			notes
+				.where('deletedAt', 'IS', null)
+				.related('mentions', (mentions) => mentions.orderBy('startIndex', 'asc'))
+				.orderBy('createdAt', 'desc')
+				.limit(1)
 		)
 		.where((expr) => personReadPermissions(expr, ctx))
 		.one();
@@ -53,5 +57,7 @@ export type ReadPersonOutputWithReadonlyArrays = Omit<
 > & {
 	readonly tags: readonly ReadPersonOutput['tags'][number][];
 	readonly teams: readonly ReadPersonOutput['teams'][number][];
-	readonly notes: readonly ReadPersonOutput['notes'][number][];
+	readonly notes: readonly (Omit<ReadPersonOutput['notes'][number], 'mentions'> & {
+		readonly mentions: readonly ReadPersonOutput['notes'][number]['mentions'][number][];
+	})[];
 };

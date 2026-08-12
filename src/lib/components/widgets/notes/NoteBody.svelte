@@ -1,21 +1,25 @@
 <script lang="ts">
-	/**
-	 * Renders the text of a note. Every note body goes through here so parsing of mentions
-	 * can be done in one place rather than being threaded through the note card's layout.
-	 */
-	import { escapeHtml } from '$lib/utils/escape-html';
+	import type { ReadPersonNoteMentionZero } from '$lib/schema/person-note-mention';
+	import { splitNoteByMentions } from '$lib/utils/person-note/mentions';
 
 	type Props = {
 		note: string;
+		mentions?: readonly ReadPersonNoteMentionZero[];
 		class?: string;
+		testId?: string;
 	};
 
-	const { note, class: className }: Props = $props();
+	const { note, mentions = [], class: className, testId }: Props = $props();
 
-	const safeNote = $derived(escapeHtml(note));
+	const segments = $derived(splitNoteByMentions(note, mentions));
 </script>
 
-<div class="text-sm leading-relaxed whitespace-pre-wrap {className ?? ''}">
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -- safeNote is escaped above -->
-	{@html safeNote}
+<div class="text-sm leading-relaxed whitespace-pre-wrap {className ?? ''}" data-testid={testId}>
+	{#each segments as segment, index (`${segment.isMention}:${segment.text}:${index}`)}
+		{#if segment.isMention}
+			<strong class="font-semibold" data-note-mention>{segment.text}</strong>
+		{:else}
+			{segment.text}
+		{/if}
+	{/each}
 </div>

@@ -34,6 +34,10 @@ export function listUsersQuery({
 	if (input.excludedIds?.length) {
 		q = q.where(({ cmp }) => cmp('id', 'NOT IN', input.excludedIds));
 	}
+	if (input.searchString) {
+		const search = `%${escapeLikeLiteral(input.searchString)}%`;
+		q = q.where(({ or, cmp }) => or(cmp('name', 'ILIKE', search), cmp('email', 'ILIKE', search)));
+	}
 	q = q.limit(input.pageSize);
 	if (input.cursor) {
 		q = q.start({ id: input.cursor });
@@ -46,3 +50,7 @@ export const listUsers = defineQuery(inputSchema, ({ ctx, args }) => {
 });
 
 export const outputSchema = array(readUserZero);
+
+export function escapeLikeLiteral(value: string) {
+	return value.replace(/[\\%_]/g, '\\$&');
+}

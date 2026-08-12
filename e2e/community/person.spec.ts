@@ -6,6 +6,7 @@ import { TeamsPage } from '../pages/settings/teams.page';
 import { loginAsOwner } from '../helpers/login';
 import { CommunityPage } from '../pages/community/community.page';
 import { BASE_URL } from '../helpers/config';
+import { getTestUsers } from '../helpers/auth';
 
 const PROJECT = 'community' as const;
 
@@ -294,6 +295,91 @@ test.describe.serial('Community and person pages', () => {
 		const contextPanel = page.getByTestId('person-context-panel');
 		await expect(contextPanel).toBeVisible();
 		await expect(contextPanel.getByTestId('person-context-note')).toHaveText(noteText);
+	});
+
+	test('owner can create, display, and edit user mentions in notes', async ({ page }) => {
+		const suffix = `${Date.now()}`;
+		const mentionedUser = getTestUsers(PROJECT).admin;
+		const notePrefix = `Mention note ${suffix}`;
+		const mentionedText = `@${mentionedUser.name}`;
+
+		await page.setViewportSize({ width: 1400, height: 900 });
+		await loginAsOwner(page, PROJECT);
+		const seedResult = await page.evaluate(async () => {
+			const response = await fetch('/api/e2e/seed-persons', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ count: 1 })
+			});
+			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
+			return (await response.json()) as { personIds: string[] };
+		});
+		const personId = seedResult.personIds[0];
+		expect(personId).toBeTruthy();
+		await page.goto(`/community/${personId}`);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible({ timeout: 15_000 });
+
+		const composer = page.getByTestId('conversation-composer');
+		await composer.getByTestId('composer-mode-note').click();
+		const textarea = composer.getByTestId('note-form-textarea');
+		await textarea.fill(`${notePrefix}: @${mentionedUser.name.slice(0, -2)}`);
+
+		const picker = composer.getByTestId('note-mention-picker');
+		await expect(picker).toBeVisible({ timeout: 10_000 });
+		const [textareaBox, pickerBox] = await Promise.all([
+			textarea.boundingBox(),
+			picker.boundingBox()
+		]);
+		expect(textareaBox).not.toBeNull();
+		expect(pickerBox).not.toBeNull();
+		expect(pickerBox!.y).toBeGreaterThan(textareaBox!.y);
+		expect(pickerBox!.y).toBeLessThan(textareaBox!.y + textareaBox!.height);
+		await picker.getByRole('option', { name: new RegExp(mentionedUser.name) }).click();
+		await textarea.press('End');
+		await textarea.pressSequentially(' please review');
+		const createdNoteText = `${notePrefix}: ${mentionedText} please review`;
+		await expect(textarea).toHaveValue(createdNoteText);
+		await composer.getByTestId('note-form-submit').click();
+
+		const inlineNote = page.getByTestId('inline-note').filter({ hasText: notePrefix });
+		await expect(inlineNote).toBeVisible({ timeout: 10_000 });
+		await expect(inlineNote.locator('strong[data-note-mention]')).toHaveText(mentionedText);
+
+		const contextNote = page.getByTestId('person-context-note');
+		await expect(contextNote).toContainText(notePrefix, { timeout: 10_000 });
+		await expect(contextNote.locator('strong[data-note-mention]')).toHaveText(mentionedText);
+
+		await page.getByTestId('notes-action-notes-btn').click();
+		const drawer = page.getByTestId('person-notes-drawer');
+		const matchingNoteItem = drawer.getByTestId('person-note-item').filter({ hasText: notePrefix });
+		await expect(matchingNoteItem).toBeVisible({ timeout: 10_000 });
+		const noteId = await matchingNoteItem.getAttribute('data-note-id');
+		expect(noteId).toBeTruthy();
+		const noteItem = drawer.locator(`[data-testid="person-note-item"][data-note-id="${noteId}"]`);
+		const liveInlineNote = page.locator(`[data-testid="inline-note"][data-note-id="${noteId}"]`);
+		await expect(noteItem.locator('strong[data-note-mention]')).toHaveText(mentionedText);
+
+		await noteItem.locator('button[aria-label="Note actions"]').click();
+		await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
+		const editTextarea = noteItem.getByRole('combobox', { name: 'Edit note...' });
+		await editTextarea.press('End');
+		await editTextarea.pressSequentially(' updated');
+		await noteItem.getByRole('button', { name: 'Update note' }).click();
+		await expect(liveInlineNote).toContainText('updated', { timeout: 10_000 });
+		await expect(liveInlineNote.locator('strong[data-note-mention]')).toHaveText(mentionedText);
+
+		await page.keyboard.press('Escape');
+		await expect(drawer).not.toBeVisible();
+		await liveInlineNote.locator('button[aria-label="Note actions"]').click();
+		await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
+		const inlineEditTextarea = liveInlineNote.getByRole('combobox', { name: 'Edit note...' });
+		await inlineEditTextarea.fill(`${notePrefix}: @Former User please review updated`);
+		await inlineEditTextarea.press('Escape');
+		await liveInlineNote.getByRole('button', { name: 'Update note' }).click();
+		await expect(liveInlineNote).toContainText('@Former User', {
+			timeout: 10_000
+		});
+		await expect(liveInlineNote.locator('strong[data-note-mention]')).toHaveCount(0);
 	});
 
 	test('composer mode resets to message after navigating away and back', async ({ page }) => {
