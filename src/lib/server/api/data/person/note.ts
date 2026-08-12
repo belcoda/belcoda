@@ -26,7 +26,6 @@ import { createNotification } from '$lib/server/api/data/notification/notificati
 import { buildPersonNoteMentionNotifications } from '$lib/utils/person-note/notifications';
 
 import pino from '$lib/pino';
-const log = pino(import.meta.url);
 
 async function requireMentionedUsersInOrganization({
 	tx,
