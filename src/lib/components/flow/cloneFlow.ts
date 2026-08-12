@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { structuredClone } from '$lib/utils/structuredClone';
 import { defaultFilterGroup } from '$lib/schema/person/filter';
+import { pruneDanglingEdges } from '$lib/components/flow/pruneFlowEdges';
 import type { Flow, Node, Edge } from '$lib/schema/flow/index';
 
 /**
@@ -8,6 +9,8 @@ import type { Flow, Node, Edge } from '$lib/schema/flow/index';
  * edges) so the clone shares no identifiers with the original. The input is never
  * mutated.
  *
+ * - Dangling edges (referencing a deleted node or a removed button handle) are
+ *   pruned up-front so the clone never carries a broken reference — see below.
  * - Node ids are regenerated and the old->new mapping is recorded.
  * - `message`/`templateMessage` button ids are regenerated into the same map.
  * - `targeting` nodes have their `data.filter` reset to `defaultFilterGroup`.
@@ -18,6 +21,13 @@ import type { Flow, Node, Edge } from '$lib/schema/flow/index';
 export function cloneFlow(flow: Flow): Flow {
 	// Deep-clone up-front so the original is never mutated.
 	const cloned = structuredClone(flow);
+
+	// Drop edges that no longer resolve BEFORE regenerating ids. The editor can
+	// persist a flow with edges pointing at a deleted node or a removed button
+	// handle, and the remap below would otherwise throw on them. Pruning here
+	// keeps cloning resilient to that historical data; the strict throws in the
+	// remap remain as a backstop for anything pruning does not catch.
+	const survivingEdges = pruneDanglingEdges(cloned.nodes, cloned.edges).edges;
 
 	// Single map of old id -> new id, covering both node ids and button ids.
 	const idMap = new Map<string, string>();
@@ -52,7 +62,7 @@ export function cloneFlow(flow: Flow): Flow {
 		}
 	});
 
-	const edges: Edge[] = cloned.edges.map((edge): Edge => {
+	const edges: Edge[] = survivingEdges.map((edge): Edge => {
 		const newSource = idMap.get(edge.source);
 		const newTarget = idMap.get(edge.target);
 		if (newSource === undefined) {
