@@ -29,24 +29,6 @@
 
 	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
 
-	const eventListFilter: EventListFilter = $state({
-		...getListFilter(appState.organizationId),
-		dateRange: {
-			start: getTimestampFromCalendarDate(
-				getWeeksFromTodayCalendarDate(getLocalTimeZone(), -4),
-				getLocalTimeZone(),
-				'start'
-			),
-			end: getTimestampFromCalendarDate(
-				getWeeksFromTodayCalendarDate(getLocalTimeZone(), 8),
-				getLocalTimeZone(),
-				'end'
-			)
-		}
-	});
-
-	const eventList = $derived.by(() => z.createQuery(queries.event.list(eventListFilter)));
-
 	import { tick } from 'svelte';
 	let open = $state(false);
 	let triggerRef = $state<HTMLButtonElement>(null!);
