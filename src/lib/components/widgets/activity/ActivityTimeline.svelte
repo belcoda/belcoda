@@ -108,13 +108,12 @@
 		}
 	);
 	watch(
-		() => activityQuery.data,
-		(data) => {
+		() => [activityQuery.data, activityQuery.details.type] as const,
+		([data, resultType]) => {
+			if (resultType !== 'complete') return;
 			paginatedActivities.handlePage(data);
-			if (data !== undefined) {
-				hasHandledInitialActivityResult = true;
-				deepLinkAwaitingInitialResult = false;
-			}
+			hasHandledInitialActivityResult = true;
+			deepLinkAwaitingInitialResult = false;
 			void resolvePendingNoteDeepLink();
 		}
 	);
@@ -160,7 +159,9 @@
 	async function resolvePendingNoteDeepLink() {
 		const noteId = pendingNoteId;
 		const resolutionVersion = deepLinkResolutionVersion;
-		if (!noteId || deepLinkAwaitingInitialResult || activityQuery.data === undefined) return;
+		if (!noteId || deepLinkAwaitingInitialResult || activityQuery.details.type !== 'complete') {
+			return;
+		}
 
 		const activity = paginatedActivities.items.find(
 			(item) => item.type === 'note_added' && item.referenceId === noteId
