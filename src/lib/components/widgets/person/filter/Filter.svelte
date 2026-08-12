@@ -10,6 +10,7 @@
 	import DisplayTagFilter from '$lib/components/widgets/person/filter/display/DisplayTagFilter.svelte';
 	import DisplayEventFilter from '$lib/components/widgets/person/filter/display/DisplayEventFilter.svelte';
 	import DisplayActivityFilter from '$lib/components/widgets/person/filter/display/DisplayActivityFilter.svelte';
+	import DisplayFavouriteFilter from '$lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte';
 
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import SearchIcon from '@lucide/svelte/icons/search';
@@ -55,5 +56,8 @@
 			mostRecentActivity={filter.mostRecentActivity}
 			onRemove={() => (filter.mostRecentActivity = null)}
 		/>
+	{/if}
+	{#if filter.favouritesOnly}
+		<DisplayFavouriteFilter onRemove={() => (filter.favouritesOnly = false)} />
 	{/if}
 </div>

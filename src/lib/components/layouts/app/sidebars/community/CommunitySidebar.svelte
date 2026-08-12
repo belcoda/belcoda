@@ -27,6 +27,7 @@
 		...getListFilter(appState.organizationId),
 		tagId: null,
 		signupEventId: null,
+		favouritesOnly: false,
 		mostRecentActivity: null
 	});
 	const pageSize = 25;
