@@ -114,7 +114,13 @@ function applyButtonDefaults(
 ): { id: string }[] {
 	let buttons = currentButtons.map((b) => ({ ...b }));
 	if (templateButtons?.type !== 'BUTTONS' || !templateButtons.buttons) {
-		return buttons;
+		// The template has no BUTTONS component, so the node must have no buttons.
+		// Any `currentButtons` here are stale (e.g. the template was edited to drop
+		// its buttons); returning them would leave button ids with no rendered handle
+		// and orphan the edges wired to them. This runs only once the template query
+		// is `complete` (see the guard in TemplateMessage.svelte), so it never wipes
+		// buttons mid-load.
+		return [];
 	}
 	const targetLength = templateButtons.buttons.length;
 	if (buttons.length > targetLength) {
