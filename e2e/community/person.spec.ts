@@ -260,6 +260,21 @@ test.describe.serial('Community and person pages', () => {
 		await expect(page.getByTestId('person-note-item')).toHaveCount(30, { timeout: 15_000 });
 	});
 
+	test('owner can open an older note from a cold deep link', async ({ page, request }) => {
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-person-notes`, {
+			data: { personId: ids.personId, count: 30, includeActivities: true }
+		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedResult = (await seedResponse.json()) as { oldestNoteId: string };
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto(`${ids.personPath}#note-${seedResult.oldestNoteId}`);
+
+		const targetNote = page.locator(`[data-note-id="${seedResult.oldestNoteId}"]`);
+		await expect(targetNote).toBeVisible({ timeout: 30_000 });
+		await expect(targetNote).toBeInViewport();
+	});
+
 	test('owner can add a note from the conversation composer on the timeline', async ({ page }) => {
 		const noteText = `E2E test note ${Date.now()}`;
 
