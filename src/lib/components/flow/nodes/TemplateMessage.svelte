@@ -61,7 +61,19 @@
 		(savedDataOnMount.header?.templateStrings?.length ?? 0) > 0
 	);
 
+	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
+	const isDisabled = $derived(
+		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
+	);
+
 	function commit() {
+		// A disabled canvas is read-only. The hydration $effect still seeds this
+		// node's local display state, but it must never persist: updateNodeData and
+		// pruneEdgesForButtons both write to the shared flow store and trigger a
+		// save. For a viewer without write access that save fails and surfaces a
+		// spurious "Changes not saved" toast (and self-heal shouldn't rewrite a
+		// flow just from opening it), so skip all side effects when disabled.
+		if (isDisabled) return;
 		taint();
 		const payload = buildNodeData({
 			templateId,
@@ -105,11 +117,6 @@
 		hydratedForTemplateId = templateId;
 		commit();
 	});
-
-	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
-	const isDisabled = $derived(
-		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
-	);
 
 	const header = $derived.by(() => {
 		if (templateHeader?.format === 'TEXT') {
