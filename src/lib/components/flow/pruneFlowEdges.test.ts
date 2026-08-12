@@ -402,6 +402,17 @@ describe('pruneRemovedButtonEdges', () => {
 		expect(removed.some((e) => e.id === 'other')).toBe(false);
 	});
 
+	it('leaves a legacy edge whose source is a (removed) button id — deferred to clone-time prune', () => {
+		// Documented scope boundary: the scoped helper only reasons about edges with
+		// source === nodeId. A legacy edge that encodes the button id directly in
+		// `source` (no sourceHandle) has source !== nodeId, so even when that button
+		// is removed it is NOT touched here — the graph-wide clone-time prune handles it.
+		const legacy = { id: 'legacy', source: TPL_BTN_2, target: REPLY_B };
+		const { edges: kept, removed } = pruneRemovedButtonEdges(TEMPLATE, [TPL_BTN_1], [legacy]);
+		expect(removed).toHaveLength(0);
+		expect(kept).toEqual([legacy]);
+	});
+
 	it('does not mutate the input and returns survivors by reference', () => {
 		const input = edges();
 		const snapshot = structuredClone(input);

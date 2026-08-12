@@ -134,6 +134,11 @@
 	}
 
 	function onTemplateSelect(newTemplateId: string) {
+		// The combobox fires on every click, including re-selecting the current
+		// template. Re-selecting is a no-op: bail before resetting params/buttons,
+		// which would otherwise regenerate button ids and prune away this node's
+		// branch wiring for no reason.
+		if (newTemplateId === templateId) return;
 		hydratedForTemplateId = null;
 		headerParams = [];
 		bodyParams = [];
