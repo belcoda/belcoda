@@ -35,6 +35,7 @@
 	let pendingNoteId: string | null = null;
 	let deepLinkAwaitingInitialResult = false;
 	let deepLinkResolutionVersion = 0;
+	let hasHandledInitialActivityResult = false;
 	let mounted = false;
 
 	const paginatedActivities = new PaginatedZeroList<ActivityListBaseFilter, ReadActivityZero>({
@@ -97,6 +98,7 @@
 			deepLinkResolutionVersion += 1;
 			pendingNoteId = null;
 			deepLinkAwaitingInitialResult = false;
+			hasHandledInitialActivityResult = false;
 			endScrollRestore();
 			previousItemCount = 0;
 			paginatedActivities.reset();
@@ -110,6 +112,7 @@
 		(data) => {
 			paginatedActivities.handlePage(data);
 			if (data !== undefined) {
+				hasHandledInitialActivityResult = true;
 				deepLinkAwaitingInitialResult = false;
 			}
 			void resolvePendingNoteDeepLink();
@@ -147,7 +150,7 @@
 		const hash = window.location.hash;
 		pendingNoteId = hash.startsWith('#note-') ? hash.slice('#note-'.length) || null : null;
 		deepLinkAwaitingInitialResult =
-			pendingNoteId !== null && (awaitInitialResult || activityQuery.data === undefined);
+			pendingNoteId !== null && (awaitInitialResult || !hasHandledInitialActivityResult);
 		if (pendingNoteId) {
 			endScrollRestore();
 			void resolvePendingNoteDeepLink();
