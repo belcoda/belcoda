@@ -33,6 +33,8 @@ type GroupedNotification = {
 	referenceId: string;
 	people: { name: string; id: string | null }[];
 	subjectTitle: string | null;
+	noteAuthorName: string | null;
+	notePreview: string | null;
 	count: number;
 };
 
@@ -63,6 +65,8 @@ function groupNotifications(notifications: NotificationRow[]): GroupedNotificati
 				referenceId: n.referenceId,
 				people: [],
 				subjectTitle: payload?.subjectTitle ?? null,
+				noteAuthorName: payload?.noteAuthorName ?? null,
+				notePreview: payload?.notePreview ?? null,
 				count: 0
 			});
 		}
@@ -148,6 +152,20 @@ export function buildDigestContext(options: {
 				item = {
 					title: person?.name ?? 'WhatsApp contact',
 					detail: `${group.count} new message${group.count === 1 ? '' : 's'}`,
+					url: personUrl
+				};
+				break;
+			}
+			case 'person_note_mention': {
+				sectionKey = 'person_note_mention';
+				sectionLabel = 'Note mentions';
+				const person = group.people[0];
+				const personUrl = person?.id
+					? buildAppUrl(appUrl, `/community/${person.id}#note-${group.referenceId}`, organizationId)
+					: buildAppUrl(appUrl, '/notifications', organizationId);
+				item = {
+					title: person?.name ?? 'Note mention',
+					detail: `${group.noteAuthorName ?? 'A teammate'} mentioned you in a note${group.notePreview ? `: ${group.notePreview}` : ''}`,
 					url: personUrl
 				};
 				break;
