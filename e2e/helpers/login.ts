@@ -14,13 +14,15 @@ export async function signOut(page: Page) {
 	});
 }
 
-async function loginViaForm(page: Page, email: string, password: string) {
+async function loginViaForm(page: Page, email: string, password: string, waitForLoad = false) {
 	const loginPage = new LoginPage(page);
 	const communityPage = new CommunityPage(page);
 	await loginPage.goto();
 	await loginPage.login(email, password);
 	await expect(page).toHaveURL(/\/community/, { timeout: 30_000 });
-	await communityPage.expectLoaded();
+	if (waitForLoad) {
+		await communityPage.expectLoaded();
+	}
 	return communityPage;
 }
 
@@ -34,20 +36,21 @@ async function hasAuthoritativeSession(page: Page): Promise<boolean> {
 export async function ensureAuthenticated(
 	page: Page,
 	project: E2EProject,
-	role: UserRole = 'owner'
+	role: UserRole = 'owner',
+	waitForCommunityLoad = true
 ): Promise<CommunityPage> {
 	const communityPage = new CommunityPage(page);
 	await page.goto('/community', { waitUntil: 'commit', timeout: NAVIGATION_TIMEOUT });
 
 	if (/\/(login|signup)/.test(page.url())) {
 		const user = getTestUsers(project)[role];
-		return loginViaForm(page, user.email, user.password);
+		return loginViaForm(page, user.email, user.password, waitForCommunityLoad);
 	}
 
 	if (!(await hasAuthoritativeSession(page))) {
 		const user = getTestUsers(project)[role];
 		await signOut(page);
-		await loginViaForm(page, user.email, user.password);
+		await loginViaForm(page, user.email, user.password, waitForCommunityLoad);
 		return communityPage;
 	}
 
@@ -55,24 +58,26 @@ export async function ensureAuthenticated(
 		await expect(page).toHaveURL(/\/community/, { timeout: 30_000 });
 	}
 
-	await communityPage.expectLoaded();
+	if (waitForCommunityLoad) {
+		await communityPage.expectLoaded();
+	}
 	return communityPage;
 }
 
 export async function loginAsOwner(page: Page, project: E2EProject) {
-	await ensureAuthenticated(page, project, 'owner');
+	await ensureAuthenticated(page, project, 'owner', false);
 }
 
 export async function loginAsAdmin(page: Page, project: E2EProject) {
 	const { admin } = getTestUsers(project);
 	await signOut(page);
-	await loginViaForm(page, admin.email, admin.password);
+	await loginViaForm(page, admin.email, admin.password, true);
 }
 
 export async function loginAsMember(page: Page, project: E2EProject) {
 	const { member } = getTestUsers(project);
 	await signOut(page);
-	await loginViaForm(page, member.email, member.password);
+	await loginViaForm(page, member.email, member.password, true);
 }
 
 export async function gotoCommunitySettings(page: Page, project: E2EProject) {
