@@ -117,3 +117,40 @@ export function pruneDanglingEdges<N extends HandleBearingNode, E extends Resolv
 
 	return { edges: kept, removed };
 }
+
+/**
+ * Scoped edge cleanup for a SINGLE node whose button set just changed.
+ *
+ * Drops only the edges that leave `nodeId` through a button handle the node no
+ * longer has — i.e. `source === nodeId` with a non-null `sourceHandle` that is
+ * not in `currentButtonIds`. Everything else is kept:
+ *  - handleless edges from `nodeId` (automatic continuations, resolved by
+ *    `source` alone at runtime) are not button edges and are left untouched;
+ *  - edges from every OTHER node are out of scope and never considered, so a
+ *    button change on one node can't disturb — or persist — edges elsewhere in
+ *    the graph, including ones that are only transiently dangling mid-hydration.
+ *
+ * This is deliberately narrower than `pruneDanglingEdges` (which is graph-wide
+ * and used at clone time): editor edits should touch only the node being edited.
+ * Note it matches the editor's own edge encoding (`source` = node id,
+ * `sourceHandle` = button id); a legacy edge that encodes the button id directly
+ * in `source` is left for the graph-wide prune at clone time. Pure.
+ */
+export function pruneRemovedButtonEdges<E extends ResolvableEdge>(
+	nodeId: string,
+	currentButtonIds: Iterable<string>,
+	edges: readonly E[]
+): PruneResult<E> {
+	const keep = new Set(currentButtonIds);
+	const kept: E[] = [];
+	const removed: E[] = [];
+
+	for (const edge of edges) {
+		const orphaned =
+			edge.source === nodeId && edge.sourceHandle != null && !keep.has(edge.sourceHandle);
+		if (orphaned) removed.push(edge);
+		else kept.push(edge);
+	}
+
+	return { edges: kept, removed };
+}

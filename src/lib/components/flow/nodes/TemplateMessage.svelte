@@ -72,10 +72,10 @@
 		});
 		updateNodeData(id, payload);
 		updateNodeInternals(id);
-		// Selecting a template resets buttons to [] and re-hydration regenerates
-		// fresh button ids; a shrunk template truncates them. In every case, drop
-		// edges left wired to button ids this node no longer has. A no-op for
-		// param-only edits, where the button set is unchanged.
+		// Drop this node's edges that point at button ids it no longer has:
+		// selecting a template resets buttons to [] then re-hydration regenerates
+		// fresh ids, and a shrunk template truncates them. Scoped to this node's
+		// button handles, so a param-only edit (button set unchanged) is a no-op.
 		pruneEdgesForButtons(id, payload.buttons ?? []);
 	}
 

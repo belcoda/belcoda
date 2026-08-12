@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { pruneDanglingEdges, nodeHandleIds } from './pruneFlowEdges';
+import { pruneDanglingEdges, nodeHandleIds, pruneRemovedButtonEdges } from './pruneFlowEdges';
 import { structuredClone } from '$lib/utils/structuredClone';
 import type { Flow } from '$lib/schema/flow/index';
 
@@ -350,5 +350,63 @@ describe('pruneDanglingEdges', () => {
 			expect(edges).toHaveLength(flow.edges.length);
 			expect(edges.length + removed.length).toBe(flow.edges.length + extras.length);
 		});
+	});
+});
+
+describe('pruneRemovedButtonEdges', () => {
+	// A templateMessage (TEMPLATE) wired out of two of its three button handles,
+	// plus edges belonging to other nodes that must never be disturbed.
+	function edges() {
+		return [
+			{ id: 'in', source: TARGETING, target: TEMPLATE }, // into TEMPLATE, unrelated
+			{ id: 'b1', source: TEMPLATE, target: REPLY_A, sourceHandle: TPL_BTN_1 },
+			{ id: 'b2', source: TEMPLATE, target: REPLY_B, sourceHandle: TPL_BTN_2 },
+			{ id: 'cont', source: TEMPLATE, target: REPLY_C }, // handleless auto-continuation
+			{ id: 'other', source: MESSAGE, target: REPLY_A, sourceHandle: MSG_BTN_1 } // another node
+		];
+	}
+
+	it('keeps every edge when all of the node’s handles are still present', () => {
+		const { edges: kept, removed } = pruneRemovedButtonEdges(
+			TEMPLATE,
+			[TPL_BTN_1, TPL_BTN_2, TPL_BTN_3],
+			edges()
+		);
+		expect(removed).toHaveLength(0);
+		expect(kept).toHaveLength(5);
+	});
+
+	it('drops only the node’s edge whose handle was removed', () => {
+		const { edges: kept, removed } = pruneRemovedButtonEdges(TEMPLATE, [TPL_BTN_1], edges());
+		expect(removed.map((e) => e.id)).toEqual(['b2']);
+		expect(kept.map((e) => e.id)).toEqual(['in', 'b1', 'cont', 'other']);
+	});
+
+	it('drops all of the node’s button edges when its buttons are cleared (template swap)', () => {
+		const { edges: kept, removed } = pruneRemovedButtonEdges(TEMPLATE, [], edges());
+		expect(removed.map((e) => e.id).sort()).toEqual(['b1', 'b2']);
+		// The incoming edge, the handleless continuation, and the other node stay.
+		expect(kept.map((e) => e.id)).toEqual(['in', 'cont', 'other']);
+	});
+
+	it('never removes a handleless edge from the node (automatic continuation)', () => {
+		const { removed } = pruneRemovedButtonEdges(TEMPLATE, [], edges());
+		expect(removed.some((e) => e.id === 'cont')).toBe(false);
+	});
+
+	it('never touches edges belonging to other nodes', () => {
+		// MSG_BTN_1 is not in TEMPLATE's set, but the 'other' edge is from MESSAGE
+		// and must be left alone — scoping is by source node, not by handle id.
+		const { edges: kept, removed } = pruneRemovedButtonEdges(TEMPLATE, [], edges());
+		expect(kept.some((e) => e.id === 'other')).toBe(true);
+		expect(removed.some((e) => e.id === 'other')).toBe(false);
+	});
+
+	it('does not mutate the input and returns survivors by reference', () => {
+		const input = edges();
+		const snapshot = structuredClone(input);
+		const { edges: kept } = pruneRemovedButtonEdges(TEMPLATE, [TPL_BTN_1], input);
+		expect(input).toEqual(snapshot);
+		expect(kept.find((e) => e.id === 'b1')).toBe(input.find((e) => e.id === 'b1'));
 	});
 });

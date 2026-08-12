@@ -10,7 +10,7 @@ import {
 	addEdge,
 	getConnectedEdges
 } from '@xyflow/svelte';
-import { pruneDanglingEdges } from '$lib/components/flow/pruneFlowEdges';
+import { pruneRemovedButtonEdges } from '$lib/components/flow/pruneFlowEdges';
 import { untrack } from 'svelte';
 import { useDebounce } from 'runed';
 import { toast } from 'svelte-sonner';
@@ -120,27 +120,24 @@ function bridgeEdge(inEdge: Edge, outEdge: Edge): Edge {
 }
 
 /**
- * Reconcile the edge list after a node's button set changes.
+ * Reconcile the edge list after ONE node's button set changes.
  *
  * Removing a button (or swapping a template, which regenerates every button id)
  * leaves behind any edge whose `sourceHandle` was one of the now-missing button
  * ids. Call this with the node's NEW button set right after updating its data;
- * it drops the orphaned edges so the saved flow never carries a dangling handle.
- * A no-op (and no save) when nothing needs pruning.
+ * it drops just that node's orphaned button edges so the saved flow never carries
+ * a dangling handle. Scoped to `nodeId` — edges on other nodes are never touched
+ * — and a no-op (no save) when nothing needs pruning.
  */
 export function pruneEdgesForButtons(nodeId: string, buttons: { id: string }[]) {
+	const buttonIds = buttons.map((b) => b.id);
 	// This runs imperatively (from button edits and from TemplateMessage.commit(),
-	// which itself fires inside a $effect). Read the current nodes/edges without
-	// subscribing — `untrack` keeps a calling effect from taking a dependency on
-	// the whole graph and re-running on every unrelated canvas change.
-	const { edges: nextEdges, removed } = untrack(() => {
-		// Reflect the new buttons on the target node so pruning sees the post-change
-		// handle set, rather than relying on the store binding having flushed yet.
-		const nextNodes = getNodes().map((node) =>
-			node.id === nodeId ? ({ ...node, data: { ...node.data, buttons } } as Node) : node
-		);
-		return pruneDanglingEdges(nextNodes, getEdges());
-	});
+	// which itself fires inside a $effect). Read the edge list without subscribing —
+	// `untrack` keeps a calling effect from taking a dependency on the edge store
+	// and re-running on every unrelated canvas change.
+	const { edges: nextEdges, removed } = untrack(() =>
+		pruneRemovedButtonEdges(nodeId, buttonIds, getEdges())
+	);
 	if (removed.length > 0) {
 		setEdges(nextEdges);
 	}
