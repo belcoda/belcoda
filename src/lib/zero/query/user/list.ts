@@ -35,12 +35,12 @@ export function listUsersQuery({
 		});
 	}
 	if (input.personId) {
-		q = q.where(({ or, exists, cmp }) =>
+		q = q.where(({ or, exists }) =>
 			or(
 				exists('orgMemberships', (m) => {
-					return m.where('organizationId', '=', input.organizationId).where(({ or, cmp }) =>
-						or(cmp('role', '=', 'admin'), cmp('role', '=', 'owner'))
-					);
+					return m
+						.where('organizationId', '=', input.organizationId)
+						.where(({ or, cmp }) => or(cmp('role', '=', 'admin'), cmp('role', '=', 'owner')));
 				}),
 				exists('teamMemberships', (tm) => {
 					return tm.whereExists('team', (team) => {
