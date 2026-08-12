@@ -8,7 +8,7 @@ import { builder } from '$lib/zero/schema';
 
 export const createPersonNote = defineMutator(
 	createMutatorSchemaZero,
-	async ({ tx, args, ctx }) => {
+	async ({ tx, args }) => {
 		const now = Date.now();
 		tx.mutate.personNote.insert({
 			id: args.metadata.personNoteId,
@@ -31,7 +31,7 @@ export const createPersonNote = defineMutator(
 
 export const updatePersonNote = defineMutator(
 	updateMutatorSchemaZero,
-	async ({ tx, args, ctx }) => {
+	async ({ tx, args }) => {
 		const now = Date.now();
 		tx.mutate.personNote.update({
 			id: args.metadata.personNoteId,
