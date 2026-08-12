@@ -108,8 +108,9 @@
 		}
 	);
 	watch(
-		() => activityQuery.data,
-		(data) => {
+		() => [activityQuery.data, activityQuery.details.type] as const,
+		([data, resultType]) => {
+			if (resultType !== 'complete') return;
 			paginatedActivities.handlePage(data);
 		}
 	);
@@ -146,7 +147,8 @@
 			pendingNoteId,
 			paginatedActivities.items.length,
 			paginatedActivities.hasMore,
-			paginatedActivities.loadingMore
+			paginatedActivities.loadingMore,
+			activityQuery.details.type
 		],
 		() => {
 			void tick().then(() => {
@@ -197,6 +199,10 @@
 		}
 		if (paginatedActivities.hasMore) {
 			loadMoreOlder(false);
+			return;
+		}
+
+		if (activityQuery.details.type !== 'complete') {
 			return;
 		}
 

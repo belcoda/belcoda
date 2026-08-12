@@ -260,6 +260,25 @@ test.describe.serial('Community and person pages', () => {
 		await expect(page.getByTestId('person-note-item')).toHaveCount(30, { timeout: 15_000 });
 	});
 
+	test('owner can deep-link to a note beyond the first timeline page', async ({
+		page,
+		request
+	}) => {
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-person-notes`, {
+			data: { personId: ids.personId, count: 30 }
+		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const { noteIds } = (await seedResponse.json()) as { noteIds: string[] };
+		const targetNoteId = noteIds.at(-1);
+		expect(targetNoteId).toBeTruthy();
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto(`${ids.personPath}#note-${targetNoteId}`);
+
+		const targetNote = page.locator(`[data-testid="inline-note"][data-note-id="${targetNoteId}"]`);
+		await expect(targetNote).toBeVisible({ timeout: 15_000 });
+	});
+
 	test('owner can add a note from the conversation composer on the timeline', async ({ page }) => {
 		const noteText = `E2E test note ${Date.now()}`;
 
