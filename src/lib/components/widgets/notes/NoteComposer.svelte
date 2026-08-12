@@ -81,6 +81,7 @@
 			{#snippet children({ props })}
 				<InputGroup.Root class="border-amber-300 bg-amber-50 focus-within:border-amber-500">
 					<MentionTextarea
+						personId={personId}
 						{...props}
 						{autofocus}
 						placeholder={t`Write an internal note...`}

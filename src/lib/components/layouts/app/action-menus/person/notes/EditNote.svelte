@@ -79,6 +79,7 @@
 			{#snippet children({ props })}
 				<InputGroup.Root>
 					<MentionTextarea
+						personId={note.personId}
 						{...props}
 						placeholder={t`Edit note...`}
 						bind:value={$data.note}

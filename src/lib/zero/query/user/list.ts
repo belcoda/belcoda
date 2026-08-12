@@ -1,12 +1,15 @@
 import { defineQuery } from '@rocicorp/zero';
 import { builder } from '$lib/zero/schema';
 import type { QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput } from 'valibot';
-import { listFilter } from '$lib/schema/helpers';
+import { array, type InferOutput, nullable, object, optional } from 'valibot';
+import { listFilter, uuid } from '$lib/schema/helpers';
 import { userReadPermissions } from '$lib/zero/query/user/permissions';
 import { readUserZero } from '$lib/schema/user';
 
-export const inputSchema = listFilter;
+export const inputSchema = object({
+	...listFilter.entries,
+	personId: optional(nullable(uuid))
+});
 
 export function listUsersQuery({
 	ctx,
@@ -30,6 +33,26 @@ export function listUsersQuery({
 				return tm.where('teamId', '=', input.teamId!);
 			});
 		});
+	}
+	if (input.personId) {
+		q = q.where(({ or, exists, cmp }) =>
+			or(
+				exists('orgMemberships', (m) => {
+					return m.where('organizationId', '=', input.organizationId).where(({ or, cmp }) =>
+						or(cmp('role', '=', 'admin'), cmp('role', '=', 'owner'))
+					);
+				}),
+				exists('teamMemberships', (tm) => {
+					return tm.whereExists('team', (team) => {
+						return team
+							.where('organizationId', '=', input.organizationId)
+							.whereExists('person', (pt) => {
+								return pt.where('personId', '=', input.personId!);
+							});
+					});
+				})
+			)
+		);
 	}
 	if (input.excludedIds?.length) {
 		q = q.where(({ cmp }) => cmp('id', 'NOT IN', input.excludedIds));

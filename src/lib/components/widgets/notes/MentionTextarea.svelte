@@ -18,12 +18,14 @@
 
 	type TextareaProps = ComponentProps<typeof InputGroup.Textarea>;
 	type Props = Omit<TextareaProps, 'value' | 'ref'> & {
+		personId: string;
 		value?: string;
 		mentions?: WritePersonNoteMentionZero[];
 		ref?: HTMLTextAreaElement | null;
 	};
 
 	let {
+		personId,
 		value = $bindable(''),
 		mentions = $bindable([]),
 		ref = $bindable(null),
@@ -43,12 +45,13 @@
 	let previousNote = value;
 	let pickerPosition = $state({ left: 0, top: 0, width: 320 });
 
-	const usersFilter = $derived(
-		getListFilter(appState.organizationId, {
+	const usersFilter = $derived({
+		...getListFilter(appState.organizationId, {
 			pageSize: 8,
 			searchString: activeQuery?.searchString || null
-		})
-	);
+		}),
+		personId
+	});
 	const usersQuery = $derived.by(() =>
 		activeQuery ? z.createQuery(queries.user.list(usersFilter)) : null
 	);

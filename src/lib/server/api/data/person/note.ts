@@ -1,7 +1,16 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
 
-import { member, person, personNote, personNoteMention, user } from '$lib/schema/drizzle';
+import {
+	member,
+	person,
+	personNote,
+	personNoteMention,
+	personTeam,
+	team,
+	teamMember,
+	user
+} from '$lib/schema/drizzle';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
 import { eq, and, isNull, count, ilike, inArray } from 'drizzle-orm';
 
@@ -25,28 +34,106 @@ import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { createNotification } from '$lib/server/api/data/notification/notification';
 import { buildPersonNoteMentionNotifications } from '$lib/utils/person-note/notifications';
 
-import pino from '$lib/pino';
-
-async function requireMentionedUsersInOrganization({
+async function requireMentionedUsersCanReadPerson({
 	tx,
 	organizationId,
+	personId,
 	mentions
 }: {
 	tx: ServerTransaction;
 	organizationId: string;
+	personId: string;
 	mentions: readonly WritePersonNoteMentionZero[];
 }) {
 	const mentionedUserIds = [...new Set(mentions.map((mention) => mention.mentionedUserId))];
 	if (mentionedUserIds.length === 0) return;
 
 	const memberships = await tx.dbTransaction.wrappedTransaction
-		.select({ userId: member.userId })
+		.select({ userId: member.userId, role: member.role })
 		.from(member)
 		.where(
 			and(eq(member.organizationId, organizationId), inArray(member.userId, mentionedUserIds))
 		);
 	if (memberships.length !== mentionedUserIds.length) {
 		throw new Error('Every mentioned user must be a member of the organization');
+	}
+
+	const usersWithOrganizationWideRead = new Set(
+		memberships
+			.filter((membership) => membership.role === 'admin' || membership.role === 'owner')
+			.map((membership) => membership.userId)
+	);
+	const usersNeedingTeamAccess = mentionedUserIds.filter(
+		(userId) => !usersWithOrganizationWideRead.has(userId)
+	);
+	if (usersNeedingTeamAccess.length === 0) {
+		return;
+	}
+
+	const personTeams = await tx.dbTransaction.wrappedTransaction
+		.select({ teamId: personTeam.teamId })
+		.from(personTeam)
+		.where(and(eq(personTeam.organizationId, organizationId), eq(personTeam.personId, personId)));
+	if (personTeams.length === 0) {
+		throw new Error('Every mentioned user must be able to read the person');
+	}
+
+	const personTeamIds = new Set(personTeams.map((row) => row.teamId));
+	const organizationTeams = await tx.dbTransaction.wrappedTransaction
+		.select({ id: team.id, parentTeamId: team.parentTeamId })
+		.from(team)
+		.where(eq(team.organizationId, organizationId));
+	const organizationTeamIds = organizationTeams.map((organizationTeam) => organizationTeam.id);
+	if (organizationTeamIds.length === 0) {
+		throw new Error('Every mentioned user must be able to read the person');
+	}
+
+	const teamMemberships = await tx.dbTransaction.wrappedTransaction
+		.select({ userId: teamMember.userId, teamId: teamMember.teamId })
+		.from(teamMember)
+		.where(
+			and(
+				inArray(teamMember.userId, usersNeedingTeamAccess),
+				inArray(teamMember.teamId, organizationTeamIds)
+			)
+		);
+
+	const childTeamsByParentId = new Map<string, string[]>();
+	for (const organizationTeam of organizationTeams) {
+		if (!organizationTeam.parentTeamId) continue;
+		const children = childTeamsByParentId.get(organizationTeam.parentTeamId) ?? [];
+		children.push(organizationTeam.id);
+		childTeamsByParentId.set(organizationTeam.parentTeamId, children);
+	}
+
+	const directTeamIdsByUserId = new Map<string, string[]>();
+	for (const teamMembership of teamMemberships) {
+		const directTeamIds = directTeamIdsByUserId.get(teamMembership.userId) ?? [];
+		directTeamIds.push(teamMembership.teamId);
+		directTeamIdsByUserId.set(teamMembership.userId, directTeamIds);
+	}
+
+	const usersWithPersonReadAccess = new Set(usersWithOrganizationWideRead);
+	for (const userId of usersNeedingTeamAccess) {
+		const queue = [...(directTeamIdsByUserId.get(userId) ?? [])];
+		const visitedTeamIds = new Set(queue);
+
+		for (let index = 0; index < queue.length; index++) {
+			const teamId = queue[index];
+			if (personTeamIds.has(teamId)) {
+				usersWithPersonReadAccess.add(userId);
+				break;
+			}
+			for (const childTeamId of childTeamsByParentId.get(teamId) ?? []) {
+				if (visitedTeamIds.has(childTeamId)) continue;
+				visitedTeamIds.add(childTeamId);
+				queue.push(childTeamId);
+			}
+		}
+	}
+
+	if (usersWithPersonReadAccess.size !== mentionedUserIds.length) {
+		throw new Error('Every mentioned user must be able to read the person');
 	}
 }
 
@@ -73,9 +160,10 @@ export async function createPersonNote({
 		ctx,
 		args: { organizationId: parsed.metadata.organizationId, personId: parsed.metadata.personId }
 	});
-	await requireMentionedUsersInOrganization({
+	await requireMentionedUsersCanReadPerson({
 		tx,
 		organizationId: parsed.metadata.organizationId,
+		personId: parsed.metadata.personId,
 		mentions: parsed.input.mentions
 	});
 	const personNoteToCreate: typeof personNote.$inferInsert = {
@@ -157,9 +245,10 @@ export async function updatePersonNote({
 	if (!personNoteRecord) {
 		throw new Error('Person note not found');
 	}
-	await requireMentionedUsersInOrganization({
+	await requireMentionedUsersCanReadPerson({
 		tx,
 		organizationId: parsed.metadata.organizationId,
+		personId: personNoteRecord.personId,
 		mentions: parsed.input.mentions
 	});
 	const result = await _updatePersonNoteNoPermissionsCheckUnsafe({
