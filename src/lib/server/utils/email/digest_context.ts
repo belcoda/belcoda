@@ -32,6 +32,7 @@ type GroupedNotification = {
 	type: string;
 	referenceId: string;
 	people: { name: string; id: string | null }[];
+	fallbackPersonId: string | null;
 	subjectTitle: string | null;
 	noteAuthorName: string | null;
 	notePreview: string | null;
@@ -64,6 +65,7 @@ function groupNotifications(notifications: NotificationRow[]): GroupedNotificati
 				type: n.type,
 				referenceId: n.referenceId,
 				people: [],
+				fallbackPersonId: payload?.personId ?? null,
 				subjectTitle: payload?.subjectTitle ?? null,
 				noteAuthorName: payload?.noteAuthorName ?? null,
 				notePreview: payload?.notePreview ?? null,
@@ -76,6 +78,9 @@ function groupNotifications(notifications: NotificationRow[]): GroupedNotificati
 
 		const name = payload?.personName;
 		const pid = payload?.personId ?? null;
+		if (!group.fallbackPersonId && pid) {
+			group.fallbackPersonId = pid;
+		}
 		if (name) {
 			const existing = group.people.find((p) => p.id === pid || p.name === name);
 			if (existing) {
@@ -146,8 +151,9 @@ export function buildDigestContext(options: {
 				sectionKey = 'whatsapp';
 				sectionLabel = 'WhatsApp messages';
 				const person = group.people[0];
-				const personUrl = person?.id
-					? buildAppUrl(appUrl, `/community/${person.id}`, organizationId)
+				const personId = person?.id ?? group.fallbackPersonId;
+				const personUrl = personId
+					? buildAppUrl(appUrl, `/community/${personId}`, organizationId)
 					: buildAppUrl(appUrl, '/notifications', organizationId);
 				item = {
 					title: person?.name ?? 'WhatsApp contact',
@@ -160,8 +166,9 @@ export function buildDigestContext(options: {
 				sectionKey = 'person_note_mention';
 				sectionLabel = 'Note mentions';
 				const person = group.people[0];
-				const personUrl = person?.id
-					? buildAppUrl(appUrl, `/community/${person.id}#note-${group.referenceId}`, organizationId)
+				const personId = person?.id ?? group.fallbackPersonId;
+				const personUrl = personId
+					? buildAppUrl(appUrl, `/community/${personId}#note-${group.referenceId}`, organizationId)
 					: buildAppUrl(appUrl, '/notifications', organizationId);
 				item = {
 					title: person?.name ?? 'Note mention',

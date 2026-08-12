@@ -23,6 +23,7 @@
 	const pageSize = 20;
 	const loadMoreScrollThreshold = 200;
 	const scrollRestoreDurationMs = 1000;
+	const noteHashPrefix = '#note-';
 
 	let scrollContainer: HTMLElement | null = $state(null);
 	let listContent: HTMLElement | null = $state(null);
@@ -32,6 +33,8 @@
 	let restoreAnchorOffset = 0;
 	let scrollRestoreTimeout: ReturnType<typeof setTimeout> | null = null;
 	let resizeObserver: ResizeObserver | undefined;
+	let pendingNoteId: string | null = $state(null);
+	let noteDeepLinkResolved = $state(true);
 
 	const paginatedActivities = new PaginatedZeroList<ActivityListBaseFilter, ReadActivityZero>({
 		getBaseFilter: () => ({ personId, accountId: appState.activeWhatsappAccountId ?? undefined }),
@@ -49,6 +52,19 @@
 	const chronologicalActivities = $derived([...paginatedActivities.items].reverse());
 
 	onMount(() => {
+		const handleHashChange = () => {
+			syncNoteDeepLinkFromHash();
+			void tick().then(() => {
+				resolvePendingNoteDeepLink();
+			});
+		};
+
+		syncNoteDeepLinkFromHash();
+		void tick().then(() => {
+			resolvePendingNoteDeepLink();
+		});
+		window.addEventListener('hashchange', handleHashChange);
+
 		resizeObserver = new ResizeObserver(() => {
 			if (pendingScrollRestore) {
 				maintainScrollPosition();
@@ -60,6 +76,7 @@
 			resizeObserver.observe(listContent);
 		}
 		return () => {
+			window.removeEventListener('hashchange', handleHashChange);
 			resizeObserver?.disconnect();
 			if (scrollRestoreTimeout) {
 				clearTimeout(scrollRestoreTimeout);
@@ -86,6 +103,8 @@
 			endScrollRestore();
 			previousItemCount = 0;
 			paginatedActivities.reset();
+			syncNoteDeepLinkFromHash();
+			noteDeepLinkResolved = pendingNoteId === null;
 		}
 	);
 	watch(
@@ -105,20 +124,83 @@
 			void tick().then(() => {
 				if (!scrollContainer) return;
 
-				if (previousItemCount === 0 || (itemCount > previousItemCount && !pendingScrollRestore)) {
+				if (
+					(previousItemCount === 0 || itemCount > previousItemCount) &&
+					!pendingScrollRestore &&
+					!hasPendingNoteDeepLink()
+				) {
 					scrollToBottom();
 				} else if (itemCount > previousItemCount && pendingScrollRestore) {
 					maintainScrollPosition();
 				}
 
 				loadMoreIfNotScrollable();
+				resolvePendingNoteDeepLink();
 				previousItemCount = itemCount;
 			});
 		}
 	);
+	watch(
+		() => [
+			scrollContainer,
+			pendingNoteId,
+			paginatedActivities.items.length,
+			paginatedActivities.hasMore,
+			paginatedActivities.loadingMore
+		],
+		() => {
+			void tick().then(() => {
+				resolvePendingNoteDeepLink();
+			});
+		}
+	);
+
+	function parseNoteIdFromHash(hash: string) {
+		if (!hash.startsWith(noteHashPrefix)) return null;
+		const noteId = hash.slice(noteHashPrefix.length).trim();
+		return noteId.length > 0 ? noteId : null;
+	}
+
+	function syncNoteDeepLinkFromHash() {
+		const noteId = parseNoteIdFromHash(window.location.hash);
+		if (pendingNoteId === noteId) return;
+		pendingNoteId = noteId;
+		noteDeepLinkResolved = noteId === null;
+	}
+
+	function hasPendingNoteDeepLink() {
+		return pendingNoteId !== null && !noteDeepLinkResolved;
+	}
 
 	function getAnchorElement(activityId: string) {
 		return scrollContainer?.querySelector(`[data-activity-id="${activityId}"]`);
+	}
+
+	function getNoteElement(noteId: string) {
+		return scrollContainer?.querySelector<HTMLElement>(`[data-note-id="${noteId}"]`);
+	}
+
+	function resolvePendingNoteDeepLink() {
+		if (!scrollContainer || !hasPendingNoteDeepLink() || !pendingNoteId) {
+			return;
+		}
+
+		const noteElement = getNoteElement(pendingNoteId);
+		if (noteElement) {
+			noteElement.scrollIntoView({ block: 'center' });
+			noteDeepLinkResolved = true;
+			return;
+		}
+
+		if (paginatedActivities.loadingMore) {
+			return;
+		}
+		if (paginatedActivities.hasMore) {
+			loadMoreOlder(false);
+			return;
+		}
+
+		noteDeepLinkResolved = true;
 	}
 
 	function maintainScrollPosition() {
