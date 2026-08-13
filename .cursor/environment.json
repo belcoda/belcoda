@@ -4,7 +4,7 @@
 	"terminals": [
 		{
 			"name": "app-zero",
-			"command": "test -f .env || cp .env.example.cloud-agents .env; PUBLIC_HOST=http://localhost:5173 PUBLIC_ROOT_DOMAIN=localhost:5173 npm run dev"
+			"command": "test -f .env || cp .env.example.cloud-agents .env; npm run dev"
 		}
 	]
 }
