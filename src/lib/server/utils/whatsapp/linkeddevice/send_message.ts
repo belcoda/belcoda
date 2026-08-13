@@ -180,7 +180,10 @@ export async function sendWhatsappMessage({
 			whatsappAccountId,
 			tx
 		});
-		const titanMessage = convertOutboundMessage({ message: whatsappMessage });
+		if (!recipient.jid) {
+			throw new Error('Recipient has no JID');
+		}
+		const titanMessage = convertOutboundMessage({ message: whatsappMessage, jid: recipient.jid });
 		const titanResponse = await sendWhatsappMessageToLinkedDeviceGateway({ message: titanMessage });
 		if (!titanResponse.id) {
 			throw new Error('Failed to send message to Titan');
