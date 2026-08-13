@@ -162,7 +162,7 @@ export function getEnglishLanguageName(languageCode: LanguageCode): string {
 	return isoLanguageCodes[languageCode].name;
 }
 
-export const LOCALES = ['en', 'es', 'pt', 'fr', 'sw', 'ms', 'id', 'tl'] as const;
+export const LOCALES = ['en', 'es', 'pt', 'fr', 'sw', 'ms', 'id', 'fil'] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const getLocaleName = (locale: Locale): string => {
@@ -181,8 +181,8 @@ export const getLocaleName = (locale: Locale): string => {
 			return 'Bahasa Melayu';
 		case 'id':
 			return 'Bahasa Indonesia';
-		case 'tl':
-			return 'Tagalog';
+		case 'fil':
+			return 'Filipino';
 		default:
 			return locale;
 	}

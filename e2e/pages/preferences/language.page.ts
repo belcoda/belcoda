@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-const LOCALES = ['en', 'es', 'pt', 'fr', 'sw', 'ms', 'id', 'tl'] as const;
+const LOCALES = ['en', 'es', 'pt', 'fr', 'sw', 'ms', 'id', 'fil'] as const;
 
 function localeLabel(locale: string): string {
 	const labels: Record<string, string> = {
@@ -11,7 +11,7 @@ function localeLabel(locale: string): string {
 		sw: 'Swahili',
 		ms: 'Bahasa Melayu',
 		id: 'Bahasa Indonesia',
-		tl: 'Tagalog'
+		fil: 'Filipino'
 	};
 	return labels[locale] ?? locale;
 }

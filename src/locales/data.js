@@ -1,3 +1,3 @@
-/** @typedef {('en'|'es'|'pt'|'fr'|'sw'|'ms'|'id'|'tl')} Locale */
+/** @typedef {('en'|'es'|'pt'|'fr'|'sw'|'ms'|'id'|'fil')} Locale */
 /** @type {[Locale, ...Locale[]]} */
-export const locales = ['en','es','pt','fr','sw','ms','id','tl']
+export const locales = ['en','es','pt','fr','sw','ms','id','fil']
