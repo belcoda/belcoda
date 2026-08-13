@@ -20,7 +20,11 @@ set -euo pipefail
 
 # --- Node 24 (base image ships 20/21/22 via nvm; CI/Docker pin 24) ---
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
-for candidate in "$NVM_DIR/nvm.sh" /root/.nvm/nvm.sh /usr/local/nvm/nvm.sh; do
+# The base image installs nvm at /opt/nvm (see /etc/profile.d/nvm.sh). The setup
+# script runs as a non-login shell, so that profile drop-in isn't sourced and
+# NVM_DIR is usually unset here — probe /opt/nvm explicitly or the whole Node 24
+# block gets silently skipped and the session stays on the base image's Node.
+for candidate in "$NVM_DIR/nvm.sh" /opt/nvm/nvm.sh /root/.nvm/nvm.sh /usr/local/nvm/nvm.sh; do
 	if [ -s "$candidate" ]; then
 		# shellcheck disable=SC1090
 		. "$candidate"
@@ -65,15 +69,24 @@ as_postgres() {
 # --- Configure the pre-installed Postgres for Zero (needs wal_level=logical) ---
 # Idempotent: only append once so cache rebuilds don't accumulate duplicate lines.
 PG_CONF="/etc/postgresql/16/main/postgresql.conf"
+pg_conf_changed=0
 if [ -f "$PG_CONF" ] && ! grep -q '^wal_level = logical' "$PG_CONF"; then
 	{
 		echo "wal_level = logical"
 		echo "max_wal_senders = 10"
 		echo "max_replication_slots = 10"
 	} >>"$PG_CONF"
+	pg_conf_changed=1
 fi
 service postgresql start
 wait_for_postgres
+# wal_level takes effect only on a full restart. If Postgres was already running
+# when we appended the setting, `start` above was a no-op and the live server is
+# still on the default `replica` — restart so Zero's logical replication works.
+if [ "$pg_conf_changed" -eq 1 ]; then
+	service postgresql restart
+	wait_for_postgres
+fi
 
 bootstrap_postgres_roles
 
