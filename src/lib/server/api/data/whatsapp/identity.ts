@@ -132,40 +132,62 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 		}
 	}
 
-	const [upserted] = await tx.dbTransaction.wrappedTransaction
-		.insert(personWhatsappIdentity)
-		.values({
-			id: uuidv7(),
-			organizationId,
-			personId,
-			wabaId,
-			bsuid,
-			parentUserId: parentUserId ?? null,
-			waPhone: waPhone ?? null,
-			displayName: displayName ?? null,
-			firstSeenAt: now,
-			lastSeenAt: now,
-			createdAt: now,
-			updatedAt: now,
-			deletedAt: null
-		})
-		.onConflictDoUpdate({
-			target: [
-				personWhatsappIdentity.organizationId,
-				personWhatsappIdentity.wabaId,
-				personWhatsappIdentity.bsuid
-			],
-			targetWhere: isNull(personWhatsappIdentity.deletedAt),
-			set: {
-				personId,
-				parentUserId: sql`coalesce(excluded.parent_user_id, ${personWhatsappIdentity.parentUserId})`,
-				waPhone: sql`coalesce(excluded.wa_phone, ${personWhatsappIdentity.waPhone})`,
-				displayName: sql`coalesce(excluded.display_name, ${personWhatsappIdentity.displayName})`,
-				lastSeenAt: now,
-				updatedAt: now
-			}
-		})
-		.returning();
+	// Linked-device identities are keyed on (organization, whatsapp account, jid); cloud
+	// identities on (organization, waba, bsuid). Pick the conflict target that matches the
+	// identity being written so the correct partial unique index resolves the upsert.
+	const isLinkedDeviceIdentity = Boolean(whatsappAccountId && jid);
+	const insert = tx.dbTransaction.wrappedTransaction.insert(personWhatsappIdentity).values({
+		id: uuidv7(),
+		organizationId,
+		personId,
+		whatsappAccountId: whatsappAccountId ?? null,
+		jid: jid ?? null,
+		wabaId,
+		bsuid,
+		parentUserId: parentUserId ?? null,
+		waPhone: waPhone ?? null,
+		displayName: displayName ?? null,
+		firstSeenAt: now,
+		lastSeenAt: now,
+		createdAt: now,
+		updatedAt: now,
+		deletedAt: null
+	});
+
+	const upsertQuery = isLinkedDeviceIdentity
+		? insert.onConflictDoUpdate({
+				target: [
+					personWhatsappIdentity.organizationId,
+					personWhatsappIdentity.whatsappAccountId,
+					personWhatsappIdentity.jid
+				],
+				targetWhere: isNull(personWhatsappIdentity.deletedAt),
+				set: {
+					personId,
+					waPhone: sql`coalesce(excluded.wa_phone, ${personWhatsappIdentity.waPhone})`,
+					displayName: sql`coalesce(excluded.display_name, ${personWhatsappIdentity.displayName})`,
+					lastSeenAt: now,
+					updatedAt: now
+				}
+			})
+		: insert.onConflictDoUpdate({
+				target: [
+					personWhatsappIdentity.organizationId,
+					personWhatsappIdentity.wabaId,
+					personWhatsappIdentity.bsuid
+				],
+				targetWhere: isNull(personWhatsappIdentity.deletedAt),
+				set: {
+					personId,
+					parentUserId: sql`coalesce(excluded.parent_user_id, ${personWhatsappIdentity.parentUserId})`,
+					waPhone: sql`coalesce(excluded.wa_phone, ${personWhatsappIdentity.waPhone})`,
+					displayName: sql`coalesce(excluded.display_name, ${personWhatsappIdentity.displayName})`,
+					lastSeenAt: now,
+					updatedAt: now
+				}
+			});
+
+	const [upserted] = await upsertQuery.returning();
 
 	if (!upserted) {
 		throw new Error('Failed to upsert WhatsApp identity');
