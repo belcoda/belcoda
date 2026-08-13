@@ -31,6 +31,7 @@ type GroupedNotification = {
 	key: string;
 	type: string;
 	referenceId: string;
+	personId: string | null;
 	people: { name: string; id: string | null }[];
 	subjectTitle: string | null;
 	noteAuthorName: string | null;
@@ -63,6 +64,7 @@ function groupNotifications(notifications: NotificationRow[]): GroupedNotificati
 				key,
 				type: n.type,
 				referenceId: n.referenceId,
+				personId: payload?.personId ?? null,
 				people: [],
 				subjectTitle: payload?.subjectTitle ?? null,
 				noteAuthorName: payload?.noteAuthorName ?? null,
@@ -76,6 +78,7 @@ function groupNotifications(notifications: NotificationRow[]): GroupedNotificati
 
 		const name = payload?.personName;
 		const pid = payload?.personId ?? null;
+		group.personId ??= pid;
 		if (name) {
 			const existing = group.people.find((p) => p.id === pid || p.name === name);
 			if (existing) {
@@ -146,8 +149,9 @@ export function buildDigestContext(options: {
 				sectionKey = 'whatsapp';
 				sectionLabel = 'WhatsApp messages';
 				const person = group.people[0];
-				const personUrl = person?.id
-					? buildAppUrl(appUrl, `/community/${person.id}`, organizationId)
+				const personId = person?.id ?? group.personId;
+				const personUrl = personId
+					? buildAppUrl(appUrl, `/community/${personId}`, organizationId)
 					: buildAppUrl(appUrl, '/notifications', organizationId);
 				item = {
 					title: person?.name ?? 'WhatsApp contact',
@@ -160,8 +164,9 @@ export function buildDigestContext(options: {
 				sectionKey = 'person_note_mention';
 				sectionLabel = 'Note mentions';
 				const person = group.people[0];
-				const personUrl = person?.id
-					? buildAppUrl(appUrl, `/community/${person.id}#note-${group.referenceId}`, organizationId)
+				const personId = person?.id ?? group.personId;
+				const personUrl = personId
+					? buildAppUrl(appUrl, `/community/${personId}#note-${group.referenceId}`, organizationId)
 					: buildAppUrl(appUrl, '/notifications', organizationId);
 				item = {
 					title: person?.name ?? 'Note mention',
