@@ -48,6 +48,10 @@ export const createNotificationSchema = v.variant('type', [
 		...notificationCreateBaseSchema
 	}),
 	v.object({
+		type: v.literal('person_note_mention'),
+		...notificationCreateBaseSchema
+	}),
+	v.object({
 		type: v.literal('generic'),
 		...notificationCreateBaseSchema
 	})
