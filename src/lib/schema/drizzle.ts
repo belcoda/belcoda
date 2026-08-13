@@ -521,6 +521,9 @@ export const personWhatsappIdentity = pgTable(
 		uniqueIndex('person_whatsapp_identity_active_unique')
 			.on(table.organizationId, table.wabaId, table.bsuid)
 			.where(sql`${table.deletedAt} is null`),
+		uniqueIndex('person_whatsapp_identity_linked_device_active_unique')
+			.on(table.organizationId, table.whatsappAccountId, table.jid)
+			.where(sql`${table.deletedAt} is null`),
 		index('person_whatsapp_identity_person_id').on(table.personId),
 		index('person_whatsapp_identity_org_waba').on(table.organizationId, table.wabaId)
 	]

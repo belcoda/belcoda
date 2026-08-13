@@ -3860,6 +3860,34 @@
           "method": "btree",
           "with": {}
         },
+        "person_whatsapp_identity_linked_device_active_unique": {
+          "name": "person_whatsapp_identity_linked_device_active_unique",
+          "columns": [
+            {
+              "expression": "organization_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "whatsapp_account_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "jid",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"person_whatsapp_identity\".\"deleted_at\" is null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "person_whatsapp_identity_person_id": {
           "name": "person_whatsapp_identity_person_id",
           "columns": [
