@@ -6,7 +6,7 @@ import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_ap
 import { v7 as uuidv7 } from 'uuid';
 
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
-
+import { generateEventPageUrl } from '$lib/components/forms/event/actions';
 import { env as privateEnv } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
 import { _getEventByIdUnsafe } from '$lib/server/api/data/event/event';
@@ -62,6 +62,8 @@ async function sendConfirmationMessage({
 	eventTitle,
 	eventStartDate,
 	eventTimezone,
+	eventOnlineMeetingLink,
+	eventPageUrl,
 	tx
 }: {
 	from: string;
@@ -69,6 +71,8 @@ async function sendConfirmationMessage({
 	eventTitle: string;
 	eventStartDate: Date | null;
 	eventTimezone: string;
+	eventOnlineMeetingLink: string | null;
+	eventPageUrl: string | null;
 	tx: ServerTransaction;
 }) {
 	try {
@@ -123,7 +127,7 @@ async function sendConfirmationMessage({
 			}
 		}
 
-		const confirmationText = `✅ You're registered for *${eventTitle}*!\n\n📅 ${dateString}\n\nWe'll send you a reminder before the event. See you there!`;
+		const confirmationText = `✅ You're registered for *${eventTitle}*!\n\n📅 ${dateString}\n\n${eventOnlineMeetingLink ? `🔗 Join the event at ${eventOnlineMeetingLink}\n\n` : ''}${eventPageUrl ? `👉 Details: ${eventPageUrl}\n\n` : ''}We'll send you a reminder before the event. See you there!`;
 
 		await sendWhatsappMessage({
 			from: waPhoneNumber,
@@ -323,6 +327,11 @@ export async function handleFlowResponse({
 					eventTitle: event.title,
 					eventStartDate: event.startsAt,
 					eventTimezone: event.timezone,
+					eventOnlineMeetingLink: event.onlineLink,
+					eventPageUrl: generateEventPageUrl({
+						eventSlug: event.slug,
+						organizationSlug: organization.slug
+					}),
 					tx
 				});
 
