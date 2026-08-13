@@ -180,7 +180,7 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 	organizationId,
 	personId,
 	note,
-	mentions = [],
+	mentions,
 	mentionAuthorUserId
 }: {
 	tx: ServerTransaction;
@@ -209,10 +209,12 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 	if (!result) {
 		throw new Error('Unable to update person note');
 	}
-	await tx.dbTransaction.wrappedTransaction
-		.delete(personNoteMention)
-		.where(eq(personNoteMention.personNoteId, noteId));
-	if (mentions.length > 0) {
+	if (mentions !== undefined) {
+		await tx.dbTransaction.wrappedTransaction
+			.delete(personNoteMention)
+			.where(eq(personNoteMention.personNoteId, noteId));
+	}
+	if (mentions && mentions.length > 0) {
 		await tx.dbTransaction.wrappedTransaction.insert(personNoteMention).values(
 			mentions.map((mention) => ({
 				...mention,
