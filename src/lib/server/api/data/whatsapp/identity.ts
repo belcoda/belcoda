@@ -1,6 +1,7 @@
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { v7 as uuidv7 } from 'uuid';
+import * as v from 'valibot';
 
 import pino from '$lib/pino';
 import { organization, person, personWhatsappIdentity } from '$lib/schema/drizzle';
@@ -86,6 +87,24 @@ export async function findWhatsappIdentityByBsuidUnsafe({
 	return identity;
 }
 
+// A WhatsApp identity must be keyed on exactly one complete pair: linked-device
+// (whatsappAccountId + jid) or cloud (wabaId + bsuid). Partial combinations would fall through
+// to a conflict target whose columns are null, so the upsert can't resolve and orphan rows leak.
+const whatsappIdentityKeySchema = v.pipe(
+	v.object({
+		whatsappAccountId: v.nullish(v.string()),
+		jid: v.nullish(v.string()),
+		wabaId: v.nullish(v.string()),
+		bsuid: v.nullish(v.string())
+	}),
+	v.check(
+		(key) =>
+			(Boolean(key.whatsappAccountId) && Boolean(key.jid)) ||
+			(Boolean(key.wabaId) && Boolean(key.bsuid)),
+		'A complete WhatsApp identity key is required: whatsappAccountId + jid, or wabaId + bsuid'
+	)
+);
+
 export async function upsertWhatsappIdentityForPersonUnsafe({
 	organizationId,
 	personId,
@@ -109,6 +128,18 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 	jid?: string | null;
 	tx: ServerTransaction;
 }) {
+	const keyValidation = v.safeParse(whatsappIdentityKeySchema, {
+		whatsappAccountId,
+		jid,
+		wabaId,
+		bsuid
+	});
+	if (!keyValidation.success) {
+		throw new Error(
+			'upsertWhatsappIdentityForPersonUnsafe requires a complete identity key: either whatsappAccountId + jid, or wabaId + bsuid'
+		);
+	}
+
 	const now = new Date();
 
 	if (wabaId && bsuid) {
