@@ -20,18 +20,22 @@ msgstr "Date and time"
 #: src/lib/components/layouts/app/sidebars/preferences/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/routes/(app)/settings/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
 msgstr "Language"
 
-#~ msgid "Languages"
-#~ msgstr "Languages"
+#: src/routes/(app)/settings/language/+page.svelte
+msgid "Languages"
+msgstr "Languages"
 
-#~ msgid "Update your preferred language:"
-#~ msgstr "Update your preferred language:"
+#: src/routes/(app)/settings/language/+page.svelte
+msgid "Update your preferred language:"
+msgstr "Update your preferred language:"
 
-#~ msgid "This will update your language for all the pages in the application."
-#~ msgstr "This will update your language for all the pages in the application."
+#: src/routes/(app)/settings/language/+page.svelte
+msgid "This will update your language for all the pages in the application."
+msgstr "This will update your language for all the pages in the application."
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
@@ -111,6 +115,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/routes/(app)/settings/users/RemoveMemberDialog.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -194,6 +199,7 @@ msgstr "The return path domain is used for bounce handling."
 #: src/routes/(app)/settings/people/imports/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
 #: src/routes/(app)/settings/webhooks/[webhookId]/logs/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Status"
 msgstr "Status"
@@ -286,6 +292,7 @@ msgstr "Create a new email signature that will be verified with Postmark."
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
 msgid "Display name"
 msgstr "Display name"
 
@@ -369,6 +376,7 @@ msgstr "The email address cannot be changed."
 #: src/routes/(app)/settings/tags/EditTag.svelte
 #: src/routes/(app)/settings/teams/EditTeam.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
 msgid "Save changes"
 msgstr "Save changes"
 
@@ -723,6 +731,7 @@ msgstr "Call"
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/event/signups/SignupActionButton.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "WhatsApp"
@@ -763,16 +772,20 @@ msgid "Add a note or comment..."
 msgstr "Add a note or comment..."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
 msgid "Are you sure you want to delete this note?"
 msgstr "Are you sure you want to delete this note?"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
 msgid "Note deleted"
 msgstr "Note deleted"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/Name.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Edit"
 msgstr "Edit"
@@ -780,6 +793,7 @@ msgstr "Edit"
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/DeleteNote.svelte
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/+page.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
@@ -1298,6 +1312,7 @@ msgstr "Create an account to get started"
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/+page.svelte
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Name"
@@ -1387,6 +1402,7 @@ msgstr "Enter email subject..."
 
 #: src/lib/components/flow/Flow.svelte
 #: src/lib/components/forms/email/EmailForm.svelte
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
 #: src/routes/(app)/communications/email/sent/[id]/+page.svelte
 msgid "Message"
 msgstr "Message"
@@ -2790,6 +2806,7 @@ msgid "WhatsApp templates"
 msgstr "WhatsApp templates"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
 msgid "WhatsApp accounts"
 msgstr "WhatsApp accounts"
 
@@ -3255,6 +3272,7 @@ msgstr "Email saved"
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
 msgid "Organization"
 msgstr "Organization"
 
@@ -3978,14 +3996,17 @@ msgid "Select a sent message from the list to view its details"
 msgstr "Select a sent message from the list to view its details"
 
 #: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
 msgid "You are not authorized to access this page."
 msgstr "You are not authorized to access this page."
 
 #: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
 msgid "You need to be an organization admin or owner to access this page."
 msgstr "You need to be an organization admin or owner to access this page."
 
 #: src/routes/(app)/communications/+layout.svelte
+#: src/routes/(app)/settings/+layout.svelte
 msgid "Go to dashboard"
 msgstr "Go to dashboard"
 
@@ -4381,6 +4402,7 @@ msgid "Petition page"
 msgstr "Petition page"
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
 msgid "Danger zone"
 msgstr "Danger zone"
 
@@ -5066,7 +5088,8 @@ msgstr "🎨 Sticker"
 #. 0: formatNumber(paginatedSignups.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
 #. 0: formatNumber(paginatedSignatures.items.length, locale.current)
-#. 
+#. 0: formatNumber(paginatedTags.items.length, locale.current)
+#. 0: formatNumber(paginatedTeams.items.length, locale.current)
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 #: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
@@ -5075,6 +5098,7 @@ msgstr "🎨 Sticker"
 #: src/lib/components/widgets/petition/PetitionSignatures.svelte
 #: src/routes/(app)/petitions/[petitionId]/signatures/+page.svelte
 #: src/routes/(app)/settings/tags/+page.svelte
+#: src/routes/(app)/settings/teams/+page.svelte
 msgid "{0} shown"
 msgstr "{0} shown"
 
@@ -5139,6 +5163,7 @@ msgstr "Add funds"
 msgid "Add {0}"
 msgstr "Add {0}"
 
+#. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Enter a valid amount. Minimum purchase is {0}."
 msgstr "Enter a valid amount. Minimum purchase is {0}."
@@ -5431,6 +5456,7 @@ msgstr "Notification"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
+#: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -5636,9 +5662,11 @@ msgid "Digest frequency"
 msgstr "Digest frequency"
 
 #: src/routes/(app)/settings/notifications/+page.svelte
+#: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Weekly"
 msgstr "Weekly"
 
+#: src/routes/(app)/settings/notifications/+page.svelte
 #: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Daily"
 msgstr "Daily"
@@ -5647,6 +5675,7 @@ msgstr "Daily"
 msgid "Saved"
 msgstr "Saved"
 
+#: src/routes/(app)/settings/notifications/+page.svelte
 #: src/routes/(app)/settings/notifications/+page.svelte
 msgid "Failed to save notification preferences"
 msgstr "Failed to save notification preferences"
@@ -5700,7 +5729,7 @@ msgstr "Nothing here yet"
 msgid "Timeline"
 msgstr "Timeline"
 
-#: src/routes/(app)/community/[personId]/+page.svelte
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
 msgstr "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
 
@@ -5905,28 +5934,22 @@ msgstr "Added to favourites"
 msgid "Could not update favourites. Please try again."
 msgstr "Could not update favourites. Please try again."
 
-#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Account"
 msgstr "Account"
 
-#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
-msgid "Just you"
-msgstr "Just you"
+#~ msgid "Just you"
+#~ msgstr "Just you"
 
-#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
-msgid "Workspace"
-msgstr "Workspace"
+#~ msgid "Workspace"
+#~ msgstr "Workspace"
 
-#. 0: orgName
-#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
-msgid "Everyone in {0}"
-msgstr "Everyone in {0}"
+#~ msgid "Everyone in {0}"
+#~ msgstr "Everyone in {0}"
 
-#: src/lib/components/layouts/app/sidebars/settings/SettingsSidebar.svelte
-msgid "Everyone in your workspace"
-msgstr "Everyone in your workspace"
+#~ msgid "Everyone in your workspace"
+#~ msgstr "Everyone in your workspace"
 
 #: src/lib/components/layouts/app/sidebars/settings/ScopeBanner.svelte
 msgid "Only affects you. Other teammates keep their own settings."
@@ -5944,6 +5967,346 @@ msgstr "Manage your personal account preferences and, if you're an admin, your w
 msgid "Failed to send WhatsApp message"
 msgstr "Failed to send WhatsApp message"
 
-#: src/lib/components/widgets/activity/NoteAdded.svelte
-msgid "Note added"
-msgstr "Note added"
+#~ msgid "Note added"
+#~ msgstr "Note added"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Teammates notified"
+msgstr "Teammates notified"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Unable to notify teammates"
+msgstr "Unable to notify teammates"
+
+#~ msgid "Notify teammates"
+#~ msgstr "Notify teammates"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Select organization members to invite to this conversation."
+msgstr "Select organization members to invite to this conversation."
+
+#~ msgid "Notify"
+#~ msgstr "Notify"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr "A teammate"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "this person"
+msgstr "this person"
+
+#. 0: actorName; 1: personName
+#. 0: getPayload(notification.payload)?.actorName ?? t`A teammate`; 1: getPayload(notification.payload)?.personName ?? t`this person`
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} invited you to join the conversation with {1}"
+msgstr "{0} invited you to join the conversation with {1}"
+
+#: src/lib/components/widgets/notifications/NotificationGroupConversationMention.svelte
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View conversation"
+msgstr "View conversation"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Conversation invitation"
+msgstr "Conversation invitation"
+
+#. 0: actor.data.name
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "{0} notified teammates about this person"
+msgstr "{0} notified teammates about this person"
+
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "Teammates were notified about this person"
+msgstr "Teammates were notified about this person"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Bring in teammates"
+msgstr "Bring in teammates"
+
+#: src/lib/components/widgets/communications/NotifyConversationAction.svelte
+msgid "Notify selected"
+msgstr "Notify selected"
+
+#. 0: actor.data.name; 1: teammate.data.name
+#: src/lib/components/widgets/activity/ConversationTeammatesNotified.svelte
+msgid "{0} brought {1} into the conversation"
+msgstr "{0} brought {1} into the conversation"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Identifier"
+msgstr "Identifier"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+msgid "Scope"
+msgstr "Scope"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Type"
+msgstr "Type"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Personal"
+msgstr "Personal"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Business"
+msgstr "Business"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+msgid "No WhatsApp accounts"
+msgstr "No WhatsApp accounts"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+msgid "You don't have access to any WhatsApp accounts yet."
+msgstr "You don't have access to any WhatsApp accounts yet."
+
+#: src/lib/components/layouts/app/sidebars/settings/items.ts
+msgid "WhatsApp Linked Accounts"
+msgstr "WhatsApp Linked Accounts"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Are you sure you want to unlink this WhatsApp account?"
+msgstr "Are you sure you want to unlink this WhatsApp account?"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Edit WhatsApp account"
+msgstr "Edit WhatsApp account"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Account details"
+msgstr "Account details"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Update the display information for this WhatsApp account."
+msgstr "Update the display information for this WhatsApp account."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "The phone number or WhatsApp username. This cannot be changed."
+msgstr "The phone number or WhatsApp username. This cannot be changed."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "e.g., Campaign hotline"
+msgstr "e.g., Campaign hotline"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "e.g., Available"
+msgstr "e.g., Available"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Profile picture URL"
+msgstr "Profile picture URL"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "https://…"
+msgstr "https://…"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Unlinking removes this account. This action cannot be undone."
+msgstr "Unlinking removes this account. This action cannot be undone."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "Unlink account"
+msgstr "Unlink account"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
+msgid "You don't have permission to edit this WhatsApp account."
+msgstr "You don't have permission to edit this WhatsApp account."
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
+msgid "Link account"
+msgstr "Link account"
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "We couldn't link that account. Please check the code and try again."
+msgstr "We couldn't link that account. Please check the code and try again."
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Something went wrong while linking the account. Please try again."
+msgstr "Something went wrong while linking the account. Please try again."
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Link at your own risk"
+msgstr "Link at your own risk"
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Belcoda links your account using the unofficial WhatsApp Linked Devices API, which is not endorsed or supported by Meta Platforms, Inc. Using a WhatsApp account in Belcoda this way may violate Meta's terms of service, and we cannot rule out the risk of your account being suspended or banned. Only link an account you are comfortable putting at that risk."
+msgstr "Belcoda links your account using the unofficial WhatsApp Linked Devices API, which is not endorsed or supported by Meta Platforms, Inc. Using a WhatsApp account in Belcoda this way may violate Meta's terms of service, and we cannot rule out the risk of your account being suspended or banned. Only link an account you are comfortable putting at that risk."
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Read the FAQ"
+msgstr "Read the FAQ"
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Using a new account? Read our warm-up tips"
+msgstr "Using a new account? Read our warm-up tips"
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Signup code"
+msgstr "Signup code"
+
+#. 0: String(LINK_ACCOUNT_CODE_LENGTH)
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+msgid "Enter the {0}-digit code to link your WhatsApp account."
+msgstr "Enter the {0}-digit code to link your WhatsApp account."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+msgid "Link a WhatsApp account"
+msgstr "Link a WhatsApp account"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+msgid "Connect an existing WhatsApp account — one you already use in the WhatsApp app or the WhatsApp Business app — so you can send and receive messages from within Belcoda. This does not create a new WhatsApp account."
+msgstr "Connect an existing WhatsApp account — one you already use in the WhatsApp app or the WhatsApp Business app — so you can send and receive messages from within Belcoda. This does not create a new WhatsApp account."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+msgid "Please read before continuing"
+msgstr "Please read before continuing"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+msgid "Belcoda links accounts using the unofficial WhatsApp Linked Devices API, which is not endorsed or supported by Meta Platforms, Inc. While we aim to comply with all relevant policies, using a WhatsApp account in Belcoda via the Linked Devices API may violate Meta's terms of service. We cannot guarantee there is no risk of the account being suspended or banned as a result of using it via Belcoda."
+msgstr "Belcoda links accounts using the unofficial WhatsApp Linked Devices API, which is not endorsed or supported by Meta Platforms, Inc. While we aim to comply with all relevant policies, using a WhatsApp account in Belcoda via the Linked Devices API may violate Meta's terms of service. We cannot guarantee there is no risk of the account being suspended or banned as a result of using it via Belcoda."
+
+#: src/lib/components/forms/whatsapp/LinkWhatsAppAccount.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+msgid "I understand and certify that I am linking a WhatsApp account to Belcoda at my own risk, and that I am aware of the risk of suspension or banning of the account."
+msgstr "I understand and certify that I am linking a WhatsApp account to Belcoda at my own risk, and that I am aware of the risk of suspension or banning of the account."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+msgid "Choose how this account should be shared"
+msgstr "Choose how this account should be shared"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+msgid "Personal (user) account"
+msgstr "Personal (user) account"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/new/user/+page.svelte
+msgid "Only you will be able to send and receive messages using this account."
+msgstr "Only you will be able to send and receive messages using this account."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+msgid "Organization account"
+msgstr "Organization account"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/+page.svelte
+#: src/routes/(app)/settings/whatsapp/_accounts/new/organization/+page.svelte
+msgid "Any Belcoda user in your organization will be able to send and receive messages using this account."
+msgstr "Any Belcoda user in your organization will be able to send and receive messages using this account."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/organization/+page.svelte
+msgid "Link an organization WhatsApp account"
+msgstr "Link an organization WhatsApp account"
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/organization/+page.svelte
+msgid "Only organization admins and owners can link an organization WhatsApp account."
+msgstr "Only organization admins and owners can link an organization WhatsApp account."
+
+#: src/routes/(app)/settings/whatsapp/_accounts/new/user/+page.svelte
+msgid "Link a personal WhatsApp account"
+msgstr "Link a personal WhatsApp account"
+
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+#: src/lib/components/layouts/app/sidebars/events/RenderEvent.svelte
+msgid "Favourite"
+msgstr "Favourite"
+
+#: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+msgid "Favourites only"
+msgstr "Favourites only"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "No favourite events"
+msgstr "No favourite events"
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Favourite an event using the star in its header to see it here."
+msgstr "Favourite an event using the star in its header to see it here."
+
+#: src/lib/components/layouts/app/sidebars/events/EventsSidebar.svelte
+msgid "Show all events"
+msgstr "Show all events"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "User"
+msgstr "User"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Internal note"
+msgstr "Internal note"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "Note actions"
+msgstr "Note actions"
+
+#: src/lib/components/widgets/activity/InlineNote.svelte
+msgid "Only your team can see this"
+msgstr "Only your team can see this"
+
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Note"
+msgstr "Note"
+
+#. 0: personDisplayName
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Internal note — {0} will not see this"
+msgstr "Internal note — {0} will not see this"
+
+#: src/lib/components/widgets/notes/ConversationComposer.svelte
+msgid "Internal note — the person will not see this"
+msgstr "Internal note — the person will not see this"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Write an internal note..."
+msgstr "Write an internal note..."
+
+#. 0: personDisplayName
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Internal note about {0}"
+msgstr "Internal note about {0}"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Save note"
+msgstr "Save note"
+
+#: src/lib/components/widgets/notes/NoteComposer.svelte
+msgid "Failed to save note"
+msgstr "Failed to save note"
+
+#: src/lib/components/widgets/notes/MentionTextarea.svelte
+msgid "Mention a user"
+msgstr "Mention a user"
+
+#: src/lib/components/widgets/notes/MentionTextarea.svelte
+msgid "Unable to load organization members."
+msgstr "Unable to load organization members."
+
+#: src/lib/components/widgets/notes/MentionTextarea.svelte
+msgid "Loading users..."
+msgstr "Loading users..."
+
+#: src/lib/components/widgets/notes/MentionTextarea.svelte
+msgid "No users found."
+msgstr "No users found."
+
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+msgid "Note updated"
+msgstr "Note updated"
+
+#: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
+msgid "Failed to update note"
+msgstr "Failed to update note"

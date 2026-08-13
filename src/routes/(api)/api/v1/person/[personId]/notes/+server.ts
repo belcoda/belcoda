@@ -41,7 +41,7 @@ export async function POST(event) {
 		const note = await createPersonNote({
 			ctx: { ...ctx, userId: input.userId }, //it is safe to use the user-provided userId here because we are using an API key and the API key is owned by an organizational owner
 			args: {
-				input: { note: input.note },
+				input: { note: input.note, mentions: [] },
 				metadata: {
 					personId: event.params.personId,
 					organizationId,

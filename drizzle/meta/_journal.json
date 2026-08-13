@@ -180,8 +180,22 @@
     {
       "idx": 25,
       "version": "7",
-      "when": 1786089834044,
-      "tag": "0025_superb_puff_adder",
+      "when": 1786325689512,
+      "tag": "0025_sharp_shinko_yamashiro",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1786390318054,
+      "tag": "0026_plain_doctor_octopus",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1786579917887,
+      "tag": "0027_overrated_miracleman",
       "breakpoints": true
     }
   ]

@@ -12,7 +12,9 @@ type PersonNoteApi = {
 };
 
 async function openNotesDrawer(page: Page) {
-	await page.getByRole('button', { name: /^Notes$/i }).click();
+	// Not a name-based role query: the Notes button appends a count once notes exist
+	// (e.g. "Notes 1"), which would break an exact-match name like /^Notes$/.
+	await page.getByTestId('notes-action-notes-btn').click();
 	await page.getByTestId('person-notes-list').waitFor({ state: 'visible', timeout: 10_000 });
 }
 
@@ -87,11 +89,18 @@ test.describe.serial('API v1 Person Notes', () => {
 
 		await loginAsOwner(page);
 		await page.goto(ids.personPath);
+
+		// A note created via the API renders inline in the timeline too, not only in
+		// the drawer. the timeline has no separate write path to bypass.
+		await expect(page.getByTestId('inline-note').filter({ hasText: ids.noteText })).toBeVisible({
+			timeout: 15_000
+		});
+
 		await openNotesDrawer(page);
 
-		const noteItem = page.locator(`[data-testid="person-note"][data-note-id="${ids.noteId}"]`);
+		const noteItem = page.locator(`[data-testid="person-note-item"][data-note-id="${ids.noteId}"]`);
 		await expect(noteItem).toBeVisible({ timeout: 15_000 });
-		await expect(noteItem.getByTestId('person-note-text')).toHaveText(ids.noteText);
+		await expect(noteItem.getByTestId('person-note-content')).toHaveText(ids.noteText);
 	});
 
 	test('GET /api/v1/person/:personId/notes lists the new note', async ({ request }) => {
@@ -125,8 +134,8 @@ test.describe.serial('API v1 Person Notes', () => {
 		await page.goto(ids.personPath);
 		await openNotesDrawer(page);
 
-		const noteItem = page.locator(`[data-testid="person-note"][data-note-id="${ids.noteId}"]`);
-		await expect(noteItem.getByTestId('person-note-text')).toHaveText(updatedText, {
+		const noteItem = page.locator(`[data-testid="person-note-item"][data-note-id="${ids.noteId}"]`);
+		await expect(noteItem.getByTestId('person-note-content')).toHaveText(updatedText, {
 			timeout: 15_000
 		});
 	});
@@ -144,7 +153,7 @@ test.describe.serial('API v1 Person Notes', () => {
 		await openNotesDrawer(page);
 
 		await expect(
-			page.locator(`[data-testid="person-note"][data-note-id="${ids.noteId}"]`)
+			page.locator(`[data-testid="person-note-item"][data-note-id="${ids.noteId}"]`)
 		).toHaveCount(0, { timeout: 15_000 });
 	});
 

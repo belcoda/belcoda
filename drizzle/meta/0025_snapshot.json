@@ -1,5 +1,5 @@
 {
-  "id": "85ada0dc-b629-496f-a825-742d7dd77c73",
+  "id": "bf23e280-f328-4bde-a23f-eaa1698cd25f",
   "prevId": "13ad04d8-fcb4-45e4-9d93-a1fecbb07c39",
   "version": "7",
   "dialect": "postgresql",
@@ -3642,29 +3642,17 @@
           "primaryKey": false,
           "notNull": true
         },
-        "whatsapp_account_id": {
-          "name": "whatsapp_account_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "jid": {
-          "name": "jid",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "waba_id": {
           "name": "waba_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "bsuid": {
           "name": "bsuid",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "parent_user_id": {
           "name": "parent_user_id",
@@ -3801,19 +3789,6 @@
           "tableTo": "person",
           "columnsFrom": [
             "person_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "person_whatsapp_identity_whatsapp_account_id_whatsapp_account_id_fk": {
-          "name": "person_whatsapp_identity_whatsapp_account_id_whatsapp_account_id_fk",
-          "tableFrom": "person_whatsapp_identity",
-          "tableTo": "whatsapp_account",
-          "columnsFrom": [
-            "whatsapp_account_id"
           ],
           "columnsTo": [
             "id"
@@ -5043,19 +5018,27 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "whatsapp_account_identifier_active_idx": {
+          "name": "whatsapp_account_identifier_active_idx",
+          "columns": [
+            {
+              "expression": "identifier",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"whatsapp_account\".\"deleted_at\" IS NULL",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "whatsapp_account_identifier_unique": {
-          "name": "whatsapp_account_identifier_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "identifier"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

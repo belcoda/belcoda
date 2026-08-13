@@ -2,6 +2,7 @@ import { defineMutator } from '@rocicorp/zero';
 import {
 	createWhatsappAccountMutatorSchema,
 	deleteWhatsappAccountMutatorSchema,
+	unlinkWhatsappAccountMutatorSchema,
 	updateWhatsappAccountMetadataMutatorSchema
 } from '$lib/schema/whatsapp-account';
 
@@ -28,6 +29,21 @@ export const createWhatsappAccount = defineMutator(
 export const deleteWhatsappAccount = defineMutator(
 	deleteWhatsappAccountMutatorSchema,
 	async ({ tx, args }) => {
+		tx.mutate.whatsappAccount.update({
+			id: args.metadata.whatsappAccountId,
+			deletedAt: now(),
+			updatedAt: now()
+		});
+	}
+);
+
+// Unlinking an account soft-deletes it (stamps `deletedAt`), same as a delete.
+// It is a distinct mutator because unlinking should eventually also detach the
+// account at the WhatsApp provider.
+export const unlinkWhatsappAccount = defineMutator(
+	unlinkWhatsappAccountMutatorSchema,
+	async ({ tx, args }) => {
+		// todo: unlink with API
 		tx.mutate.whatsappAccount.update({
 			id: args.metadata.whatsappAccountId,
 			deletedAt: now(),

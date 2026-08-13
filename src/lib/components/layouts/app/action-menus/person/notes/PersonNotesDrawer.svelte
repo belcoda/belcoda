@@ -25,7 +25,7 @@
 	import { locale, t } from '$lib/index.svelte';
 	const timeAgo = getTimeAgo(locale.current);
 	import PersonNote from '$lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte';
-	import PersonNoteForm from '$lib/components/layouts/app/action-menus/person/notes/PersonNoteForm.svelte';
+	import NoteComposer from '$lib/components/widgets/notes/NoteComposer.svelte';
 
 	import queries from '$lib/zero/query/index';
 	import * as Empty from '$lib/components/ui/empty/index.js';
@@ -103,7 +103,7 @@
 					><XIcon class="size-4" /></Drawer.Close
 				>
 			</div>
-			<PersonNoteForm personId={person.id} {onNotesChanged} />
+			<NoteComposer personId={person.id} onSaved={onNotesChanged} />
 		</Drawer.Header>
 		<div class="space-y-4 overflow-y-auto p-4" data-testid="person-notes-list">
 			{#if paginatedNotes.items.length > 0}

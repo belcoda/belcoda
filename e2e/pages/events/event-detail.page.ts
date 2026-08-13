@@ -3,10 +3,12 @@ import type { Page, Locator } from '@playwright/test';
 export class EventDetailPage {
 	readonly page: Page;
 	readonly actionDropdownTrigger: Locator;
+	readonly favouriteButton: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
 		this.actionDropdownTrigger = page.getByTestId('event-action-dropdown');
+		this.favouriteButton = page.getByTestId('favourite-event-button');
 	}
 
 	async goto(eventId: string) {

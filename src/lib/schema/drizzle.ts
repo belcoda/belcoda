@@ -1004,6 +1004,28 @@ type PersonNoteDrizzleMatchesValibot = IsTrue<
 	typeof personNote.$inferSelect extends PersonNoteSchema ? true : false
 >;
 
+export const personNoteMention = pgTable(
+	'person_note_mention',
+	{
+		id: uuid('id').primaryKey(),
+		personNoteId: uuid('person_note_id')
+			.notNull()
+			.references(() => personNote.id, { onDelete: 'cascade' }),
+		mentionedUserId: uuid('mentioned_user_id')
+			.notNull()
+			.references(() => user.id),
+		startIndex: integer('start_index').notNull(),
+		length: integer('length').notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull()
+	},
+	(table) => [
+		unique('person_note_mention_position_unique').on(table.personNoteId, table.startIndex),
+		index('person_note_mention_user_note_idx').on(table.mentionedUserId, table.personNoteId),
+		check('person_note_mention_start_index_check', sql`${table.startIndex} >= 0`),
+		check('person_note_mention_length_check', sql`${table.length} > 0`)
+	]
+);
+
 // petition schema
 export const petition = pgTable('petition', {
 	id: uuid('id').primaryKey(),
@@ -1155,14 +1177,21 @@ export const whatsappAccount = pgTable(
 		id: uuid('id').primaryKey(),
 		referenceId: uuid('reference_id').notNull(),
 		scope: text('scope').$type<WhatsappAccountScope>().notNull(),
-		identifier: text('identifier').notNull().unique(),
+		identifier: text('identifier').notNull(),
 		details: jsonb('details').$type<WhatsappAccountDetails>().notNull(),
 		metadata: jsonb('metadata').$type<WhatsappAccountMetadata>().notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull(),
 		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }).notNull(),
 		deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
 	},
-	(table) => [index('whatsapp_account_reference_idx').on(table.referenceId)]
+	(table) => [
+		index('whatsapp_account_reference_idx').on(table.referenceId),
+		// identifier is unique only among active (non-soft-deleted) accounts, so an
+		// unlinked account's identifier can be re-linked later.
+		uniqueIndex('whatsapp_account_identifier_active_idx')
+			.on(table.identifier)
+			.where(sql`${table.deletedAt} IS NULL`)
+	]
 );
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
 type WhatsappAccountValibotMatchesDrizzle = IsTrue<
@@ -1428,6 +1457,11 @@ export const memberFavouriteRelations = relations(memberFavourite, ({ one }) => 
 	member: one(member, {
 		fields: [memberFavourite.memberId],
 		references: [member.id]
+	}),
+	event: one(event, {
+		fields: [memberFavourite.referenceId],
+		references: [event.id],
+		relationName: 'eventFavourites'
 	})
 }));
 
@@ -1441,7 +1475,8 @@ export const tagRelations = relations(tag, ({ one, many }) => ({
 
 export const userRelations = relations(user, ({ one, many }) => ({
 	orgMemberships: many(member),
-	teamMemberships: many(teamMember)
+	teamMemberships: many(teamMember),
+	personNoteMentions: many(personNoteMention)
 }));
 
 export const teamRelations = relations(team, ({ one, many }) => ({
@@ -1568,6 +1603,12 @@ export const activityRelations = relations(activity, ({ one }) => ({
 	whatsappMessage: one(whatsappMessage, {
 		fields: [activity.referenceId],
 		references: [whatsappMessage.id]
+	}),
+	// polymorphic relationship to personNote, used to exclude note_added activities
+	// whose note has been deleted from the activity list query
+	personNote: one(personNote, {
+		fields: [activity.referenceId],
+		references: [personNote.id]
 	})
 }));
 
@@ -1681,7 +1722,8 @@ export const eventRelations = relations(event, ({ one, many }) => ({
 		fields: [event.teamId],
 		references: [team.id]
 	}),
-	signups: many(eventSignup)
+	signups: many(eventSignup),
+	favourites: many(memberFavourite, { relationName: 'eventFavourites' })
 }));
 
 export const eventSignupRelations = relations(eventSignup, ({ one }) => ({
@@ -1726,7 +1768,7 @@ export const petitionSignatureRelations = relations(petitionSignature, ({ one })
 	})
 }));
 
-export const personNoteRelations = relations(personNote, ({ one }) => ({
+export const personNoteRelations = relations(personNote, ({ one, many }) => ({
 	person: one(person, {
 		fields: [personNote.personId],
 		references: [person.id]
@@ -1738,6 +1780,18 @@ export const personNoteRelations = relations(personNote, ({ one }) => ({
 	organization: one(organization, {
 		fields: [personNote.organizationId],
 		references: [organization.id]
+	}),
+	mentions: many(personNoteMention)
+}));
+
+export const personNoteMentionRelations = relations(personNoteMention, ({ one }) => ({
+	personNote: one(personNote, {
+		fields: [personNoteMention.personNoteId],
+		references: [personNote.id]
+	}),
+	mentionedUser: one(user, {
+		fields: [personNoteMention.mentionedUserId],
+		references: [user.id]
 	})
 }));
 

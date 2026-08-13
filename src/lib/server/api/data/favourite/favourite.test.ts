@@ -77,33 +77,36 @@ describe('member favourites', () => {
 		} as never);
 	});
 
-	it('adds a favourite for a readable resource', async () => {
-		const inserted = {
-			id: favouriteId,
-			organizationId,
-			memberId,
-			referenceType: 'person',
-			referenceId
-		};
-		const { tx, values, run } = createTransaction({ insertedRows: [inserted] });
+	it.each(['person', 'event', 'petition'] as const)(
+		'adds a favourite for a readable %s',
+		async (referenceType) => {
+			const inserted = {
+				id: favouriteId,
+				organizationId,
+				memberId,
+				referenceType,
+				referenceId
+			};
+			const { tx, values, run } = createTransaction({ insertedRows: [inserted] });
 
-		const result = await addFavourite({
-			tx: tx as never,
-			ctx,
-			args: { metadata }
-		});
+			const result = await addFavourite({
+				tx: tx as never,
+				ctx,
+				args: { metadata: { ...metadata, referenceType } }
+			});
 
-		expect(run).toHaveBeenCalledOnce();
-		expect(values).toHaveBeenCalledWith({
-			id: favouriteId,
-			organizationId,
-			memberId,
-			referenceType: 'person',
-			referenceId,
-			createdAt: expect.any(Date)
-		});
-		expect(result).toBe(inserted);
-	});
+			expect(run).toHaveBeenCalledOnce();
+			expect(values).toHaveBeenCalledWith({
+				id: favouriteId,
+				organizationId,
+				memberId,
+				referenceType,
+				referenceId,
+				createdAt: expect.any(Date)
+			});
+			expect(result).toBe(inserted);
+		}
+	);
 
 	it('returns the existing row when the favourite already exists', async () => {
 		const existing = {
@@ -144,18 +147,21 @@ describe('member favourites', () => {
 		expect(run).not.toHaveBeenCalled();
 	});
 
-	it('rejects a reference the member cannot currently read', async () => {
-		const { tx, run } = createTransaction();
-		run.mockResolvedValueOnce(undefined);
+	it.each(['person', 'event', 'petition'] as const)(
+		'rejects an unreadable %s reference',
+		async (referenceType) => {
+			const { tx, run } = createTransaction();
+			run.mockResolvedValueOnce(undefined);
 
-		await expect(
-			addFavourite({
-				tx: tx as never,
-				ctx,
-				args: { metadata }
-			})
-		).rejects.toThrow('Favourite reference not found');
-	});
+			await expect(
+				addFavourite({
+					tx: tx as never,
+					ctx,
+					args: { metadata: { ...metadata, referenceType } }
+				})
+			).rejects.toThrow('Favourite reference not found');
+		}
+	);
 
 	it('removes a favourite idempotently', async () => {
 		const { tx, deleteRow } = createTransaction();
