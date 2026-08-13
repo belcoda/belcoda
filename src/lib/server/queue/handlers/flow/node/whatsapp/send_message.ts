@@ -4,10 +4,14 @@ import { type NodeHandlerProps } from '$lib/server/queue/handlers/flow/node/inde
 import { _getFlowDetailsUnsafe } from '$lib/server/api/data/flow/utils';
 import { _updateFlowExecutionStep } from '$lib/server/api/data/flow/execution_step';
 import { queueNextNode } from '$lib/server/queue/handlers/flow/node/utils/queue_next_node';
+import { shouldSkipPersonMessage } from '$lib/server/queue/handlers/whatsapp/process_flow_node';
+import pino from '$lib/pino';
 
 // imports for specific handler action
 import { sendWhatsappMessage } from '$lib/server/utils/whatsapp/linkeddevice/send_message';
 import { v7 as uuidv7 } from 'uuid';
+
+const log = pino(import.meta.url);
 
 export async function processFlowNodeWhatsappSendMessage({
 	flowVersionId,
@@ -26,6 +30,23 @@ export async function processFlowNodeWhatsappSendMessage({
 	});
 	if (flowDetails.node.data.type !== 'whatsapp.sendMessage') {
 		throw new Error(`Node is not an whatsapp send message node for flow version ${flowVersionId}`);
+	}
+	// This node is reached via automation (cron, person-created, etc.), so enforce subscription
+	// as well as doNotContact — mirroring the guard on the WhatsApp flow path so opted-out
+	// recipients never receive an automated message.
+	if (await shouldSkipPersonMessage({ personId, organizationId, enforceSubscription: true })) {
+		log.info(
+			{ flowVersionId, flowExecutionId, nodeId, personId, organizationId },
+			'Skipped linked-device WhatsApp message for ineligible person'
+		);
+		await db.transaction(async (tx) => {
+			await _updateFlowExecutionStep({
+				tx,
+				flowExecutionStepId,
+				status: 'completed'
+			});
+		});
+		return;
 	}
 	const message = {
 		id: uuidv7(),

@@ -176,7 +176,7 @@ export async function processFlowNodeAction({
 	}
 }
 
-async function shouldSkipPersonMessage({
+export async function shouldSkipPersonMessage({
 	personId,
 	organizationId,
 	enforceSubscription
