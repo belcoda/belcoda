@@ -11,7 +11,7 @@ export default defineConfig({
 		parallel: 5,
 		think: true // default: false
 	}),
-	locales: ['en', 'es', 'pt'],
+	locales: ['en', 'es', 'pt', 'fr', 'sw', 'ms', 'id', 'tl'],
 	adapters: {
 		main: svelte({
 			loader: 'sveltekit',
