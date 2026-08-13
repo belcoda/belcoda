@@ -51,6 +51,9 @@
 			})
 		)
 	);
+	const pendingNoteQuery = $derived.by(() =>
+		pendingNoteId ? z.createQuery(queries.personNote.read({ personNoteId: pendingNoteId })) : null
+	);
 	const chronologicalActivities = $derived([...paginatedActivities.items].reverse());
 
 	onMount(() => {
@@ -118,6 +121,14 @@
 		}
 	);
 	watch(
+		() => [pendingNoteQuery?.data, pendingNoteQuery?.details.type] as const,
+		([, resultType]) => {
+			if (resultType === 'complete') {
+				void resolvePendingNoteDeepLink();
+			}
+		}
+	);
+	watch(
 		() => paginatedActivities.items.length,
 		(itemCount) => {
 			if (pendingNoteId) {
@@ -160,6 +171,14 @@
 		const noteId = pendingNoteId;
 		const resolutionVersion = deepLinkResolutionVersion;
 		if (!noteId || deepLinkAwaitingInitialResult || activityQuery.details.type !== 'complete') {
+			return;
+		}
+
+		const noteQuery = pendingNoteQuery;
+		if (!noteQuery || noteQuery.details.type !== 'complete') return;
+		const note = noteQuery.data;
+		if (!note || note.deletedAt || note.personId !== personId) {
+			pendingNoteId = null;
 			return;
 		}
 
