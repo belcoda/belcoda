@@ -5,6 +5,7 @@ import { _createFlowExecutionStep } from '$lib/server/api/data/flow/execution_st
 import { failFlowExecution } from '$lib/server/utils/flows/execution';
 import { processFlowNodeEventSignup } from '$lib/server/queue/handlers/flow/node/event.signup';
 import { processFlowNodeTriggerCron } from '$lib/server/queue/handlers/flow/node/trigger.js';
+import { processFlowNodeWhatsappSendMessage } from '$lib/server/queue/handlers/flow/node/whatsapp/send_message';
 
 export type ProcessFlowNodeProps = {
 	flowVersionId: string;
@@ -76,6 +77,14 @@ export async function processFlowNode({
 				break;
 			}
 			case 'whatsapp.sendMessage': {
+				await processFlowNodeWhatsappSendMessage({
+					flowVersionId,
+					personId,
+					organizationId,
+					flowExecutionId,
+					flowExecutionStepId: flowExecutionStep.id,
+					nodeId
+				});
 				break;
 			}
 			default: {
