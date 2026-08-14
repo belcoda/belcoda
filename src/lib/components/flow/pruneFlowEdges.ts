@@ -154,3 +154,39 @@ export function pruneRemovedButtonEdges<E extends ResolvableEdge>(
 
 	return { edges: kept, removed };
 }
+
+/**
+ * Scoped edge cleanup for a SINGLE node that now HAS buttons.
+ *
+ * A message/templateMessage node with no buttons renders one unkeyed bottom
+ * source handle, so an edge drawn from it is handleless (`source === nodeId`,
+ * null/undefined `sourceHandle`) and the runtime treats it as an automatic
+ * continuation. Once the node gains buttons it switches to per-button handles and
+ * stops rendering that bottom handle — the old handleless edge is now orphaned,
+ * yet `pruneRemovedButtonEdges` keeps it (a handleless edge is not a button edge).
+ * At runtime the flow then both sends the buttoned message AND auto-advances down
+ * the stale edge, a double advance / unintended message (BEL-1058).
+ *
+ * This drops exactly `nodeId`'s handleless outgoing edges (`source === nodeId`
+ * with a null/undefined `sourceHandle`). It is only correct once the node has ≥1
+ * button — a button-less node legitimately owns a handleless continuation — so
+ * callers must invoke it only on the 0 → >0 transition (or while the node has
+ * buttons). Complementary to `pruneRemovedButtonEdges`, which handles the keyed
+ * button edges; between them a buttoned node keeps only its per-button edges.
+ * Scoped to `nodeId`; every other edge is kept. Pure.
+ */
+export function pruneHandlelessEdgesForButtonedNode<E extends ResolvableEdge>(
+	nodeId: string,
+	edges: readonly E[]
+): PruneResult<E> {
+	const kept: E[] = [];
+	const removed: E[] = [];
+
+	for (const edge of edges) {
+		const orphaned = edge.source === nodeId && edge.sourceHandle == null;
+		if (orphaned) removed.push(edge);
+		else kept.push(edge);
+	}
+
+	return { edges: kept, removed };
+}
