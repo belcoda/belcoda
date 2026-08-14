@@ -59,11 +59,47 @@ export function defaultEmailOrganizationSettings(): EmailOrganizationSettingsSch
 	};
 }
 
+export const organizationOnboardingStatusSchema = v.picklist(['pending', 'skipped', 'complete']);
+export type OrganizationOnboardingStatusSchema = v.InferOutput<
+	typeof organizationOnboardingStatusSchema
+>;
+
+export const organizationOnboardingSettingsSchema = v.object({
+	whatsappAccount: organizationOnboardingStatusSchema,
+	event: organizationOnboardingStatusSchema,
+	publishEvent: organizationOnboardingStatusSchema,
+	other: organizationOnboardingStatusSchema,
+	advanced: organizationOnboardingStatusSchema
+});
+export type OrganizationOnboardingSettingsSchema = v.InferOutput<
+	typeof organizationOnboardingSettingsSchema
+>;
+
+export function defaultOrganizationOnboardingSettings(
+	status: OrganizationOnboardingStatusSchema = 'pending'
+): OrganizationOnboardingSettingsSchema {
+	return {
+		whatsappAccount: status,
+		event: status,
+		publishEvent: status,
+		other: status,
+		advanced: status
+	};
+}
+
+export function organizationOnboardingIsComplete(
+	settings: OrganizationOnboardingSettingsSchema
+): boolean {
+	return Object.values(settings).every((status) => status !== 'pending');
+}
+
 export const organizationSettingsSchema = v.object({
 	whatsApp: whatsappOrganizationSettingsSchema,
 	email: emailOrganizationSettingsSchema,
 	theme: themeSettingsSchema,
-	website: websiteOrganizationSettingsSchema
+	website: websiteOrganizationSettingsSchema,
+	// Optional for organizations created before the onboarding settings were introduced.
+	onboarding: v.optional(organizationOnboardingSettingsSchema)
 });
 
 export type OrganizationSettingsSchema = v.InferOutput<typeof organizationSettingsSchema>;
@@ -73,14 +109,19 @@ export const defaultDisplaySettings = {
 	secondaryColor: '#10b981'
 };
 
-export function defaultOrganizationSettings(): OrganizationSettingsSchema {
+export function defaultOrganizationSettings({
+	onboardingStatus = 'complete'
+}: {
+	onboardingStatus?: OrganizationOnboardingStatusSchema;
+} = {}): OrganizationSettingsSchema {
 	return {
 		whatsApp: defaultWhatsappOrganizationSettings(),
 		email: defaultEmailOrganizationSettings(),
 		theme: defaultThemeSettings(),
 		website: {
 			homepageUrl: null
-		}
+		},
+		onboarding: defaultOrganizationOnboardingSettings(onboardingStatus)
 	};
 }
 
@@ -102,4 +143,15 @@ export const updateWhatsappOrganizationSettingsZeroMutatorSchema = v.object({
 });
 export type UpdateWhatsappOrganizationSettingsZeroMutatorSchema = v.InferOutput<
 	typeof updateWhatsappOrganizationSettingsZeroMutatorSchema
+>;
+
+export const updateOrganizationOnboardingZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid,
+		existingSettings: organizationSettingsSchema
+	}),
+	input: v.partial(organizationOnboardingSettingsSchema)
+});
+export type UpdateOrganizationOnboardingZeroMutatorSchema = v.InferOutput<
+	typeof updateOrganizationOnboardingZeroMutatorSchema
 >;
