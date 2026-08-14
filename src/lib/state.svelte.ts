@@ -6,6 +6,12 @@ import { SvelteMap } from 'svelte/reactivity';
 import { z } from '$lib/zero.svelte';
 import queries from '$lib/zero/query/index';
 import { structuredClone } from '$lib/utils/structuredClone';
+import { safeLocalStorage } from '$lib/utils/storage';
+import { organizationNeedsOnboardingStorageKey } from '$lib/utils/organization-onboarding';
+import {
+	defaultOrganizationOnboardingSettings,
+	organizationOnboardingIsComplete
+} from '$lib/schema/organization/settings';
 
 const DEFAULT_LIST_FILTER: ListFilter = {
 	organizationId: '',
@@ -30,6 +36,7 @@ class AppState {
 	#userId = $state<string | null>(null);
 	#queryContext: QueryContext | null = $state(null);
 	#activeWhatsappAccountId = $state<string | null>(null);
+	#organizationNeedsOnboardingLocally = $state(false);
 
 	#whatsappAccounts = $derived.by(() => {
 		if (!this.#organizationId) {
@@ -170,12 +177,15 @@ class AppState {
 	}) {
 		this.#userId = userId;
 		this.#organizationId = organizationId;
+		this.#organizationNeedsOnboardingLocally =
+			safeLocalStorage.getItem(organizationNeedsOnboardingStorageKey(organizationId)) === 'true';
 		this.#queryContext = queryContext;
 		this.#hasAppOrganizationContext = true;
 	}
 
 	clearOrganizationContext() {
 		this.#organizationId = null;
+		this.#organizationNeedsOnboardingLocally = false;
 		this.#activeTeamId = null;
 		this.#queryContext = null;
 		this.#hasAppOrganizationContext = false;
@@ -219,6 +229,26 @@ class AppState {
 	set organizationId(newOrganizationId: string) {
 		this.#organizationId = newOrganizationId;
 		this.#activeWhatsappAccountId = null;
+		this.#organizationNeedsOnboardingLocally =
+			safeLocalStorage.getItem(organizationNeedsOnboardingStorageKey(newOrganizationId)) === 'true';
+	}
+
+	get organizationOnboarding() {
+		const onboarding = this.#activeOrganization?.data?.settings.onboarding;
+		if (onboarding) return onboarding;
+		return defaultOrganizationOnboardingSettings(
+			this.#organizationNeedsOnboardingLocally ? 'pending' : 'complete'
+		);
+	}
+
+	get organizationNeedsOnboarding() {
+		return !organizationOnboardingIsComplete(this.organizationOnboarding);
+	}
+
+	clearOrganizationNeedsOnboardingFlag() {
+		if (!this.#organizationId) return;
+		safeLocalStorage.removeItem(organizationNeedsOnboardingStorageKey(this.#organizationId));
+		this.#organizationNeedsOnboardingLocally = false;
 	}
 
 	get activeWhatsappAccountId() {
