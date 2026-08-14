@@ -2,6 +2,8 @@ import { defineMutator } from '@rocicorp/zero';
 import { updateOrganizationZeroMutatorSchema } from '$lib/schema/organization';
 import {
 	updateThemeZeroMutatorSchema,
+	defaultOrganizationOnboardingSettings,
+	updateOrganizationOnboardingZeroMutatorSchema,
 	updateWhatsappOrganizationSettingsZeroMutatorSchema
 } from '$lib/schema/organization/settings';
 
@@ -42,6 +44,24 @@ export const updateOrganizationWhatsappSettings = defineMutator(
 				...args.metadata.existingSettings,
 				whatsApp: {
 					...args.metadata.existingSettings?.whatsApp,
+					...args.input
+				}
+			},
+			updatedAt: Date.now()
+		});
+	}
+);
+
+export const updateOrganizationOnboarding = defineMutator(
+	updateOrganizationOnboardingZeroMutatorSchema,
+	async ({ tx, args }) => {
+		tx.mutate.organization.update({
+			id: args.metadata.organizationId,
+			settings: {
+				...args.metadata.existingSettings,
+				onboarding: {
+					...defaultOrganizationOnboardingSettings('complete'),
+					...args.metadata.existingSettings.onboarding,
 					...args.input
 				}
 			},

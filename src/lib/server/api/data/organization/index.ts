@@ -16,6 +16,9 @@ import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 
 import {
 	type UpdateThemeZeroMutatorSchema,
+	type UpdateOrganizationOnboardingZeroMutatorSchema,
+	defaultOrganizationOnboardingSettings,
+	updateOrganizationOnboardingZeroMutatorSchema,
 	updateThemeZeroMutatorSchema
 } from '$lib/schema/organization/settings';
 
@@ -174,6 +177,55 @@ export async function updateTheme({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	return updated;
+}
+
+export async function updateOrganizationOnboarding({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateOrganizationOnboardingZeroMutatorSchema;
+}) {
+	const parsed = parse(updateOrganizationOnboardingZeroMutatorSchema, args);
+	const organizationId = parsed.metadata.organizationId;
+	const orgRecord = await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(organization)
+		.set({
+			settings: {
+				...orgRecord.settings,
+				onboarding: {
+					...defaultOrganizationOnboardingSettings('complete'),
+					...orgRecord.settings.onboarding,
+					...parsed.input
+				}
+			},
+			updatedAt: new Date()
+		})
+		.where(eq(organization.id, organizationId))
+		.returning();
+
+	if (!updated) {
+		throw new Error('Failed to update organization onboarding settings');
+	}
+
+	const { id: _omitId, ...orgWebhookData } = updated;
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
+			organizationId: updated.id,
+			payload: {
+				type: 'organization.updated',
+				data: parse(organizationApiSchema, orgWebhookData)
+			}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
+
 	return updated;
 }
 
