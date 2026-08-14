@@ -109,7 +109,17 @@ export function getNextNodeToProcess({
 		}
 		return edge.target;
 	} else {
-		const nextNodeSource = flow.edges.find((edge) => edge.source === node.id);
+		// No handle requested → an automatic continuation. Only a handleless edge is a
+		// valid auto-continuation; an edge with a sourceHandle is a button/branch edge
+		// and must never be followed without its handle being pressed. Matching the
+		// first edge regardless of handle would auto-advance down a button branch of a
+		// node that has since gained buttons — the same orphaned-edge double advance as
+		// BEL-1058 on the WhatsApp path. Use a nullish (`== null`) test, matching the
+		// prune helpers' definition of "handleless", so both agree on what an
+		// auto-continuation edge is.
+		const nextNodeSource = flow.edges.find(
+			(edge) => edge.source === node.id && edge.sourceHandle == null
+		);
 		if (!nextNodeSource) {
 			return null;
 		}
