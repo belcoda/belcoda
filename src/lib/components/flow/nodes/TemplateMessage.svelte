@@ -22,7 +22,7 @@
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
 	import { t } from '$lib/index.svelte';
-	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import { taint, pruneEdgesForButtons } from '$lib/components/flow/flow_state.svelte';
 	import Combobox from './template/Combobox.svelte';
 	import { parseTemplate } from './template/parseTemplate';
 	import { z } from '$lib/zero.svelte';
@@ -56,12 +56,24 @@
 	const savedTemplateIdOnMount = savedDataOnMount.templateId;
 	const hasSavedParams = Boolean(
 		(savedDataOnMount.body?.templateParams?.length ?? 0) > 0 ||
-			(savedDataOnMount.header?.templateParams?.length ?? 0) > 0 ||
-			(savedDataOnMount.body?.templateStrings?.length ?? 0) > 0 ||
-			(savedDataOnMount.header?.templateStrings?.length ?? 0) > 0
+		(savedDataOnMount.header?.templateParams?.length ?? 0) > 0 ||
+		(savedDataOnMount.body?.templateStrings?.length ?? 0) > 0 ||
+		(savedDataOnMount.header?.templateStrings?.length ?? 0) > 0
+	);
+
+	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
+	const isDisabled = $derived(
+		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
 	);
 
 	function commit() {
+		// A disabled canvas is read-only. The hydration $effect still seeds this
+		// node's local display state, but it must never persist: updateNodeData and
+		// pruneEdgesForButtons both write to the shared flow store and trigger a
+		// save. For a viewer without write access that save fails and surfaces a
+		// spurious "Changes not saved" toast (and self-heal shouldn't rewrite a
+		// flow just from opening it), so skip all side effects when disabled.
+		if (isDisabled) return;
 		taint();
 		const payload = buildNodeData({
 			templateId,
@@ -72,6 +84,11 @@
 		});
 		updateNodeData(id, payload);
 		updateNodeInternals(id);
+		// Drop this node's edges that point at button ids it no longer has:
+		// selecting a template resets buttons to [] then re-hydration regenerates
+		// fresh ids, and a shrunk template truncates them. Scoped to this node's
+		// button handles, so a param-only edit (button set unchanged) is a no-op.
+		pruneEdgesForButtons(id, payload.buttons ?? []);
 	}
 
 	const template = $derived.by(() => z.createQuery(queries.whatsappTemplate.read({ templateId })));
@@ -101,11 +118,6 @@
 		commit();
 	});
 
-	const { elementsSelectable, nodesDraggable, nodesConnectable } = useStore();
-	const isDisabled = $derived(
-		elementsSelectable === false || nodesDraggable === false || nodesConnectable === false
-	);
-
 	const header = $derived.by(() => {
 		if (templateHeader?.format === 'TEXT') {
 			return parseTemplate(templateHeader?.text ?? '');
@@ -129,6 +141,11 @@
 	}
 
 	function onTemplateSelect(newTemplateId: string) {
+		// The combobox fires on every click, including re-selecting the current
+		// template. Re-selecting is a no-op: bail before resetting params/buttons,
+		// which would otherwise regenerate button ids and prune away this node's
+		// branch wiring for no reason.
+		if (newTemplateId === templateId) return;
 		hydratedForTemplateId = null;
 		headerParams = [];
 		bodyParams = [];
@@ -183,8 +200,7 @@
 											class={cn(
 												'rounded-sm px-2 py-0.5 text-sm font-medium text-white outline-none',
 												param?.type === 'variable' ? 'bg-violet-600/90' : 'bg-blue-600/90'
-											)}
-											>{@render paramBadgeContent(headerParams, 0, `{{${item.id}}}`)}</span
+											)}>{@render paramBadgeContent(headerParams, 0, `{{${item.id}}}`)}</span
 										>
 									{/snippet}
 								</Popover.Trigger>
@@ -237,6 +253,16 @@
 							>
 								{btn.text}
 							</div>
+							<!--
+								Known, accepted edge case: during the brief pre-hydration window
+								`buttons` can be shorter than the template's button list, so this
+								handle falls back to an ephemeral uuid that isn't persisted in
+								`data.buttons`. An edge a user manages to draw from it in that window
+								carries an unknown id and will be pruned (by pruneEdgesForButtons /
+								cloneFlow) — but that removal is reactive and visible on the canvas,
+								not silent data loss, and hydration normally fills `buttons` before
+								any interaction. We're comfortable leaving this for now.
+							-->
 							<Handle
 								type="source"
 								id={buttons[i]?.id || uuidv4()}
@@ -376,7 +402,7 @@
 		{param.value || placeholder}
 	{:else}
 		{getVariableLabel(param.key)}{#if param.fallback?.trim()}
-			 → {param.fallback}
+			→ {param.fallback}
 		{/if}
 	{/if}
 {/snippet}

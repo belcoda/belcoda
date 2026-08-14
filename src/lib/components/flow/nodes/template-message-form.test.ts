@@ -131,6 +131,60 @@ describe('applyTemplateDefaults', () => {
 	});
 });
 
+describe('applyTemplateDefaults button handling', () => {
+	const bodyOnly = [
+		{ type: 'BODY', text: 'Hello {{1}}', example: { body_text: [['Maria']] } }
+	] as TemplateMessageComponents;
+
+	function withButtons(count: number): TemplateMessageComponents {
+		return [
+			{ type: 'BODY', text: 'Hello {{1}}', example: { body_text: [['Maria']] } },
+			{
+				type: 'BUTTONS',
+				buttons: Array.from({ length: count }, (_, i) => ({
+					type: 'QUICK_REPLY',
+					text: `Option ${i + 1}`
+				}))
+			}
+		] as TemplateMessageComponents;
+	}
+
+	it('clears stale buttons when the template has no BUTTONS component', () => {
+		const current = {
+			...emptyFormState(),
+			buttons: [{ id: '00000000-0000-4000-8000-00000000aaaa' }]
+		};
+		const result = applyTemplateDefaults(current as TemplateMessageFormState, bodyOnly, {
+			mergeExisting: true
+		});
+		expect(result.buttons).toEqual([]);
+	});
+
+	it('keeps one button per template entry, preserving existing ids and appending new ones', () => {
+		const existingId = '00000000-0000-4000-8000-00000000bbbb';
+		const current = { ...emptyFormState(), buttons: [{ id: existingId }] };
+		const result = applyTemplateDefaults(current as TemplateMessageFormState, withButtons(2), {
+			mergeExisting: true
+		});
+		expect(result.buttons).toHaveLength(2);
+		expect(result.buttons[0].id).toBe(existingId);
+		expect(result.buttons[1].id).toEqual(expect.any(String));
+		expect(result.buttons[1].id).not.toBe(existingId);
+	});
+
+	it('truncates buttons when the template has fewer than the node', () => {
+		const keepId = '00000000-0000-4000-8000-00000000cccc';
+		const current = {
+			...emptyFormState(),
+			buttons: [{ id: keepId }, { id: '00000000-0000-4000-8000-00000000dddd' }]
+		};
+		const result = applyTemplateDefaults(current as TemplateMessageFormState, withButtons(1), {
+			mergeExisting: true
+		});
+		expect(result.buttons).toEqual([{ id: keepId }]);
+	});
+});
+
 describe('patchParamSource and patchParamSourceType', () => {
 	it('replaces a param at the given index', () => {
 		const params = [{ type: 'literal' as const, value: 'Maria' }];
