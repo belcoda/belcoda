@@ -6295,11 +6295,3 @@ msgstr ""
 
 #~ msgid "Show all people"
 #~ msgstr ""
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationOnboarding.svelte
-msgid "Set up your organization"
-msgstr ""
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationOnboarding.svelte
-msgid "Your organization setup is still in progress."
-msgstr ""

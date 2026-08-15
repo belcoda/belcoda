@@ -7,7 +7,6 @@
 	import { zero } from '$lib/zero.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import DeploymentRecoveryReset from '$lib/utils/DeploymentRecoveryReset.svelte';
-	import OrganizationOnboarding from '$lib/components/widgets/organization-onboarding/OrganizationOnboarding.svelte';
 
 	const { children, data } = $props();
 
@@ -70,11 +69,7 @@
 
 {#if zero.hasInstance && appState.layoutBootstrapComplete}
 	<DeploymentRecoveryReset />
-	{#if appState.organizationNeedsOnboarding}
-		<OrganizationOnboarding />
-	{:else}
-		{@render children()}
-	{/if}
+	{@render children()}
 {:else}
 	<div class="flex h-screen w-screen items-center justify-center">
 		<Spinner />

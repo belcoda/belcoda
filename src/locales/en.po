@@ -6319,11 +6319,3 @@ msgstr "Failed to update note"
 
 #~ msgid "Show all people"
 #~ msgstr "Show all people"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationOnboarding.svelte
-msgid "Set up your organization"
-msgstr "Set up your organization"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationOnboarding.svelte
-msgid "Your organization setup is still in progress."
-msgstr "Your organization setup is still in progress."
