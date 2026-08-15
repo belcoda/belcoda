@@ -243,6 +243,8 @@ test.describe.serial('Community and person pages', () => {
 			data: { personId: ids.personId, count: 30 }
 		});
 		expect(seedResponse.ok()).toBeTruthy();
+		const { noteIds } = (await seedResponse.json()) as { noteIds: string[] };
+		expect(noteIds).toHaveLength(30);
 
 		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
@@ -257,7 +259,12 @@ test.describe.serial('Community and person pages', () => {
 			element.scrollTop = element.scrollHeight;
 		});
 
-		await expect(page.getByTestId('person-note-item')).toHaveCount(30, { timeout: 15_000 });
+		const seededNotes = page.locator(
+			noteIds
+				.map((noteId) => `[data-testid="person-note-item"][data-note-id="${noteId}"]`)
+				.join(',')
+		);
+		await expect(seededNotes).toHaveCount(30, { timeout: 15_000 });
 	});
 
 	test('owner can add a note from the conversation composer on the timeline', async ({ page }) => {
@@ -419,8 +426,8 @@ test.describe.serial('Community and person pages', () => {
 		await textarea.fill(noteText);
 		await drawer.getByTestId('note-form-submit').click();
 
-		await expect(drawer.getByTestId('person-note-item').first()).toBeVisible({ timeout: 10_000 });
-		await expect(drawer.getByTestId('person-note-content').first()).toHaveText(noteText);
+		const createdNote = drawer.getByTestId('person-note-item').filter({ hasText: noteText });
+		await expect(createdNote).toBeVisible({ timeout: 10_000 });
 
 		await page.keyboard.press('Escape');
 		await expect(page.getByTestId('inline-note').last()).toContainText(noteText, {
