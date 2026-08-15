@@ -26,7 +26,7 @@ export const filterTypes = {
 
 	preferredLanguage: v.object({
 		type: v.literal('preferredLanguage'),
-		preferredLanguage: v.pipe(v.string(), v.minLength(2), v.maxLength(2)),
+		preferredLanguage: v.pipe(v.string(), v.minLength(2), v.maxLength(5)),
 		label: mediumString
 	}),
 
