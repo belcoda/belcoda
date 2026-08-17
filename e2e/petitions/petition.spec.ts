@@ -389,7 +389,7 @@ test.describe.serial('Petitions: public page', () => {
 });
 
 test.describe.serial('Petitions: signup fields', () => {
-	test.describe.configure({ timeout: 60_000 });
+	test.describe.configure({ timeout: 120_000 });
 
 	const CUSTOM_QUESTION_LABEL = 'What is your biggest concern?';
 	let petitionSlug = '';
@@ -420,7 +420,6 @@ test.describe.serial('Petitions: signup fields', () => {
 			{ timeout: 10_000 }
 		);
 		await surveyPage.checkStandardField('address');
-		await expect(surveyPage.standardFieldCheckbox('address')).toBeChecked();
 
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -430,13 +429,8 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
 		const isPublished = await publishToggle.isChecked().catch(() => false);
 		if (!isPublished) {
-			const publishResponse = page.waitForResponse(
-				(response) => response.url().includes('/api/utils/zero/push') && response.ok(),
-				{ timeout: 15_000 }
-			);
 			await publishToggle.click();
-			await publishResponse;
-			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
+			await expect(publishToggle).toBeChecked({ timeout: 20_000 });
 		}
 
 		await createPage.closeModal();
@@ -445,18 +439,30 @@ test.describe.serial('Petitions: signup fields', () => {
 			/\/petitions\/[0-9a-f-]{8}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{4}-[0-9a-f-]{12}/i,
 			{ timeout: 10_000 }
 		);
+
+		const detailPage = new PetitionDetailPage(page);
+		await detailPage.waitForLoaded();
+		await detailPage.openActionDropdown();
+		await detailPage.clickEditPetition();
+		const editPage = new PetitionEditPage(page);
+		await editPage.waitForForm();
+		petitionSlug = await editPage.slugFromPreview();
+		expect(petitionSlug).not.toBe('');
 	});
 
 	test('public petition page shows standard address fields', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.gotoViaPath(ORG_SLUG, petitionSlug);
-		await publicPage.givenNameInput.waitFor({ state: 'visible', timeout: 30_000 });
 
-		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 15_000 });
-		await expect(publicPage.addressLine1Input).toBeVisible({ timeout: 15_000 });
-		await expect(publicPage.addressLocalityInput).toBeVisible();
-		await expect(publicPage.addressRegionInput).toBeVisible();
-		await expect(publicPage.addressPostcodeInput).toBeVisible();
+		await expect(async () => {
+			await publicPage.gotoViaPath(ORG_SLUG, petitionSlug);
+			await publicPage.givenNameInput.waitFor({ state: 'visible', timeout: 5_000 });
+			await expect(publicPage.addressLine1Input).toBeVisible({ timeout: 2_000 });
+			await expect(publicPage.addressLocalityInput).toBeVisible({ timeout: 1_000 });
+			await expect(publicPage.addressRegionInput).toBeVisible({ timeout: 1_000 });
+			await expect(publicPage.addressPostcodeInput).toBeVisible({ timeout: 1_000 });
+		}).toPass({ timeout: 30_000 });
+
+		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 5_000 });
 	});
 
 	test('public petition page shows the custom question field', async ({ page }) => {

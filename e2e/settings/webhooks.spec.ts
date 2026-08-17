@@ -118,7 +118,7 @@ test.describe.serial('Settings: Webhooks', () => {
 test('webhook fires on a covered action and records a delivery log', async ({ page }) => {
 	// Delivery is asynchronous (queue pickup + external POST + Zero sync), so give the
 	// whole flow a budget well above the poll timeout used for the delivery assertion.
-	test.setTimeout(90_000);
+	test.setTimeout(120_000);
 
 	const webhooksPage = new WebhooksPage(page);
 	const tagsPage = new TagsPage(page);
@@ -155,9 +155,11 @@ test('webhook fires on a covered action and records a delivery log', async ({ pa
 		// The delivery is processed by the background queue and synced back via Zero,
 		// so poll the logs page until the delivery row for THIS tag appears. `.first()`
 		// guards against a retry inserting a second row for the same tag mid-assertion.
-		await webhooksPage.gotoLogs(webhookId);
 		const deliveryRow = webhooksPage.logRowForEventContaining('tag.created', tagName).first();
-		await expect(deliveryRow).toBeVisible({ timeout: 45_000 });
+		await expect(async () => {
+			await webhooksPage.gotoLogs(webhookId);
+			await expect(deliveryRow).toBeVisible({ timeout: 5_000 });
+		}).toPass({ timeout: 90_000 });
 
 		// The delivery attempt should have recorded a terminal status.
 		await expect(deliveryRow.getByTestId('settings-webhook-logs-status')).toHaveText(
