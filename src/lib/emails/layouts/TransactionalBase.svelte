@@ -33,7 +33,7 @@
 		logoUrl = 'https://belcoda-public-prod.t3.tigrisfiles.io/design/logo-belcoda-glass.png',
 		logoAlt = 'Example Logo',
 		children,
-		copyright = `${new Date().getFullYear()} Belcoda. All rights reserved.`
+		copyright = `Copyright ${new Date().getFullYear()} Belcoda. All rights reserved.`
 	}: Props = $props();
 </script>
 
@@ -64,7 +64,7 @@
 
 			<Section class="w-full">
 				<Text class="m-0 px-9 py-6 text-center text-xs leading-5 text-slate-500">
-					&copy; {copyright}
+					{copyright}
 				</Text>
 			</Section>
 		</Container>
