@@ -17,12 +17,16 @@ export class PetitionSurveyPage {
 		const checkbox = this.standardFieldCheckbox(field);
 		await checkbox.waitFor({ state: 'visible', timeout: 10_000 });
 		await checkbox.scrollIntoViewIfNeeded();
-		const isChecked = await checkbox.isChecked().catch(async () => {
-			return (await checkbox.getAttribute('aria-checked')) === 'true';
-		});
-		if (!isChecked) {
-			await checkbox.click();
-		}
+
+		await expect(async () => {
+			const isChecked = await checkbox.isChecked().catch(async () => {
+				return (await checkbox.getAttribute('aria-checked')) === 'true';
+			});
+			if (!isChecked) {
+				await checkbox.click();
+			}
+			await expect(checkbox).toBeChecked({ timeout: 1_000 });
+		}).toPass({ timeout: 10_000 });
 	}
 
 	async addShortTextQuestion(label: string) {
@@ -56,12 +60,14 @@ export class PetitionSurveyPage {
 		}
 
 		const newTrigger = triggers.nth(countBefore);
-		const labelInput = labelInputs.last();
-		if (!(await labelInput.isVisible())) {
-			await newTrigger.click();
-		}
-		await labelInput.waitFor({ state: 'visible', timeout: 15_000 });
-		await labelInput.fill(label, { timeout: 15_000 });
-		await labelInput.blur();
+		await expect(async () => {
+			const labelInput = labelInputs.last();
+			if (!(await labelInput.isVisible())) {
+				await newTrigger.click();
+			}
+			await labelInput.waitFor({ state: 'visible', timeout: 2_000 });
+			await labelInput.fill(label, { timeout: 2_000 });
+			await expect(labelInput).toHaveValue(label, { timeout: 2_000 });
+		}).toPass({ timeout: 15_000 });
 	}
 }
