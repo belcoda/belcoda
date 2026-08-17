@@ -19,7 +19,7 @@ export class PreferencesLanguagePage {
 	}
 
 	async goto() {
-		await this.page.goto('/preferences/language');
+		await this.page.goto('/settings/language');
 	}
 
 	get root(): Locator {
