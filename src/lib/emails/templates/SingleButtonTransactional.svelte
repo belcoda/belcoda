@@ -1,11 +1,9 @@
-<script lang="ts">
-	import TransactionalBase from '../layouts/TransactionalBase.svelte';
-	import { Heading, Text, Button, Hr } from '@better-svelte-email/components';
-	type Props = {
+<script lang="ts" module>
+	export type Props = {
 		previewText: string;
 		language?: string;
 		instanceUrl: string;
-		logoUrl: string;
+		logoUrl?: string;
 		logoAlt: string;
 		logoWidth?: string;
 		logoHeight?: string;
@@ -14,10 +12,14 @@
 		buttonUrl: string;
 		buttonText: string;
 		instanceName: string;
-		/** Trusted HTML containing the plain-link fallback shown below the button. */
 		buttonAltHtml?: string | null;
 		copyright?: string;
 	};
+</script>
+
+<script lang="ts">
+	import TransactionalBase from '../layouts/TransactionalBase.svelte';
+	import { Heading, Text, Button, Hr } from '@better-svelte-email/components';
 
 	let {
 		previewText = 'This is email preview text',

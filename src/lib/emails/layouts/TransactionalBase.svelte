@@ -1,3 +1,15 @@
+<script lang="ts" module>
+	export type Props = {
+		previewText: string;
+		children: Snippet;
+		language?: string;
+		instanceUrl: string;
+		logoUrl?: string;
+		logoAlt: string;
+		copyright: string;
+	};
+</script>
+
 <script lang="ts">
 	import {
 		Body,
@@ -13,17 +25,6 @@
 	} from '@better-svelte-email/components';
 
 	import type { Snippet } from 'svelte';
-
-	type Props = {
-		previewText: string;
-		children: Snippet;
-		language?: string;
-		instanceUrl: string;
-		logoUrl: string;
-		logoAlt: string;
-		/** Trusted HTML containing the plain-link fallback shown below the button. */
-		copyright: string;
-	};
 
 	let {
 		previewText = 'This is email preview text',
