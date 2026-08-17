@@ -64,8 +64,10 @@ test.describe.serial('Settings: Webhooks', () => {
 		await loginAsAdmin(page, PROJECT);
 		await webhooksPage.goto();
 
-		const row = webhooksPage.webhookRow(state.name, state.targetUrl);
+		const row = webhooksPage.webhookRowById(state.webhookId);
 		await expect(row).toBeVisible({ timeout: 15_000 });
+		await expect(row).toContainText(state.name);
+		await expect(row).toContainText(state.targetUrl);
 		await expect(webhooksPage.createWebhookTrigger).toHaveCount(0);
 		await expect(row.getByTestId('settings-webhooks-edit')).toHaveCount(0);
 		await expect(row.getByTestId('settings-webhooks-delete')).toHaveCount(0);
