@@ -11,7 +11,13 @@ import { dev } from '$app/environment';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 
-import { openAPI, organization, bearer, type OrganizationOptions } from 'better-auth/plugins';
+import {
+	openAPI,
+	organization,
+	bearer,
+	type OrganizationOptions,
+	oAuthProxy
+} from 'better-auth/plugins';
 import { oneTimeToken } from 'better-auth/plugins/one-time-token';
 
 import { apiKey, type ApiKeyOptions, type ApiKeyConfigurationOptions } from '@better-auth/api-key';
@@ -56,6 +62,8 @@ import { emailVerification } from '$lib/server/utils/email/context/transactional
 import { passwordReset } from '$lib/server/utils/email/context/transactional/auth/password_reset';
 import { organizationInvitation } from '$lib/server/utils/email/context/transactional/auth/organization_invitation';
 import { _createLedgerEntry } from './api/data/ledger';
+
+const isReview = publicEnv.PUBLIC_APPLICATION_ENVIRONMENT === 'review';
 
 async function canManageOrganizationBilling({
 	userId,
@@ -426,6 +434,10 @@ export function buildBetterAuth(localeInput: string) {
 						organization(organizationPluginOptions),
 						apiKey(apiKeyPluginOptions),
 						stripe(stripePluginOptions),
+						oAuthProxy({
+							productionURL: 'https://staging.belcoda.com',
+							secret: env.OAUTH_PROXY_SECRET
+						}),
 						openAPI(),
 						oneTimeToken(),
 						sveltekitCookies(getRequestEvent)
