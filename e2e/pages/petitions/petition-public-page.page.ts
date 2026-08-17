@@ -36,7 +36,17 @@ export class PetitionPublicPage {
 	}
 
 	async gotoViaPath(orgSlug: string, petitionSlug: string) {
-		await this.page.goto(`/page/${orgSlug}/petitions/${petitionSlug}`);
+		await this.page.goto(`/page/${orgSlug}/petitions/${petitionSlug}`, {
+			waitUntil: 'domcontentloaded'
+		});
+		await this.dismissCookieBannerIfPresent();
+	}
+
+	private async dismissCookieBannerIfPresent() {
+		const acceptAll = this.page.getByRole('button', { name: 'Accept all' });
+		if (await acceptAll.isVisible().catch(() => false)) {
+			await acceptAll.click();
+		}
 	}
 
 	customFieldInput(fieldId: string): Locator {
