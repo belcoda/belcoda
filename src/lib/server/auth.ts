@@ -54,7 +54,7 @@ import { memberSettingsSchema } from '$lib/schema/member/settings';
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
 import { passwordReset } from '$lib/server/utils/email/context/transactional/auth/password_reset';
-import { organizationInvitation } from '$lib/server/utils/email/context/transactional/auth/organization_invitation';
+import { sendOrganizationInvitationEmail } from '$lib/server/utils/email/transactional/send_organization_invite';
 import { _createLedgerEntry } from './api/data/ledger';
 
 async function canManageOrganizationBilling({
@@ -142,19 +142,13 @@ export function buildBetterAuth(localeInput: string) {
 		async sendInvitationEmail(data) {
 			try {
 				const inviteLink = `${publicEnv.PUBLIC_HOST}/signup?invitationEmail=${encodeURIComponent(data.email)}&invitationOrganizationName=${encodeURIComponent(data.organization.name)}`;
-				const emailContext = organizationInvitation({
+				await sendOrganizationInvitationEmail({
 					url: inviteLink,
+					emailAddress: data.email,
 					inviterName: data.inviter.user.name,
 					organizationName: data.organization.name,
 					locale,
 					orgIcon: data.organization.logo
-				});
-				await sendTemplateEmail({
-					to: data.email,
-					from: 'Belcoda <noreply@belcoda.com>',
-					template: 'transactional',
-					stream: 'outbound',
-					context: emailContext
 				});
 			} catch (e) {
 				log.error({ error: e }, 'Failed to send invitation email');
