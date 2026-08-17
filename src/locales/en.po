@@ -3524,6 +3524,7 @@ msgstr "Getting started with Belcoda"
 msgid "Decline invitation"
 msgstr "Decline invitation"
 
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Accept invitation"
 msgstr "Accept invitation"
@@ -4455,7 +4456,9 @@ msgid "View petition"
 msgstr "View petition"
 
 #. 0: petitionUrl
+#. 0: url
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copy and paste the following link into your browser {0}"
 msgstr "Copy and paste the following link into your browser {0}"
 
@@ -6282,3 +6285,23 @@ msgstr "Note updated"
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 msgid "Failed to update note"
 msgstr "Failed to update note"
+
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
+msgstr "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Join {0}"
+msgstr "Join {0}"
+
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda"
+msgstr "{0} has invited you to join {1} on Belcoda"
+
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Copyright {0} {1}"
+msgstr "Copyright {0} {1}"
