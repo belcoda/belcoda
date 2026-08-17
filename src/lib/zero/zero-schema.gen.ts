@@ -2760,7 +2760,7 @@ const userTable = {
 		preferredLanguage: {
 			type: 'string',
 			optional: true,
-			customType: null as unknown as 'en' | 'pt' | 'es',
+			customType: null as unknown as 'id' | 'en' | 'fil' | 'fr' | 'ms' | 'pt' | 'es' | 'sw',
 			serverName: 'preferred_language'
 		},
 		createdAt: {
