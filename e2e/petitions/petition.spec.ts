@@ -430,7 +430,12 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publishToggle.waitFor({ state: 'visible', timeout: 5_000 });
 		const isPublished = await publishToggle.isChecked().catch(() => false);
 		if (!isPublished) {
+			const publishResponse = page.waitForResponse(
+				(response) => response.url().includes('/api/utils/zero/push') && response.ok(),
+				{ timeout: 15_000 }
+			);
 			await publishToggle.click();
+			await publishResponse;
 			await expect(publishToggle).toBeChecked({ timeout: 10_000 });
 		}
 
@@ -444,15 +449,14 @@ test.describe.serial('Petitions: signup fields', () => {
 
 	test('public petition page shows standard address fields', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(ORG_SLUG, petitionSlug);
+		await publicPage.gotoViaPath(ORG_SLUG, petitionSlug);
+		await publicPage.givenNameInput.waitFor({ state: 'visible', timeout: 30_000 });
 
 		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 15_000 });
-		await expect(async () => {
-			await expect(publicPage.addressLine1Input).toBeVisible();
-			await expect(publicPage.addressLocalityInput).toBeVisible();
-			await expect(publicPage.addressRegionInput).toBeVisible();
-			await expect(publicPage.addressPostcodeInput).toBeVisible();
-		}).toPass({ timeout: 30_000 });
+		await expect(publicPage.addressLine1Input).toBeVisible({ timeout: 15_000 });
+		await expect(publicPage.addressLocalityInput).toBeVisible();
+		await expect(publicPage.addressRegionInput).toBeVisible();
+		await expect(publicPage.addressPostcodeInput).toBeVisible();
 	});
 
 	test('public petition page shows the custom question field', async ({ page }) => {
