@@ -43,7 +43,7 @@
 				}
 			})
 		);
-		await petition.client;
+		await petition.server;
 		resetPetitionsListPagination();
 		createdPetition = parse(readPetitionZero, {
 			id,
