@@ -5,7 +5,7 @@ import { TagsPage } from '../pages/settings/tags.page';
 import { TeamsPage } from '../pages/settings/teams.page';
 import { loginAsOwner } from '../helpers/login';
 import { CommunityPage } from '../pages/community/community.page';
-import { BASE_URL } from '../helpers/config';
+import { BASE_URL, getOrgSlug } from '../helpers/config';
 import { getTestUsers } from '../helpers/auth';
 
 const PROJECT = 'community' as const;
@@ -304,7 +304,7 @@ test.describe.serial('Community and person pages', () => {
 		await expect(contextPanel.getByTestId('person-context-note')).toHaveText(noteText);
 	});
 
-	test('owner can create, display, and edit user mentions in notes', async ({ page }) => {
+	test('owner can create, display, and edit user mentions in notes', async ({ page, request }) => {
 		const suffix = `${Date.now()}`;
 		const mentionedUser = getTestUsers(PROJECT).admin;
 		const notePrefix = `Mention note ${suffix}`;
@@ -312,15 +312,11 @@ test.describe.serial('Community and person pages', () => {
 
 		await page.setViewportSize({ width: 1400, height: 900 });
 		await loginAsOwner(page, PROJECT);
-		const seedResult = await page.evaluate(async () => {
-			const response = await fetch('/api/e2e/seed-persons', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ count: 1 })
-			});
-			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
-			return (await response.json()) as { personIds: string[] };
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-persons`, {
+			data: { count: 1, organizationSlug: getOrgSlug(PROJECT) }
 		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedResult = (await seedResponse.json()) as { personIds: string[] };
 		const personId = seedResult.personIds[0];
 		expect(personId).toBeTruthy();
 		await page.goto(`/community/${personId}`);
