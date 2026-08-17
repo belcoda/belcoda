@@ -4470,6 +4470,7 @@ msgid "Copyright {0} Belcoda"
 msgstr "Copyright {0} Belcoda"
 
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Belcoda logo"
 msgstr "Logo Belcoda"
 
@@ -5982,8 +5983,9 @@ msgstr "Impossible d’envoyer le message WhatsApp"
 #~ msgid "Notify"
 #~ msgstr ""
 
-#~ msgid "A teammate"
-#~ msgstr ""
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr ""
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6287,19 +6289,45 @@ msgstr "Impossible de mettre à jour la note"
 #. 0: inviterName; 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
-msgstr ""
+msgstr "{0} vous a invité à rejoindre {1} sur Belcoda. Cliquez sur le bouton ci-dessous pour accepter l’invitation et commencer."
 
 #. 0: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Join {0}"
-msgstr ""
+msgstr "Rejoindre {0}"
 
 #. 0: inviterName; 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "{0} has invited you to join {1} on Belcoda"
-msgstr ""
+msgstr "{0} vous a invité à rejoindre {1} sur Belcoda"
 
 #. 0: new Date().getFullYear().toString(); 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copyright {0} {1}"
+msgstr "Copyright {0} {1}"
+
+#~ msgid "{0} {1}"
+#~ msgstr ""
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Invitation to join {0}"
+msgstr "Invitation à rejoindre {0}"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Note mention"
+msgstr ""
+
+#. 0: authorName; 1: personName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note about {1}."
+msgstr ""
+
+#. 0: authorName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note."
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View note"
 msgstr ""

@@ -4448,6 +4448,7 @@ msgid "Copyright {0} Belcoda"
 msgstr ""
 
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Belcoda logo"
 msgstr ""
 
@@ -5960,8 +5961,9 @@ msgstr "Error al enviar el mensaje de WhatsApp"
 #~ msgid "Notify"
 #~ msgstr ""
 
-#~ msgid "A teammate"
-#~ msgstr ""
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr ""
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6265,19 +6267,45 @@ msgstr ""
 #. 0: inviterName; 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
-msgstr ""
+msgstr "{0} te ha invitado a unirte a {1} en Belcoda. Haz clic en el botón de abajo para aceptar la invitación y comenzar."
 
 #. 0: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Join {0}"
-msgstr ""
+msgstr "Únete a {0}"
 
 #. 0: inviterName; 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "{0} has invited you to join {1} on Belcoda"
-msgstr ""
+msgstr "{0} te ha invitado a unirte a {1} en Belcoda"
 
 #. 0: new Date().getFullYear().toString(); 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copyright {0} {1}"
+msgstr "Copyright {0} {1}"
+
+#~ msgid "{0} {1}"
+#~ msgstr ""
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Invitation to join {0}"
+msgstr "Invitación para unirse a {0}"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Note mention"
+msgstr ""
+
+#. 0: authorName; 1: personName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note about {1}."
+msgstr ""
+
+#. 0: authorName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note."
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View note"
 msgstr ""

@@ -4472,6 +4472,7 @@ msgid "Copyright {0} Belcoda"
 msgstr "Copyright {0} Belcoda"
 
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Belcoda logo"
 msgstr "Belcoda logo"
 
@@ -5984,8 +5985,9 @@ msgstr "Failed to send WhatsApp message"
 #~ msgid "Notify"
 #~ msgstr "Notify"
 
-#~ msgid "A teammate"
-#~ msgstr "A teammate"
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr "A teammate"
 
 #~ msgid "this person"
 #~ msgstr "this person"
@@ -6305,3 +6307,29 @@ msgstr "{0} has invited you to join {1} on Belcoda"
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copyright {0} {1}"
 msgstr "Copyright {0} {1}"
+
+#~ msgid "{0} {1}"
+#~ msgstr "{0} {1}"
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Invitation to join {0}"
+msgstr "Invitation to join {0}"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Note mention"
+msgstr "Note mention"
+
+#. 0: authorName; 1: personName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note about {1}."
+msgstr "{0} mentioned you in a note about {1}."
+
+#. 0: authorName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note."
+msgstr "{0} mentioned you in a note."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View note"
+msgstr "View note"
