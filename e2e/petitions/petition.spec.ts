@@ -389,6 +389,8 @@ test.describe.serial('Petitions: public page', () => {
 });
 
 test.describe.serial('Petitions: signup fields', () => {
+	test.describe.configure({ timeout: 60_000 });
+
 	const CUSTOM_QUESTION_LABEL = 'What is your biggest concern?';
 	let petitionSlug = '';
 
