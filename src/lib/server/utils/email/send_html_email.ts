@@ -1,6 +1,5 @@
 import { env } from '$env/dynamic/private';
 const { POSTMARK_SERVER_TOKEN } = env;
-import { type JsonSchemaObject } from '$lib/schema/helpers';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
