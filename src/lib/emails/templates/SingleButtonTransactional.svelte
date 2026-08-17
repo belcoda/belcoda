@@ -54,7 +54,7 @@
 			href={buttonUrl}
 			pX={24}
 			pY={16}
-			class="rounded bg-primary text-base font-extrabold text-white hover:bg-primary/80"
+			class="rounded bg-slate-900 text-base font-extrabold text-white hover:bg-slate-800"
 		>
 			{buttonText}
 		</Button>

@@ -37,7 +37,7 @@
 	}: Props = $props();
 </script>
 
-<Html lang={language} class="sm:bg-gray-100">
+<Html lang={language} class="sm:bg-gray-100 font-sans">
 	<Head>
 		<title>{previewText}</title>
 		<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no" />
