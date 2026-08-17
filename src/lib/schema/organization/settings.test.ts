@@ -19,7 +19,8 @@ describe('organization onboarding settings', () => {
 	});
 
 	it('accepts legacy organization settings without onboarding flags', () => {
-		const { onboarding: _onboarding, ...legacySettings } = defaultOrganizationSettings();
+		const legacySettings = defaultOrganizationSettings();
+		delete legacySettings.onboarding;
 
 		expect(v.parse(organizationSettingsSchema, legacySettings).onboarding).toBeUndefined();
 	});

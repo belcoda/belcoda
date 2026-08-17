@@ -191,19 +191,22 @@ export async function updateOrganizationOnboarding({
 }) {
 	const parsed = parse(updateOrganizationOnboardingZeroMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
-	const orgRecord = await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
+	const onboardingPatch = JSON.stringify(parsed.input);
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({
-			settings: {
-				...orgRecord.settings,
-				onboarding: {
-					...defaultOrganizationOnboardingSettings('complete'),
-					...orgRecord.settings.onboarding,
-					...parsed.input
-				}
-			},
+			settings: sql`
+				COALESCE(${organization.settings}, '{}'::jsonb)
+				|| jsonb_build_object(
+					'onboarding',
+					${defaultOnboarding}::jsonb
+					|| COALESCE(${organization.settings}->'onboarding', '{}'::jsonb)
+					|| ${onboardingPatch}::jsonb
+				)
+			`,
 			updatedAt: new Date()
 		})
 		.where(eq(organization.id, organizationId))
@@ -213,11 +216,11 @@ export async function updateOrganizationOnboarding({
 		throw new Error('Failed to update organization onboarding settings');
 	}
 
-	const { id: _omitId, ...orgWebhookData } = updated;
+	const { id: updatedOrganizationId, ...orgWebhookData } = updated;
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: updated.id,
+			organizationId: updatedOrganizationId,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationApiSchema, orgWebhookData)
