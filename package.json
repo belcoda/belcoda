@@ -33,9 +33,11 @@
 		"wuchale:extract": "wuchale --config wuchale.config.js",
 		"wuchale:clean": "wuchale --config wuchale.config.js --clean",
 		"zero:dev": "npx zero-cache-dev",
-		"cve:check:critical": "npx cve-lite-cli --fail-on critical"
+		"cve:check:critical": "npx cve-lite-cli --fail-on critical",
+		"email:dev": "npx @better-svelte-email/cli dev"
 	},
 	"devDependencies": {
+		"@better-svelte-email/cli": "^2.1.1",
 		"@cyclonedx/cyclonedx-npm": "6.0.0",
 		"@eslint/compat": "^2.1.0",
 		"@eslint/js": "^10.0.1",
@@ -98,6 +100,8 @@
 		"@aws-sdk/s3-request-presigner": "^3.1087.0",
 		"@better-auth/api-key": "^1.6.23",
 		"@better-auth/stripe": "^1.6.23",
+		"@better-svelte-email/components": "^2.1.1",
+		"@better-svelte-email/server": "^2.1.1",
 		"@emoji-mart/data": "^1.2.1",
 		"@lexical/html": "0.40.0",
 		"@openapi-contrib/json-schema-to-openapi-schema": "^4.3.4",
