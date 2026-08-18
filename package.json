@@ -40,7 +40,7 @@
 		"@eslint/compat": "^2.1.0",
 		"@eslint/js": "^10.0.1",
 		"@faker-js/faker": "^10.4.0",
-		"@iconify-json/lucide": "^1.2.117",
+		"@iconify-json/lucide": "^1.2.123",
 		"@iconify/json": "^2.2.487",
 		"@iconify/tailwind4": "^1.2.3",
 		"@internationalized/date": "^3.12.2",
