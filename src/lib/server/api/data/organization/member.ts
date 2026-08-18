@@ -9,6 +9,22 @@ import {
 	type MemberNotificationSettingsPatchSchema,
 	type MemberOnboardingSettingsPatchSchema
 } from '$lib/schema/member/settings';
+import type { InferredMemberOnboardingStep } from '$lib/schema/member/onboarding';
+
+function memberOnboardingSettingsUpdate(onboarding: MemberOnboardingSettingsPatchSchema) {
+	const defaultOnboarding = JSON.stringify(defaultMemberOnboardingSettings('complete'));
+	const onboardingPatch = JSON.stringify(onboarding);
+
+	return sql`
+		COALESCE(${member.settings}, '{}'::jsonb)
+		|| jsonb_build_object(
+			'onboarding',
+			${defaultOnboarding}::jsonb
+			|| COALESCE(${member.settings}->'onboarding', '{}'::jsonb)
+			|| ${onboardingPatch}::jsonb
+		)
+	`;
+}
 
 export async function getOrganizationMember({
 	tx,
@@ -81,21 +97,10 @@ export async function updateMemberOnboarding({
 	organizationId: string;
 	onboarding: MemberOnboardingSettingsPatchSchema;
 }) {
-	const defaultOnboarding = JSON.stringify(defaultMemberOnboardingSettings('complete'));
-	const onboardingPatch = JSON.stringify(onboarding);
-
 	const updated = await drizzle
 		.update(member)
 		.set({
-			settings: sql`
-				COALESCE(${member.settings}, '{}'::jsonb)
-				|| jsonb_build_object(
-					'onboarding',
-					${defaultOnboarding}::jsonb
-					|| COALESCE(${member.settings}->'onboarding', '{}'::jsonb)
-					|| ${onboardingPatch}::jsonb
-				)
-			`
+			settings: memberOnboardingSettingsUpdate(onboarding)
 		})
 		.where(and(eq(member.userId, userId), eq(member.organizationId, organizationId)))
 		.returning({ id: member.id });
@@ -105,22 +110,34 @@ export async function updateMemberOnboarding({
 	}
 }
 
-export async function completeMemberLanguageOnboarding({ userId }: { userId: string }) {
-	const defaultOnboarding = JSON.stringify(defaultMemberOnboardingSettings('complete'));
-	const languagePatch = JSON.stringify({ language: 'complete' });
+export async function completeInferredMemberOnboardingStepInTransaction({
+	tx,
+	userId,
+	organizationId,
+	step
+}: {
+	tx: ServerTransaction;
+	userId: string;
+	organizationId: string;
+	step: InferredMemberOnboardingStep;
+}) {
+	await tx.dbTransaction.wrappedTransaction
+		.update(member)
+		.set({ settings: memberOnboardingSettingsUpdate({ [step]: 'complete' }) })
+		.where(
+			and(
+				eq(member.userId, userId),
+				eq(member.organizationId, organizationId),
+				sql`COALESCE(${member.settings}->'onboarding'->>${step}, 'complete') = 'pending'`
+			)
+		);
+}
 
+export async function completeMemberLanguageOnboarding({ userId }: { userId: string }) {
 	await drizzle
 		.update(member)
 		.set({
-			settings: sql`
-				COALESCE(${member.settings}, '{}'::jsonb)
-				|| jsonb_build_object(
-					'onboarding',
-					${defaultOnboarding}::jsonb
-					|| COALESCE(${member.settings}->'onboarding', '{}'::jsonb)
-					|| ${languagePatch}::jsonb
-				)
-			`
+			settings: memberOnboardingSettingsUpdate({ language: 'complete' })
 		})
 		.where(
 			and(
