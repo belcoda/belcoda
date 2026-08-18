@@ -46,7 +46,7 @@ const cache = new LRUCache<string, string>({
 	ttlAutopurge: false // Don't automatically remove expired items, only remove on LRU eviction or when fetched and tested for expiry
 });
 
-import { type LanguageCode, clampLocale } from '$lib/utils/language';
+import { type LanguageCode, clampLocale, isSupportedLanguage } from '$lib/utils/language';
 import { organizationMetadataSchema } from '$lib/schema/organization';
 import { organizationSettingsSchema } from '$lib/schema/organization/settings';
 import { defaultMemberSettings, memberSettingsSchema } from '$lib/schema/member/settings';
@@ -475,7 +475,11 @@ export function buildBetterAuth(localeInput: string) {
 			user: {
 				update: {
 					after: async (user) => {
-						if (typeof user.preferredLanguage !== 'string') return;
+						if (
+							typeof user.preferredLanguage !== 'string' ||
+							!isSupportedLanguage(user.preferredLanguage)
+						)
+							return;
 						await completeMemberLanguageOnboarding({ userId: user.id });
 					}
 				}
