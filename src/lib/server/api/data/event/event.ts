@@ -37,6 +37,7 @@ import { eventDeletedWebhookSchema } from '$lib/schema/webhook';
 import { parse } from 'valibot';
 import { _insertActionCodeUnsafe } from '$lib/server/api/data/action/insert';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
+import { completeInferredMemberOnboardingStepInTransaction } from '$lib/server/api/data/organization/member';
 
 export async function createEvent({
 	tx,
@@ -138,6 +139,14 @@ export async function createEvent({
 	if (!result) {
 		throw new Error('Unable to create event');
 	}
+	if (ctx.userId) {
+		await completeInferredMemberOnboardingStepInTransaction({
+			tx,
+			userId: ctx.userId,
+			organizationId: parsedInput.metadata.organizationId,
+			step: 'event'
+		});
+	}
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
@@ -196,6 +205,14 @@ export async function updateEvent({
 	const structureChanged = !!(parsed.input.settings || parsed.input.title);
 	const publishedStatusChanged =
 		eventRecord?.published !== undefined && eventRecord?.published !== updatedEvent?.published;
+	if (updatedEvent?.published && ctx.userId) {
+		await completeInferredMemberOnboardingStepInTransaction({
+			tx,
+			userId: ctx.userId,
+			organizationId: parsed.metadata.organizationId,
+			step: 'publishEvent'
+		});
+	}
 
 	const queue = await getQueue();
 	if (structureChanged || publishedStatusChanged) {
