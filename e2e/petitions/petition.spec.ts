@@ -27,18 +27,18 @@ async function expectPetitionSlugPreview(page: Page, title: string) {
 }
 
 async function ensurePetitionForPublicTests(page: Page) {
-	if (ids.petitionId && ids.petitionSlug) {
+	if (publicTestIds.petitionId && publicTestIds.petitionSlug) {
 		return;
 	}
 
 	const suffix = Date.now();
-	ids.petitionTitle = `E2E Petition Public ${suffix}`;
+	publicTestIds.petitionTitle = `E2E Petition Public ${suffix}`;
 
 	const createPage = new PetitionCreatePage(page);
 	await createPage.goto();
 	await expect(createPage.form).toBeVisible();
-	await createPage.fillTitle(ids.petitionTitle);
-	await expectPetitionSlugPreview(page, ids.petitionTitle);
+	await createPage.fillTitle(publicTestIds.petitionTitle);
+	await expectPetitionSlugPreview(page, publicTestIds.petitionTitle);
 	await createPage.fillDescription('E2E petition for public page tests');
 	await createPage.fillTarget('E2E public petition target');
 	await createPage.fillPetitionText('E2E petition text for public page tests');
@@ -50,13 +50,19 @@ async function ensurePetitionForPublicTests(page: Page) {
 		{ timeout: 10_000 }
 	);
 
-	ids.petitionId = new URL(page.url()).pathname.split('/')[2] ?? '';
-	ids.petitionSlug = slugifyTitle(ids.petitionTitle);
-	expect(ids.petitionId).not.toBe('');
-	expect(ids.petitionSlug).not.toBe('');
+	publicTestIds.petitionId = new URL(page.url()).pathname.split('/')[2] ?? '';
+	publicTestIds.petitionSlug = slugifyTitle(publicTestIds.petitionTitle);
+	expect(publicTestIds.petitionId).not.toBe('');
+	expect(publicTestIds.petitionSlug).not.toBe('');
 }
 
 const ids = {
+	petitionId: '',
+	petitionSlug: '',
+	petitionTitle: ''
+};
+
+const publicTestIds = {
 	petitionId: '',
 	petitionSlug: '',
 	petitionTitle: ''
@@ -222,11 +228,14 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 
 test.describe.serial('Petitions: public page', () => {
 	test('owner publishes the previously created petition for public tests', async ({ page }) => {
+		// Increase timeout because this test creates a petition if needed (setup for subsequent tests)
+		test.setTimeout(120_000);
+
 		await loginAsOwner(page, PROJECT);
 		await ensurePetitionForPublicTests(page);
 
 		const detailPage = new PetitionDetailPage(page);
-		await detailPage.goto(ids.petitionId);
+		await detailPage.goto(publicTestIds.petitionId);
 		await detailPage.waitForLoaded();
 		await detailPage.openActionDropdown();
 
@@ -237,14 +246,14 @@ test.describe.serial('Petitions: public page', () => {
 			await publishSwitch.click();
 			await expect(publishSwitch).toBeChecked({ timeout: 10_000 });
 		}
-		expect(ids.petitionSlug).not.toBe('');
+		expect(publicTestIds.petitionSlug).not.toBe('');
 	});
 
 	test('logged-in owner sees the edit navbar on the public petition page', async ({ page }) => {
 		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
-		await detailPage.goto(ids.petitionId);
+		await detailPage.goto(publicTestIds.petitionId);
 		await detailPage.waitForLoaded();
 		await detailPage.openActionDropdown();
 
@@ -255,21 +264,27 @@ test.describe.serial('Petitions: public page', () => {
 		await expect(page).toHaveURL(new RegExp(`https?:\\/\\/${ORG_SLUG}\\.`), {
 			timeout: 15_000
 		});
-		await expect(page).toHaveURL(new RegExp(`\\/petitions\\/${ids.petitionSlug}(?:\\?|$)`), {
-			timeout: 15_000
-		});
+		await expect(page).toHaveURL(
+			new RegExp(`\\/petitions\\/${publicTestIds.petitionSlug}(?:\\?|$)`),
+			{
+				timeout: 15_000
+			}
+		);
 
 		await expect(page.getByTestId('public-page-navbar')).toBeVisible({ timeout: 10_000 });
 		const editLink = page.getByTestId('public-page-edit-link');
 		await expect(editLink).toBeVisible();
-		await expect(editLink).toHaveAttribute('href', new RegExp(`/petitions/${ids.petitionId}$`));
+		await expect(editLink).toHaveAttribute(
+			'href',
+			new RegExp(`/petitions/${publicTestIds.petitionId}$`)
+		);
 	});
 
 	test('anonymous visitor does not see the edit navbar on the public petition page', async ({
 		page
 	}) => {
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(ORG_SLUG, ids.petitionSlug);
+		await publicPage.goto(ORG_SLUG, publicTestIds.petitionSlug);
 
 		await expect(page.getByTestId('public-page-navbar')).toHaveCount(0);
 		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 10_000 });
@@ -278,7 +293,7 @@ test.describe.serial('Petitions: public page', () => {
 
 	test('public petition page shows WhatsApp signup when configured', async ({ page }) => {
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(ORG_SLUG, ids.petitionSlug);
+		await publicPage.goto(ORG_SLUG, publicTestIds.petitionSlug);
 
 		await expect(publicPage.submitButton).toBeVisible({ timeout: 10_000 });
 		await expect(publicPage.whatsappSignupBtn).toBeVisible({ timeout: 10_000 });
@@ -288,7 +303,7 @@ test.describe.serial('Petitions: public page', () => {
 		const suffix = Date.now();
 
 		const publicPage = new PetitionPublicPage(page);
-		await publicPage.goto(ORG_SLUG, ids.petitionSlug);
+		await publicPage.goto(ORG_SLUG, publicTestIds.petitionSlug);
 
 		await publicPage.fillSignupForm({
 			givenName: 'E2E',
@@ -298,7 +313,7 @@ test.describe.serial('Petitions: public page', () => {
 		await publicPage.submitSignup();
 
 		await expect(page).toHaveURL(
-			new RegExp(`${ORG_SLUG}.*\\/petitions\\/${ids.petitionSlug}\\/signed`),
+			new RegExp(`${ORG_SLUG}.*\\/petitions\\/${publicTestIds.petitionSlug}\\/signed`),
 			{ timeout: 15_000 }
 		);
 	});
@@ -307,7 +322,7 @@ test.describe.serial('Petitions: public page', () => {
 		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
-		await detailPage.goto(ids.petitionId);
+		await detailPage.goto(publicTestIds.petitionId);
 		await detailPage.waitForLoaded();
 
 		const signaturesPage = new PetitionSignaturesPage(page);
@@ -321,13 +336,15 @@ test.describe.serial('Petitions: public page', () => {
 		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
-		await detailPage.goto(ids.petitionId);
+		await detailPage.goto(publicTestIds.petitionId);
 		await detailPage.waitForLoaded();
 
 		await detailPage.openActionDropdown();
 		await detailPage.clickDetailedSignatures();
 
-		await expect(page).toHaveURL(`/petitions/${ids.petitionId}/signatures`, { timeout: 10_000 });
+		await expect(page).toHaveURL(`/petitions/${publicTestIds.petitionId}/signatures`, {
+			timeout: 10_000
+		});
 
 		const signaturesPage = new PetitionSignaturesPage(page);
 		await expect(signaturesPage.detailedTable).toBeVisible({ timeout: 15_000 });
@@ -337,7 +354,7 @@ test.describe.serial('Petitions: public page', () => {
 		await loginAsOwner(page, PROJECT);
 
 		const detailPage = new PetitionDetailPage(page);
-		await detailPage.goto(ids.petitionId);
+		await detailPage.goto(publicTestIds.petitionId);
 		await detailPage.waitForLoaded();
 
 		const signaturesPage = new PetitionSignaturesPage(page);
@@ -357,14 +374,14 @@ test.describe.serial('Petitions: public page', () => {
 				phoneNumber: flowPhone,
 				flow_token: 'unused',
 				resource_type: 'petition',
-				resource_id: ids.petitionId
+				resource_id: publicTestIds.petitionId
 			}
 		});
 
 		const { status } = await postWhatsAppInboundWebhook(request, webhookBody);
 		expect(status).toBe(200);
 
-		await detailPage.goto(ids.petitionId);
+		await detailPage.goto(publicTestIds.petitionId);
 		await detailPage.waitForLoaded();
 		await signaturesPage.summaryTable.waitFor({ state: 'visible', timeout: 15_000 });
 		await expect(signaturesPage.summaryTable).toContainText(flowGivenName, { timeout: 15_000 });

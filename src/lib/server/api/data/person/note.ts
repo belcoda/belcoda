@@ -1,7 +1,7 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
 
-import { member, personNote, personNoteMention } from '$lib/schema/drizzle';
+import { member, person, personNote, personNoteMention, user } from '$lib/schema/drizzle';
 import { personNoteReadPermissions } from '$lib/zero/query/person_note/permissions';
 import { eq, and, isNull, count, ilike, inArray } from 'drizzle-orm';
 
@@ -22,9 +22,10 @@ import { getOrganizationMember } from '$lib/server/api/data/organization/member'
 import type { ListFilter } from '$lib/schema/helpers';
 import { listPersonNotesQuery } from '$lib/zero/query/person_note/list';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
+import { createNotification } from '$lib/server/api/data/notification/notification';
+import { buildPersonNoteMentionNotifications } from '$lib/utils/person-note/notifications';
 
 import pino from '$lib/pino';
-const log = pino(import.meta.url);
 
 async function requireMentionedUsersInOrganization({
 	tx,
@@ -67,7 +68,7 @@ export async function createPersonNote({
 	});
 
 	//make sure the person exists and has permissions
-	await getPerson({
+	const personRecord = await getPerson({
 		tx,
 		ctx,
 		args: { organizationId: parsed.metadata.organizationId, personId: parsed.metadata.personId }
@@ -102,6 +103,16 @@ export async function createPersonNote({
 				createdAt: new Date()
 			}))
 		);
+		await createPersonNoteMentionNotifications({
+			tx,
+			organizationId: parsed.metadata.organizationId,
+			personNoteId: result.id,
+			personId: result.personId,
+			personName: getPersonName(personRecord),
+			noteAuthorUserId: ctx.userId,
+			note: result.note,
+			mentions: parsed.input.mentions
+		});
 	}
 	const queue = await getQueue();
 	queue.insertActivity({
@@ -157,7 +168,8 @@ export async function updatePersonNote({
 		noteId: parsed.metadata.personNoteId,
 		organizationId: parsed.metadata.organizationId,
 		note: parsed.input.note,
-		mentions: parsed.input.mentions
+		mentions: parsed.input.mentions,
+		mentionAuthorUserId: ctx.userId ?? undefined
 	});
 	return result;
 }
@@ -168,7 +180,8 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 	organizationId,
 	personId,
 	note,
-	mentions = []
+	mentions,
+	mentionAuthorUserId
 }: {
 	tx: ServerTransaction;
 	noteId: string;
@@ -176,6 +189,7 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 	organizationId: string;
 	note: string;
 	mentions?: readonly WritePersonNoteMentionZero[];
+	mentionAuthorUserId?: string;
 }) {
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(personNote)
@@ -195,10 +209,12 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 	if (!result) {
 		throw new Error('Unable to update person note');
 	}
-	await tx.dbTransaction.wrappedTransaction
-		.delete(personNoteMention)
-		.where(eq(personNoteMention.personNoteId, noteId));
-	if (mentions.length > 0) {
+	if (mentions !== undefined) {
+		await tx.dbTransaction.wrappedTransaction
+			.delete(personNoteMention)
+			.where(eq(personNoteMention.personNoteId, noteId));
+	}
+	if (mentions && mentions.length > 0) {
 		await tx.dbTransaction.wrappedTransaction.insert(personNoteMention).values(
 			mentions.map((mention) => ({
 				...mention,
@@ -206,6 +222,18 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 				createdAt: new Date()
 			}))
 		);
+		if (mentionAuthorUserId) {
+			await createPersonNoteMentionNotifications({
+				tx,
+				organizationId,
+				personNoteId: noteId,
+				personId,
+				personName: await _getPersonNameByIdUnsafe({ tx, personId }),
+				noteAuthorUserId: mentionAuthorUserId,
+				note: result.note,
+				mentions
+			});
+		}
 	}
 	const queue = await getQueue();
 	await queue.triggerWebhook(
@@ -219,6 +247,66 @@ export async function _updatePersonNoteNoPermissionsCheckUnsafe({
 		queueSendOptionsFromTransaction(tx)
 	);
 	return result;
+}
+
+async function createPersonNoteMentionNotifications({
+	tx,
+	organizationId,
+	personNoteId,
+	personId,
+	personName,
+	noteAuthorUserId,
+	note,
+	mentions
+}: {
+	tx: ServerTransaction;
+	organizationId: string;
+	personNoteId: string;
+	personId: string;
+	personName: string | null;
+	noteAuthorUserId: string;
+	note: string;
+	mentions: readonly WritePersonNoteMentionZero[];
+}) {
+	const [noteAuthor] = await tx.dbTransaction.wrappedTransaction
+		.select({ name: user.name })
+		.from(user)
+		.where(eq(user.id, noteAuthorUserId))
+		.limit(1);
+
+	for (const args of buildPersonNoteMentionNotifications({
+		organizationId,
+		personNoteId,
+		personId,
+		personName,
+		noteAuthorUserId,
+		noteAuthorName: noteAuthor?.name ?? null,
+		note,
+		mentions
+	})) {
+		await createNotification({ tx, args });
+	}
+}
+
+async function _getPersonNameByIdUnsafe({
+	tx,
+	personId
+}: {
+	tx: ServerTransaction;
+	personId: string;
+}) {
+	const [personRecord] = await tx.dbTransaction.wrappedTransaction
+		.select({ givenName: person.givenName, familyName: person.familyName })
+		.from(person)
+		.where(eq(person.id, personId))
+		.limit(1);
+	return getPersonName(personRecord);
+}
+
+function getPersonName(
+	personRecord: { givenName: string | null; familyName: string | null } | undefined
+) {
+	return [personRecord?.givenName, personRecord?.familyName].filter(Boolean).join(' ') || null;
 }
 
 export async function deletePersonNote({

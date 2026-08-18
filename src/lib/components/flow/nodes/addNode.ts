@@ -40,14 +40,19 @@ export function startingNodes({
 			data: { templateId: defaultTemplateId }
 		});
 	}
-	const edges = [
-		{
-			id: uuidv4(),
-			source: targetingNodeId,
-			target: messageNodeId,
-			type: 'edge' as const
-		}
-	];
+	// Only wire the targeting -> message edge when the message node actually
+	// exists. Without a default template there is no second node, so emitting the
+	// edge would leave a dangling reference to a node that was never created.
+	const edges = defaultTemplateId
+		? [
+				{
+					id: uuidv4(),
+					source: targetingNodeId,
+					target: messageNodeId,
+					type: 'edge' as const
+				}
+			]
+		: [];
 	return { nodes, edges };
 }
 export function addNode({

@@ -20,6 +20,37 @@ import {
 import { builder, type QueryContext } from '$lib/zero/schema';
 import { notificationReadPermissions } from '$lib/zero/query/notification/permissions';
 import { getOrganizationMember } from '$lib/server/api/data/organization/member';
+import { isFavouriteReferenceReadable } from '$lib/server/api/data/favourite/reference-permissions';
+import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
+
+function uniqueReferences(relatedResources: FavouriteReference[]): FavouriteReference[] {
+	const referencesByKey = new Map(
+		relatedResources.map((reference) => [
+			`${reference.referenceType}:${reference.referenceId}`,
+			reference
+		])
+	);
+	return [...referencesByKey.values()];
+}
+
+async function canReadAllRelatedResources({
+	tx,
+	ctx,
+	organizationId,
+	relatedResources
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	organizationId: string;
+	relatedResources: FavouriteReference[];
+}): Promise<boolean> {
+	for (const reference of relatedResources) {
+		if (!(await isFavouriteReferenceReadable({ tx, ctx, organizationId, reference }))) {
+			return false;
+		}
+	}
+	return true;
+}
 
 async function getFavouriteRecipientUserIds({
 	tx,
@@ -57,7 +88,30 @@ async function getFavouriteRecipientUserIds({
 			)
 		);
 
-	return [...new Set(favouriteMemberships.map((membership) => membership.userId))];
+	const candidateUserIds = [
+		...new Set(favouriteMemberships.map((membership) => membership.userId))
+	];
+	const referencesToValidate = uniqueReferences(relatedResources);
+
+	const candidates = await Promise.all(
+		candidateUserIds.map(async (userId) => ({ userId, ctx: await getQueryContext(userId) }))
+	);
+
+	const recipientUserIds: string[] = [];
+	for (const { userId, ctx } of candidates) {
+		if (
+			await canReadAllRelatedResources({
+				tx,
+				ctx,
+				organizationId,
+				relatedResources: referencesToValidate
+			})
+		) {
+			recipientUserIds.push(userId);
+		}
+	}
+
+	return recipientUserIds;
 }
 
 export async function resolveNotificationRecipients({

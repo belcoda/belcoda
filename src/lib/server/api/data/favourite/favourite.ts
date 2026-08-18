@@ -5,65 +5,13 @@ import { parse } from 'valibot';
 import {
 	addFavouriteMutatorSchemaZero,
 	type AddFavouriteMutatorSchemaZero,
-	type FavouriteReference,
 	removeFavouriteMutatorSchemaZero,
 	type RemoveFavouriteMutatorSchemaZero
 } from '$lib/schema/favourite';
 import { memberFavourite } from '$lib/schema/drizzle';
 import { getOrganizationMember } from '$lib/server/api/data/organization/member';
-import { eventReadPermissions } from '$lib/zero/query/event/permissions';
-import { personReadPermissions } from '$lib/zero/query/person/permissions';
-import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
-import { builder, type QueryContext } from '$lib/zero/schema';
-
-async function assertReferenceIsReadable({
-	tx,
-	ctx,
-	organizationId,
-	reference
-}: {
-	tx: ServerTransaction;
-	ctx: QueryContext;
-	organizationId: string;
-	reference: FavouriteReference;
-}) {
-	let record;
-	switch (reference.referenceType) {
-		case 'person':
-			record = await tx.run(
-				builder.person
-					.where('id', '=', reference.referenceId)
-					.where('organizationId', '=', organizationId)
-					.where('deletedAt', 'IS', null)
-					.where((expr) => personReadPermissions(expr, ctx))
-					.one()
-			);
-			break;
-		case 'petition':
-			record = await tx.run(
-				builder.petition
-					.where('id', '=', reference.referenceId)
-					.where('organizationId', '=', organizationId)
-					.where('deletedAt', 'IS', null)
-					.where((expr) => petitionReadPermissions(expr, ctx))
-					.one()
-			);
-			break;
-		case 'event':
-			record = await tx.run(
-				builder.event
-					.where('id', '=', reference.referenceId)
-					.where('organizationId', '=', organizationId)
-					.where('deletedAt', 'IS', null)
-					.where((expr) => eventReadPermissions(expr, ctx))
-					.one()
-			);
-			break;
-	}
-	if (!record) {
-		throw new Error('Favourite reference not found');
-	}
-}
+import type { QueryContext } from '$lib/zero/schema';
+import { isFavouriteReferenceReadable } from './reference-permissions';
 
 export async function addFavourite({
 	tx,
@@ -85,7 +33,7 @@ export async function addFavourite({
 	if (membership.id !== parsed.metadata.memberId) {
 		throw new Error('Member does not match the authenticated user');
 	}
-	await assertReferenceIsReadable({
+	const referenceIsReadable = await isFavouriteReferenceReadable({
 		tx,
 		ctx,
 		organizationId: parsed.metadata.organizationId,
@@ -94,6 +42,9 @@ export async function addFavourite({
 			referenceId: parsed.metadata.referenceId
 		}
 	});
+	if (!referenceIsReadable) {
+		throw new Error('Favourite reference not found');
+	}
 
 	const [inserted] = await tx.dbTransaction.wrappedTransaction
 		.insert(memberFavourite)
