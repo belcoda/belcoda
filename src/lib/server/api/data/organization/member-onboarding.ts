@@ -1,5 +1,7 @@
 import { and, eq, or } from 'drizzle-orm';
+import * as v from 'valibot';
 import { event, member, user, whatsappAccount } from '$lib/schema/drizzle';
+import { uuid } from '$lib/schema/helpers';
 import {
 	inferMemberOnboardingPatch,
 	type MemberOnboardingInferenceFacts
@@ -8,6 +10,11 @@ import { memberOnboardingIsComplete, resolveMemberSettings } from '$lib/schema/m
 import { drizzle } from '$lib/server/db';
 import { updateMemberOnboarding } from '$lib/server/api/data/organization/member';
 
+const inferAndPersistMemberOnboardingSchema = v.object({
+	userId: uuid,
+	organizationId: uuid
+});
+
 export async function inferAndPersistMemberOnboarding({
 	userId,
 	organizationId
@@ -15,6 +22,8 @@ export async function inferAndPersistMemberOnboarding({
 	userId: string;
 	organizationId: string;
 }) {
+	const parsed = v.parse(inferAndPersistMemberOnboardingSchema, { userId, organizationId });
+
 	const [membership] = await drizzle
 		.select({
 			settings: member.settings,
@@ -22,7 +31,7 @@ export async function inferAndPersistMemberOnboarding({
 		})
 		.from(member)
 		.innerJoin(user, eq(user.id, member.userId))
-		.where(and(eq(member.userId, userId), eq(member.organizationId, organizationId)))
+		.where(and(eq(member.userId, parsed.userId), eq(member.organizationId, parsed.organizationId)))
 		.limit(1);
 
 	if (!membership) {
@@ -42,21 +51,21 @@ export async function inferAndPersistMemberOnboarding({
 				or(
 					and(
 						eq(whatsappAccount.scope, 'organization'),
-						eq(whatsappAccount.referenceId, organizationId)
+						eq(whatsappAccount.referenceId, parsed.organizationId)
 					),
-					and(eq(whatsappAccount.scope, 'user'), eq(whatsappAccount.referenceId, userId))
+					and(eq(whatsappAccount.scope, 'user'), eq(whatsappAccount.referenceId, parsed.userId))
 				)
 			)
 			.limit(1),
 		drizzle
 			.select({ id: event.id })
 			.from(event)
-			.where(eq(event.organizationId, organizationId))
+			.where(eq(event.organizationId, parsed.organizationId))
 			.limit(1),
 		drizzle
 			.select({ id: event.id })
 			.from(event)
-			.where(and(eq(event.organizationId, organizationId), eq(event.published, true)))
+			.where(and(eq(event.organizationId, parsed.organizationId), eq(event.published, true)))
 			.limit(1)
 	]);
 
@@ -74,7 +83,11 @@ export async function inferAndPersistMemberOnboarding({
 	});
 
 	if (Object.keys(onboardingPatch).length > 0) {
-		await updateMemberOnboarding({ userId, organizationId, onboarding: onboardingPatch });
+		await updateMemberOnboarding({
+			userId: parsed.userId,
+			organizationId: parsed.organizationId,
+			onboarding: onboardingPatch
+		});
 	}
 
 	return {
