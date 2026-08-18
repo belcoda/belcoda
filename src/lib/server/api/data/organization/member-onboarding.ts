@@ -4,7 +4,7 @@ import {
 	inferMemberOnboardingPatch,
 	type MemberOnboardingInferenceFacts
 } from '$lib/schema/member/onboarding';
-import { resolveMemberSettings } from '$lib/schema/member/settings';
+import { memberOnboardingIsComplete, resolveMemberSettings } from '$lib/schema/member/settings';
 import { drizzle } from '$lib/server/db';
 import { updateMemberOnboarding } from '$lib/server/api/data/organization/member';
 
@@ -27,6 +27,11 @@ export async function inferAndPersistMemberOnboarding({
 
 	if (!membership) {
 		throw new Error('Member not found');
+	}
+	const settings = resolveMemberSettings(membership.settings);
+
+	if (memberOnboardingIsComplete(settings.onboarding)) {
+		return settings;
 	}
 
 	const organizationMembers = await drizzle
@@ -72,7 +77,6 @@ export async function inferAndPersistMemberOnboarding({
 		event: existingEvent.length > 0,
 		publishEvent: publishedEvent.length > 0
 	};
-	const settings = resolveMemberSettings(membership.settings);
 	const onboardingPatch = inferMemberOnboardingPatch({
 		settings: settings.onboarding,
 		facts

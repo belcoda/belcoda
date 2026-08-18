@@ -1,6 +1,11 @@
 import type { QueryContext } from '$lib/zero/schema';
 import { type ListFilter } from '$lib/schema/helpers';
 import type { NotificationPayload } from '$lib/schema/notification/payload';
+import {
+	defaultMemberSettings,
+	memberOnboardingIsComplete,
+	type ResolvedMemberSettingsSchema
+} from '$lib/schema/member/settings';
 import { SvelteMap } from 'svelte/reactivity';
 
 import { z } from '$lib/zero.svelte';
@@ -37,6 +42,7 @@ class AppState {
 	#queryContext: QueryContext | null = $state(null);
 	#activeWhatsappAccountId = $state<string | null>(null);
 	#organizationNeedsOnboardingLocally = $state(false);
+	#memberSettingsByOrganizationId = $state<Record<string, ResolvedMemberSettingsSchema>>({});
 
 	#whatsappAccounts = $derived.by(() => {
 		if (!this.#organizationId) {
@@ -169,17 +175,20 @@ class AppState {
 	init({
 		userId,
 		organizationId,
-		queryContext
+		queryContext,
+		memberSettingsByOrganizationId
 	}: {
 		userId: string;
 		organizationId: string;
 		queryContext: QueryContext;
+		memberSettingsByOrganizationId: Record<string, ResolvedMemberSettingsSchema>;
 	}) {
 		this.#userId = userId;
 		this.#organizationId = organizationId;
 		this.#organizationNeedsOnboardingLocally =
 			safeLocalStorage.getItem(organizationNeedsOnboardingStorageKey(organizationId)) === 'true';
 		this.#queryContext = queryContext;
+		this.#memberSettingsByOrganizationId = memberSettingsByOrganizationId;
 		this.#hasAppOrganizationContext = true;
 	}
 
@@ -188,6 +197,7 @@ class AppState {
 		this.#organizationNeedsOnboardingLocally = false;
 		this.#activeTeamId = null;
 		this.#queryContext = null;
+		this.#memberSettingsByOrganizationId = {};
 		this.#hasAppOrganizationContext = false;
 	}
 
@@ -243,6 +253,19 @@ class AppState {
 
 	get organizationNeedsOnboarding() {
 		return !organizationOnboardingIsComplete(this.organizationOnboarding);
+	}
+
+	get memberSettings() {
+		if (!this.#organizationId) return defaultMemberSettings();
+		return this.#memberSettingsByOrganizationId[this.#organizationId] ?? defaultMemberSettings();
+	}
+
+	get memberOnboarding() {
+		return this.memberSettings.onboarding;
+	}
+
+	get memberNeedsOnboarding() {
+		return !memberOnboardingIsComplete(this.memberOnboarding);
 	}
 
 	clearOrganizationNeedsOnboardingFlag() {

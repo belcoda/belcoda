@@ -3,6 +3,7 @@ import { parse } from 'valibot';
 
 import { getQueryContext } from '$lib/server/api/utils/auth/permissions';
 import { _listOrganizationMembershipsByUserIdUnsafe } from '$lib/server/api/data/organization';
+import { inferAndPersistMemberOnboarding } from '$lib/server/api/data/organization/member-onboarding';
 import { inferOrganizationIdFromUrl } from '$lib/server/api/utils/infer_organization';
 import { queryContextSchema, type QueryContext } from '$lib/zero/schema';
 
@@ -16,6 +17,7 @@ import { queryContextSchema, type QueryContext } from '$lib/zero/schema';
  * - `queryParamOrganizationId` — `?org=` when valid for the user's memberships, else `null`
  * - `organizations` — array of `{ organizationId }` derived from the user's memberships
  * - `memberships` — same value as `organizations`
+ * - `memberSettingsByOrganizationId` — resolved, reconciled settings for every membership
  * - `queryContext` — the parsed and validated query context
  *
  * @throws Redirects to `/signup` (302) when there is no session or the session user id is missing/blank.
@@ -82,6 +84,17 @@ export async function load({ locals, url }) {
 	}
 
 	const organizations = memberships.map((m) => ({ organizationId: m.organizationId }));
+	const memberSettingsByOrganizationId = Object.fromEntries(
+		await Promise.all(
+			memberships.map(
+				async ({ organizationId }) =>
+					[
+						organizationId,
+						await inferAndPersistMemberOnboarding({ userId, organizationId })
+					] as const
+			)
+		)
+	);
 
 	return {
 		userId,
@@ -90,6 +103,7 @@ export async function load({ locals, url }) {
 		queryParamOrganizationId,
 		organizations,
 		memberships: organizations,
+		memberSettingsByOrganizationId,
 		queryContext
 	};
 }
