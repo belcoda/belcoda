@@ -14,6 +14,10 @@ import {
 	unlinkWhatsappAccountMutatorSchema,
 	updateWhatsappAccountMetadataMutatorSchema
 } from '$lib/schema/whatsapp-account';
+import {
+	completeInferredMemberOnboardingStepForUserInTransaction,
+	completeInferredMemberOnboardingStepInTransaction
+} from '$lib/server/api/data/organization/member';
 
 type WhatsappAccountRecord = typeof whatsappAccount.$inferSelect;
 
@@ -107,6 +111,22 @@ export async function createWhatsappAccount({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to create WhatsApp account');
+	}
+	if (ctx.userId) {
+		if (result.scope === 'organization') {
+			await completeInferredMemberOnboardingStepInTransaction({
+				tx,
+				userId: ctx.userId,
+				organizationId: result.referenceId,
+				step: 'whatsappAccount'
+			});
+		} else {
+			await completeInferredMemberOnboardingStepForUserInTransaction({
+				tx,
+				userId: ctx.userId,
+				step: 'whatsappAccount'
+			});
+		}
 	}
 	return result;
 }
