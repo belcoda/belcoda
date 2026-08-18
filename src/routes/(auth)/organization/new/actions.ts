@@ -13,8 +13,7 @@ import { getLocalTimeZone } from '@internationalized/date';
 import { httpsifyUrl } from '$lib/utils/string/domain';
 import { post } from '$lib/utils/http';
 import { object, boolean } from 'valibot';
-import { safeLocalStorage, safeSessionStorage } from '$lib/utils/storage';
-import { organizationNeedsOnboardingStorageKey } from '$lib/utils/organization-onboarding';
+import { safeSessionStorage } from '$lib/utils/storage';
 export async function getCurrentCountry(): Promise<CountryCode> {
 	try {
 		//get the country from the IP address of the user
@@ -84,7 +83,6 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 	}
 
 	safeSessionStorage.setItem('state:organizationId', data.id);
-	safeLocalStorage.setItem(organizationNeedsOnboardingStorageKey(data.id), 'true');
 
 	return data;
 }
