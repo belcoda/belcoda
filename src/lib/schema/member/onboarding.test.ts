@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { inferMemberOnboardingPatch } from '$lib/schema/member/onboarding';
+import {
+	hasPendingInferredMemberOnboardingStep,
+	inferMemberOnboardingPatch
+} from '$lib/schema/member/onboarding';
 import { defaultMemberOnboardingSettings } from '$lib/schema/member/settings';
 
 describe('member onboarding inference', () => {
@@ -69,5 +72,20 @@ describe('member onboarding inference', () => {
 
 		expect(patch).not.toHaveProperty('other');
 		expect(patch).not.toHaveProperty('advanced');
+	});
+
+	it('does not reconcile when only explicit-only steps are pending', () => {
+		const settings = {
+			...defaultMemberOnboardingSettings('pending'),
+			language: 'complete' as const,
+			whatsappAccount: 'complete' as const,
+			event: 'complete' as const,
+			publishEvent: 'complete' as const
+		};
+
+		expect(hasPendingInferredMemberOnboardingStep(settings)).toBe(false);
+		expect(hasPendingInferredMemberOnboardingStep(defaultMemberOnboardingSettings('pending'))).toBe(
+			true
+		);
 	});
 });

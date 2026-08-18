@@ -14,6 +14,12 @@ export type InferredMemberOnboardingStep = (typeof inferredMemberOnboardingSteps
 
 export type MemberOnboardingInferenceFacts = Record<InferredMemberOnboardingStep, boolean>;
 
+export function hasPendingInferredMemberOnboardingStep(
+	settings: MemberOnboardingSettingsSchema
+): boolean {
+	return inferredMemberOnboardingSteps.some((step) => settings[step] === 'pending');
+}
+
 export function inferMemberOnboardingPatch({
 	settings,
 	facts

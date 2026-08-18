@@ -3,10 +3,11 @@ import * as v from 'valibot';
 import { event, member, user, whatsappAccount } from '$lib/schema/drizzle';
 import { uuid } from '$lib/schema/helpers';
 import {
+	hasPendingInferredMemberOnboardingStep,
 	inferMemberOnboardingPatch,
 	type MemberOnboardingInferenceFacts
 } from '$lib/schema/member/onboarding';
-import { memberOnboardingIsComplete, resolveMemberSettings } from '$lib/schema/member/settings';
+import { resolveMemberSettings } from '$lib/schema/member/settings';
 import { drizzle } from '$lib/server/db';
 import { updateMemberOnboarding } from '$lib/server/api/data/organization/member';
 
@@ -39,7 +40,7 @@ export async function inferAndPersistMemberOnboarding({
 	}
 	const settings = resolveMemberSettings(membership.settings);
 
-	if (memberOnboardingIsComplete(settings.onboarding)) {
+	if (!hasPendingInferredMemberOnboardingStep(settings.onboarding)) {
 		return settings;
 	}
 
