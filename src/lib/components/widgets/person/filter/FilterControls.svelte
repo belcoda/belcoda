@@ -23,33 +23,11 @@
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
-	const teamList = $derived.by(() =>
-		z.createQuery(queries.team.list(teamsListFilter))
-	);
+	const teamList = $derived.by(() => z.createQuery(queries.team.list(teamsListFilter)));
 
 	const tagListFilter: ListFilter = $state(getListFilter(appState.organizationId));
 
 	const tagList = $derived.by(() => z.createQuery(queries.tag.list(tagListFilter)));
-
-	const eventListFilter: EventListFilter = $state({
-		...getListFilter(appState.organizationId),
-		dateRange: {
-			start: getTimestampFromCalendarDate(
-				getWeeksFromTodayCalendarDate(getLocalTimeZone(), -4),
-				getLocalTimeZone(),
-				'start'
-			),
-			end: getTimestampFromCalendarDate(
-				getWeeksFromTodayCalendarDate(getLocalTimeZone(), 8),
-				getLocalTimeZone(),
-				'end'
-			)
-		}
-	});
-
-	const eventList = $derived.by(() =>
-		z.createQuery(queries.event.list(eventListFilter))
-	);
 
 	import { tick } from 'svelte';
 	let open = $state(false);
@@ -183,5 +161,15 @@
 				</DropdownMenu.SubContent>
 			</DropdownMenu.Sub>
 		{/if}
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.CheckboxItem
+				data-testid="people-favourites-filter"
+				checked={filter.favouritesOnly ?? false}
+				onCheckedChange={(checked) => {
+					filter.favouritesOnly = checked;
+				}}>{t`Favourites only`}</DropdownMenu.CheckboxItem
+			>
+		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
