@@ -86,7 +86,6 @@ export const mutators = defineMutators({
 	},
 	organization: {
 		update: organization.updateOrganization,
-		updateOnboarding: organization.updateOrganizationOnboarding,
 		updateWhatsappSettings: organization.updateOrganizationWhatsappSettings,
 		updateTheme: organization.updateTheme
 	},

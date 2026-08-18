@@ -36,7 +36,7 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 	const timezone = getLocalTimeZone();
 	const homepageUrl = org.website ? httpsifyUrl(org.website) : null;
 	const settings: OrganizationSettingsSchema = {
-		...defaultOrganizationSettings({ onboardingStatus: 'pending' }),
+		...defaultOrganizationSettings(),
 		website: {
 			homepageUrl
 		}
