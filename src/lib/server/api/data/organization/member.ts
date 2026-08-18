@@ -104,3 +104,28 @@ export async function updateMemberOnboarding({
 		throw new Error('Member not found');
 	}
 }
+
+export async function completeMemberLanguageOnboarding({ userId }: { userId: string }) {
+	const defaultOnboarding = JSON.stringify(defaultMemberOnboardingSettings('complete'));
+	const languagePatch = JSON.stringify({ language: 'complete' });
+
+	await drizzle
+		.update(member)
+		.set({
+			settings: sql`
+				COALESCE(${member.settings}, '{}'::jsonb)
+				|| jsonb_build_object(
+					'onboarding',
+					${defaultOnboarding}::jsonb
+					|| COALESCE(${member.settings}->'onboarding', '{}'::jsonb)
+					|| ${languagePatch}::jsonb
+				)
+			`
+		})
+		.where(
+			and(
+				eq(member.userId, userId),
+				sql`COALESCE(${member.settings}->'onboarding'->>'language', 'complete') = 'pending'`
+			)
+		);
+}

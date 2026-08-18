@@ -56,6 +56,7 @@ import { emailVerification } from '$lib/server/utils/email/context/transactional
 import { passwordReset } from '$lib/server/utils/email/context/transactional/auth/password_reset';
 import { organizationInvitation } from '$lib/server/utils/email/context/transactional/auth/organization_invitation';
 import { _createLedgerEntry } from './api/data/ledger';
+import { completeMemberLanguageOnboarding } from './api/data/organization/member';
 
 async function canManageOrganizationBilling({
 	userId,
@@ -467,6 +468,16 @@ export function buildBetterAuth(localeInput: string) {
 					type: 'string',
 					input: true,
 					required: false
+				}
+			}
+		},
+		databaseHooks: {
+			user: {
+				update: {
+					after: async (user) => {
+						if (typeof user.preferredLanguage !== 'string') return;
+						await completeMemberLanguageOnboarding({ userId: user.id });
+					}
 				}
 			}
 		},
