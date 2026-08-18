@@ -1,4 +1,4 @@
-import { and, eq, inArray, or } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 import { event, member, user, whatsappAccount } from '$lib/schema/drizzle';
 import {
 	inferMemberOnboardingPatch,
@@ -34,12 +34,6 @@ export async function inferAndPersistMemberOnboarding({
 		return settings;
 	}
 
-	const organizationMembers = await drizzle
-		.select({ userId: member.userId })
-		.from(member)
-		.where(eq(member.organizationId, organizationId));
-	const organizationMemberIds = organizationMembers.map(({ userId }) => userId);
-
 	const [linkedWhatsappAccount, existingEvent, publishedEvent] = await Promise.all([
 		drizzle
 			.select({ id: whatsappAccount.id })
@@ -50,10 +44,7 @@ export async function inferAndPersistMemberOnboarding({
 						eq(whatsappAccount.scope, 'organization'),
 						eq(whatsappAccount.referenceId, organizationId)
 					),
-					and(
-						eq(whatsappAccount.scope, 'user'),
-						inArray(whatsappAccount.referenceId, organizationMemberIds)
-					)
+					and(eq(whatsappAccount.scope, 'user'), eq(whatsappAccount.referenceId, userId))
 				)
 			)
 			.limit(1),
