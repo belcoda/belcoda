@@ -153,6 +153,26 @@ export async function completeInferredMemberOnboardingStepForUserInTransaction({
 		);
 }
 
+export async function completeInferredMemberOnboardingStepForOrganizationInTransaction({
+	tx,
+	organizationId,
+	step
+}: {
+	tx: ServerTransaction;
+	organizationId: string;
+	step: InferredMemberOnboardingStep;
+}) {
+	await tx.dbTransaction.wrappedTransaction
+		.update(member)
+		.set({ settings: memberOnboardingSettingsUpdate({ [step]: 'complete' }) })
+		.where(
+			and(
+				eq(member.organizationId, organizationId),
+				sql`COALESCE(${member.settings}->'onboarding'->>${step}, 'complete') = 'pending'`
+			)
+		);
+}
+
 export async function completeMemberLanguageOnboarding({ userId }: { userId: string }) {
 	await drizzle
 		.update(member)
