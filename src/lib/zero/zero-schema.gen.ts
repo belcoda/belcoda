@@ -3474,6 +3474,14 @@ const personRelationships = {
 	],
 	notes: [
 		{ sourceField: ['id'], destField: ['personId'], destSchema: 'personNote', cardinality: 'many' }
+	],
+	favourites: [
+		{
+			sourceField: ['id'],
+			destField: ['referenceId'],
+			destSchema: 'memberFavourite',
+			cardinality: 'many'
+		}
 	]
 } as const;
 const whatsappGroupRelationships = {
@@ -3682,6 +3690,9 @@ const memberFavouriteRelationships = {
 	],
 	event: [
 		{ sourceField: ['referenceId'], destField: ['id'], destSchema: 'event', cardinality: 'one' }
+	],
+	person: [
+		{ sourceField: ['referenceId'], destField: ['id'], destSchema: 'person', cardinality: 'one' }
 	]
 } as const;
 const memberRelationships = {
