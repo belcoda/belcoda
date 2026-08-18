@@ -3,9 +3,11 @@ import { and, eq, sql } from 'drizzle-orm';
 import { drizzle } from '$lib/server/db';
 import { member } from '$lib/schema/drizzle';
 import {
+	defaultMemberOnboardingSettings,
 	defaultMemberSettings,
-	parseMemberSettings,
-	type MemberNotificationSettingsPatchSchema
+	resolveMemberSettings,
+	type MemberNotificationSettingsPatchSchema,
+	type MemberOnboardingSettingsPatchSchema
 } from '$lib/schema/member/settings';
 
 export async function getOrganizationMember({
@@ -35,7 +37,7 @@ export async function getMemberSettings({
 		where: and(eq(member.userId, userId), eq(member.organizationId, organizationId)),
 		columns: { settings: true }
 	});
-	return parseMemberSettings(row?.settings) ?? defaultMemberSettings();
+	return resolveMemberSettings(row?.settings);
 }
 
 export async function updateMemberSettings({
@@ -59,6 +61,39 @@ export async function updateMemberSettings({
 					'notifications',
 					COALESCE(${member.settings}->'notifications', ${defaultNotifications}::jsonb)
 					|| ${notificationPatch}::jsonb
+				)
+			`
+		})
+		.where(and(eq(member.userId, userId), eq(member.organizationId, organizationId)))
+		.returning({ id: member.id });
+
+	if (!updated.length) {
+		throw new Error('Member not found');
+	}
+}
+
+export async function updateMemberOnboarding({
+	userId,
+	organizationId,
+	onboarding
+}: {
+	userId: string;
+	organizationId: string;
+	onboarding: MemberOnboardingSettingsPatchSchema;
+}) {
+	const defaultOnboarding = JSON.stringify(defaultMemberOnboardingSettings('complete'));
+	const onboardingPatch = JSON.stringify(onboarding);
+
+	const updated = await drizzle
+		.update(member)
+		.set({
+			settings: sql`
+				COALESCE(${member.settings}, '{}'::jsonb)
+				|| jsonb_build_object(
+					'onboarding',
+					${defaultOnboarding}::jsonb
+					|| COALESCE(${member.settings}->'onboarding', '{}'::jsonb)
+					|| ${onboardingPatch}::jsonb
 				)
 			`
 		})

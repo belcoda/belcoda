@@ -43,6 +43,11 @@ export const memberSettingsSchema = v.object({
 
 export type MemberSettingsSchema = v.InferOutput<typeof memberSettingsSchema>;
 
+export type ResolvedMemberSettingsSchema = {
+	notifications: MemberNotificationSettingsSchema;
+	onboarding: MemberOnboardingSettingsSchema;
+};
+
 export function defaultMemberOnboardingSettings(
 	status: MemberOnboardingStatusSchema = 'pending'
 ): MemberOnboardingSettingsSchema {
@@ -64,7 +69,7 @@ export function defaultMemberSettings({
 	onboardingStatus = 'complete'
 }: {
 	onboardingStatus?: MemberOnboardingStatusSchema;
-} = {}): MemberSettingsSchema {
+} = {}): ResolvedMemberSettingsSchema {
 	return {
 		notifications: {
 			digestEnabled: true,
@@ -77,4 +82,20 @@ export function defaultMemberSettings({
 export function parseMemberSettings(value: unknown): MemberSettingsSchema | undefined {
 	const result = v.safeParse(memberSettingsSchema, value);
 	return result.success ? result.output : undefined;
+}
+
+export function resolveMemberSettings(value: unknown): ResolvedMemberSettingsSchema {
+	const defaults = defaultMemberSettings();
+	const parsed = parseMemberSettings(value);
+
+	return {
+		notifications: {
+			...defaults.notifications,
+			...parsed?.notifications
+		},
+		onboarding: {
+			...defaults.onboarding,
+			...parsed?.onboarding
+		}
+	};
 }
