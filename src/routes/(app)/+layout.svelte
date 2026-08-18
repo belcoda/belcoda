@@ -42,6 +42,7 @@
 
 	$effect(() => {
 		if (!initialized) return;
+		appState.syncMemberSettings(data.memberSettingsByOrganizationId);
 		const organizationId = determineAndPersistActiveOrganizationId({
 			queryParamOrganizationId: data.queryParamOrganizationId,
 			inferredOrganizationId: data.inferredOrganizationId,

@@ -191,6 +191,10 @@ class AppState {
 		this.#hasAppOrganizationContext = false;
 	}
 
+	syncMemberSettings(memberSettingsByOrganizationId: Record<string, ResolvedMemberSettingsSchema>) {
+		this.#memberSettingsByOrganizationId = memberSettingsByOrganizationId;
+	}
+
 	/**
 	 * Safe gate for `(app)` layout: does not use throwing getters. True when core list/read
 	 * queries have reached a complete materialized state.

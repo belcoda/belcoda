@@ -7,6 +7,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { t } from '$lib/index.svelte';
 	import { locale } from '$lib/index.svelte';
+	import { invalidateAll } from '$app/navigation';
 	let value = $state<Locale>(locale.current);
 	import { authClient } from '$lib/auth-client';
 	async function setLocale(newLocale: string) {
@@ -19,6 +20,7 @@
 		});
 		locale.setLocale(newLocale);
 		document.cookie = `BELCODA_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=strict`;
+		await invalidateAll();
 	}
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
