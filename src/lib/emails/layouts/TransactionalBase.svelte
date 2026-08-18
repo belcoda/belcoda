@@ -13,6 +13,7 @@
 <script lang="ts">
 	import {
 		Body,
+		Column,
 		Container,
 		Head,
 		Html,
@@ -48,17 +49,22 @@
 		<Container class="mx-auto w-full max-w-xl">
 			<Section class="rounded-lg  bg-white mt-8 p-6 sm:px-9">
 				<Row>
-					<Link href={instanceUrl} aria-label={logoAlt} class="mx-auto">
-						<Img
-							src={logoUrl}
-							alt={logoAlt}
-							width="100px"
-							height="auto"
-							class="my-4 h-auto mx-auto"
-						/>
-					</Link>
-
-					{@render children()}
+					<Column>
+						<Link href={instanceUrl} aria-label={logoAlt} class="mx-auto">
+							<Img
+								src={logoUrl}
+								alt={logoAlt}
+								width="100px"
+								height="auto"
+								class="my-4 h-auto mx-auto"
+							/>
+						</Link>
+					</Column>
+				</Row>
+				<Row>
+					<Column>
+						{@render children()}
+					</Column>
 				</Row>
 			</Section>
 

@@ -10,7 +10,7 @@ import { runWithLocale } from 'wuchale/load-utils/server';
 function formatEmailDisplayName(name: string): string {
 	const cleaned = name.replace(/[\r\n\t]+/g, ' ').trim();
 	if (/[()<>@,;:\\".[\]]/.test(cleaned)) {
-		return `"${cleaned.replace(/(["\\])/g, '\\$1')}"`;
+		return `"${cleaned.replace(/(["\\])/g, String.raw`\$1`)}"`;
 	}
 	return cleaned;
 }

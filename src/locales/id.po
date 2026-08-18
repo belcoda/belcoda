@@ -6304,7 +6304,7 @@ msgstr "{0} telah mengundang Anda untuk bergabung dengan {1} di Belcoda"
 #. 0: new Date().getFullYear().toString(); 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copyright {0} {1}"
-msgstr "Copyright {0} {1}"
+msgstr "Hak Cipta {0} {1}"
 
 #~ msgid "{0} {1}"
 #~ msgstr ""

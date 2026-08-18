@@ -5985,7 +5985,7 @@ msgstr "Impossible d’envoyer le message WhatsApp"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "A teammate"
-msgstr ""
+msgstr "Un membre de l’équipe"
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6316,18 +6316,18 @@ msgstr "Invitation à rejoindre {0}"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Note mention"
-msgstr ""
+msgstr "Mention dans une note"
 
 #. 0: authorName; 1: personName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note about {1}."
-msgstr ""
+msgstr "{0} vous a mentionné dans une note à propos de {1}."
 
 #. 0: authorName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note."
-msgstr ""
+msgstr "{0} vous a mentionné dans une note."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "View note"
-msgstr ""
+msgstr "Voir la note"

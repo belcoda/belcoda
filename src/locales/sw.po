@@ -5985,7 +5985,7 @@ msgstr "Imeshindwa kutuma ujumbe wa WhatsApp"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "A teammate"
-msgstr ""
+msgstr "Mwenzako"
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6316,18 +6316,18 @@ msgstr "Mwaliko wa kujiunga na {0}"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Note mention"
-msgstr ""
+msgstr "Kutajwa katika maelezo"
 
 #. 0: authorName; 1: personName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note about {1}."
-msgstr ""
+msgstr "{0} amekutaja katika maelezo kuhusu {1}."
 
 #. 0: authorName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note."
-msgstr ""
+msgstr "{0} amekutaja katika maelezo."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "View note"
-msgstr ""
+msgstr "Angalia maelezo"

@@ -1,9 +1,10 @@
 import { env } from '$env/dynamic/private';
-const { POSTMARK_SERVER_TOKEN } = env;
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
 import { toPlainText } from '@better-svelte-email/server';
+
+const POSTMARK_REQUEST_TIMEOUT_MS = 15_000;
 
 type SendHtmlEmailOptions = {
 	to: string;
@@ -16,7 +17,12 @@ type SendHtmlEmailOptions = {
 };
 
 export default async function sendHtmlEmail(options: SendHtmlEmailOptions): Promise<string> {
-	const logContext = { to: options.to, subject: options.subject };
+	const { POSTMARK_SERVER_TOKEN } = env;
+	if (!POSTMARK_SERVER_TOKEN) {
+		throw new Error('POSTMARK_SERVER_TOKEN is not configured');
+	}
+
+	const logContext = { subject: options.subject };
 	log.debug(logContext, 'Sending HTML email with Postmark');
 
 	const result = await fetch('https://api.postmarkapp.com/email', {
@@ -34,7 +40,8 @@ export default async function sendHtmlEmail(options: SendHtmlEmailOptions): Prom
 			HtmlBody: options.html,
 			TextBody: toPlainText(options.html),
 			MessageStream: options.stream
-		})
+		}),
+		signal: AbortSignal.timeout(POSTMARK_REQUEST_TIMEOUT_MS)
 	});
 	if (result.ok) {
 		let json: unknown;
@@ -52,6 +59,10 @@ export default async function sendHtmlEmail(options: SendHtmlEmailOptions): Prom
 			log.debug({ ...logContext, providerMessageId: json.MessageID }, 'Email sent successfully');
 			return json.MessageID;
 		}
+	} else {
+		const responseBody = await result.text().catch(() => '');
+		log.error({ ...logContext, status: result.status, body: responseBody }, 'Failed to send email');
+		throw new Error('Failed to send email');
 	}
 
 	log.error(logContext, 'Failed to send email');
