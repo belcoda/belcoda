@@ -49,7 +49,7 @@ const cache = new LRUCache<string, string>({
 import { type LanguageCode, clampLocale } from '$lib/utils/language';
 import { organizationMetadataSchema } from '$lib/schema/organization';
 import { organizationSettingsSchema } from '$lib/schema/organization/settings';
-import { memberSettingsSchema } from '$lib/schema/member/settings';
+import { defaultMemberSettings, memberSettingsSchema } from '$lib/schema/member/settings';
 
 import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
 import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
@@ -170,6 +170,16 @@ export function buildBetterAuth(localeInput: string) {
 						freeWhatsAppMessageCredits: DEFAULT_FREE_WHATSAPP_MESSAGE_CREDITS,
 						freeEmailMessageCredits: DEFAULT_FREE_EMAIL_MESSAGE_CREDITS,
 						resetFreeQuotasAfter: addOneCalendarMonth(new Date())
+					}
+				};
+			},
+			beforeAddMember: async ({ member }) => {
+				if (member.role !== 'owner') return;
+
+				return {
+					data: {
+						...member,
+						settings: defaultMemberSettings({ onboardingStatus: 'pending' })
 					}
 				};
 			},
