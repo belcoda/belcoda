@@ -67,16 +67,34 @@ export const POST: RequestHandler = async ({ request }) => {
 		.values(rows)
 		.returning({ id: schema.personNote.id });
 
+	if (body.includeActivities) {
+		await drizzle.insert(schema.activity).values(
+			rows.map((note) => ({
+				id: crypto.randomUUID(),
+				organizationId: person.organizationId,
+				personId: person.id,
+				userId: owner.userId,
+				type: 'note_added' as const,
+				referenceId: note.id!,
+				unread: false,
+				createdAt: note.createdAt
+			}))
+		);
+	}
+
 	return json({
 		success: true,
 		count: inserted.length,
 		personId: person.id,
 		organizationId: person.organizationId,
-		noteIds: inserted.map((note) => note.id)
+		noteIds: inserted.map((note) => note.id),
+		oldestNoteId: rows.at(-1)?.id
 	});
 };
 
-function isSeedPersonNotesBody(body: unknown): body is { personId: string; count: number } {
+function isSeedPersonNotesBody(
+	body: unknown
+): body is { personId: string; count: number; includeActivities?: boolean } {
 	if (typeof body !== 'object' || body === null || Array.isArray(body)) {
 		return false;
 	}
@@ -84,6 +102,7 @@ function isSeedPersonNotesBody(body: unknown): body is { personId: string; count
 	return (
 		typeof maybeBody.personId === 'string' &&
 		typeof maybeBody.count === 'number' &&
-		Number.isFinite(maybeBody.count)
+		Number.isFinite(maybeBody.count) &&
+		(maybeBody.includeActivities === undefined || typeof maybeBody.includeActivities === 'boolean')
 	);
 }
