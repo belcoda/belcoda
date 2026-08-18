@@ -1,8 +1,9 @@
 import { defineQuery, type ExpressionBuilder } from '@rocicorp/zero';
 import { builder, type Schema, type QueryContext } from '$lib/zero/schema';
-import { array, type InferOutput, optional, object, nullable, picklist } from 'valibot';
+import { array, boolean, type InferOutput, optional, object, nullable, picklist } from 'valibot';
 import { listFilter, uuid } from '$lib/schema/helpers';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
+import { memberFavouriteReadPermissions } from '$lib/zero/query/member_favourite/permissions';
 import { readPersonZero } from '$lib/schema/person';
 import { decodePersonListCursor } from '$lib/utils/person/cursor';
 
@@ -10,6 +11,7 @@ export const inputSchema = object({
 	...listFilter.entries,
 	tagId: optional(nullable(uuid)),
 	signupEventId: optional(nullable(uuid)),
+	favouritesOnly: optional(nullable(boolean())),
 	mostRecentActivity: optional(
 		nullable(
 			picklist([
@@ -41,7 +43,7 @@ function listPersonsQueryBase({
 	let q = builder.person
 		.where((expr) => personReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
+		.where((expr) => whereClause(expr, { ctx, filter: input }))
 		.orderBy('mostRecentActivityAt', 'desc')
 		.orderBy('id', 'desc')
 		.limit(limit);
@@ -127,7 +129,7 @@ export const listPersonByIdsArray = defineQuery(object({ ids: array(uuid) }), ({
 
 function whereClause(
 	builder: ExpressionBuilder<'person', Schema>,
-	{ filter }: { filter: InferOutput<typeof inputSchema> }
+	{ ctx, filter }: { ctx: QueryContext; filter: InferOutput<typeof inputSchema> }
 ) {
 	const isDeleted = filter.isDeleted ?? false;
 	const { and, or, exists, cmp } = builder;
@@ -154,6 +156,15 @@ function whereClause(
 			exists('eventSignups', (es) => {
 				return es.where('eventId', '=', filter.signupEventId!); // ! is safe because signupEventId is not null
 			})
+		);
+	}
+	if (filter.favouritesOnly) {
+		filterArr.push(
+			exists('favourites', (favourite) =>
+				favourite
+					.where('referenceType', '=', 'person')
+					.where((expr) => memberFavouriteReadPermissions(expr, ctx))
+			)
 		);
 	}
 	if (filter.mostRecentActivity) {

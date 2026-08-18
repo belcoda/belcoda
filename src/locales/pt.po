@@ -6184,7 +6184,8 @@ msgid "Favourite"
 msgstr "Favorito"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte
 msgid "Favourites only"
 msgstr "Apenas favoritos"
 
@@ -6317,3 +6318,15 @@ msgstr ""
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "View note"
 msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No favourite people"
+msgstr "Nenhuma pessoa favorita"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Favourite a person using the star in their header to see them here."
+msgstr "Adicione uma pessoa aos favoritos usando a estrela no cabeçalho para vê-la aqui."
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Show all people"
+msgstr "Mostrar todas as pessoas"

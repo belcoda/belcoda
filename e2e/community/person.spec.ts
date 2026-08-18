@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { PersonCreatePage } from '../pages/community/person-create.page';
 import { PersonProfilePage } from '../pages/community/person-profile.page';
 import { TagsPage } from '../pages/settings/tags.page';
@@ -9,6 +9,18 @@ import { BASE_URL } from '../helpers/config';
 import { getTestUsers } from '../helpers/auth';
 
 const PROJECT = 'community' as const;
+
+async function setPersonFavourite(page: Page, shouldBeFavourite: boolean) {
+	const favouriteButton = page.getByTestId('favourite-person-button');
+	await expect(favouriteButton).toBeEnabled({ timeout: 15_000 });
+	const expectedState = shouldBeFavourite.toString();
+	if ((await favouriteButton.getAttribute('aria-pressed')) === expectedState) return;
+
+	await favouriteButton.click();
+	await expect(favouriteButton).toHaveAttribute('aria-pressed', expectedState, {
+		timeout: 15_000
+	});
+}
 
 test.describe.serial('Community and person pages', () => {
 	const ids = {
@@ -62,6 +74,32 @@ test.describe.serial('Community and person pages', () => {
 
 		await expect(personLink).toContainText(ids.givenName);
 		await expect(personLink).toContainText(ids.familyName);
+	});
+
+	test('owner can filter the community list to favourite people', async ({ page }) => {
+		const communityPage = new CommunityPage(page);
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto(ids.personPath);
+		await setPersonFavourite(page, true);
+
+		await communityPage.goto();
+		await communityPage.searchCommunityList(ids.familyName);
+		await communityPage.toggleFavouritesOnly();
+		await expect(communityPage.personListLink(ids.personId)).toBeVisible({ timeout: 15_000 });
+
+		await page.goto(ids.personPath);
+		await setPersonFavourite(page, false);
+
+		await communityPage.goto();
+		await communityPage.searchCommunityList(ids.familyName);
+		await communityPage.toggleFavouritesOnly();
+		await expect(page.getByText('No favourite people', { exact: true })).toBeVisible({
+			timeout: 15_000
+		});
+
+		await page.getByRole('button', { name: 'Show all people' }).click();
+		await expect(communityPage.personListLink(ids.personId)).toBeVisible({ timeout: 15_000 });
 	});
 
 	test('owner can use the person context panel on desktop', async ({ page }) => {
