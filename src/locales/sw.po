@@ -2106,6 +2106,7 @@ msgid "Enter your email to reset your password"
 msgstr "Weka barua pepe yako ili kuweka upya nenosiri lako"
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset password"
@@ -6365,9 +6366,8 @@ msgstr ""
 msgid "Click below to create a new password. If you didn't request this, just ignore this email."
 msgstr ""
 
-#: src/lib/server/utils/email/transactional/send_password_reset.ts
-msgid "Reset Password"
-msgstr ""
+#~ msgid "Reset Password"
+#~ msgstr ""
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Security verification"

@@ -35,7 +35,7 @@ export async function sendPasswordResetEmail({
 			to: emailAddress,
 			from: 'Belcoda <noreply@belcoda.com>',
 			html,
-			subject: t`Reset Password`,
+			subject: t`Reset password`,
 			stream: 'outbound'
 		});
 	});

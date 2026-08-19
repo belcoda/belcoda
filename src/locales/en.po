@@ -2106,6 +2106,7 @@ msgid "Enter your email to reset your password"
 msgstr "Enter your email to reset your password"
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset password"
@@ -6367,9 +6368,8 @@ msgstr "We received a request to reset your password. If this was you, click the
 msgid "Click below to create a new password. If you didn't request this, just ignore this email."
 msgstr "Click below to create a new password. If you didn't request this, just ignore this email."
 
-#: src/lib/server/utils/email/transactional/send_password_reset.ts
-msgid "Reset Password"
-msgstr "Reset Password"
+#~ msgid "Reset Password"
+#~ msgstr "Reset Password"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Security verification"

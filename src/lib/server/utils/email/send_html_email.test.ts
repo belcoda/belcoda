@@ -109,6 +109,20 @@ describe('sendHtmlEmail', () => {
 		expect(JSON.stringify(logger.error.mock.calls)).not.toContain('recipient@example.com');
 	});
 
+	it('logs and throws the uniform error when the fetch itself rejects', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockRejectedValue(new DOMException('The operation timed out.', 'TimeoutError'))
+		);
+
+		await expect(sendHtmlEmail(options)).rejects.toThrow('Failed to send email');
+		expect(logger.error).toHaveBeenCalledWith(
+			expect.objectContaining({ subject: 'Invite' }),
+			'Failed to send email'
+		);
+		expect(JSON.stringify(logger.error.mock.calls)).not.toContain('recipient@example.com');
+	});
+
 	it.each([
 		['empty', ''],
 		['malformed', '{not-json']
