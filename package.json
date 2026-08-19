@@ -91,7 +91,7 @@
 		"vite-node": "^6.0.0",
 		"vite-plugin-devtools-json": "^1.0.0",
 		"vitest": "^4.1.10",
-		"vitest-browser-svelte": "^2.1.1"
+		"vitest-browser-svelte": "^3.0.0"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.1070.0",
