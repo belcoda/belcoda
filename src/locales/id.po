@@ -19,6 +19,7 @@ msgstr "Tanggal dan waktu"
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
 #: src/routes/(app)/settings/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
@@ -1518,6 +1519,7 @@ msgstr "Kode pos"
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Country"
 msgstr "Negara"
@@ -3012,6 +3014,7 @@ msgstr "Undang Pengguna"
 msgid "Send an invitation to join your organization."
 msgstr "Kirim undangan untuk bergabung dengan organisasi Anda."
 
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Invite"
 msgstr "Undang"
@@ -4077,27 +4080,37 @@ msgstr "Ajukan"
 msgid ""
 "By clicking continue, you agree to our <a href=\"https://www.belcoda.com/terms-of-service\">Terms of Service</a>\n"
 "\t\tand <a href=\"https://www.belcoda.com/privacy\">Privacy Policy</a>."
-msgstr "Dengan mengeklik lanjutkan, Anda menyetujui <a href=\"https://www.belcoda.com/terms-of-service\">Ketentuan Layanan</a>\n\t\tdan <a href=\"https://www.belcoda.com/privacy\">Kebijakan Privasi</a> kami."
+msgstr ""
+"Dengan mengeklik lanjutkan, Anda menyetujui <a href=\"https://www.belcoda.com/terms-of-service\">Ketentuan Layanan</a>\n"
+"\t\tdan <a href=\"https://www.belcoda.com/privacy\">Kebijakan Privasi</a> kami."
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid ""
 "If the person is subscribed, they will be able to receive notifications\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\tand messages."
-msgstr "Jika orang tersebut berlangganan, mereka akan dapat menerima notifikasi\n\t\t\t\t\t\t\t\t\t\t\t\t\tdan pesan."
+msgstr ""
+"Jika orang tersebut berlangganan, mereka akan dapat menerima notifikasi\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tdan pesan."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid ""
 "This is a URL-friendly identifier for the event and is part of the event link.\n"
 "\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Ini adalah pengenal yang ramah URL untuk acara dan merupakan bagian dari tautan acara.\n\t\t\t\t\t\t\t\t\t\t\tPengenal harus unik dan hanya boleh berisi huruf kecil, angka, dan\n\t\t\t\t\t\t\t\t\t\t\ttanda hubung."
+msgstr ""
+"Ini adalah pengenal yang ramah URL untuk acara dan merupakan bagian dari tautan acara.\n"
+"\t\t\t\t\t\t\t\t\t\t\tPengenal harus unik dan hanya boleh berisi huruf kecil, angka, dan\n"
+"\t\t\t\t\t\t\t\t\t\t\ttanda hubung."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid ""
 "This is a URL-friendly identifier for the petition and is part of the petition\n"
 "\t\t\t\t\t\t\t\t\t\t\tlink. It must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Ini adalah pengenal yang ramah URL untuk petisi dan merupakan bagian dari tautan\n\t\t\t\t\t\t\t\t\t\t\tpetisi. Pengenal harus unik dan hanya boleh berisi huruf kecil, angka, dan\n\t\t\t\t\t\t\t\t\t\t\ttanda hubung."
+msgstr ""
+"Ini adalah pengenal yang ramah URL untuk petisi dan merupakan bagian dari tautan\n"
+"\t\t\t\t\t\t\t\t\t\t\tpetisi. Pengenal harus unik dan hanya boleh berisi huruf kecil, angka, dan\n"
+"\t\t\t\t\t\t\t\t\t\t\ttanda hubung."
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
@@ -4109,7 +4122,10 @@ msgid ""
 "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Ini adalah pengenal yang ramah URL untuk organisasi yang dapat digunakan dalam tautan acara, petisi, dan halaman lain.\n\t\t\t\t\t\t\t\t\t\t\t\t\tPengenal harus unik dan hanya boleh berisi huruf kecil, angka, dan\n\t\t\t\t\t\t\t\t\t\t\t\t\ttanda hubung."
+msgstr ""
+"Ini adalah pengenal yang ramah URL untuk organisasi yang dapat digunakan dalam tautan acara, petisi, dan halaman lain.\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tPengenal harus unik dan hanya boleh berisi huruf kecil, angka, dan\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\ttanda hubung."
 
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Failed to update petition"
@@ -4186,7 +4202,9 @@ msgstr "Gagal menghapus webhook"
 msgid ""
 "Personal details may differ the responses provided by the attendee if their recorded personal\n"
 "\t\t\tinformation in Belcoda has been modified or updated since they signed up for the event."
-msgstr "Detail pribadi mungkin berbeda dari jawaban yang diberikan peserta jika informasi pribadi mereka yang tercatat\n\t\t\tdi Belcoda telah diubah atau diperbarui sejak mereka mendaftar untuk acara."
+msgstr ""
+"Detail pribadi mungkin berbeda dari jawaban yang diberikan peserta jika informasi pribadi mereka yang tercatat\n"
+"\t\t\tdi Belcoda telah diubah atau diperbarui sejak mereka mendaftar untuk acara."
 
 #: src/lib/components/widgets/communications/recipients/getOptions.svelte.ts
 msgid "No show (ever)"
@@ -4244,13 +4262,17 @@ msgstr "Tidak dapat memulai pembayaran Stripe"
 msgid ""
 "A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
 "\t\t\t\tone by clicking the button below."
-msgstr "Akun WhatsApp Business diperlukan untuk menggunakan fitur perpesanan WhatsApp. Anda dapat membuatnya\n\t\t\t\tdengan mengeklik tombol di bawah."
+msgstr ""
+"Akun WhatsApp Business diperlukan untuk menggunakan fitur perpesanan WhatsApp. Anda dapat membuatnya\n"
+"\t\t\t\tdengan mengeklik tombol di bawah."
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
 "When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
 "\t\t\t\tand create a WhatsApp Business Account."
-msgstr "Saat memulai pendaftaran WhatsApp, Anda akan diminta masuk ke akun Facebook\n\t\t\t\tdan membuat Akun WhatsApp Business."
+msgstr ""
+"Saat memulai pendaftaran WhatsApp, Anda akan diminta masuk ke akun Facebook\n"
+"\t\t\t\tdan membuat Akun WhatsApp Business."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email signature verification status updated"
@@ -4281,7 +4303,10 @@ msgid ""
 "Email from signatures are the names and email addresses that are used to send emails on behalf\n"
 "  of the organization. You can add as many as you want, but they must be attached to a\n"
 "  non-public email address that you control."
-msgstr "Tanda tangan pengirim email adalah nama dan alamat email yang digunakan untuk mengirim email atas nama\n  organisasi. Anda dapat menambahkan sebanyak yang Anda inginkan, tetapi harus terhubung ke\n  alamat email nonpublik yang Anda kendalikan."
+msgstr ""
+"Tanda tangan pengirim email adalah nama dan alamat email yang digunakan untuk mengirim email atas nama\n"
+"  organisasi. Anda dapat menambahkan sebanyak yang Anda inginkan, tetapi harus terhubung ke\n"
+"  alamat email nonpublik yang Anda kendalikan."
 
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
 msgid "Cancelled"
@@ -4444,6 +4469,7 @@ msgstr "Belcoda"
 msgid "Copyright {0} Belcoda"
 msgstr "Hak Cipta {0} Belcoda"
 
+#: src/lib/components/widgets/organization-onboarding/OnboardingLayout.svelte
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
 msgid "Belcoda logo"
 msgstr "Logo Belcoda"
@@ -5957,8 +5983,9 @@ msgstr "Gagal mengirim pesan WhatsApp"
 #~ msgid "Notify"
 #~ msgstr ""
 
-#~ msgid "A teammate"
-#~ msgstr ""
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr ""
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6171,7 +6198,8 @@ msgid "Favourite"
 msgstr "Favorit"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte
 msgid "Favourites only"
 msgstr "Hanya favorit"
 
@@ -6258,3 +6286,278 @@ msgstr "Catatan diperbarui"
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 msgid "Failed to update note"
 msgstr "Gagal memperbarui catatan"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No favourite people"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Favourite a person using the star in their header to see them here."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Show all people"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "United Kingdom"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Europe / London"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Organization created"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Organization profile"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "First team"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "WhatsApp later"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Invite team later"
+msgstr ""
+
+#. 0: orgName
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Set up {0}"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Do the essentials now; the rest is here whenever you come back."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "You're all set"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "The essentials are done. You can head into Belcoda — the rest is waiting on your dashboard."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Do now"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Sets defaults for dates, language and messaging."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Create a first team"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "A team is where your organisers and their work live."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "recommended"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "When you're ready"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Connect WhatsApp"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Needs a business number + verification. Has ban risk — we guide you."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Set up"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Invite your team"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Optional — you can run Belcoda solo and invite anyone later."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Save & go to dashboard"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OnboardingLayout.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Skip for now"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "United States"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Kenya"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "South Africa"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "India"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "English"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Spanish"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Portuguese"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Europe / London (GMT+1)"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "America / New York (GMT-4)"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Africa / Nairobi (GMT+3)"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Asia / Kolkata (GMT+5:30)"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Select"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Time zone"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
+msgid "Team name"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
+msgid "e.g. Field organisers"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "Your progress"
+msgstr ""
+
+#. 0: String(doneCount); 1: String(steps.length)
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "{0} of {1} done"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "saved as you go"
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Note mention"
+msgstr ""
+
+#. 0: authorName; 1: personName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note about {1}."
+msgstr ""
+
+#. 0: authorName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note."
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View note"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Message templates & approval"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Draft the messages Meta must approve before you can broadcast."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Opt-in collection flow"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Collect consent from people before you message them."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Number warm-up"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Ramp up sending volume gradually to protect your number."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Back to setup"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "High-barrier — only what's needed right now."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Ban risk"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Messaging people who never opted in can get your number suspended by Meta. We collect consent and warm the number up before any broadcast."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Due now"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Business phone number"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "WhatsApp Business Account (WABA) ID"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Deferred — after you're verified"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Verify number"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Do this later"
+msgstr ""
