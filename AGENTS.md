@@ -375,6 +375,11 @@ Use the reverse order in **two PRs** when possible:
 - Use `appState.organizationId`, `appState.userId` for org/user context
 - Mutators that need auth checks must run on server (use server mutators)
 
+### Localization
+
+- User facing code should always use i18n strings (using wuchale t`` macro).
+- New PRs and new code is fine to be approved and merged with english as the only localization copy. We don't need to have all languages supported for all new code, as we will run a periodic job to add missing translations.
+
 ### Naming
 
 - **Unsafe** suffix: Functions that skip auth (e.g. `_listOrganizationMembershipsByUserIdUnsafe`) – use only in trusted server code

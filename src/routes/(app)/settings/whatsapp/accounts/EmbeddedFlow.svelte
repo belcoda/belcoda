@@ -74,21 +74,24 @@
 	});
 
 	async function persistWhatsappSettingsFromEmbedded(number: string, wabaId: string) {
-		if (appState.organizationId && appState.activeOrganization.data) {
-			const result = z.mutate(
-				mutators.organization.updateWhatsappSettings({
-					metadata: {
-						organizationId: appState.organizationId,
-						existingSettings: appState.activeOrganization.data.settings
-					},
-					input: {
-						number,
-						wabaId
-					}
-				})
-			);
-			await result.server;
+		const organizationId = appState.optionalOrganizationId;
+		const existingSettings = appState.activeOrganization.data?.settings;
+		if (!organizationId || !existingSettings) {
+			throw new Error('Organization is not ready');
 		}
+		const result = z.mutate(
+			mutators.organization.updateWhatsappSettings({
+				metadata: {
+					organizationId,
+					existingSettings: $state.snapshot(existingSettings)
+				},
+				input: {
+					number,
+					wabaId
+				}
+			})
+		);
+		await result.server;
 	}
 
 	const sessionInfoListener = async (event: MessageEvent) => {
@@ -116,7 +119,13 @@
 	// --- Launch signup ---
 	async function launchWhatsAppSignup() {
 		if (mockExternalServices) {
-			persistWhatsappSettingsFromEmbedded(MOCK_PHONE_NUMBER_ID, MOCK_WABA_ID);
+			try {
+				await persistWhatsappSettingsFromEmbedded(MOCK_PHONE_NUMBER_ID, MOCK_WABA_ID);
+				document.location.reload();
+			} catch (e) {
+				console.error('Error launching signup:', e);
+				error = 'Failed to start WhatsApp signup';
+			}
 			return;
 		}
 

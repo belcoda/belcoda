@@ -103,21 +103,31 @@ test.describe.serial('Settings: People Imports', () => {
 	test('owner can upload a CSV and import starts', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 		const csvFile = createSampleCsvFile();
-		const fakeS3Url = 'https://fake-s3.example.com/upload/test.csv';
+		const corsHeaders = {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+			'Access-Control-Allow-Headers': '*'
+		};
 
 		await page.route('**/api/utils/upload**', async (route) => {
+			const origin = new URL(route.request().url()).origin;
 			await route.fulfill({
 				status: 200,
 				contentType: 'application/json',
-				body: JSON.stringify({ signedUrl: fakeS3Url })
+				headers: corsHeaders,
+				body: JSON.stringify({
+					key: 'e2e/test.csv',
+					signedUrl: `${origin}/__e2e__/s3-upload/test.csv`
+				})
 			});
 		});
 
-		await page.route(fakeS3Url, async (route) => {
-			await route.fulfill({
-				status: 200,
-				headers: { location: fakeS3Url }
-			});
+		await page.route('**/__e2e__/s3-upload**', async (route) => {
+			if (route.request().method() === 'OPTIONS') {
+				await route.fulfill({ status: 204, headers: corsHeaders });
+				return;
+			}
+			await route.fulfill({ status: 200, headers: corsHeaders });
 		});
 
 		await loginAsOwner(page, PROJECT);
@@ -127,9 +137,11 @@ test.describe.serial('Settings: People Imports', () => {
 		await expect(importsPage.csvFileInput).toBeVisible({ timeout: 10_000 });
 
 		await importsPage.csvFileInput.setInputFiles(csvFile);
+		await expect(page.getByTestId('imports-selected-file')).toBeVisible({ timeout: 5_000 });
 		await importsPage.uploadSubmitButton.click();
 
-		await expect(importsPage.csvFileInput).not.toBeVisible({ timeout: 15_000 });
+		await expect(page.getByText('Import started successfully')).toBeVisible({ timeout: 15_000 });
+		await expect(importsPage.csvFileInput).not.toBeVisible({ timeout: 5_000 });
 
 		fs.unlinkSync(csvFile);
 	});
