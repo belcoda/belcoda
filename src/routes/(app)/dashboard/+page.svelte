@@ -5,8 +5,10 @@
 	import NextEventCard from '$lib/components/widgets/event/NextEventCard.svelte';
 	import UpcomingEventsList from '$lib/components/widgets/event/UpcomingEventsList.svelte';
 	import DashboardMetrics from '$lib/components/widgets/dashboard/DashboardMetrics.svelte';
+	import FinishSettingUpCard from '$lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import { appState } from '$lib/state.svelte';
+	import { goto } from '$app/navigation';
 
 	const today = new Date();
 	const greeting = (() => {
@@ -49,6 +51,13 @@
 				</Button>
 			</div>
 		</header>
+
+		<FinishSettingUpCard
+			onaction={(action) => {
+				if (action === 'whatsapp') goto('/setup/whatsapp');
+				else console.log('onboarding action:', action);
+			}}
+		/>
 
 		<DashboardMetrics />
 

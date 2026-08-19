@@ -2084,6 +2084,7 @@ msgstr "Deixe vazio para uma chave que nunca expira"
 msgid "Creating..."
 msgstr "Criando..."
 
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
 #: src/routes/(app)/settings/teams/NewTeam.svelte
@@ -6295,6 +6296,7 @@ msgid "Europe / London"
 msgstr ""
 
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
 msgid "Organization created"
 msgstr ""
@@ -6362,6 +6364,7 @@ msgstr ""
 
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
 msgid "Connect WhatsApp"
 msgstr ""
@@ -6457,7 +6460,9 @@ msgstr ""
 msgid "Your progress"
 msgstr ""
 
+#. 0: String(doneCount); 1: String(tasks.length)
 #. 0: String(doneCount); 1: String(steps.length)
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
 msgid "{0} of {1} done"
 msgstr ""
@@ -6525,6 +6530,7 @@ msgid "Messaging people who never opted in can get your number suspended by Meta
 msgstr ""
 
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 msgid "Due now"
 msgstr ""
 
@@ -6546,4 +6552,57 @@ msgstr ""
 
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
 msgid "Do this later"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Set your time zone & language"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "So dates and messages behave correctly"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "30 sec"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Create your first team"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Where your organisers live"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Add your first people"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "or import a list"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Invite teammates"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "optional"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "has ban risk"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Finish setting up"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "you can do the rest anytime"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Eventually"
 msgstr ""

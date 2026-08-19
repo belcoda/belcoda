@@ -2084,6 +2084,7 @@ msgstr "Leave empty for a key that never expires"
 msgid "Creating..."
 msgstr "Creating..."
 
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
 #: src/routes/(app)/settings/teams/NewTeam.svelte
@@ -6311,6 +6312,7 @@ msgid "Europe / London"
 msgstr "Europe / London"
 
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
 msgid "Organization created"
 msgstr "Organization created"
@@ -6378,6 +6380,7 @@ msgstr "When you're ready"
 
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
 msgid "Connect WhatsApp"
 msgstr "Connect WhatsApp"
@@ -6473,7 +6476,9 @@ msgstr "e.g. Field organisers"
 msgid "Your progress"
 msgstr "Your progress"
 
+#. 0: String(doneCount); 1: String(tasks.length)
 #. 0: String(doneCount); 1: String(steps.length)
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
 msgid "{0} of {1} done"
 msgstr "{0} of {1} done"
@@ -6541,6 +6546,7 @@ msgid "Messaging people who never opted in can get your number suspended by Meta
 msgstr "Messaging people who never opted in can get your number suspended by Meta. We collect consent and warm the number up before any broadcast."
 
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 msgid "Due now"
 msgstr "Due now"
 
@@ -6563,3 +6569,56 @@ msgstr "Verify number"
 #: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
 msgid "Do this later"
 msgstr "Do this later"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Set your time zone & language"
+msgstr "Set your time zone & language"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "So dates and messages behave correctly"
+msgstr "So dates and messages behave correctly"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "30 sec"
+msgstr "30 sec"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Create your first team"
+msgstr "Create your first team"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Where your organisers live"
+msgstr "Where your organisers live"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Add your first people"
+msgstr "Add your first people"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "or import a list"
+msgstr "or import a list"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Invite teammates"
+msgstr "Invite teammates"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "optional"
+msgstr "optional"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "has ban risk"
+msgstr "has ban risk"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Finish setting up"
+msgstr "Finish setting up"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "you can do the rest anytime"
+msgstr "you can do the rest anytime"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Eventually"
+msgstr "Eventually"
