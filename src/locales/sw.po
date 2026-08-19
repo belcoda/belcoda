@@ -6348,43 +6348,43 @@ msgstr "Angalia maelezo"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
-msgstr ""
+msgstr "Hakuna watu unaowapenda"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Favourite a person using the star in their header to see them here."
-msgstr ""
+msgstr "Weka mtu kuwa kipendwa kwa kutumia nyota kwenye kichwa chake ili kumwona hapa."
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Show all people"
-msgstr ""
+msgstr "Onyesha watu wote"
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
-msgstr ""
+msgstr "Tumepokea ombi la kuweka upya nenosiri lako. Ikiwa ulikuwa wewe, bofya kitufe hapa chini ili kuunda nenosiri jipya. Ikiwa sivyo, unaweza kupuuza barua pepe hii kwa usalama—akaunti yako itabaki salama."
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Click below to create a new password. If you didn't request this, just ignore this email."
-msgstr ""
+msgstr "Bofya hapa chini ili kuunda nenosiri jipya. Ikiwa hukuomba hili, puuza tu barua pepe hii."
 
 #~ msgid "Reset Password"
 #~ msgstr ""
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Security verification"
-msgstr ""
+msgstr "Uthibitishaji wa usalama"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
-msgstr ""
+msgstr "Tafadhali thibitisha anwani yako ya barua pepe kwa madhumuni ya usalama. Bofya kitufe hapa chini ili kuthibitisha anwani yako ya barua pepe."
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Please verify your email address for security purposes"
-msgstr ""
+msgstr "Tafadhali thibitisha anwani yako ya barua pepe kwa madhumuni ya usalama"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify email"
-msgstr ""
+msgstr "Thibitisha barua pepe"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
-msgstr ""
+msgstr "Thibitisha anwani yako ya barua pepe"
