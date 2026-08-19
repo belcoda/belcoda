@@ -68,6 +68,7 @@ describe('processFlowNodeWhatsappSendMessage', () => {
 		vi.mocked(sendWhatsappMessage).mockReset();
 
 		vi.mocked(_getFlowDetailsUnsafe).mockResolvedValue(flowDetails as never);
+		//@ts-expect-error - mock implementation
 		vi.mocked(db.transaction).mockImplementation(async (callback: (tx: never) => unknown) =>
 			callback({} as never)
 		);
