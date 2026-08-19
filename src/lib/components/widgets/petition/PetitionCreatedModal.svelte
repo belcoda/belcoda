@@ -33,7 +33,7 @@
 
 	async function handlePublishChange(checked: boolean) {
 		try {
-			await z.mutate(
+			const response = z.mutate(
 				mutators.petition.update({
 					metadata: {
 						petitionId: petition.id,
@@ -44,6 +44,8 @@
 					}
 				})
 			);
+			await response.server;
+			petition.published = checked;
 			toast.success(checked ? t`Petition published` : t`Petition unpublished`);
 		} catch {
 			toast.error(t`Failed to update petition`);
