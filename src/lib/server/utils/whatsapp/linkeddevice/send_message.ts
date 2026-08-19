@@ -5,6 +5,7 @@ import {
 import { _getPersonByIdUnsafe } from '$lib/server/api/data/person/person';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
+import { assertWhatsappAccountInOrganizationScope } from '$lib/server/api/data/whatsapp/account';
 import { v7 as uuidv7 } from 'uuid';
 import { type WhatsappMessage } from '$lib/schema/whatsapp/message';
 import { db } from '$lib/server/db';
@@ -174,6 +175,15 @@ export async function sendWhatsappMessage({
 		if (!personObject) {
 			throw new Error('Person not found');
 		}
+		// A persisted flow can carry a WhatsApp account UUID that is not (or is no longer)
+		// in this organization's scope, or that has been unlinked. Enforce the same active
+		// organization scope as listWhatsappAccountsQuery before we resolve an identity and
+		// record an outbound message against the account.
+		await assertWhatsappAccountInOrganizationScope({
+			tx,
+			whatsappAccountId,
+			organizationId: organization.id
+		});
 		const recipient = await resolveWhatsappIdentity({
 			personId: personObject.id,
 			organizationId: organization.id,
