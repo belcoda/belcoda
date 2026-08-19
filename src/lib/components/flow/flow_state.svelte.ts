@@ -10,7 +10,10 @@ import {
 	addEdge,
 	getConnectedEdges
 } from '@xyflow/svelte';
-import { pruneRemovedButtonEdges } from '$lib/components/flow/pruneFlowEdges';
+import {
+	pruneRemovedButtonEdges,
+	pruneHandlelessEdgesForButtonedNode
+} from '$lib/components/flow/pruneFlowEdges';
 import { untrack } from 'svelte';
 import { useDebounce } from 'runed';
 import { toast } from 'svelte-sonner';
@@ -137,6 +140,27 @@ export function pruneEdgesForButtons(nodeId: string, buttons: { id: string }[]) 
 	// and re-running on every unrelated canvas change.
 	const { edges: nextEdges, removed } = untrack(() =>
 		pruneRemovedButtonEdges(nodeId, buttonIds, getEdges())
+	);
+	if (removed.length > 0) {
+		setEdges(nextEdges);
+	}
+}
+
+/**
+ * Reconcile the edge list after a node GAINS buttons (0 → >0).
+ *
+ * A buttoned node renders per-button handles and no bottom handle, so any
+ * handleless edge still leaving it is orphaned and would make the runtime
+ * auto-advance past the buttoned message (BEL-1058). Drops just that node's
+ * handleless outgoing edges; scoped to `nodeId`; a no-op (no save) when there are
+ * none. Only call this once the node actually has ≥1 button — a button-less node
+ * legitimately owns a handleless continuation.
+ */
+export function pruneHandlelessEdgesForButtons(nodeId: string) {
+	// Same reasoning as pruneEdgesForButtons: read the edge list without
+	// subscribing so a calling $effect doesn't re-run on unrelated canvas changes.
+	const { edges: nextEdges, removed } = untrack(() =>
+		pruneHandlelessEdgesForButtonedNode(nodeId, getEdges())
 	);
 	if (removed.length > 0) {
 		setEdges(nextEdges);
