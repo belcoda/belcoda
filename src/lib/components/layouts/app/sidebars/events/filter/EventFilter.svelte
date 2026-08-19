@@ -8,7 +8,7 @@
 	import DisplayEventStatusFilter from '$lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte';
 	import DisplayEventHasSignupsFilter from '$lib/components/widgets/person/filter/display/DisplayEventHasSignupsFilter.svelte';
 	import DisplayEventArchivedFilter from '$lib/components/widgets/person/filter/display/DisplayEventArchivedFilter.svelte';
-	import DisplayEventFavouriteFilter from '$lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte';
+	import DisplayFavouriteFilter from '$lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte';
 
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import SearchIcon from '@lucide/svelte/icons/search';
@@ -55,6 +55,6 @@
 		<DisplayEventArchivedFilter onRemove={() => (filter.isArchived = false)} />
 	{/if}
 	{#if filter.favouritesOnly}
-		<DisplayEventFavouriteFilter onRemove={() => (filter.favouritesOnly = false)} />
+		<DisplayFavouriteFilter onRemove={() => (filter.favouritesOnly = false)} />
 	{/if}
 </div>

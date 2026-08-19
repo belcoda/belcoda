@@ -10,7 +10,7 @@
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import GripHorizontalIcon from '@lucide/svelte/icons/grip-horizontal';
-	import { taint } from '$lib/components/flow/flow_state.svelte';
+	import { taint, pruneEdgesForButtons } from '$lib/components/flow/flow_state.svelte';
 	import { deleteFlowNode } from '$lib/components/flow/deleteFlowNode';
 	import type { WhatsappMessageData } from '$lib/schema/flow/index';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -75,7 +75,10 @@
 	const removeButton = (index: number) => {
 		taint();
 		buttons = buttons.filter((_, i) => i !== index);
-		updateNodeData(id, { buttons: $state.snapshot(buttons) });
+		const nextButtons = $state.snapshot(buttons);
+		updateNodeData(id, { buttons: nextButtons });
+		// Drop any edge that was wired to the button we just removed.
+		pruneEdgesForButtons(id, nextButtons);
 	};
 </script>
 

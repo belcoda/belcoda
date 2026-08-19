@@ -1,12 +1,17 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-const LOCALES = ['en', 'es', 'pt'] as const;
+const LOCALES = ['en', 'es', 'pt', 'fr', 'sw', 'ms', 'id', 'fil'] as const;
 
 function localeLabel(locale: string): string {
 	const labels: Record<string, string> = {
 		en: 'English',
 		es: 'Español',
-		pt: 'Português'
+		pt: 'Português',
+		fr: 'Français',
+		sw: 'Swahili',
+		ms: 'Bahasa Melayu',
+		id: 'Bahasa Indonesia',
+		fil: 'Filipino'
 	};
 	return labels[locale] ?? locale;
 }
@@ -19,7 +24,7 @@ export class PreferencesLanguagePage {
 	}
 
 	async goto() {
-		await this.page.goto('/preferences/language');
+		await this.page.goto('/settings/language');
 	}
 
 	get root(): Locator {

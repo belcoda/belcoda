@@ -351,7 +351,7 @@ describe('cloneFlow', () => {
 			expect(node.data.filter).toEqual(defaultFilterGroup);
 		});
 
-		it('throws when an edge references an unknown target node id', () => {
+		it('prunes an edge that references an unknown target node id', () => {
 			const flow: Flow = {
 				nodes: [
 					{
@@ -369,10 +369,12 @@ describe('cloneFlow', () => {
 					}
 				]
 			};
-			expect(() => cloneFlow(flow)).toThrow(/unknown target node id/);
+			const clone = cloneFlow(flow);
+			expect(clone.nodes).toHaveLength(1);
+			expect(clone.edges).toHaveLength(0);
 		});
 
-		it('throws when an edge references an unknown source node id', () => {
+		it('prunes an edge that references an unknown source node id', () => {
 			const flow: Flow = {
 				nodes: [
 					{
@@ -390,10 +392,12 @@ describe('cloneFlow', () => {
 					}
 				]
 			};
-			expect(() => cloneFlow(flow)).toThrow(/unknown source node id/);
+			const clone = cloneFlow(flow);
+			expect(clone.nodes).toHaveLength(1);
+			expect(clone.edges).toHaveLength(0);
 		});
 
-		it('throws when an edge references an unknown targetHandle id', () => {
+		it('prunes an edge that references an unknown targetHandle id', () => {
 			const flow: Flow = {
 				nodes: [
 					{
@@ -414,14 +418,16 @@ describe('cloneFlow', () => {
 						id: 'dangling-target-handle',
 						source: MESSAGE_ID,
 						target: TAGADD_ID,
-						targetHandle: MSG_BUTTON_B // not mapped in idMap
+						targetHandle: MSG_BUTTON_B // not a handle on the target node
 					}
 				]
 			};
-			expect(() => cloneFlow(flow)).toThrow(/unknown targetHandle id/);
+			const clone = cloneFlow(flow);
+			expect(clone.nodes).toHaveLength(2);
+			expect(clone.edges).toHaveLength(0);
 		});
 
-		it('throws when an edge references an unknown sourceHandle id', () => {
+		it('prunes an edge that references an unknown sourceHandle id', () => {
 			const flow: Flow = {
 				nodes: [
 					{
@@ -446,7 +452,53 @@ describe('cloneFlow', () => {
 					}
 				]
 			};
-			expect(() => cloneFlow(flow)).toThrow(/unknown sourceHandle id/);
+			const clone = cloneFlow(flow);
+			expect(clone.nodes).toHaveLength(2);
+			expect(clone.edges).toHaveLength(0);
+		});
+
+		it('keeps valid edges while pruning dangling ones in the same flow', () => {
+			// One good button-sourced edge alongside a stale one on the same node.
+			const flow: Flow = {
+				nodes: [
+					{
+						id: MESSAGE_ID,
+						type: 'message',
+						position: { x: 0, y: 0 },
+						data: {
+							text: 'pick one',
+							imageUrl: null,
+							buttons: [{ id: MSG_BUTTON_A, label: 'Yes' }]
+						}
+					},
+					{
+						id: TAGADD_ID,
+						type: 'tagAdd',
+						position: { x: 100, y: 100 },
+						data: { tagId: TAG_ID }
+					}
+				],
+				edges: [
+					{
+						id: 'valid',
+						source: MESSAGE_ID,
+						target: TAGADD_ID,
+						sourceHandle: MSG_BUTTON_A
+					},
+					{
+						id: 'stale',
+						source: MESSAGE_ID,
+						target: TAGADD_ID,
+						sourceHandle: MSG_BUTTON_B // button was removed; edge left behind
+					}
+				]
+			};
+			const clone = cloneFlow(flow);
+			expect(clone.edges).toHaveLength(1);
+			const clonedMessage = clone.nodes.find((n) => n.type === 'message');
+			if (clonedMessage?.type !== 'message') throw new Error('expected message node');
+			const clonedButtonId = clonedMessage.data.buttons?.[0].id;
+			expect(clone.edges[0].sourceHandle).toBe(clonedButtonId);
 		});
 
 		it('treats a null sourceHandle as absent rather than throwing', () => {
@@ -480,6 +532,149 @@ describe('cloneFlow', () => {
 			expect(clone.edges[0].sourceHandle).toBeUndefined();
 			expect(clone.edges[0].source).toBe(clone.nodes[0].id);
 			expect(clone.edges[0].target).toBe(clone.nodes[1].id);
+		});
+	});
+
+	// Shapes modelled on real exported flows, stripped of all names, copy and
+	// identifying data — only the broken topology is reproduced.
+	describe('real-world broken shapes', () => {
+		it('clones a targeting-only flow whose single edge points at a never-created node', () => {
+			// The "startingNodes without a default template" bug: a lone targeting
+			// node plus an edge to a message node that was never added.
+			const flow: Flow = {
+				nodes: [
+					{
+						id: TARGETING_ID,
+						type: 'targeting',
+						position: { x: 0, y: 0 },
+						data: { filter: structuredClone(defaultFilterGroup) }
+					}
+				],
+				edges: [{ id: 'orphan', source: TARGETING_ID, target: MESSAGE_ID }]
+			};
+			const clone = cloneFlow(flow);
+			expect(clone.nodes).toHaveLength(1);
+			expect(clone.edges).toHaveLength(0);
+		});
+
+		it('preserves and remaps a legacy edge whose source is a button id', () => {
+			// The runtime resolves a button press by matching against edge.source OR
+			// edge.sourceHandle, so an edge can carry the button id directly in
+			// `source` with no handle. Cloning must keep it and remap the button id.
+			const flow: Flow = {
+				nodes: [
+					{
+						id: TEMPLATE_ID,
+						type: 'templateMessage',
+						position: { x: 0, y: 0 },
+						data: {
+							templateId: TEMPLATE_MESSAGE_TEMPLATE_ID,
+							buttons: [{ id: TPL_BUTTON_A }]
+						}
+					},
+					{
+						id: TAGADD_ID,
+						type: 'tagAdd',
+						position: { x: 100, y: 100 },
+						data: { tagId: TAG_ID }
+					}
+				],
+				edges: [{ id: 'legacy', source: TPL_BUTTON_A, target: TAGADD_ID }]
+			};
+			const clone = cloneFlow(flow);
+			expect(clone.edges).toHaveLength(1);
+			const clonedTemplate = clone.nodes.find((n) => n.type === 'templateMessage');
+			if (clonedTemplate?.type !== 'templateMessage') throw new Error('expected templateMessage');
+			const newButtonId = clonedTemplate.data.buttons?.[0].id;
+			expect(clone.edges[0].source).toBe(newButtonId);
+			expect(clone.edges[0].source).not.toBe(TPL_BUTTON_A);
+			expect(clone.edges[0].target).not.toBe(TAGADD_ID);
+		});
+
+		it('drops stale duplicate handles left by a regenerated templateMessage', () => {
+			// A templateMessage whose buttons were regenerated (template re-selected):
+			// the node holds the NEW ids, but the edge list still carries the OLD,
+			// stale handles alongside the new ones — all to the same three targets.
+			const NEW_1 = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+			const NEW_2 = 'cccccccc-cccc-4ccc-8ccc-cccccccccddd';
+			const NEW_3 = 'cccccccc-cccc-4ccc-8ccc-cccccccceeee';
+			const OLD_1 = 'ffffffff-1111-4111-8111-111111111111';
+			const OLD_2 = 'ffffffff-2222-4222-8222-222222222222';
+			const OLD_3 = 'ffffffff-3333-4333-8333-333333333333';
+			const REPLY_1 = '77777777-7777-4777-8777-777777777777';
+			const REPLY_2 = '88888888-8888-4888-8888-888888888888';
+			const REPLY_3 = '99999999-9999-4999-8999-999999999999';
+
+			const flow: Flow = {
+				nodes: [
+					{
+						id: TARGETING_ID,
+						type: 'targeting',
+						position: { x: 0, y: 0 },
+						data: { filter: structuredClone(defaultFilterGroup) }
+					},
+					{
+						id: TEMPLATE_ID,
+						type: 'templateMessage',
+						position: { x: 0, y: 100 },
+						data: {
+							templateId: TEMPLATE_MESSAGE_TEMPLATE_ID,
+							buttons: [{ id: NEW_1 }, { id: NEW_2 }, { id: NEW_3 }]
+						}
+					},
+					{
+						id: REPLY_1,
+						type: 'message',
+						position: { x: -100, y: 200 },
+						data: { text: 'A', imageUrl: null, buttons: [] }
+					},
+					{
+						id: REPLY_2,
+						type: 'message',
+						position: { x: 0, y: 200 },
+						data: { text: 'B', imageUrl: null, buttons: [] }
+					},
+					{
+						id: REPLY_3,
+						type: 'message',
+						position: { x: 100, y: 200 },
+						data: { text: 'C', imageUrl: null, buttons: [] }
+					}
+				],
+				edges: [
+					{
+						id: `xy-edge__${TARGETING_ID}--${TEMPLATE_ID}`,
+						source: TARGETING_ID,
+						target: TEMPLATE_ID
+					},
+					{ id: 'stale-1', source: TEMPLATE_ID, target: REPLY_1, sourceHandle: OLD_1 },
+					{ id: 'stale-2', source: TEMPLATE_ID, target: REPLY_2, sourceHandle: OLD_2 },
+					{ id: 'stale-3', source: TEMPLATE_ID, target: REPLY_3, sourceHandle: OLD_3 },
+					{ id: 'valid-1', source: TEMPLATE_ID, target: REPLY_1, sourceHandle: NEW_1 },
+					{ id: 'valid-2', source: TEMPLATE_ID, target: REPLY_2, sourceHandle: NEW_2 },
+					{ id: 'valid-3', source: TEMPLATE_ID, target: REPLY_3, sourceHandle: NEW_3 }
+				]
+			};
+
+			const clone = cloneFlow(flow);
+
+			// 1 targeting->template edge + 3 valid button edges survive; 3 stale dropped.
+			expect(clone.edges).toHaveLength(4);
+
+			const clonedTemplate = clone.nodes.find((n) => n.type === 'templateMessage');
+			if (clonedTemplate?.type !== 'templateMessage') throw new Error('expected templateMessage');
+			const clonedButtonIds = new Set((clonedTemplate.data.buttons ?? []).map((b) => b.id));
+
+			// Every surviving handle points at a real (regenerated) button of the clone.
+			for (const edge of clone.edges) {
+				if (edge.sourceHandle === undefined) continue;
+				expect(clonedButtonIds.has(edge.sourceHandle)).toBe(true);
+			}
+			// None of the old stale ids leak into the clone.
+			const survivingHandles = clone.edges.map((e) => e.sourceHandle);
+			for (const oldId of [OLD_1, OLD_2, OLD_3]) {
+				expect(survivingHandles).not.toContain(oldId);
+			}
 		});
 	});
 });

@@ -21,12 +21,16 @@
 	import { PaginatedZeroList } from '$lib/state/paginated-zero-list.svelte';
 	import { encodePersonListCursor } from '$lib/utils/person/cursor';
 	import EmailIcon from '@lucide/svelte/icons/mail';
+	import StarIcon from '@lucide/svelte/icons/star';
 	import { IsInViewport, watch } from 'runed';
 	import PersonFilter from '$lib/components/widgets/person/filter/Filter.svelte';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	let personListFilter = $state({
 		...getListFilter(appState.organizationId),
 		tagId: null,
 		signupEventId: null,
+		favouritesOnly: false,
 		mostRecentActivity: null
 	});
 	const pageSize = 25;
@@ -96,6 +100,24 @@
 					{#each paginatedPersonList.items as person (person.id)}
 						{@render personItem(person)}
 					{/each}
+					{#if personList.details.type === 'complete' && paginatedPersonList.items.length === 0 && personListFilter.favouritesOnly}
+						<Empty.Root>
+							<Empty.Header>
+								<Empty.Media variant="icon"><StarIcon /></Empty.Media>
+								<Empty.Title>{t`No favourite people`}</Empty.Title>
+								<Empty.Description>
+									{t`Favourite a person using the star in their header to see them here.`}
+								</Empty.Description>
+								<Empty.Content>
+									<Button
+										variant="outline"
+										onclick={() => (personListFilter.favouritesOnly = false)}
+										>{t`Show all people`}</Button
+									>
+								</Empty.Content>
+							</Empty.Header>
+						</Empty.Root>
+					{/if}
 				</Sidebar.GroupContent>
 			</Sidebar.Group>
 			{#if paginatedPersonList.items.length > 0}

@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { locale, t } from '$lib/index.svelte';
+	import type { NotificationPayload } from '$lib/schema/notification/payload';
 	import { appState } from '$lib/state.svelte';
 	import { formatShortTimestamp } from '$lib/utils/date';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
@@ -12,6 +14,7 @@
 		flow_notify_user: t`Flow notification`,
 		event_signup: t`Event signup`,
 		petition_signup: t`Petition signup`,
+		person_note_mention: t`Note mention`,
 		generic: t`Notification`
 	};
 
@@ -23,6 +26,22 @@
 
 	function getTypeLabel(type: string) {
 		return typeLabelMap[type] ?? t`Notification`;
+	}
+
+	function mentionDetails(notification: (typeof notifications)[number]) {
+		if (notification.type !== 'person_note_mention') return null;
+		const payload = notification.payload as NotificationPayload | null;
+		const authorName = payload?.noteAuthorName ?? t`A teammate`;
+		const personName = payload?.personName;
+		return {
+			message: personName
+				? t`${authorName} mentioned you in a note about ${personName}.`
+				: t`${authorName} mentioned you in a note.`,
+			preview: payload?.notePreview?.trim() || null,
+			href: payload?.personId
+				? resolve(`/community/${payload.personId}#note-${notification.referenceId}`)
+				: null
+		};
 	}
 
 	function setBusy(notificationId: string, isBusy: boolean) {
@@ -115,6 +134,7 @@
 		{:else}
 			<ul>
 				{#each notifications as notification (notification.id)}
+					{@const mention = mentionDetails(notification)}
 					<li class="border-b px-4 py-3">
 						<div class="mb-1 flex items-center justify-between gap-2">
 							<div class="flex items-center gap-2">
@@ -130,7 +150,24 @@
 							</p>
 						</div>
 						<p class="mb-3 text-xs text-muted-foreground capitalize">{notification.status}</p>
+						{#if mention}
+							<p class="mb-1 text-sm">{mention.message}</p>
+							{#if mention.preview}
+								<p class="mb-3 line-clamp-2 text-xs text-muted-foreground">{mention.preview}</p>
+							{/if}
+						{/if}
 						<div class="flex items-center gap-2">
+							{#if mention?.href}
+								<Button
+									variant="outline"
+									size="sm"
+									href={mention.href}
+									onclick={() => markAsRead(notification.id)}
+									disabled={busyIds[notification.id] || markAllBusy}
+								>
+									{t`View note`}
+								</Button>
+							{/if}
 							{#if notification.status === 'unread'}
 								<Button
 									variant="ghost"

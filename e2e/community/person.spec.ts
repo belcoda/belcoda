@@ -1,14 +1,26 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { PersonCreatePage } from '../pages/community/person-create.page';
 import { PersonProfilePage } from '../pages/community/person-profile.page';
 import { TagsPage } from '../pages/settings/tags.page';
 import { TeamsPage } from '../pages/settings/teams.page';
-import { loginAsOwner } from '../helpers/login';
+import { loginAsAdmin, loginAsOwner } from '../helpers/login';
 import { CommunityPage } from '../pages/community/community.page';
-import { BASE_URL } from '../helpers/config';
+import { BASE_URL, getOrgSlug } from '../helpers/config';
 import { getTestUsers } from '../helpers/auth';
 
 const PROJECT = 'community' as const;
+
+async function setPersonFavourite(page: Page, shouldBeFavourite: boolean) {
+	const favouriteButton = page.getByTestId('favourite-person-button');
+	await expect(favouriteButton).toBeEnabled({ timeout: 15_000 });
+	const expectedState = shouldBeFavourite.toString();
+	if ((await favouriteButton.getAttribute('aria-pressed')) === expectedState) return;
+
+	await favouriteButton.click();
+	await expect(favouriteButton).toHaveAttribute('aria-pressed', expectedState, {
+		timeout: 15_000
+	});
+}
 
 test.describe.serial('Community and person pages', () => {
 	const ids = {
@@ -62,6 +74,32 @@ test.describe.serial('Community and person pages', () => {
 
 		await expect(personLink).toContainText(ids.givenName);
 		await expect(personLink).toContainText(ids.familyName);
+	});
+
+	test('owner can filter the community list to favourite people', async ({ page }) => {
+		const communityPage = new CommunityPage(page);
+
+		await loginAsOwner(page, PROJECT);
+		await page.goto(ids.personPath);
+		await setPersonFavourite(page, true);
+
+		await communityPage.goto();
+		await communityPage.searchCommunityList(ids.familyName);
+		await communityPage.toggleFavouritesOnly();
+		await expect(communityPage.personListLink(ids.personId)).toBeVisible({ timeout: 15_000 });
+
+		await page.goto(ids.personPath);
+		await setPersonFavourite(page, false);
+
+		await communityPage.goto();
+		await communityPage.searchCommunityList(ids.familyName);
+		await communityPage.toggleFavouritesOnly();
+		await expect(page.getByText('No favourite people', { exact: true })).toBeVisible({
+			timeout: 15_000
+		});
+
+		await page.getByRole('button', { name: 'Show all people' }).click();
+		await expect(communityPage.personListLink(ids.personId)).toBeVisible({ timeout: 15_000 });
 	});
 
 	test('owner can use the person context panel on desktop', async ({ page }) => {
@@ -243,6 +281,8 @@ test.describe.serial('Community and person pages', () => {
 			data: { personId: ids.personId, count: 30 }
 		});
 		expect(seedResponse.ok()).toBeTruthy();
+		const { noteIds } = (await seedResponse.json()) as { noteIds: string[] };
+		expect(noteIds).toHaveLength(30);
 
 		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
@@ -257,7 +297,46 @@ test.describe.serial('Community and person pages', () => {
 			element.scrollTop = element.scrollHeight;
 		});
 
-		await expect(page.getByTestId('person-note-item')).toHaveCount(30, { timeout: 15_000 });
+		const seededNotes = page.locator(
+			noteIds
+				.map((noteId) => `[data-testid="person-note-item"][data-note-id="${noteId}"]`)
+				.join(',')
+		);
+		await expect(seededNotes).toHaveCount(30, { timeout: 15_000 });
+	});
+
+	test('owner can open an older note from a cold deep link', async ({ page }) => {
+		await loginAsOwner(page, PROJECT);
+		const personId = await page.evaluate(async () => {
+			const response = await fetch('/api/e2e/seed-persons', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ count: 1 })
+			});
+			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
+			const result = (await response.json()) as { personIds: string[] };
+			return result.personIds[0];
+		});
+		const oldestNoteId = await page.evaluate(async (seedPersonId) => {
+			const response = await fetch('/api/e2e/seed-person-notes', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					personId: seedPersonId,
+					count: 30,
+					includeActivities: true
+				})
+			});
+			if (!response.ok) throw new Error(`Failed to seed notes: ${response.status}`);
+			const result = (await response.json()) as { oldestNoteId: string };
+			return result.oldestNoteId;
+		}, personId);
+
+		await page.goto(`/community/${personId}#note-${oldestNoteId}`);
+
+		const targetNote = page.locator(`[data-note-id="${oldestNoteId}"]`);
+		await expect(targetNote).toBeVisible({ timeout: 30_000 });
+		await expect(targetNote).toBeInViewport();
 	});
 
 	test('owner can add a note from the conversation composer on the timeline', async ({ page }) => {
@@ -297,7 +376,7 @@ test.describe.serial('Community and person pages', () => {
 		await expect(contextPanel.getByTestId('person-context-note')).toHaveText(noteText);
 	});
 
-	test('owner can create, display, and edit user mentions in notes', async ({ page }) => {
+	test('owner can create, display, and edit user mentions in notes', async ({ page, request }) => {
 		const suffix = `${Date.now()}`;
 		const mentionedUser = getTestUsers(PROJECT).admin;
 		const notePrefix = `Mention note ${suffix}`;
@@ -305,15 +384,11 @@ test.describe.serial('Community and person pages', () => {
 
 		await page.setViewportSize({ width: 1400, height: 900 });
 		await loginAsOwner(page, PROJECT);
-		const seedResult = await page.evaluate(async () => {
-			const response = await fetch('/api/e2e/seed-persons', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ count: 1 })
-			});
-			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
-			return (await response.json()) as { personIds: string[] };
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-persons`, {
+			data: { count: 1, organizationSlug: getOrgSlug(PROJECT) }
 		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedResult = (await seedResponse.json()) as { personIds: string[] };
 		const personId = seedResult.personIds[0];
 		expect(personId).toBeTruthy();
 		await page.goto(`/community/${personId}`);
@@ -382,6 +457,50 @@ test.describe.serial('Community and person pages', () => {
 		await expect(liveInlineNote.locator('strong[data-note-mention]')).toHaveCount(0);
 	});
 
+	test('mentioned users can open a note notification from the dashboard', async ({ page }) => {
+		const suffix = `${Date.now()}`;
+		const noteAuthor = getTestUsers(PROJECT).owner;
+		const mentionedUser = getTestUsers(PROJECT).admin;
+		const notePrefix = `Notification mention ${suffix}`;
+
+		await loginAsOwner(page, PROJECT);
+		const seedResult = await page.evaluate(async () => {
+			const response = await fetch('/api/e2e/seed-persons', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ count: 1 })
+			});
+			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
+			return (await response.json()) as { personIds: string[] };
+		});
+		const personId = seedResult.personIds[0];
+		expect(personId).toBeTruthy();
+		await page.goto(`/community/${personId}`);
+		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible({ timeout: 15_000 });
+
+		const composer = page.getByTestId('conversation-composer');
+		await composer.getByTestId('composer-mode-note').click();
+		const textarea = composer.getByTestId('note-form-textarea');
+		await textarea.fill(`${notePrefix}: @${mentionedUser.name.slice(0, -2)}`);
+		await composer
+			.getByTestId('note-mention-picker')
+			.getByRole('option', { name: new RegExp(mentionedUser.name) })
+			.click();
+		await composer.getByTestId('note-form-submit').click();
+		await expect(page.getByTestId('inline-note').filter({ hasText: notePrefix })).toBeVisible({
+			timeout: 10_000
+		});
+
+		await loginAsAdmin(page, PROJECT);
+		await page.goto('/dashboard');
+		await page.getByRole('button', { name: 'Open notifications' }).click();
+		const inbox = page.locator('[data-slot="sheet-content"]');
+		await expect(inbox.getByText('Note mention')).toBeVisible({ timeout: 15_000 });
+		await expect(inbox.getByText(`${noteAuthor.name} mentioned you in a note`)).toBeVisible();
+		const viewNote = inbox.getByRole('link', { name: 'View note' });
+		await expect(viewNote).toHaveAttribute('href', new RegExp(`/community/${personId}#note-`));
+	});
+
 	test('composer mode resets to message after navigating away and back', async ({ page }) => {
 		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
@@ -419,8 +538,8 @@ test.describe.serial('Community and person pages', () => {
 		await textarea.fill(noteText);
 		await drawer.getByTestId('note-form-submit').click();
 
-		await expect(drawer.getByTestId('person-note-item').first()).toBeVisible({ timeout: 10_000 });
-		await expect(drawer.getByTestId('person-note-content').first()).toHaveText(noteText);
+		const createdNote = drawer.getByTestId('person-note-item').filter({ hasText: noteText });
+		await expect(createdNote).toBeVisible({ timeout: 10_000 });
 
 		await page.keyboard.press('Escape');
 		await expect(page.getByTestId('inline-note').last()).toContainText(noteText, {

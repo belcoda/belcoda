@@ -32,6 +32,11 @@
 	let restoreAnchorOffset = 0;
 	let scrollRestoreTimeout: ReturnType<typeof setTimeout> | null = null;
 	let resizeObserver: ResizeObserver | undefined;
+	let pendingNoteId: string | null = null;
+	let deepLinkAwaitingInitialResult = false;
+	let deepLinkResolutionVersion = 0;
+	let hasHandledInitialActivityResult = false;
+	let mounted = false;
 
 	const paginatedActivities = new PaginatedZeroList<ActivityListBaseFilter, ReadActivityZero>({
 		getBaseFilter: () => ({ personId, accountId: appState.activeWhatsappAccountId ?? undefined }),
@@ -46,9 +51,17 @@
 			})
 		)
 	);
+	const pendingNoteQuery = $derived.by(() =>
+		pendingNoteId ? z.createQuery(queries.personNote.read({ personNoteId: pendingNoteId })) : null
+	);
 	const chronologicalActivities = $derived([...paginatedActivities.items].reverse());
 
 	onMount(() => {
+		mounted = true;
+		const handleHashChange = () => setPendingNoteDeepLinkFromHash(false);
+		window.addEventListener('hashchange', handleHashChange);
+		handleHashChange();
+
 		resizeObserver = new ResizeObserver(() => {
 			if (pendingScrollRestore) {
 				maintainScrollPosition();
@@ -60,6 +73,8 @@
 			resizeObserver.observe(listContent);
 		}
 		return () => {
+			mounted = false;
+			window.removeEventListener('hashchange', handleHashChange);
 			resizeObserver?.disconnect();
 			if (scrollRestoreTimeout) {
 				clearTimeout(scrollRestoreTimeout);
@@ -83,20 +98,43 @@
 	watch(
 		() => personId,
 		() => {
+			deepLinkResolutionVersion += 1;
+			pendingNoteId = null;
+			deepLinkAwaitingInitialResult = false;
+			hasHandledInitialActivityResult = false;
 			endScrollRestore();
 			previousItemCount = 0;
 			paginatedActivities.reset();
+			if (mounted) {
+				setPendingNoteDeepLinkFromHash(true);
+			}
 		}
 	);
 	watch(
-		() => activityQuery.data,
-		(data) => {
+		() => [activityQuery.data, activityQuery.details.type] as const,
+		([data, resultType]) => {
+			if (resultType !== 'complete') return;
 			paginatedActivities.handlePage(data);
+			hasHandledInitialActivityResult = true;
+			deepLinkAwaitingInitialResult = false;
+			void resolvePendingNoteDeepLink();
+		}
+	);
+	watch(
+		() => [pendingNoteQuery?.data, pendingNoteQuery?.details.type] as const,
+		([, resultType]) => {
+			if (resultType === 'complete') {
+				void resolvePendingNoteDeepLink();
+			}
 		}
 	);
 	watch(
 		() => paginatedActivities.items.length,
 		(itemCount) => {
+			if (pendingNoteId) {
+				previousItemCount = itemCount;
+				return;
+			}
 			if (!scrollContainer || itemCount === 0) {
 				previousItemCount = itemCount;
 				return;
@@ -116,6 +154,61 @@
 			});
 		}
 	);
+
+	function setPendingNoteDeepLinkFromHash(awaitInitialResult: boolean) {
+		deepLinkResolutionVersion += 1;
+		const hash = window.location.hash;
+		pendingNoteId = hash.startsWith('#note-') ? hash.slice('#note-'.length) || null : null;
+		deepLinkAwaitingInitialResult =
+			pendingNoteId !== null && (awaitInitialResult || !hasHandledInitialActivityResult);
+		if (pendingNoteId) {
+			endScrollRestore();
+			void resolvePendingNoteDeepLink();
+		}
+	}
+
+	async function resolvePendingNoteDeepLink() {
+		const noteId = pendingNoteId;
+		const resolutionVersion = deepLinkResolutionVersion;
+		if (!noteId || deepLinkAwaitingInitialResult || activityQuery.details.type !== 'complete') {
+			return;
+		}
+
+		const noteQuery = pendingNoteQuery;
+		if (!noteQuery || noteQuery.details.type !== 'complete') return;
+		const note = noteQuery.data;
+		if (!note || note.deletedAt || note.personId !== personId) {
+			pendingNoteId = null;
+			return;
+		}
+
+		const activity = paginatedActivities.items.find(
+			(item) => item.type === 'note_added' && item.referenceId === noteId
+		);
+		if (activity) {
+			await tick();
+			if (
+				pendingNoteId !== noteId ||
+				deepLinkResolutionVersion !== resolutionVersion ||
+				!scrollContainer
+			) {
+				return;
+			}
+			const activityElement = getAnchorElement(activity.id);
+			if (!activityElement) return;
+			activityElement.scrollIntoView({ block: 'center' });
+			pendingNoteId = null;
+			return;
+		}
+
+		if (paginatedActivities.loadingMore) return;
+		if (paginatedActivities.hasMore) {
+			loadMoreOlder(false);
+			return;
+		}
+
+		pendingNoteId = null;
+	}
 
 	function getAnchorElement(activityId: string) {
 		return scrollContainer?.querySelector(`[data-activity-id="${activityId}"]`);
@@ -187,7 +280,7 @@
 	}
 
 	function loadMoreIfNotScrollable() {
-		if (!scrollContainer || pendingScrollRestore) return;
+		if (!scrollContainer || pendingScrollRestore || pendingNoteId) return;
 		if (!paginatedActivities.hasMore || paginatedActivities.loadingMore) return;
 		if (!canScrollTimeline()) {
 			loadMoreOlder(false);

@@ -2751,7 +2751,7 @@ const userTable = {
 		preferredLanguage: {
 			type: 'string',
 			optional: true,
-			customType: null as unknown as 'en' | 'pt' | 'es',
+			customType: null as unknown as 'id' | 'en' | 'fil' | 'fr' | 'ms' | 'pt' | 'es' | 'sw',
 			serverName: 'preferred_language'
 		},
 		createdAt: {
@@ -3474,6 +3474,14 @@ const personRelationships = {
 	],
 	notes: [
 		{ sourceField: ['id'], destField: ['personId'], destSchema: 'personNote', cardinality: 'many' }
+	],
+	favourites: [
+		{
+			sourceField: ['id'],
+			destField: ['referenceId'],
+			destSchema: 'memberFavourite',
+			cardinality: 'many'
+		}
 	]
 } as const;
 const whatsappGroupRelationships = {
@@ -3682,6 +3690,9 @@ const memberFavouriteRelationships = {
 	],
 	event: [
 		{ sourceField: ['referenceId'], destField: ['id'], destSchema: 'event', cardinality: 'one' }
+	],
+	person: [
+		{ sourceField: ['referenceId'], destField: ['id'], destSchema: 'person', cardinality: 'one' }
 	]
 } as const;
 const memberRelationships = {
