@@ -10,6 +10,7 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils.js';
+	import { t } from '$lib/index.svelte';
 
 	import BoldIcon from '@lucide/svelte/icons/bold';
 	import ItalicIcon from '@lucide/svelte/icons/italic';
@@ -32,18 +33,18 @@
 	// told apart from the editor's own updates (prevents a setContent feedback loop).
 	let lastHtml = value;
 
-	const swatches = [
-		{ name: 'Default', value: null },
-		{ name: 'Slate', value: '#64748b' },
-		{ name: 'Red', value: '#ef4444' },
-		{ name: 'Orange', value: '#f97316' },
-		{ name: 'Amber', value: '#f59e0b' },
-		{ name: 'Green', value: '#22c55e' },
-		{ name: 'Teal', value: '#14b8a6' },
-		{ name: 'Blue', value: '#3b82f6' },
-		{ name: 'Violet', value: '#8b5cf6' },
-		{ name: 'Pink', value: '#ec4899' }
-	];
+	const swatches = $derived([
+		{ name: t`Default`, value: null },
+		{ name: t`Slate`, value: '#64748b' },
+		{ name: t`Red`, value: '#ef4444' },
+		{ name: t`Orange`, value: '#f97316' },
+		{ name: t`Amber`, value: '#f59e0b' },
+		{ name: t`Green`, value: '#22c55e' },
+		{ name: t`Teal`, value: '#14b8a6' },
+		{ name: t`Blue`, value: '#3b82f6' },
+		{ name: t`Violet`, value: '#8b5cf6' },
+		{ name: t`Pink`, value: '#ec4899' }
+	]);
 
 	// Attachment: create the editor once the mount node is in the DOM, and tear
 	// it down when the node is removed. `untrack` keeps the initial `value` read
@@ -121,37 +122,46 @@
 	{#if editorState.editor}
 		{@const editor = editorState.editor}
 		<div class="border-input flex flex-wrap items-center gap-0.5 border-b p-1">
-			{@render toolButton(Heading1Icon, 'Heading 1', editor.isActive('heading', { level: 1 }), () =>
-				editor.chain().focus().toggleHeading({ level: 1 }).run()
+			{@render toolButton(
+				Heading1Icon,
+				t`Heading 1`,
+				editor.isActive('heading', { level: 1 }),
+				() => editor.chain().focus().toggleHeading({ level: 1 }).run()
 			)}
-			{@render toolButton(Heading2Icon, 'Heading 2', editor.isActive('heading', { level: 2 }), () =>
-				editor.chain().focus().toggleHeading({ level: 2 }).run()
+			{@render toolButton(
+				Heading2Icon,
+				t`Heading 2`,
+				editor.isActive('heading', { level: 2 }),
+				() => editor.chain().focus().toggleHeading({ level: 2 }).run()
 			)}
-			{@render toolButton(Heading3Icon, 'Heading 3', editor.isActive('heading', { level: 3 }), () =>
-				editor.chain().focus().toggleHeading({ level: 3 }).run()
+			{@render toolButton(
+				Heading3Icon,
+				t`Heading 3`,
+				editor.isActive('heading', { level: 3 }),
+				() => editor.chain().focus().toggleHeading({ level: 3 }).run()
 			)}
 
 			<Separator orientation="vertical" class="mx-1 h-6" />
 
-			{@render toolButton(BoldIcon, 'Bold', editor.isActive('bold'), () =>
+			{@render toolButton(BoldIcon, t`Bold`, editor.isActive('bold'), () =>
 				editor.chain().focus().toggleBold().run()
 			)}
-			{@render toolButton(ItalicIcon, 'Italic', editor.isActive('italic'), () =>
+			{@render toolButton(ItalicIcon, t`Italic`, editor.isActive('italic'), () =>
 				editor.chain().focus().toggleItalic().run()
 			)}
-			{@render toolButton(UnderlineIcon, 'Underline', editor.isActive('underline'), () =>
+			{@render toolButton(UnderlineIcon, t`Underline`, editor.isActive('underline'), () =>
 				editor.chain().focus().toggleUnderline().run()
 			)}
-			{@render toolButton(StrikethroughIcon, 'Strikethrough', editor.isActive('strike'), () =>
+			{@render toolButton(StrikethroughIcon, t`Strikethrough`, editor.isActive('strike'), () =>
 				editor.chain().focus().toggleStrike().run()
 			)}
 
 			<Separator orientation="vertical" class="mx-1 h-6" />
 
-			{@render toolButton(ListIcon, 'Bullet list', editor.isActive('bulletList'), () =>
+			{@render toolButton(ListIcon, t`Bullet list`, editor.isActive('bulletList'), () =>
 				editor.chain().focus().toggleBulletList().run()
 			)}
-			{@render toolButton(ListOrderedIcon, 'Numbered list', editor.isActive('orderedList'), () =>
+			{@render toolButton(ListOrderedIcon, t`Numbered list`, editor.isActive('orderedList'), () =>
 				editor.chain().focus().toggleOrderedList().run()
 			)}
 
@@ -160,8 +170,8 @@
 			<Popover.Root>
 				<Popover.Trigger
 					class={cn(buttonVariants({ variant: 'ghost', size: 'icon-sm' }))}
-					aria-label="Text color"
-					title="Text color"
+					aria-label={t`Text color`}
+					title={t`Text color`}
 				>
 					<PaletteIcon
 						aria-hidden="true"
@@ -170,7 +180,7 @@
 				</Popover.Trigger>
 				<Popover.Content align="start" class="w-auto p-2">
 					<div class="grid grid-cols-5 gap-1">
-						{#each swatches as swatch (swatch.name)}
+						{#each swatches as swatch (swatch.value ?? 'default')}
 							<button
 								type="button"
 								title={swatch.name}
