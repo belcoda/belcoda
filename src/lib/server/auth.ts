@@ -51,10 +51,9 @@ import { organizationMetadataSchema } from '$lib/schema/organization';
 import { organizationSettingsSchema } from '$lib/schema/organization/settings';
 import { memberSettingsSchema } from '$lib/schema/member/settings';
 
-import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
-import { emailVerification } from '$lib/server/utils/email/context/transactional/auth/verify_email';
-import { passwordReset } from '$lib/server/utils/email/context/transactional/auth/password_reset';
 import { sendOrganizationInvitationEmail } from '$lib/server/utils/email/transactional/send_organization_invite';
+import { sendPasswordResetEmail } from '$lib/server/utils/email/transactional/send_password_reset';
+import { sendEmailVerificationEmail } from '$lib/server/utils/email/transactional/send_email_verification';
 import { _createLedgerEntry } from './api/data/ledger';
 
 async function canManageOrganizationBilling({
@@ -348,15 +347,13 @@ export function buildBetterAuth(localeInput: string) {
 			enabled: true,
 			autoSignIn: false, // Disable auto sign-in when email verification is required
 			requireEmailVerification: true,
-			sendResetPassword: async ({ user, url, token }, request) => {
-				const email = passwordReset({ url, locale });
-				await sendTemplateEmail({
-					to: user.email,
-					from: 'Belcoda <noreply@belcoda.com>',
-					template: 'transactional',
-					stream: 'outbound',
-					context: email
-				});
+			sendResetPassword: async ({ user, url }) => {
+				try {
+					await sendPasswordResetEmail({ url, emailAddress: user.email, locale });
+				} catch (e) {
+					log.error({ error: e }, 'Failed to send password reset email');
+					if (!dev) throw e;
+				}
 			}
 		},
 		socialProviders: {
@@ -434,15 +431,13 @@ export function buildBetterAuth(localeInput: string) {
 					],
 		emailVerification: {
 			autoSignInAfterVerification: true,
-			sendVerificationEmail: async ({ user, url, token }, request) => {
-				const email = emailVerification({ url, locale });
-				await sendTemplateEmail({
-					to: user.email,
-					from: 'Belcoda <noreply@belcoda.com>',
-					template: 'transactional',
-					stream: 'outbound',
-					context: email
-				});
+			sendVerificationEmail: async ({ user, url }) => {
+				try {
+					await sendEmailVerificationEmail({ url, emailAddress: user.email, locale });
+				} catch (e) {
+					log.error({ error: e }, 'Failed to send verification email');
+					if (!dev) throw e;
+				}
 			}
 		},
 		user: {

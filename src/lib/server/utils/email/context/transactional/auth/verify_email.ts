@@ -24,27 +24,6 @@ export function emailConfirm({ url, locale }: { url: string; locale: Locale }) {
 	};
 }
 
-export function emailVerification({ url, locale }: { url: string; locale: Locale }) {
-	const body =
-		'Please verify your email address for security purposes. Click the button below to verify your email address.';
-	return {
-		language: locale,
-		subject: 'Verify your email address',
-		title: 'Security verification',
-		body: body,
-		bodyPlainText: htmlToPlaintext(body),
-		previewText: 'Please verify your email address for security purposes',
-		buttonText: 'Verify email',
-		buttonUrl: url,
-		instanceName: 'Belcoda',
-		logoUrl: `http://app.belcoda.com/logos/logomark_black.svg`,
-		logoAlt: `Belcoda logo`,
-		buttonAltHtml: `Copy and paste the following link into your browser ${url}`,
-		buttonAltText: `Copy and paste the following link into your browser ${url}`,
-		copyright: `Copyright ${new Date().getFullYear()} Belcoda`
-	};
-}
-
 export function oneTimeCode({ code, locale }: { code: string; locale: Locale }) {
 	const body =
 		'Please verify your login by entering this 6 digit code when you sign in. If you did not request this code, please ignore this email or contact support if you have concerns about your account security.';
