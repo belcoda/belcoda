@@ -60,8 +60,7 @@ export default async function sendHtmlEmail(options: SendHtmlEmailOptions): Prom
 			return json.MessageID;
 		}
 	} else {
-		const responseBody = await result.text().catch(() => '');
-		log.error({ ...logContext, status: result.status, body: responseBody }, 'Failed to send email');
+		log.error({ ...logContext, status: result.status }, 'Failed to send email');
 		throw new Error('Failed to send email');
 	}
 

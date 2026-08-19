@@ -94,9 +94,11 @@ describe('sendHtmlEmail', () => {
 	it('logs Postmark status without the provider response body', async () => {
 		vi.stubGlobal(
 			'fetch',
-			vi.fn().mockResolvedValue(
-				new Response('Invalid "To" address: recipient@example.com', { status: 422 })
-			)
+			vi
+				.fn()
+				.mockResolvedValue(
+					new Response('Invalid "To" address: recipient@example.com', { status: 422 })
+				)
 		);
 
 		await expect(sendHtmlEmail(options)).rejects.toThrow('Failed to send email');
@@ -105,7 +107,6 @@ describe('sendHtmlEmail', () => {
 			'Failed to send email'
 		);
 		expect(JSON.stringify(logger.error.mock.calls)).not.toContain('recipient@example.com');
-	});
 	});
 
 	it.each([
