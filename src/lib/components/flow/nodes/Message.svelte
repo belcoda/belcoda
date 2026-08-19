@@ -10,7 +10,11 @@
 		useUpdateNodeInternals
 	} from '@xyflow/svelte';
 	import GripHorizontalIcon from '@lucide/svelte/icons/grip-horizontal';
-	import { taint, pruneEdgesForButtons } from '$lib/components/flow/flow_state.svelte';
+	import {
+		taint,
+		pruneEdgesForButtons,
+		pruneHandlelessEdgesForButtons
+	} from '$lib/components/flow/flow_state.svelte';
 	import { deleteFlowNode } from '$lib/components/flow/deleteFlowNode';
 	import type { WhatsappMessageData } from '$lib/schema/flow/index';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -66,10 +70,18 @@
 	// --- Actions ---
 	const addButton = () => {
 		taint();
+		const hadNoButtons = buttons.length === 0;
 		if (buttons.length < 3) {
 			buttons = [...buttons, { id: crypto.randomUUID(), label: `New Button` }];
 		}
 		updateNodeData(id, { buttons: $state.snapshot(buttons) });
+		// Adding the first button removes this node's bottom source handle, so any
+		// handleless edge drawn while it had none is now orphaned. Drop it, or the
+		// runtime would send the buttoned message AND auto-advance down the stale
+		// edge (BEL-1058).
+		if (hadNoButtons && buttons.length > 0) {
+			pruneHandlelessEdgesForButtons(id);
+		}
 	};
 
 	const removeButton = (index: number) => {
