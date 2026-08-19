@@ -110,12 +110,11 @@ describe('sendHtmlEmail', () => {
 	});
 
 	it('logs and throws the uniform error when the fetch itself rejects', async () => {
-		vi.stubGlobal(
-			'fetch',
-			vi.fn().mockRejectedValue(new DOMException('The operation timed out.', 'TimeoutError'))
-		);
+		const timeoutError = new DOMException('The operation timed out.', 'TimeoutError');
+		vi.stubGlobal('fetch', vi.fn().mockRejectedValue(timeoutError));
 
-		await expect(sendHtmlEmail(options)).rejects.toThrow('Failed to send email');
+		const error = await sendHtmlEmail(options).catch((rejected) => rejected);
+		expect(error).toMatchObject({ message: 'Failed to send email', cause: timeoutError });
 		expect(logger.error).toHaveBeenCalledWith(
 			expect.objectContaining({ subject: 'Invite' }),
 			'Failed to send email'

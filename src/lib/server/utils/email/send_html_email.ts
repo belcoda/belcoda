@@ -50,7 +50,7 @@ export default async function sendHtmlEmail(options: SendHtmlEmailOptions): Prom
 		// same failure contract as the other error paths: log with subject context
 		// (never the recipient/body) and throw the uniform error.
 		log.error({ ...logContext, error }, 'Failed to send email');
-		throw new Error('Failed to send email');
+		throw new Error('Failed to send email', { cause: error });
 	}
 	if (result.ok) {
 		let json: unknown;
