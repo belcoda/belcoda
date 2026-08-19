@@ -45,6 +45,20 @@ export async function processFlowNodeWhatsappSendMessage({
 				flowExecutionStepId,
 				status: 'completed'
 			});
+			// Nothing was sent, but the step is done, so advance the flow exactly like the
+			// success path below: queue the next node, or mark the execution completed when
+			// this was the terminal node. Without this the flow execution would stay
+			// 'running' forever. Any downstream whatsapp.sendMessage node re-runs this same
+			// eligibility guard, so continuing never messages an ineligible recipient.
+			await queueNextNode({
+				flowVersionId,
+				personId,
+				organizationId,
+				flowExecutionId,
+				nodeId,
+				flow: flowDetails.flowVersion.flowDefinition,
+				tx
+			});
 		});
 		return;
 	}
