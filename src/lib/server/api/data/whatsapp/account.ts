@@ -1,6 +1,6 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import type { QueryContext } from '$lib/zero/schema';
-import { whatsappAccount } from '$lib/schema/drizzle';
+import { member, whatsappAccount } from '$lib/schema/drizzle';
 import { and, eq, isNull } from 'drizzle-orm';
 import { parse } from 'valibot';
 
@@ -54,6 +54,57 @@ async function getWhatsappAccountById(
 		.from(whatsappAccount)
 		.where(eq(whatsappAccount.id, whatsappAccountId))
 		.limit(1);
+	return record;
+}
+
+/**
+ * Server-side read guard that mirrors the organization scoping enforced by
+ * `listWhatsappAccountsQuery` (see src/lib/zero/query/whatsapp_account/list.ts).
+ *
+ * A persisted flow can carry a WhatsApp account UUID that no longer belongs to the
+ * organization the flow now runs for — an admin belongs to several organizations, or
+ * the account's owner later left the organization or unlinked the account. The
+ * foreign key on `whatsappAccountId` guarantees the row exists but says nothing about
+ * scope or liveness, so without this check an outbound identity and message for one
+ * organization could be recorded against another organization's (or a soft-deleted)
+ * account. Callers must run this before resolving a recipient / sending.
+ *
+ * Scope rules are identical to `inOrganizationScope`:
+ *   - organization-scoped account: referenceId must equal organizationId
+ *   - user-scoped account: the owning user (referenceId) must be a member of
+ *     organizationId
+ * Soft-deleted (unlinked) accounts are rejected.
+ */
+export async function assertWhatsappAccountInOrganizationScope({
+	tx,
+	whatsappAccountId,
+	organizationId
+}: {
+	tx: ServerTransaction;
+	whatsappAccountId: string;
+	organizationId: string;
+}): Promise<WhatsappAccountRecord> {
+	const record = await getWhatsappAccountById(tx, whatsappAccountId);
+	if (!record || record.deletedAt !== null) {
+		throw new Error('WhatsApp account not found or has been unlinked');
+	}
+
+	if (record.scope === 'organization') {
+		if (record.referenceId !== organizationId) {
+			throw new Error('WhatsApp account does not belong to this organization');
+		}
+		return record;
+	}
+
+	// scope === 'user': the owning user must currently be a member of the organization.
+	const [membership] = await tx.dbTransaction.wrappedTransaction
+		.select({ id: member.id })
+		.from(member)
+		.where(and(eq(member.userId, record.referenceId), eq(member.organizationId, organizationId)))
+		.limit(1);
+	if (!membership) {
+		throw new Error('WhatsApp account owner is not a member of this organization');
+	}
 	return record;
 }
 

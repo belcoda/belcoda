@@ -114,7 +114,7 @@ export const settingsItems: SettingsItem[] = [
 		group: () => t`Developer`,
 		url: '/settings/webhooks',
 		keywords: ['webhooks', 'hooks', 'api', 'events'],
-		permissions: 'owner'
+		permissions: 'admin'
 	},
 	{
 		title: () => t`API keys`,

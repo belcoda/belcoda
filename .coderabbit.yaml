@@ -58,7 +58,15 @@ reviews:
       enabled: true
     simplify:
       enabled: false
-    custom: []
+    custom:
+      - name: 'generate translations'
+        instructions: |
+          Generate wuchale translations for the changed files in the relevant .po files for all supported languages.
+          Use the existing English source copy as the base for new translations.
+          Do not create new language files; only update existing ones with missing localization strings for the changed files.
+          Add entries that are missing from existing .po files.
+          Fill only entries whose msgstr is empty.
+          Do not modify non-empty translations, headers, comments, or the order of existing entries.
   pre_merge_checks:
     override_requested_reviewers_only: false
     docstrings:

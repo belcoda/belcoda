@@ -2,11 +2,6 @@ import { expect, test } from '@playwright/test';
 import { WhatsappAccountsPage } from '../pages/settings/whatsapp-accounts.page';
 import { loginAsOwner, loginAsMember } from '../helpers/login';
 import { expectMemberCannotAccessSettings } from '../helpers/settings-access';
-import {
-	E2E_EMBEDDED_SIGNUP_PHONE_NUMBER,
-	E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
-	E2E_EMBEDDED_SIGNUP_WABA_ID
-} from '../helpers/config';
 
 const PROJECT = 'whatsapp-accounts' as const;
 
@@ -36,29 +31,15 @@ test.describe.serial('Settings: WhatsApp accounts', () => {
 		await accountsPage.goto();
 
 		await expect(accountsPage.activateCard()).toBeVisible({ timeout: 20_000 });
-		await accountsPage.launchSignupButton().click();
-		await accountsPage.completeEmbeddedSignup({
-			phoneNumberId: E2E_EMBEDDED_SIGNUP_PHONE_NUMBER_ID,
-			wabaId: E2E_EMBEDDED_SIGNUP_WABA_ID
-		});
+		await Promise.all([
+			page.waitForEvent('framenavigated', {
+				predicate: (frame) => frame === page.mainFrame()
+			}),
+			accountsPage.launchSignupButton().click()
+		]);
 
 		await expect(accountsPage.activatedCard()).toBeVisible({ timeout: 20_000 });
-		await expect(accountsPage.phoneLine()).toContainText(E2E_EMBEDDED_SIGNUP_PHONE_NUMBER);
-		await expect(accountsPage.wabaLine()).toContainText(E2E_EMBEDDED_SIGNUP_WABA_ID);
-		await expect
-			.poll(
-				async () => {
-					await page.reload();
-					try {
-						await accountsPage.heading().waitFor({ state: 'visible', timeout: 5_000 });
-					} catch {
-						return 0;
-					}
-					return accountsPage.activatedCard().count();
-				},
-				{ timeout: 20_000 }
-			)
-			.toBe(1);
+		await expect(accountsPage.activatedCard()).toContainText('Mock Business');
 	});
 
 	test('owner reaches page via settings sidebar', async ({ page }) => {

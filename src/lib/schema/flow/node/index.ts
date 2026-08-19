@@ -88,7 +88,8 @@ export type TriggerNode = v.InferOutput<typeof triggerNode>;
 export const nodeData = [
 	v.object({
 		type: v.literal('whatsapp.sendMessage'),
-		message: outgoingWhatsAppMessageDataSchema
+		message: outgoingWhatsAppMessageDataSchema,
+		whatsappAccountId: h.uuid
 	}),
 	v.object({
 		type: v.literal('email.send'),
