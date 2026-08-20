@@ -33,7 +33,9 @@
 		<div class="flex items-start justify-between gap-3">
 			<div class="flex items-start gap-3">
 				{#if icon}
-					<span class="mt-0.5 flex size-8 items-center justify-center rounded-md bg-muted text-muted-foreground">
+					<span
+						class="mt-0.5 flex size-8 items-center justify-center rounded-md bg-muted text-muted-foreground"
+					>
 						{@render icon()}
 					</span>
 				{/if}
@@ -52,9 +54,13 @@
 
 			{#if actionLabel && !children}
 				{#if actionHref}
-					<Button href={actionHref} variant="outline" size="sm" class="shrink-0">{actionLabel}</Button>
+					<Button href={actionHref} variant="outline" size="sm" class="shrink-0"
+						>{actionLabel}</Button
+					>
 				{:else}
-					<Button onclick={onAction} variant="outline" size="sm" class="shrink-0">{actionLabel}</Button>
+					<Button onclick={onAction} variant="outline" size="sm" class="shrink-0"
+						>{actionLabel}</Button
+					>
 				{/if}
 			{/if}
 		</div>

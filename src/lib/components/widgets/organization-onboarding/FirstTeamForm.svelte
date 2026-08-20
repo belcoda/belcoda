@@ -12,9 +12,5 @@
 
 <div class="flex flex-col gap-2">
 	<Label for="onboarding-team-name">{t`Team name`}</Label>
-	<Input
-		id="onboarding-team-name"
-		bind:value={teamName}
-		placeholder={t`e.g. Field organisers`}
-	/>
+	<Input id="onboarding-team-name" bind:value={teamName} placeholder={t`e.g. Field organisers`} />
 </div>

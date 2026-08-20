@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
 	import { t } from '$lib/index.svelte';
+	import { resolve } from '$app/paths';
 	import GradientBorder from '$lib/components/widgets/GradientBorder.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
@@ -35,7 +36,7 @@
 	<header
 		class="sticky top-0 z-20 flex items-center justify-between gap-3 border-b bg-background/80 px-4 py-3 backdrop-blur sm:px-6"
 	>
-		<a href="/dashboard" class="flex items-center gap-2 font-medium">
+		<a href={resolve('/dashboard')} class="flex items-center gap-2 font-medium">
 			<GradientBorder class="size-6 rounded-[0.2rem]">
 				<div
 					class="flex size-6 items-center justify-center rounded-[calc(0.2rem-1px)] bg-primary text-primary-foreground"

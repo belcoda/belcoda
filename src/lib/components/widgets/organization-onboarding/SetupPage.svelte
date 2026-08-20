@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import OnboardingLayout from './OnboardingLayout.svelte';
 	import SetupTaskCard from './SetupTaskCard.svelte';
@@ -17,14 +18,10 @@
 	let {
 		orgName = 'Riverside Tenants Union',
 		orgIcon,
-		dashboardHref = '/dashboard',
-		whatsappHref = '/setup/whatsapp',
 		oninvite
 	}: {
 		orgName?: string;
 		orgIcon?: string;
-		dashboardHref?: string;
-		whatsappHref?: string;
 		oninvite?: () => void;
 	} = $props();
 
@@ -65,7 +62,7 @@
 	]);
 </script>
 
-<OnboardingLayout {orgName} {orgIcon} exitHref={dashboardHref}>
+<OnboardingLayout {orgName} {orgIcon} exitHref={resolve('/dashboard')}>
 	<div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
 		<div class="flex flex-col gap-8">
 			<header class="flex flex-col gap-1">
@@ -76,9 +73,7 @@
 			</header>
 
 			{#if essentialsDone}
-				<div
-					class="flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4"
-				>
+				<div class="flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
 					<CheckCircleIcon class="mt-0.5 size-5 text-primary" />
 					<div class="flex flex-col gap-0.5">
 						<p class="font-medium">{t`You're all set`}</p>
@@ -121,7 +116,7 @@
 					title={t`Connect WhatsApp`}
 					description={t`Needs a business number + verification. Has ban risk — we guide you.`}
 					actionLabel={t`Set up`}
-					actionHref={whatsappHref}
+					actionHref={resolve('/setup/whatsapp')}
 				>
 					{#snippet icon()}<MessageCircleIcon class="size-4" />{/snippet}
 				</SetupTaskCard>
@@ -137,8 +132,8 @@
 			</section>
 
 			<div class="flex flex-wrap items-center gap-3 border-t pt-6">
-				<Button onclick={() => goto(dashboardHref)}>{t`Save & go to dashboard`}</Button>
-				<Button variant="ghost" onclick={() => goto(dashboardHref)}>{t`Skip for now`}</Button>
+				<Button onclick={() => goto(resolve('/dashboard'))}>{t`Save & go to dashboard`}</Button>
+				<Button variant="ghost" onclick={() => goto(resolve('/dashboard'))}>{t`Skip for now`}</Button>
 			</div>
 		</div>
 

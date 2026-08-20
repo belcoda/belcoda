@@ -116,7 +116,7 @@
 						</span>
 						{#if task.description}
 							<span class="text-xs text-muted-foreground">
-								{task.description}{#if task.hint}<span> · {task.hint}</span>{/if}
+								{task.description}{#if task.hint}<span class="ml-1">· {task.hint}</span>{/if}
 							</span>
 						{/if}
 					</div>

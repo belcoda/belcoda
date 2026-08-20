@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -13,14 +14,10 @@
 
 	let {
 		orgName = 'Riverside Tenants Union',
-		orgIcon,
-		setupHref = '/setup',
-		dashboardHref = '/dashboard'
+		orgIcon
 	}: {
 		orgName?: string;
 		orgIcon?: string;
-		setupHref?: string;
-		dashboardHref?: string;
 	} = $props();
 
 	let phoneNumber = $state('');
@@ -53,12 +50,12 @@
 	];
 </script>
 
-<OnboardingLayout {orgName} {orgIcon} exitHref={dashboardHref}>
+<OnboardingLayout {orgName} {orgIcon} exitHref={resolve('/dashboard')}>
 	<div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
 		<div class="flex flex-col gap-6">
 			<div class="flex flex-col gap-2">
 				<a
-					href={setupHref}
+					href={resolve('/setup')}
 					class="inline-flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
 				>
 					<ChevronLeftIcon class="size-4" />
@@ -100,7 +97,9 @@
 				</h2>
 				<ul class="flex flex-col gap-2">
 					{#each deferred as item (item.id)}
-						<li class="flex items-start gap-3 rounded-lg border bg-muted/40 p-3 text-muted-foreground">
+						<li
+							class="flex items-start gap-3 rounded-lg border bg-muted/40 p-3 text-muted-foreground"
+						>
 							<LockIcon class="mt-0.5 size-4 shrink-0" />
 							<div class="flex flex-col gap-0.5">
 								<span class="text-sm font-medium text-foreground/70">{item.title}</span>
@@ -112,8 +111,8 @@
 			</section>
 
 			<div class="flex flex-wrap items-center gap-3 border-t pt-6">
-				<Button onclick={() => goto(setupHref)}>{t`Verify number`}</Button>
-				<Button variant="ghost" onclick={() => goto(setupHref)}>{t`Do this later`}</Button>
+				<Button onclick={() => goto(resolve('/setup'))}>{t`Verify number`}</Button>
+				<Button variant="ghost" onclick={() => goto(resolve('/setup'))}>{t`Do this later`}</Button>
 			</div>
 		</div>
 
