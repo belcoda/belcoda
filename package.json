@@ -117,7 +117,7 @@
 		"@wuchale/svelte": "^0.20.0",
 		"@xyflow/svelte": "^1.6.0",
 		"awesome-phonenumber": "^7.8.0",
-		"better-auth": "^1.6.19",
+		"better-auth": "^1.6.27",
 		"country-list": "^2.4.1",
 		"cron-schedule": "^6.0.0",
 		"drizzle-seed": "^0.3.1",
