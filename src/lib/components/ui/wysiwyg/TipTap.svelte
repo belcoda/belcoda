@@ -5,12 +5,20 @@
 	import { StarterKit } from '@tiptap/starter-kit';
 	import { TextStyle } from '@tiptap/extension-text-style';
 	import { Color } from '@tiptap/extension-color';
+	import { Image } from '@tiptap/extension-image';
 
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import ImageUpload from '$lib/components/ui/file-upload/ImageUpload.svelte';
+	import { templateFragments, type TemplateFragmentHelper } from '$lib/utils/string/handlebars';
 	import { cn } from '$lib/utils.js';
 	import { t } from '$lib/index.svelte';
+	import { appState } from '$lib/state.svelte';
 
 	import BoldIcon from '@lucide/svelte/icons/bold';
 	import ItalicIcon from '@lucide/svelte/icons/italic';
@@ -23,9 +31,24 @@
 	import ListOrderedIcon from '@lucide/svelte/icons/list-ordered';
 	import PaletteIcon from '@lucide/svelte/icons/palette';
 	import BanIcon from '@lucide/svelte/icons/ban';
+	import ImageIcon from '@lucide/svelte/icons/image';
+	import BracesIcon from '@lucide/svelte/icons/braces';
 
-	let { value = $bindable(''), class: className = undefined }: { value?: string; class?: string } =
-		$props();
+	let {
+		value = $bindable(''),
+		organizationId,
+		class: className = undefined
+	}: {
+		value?: string;
+		/** Owner of uploaded images. Falls back to the active app organization. */
+		organizationId?: string;
+		class?: string;
+	} = $props();
+
+	// The image uploader needs an organization to scope uploads to. Prefer an
+	// explicit prop, otherwise use the active app org (null-safe: hides the
+	// image button when there is no org context rather than throwing).
+	const resolvedOrganizationId = $derived(organizationId ?? appState.optionalOrganizationId);
 
 	let editorState = $state<{ editor: Editor | null }>({ editor: null });
 
@@ -52,7 +75,7 @@
 	function mountEditor(node: HTMLElement) {
 		const editor = new Editor({
 			element: node,
-			extensions: [StarterKit, TextStyle, Color],
+			extensions: [StarterKit, TextStyle, Color, Image],
 			content: untrack(() => value),
 			editorProps: {
 				attributes: {
@@ -83,7 +106,10 @@
 		};
 	}
 
-	// Push external `value` changes back into the editor.
+	// Synchronise external `value` changes into the editor. This is the one
+	// legitimate use of `$effect` here: ProseMirror is a non-reactive external
+	// system, so a controlled `value` prop can only be pushed in imperatively.
+	// The `lastHtml` guard skips the editor's own updates to avoid a feedback loop.
 	$effect(() => {
 		const html = value;
 		const editor = editorState.editor;
@@ -96,6 +122,70 @@
 	const activeColor = $derived(
 		(editorState.editor?.getAttributes('textStyle').color as string | undefined) ?? null
 	);
+
+	// Image upload popover. <ImageUpload> reports a finished upload via its
+	// `onUpload` callback; we insert the image at the current selection and
+	// close the popover.
+	let imagePopoverOpen = $state(false);
+
+	function insertImage(src: string) {
+		editorState.editor?.chain().focus().setImage({ src }).run();
+		imagePopoverOpen = false;
+	}
+
+	// "Insert fragment" dialog. Fragments are handlebars helpers (see
+	// utils/string/handlebars.ts) that get merged per-recipient at send time.
+	// The author picks a fragment and optional backup text, and we insert the
+	// raw `{{helper 'backup'}}` token at the cursor.
+	let fragmentDialogOpen = $state(false);
+	let selectedFragment = $state('');
+	let fragmentFallback = $state('');
+
+	// Human-readable label per helper. Typed by the helper union so adding a new
+	// fragment to handlebars.ts forces a label to be added here too.
+	const fragmentLabels = $derived<Record<TemplateFragmentHelper, string>>({
+		givenName: t`First name`,
+		familyName: t`Last name`,
+		email: t`Email address`,
+		phone: t`Phone number`,
+		organizationName: t`Organization name`,
+		organizationSlug: t`Organization slug`
+	});
+
+	const fragmentOptions = $derived(
+		templateFragments.map(({ helper }) => ({ value: helper, label: fragmentLabels[helper] }))
+	);
+
+	const selectedFragmentLabel = $derived(
+		fragmentOptions.find((option) => option.value === selectedFragment)?.label ?? ''
+	);
+
+	// Build the handlebars token. Backup text is wrapped in a single-quoted
+	// string literal, so any single quotes inside it are escaped so they don't
+	// terminate the literal early.
+	function buildFragment(helper: string, fallback: string): string {
+		const backup = fallback.trim();
+		return backup ? `{{${helper} '${backup.replace(/'/g, "\\'")}'}}` : `{{${helper}}}`;
+	}
+
+	const fragmentPreview = $derived(
+		selectedFragment ? buildFragment(selectedFragment, fragmentFallback) : ''
+	);
+
+	function insertFragment() {
+		const editor = editorState.editor;
+		if (!editor || !selectedFragment) return;
+		// Insert as a plain text node (not parsed HTML) so characters like `<` or
+		// `&` in the backup text stay literal instead of being read as markup.
+		editor
+			.chain()
+			.focus()
+			.insertContent({ type: 'text', text: buildFragment(selectedFragment, fragmentFallback) })
+			.run();
+		fragmentDialogOpen = false;
+		selectedFragment = '';
+		fragmentFallback = '';
+	}
 </script>
 
 {#snippet toolButton(icon: Component, label: string, active: boolean, run: () => void)}
@@ -204,6 +294,85 @@
 					</div>
 				</Popover.Content>
 			</Popover.Root>
+
+			<Separator orientation="vertical" class="mx-1 h-6" />
+
+			<Dialog.Root bind:open={fragmentDialogOpen}>
+				<Dialog.Trigger>
+					{#snippet child({ props })}
+						<Button
+							type="button"
+							{...props}
+							class={cn(buttonVariants({ variant: 'ghost', size: 'icon-sm' }))}
+							aria-label={t`Insert fragment`}
+							title={t`Insert fragment`}
+						>
+							<BracesIcon aria-hidden="true" />
+						</Button>
+					{/snippet}
+				</Dialog.Trigger>
+				<Dialog.Content class="sm:max-w-[425px]">
+					<Dialog.Header>
+						<Dialog.Title>{t`Insert fragment`}</Dialog.Title>
+						<Dialog.Description>
+							{t`Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing.`}
+						</Dialog.Description>
+					</Dialog.Header>
+					<div class="grid gap-4 py-2">
+						<div class="grid gap-2">
+							<Label for="fragment-type">{t`Fragment`}</Label>
+							<Select.Root type="single" bind:value={selectedFragment}>
+								<Select.Trigger id="fragment-type" class="w-full justify-between font-medium">
+									{selectedFragmentLabel || t`Select a fragment`}
+								</Select.Trigger>
+								<Select.Content>
+									{#each fragmentOptions as option (option.value)}
+										<Select.Item value={option.value} label={option.label} />
+									{/each}
+								</Select.Content>
+							</Select.Root>
+						</div>
+						<div class="grid gap-2">
+							<Label for="fragment-fallback">{t`Backup text`}</Label>
+							<Input
+								id="fragment-fallback"
+								bind:value={fragmentFallback}
+								placeholder={t`e.g. friend`}
+							/>
+						</div>
+						{#if fragmentPreview}
+							<p class="text-muted-foreground text-sm">
+								{t`Preview`}: <code class="font-mono">{fragmentPreview}</code>
+							</p>
+						{/if}
+					</div>
+					<Dialog.Footer>
+						<Dialog.Close class={cn(buttonVariants({ variant: 'outline' }))}>
+							{t`Cancel`}
+						</Dialog.Close>
+						<Button type="button" disabled={!selectedFragment} onclick={insertFragment}>
+							{t`Insert`}
+						</Button>
+					</Dialog.Footer>
+				</Dialog.Content>
+			</Dialog.Root>
+
+			{#if resolvedOrganizationId}
+				<Separator orientation="vertical" class="mx-1 h-6" />
+
+				<Popover.Root bind:open={imagePopoverOpen}>
+					<Popover.Trigger
+						class={cn(buttonVariants({ variant: 'ghost', size: 'icon-sm' }))}
+						aria-label={t`Insert image`}
+						title={t`Insert image`}
+					>
+						<ImageIcon aria-hidden="true" />
+					</Popover.Trigger>
+					<Popover.Content align="start" class="w-72 p-2">
+						<ImageUpload organizationId={resolvedOrganizationId} onUpload={insertImage} />
+					</Popover.Content>
+				</Popover.Root>
+			{/if}
 		</div>
 	{/if}
 

@@ -12,14 +12,17 @@
 		url = $bindable(null),
 		maxSizeBytes,
 		aspectRatio = 'video',
-		class: className
+		class: className,
+		onUpload
 	}: {
 		organizationId: string;
-		url: string | null;
+		url?: string | null;
 		/** Optional max file size in bytes. When set, larger files are rejected before upload. */
 		maxSizeBytes?: number;
 		aspectRatio?: 'video' | 'square';
 		class?: string;
+		/** Called with the uploaded file's URL once an upload finishes successfully. */
+		onUpload?: (url: string) => void;
 	} = $props();
 
 	let progress = $state(0);
@@ -65,7 +68,7 @@
 				access: 'private',
 				multipart: true,
 				partSize: 10 * 1024 * 1024, // 10 MiB parts
-				onUploadProgress: ({ loaded, total, percentage }) => {
+				onUploadProgress: ({ percentage }) => {
 					status = 'uploading';
 					progress = percentage;
 				}
@@ -82,6 +85,7 @@
 
 		status = 'idle';
 		url = result?.data?.url ?? null;
+		if (url) onUpload?.(url);
 	};
 </script>
 
