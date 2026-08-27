@@ -14,7 +14,7 @@ export const petitionSchema = v.object({
 	title: helpers.mediumString,
 	shortDescription: helpers.mediumString,
 	description: v.nullable(v.any()),
-	pageHtml: v.nullable(helpers.longString),
+	pageHtml: v.nullable(helpers.longStringEmpty),
 
 	published: v.boolean(),
 
@@ -31,7 +31,7 @@ export const petitionSchema = v.object({
 export type PetitionSchema = v.InferOutput<typeof petitionSchema>;
 
 export const petitionApiSchema = v.object({
-	...v.omit(petitionSchema, ['organizationId']).entries,
+	...v.omit(petitionSchema, ['organizationId', 'pageHtml']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString,
 	deletedAt: v.nullable(helpers.dateToString),
@@ -39,7 +39,7 @@ export const petitionApiSchema = v.object({
 });
 
 export const readPetitionZero = v.object({
-	...petitionSchema.entries,
+	...v.omit(petitionSchema, ['pageHtml']).entries,
 	createdAt: helpers.unixTimestamp,
 	updatedAt: helpers.unixTimestamp,
 	deletedAt: v.nullable(helpers.unixTimestamp),
