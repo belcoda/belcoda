@@ -6403,10 +6403,8 @@ msgstr ""
 msgid "Insert"
 msgstr ""
 
-#. 0: limitLabel
-#: src/lib/components/ui/file-upload/ImageUpload.svelte
-msgid "Image is too large. Please choose a file under {0}."
-msgstr ""
+#~ msgid "Image is too large. Please choose a file under {0}."
+#~ msgstr ""
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Cover preview"
@@ -6426,4 +6424,9 @@ msgstr ""
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Uploading…"
+msgstr ""
+
+#. 0: limitLabel
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Image is too large. Please choose a file no larger than {0}."
 msgstr ""

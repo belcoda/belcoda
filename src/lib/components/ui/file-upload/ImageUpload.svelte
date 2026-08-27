@@ -51,7 +51,7 @@
 				maxSizeBytes >= 1024 * 1024
 					? `${Math.round(maxSizeBytes / (1024 * 1024))}MB`
 					: `${Math.round(maxSizeBytes / 1024)}KB`;
-			errorMessage = t`Image is too large. Please choose a file under ${limitLabel}.`;
+			errorMessage = t`Image is too large. Please choose a file no larger than ${limitLabel}.`;
 			input.value = '';
 			return;
 		}
