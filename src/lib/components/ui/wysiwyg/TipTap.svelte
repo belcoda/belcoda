@@ -50,6 +50,10 @@
 	// image button when there is no org context rather than throwing).
 	const resolvedOrganizationId = $derived(organizationId ?? appState.optionalOrganizationId);
 
+	// Max size for editor image uploads. Enforced client-side before upload
+	// (the Tigris client-upload handshake exposes no server-side size hook).
+	const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB
+
 	let editorState = $state<{ editor: Editor | null }>({ editor: null });
 
 	// Tracks the last HTML the editor produced so external `value` changes can be
@@ -303,7 +307,8 @@
 						<Button
 							type="button"
 							{...props}
-							class={cn(buttonVariants({ variant: 'ghost', size: 'icon-sm' }))}
+							variant="ghost"
+							size="icon-sm"
 							aria-label={t`Insert fragment`}
 							title={t`Insert fragment`}
 						>
@@ -369,7 +374,11 @@
 						<ImageIcon aria-hidden="true" />
 					</Popover.Trigger>
 					<Popover.Content align="start" class="w-72 p-2">
-						<ImageUpload organizationId={resolvedOrganizationId} onUpload={insertImage} />
+						<ImageUpload
+							organizationId={resolvedOrganizationId}
+							maxSizeBytes={MAX_IMAGE_UPLOAD_BYTES}
+							onUpload={insertImage}
+						/>
 					</Popover.Content>
 				</Popover.Root>
 			{/if}

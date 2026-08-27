@@ -46,7 +46,11 @@
 
 		if (maxSizeBytes && file.size > maxSizeBytes) {
 			status = 'error';
-			errorMessage = `Image is too large. Please choose a file under ${Math.round(maxSizeBytes / 1024)}KB.`;
+			const limitLabel =
+				maxSizeBytes >= 1024 * 1024
+					? `${Math.round(maxSizeBytes / (1024 * 1024))}MB`
+					: `${Math.round(maxSizeBytes / 1024)}KB`;
+			errorMessage = `Image is too large. Please choose a file under ${limitLabel}.`;
 			input.value = '';
 			return;
 		}
@@ -64,8 +68,8 @@
 			`uploads/${organizationId}/${dateString}/${uuidv7()}-${file.name}`,
 			file,
 			{
-				url: '/api/utils/upload/tigris',
-				access: 'private',
+				url: `/api/utils/upload/${organizationId}/tigris`,
+				access: 'public',
 				multipart: true,
 				partSize: 10 * 1024 * 1024, // 10 MiB parts
 				onUploadProgress: ({ percentage }) => {
@@ -84,9 +88,21 @@
 		}
 
 		status = 'idle';
-		url = result?.data?.url ?? null;
+		// The SDK returns a time-limited presigned GET URL (expires in ~1h). The
+		// bucket is public, so the object is permanently reachable at the same URL
+		// without the signature — strip the query string to get a durable URL that
+		// won't rot inside stored content.
+		url = toDurableUrl(result?.data?.url ?? null);
 		if (url) onUpload?.(url);
 	};
+
+	// Remove the presigned-URL query string (`?X-Amz-*`) to yield the object's
+	// stable public URL. Format-agnostic: works for both virtual-hosted
+	// (`<bucket>.t3.storage.dev/<key>`) and path-style URLs.
+	function toDurableUrl(rawUrl: string | null): string | null {
+		if (!rawUrl) return null;
+		return rawUrl.split('?')[0];
+	}
 </script>
 
 <div class={cn('w-full space-y-2', className)}>
