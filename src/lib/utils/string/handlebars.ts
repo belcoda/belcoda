@@ -34,16 +34,26 @@ export function renderHandlebarsTemplate({
 	person: ReadPersonZero;
 	organization: ReadOrganizationZero;
 }): string {
+	const hb = Handlebars.create();
+
 	for (const fragment of templateFragments) {
-		Handlebars.registerHelper(fragment.helper, function (fallbackString?: unknown) {
+		hb.registerHelper(fragment.helper, function (fallbackString?: unknown) {
+			const value = fragment.value({ person, organization });
+			// Real values are raw text from the database, so return them plain and
+			// let Handlebars HTML-escape them for the HTML output.
+			if (value) return value;
+			// The fallback is authored inside the template, which is already an HTML
+			// string — the editor serialises `{{helper 'text'}}` into HTML and encodes
+			// entities (e.g. `&` -> `&amp;`). Returning it as a SafeString stops
+			// Handlebars from escaping it a second time (`&amp;` -> `&amp;amp;`).
 			// Handlebars passes an options object (not a string) when the helper is
-			// called with no argument, so only treat a real string as the fallback.
+			// called with no argument, so guard for a real string.
 			const fallback = typeof fallbackString === 'string' ? fallbackString : '';
-			return fragment.value({ person, organization }) || fallback || '';
+			return new Handlebars.SafeString(fallback);
 		});
 	}
 
-	const compiled = Handlebars.compile(template);
+	const compiled = hb.compile(template);
 	return compiled({
 		person,
 		organization

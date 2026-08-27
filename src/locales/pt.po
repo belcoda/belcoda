@@ -4214,6 +4214,7 @@ msgstr ""
 msgid "Import started successfully"
 msgstr "Importação iniciada com sucesso"
 
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
 msgstr "Falha no upload. Por favor, tente novamente."
@@ -6408,4 +6409,29 @@ msgstr ""
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert"
+msgstr ""
+
+#. 0: limitLabel
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Image is too large. Please choose a file under {0}."
+msgstr ""
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Cover preview"
+msgstr ""
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Change image"
+msgstr ""
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Click to upload an image"
+msgstr ""
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "PNG, JPG, or WebP"
+msgstr ""
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Uploading…"
 msgstr ""

@@ -26,10 +26,7 @@ export async function POST(event) {
 	let body;
 	try {
 		body = await event.request.json();
-		const path = body.name;
-		log.debug({ path }, 'Path');
-		const orgId = getOrgIdFromPath(path);
-		log.debug({ orgId }, 'Org ID');
+		const orgId = getOrgIdFromPath(body.name);
 		if (orgId !== organizationId) {
 			return json({ error: 'Unauthorized' }, { status: 401 });
 		}

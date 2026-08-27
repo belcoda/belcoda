@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { upload } from '@tigrisdata/storage/client';
-	import { v7 as uuidv7 } from 'uuid';
 	import ImagePlusIcon from '@lucide/svelte/icons/image-plus';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import { cn } from '$lib/utils.js';
 	import { useId } from 'bits-ui';
 	import { getUploadPath } from './helpers';
+	import { t } from '$lib/index.svelte';
 
 	let {
 		organizationId,
@@ -51,7 +51,7 @@
 				maxSizeBytes >= 1024 * 1024
 					? `${Math.round(maxSizeBytes / (1024 * 1024))}MB`
 					: `${Math.round(maxSizeBytes / 1024)}KB`;
-			errorMessage = `Image is too large. Please choose a file under ${limitLabel}.`;
+			errorMessage = t`Image is too large. Please choose a file under ${limitLabel}.`;
 			input.value = '';
 			return;
 		}
@@ -74,7 +74,7 @@
 
 		if (result.error) {
 			status = 'error';
-			errorMessage = result.error.message || 'Upload failed. Please try again.';
+			errorMessage = result.error.message || t`Upload failed. Please try again.`;
 			return;
 		}
 
@@ -121,7 +121,7 @@
 		)}
 	>
 		{#if hasImage}
-			<img src={url} alt="Cover preview" class="size-full object-cover" />
+			<img src={url} alt={t`Cover preview`} class="size-full object-cover" />
 
 			<span
 				class="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100"
@@ -130,7 +130,7 @@
 					class="inline-flex items-center gap-1.5 rounded-md bg-background/95 px-2.5 py-1.5 text-xs font-medium shadow-xs"
 				>
 					<PencilIcon class="size-3.5" aria-hidden="true" />
-					Change image
+					{t`Change image`}
 				</span>
 			</span>
 		{:else}
@@ -141,8 +141,8 @@
 					<ImagePlusIcon class="size-5" aria-hidden="true" />
 				</span>
 				<span class="space-y-0.5">
-					<span class="text-sm font-medium">Click to upload an image</span>
-					<span class="text-muted-foreground block text-xs">PNG, JPG, or WebP</span>
+					<span class="text-sm font-medium">{t`Click to upload an image`}</span>
+					<span class="text-muted-foreground block text-xs">{t`PNG, JPG, or WebP`}</span>
 				</span>
 			</span>
 		{/if}
@@ -152,7 +152,7 @@
 				class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/80 px-6 backdrop-blur-[1px]"
 				aria-live="polite"
 			>
-				<span class="text-sm font-medium">Uploading…</span>
+				<span class="text-sm font-medium">{t`Uploading…`}</span>
 				<Progress value={progress} class="h-1.5 w-full max-w-48" />
 				<span class="text-muted-foreground text-xs tabular-nums">{Math.round(progress)}%</span>
 			</span>

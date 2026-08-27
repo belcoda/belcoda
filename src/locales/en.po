@@ -4221,6 +4221,7 @@ msgstr "Could not update profile picture. Please try again."
 msgid "Import started successfully"
 msgstr "Import started successfully"
 
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
 msgstr "Upload failed. Please try again."
@@ -6425,3 +6426,28 @@ msgstr "Preview"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert"
 msgstr "Insert"
+
+#. 0: limitLabel
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Image is too large. Please choose a file under {0}."
+msgstr "Image is too large. Please choose a file under {0}."
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Cover preview"
+msgstr "Cover preview"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Change image"
+msgstr "Change image"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Click to upload an image"
+msgstr "Click to upload an image"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "PNG, JPG, or WebP"
+msgstr "PNG, JPG, or WebP"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Uploading…"
+msgstr "Uploading…"
