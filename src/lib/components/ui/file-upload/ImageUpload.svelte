@@ -6,6 +6,7 @@
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import { cn } from '$lib/utils.js';
 	import { useId } from 'bits-ui';
+	import { getUploadPath } from './helpers';
 
 	let {
 		organizationId,
@@ -57,27 +58,17 @@
 
 		status = 'uploading';
 
-		//japanese dates best for this
-		const dateString = new Date().toLocaleDateString('ja-JP', {
-			year: 'numeric',
-			month: '2-digit',
-			day: '2-digit'
-		});
 		// rename the file to include the organizationId and a uuidv7
-		const result = await upload(
-			`uploads/${organizationId}/${dateString}/${uuidv7()}-${file.name}`,
-			file,
-			{
-				url: `/api/utils/upload/${organizationId}/tigris`,
-				access: 'public',
-				multipart: true,
-				partSize: 10 * 1024 * 1024, // 10 MiB parts
-				onUploadProgress: ({ percentage }) => {
-					status = 'uploading';
-					progress = percentage;
-				}
+		const result = await upload(getUploadPath(organizationId, file.name), file, {
+			url: `/api/utils/upload/${organizationId}/tigris`,
+			access: 'public',
+			multipart: true,
+			partSize: 10 * 1024 * 1024, // 10 MiB parts
+			onUploadProgress: ({ percentage }) => {
+				status = 'uploading';
+				progress = percentage;
 			}
-		);
+		});
 
 		input.value = '';
 

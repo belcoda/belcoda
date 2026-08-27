@@ -3,6 +3,7 @@ import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import pino from '$lib/pino';
 import { _listOrganizationMembershipsByUserIdUnsafe } from '$lib/server/api/data/organization';
+import { getOrgIdFromPath } from '$lib/components/ui/file-upload/helpers';
 const log = pino(import.meta.url);
 
 export async function POST(event) {
@@ -25,6 +26,13 @@ export async function POST(event) {
 	let body;
 	try {
 		body = await event.request.json();
+		const path = body.name;
+		log.debug({ path }, 'Path');
+		const orgId = getOrgIdFromPath(path);
+		log.debug({ orgId }, 'Org ID');
+		if (orgId !== organizationId) {
+			return json({ error: 'Unauthorized' }, { status: 401 });
+		}
 	} catch (error) {
 		log.error({ error }, 'Failed to parse upload request body');
 		return json({ error: 'Invalid request body' }, { status: 400 });
