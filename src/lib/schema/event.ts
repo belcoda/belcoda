@@ -13,6 +13,7 @@ export const eventSchema = v.object({
 	title: helpers.mediumString,
 	shortDescription: helpers.mediumString, //500 chars
 	description: v.nullable(v.any()),
+	pageHtml: v.nullable(helpers.longString),
 
 	published: v.boolean(),
 

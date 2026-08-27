@@ -14,6 +14,7 @@ export const petitionSchema = v.object({
 	title: helpers.mediumString,
 	shortDescription: helpers.mediumString,
 	description: v.nullable(v.any()),
+	pageHtml: v.nullable(helpers.longString),
 
 	published: v.boolean(),
 
