@@ -1,10 +1,11 @@
 import { db } from '$lib/server/db';
-import { type Flow } from '$lib/schema/flow/node/index';
+import { type Flow, type Node } from '$lib/schema/flow/node/index';
 import { _getFlowDetailsUnsafe } from '$lib/server/api/data/flow/utils';
 import { _createFlowExecutionStep } from '$lib/server/api/data/flow/execution_step';
 import { failFlowExecution } from '$lib/server/utils/flows/execution';
 import { processFlowNodeEventSignup } from '$lib/server/queue/handlers/flow/node/event.signup';
 import { processFlowNodeTriggerCron } from '$lib/server/queue/handlers/flow/node/trigger.js';
+import { processFlowNodeWhatsappSendMessage } from '$lib/server/queue/handlers/flow/node/whatsapp/send_message';
 
 export type ProcessFlowNodeProps = {
 	flowVersionId: string;
@@ -75,6 +76,17 @@ export async function processFlowNode({
 				});
 				break;
 			}
+			case 'whatsapp.sendMessage': {
+				await processFlowNodeWhatsappSendMessage({
+					flowVersionId,
+					personId,
+					organizationId,
+					flowExecutionId,
+					flowExecutionStepId: flowExecutionStep.id,
+					nodeId
+				});
+				break;
+			}
 			default: {
 				throw new Error(`Unknown node type: ${node.data.type}`);
 			}
@@ -95,7 +107,7 @@ export function getNextNodeToProcess({
 	nodeId: string;
 	handleId?: string;
 	flow: Flow;
-}): string | null {
+}): Node | null {
 	const node = flow.nodes.find((node) => node.id === nodeId);
 	if (!node) {
 		throw new Error(`Node not found: ${nodeId}`);
@@ -107,12 +119,30 @@ export function getNextNodeToProcess({
 		if (!edge) {
 			return null;
 		}
-		return edge.target;
+		const targetNode = flow.nodes.find((node) => node.id === edge.target);
+		if (!targetNode) {
+			throw new Error(`Target node not found: ${edge.target}`);
+		}
+		return targetNode;
 	} else {
-		const nextNodeSource = flow.edges.find((edge) => edge.source === node.id);
+		// No handle requested → an automatic continuation. Only a handleless edge is a
+		// valid auto-continuation; an edge with a sourceHandle is a button/branch edge
+		// and must never be followed without its handle being pressed. Matching the
+		// first edge regardless of handle would auto-advance down a button branch of a
+		// node that has since gained buttons — the same orphaned-edge double advance as
+		// BEL-1058 on the WhatsApp path. Use a nullish (`== null`) test, matching the
+		// prune helpers' definition of "handleless", so both agree on what an
+		// auto-continuation edge is.
+		const nextNodeSource = flow.edges.find(
+			(edge) => edge.source === node.id && edge.sourceHandle == null
+		);
 		if (!nextNodeSource) {
 			return null;
 		}
-		return nextNodeSource.target;
+		const targetNode = flow.nodes.find((node) => node.id === nextNodeSource.target);
+		if (!targetNode) {
+			throw new Error(`Target node not found: ${nextNodeSource.target}`);
+		}
+		return targetNode;
 	}
 }

@@ -6388,3 +6388,84 @@ msgstr ""
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
 msgstr ""
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Default"
+msgstr "Bawaan"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Slate"
+msgstr "Abu-abu batu"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Red"
+msgstr "Merah"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Orange"
+msgstr "Oranye"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Amber"
+msgstr "Ambar"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Green"
+msgstr "Hijau"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Teal"
+msgstr "Hijau kebiruan"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Blue"
+msgstr "Biru"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Violet"
+msgstr "Ungu"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Pink"
+msgstr "Merah muda"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 1"
+msgstr "Judul 1"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 2"
+msgstr "Judul 2"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 3"
+msgstr "Judul 3"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Bold"
+msgstr "Tebal"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Italic"
+msgstr "Miring"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Underline"
+msgstr "Garis bawah"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Strikethrough"
+msgstr "Coret"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Bullet list"
+msgstr "Daftar berpoin"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Numbered list"
+msgstr "Daftar bernomor"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Text color"
+msgstr "Warna teks"

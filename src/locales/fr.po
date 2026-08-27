@@ -6303,7 +6303,7 @@ msgstr "Impossible de mettre à jour la note"
 #. 0: inviterName; 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
-msgstr "{0} vous a invité à rejoindre {1} sur Belcoda. Cliquez sur le bouton ci-dessous pour accepter l’invitation et commencer."
+msgstr "{0} vous a invité à rejoindre {1} sur Belcoda. Cliquez sur le bouton ci-dessous pour accepter l'invitation et commencer."
 
 #. 0: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
@@ -6352,7 +6352,7 @@ msgstr "Aucune personne favorite"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Favourite a person using the star in their header to see them here."
-msgstr "Ajoutez une personne aux favoris à l’aide de l’étoile dans son en-tête pour la voir ici."
+msgstr "Ajoutez une personne aux favoris à l'aide de l'étoile dans son en-tête pour la voir ici."
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Show all people"
@@ -6360,11 +6360,11 @@ msgstr "Afficher toutes les personnes"
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
-msgstr "Nous avons reçu une demande de réinitialisation de votre mot de passe. Si c’était bien vous, cliquez sur le bouton ci-dessous pour en créer un nouveau. Sinon, vous pouvez ignorer cet e-mail en toute sécurité — votre compte restera protégé."
+msgstr "Nous avons reçu une demande de réinitialisation de votre mot de passe. Si c'était bien vous, cliquez sur le bouton ci-dessous pour en créer un nouveau. Sinon, vous pouvez ignorer cet e-mail en toute sécurité — votre compte restera protégé."
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Click below to create a new password. If you didn't request this, just ignore this email."
-msgstr "Cliquez ci-dessous pour créer un nouveau mot de passe. Si vous n’avez pas fait cette demande, ignorez simplement cet e-mail."
+msgstr "Cliquez ci-dessous pour créer un nouveau mot de passe. Si vous n'avez pas fait cette demande, ignorez simplement cet e-mail."
 
 #~ msgid "Reset Password"
 #~ msgstr ""
@@ -6383,8 +6383,89 @@ msgstr "Veuillez vérifier votre adresse e-mail pour des raisons de sécurité"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify email"
-msgstr "Vérifier l’e-mail"
+msgstr "Vérifier l'e-mail"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
 msgstr "Vérifiez votre adresse e-mail"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Default"
+msgstr "Par défaut"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Slate"
+msgstr "Ardoise"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Red"
+msgstr "Rouge"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Orange"
+msgstr "Orange"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Amber"
+msgstr "Ambre"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Green"
+msgstr "Vert"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Teal"
+msgstr "Sarcelle"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Blue"
+msgstr "Bleu"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Violet"
+msgstr "Violet"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Pink"
+msgstr "Rose"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 1"
+msgstr "Titre 1"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 2"
+msgstr "Titre 2"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 3"
+msgstr "Titre 3"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Bold"
+msgstr "Gras"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Italic"
+msgstr "Italique"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Underline"
+msgstr "Souligné"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Strikethrough"
+msgstr "Barré"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Bullet list"
+msgstr "Liste à puces"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Numbered list"
+msgstr "Liste numérotée"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Text color"
+msgstr "Couleur du texte"

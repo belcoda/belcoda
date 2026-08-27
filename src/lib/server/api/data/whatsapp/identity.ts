@@ -1,6 +1,7 @@
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { v7 as uuidv7 } from 'uuid';
+import * as v from 'valibot';
 
 import pino from '$lib/pino';
 import { organization, person, personWhatsappIdentity } from '$lib/schema/drizzle';
@@ -86,6 +87,24 @@ export async function findWhatsappIdentityByBsuidUnsafe({
 	return identity;
 }
 
+// A WhatsApp identity must be keyed on exactly one complete pair: linked-device
+// (whatsappAccountId + jid) or cloud (wabaId + bsuid). Partial combinations would fall through
+// to a conflict target whose columns are null, so the upsert can't resolve and orphan rows leak.
+const whatsappIdentityKeySchema = v.pipe(
+	v.object({
+		whatsappAccountId: v.nullish(v.string()),
+		jid: v.nullish(v.string()),
+		wabaId: v.nullish(v.string()),
+		bsuid: v.nullish(v.string())
+	}),
+	v.check(
+		(key) =>
+			(Boolean(key.whatsappAccountId) && Boolean(key.jid)) ||
+			(Boolean(key.wabaId) && Boolean(key.bsuid)),
+		'A complete WhatsApp identity key is required: whatsappAccountId + jid, or wabaId + bsuid'
+	)
+);
+
 export async function upsertWhatsappIdentityForPersonUnsafe({
 	organizationId,
 	personId,
@@ -94,76 +113,115 @@ export async function upsertWhatsappIdentityForPersonUnsafe({
 	parentUserId,
 	waPhone,
 	displayName,
+	whatsappAccountId,
+	jid,
 	tx
 }: {
 	organizationId: string;
 	personId: string;
-	wabaId: string;
-	bsuid: string;
+	wabaId?: string;
+	bsuid?: string;
 	parentUserId?: string | null;
 	waPhone?: string | null;
 	displayName?: string | null;
+	whatsappAccountId?: string | null;
+	jid?: string | null;
 	tx: ServerTransaction;
 }) {
+	const keyValidation = v.safeParse(whatsappIdentityKeySchema, {
+		whatsappAccountId,
+		jid,
+		wabaId,
+		bsuid
+	});
+	if (!keyValidation.success) {
+		throw new Error(
+			'upsertWhatsappIdentityForPersonUnsafe requires a complete identity key: either whatsappAccountId + jid, or wabaId + bsuid'
+		);
+	}
+
 	const now = new Date();
 
-	const existingIdentity = await findWhatsappIdentityByBsuidUnsafe({
-		organizationId,
-		wabaId,
-		bsuid,
-		tx
-	});
-
-	const [upserted] = await tx.dbTransaction.wrappedTransaction
-		.insert(personWhatsappIdentity)
-		.values({
-			id: uuidv7(),
+	if (wabaId && bsuid) {
+		const existingIdentity = await findWhatsappIdentityByBsuidUnsafe({
 			organizationId,
-			personId,
 			wabaId,
 			bsuid,
-			parentUserId: parentUserId ?? null,
-			waPhone: waPhone ?? null,
-			displayName: displayName ?? null,
-			firstSeenAt: now,
-			lastSeenAt: now,
-			createdAt: now,
-			updatedAt: now,
-			deletedAt: null
-		})
-		.onConflictDoUpdate({
-			target: [
-				personWhatsappIdentity.organizationId,
-				personWhatsappIdentity.wabaId,
-				personWhatsappIdentity.bsuid
-			],
-			targetWhere: isNull(personWhatsappIdentity.deletedAt),
-			set: {
-				personId,
-				parentUserId: sql`coalesce(excluded.parent_user_id, ${personWhatsappIdentity.parentUserId})`,
-				waPhone: sql`coalesce(excluded.wa_phone, ${personWhatsappIdentity.waPhone})`,
-				displayName: sql`coalesce(excluded.display_name, ${personWhatsappIdentity.displayName})`,
-				lastSeenAt: now,
-				updatedAt: now
-			}
-		})
-		.returning();
+			tx
+		});
+		if (existingIdentity && existingIdentity.personId !== personId) {
+			log.warn(
+				{
+					organizationId,
+					wabaId,
+					bsuid,
+					oldPersonId: existingIdentity.personId,
+					newPersonId: personId
+				},
+				'Relinking WhatsApp BSUID identity to resolved person'
+			);
+		}
+	}
+
+	// Linked-device identities are keyed on (organization, whatsapp account, jid); cloud
+	// identities on (organization, waba, bsuid). Pick the conflict target that matches the
+	// identity being written so the correct partial unique index resolves the upsert.
+	const isLinkedDeviceIdentity = Boolean(whatsappAccountId && jid);
+	const insert = tx.dbTransaction.wrappedTransaction.insert(personWhatsappIdentity).values({
+		id: uuidv7(),
+		organizationId,
+		personId,
+		whatsappAccountId: whatsappAccountId ?? null,
+		jid: jid ?? null,
+		wabaId,
+		bsuid,
+		parentUserId: parentUserId ?? null,
+		waPhone: waPhone ?? null,
+		displayName: displayName ?? null,
+		firstSeenAt: now,
+		lastSeenAt: now,
+		createdAt: now,
+		updatedAt: now,
+		deletedAt: null
+	});
+
+	const upsertQuery = isLinkedDeviceIdentity
+		? insert.onConflictDoUpdate({
+				target: [
+					personWhatsappIdentity.organizationId,
+					personWhatsappIdentity.whatsappAccountId,
+					personWhatsappIdentity.jid
+				],
+				targetWhere: isNull(personWhatsappIdentity.deletedAt),
+				set: {
+					personId,
+					waPhone: sql`coalesce(excluded.wa_phone, ${personWhatsappIdentity.waPhone})`,
+					displayName: sql`coalesce(excluded.display_name, ${personWhatsappIdentity.displayName})`,
+					lastSeenAt: now,
+					updatedAt: now
+				}
+			})
+		: insert.onConflictDoUpdate({
+				target: [
+					personWhatsappIdentity.organizationId,
+					personWhatsappIdentity.wabaId,
+					personWhatsappIdentity.bsuid
+				],
+				targetWhere: isNull(personWhatsappIdentity.deletedAt),
+				set: {
+					personId,
+					parentUserId: sql`coalesce(excluded.parent_user_id, ${personWhatsappIdentity.parentUserId})`,
+					waPhone: sql`coalesce(excluded.wa_phone, ${personWhatsappIdentity.waPhone})`,
+					displayName: sql`coalesce(excluded.display_name, ${personWhatsappIdentity.displayName})`,
+					lastSeenAt: now,
+					updatedAt: now
+				}
+			});
+
+	const [upserted] = await upsertQuery.returning();
 
 	if (!upserted) {
 		throw new Error('Failed to upsert WhatsApp identity');
-	}
-
-	if (existingIdentity && existingIdentity.personId !== personId) {
-		log.warn(
-			{
-				organizationId,
-				wabaId,
-				bsuid,
-				oldPersonId: existingIdentity.personId,
-				newPersonId: personId
-			},
-			'Relinking WhatsApp BSUID identity to resolved person'
-		);
 	}
 
 	return upserted;
@@ -404,6 +462,32 @@ async function findActiveWhatsappIdentityByPersonUnsafe({
 				eq(personWhatsappIdentity.organizationId, organizationId),
 				eq(personWhatsappIdentity.wabaId, wabaId),
 				eq(personWhatsappIdentity.personId, personId)
+			)
+		)
+		.orderBy(desc(personWhatsappIdentity.lastSeenAt));
+	return identity;
+}
+
+export async function findActiveWhatsappIdentitiesByPersonAndAccountIdUnsafe({
+	organizationId,
+	personId,
+	accountId,
+	tx
+}: {
+	organizationId: string;
+	personId: string;
+	accountId: string;
+	tx: ServerTransaction;
+}) {
+	const identity = await tx.dbTransaction.wrappedTransaction
+		.select()
+		.from(personWhatsappIdentity)
+		.where(
+			and(
+				isNull(personWhatsappIdentity.deletedAt),
+				eq(personWhatsappIdentity.organizationId, organizationId),
+				eq(personWhatsappIdentity.personId, personId),
+				eq(personWhatsappIdentity.whatsappAccountId, accountId)
 			)
 		)
 		.orderBy(desc(personWhatsappIdentity.lastSeenAt));

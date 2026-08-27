@@ -504,8 +504,10 @@ export const personWhatsappIdentity = pgTable(
 		personId: uuid('person_id')
 			.notNull()
 			.references(() => person.id),
-		wabaId: text('waba_id').notNull(),
-		bsuid: text('bsuid').notNull(),
+		whatsappAccountId: uuid('whatsapp_account_id').references(() => whatsappAccount.id), //linked devices api account
+		jid: text('jid'), //used by linked device api (can be account scoped or a phone number)
+		wabaId: text('waba_id'), //used by business cloud api
+		bsuid: text('bsuid'), //used by business cloud api
 		parentUserId: text('parent_user_id'),
 		waPhone: text('wa_phone'),
 		displayName: text('display_name'),
@@ -518,6 +520,9 @@ export const personWhatsappIdentity = pgTable(
 	(table) => [
 		uniqueIndex('person_whatsapp_identity_active_unique')
 			.on(table.organizationId, table.wabaId, table.bsuid)
+			.where(sql`${table.deletedAt} is null`),
+		uniqueIndex('person_whatsapp_identity_linked_device_active_unique')
+			.on(table.organizationId, table.whatsappAccountId, table.jid)
 			.where(sql`${table.deletedAt} is null`),
 		index('person_whatsapp_identity_person_id').on(table.personId),
 		index('person_whatsapp_identity_org_waba').on(table.organizationId, table.wabaId)
