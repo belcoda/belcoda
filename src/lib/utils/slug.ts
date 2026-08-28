@@ -10,7 +10,8 @@ export function slugify(str: string) {
 	str = str
 		.replace(/[^a-z0-9 -]/g, '') // remove any non-alphanumeric characters
 		.replace(/\s+/g, '-') // replace spaces with hyphens
-		.replace(/-+/g, '-'); // remove consecutive hyphens
+		.replace(/-+/g, '-') // remove consecutive hyphens
+		.replace(/^-+|-+$/g, ''); // remove leading and trailing hyphens
 	// If sanitization resulted in an empty string, return it without parsing
 	if (str.length === 0) {
 		return '';
