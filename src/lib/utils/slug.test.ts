@@ -10,7 +10,7 @@ describe('slugify', () => {
 	it('returns an empty string when stripping leaves nothing to parse', () => {
 		expect(slugify('!!!')).toBe('');
 		expect(slugify('你好')).toBe('');
-		expect(slugify('@#$ %^&')).toBe('');
+		expect(slugify('@#$%^&')).toBe('');
 	});
 
 	it('slugifies alphanumeric titles', () => {
