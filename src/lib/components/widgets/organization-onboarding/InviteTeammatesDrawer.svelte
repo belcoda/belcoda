@@ -53,20 +53,15 @@
 		emails = emails.filter((e) => e !== email);
 	}
 
-	function reset() {
-		emails = [];
-		draft = '';
-		role = 'member';
-	}
-
 	async function send() {
 		commitDraft();
 		if (emails.length === 0) return;
 
+		const pending = [...emails];
 		submitting = true;
 		// Better Auth invites one member per call, so fan the chips out in parallel.
 		const results = await Promise.allSettled(
-			emails.map((email) =>
+			pending.map((email) =>
 				authClient.organization
 					.inviteMember({ email, role, organizationId: appState.organizationId })
 					.then((result) => {
@@ -76,23 +71,29 @@
 		);
 		submitting = false;
 
-		const failed = results.filter((r) => r.status === 'rejected').length;
-		const sent = results.length - failed;
+		const sentEmails = pending.filter((_, i) => results[i].status === 'fulfilled');
+		const failedEmails = pending.filter((_, i) => results[i].status === 'rejected');
 
-		if (sent > 0) {
+		if (sentEmails.length > 0) {
 			toast.success(
-				sent === 1 ? t`1 invitation sent` : t`${String(sent)} invitations sent`
+				sentEmails.length === 1
+					? t`1 invitation sent`
+					: t`${String(sentEmails.length)} invitations sent`
 			);
-			onsent?.(emails.slice(0, sent));
+			onsent?.(sentEmails);
 		}
-		if (failed > 0) {
+		if (failedEmails.length > 0) {
 			toast.error(
-				failed === 1 ? t`1 invitation could not be sent` : t`${String(failed)} invitations could not be sent`
+				failedEmails.length === 1
+					? t`1 invitation could not be sent`
+					: t`${String(failedEmails.length)} invitations could not be sent`
 			);
 		}
 
-		if (failed === 0) {
-			reset();
+		// Keep only the addresses that failed, so a retry does not re-invite the successful ones.
+		emails = failedEmails;
+		if (failedEmails.length === 0) {
+			role = 'member';
 			open = false;
 		}
 	}
