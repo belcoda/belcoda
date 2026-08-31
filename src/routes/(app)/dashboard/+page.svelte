@@ -58,7 +58,8 @@
 			onaction={(action) => {
 				if (action === 'whatsapp') goto(resolve('/setup/whatsapp'));
 				else if (action === 'invite') inviteOpen = true;
-				else console.log('onboarding action:', action);
+				else if (action === 'team') goto(resolve('/settings/teams'));
+				else if (action === 'people') goto(resolve('/community/person/new'));
 			}}
 		/>
 		<InviteTeammatesDrawer bind:open={inviteOpen} />
