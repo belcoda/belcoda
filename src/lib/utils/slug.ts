@@ -11,6 +11,9 @@ export function slugify(str: string) {
 		.replace(/[^a-z0-9 -]/g, '') // remove any non-alphanumeric characters
 		.replace(/\s+/g, '-') // replace spaces with hyphens
 		.replace(/-+/g, '-'); // remove consecutive hyphens
+	if (str.length === 0) {
+		return '';
+	}
 	return parse(slug, str);
 }
 
