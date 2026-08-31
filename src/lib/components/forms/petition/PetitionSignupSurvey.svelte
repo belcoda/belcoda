@@ -42,11 +42,11 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 
-	function toggleStandardInformation(field: SurveyQuestionType, checked: boolean) {
+	function toggleStandardInformation(field: SurveyQuestionType, checked: boolean | 'indeterminate') {
 		if (!$data.settings?.survey) return;
-		if (checked) {
+		if (checked === true) {
 			$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, field, locale.current);
-		} else {
+		} else if (checked === false) {
 			$data.settings.survey = removeFieldTypeFromSurvey($data.settings.survey, field);
 		}
 	}

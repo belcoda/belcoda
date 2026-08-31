@@ -5,7 +5,7 @@ import { TagsPage } from '../pages/settings/tags.page';
 import { TeamsPage } from '../pages/settings/teams.page';
 import { loginAsAdmin, loginAsOwner } from '../helpers/login';
 import { CommunityPage } from '../pages/community/community.page';
-import { BASE_URL } from '../helpers/config';
+import { BASE_URL, getOrgSlug } from '../helpers/config';
 import { getTestUsers } from '../helpers/auth';
 
 const PROJECT = 'community' as const;
@@ -281,6 +281,8 @@ test.describe.serial('Community and person pages', () => {
 			data: { personId: ids.personId, count: 30 }
 		});
 		expect(seedResponse.ok()).toBeTruthy();
+		const { noteIds } = (await seedResponse.json()) as { noteIds: string[] };
+		expect(noteIds).toHaveLength(30);
 
 		await loginAsOwner(page, PROJECT);
 		await page.goto(ids.personPath);
@@ -295,7 +297,12 @@ test.describe.serial('Community and person pages', () => {
 			element.scrollTop = element.scrollHeight;
 		});
 
-		await expect(page.getByTestId('person-note-item')).toHaveCount(30, { timeout: 15_000 });
+		const seededNotes = page.locator(
+			noteIds
+				.map((noteId) => `[data-testid="person-note-item"][data-note-id="${noteId}"]`)
+				.join(',')
+		);
+		await expect(seededNotes).toHaveCount(30, { timeout: 15_000 });
 	});
 
 	test('owner can open an older note from a cold deep link', async ({ page }) => {
@@ -369,7 +376,7 @@ test.describe.serial('Community and person pages', () => {
 		await expect(contextPanel.getByTestId('person-context-note')).toHaveText(noteText);
 	});
 
-	test('owner can create, display, and edit user mentions in notes', async ({ page }) => {
+	test('owner can create, display, and edit user mentions in notes', async ({ page, request }) => {
 		const suffix = `${Date.now()}`;
 		const mentionedUser = getTestUsers(PROJECT).admin;
 		const notePrefix = `Mention note ${suffix}`;
@@ -377,15 +384,11 @@ test.describe.serial('Community and person pages', () => {
 
 		await page.setViewportSize({ width: 1400, height: 900 });
 		await loginAsOwner(page, PROJECT);
-		const seedResult = await page.evaluate(async () => {
-			const response = await fetch('/api/e2e/seed-persons', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ count: 1 })
-			});
-			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
-			return (await response.json()) as { personIds: string[] };
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-persons`, {
+			data: { count: 1, organizationSlug: getOrgSlug(PROJECT) }
 		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedResult = (await seedResponse.json()) as { personIds: string[] };
 		const personId = seedResult.personIds[0];
 		expect(personId).toBeTruthy();
 		await page.goto(`/community/${personId}`);
@@ -535,8 +538,8 @@ test.describe.serial('Community and person pages', () => {
 		await textarea.fill(noteText);
 		await drawer.getByTestId('note-form-submit').click();
 
-		await expect(drawer.getByTestId('person-note-item').first()).toBeVisible({ timeout: 10_000 });
-		await expect(drawer.getByTestId('person-note-content').first()).toHaveText(noteText);
+		const createdNote = drawer.getByTestId('person-note-item').filter({ hasText: noteText });
+		await expect(createdNote).toBeVisible({ timeout: 10_000 });
 
 		await page.keyboard.press('Escape');
 		await expect(page.getByTestId('inline-note').last()).toContainText(noteText, {

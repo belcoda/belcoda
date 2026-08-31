@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class PetitionSurveyPage {
 	readonly page: Page;
@@ -17,27 +17,57 @@ export class PetitionSurveyPage {
 		const checkbox = this.standardFieldCheckbox(field);
 		await checkbox.waitFor({ state: 'visible', timeout: 10_000 });
 		await checkbox.scrollIntoViewIfNeeded();
-		const isChecked = await checkbox.isChecked().catch(async () => {
-			return (await checkbox.getAttribute('aria-checked')) === 'true';
-		});
-		if (!isChecked) {
-			await checkbox.click();
-		}
+
+		await expect(async () => {
+			const isChecked = await checkbox.isChecked().catch(async () => {
+				return (await checkbox.getAttribute('aria-checked')) === 'true';
+			});
+			if (!isChecked) {
+				await checkbox.click();
+			}
+			await expect(checkbox).toBeChecked({ timeout: 1_000 });
+		}).toPass({ timeout: 10_000 });
 	}
 
 	async addShortTextQuestion(label: string) {
+		const triggers = this.page.locator('[data-testid^="survey-question-trigger-"]');
 		const labelInputs = this.page.locator('[data-testid^="survey-custom-question-label-"]');
-		const countBefore = await labelInputs.count();
+		const countBefore = await triggers.count();
 
+		await expect(this.addQuestionTrigger).toBeVisible({ timeout: 15_000 });
 		await this.addQuestionTrigger.scrollIntoViewIfNeeded();
-		await this.addQuestionTrigger.click();
-		const shortTextOption = this.page.getByTestId('survey-add-short-text');
-		await shortTextOption.waitFor({ state: 'visible', timeout: 10_000 });
-		await shortTextOption.click();
 
-		const newLabelInput = labelInputs.nth(countBefore);
-		await newLabelInput.waitFor({ state: 'visible', timeout: 15_000 });
-		await newLabelInput.fill(label, { timeout: 15_000 });
-		await newLabelInput.blur();
+		let added = false;
+		for (let attempt = 0; attempt < 3; attempt += 1) {
+			await this.addQuestionTrigger.click();
+			const shortTextOption = this.page
+				.getByTestId('survey-add-short-text')
+				.or(this.page.getByRole('menuitem', { name: 'Short text' }));
+			await shortTextOption.waitFor({ state: 'visible', timeout: 5_000 });
+			await shortTextOption.click();
+
+			try {
+				await expect(triggers).toHaveCount(countBefore + 1, { timeout: 5_000 });
+				added = true;
+				break;
+			} catch {
+				await this.page.keyboard.press('Escape');
+			}
+		}
+
+		if (!added) {
+			throw new Error('Failed to add short text survey question after 3 attempts');
+		}
+
+		const newTrigger = triggers.nth(countBefore);
+		await expect(async () => {
+			const labelInput = labelInputs.last();
+			if (!(await labelInput.isVisible())) {
+				await newTrigger.click();
+			}
+			await labelInput.waitFor({ state: 'visible', timeout: 2_000 });
+			await labelInput.fill(label, { timeout: 2_000 });
+			await expect(labelInput).toHaveValue(label, { timeout: 2_000 });
+		}).toPass({ timeout: 15_000 });
 	}
 }

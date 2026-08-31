@@ -31,6 +31,12 @@ export class PetitionEditPage {
 		await this.titleInput.blur();
 	}
 
+	async slugFromPreview(): Promise<string> {
+		const text = await this.slugPreview.textContent();
+		const match = text?.match(/\/petitions\/([a-z0-9-]+)/);
+		return match?.[1] ?? '';
+	}
+
 	async submit() {
 		await this.saveButton.click();
 	}

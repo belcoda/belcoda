@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { pruneDanglingEdges, nodeHandleIds, pruneRemovedButtonEdges } from './pruneFlowEdges';
+import {
+	pruneDanglingEdges,
+	nodeHandleIds,
+	pruneRemovedButtonEdges,
+	pruneHandlelessEdgesForButtonedNode
+} from './pruneFlowEdges';
 import { structuredClone } from '$lib/utils/structuredClone';
 import type { Flow } from '$lib/schema/flow/index';
 
@@ -417,6 +422,65 @@ describe('pruneRemovedButtonEdges', () => {
 		const input = edges();
 		const snapshot = structuredClone(input);
 		const { edges: kept } = pruneRemovedButtonEdges(TEMPLATE, [TPL_BTN_1], input);
+		expect(input).toEqual(snapshot);
+		expect(kept.find((e) => e.id === 'b1')).toBe(input.find((e) => e.id === 'b1'));
+	});
+});
+
+describe('pruneHandlelessEdgesForButtonedNode', () => {
+	// MESSAGE has just gained buttons. It carries a stale handleless continuation
+	// (`orphan`) from when it had none, plus its real button edges. Other edges —
+	// the incoming edge, its own button edges, and a handleless edge from ANOTHER
+	// node — must never be touched.
+	function edges() {
+		return [
+			{ id: 'in', source: TARGETING, target: MESSAGE }, // into MESSAGE, unrelated
+			{ id: 'orphan', source: MESSAGE, target: REPLY_C }, // stale handleless continuation
+			{ id: 'b1', source: MESSAGE, target: REPLY_A, sourceHandle: MSG_BTN_1 },
+			{ id: 'b2', source: MESSAGE, target: REPLY_B, sourceHandle: MSG_BTN_2 },
+			{ id: 'other-cont', source: TEMPLATE, target: REPLY_A } // another node's continuation
+		];
+	}
+
+	it('drops the node’s orphaned handleless continuation edge', () => {
+		const { edges: kept, removed } = pruneHandlelessEdgesForButtonedNode(MESSAGE, edges());
+		expect(removed.map((e) => e.id)).toEqual(['orphan']);
+		expect(kept.map((e) => e.id)).toEqual(['in', 'b1', 'b2', 'other-cont']);
+	});
+
+	it('keeps the node’s button (keyed) edges', () => {
+		const { edges: kept } = pruneHandlelessEdgesForButtonedNode(MESSAGE, edges());
+		expect(kept.some((e) => e.id === 'b1')).toBe(true);
+		expect(kept.some((e) => e.id === 'b2')).toBe(true);
+	});
+
+	it('never touches a handleless edge belonging to another node', () => {
+		const { edges: kept, removed } = pruneHandlelessEdgesForButtonedNode(MESSAGE, edges());
+		expect(kept.some((e) => e.id === 'other-cont')).toBe(true);
+		expect(removed.some((e) => e.id === 'other-cont')).toBe(false);
+	});
+
+	it('treats a null sourceHandle as handleless and drops it', () => {
+		const input = [{ id: 'null-handle', source: MESSAGE, target: REPLY_A, sourceHandle: null }];
+		const { edges: kept, removed } = pruneHandlelessEdgesForButtonedNode(MESSAGE, input);
+		expect(kept).toHaveLength(0);
+		expect(removed.map((e) => e.id)).toEqual(['null-handle']);
+	});
+
+	it('is a no-op when the node has no handleless outgoing edge', () => {
+		const input = [
+			{ id: 'in', source: TARGETING, target: MESSAGE },
+			{ id: 'b1', source: MESSAGE, target: REPLY_A, sourceHandle: MSG_BTN_1 }
+		];
+		const { edges: kept, removed } = pruneHandlelessEdgesForButtonedNode(MESSAGE, input);
+		expect(removed).toHaveLength(0);
+		expect(kept).toEqual(input);
+	});
+
+	it('does not mutate the input and returns survivors by reference', () => {
+		const input = edges();
+		const snapshot = structuredClone(input);
+		const { edges: kept } = pruneHandlelessEdgesForButtonedNode(MESSAGE, input);
 		expect(input).toEqual(snapshot);
 		expect(kept.find((e) => e.id === 'b1')).toBe(input.find((e) => e.id === 'b1'));
 	});
