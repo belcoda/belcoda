@@ -13,6 +13,11 @@ describe('slugify', () => {
 		expect(slugify('@#$%^&')).toBe('');
 	});
 
+	it('returns an empty string when only hyphens remain', () => {
+		expect(slugify('---')).toBe('');
+		expect(slugify('@#$ %^&')).toBe('');
+	});
+
 	it('slugifies alphanumeric titles', () => {
 		expect(slugify('Hello World')).toBe('hello-world');
 		expect(slugify('  Café 123  ')).toBe('caf-123');
