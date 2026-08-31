@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
-	import NotificationBell from '$lib/components/widgets/notifications/NotificationBell.svelte';
 	import RecentNotifications from '$lib/components/widgets/notifications/RecentNotifications.svelte';
 	import NextEventCard from '$lib/components/widgets/event/NextEventCard.svelte';
 	import UpcomingEventsList from '$lib/components/widgets/event/UpcomingEventsList.svelte';
 	import DashboardMetrics from '$lib/components/widgets/dashboard/DashboardMetrics.svelte';
 	import FinishSettingUpCard from '$lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte';
+	import InviteTeammatesDrawer from '$lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import { appState } from '$lib/state.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+
+	let inviteOpen = $state(false);
 
 	const today = new Date();
 	const greeting = (() => {
@@ -44,7 +47,6 @@
 				<p class="mt-1 text-sm text-muted-foreground">{dateLabel}</p>
 			</div>
 			<div class="flex items-center gap-2">
-				<!-- <NotificationBell /> -->
 				<Button href="/events/new" size="sm">
 					<PlusIcon class="size-4" />
 					New event
@@ -54,10 +56,12 @@
 
 		<FinishSettingUpCard
 			onaction={(action) => {
-				if (action === 'whatsapp') goto('/setup/whatsapp');
+				if (action === 'whatsapp') goto(resolve('/setup/whatsapp'));
+				else if (action === 'invite') inviteOpen = true;
 				else console.log('onboarding action:', action);
 			}}
 		/>
+		<InviteTeammatesDrawer bind:open={inviteOpen} />
 
 		<DashboardMetrics />
 

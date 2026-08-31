@@ -421,6 +421,7 @@ msgid "Invite?"
 msgstr "Alika?"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -428,6 +429,8 @@ msgid "Admin"
 msgstr "Msimamizi"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -435,6 +438,7 @@ msgid "Member"
 msgstr "Mwanachama"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -2967,6 +2971,7 @@ msgstr "Wanachama"
 msgid "Users who are part of this organization."
 msgstr "Watumiaji ambao ni sehemu ya shirika hili."
 
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
@@ -6598,6 +6603,7 @@ msgid "or import a list"
 msgstr ""
 
 #: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 msgid "Invite teammates"
 msgstr ""
 
@@ -6619,4 +6625,64 @@ msgstr ""
 
 #: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 msgid "Eventually"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Optional. Run Belcoda solo and add people whenever."
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Email addresses"
+msgstr ""
+
+#. 0: email
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Remove {0}"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "add another…"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "name@example.org"
+msgstr ""
+
+#. 0: String(emails.length)
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send {0} invitations"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send invitations"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Skip — I'll do this later"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send 1 invitation"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "1 invitation sent"
+msgstr ""
+
+#. 0: String(sent)
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "{0} invitations sent"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "1 invitation could not be sent"
+msgstr ""
+
+#. 0: String(failed)
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "{0} invitations could not be sent"
+msgstr ""
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Sending…"
 msgstr ""

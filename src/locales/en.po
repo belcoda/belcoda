@@ -421,6 +421,7 @@ msgid "Invite?"
 msgstr "Invite?"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -428,6 +429,8 @@ msgid "Admin"
 msgstr "Admin"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -435,6 +438,7 @@ msgid "Member"
 msgstr "Member"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -2967,6 +2971,7 @@ msgstr "Members"
 msgid "Users who are part of this organization."
 msgstr "Users who are part of this organization."
 
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
@@ -6600,6 +6605,7 @@ msgid "or import a list"
 msgstr "or import a list"
 
 #: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 msgid "Invite teammates"
 msgstr "Invite teammates"
 
@@ -6622,3 +6628,63 @@ msgstr "you can do the rest anytime"
 #: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 msgid "Eventually"
 msgstr "Eventually"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Optional. Run Belcoda solo and add people whenever."
+msgstr "Optional. Run Belcoda solo and add people whenever."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Email addresses"
+msgstr "Email addresses"
+
+#. 0: email
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Remove {0}"
+msgstr "Remove {0}"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "add another…"
+msgstr "add another…"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "name@example.org"
+msgstr "name@example.org"
+
+#. 0: String(emails.length)
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send {0} invitations"
+msgstr "Send {0} invitations"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send invitations"
+msgstr "Send invitations"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Skip — I'll do this later"
+msgstr "Skip — I'll do this later"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send 1 invitation"
+msgstr "Send 1 invitation"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "1 invitation sent"
+msgstr "1 invitation sent"
+
+#. 0: String(sent)
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "{0} invitations sent"
+msgstr "{0} invitations sent"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "1 invitation could not be sent"
+msgstr "1 invitation could not be sent"
+
+#. 0: String(failed)
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "{0} invitations could not be sent"
+msgstr "{0} invitations could not be sent"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Sending…"
+msgstr "Sending…"
