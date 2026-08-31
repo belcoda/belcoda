@@ -59,16 +59,25 @@
 
 	let {
 		tasks = defaultTasks(),
+		canInvite = true,
 		onaction
 	}: {
 		tasks?: OnboardingTask[];
+		canInvite?: boolean;
 		onaction?: (action: string) => void;
 	} = $props();
 
-	const doneCount = $derived(tasks.filter((task) => task.status === 'done').length);
-	const percent = $derived(tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0);
-	const nowTasks = $derived(tasks.filter((task) => task.track === 'now'));
-	const laterTasks = $derived(tasks.filter((task) => task.track === 'later'));
+	// Members cannot invite teammates, so drop that task for them entirely.
+	const visibleTasks = $derived(
+		canInvite ? tasks : tasks.filter((task) => task.action !== 'invite')
+	);
+
+	const doneCount = $derived(visibleTasks.filter((task) => task.status === 'done').length);
+	const percent = $derived(
+		visibleTasks.length ? Math.round((doneCount / visibleTasks.length) * 100) : 0
+	);
+	const nowTasks = $derived(visibleTasks.filter((task) => task.track === 'now'));
+	const laterTasks = $derived(visibleTasks.filter((task) => task.track === 'later'));
 
 	function runAction(task: OnboardingTask) {
 		if (task.action) onaction?.(task.action);
@@ -80,7 +89,7 @@
 		<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
 			<Card.Title class="text-base">{t`Finish setting up`}</Card.Title>
 			<span class="text-sm text-muted-foreground">
-				{t`${String(doneCount)} of ${String(tasks.length)} done`} — {t`you can do the rest anytime`}
+				{t`${String(doneCount)} of ${String(visibleTasks.length)} done`} — {t`you can do the rest anytime`}
 			</span>
 		</div>
 		<div class="flex items-center gap-3">
