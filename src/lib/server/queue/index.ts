@@ -13,10 +13,12 @@ type WorkerOptions = {
 	includeMetadata?: boolean; //default false
 	priority?: boolean; //default true
 	pollingIntervalSeconds?: number; //default 2
+	groupConcurrency?: number; //default 1
 };
 export const DEFAULT_QUEUE_WORKER_OPTIONS: WorkerOptions = {
 	batchSize: 1,
-	pollingIntervalSeconds: 2
+	pollingIntervalSeconds: 2,
+	groupConcurrency: 1
 };
 
 type QueueHandlers = {
@@ -33,6 +35,9 @@ type QueueDbAdapter = {
 type QueueSendOptions = {
 	db?: QueueDbAdapter;
 	startAfter?: number;
+	group?: {
+		id: string;
+	};
 };
 import type { ServerTransaction } from '@rocicorp/zero';
 function _createTxDbWrapper(trx: ServerTransaction) {
