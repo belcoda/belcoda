@@ -60,7 +60,7 @@
 		"bits-ui": "^2.18.1",
 		"clsx": "^2.1.1",
 		"concurrently": "^10.0.4",
-		"cve-lite-cli": "^1.25.0",
+		"cve-lite-cli": "^1.30.0",
 		"dotenv-cli": "^11.0.0",
 		"drizzle-kit": "^0.31.10",
 		"drizzle-orm": "^0.45.2",
