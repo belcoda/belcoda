@@ -131,6 +131,7 @@
 		"jwt-decode": "^4.0.0",
 		"lexical": "0.40.0",
 		"lru-cache": "^11.5.1",
+		"mapbox-gl": "^3.29.0",
 		"melt": "^0.44.0",
 		"nanoid": "^6.0.0",
 		"papaparse": "^5.5.3",
