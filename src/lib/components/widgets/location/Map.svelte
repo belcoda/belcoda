@@ -10,8 +10,11 @@
 	let map: mapboxgl.Map | null = $state(null);
 	let marker: mapboxgl.Marker | null = null;
 	let mapContainer: HTMLElement;
+	let resizeObserver: ResizeObserver | null = null;
 	// True while we resolve the location and the map's first render is still pending.
 	let loading = $state(true);
+	// True once onDestroy has run, so an in-flight onMount can bail out.
+	let destroyed = false;
 
 	import { type CountryCode } from '$lib/utils/country';
 	let {
@@ -27,6 +30,8 @@
 		// geolocation when we don't already have one.
 		const hasInitialCoords = latitude != null && longitude != null;
 		const location = hasInitialCoords ? null : await getLocation();
+		// Guard: the component may have been destroyed while awaiting geolocation.
+		if (destroyed) return;
 		if (location?.coords.latitude) {
 			latitude = location.coords.latitude;
 		}
@@ -42,6 +47,26 @@
 			zoom: hasCoords ? 13 : 2 // zoom into the coordinate, or start wide before framing the country
 		});
 
+		// Register these synchronously, before any further awaits below, so we
+		// never miss the load event or block click-to-place while geocoding.
+		// Let the user (re)place the marker by clicking anywhere on the map.
+		map.on('click', (event) => {
+			placeMarker(event.lngLat.lng, event.lngLat.lat);
+		});
+
+		// Hide the spinner once the map has rendered its first frame.
+		map.on('load', () => {
+			loading = false;
+		});
+
+		// Keep the map sized to its container across dialog animations/resizes.
+		if (typeof ResizeObserver !== 'undefined') {
+			resizeObserver = new ResizeObserver(() => {
+				map?.resize();
+			});
+			resizeObserver.observe(mapContainer);
+		}
+
 		// Show a draggable marker if we already have a coordinate (geolocation or props).
 		if (latitude != null && longitude != null) {
 			placeMarker(longitude, latitude);
@@ -51,20 +76,11 @@
 			map.getCanvas().style.cursor = 'crosshair';
 			const bounds = await getCountryBounds(country, accessToken);
 			// Guard: the component may have been destroyed while awaiting the geocode.
+			if (destroyed) return;
 			if (bounds && map) {
 				map.fitBounds(bounds, { padding: 40, animate: false });
 			}
 		}
-
-		// Let the user (re)place the marker by clicking anywhere on the map.
-		map?.on('click', (event) => {
-			placeMarker(event.lngLat.lng, event.lngLat.lat);
-		});
-
-		// Hide the spinner once the map has rendered its first frame.
-		map?.on('load', () => {
-			loading = false;
-		});
 	});
 
 	// Create the marker on first use, otherwise move it. Either way, sync the
@@ -92,6 +108,8 @@
 	}
 
 	onDestroy(() => {
+		destroyed = true;
+		resizeObserver?.disconnect();
 		map?.remove();
 	});
 </script>
