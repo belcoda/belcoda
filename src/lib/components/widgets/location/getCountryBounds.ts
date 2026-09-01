@@ -17,7 +17,15 @@ export const getCountryBounds = async (
 	}
 
 	// ISO code -> country name (built into the platform, no table to keep in sync).
-	const name = new Intl.DisplayNames(['en'], { type: 'region' }).of(country) ?? country;
+	// DisplayNames construction/`.of()` can throw (RangeError on a structurally invalid
+	// region code, or missing ICU data in some environments) — fall back to the raw code
+	// rather than letting that reject this function and break the caller's await.
+	let name: string = country;
+	try {
+		name = new Intl.DisplayNames(['en'], { type: 'region' }).of(country) ?? country;
+	} catch {
+		// fall back to `country`
+	}
 
 	const url = new URL('https://api.mapbox.com/search/geocode/v6/forward');
 	url.searchParams.set('q', name);
