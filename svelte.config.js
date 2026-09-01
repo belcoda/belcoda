@@ -47,8 +47,14 @@ const config = {
 					'https://cloud.umami.is', // Umami Cloud script host
 					'https://api-gateway.umami.dev', // Umami Cloud event ingestion API
 					'https://*.s3.amazonaws.com', // Global S3 endpoint (left-most wildcard is valid)
-					'https://api.country.is' // IP geolocation during new organization creation
+					'https://api.country.is', // IP geolocation during new organization creation
+					'https://api.mapbox.com', // Mapbox styles, tiles, sprites, glyphs
+					'https://events.mapbox.com' // Mapbox GL JS telemetry
 					// Regional S3 upload host and Zero sync added at runtime in hooks.server.ts
+				],
+				'worker-src': [
+					"'self'",
+					'blob:' // Mapbox GL JS creates its web workers from blob: URLs
 				],
 				'frame-src': [
 					'https://www.youtube.com', // Embedded YouTube videos
