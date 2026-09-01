@@ -68,6 +68,6 @@ test.describe('Settings: Organization Themes', () => {
 		await themesPage.goto();
 		await expect(themesPage.themesForm).toBeVisible({ timeout: 15_000 });
 		await themesPage.saveButton.click();
-		await expect(page).toHaveURL('/settings', { timeout: 30_000 });
+		await expect(page).toHaveURL('/settings', { timeout: 15_000 });
 	});
 });
