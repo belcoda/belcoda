@@ -85,6 +85,7 @@ msgstr "Couleur d’accentuation des états de réussite et des éléments secon
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -93,6 +94,7 @@ msgstr "Couleur d’accentuation des états de réussite et des éléments secon
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
@@ -950,6 +952,7 @@ msgstr "Nom de famille"
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
@@ -1742,6 +1745,7 @@ msgstr "Supprimer la question"
 msgid "Remove question"
 msgstr "Créer une personne"
 
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 msgid "Create Person"
 msgstr "Coordonnées"
@@ -4077,27 +4081,37 @@ msgstr "Soumettre"
 msgid ""
 "By clicking continue, you agree to our <a href=\"https://www.belcoda.com/terms-of-service\">Terms of Service</a>\n"
 "\t\tand <a href=\"https://www.belcoda.com/privacy\">Privacy Policy</a>."
-msgstr "En cliquant sur Continuer, vous acceptez nos <a href=\"https://www.belcoda.com/terms-of-service\">Conditions d’utilisation</a>\n\t\tet notre <a href=\"https://www.belcoda.com/privacy\">Politique de confidentialité</a>."
+msgstr ""
+"En cliquant sur Continuer, vous acceptez nos <a href=\"https://www.belcoda.com/terms-of-service\">Conditions d’utilisation</a>\n"
+"\t\tet notre <a href=\"https://www.belcoda.com/privacy\">Politique de confidentialité</a>."
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid ""
 "If the person is subscribed, they will be able to receive notifications\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\tand messages."
-msgstr "Si la personne est abonnée, elle pourra recevoir des notifications\n\t\t\t\t\t\t\t\t\t\t\t\t\tet des messages."
+msgstr ""
+"Si la personne est abonnée, elle pourra recevoir des notifications\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tet des messages."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid ""
 "This is a URL-friendly identifier for the event and is part of the event link.\n"
 "\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Il s’agit d’un identifiant compatible avec les URL pour l’événement, qui fait partie du lien de l’événement.\n\t\t\t\t\t\t\t\t\t\t\tIl doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
+msgstr ""
+"Il s’agit d’un identifiant compatible avec les URL pour l’événement, qui fait partie du lien de l’événement.\n"
+"\t\t\t\t\t\t\t\t\t\t\tIl doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n"
+"\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid ""
 "This is a URL-friendly identifier for the petition and is part of the petition\n"
 "\t\t\t\t\t\t\t\t\t\t\tlink. It must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Il s’agit d’un identifiant compatible avec les URL pour la pétition, qui fait partie du lien\n\t\t\t\t\t\t\t\t\t\t\tde la pétition. Il doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
+msgstr ""
+"Il s’agit d’un identifiant compatible avec les URL pour la pétition, qui fait partie du lien\n"
+"\t\t\t\t\t\t\t\t\t\t\tde la pétition. Il doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n"
+"\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
@@ -4109,7 +4123,10 @@ msgid ""
 "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Il s’agit d’un identifiant compatible avec les URL pour l’organisation, qui peut être utilisé dans les liens vers des événements, pétitions et autres pages.\n\t\t\t\t\t\t\t\t\t\t\t\t\tIl doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n\t\t\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
+msgstr ""
+"Il s’agit d’un identifiant compatible avec les URL pour l’organisation, qui peut être utilisé dans les liens vers des événements, pétitions et autres pages.\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tIl doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
 
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Failed to update petition"
@@ -4186,7 +4203,9 @@ msgstr "Impossible de supprimer le webhook"
 msgid ""
 "Personal details may differ the responses provided by the attendee if their recorded personal\n"
 "\t\t\tinformation in Belcoda has been modified or updated since they signed up for the event."
-msgstr "Les informations personnelles peuvent différer des réponses fournies par la personne participante si ses informations personnelles\n\t\t\tenregistrées dans Belcoda ont été modifiées ou mises à jour depuis son inscription à l’événement."
+msgstr ""
+"Les informations personnelles peuvent différer des réponses fournies par la personne participante si ses informations personnelles\n"
+"\t\t\tenregistrées dans Belcoda ont été modifiées ou mises à jour depuis son inscription à l’événement."
 
 #: src/lib/components/widgets/communications/recipients/getOptions.svelte.ts
 msgid "No show (ever)"
@@ -4244,13 +4263,17 @@ msgstr "Impossible de lancer le paiement Stripe"
 msgid ""
 "A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
 "\t\t\t\tone by clicking the button below."
-msgstr "Un compte WhatsApp Business est nécessaire pour utiliser les fonctionnalités de messagerie WhatsApp. Vous pouvez en créer\n\t\t\t\tun en cliquant sur le bouton ci-dessous."
+msgstr ""
+"Un compte WhatsApp Business est nécessaire pour utiliser les fonctionnalités de messagerie WhatsApp. Vous pouvez en créer\n"
+"\t\t\t\tun en cliquant sur le bouton ci-dessous."
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
 "When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
 "\t\t\t\tand create a WhatsApp Business Account."
-msgstr "Lorsque vous lancerez l’inscription WhatsApp, vous devrez vous connecter à votre compte Facebook\n\t\t\t\tet créer un compte WhatsApp Business."
+msgstr ""
+"Lorsque vous lancerez l’inscription WhatsApp, vous devrez vous connecter à votre compte Facebook\n"
+"\t\t\t\tet créer un compte WhatsApp Business."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email signature verification status updated"
@@ -4281,7 +4304,10 @@ msgid ""
 "Email from signatures are the names and email addresses that are used to send emails on behalf\n"
 "  of the organization. You can add as many as you want, but they must be attached to a\n"
 "  non-public email address that you control."
-msgstr "Les signatures d’expéditeur correspondent aux noms et adresses e-mail utilisés pour envoyer des e-mails au nom\n  de l’organisation. Vous pouvez en ajouter autant que vous le souhaitez, mais elles doivent être associées à une\n  adresse e-mail non publique que vous contrôlez."
+msgstr ""
+"Les signatures d’expéditeur correspondent aux noms et adresses e-mail utilisés pour envoyer des e-mails au nom\n"
+"  de l’organisation. Vous pouvez en ajouter autant que vous le souhaitez, mais elles doivent être associées à une\n"
+"  adresse e-mail non publique que vous contrôlez."
 
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
 msgid "Cancelled"
@@ -6171,7 +6197,8 @@ msgid "Favourite"
 msgstr "Favori"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte
 msgid "Favourites only"
 msgstr "Favoris uniquement"
 
@@ -6259,6 +6286,18 @@ msgstr "Note mise à jour"
 msgid "Failed to update note"
 msgstr "Impossible de mettre à jour la note"
 
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No favourite people"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Favourite a person using the star in their header to see them here."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Show all people"
+msgstr ""
+
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
 msgstr "Par défaut"
@@ -6339,3 +6378,28 @@ msgstr "Liste numérotée"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Text color"
 msgstr "Couleur du texte"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Remove location"
+msgstr "Supprimer l'emplacement"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Change"
+msgstr "Modifier"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Select location"
+msgstr "Sélectionner l'emplacement"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Click the map to drop a pin, then drag it to fine-tune the exact spot."
+msgstr "Cliquez sur la carte pour placer un repère, puis faites-le glisser pour ajuster l'emplacement exact."
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "No location selected yet"
+msgstr "Aucun emplacement sélectionné pour le moment"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Save location"
+msgstr "Enregistrer l'emplacement"

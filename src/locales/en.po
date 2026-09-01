@@ -85,6 +85,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -93,6 +94,7 @@ msgstr "Accent color for success states and secondary elements on public pages."
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
@@ -950,6 +952,7 @@ msgstr "Family name"
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
@@ -1742,6 +1745,7 @@ msgstr "Are you sure you want to remove this question?"
 msgid "Remove question"
 msgstr "Remove question"
 
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 msgid "Create Person"
 msgstr "Create Person"
@@ -6376,3 +6380,28 @@ msgstr "Numbered list"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Text color"
 msgstr "Text color"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Remove location"
+msgstr "Remove location"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Change"
+msgstr "Change"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Select location"
+msgstr "Select location"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Click the map to drop a pin, then drag it to fine-tune the exact spot."
+msgstr "Click the map to drop a pin, then drag it to fine-tune the exact spot."
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "No location selected yet"
+msgstr "No location selected yet"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Save location"
+msgstr "Save location"

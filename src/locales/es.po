@@ -85,6 +85,7 @@ msgstr ""
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -93,6 +94,7 @@ msgstr ""
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
@@ -950,6 +952,7 @@ msgstr ""
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 #: src/routes/(app)/events/[eventId]/edit/+page.svelte
 #: src/routes/(app)/events/new/+page.svelte
@@ -1742,6 +1745,7 @@ msgstr ""
 msgid "Remove question"
 msgstr ""
 
+#: src/routes/(app)/community/locationtest/+page.svelte
 #: src/routes/(app)/community/person/new/+page.svelte
 msgid "Create Person"
 msgstr ""
@@ -6352,3 +6356,28 @@ msgstr "Lista numerada"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Text color"
 msgstr "Color del texto"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Remove location"
+msgstr "Eliminar ubicación"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Change"
+msgstr "Cambiar"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Select location"
+msgstr "Seleccionar ubicación"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Click the map to drop a pin, then drag it to fine-tune the exact spot."
+msgstr "Haz clic en el mapa para colocar un marcador y luego arrástralo para ajustar el punto exacto."
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "No location selected yet"
+msgstr "Aún no se ha seleccionado ninguna ubicación"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Save location"
+msgstr "Guardar ubicación"
