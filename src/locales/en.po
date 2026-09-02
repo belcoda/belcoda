@@ -6327,6 +6327,8 @@ msgid "{0} has invited you to join {1} on Belcoda"
 msgstr "{0} has invited you to join {1} on Belcoda"
 
 #. 0: new Date().getFullYear().toString(); 1: organizationName
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/send_broadcast_email.ts
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copyright {0} {1}"
 msgstr "Copyright {0} {1}"

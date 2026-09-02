@@ -6325,6 +6325,8 @@ msgid "{0} has invited you to join {1} on Belcoda"
 msgstr "{0} vous a invité à rejoindre {1} sur Belcoda"
 
 #. 0: new Date().getFullYear().toString(); 1: organizationName
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/send_broadcast_email.ts
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copyright {0} {1}"
 msgstr "Copyright {0} {1}"
@@ -6397,6 +6399,7 @@ msgstr "Vérifier l'e-mail"
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
 msgstr "Vérifiez votre adresse e-mail"
+
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
 msgstr "Par défaut"
