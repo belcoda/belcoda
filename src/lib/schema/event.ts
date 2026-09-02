@@ -27,6 +27,7 @@ export const eventSchema = v.object({
 	locality: v.nullable(helpers.mediumString),
 	region: v.nullable(helpers.mediumString),
 	postcode: v.nullable(helpers.shortString),
+	location: v.nullable(helpers.geographyPoint),
 
 	country: helpers.countryCode,
 	timezone: helpers.shortString,
