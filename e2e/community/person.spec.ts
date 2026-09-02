@@ -457,12 +457,11 @@ test.describe.serial('Community and person pages', () => {
 		await expect(liveInlineNote.locator('strong[data-note-mention]')).toHaveCount(0);
 	});
 
-	// Skipped: this spec opened NotificationInbox via the dashboard notification
-	// bell ("Note mention", "View note"). NotificationBell is commented out on the
-	// dashboard, desktop sidebar, and mobile top nav, so that inbox is not mounted.
-	// Restore the previous inbox assertions from git history when the bell returns.
-	// Mention authoring stays covered by the notes-mention spec above.
-	test.skip('mentioned users can open a note notification from the dashboard', async () => {});
+	// Dashboard mention-inbox e2e is omitted while NotificationBell is commented
+	// out on the dashboard, desktop sidebar, and mobile top nav. The inbox UI
+	// ("Note mention", "View note") only mounts via that bell. Restore the
+	// previous spec from git history when the bell is shown again. Mention
+	// authoring stays covered by the notes-mention spec above.
 
 	test('composer mode resets to message after navigating away and back', async ({ page }) => {
 		await loginAsOwner(page, PROJECT);
