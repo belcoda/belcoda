@@ -1,7 +1,6 @@
 import sendHtmlEmail from '$lib/server/utils/email/send_html_email';
 import { type Locale } from '$lib/utils/language';
-import { Renderer } from '@better-svelte-email/server';
-const renderer = new Renderer();
+import { renderer } from './renderer';
 import SingleButtonTransactional from '$lib/emails/templates/SingleButtonTransactional.svelte';
 import type { Props as SingleButtonTransactionalProps } from '$lib/emails/templates/SingleButtonTransactional.svelte';
 import { t } from '$lib/index.svelte';

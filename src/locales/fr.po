@@ -2105,6 +2105,8 @@ msgstr "Saisissez votre adresse e-mail pour réinitialiser votre mot de passe"
 msgid "Enter your email to reset your password"
 msgstr "Réinitialiser le mot de passe"
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset password"
@@ -2546,6 +2548,7 @@ msgstr "Créer un nouvel e-mail"
 msgid "Reset token is missing. Please use the link from your email."
 msgstr "Le jeton de réinitialisation est manquant. Utilisez le lien reçu par e-mail."
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset your password"
@@ -4455,8 +4458,12 @@ msgstr "Voir la pétition"
 
 #. 0: petitionUrl
 #. 0: url
+#. 0: url
+#. 0: url
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copy and paste the following link into your browser {0}"
 msgstr "Copiez et collez le lien suivant dans votre navigateur : {0}"
 
@@ -4465,12 +4472,18 @@ msgid "Belcoda"
 msgstr "Belcoda"
 
 #. 0: String(year)
+#. 0: new Date().getFullYear().toString()
+#. 0: new Date().getFullYear().toString()
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copyright {0} Belcoda"
 msgstr "Copyright {0} Belcoda"
 
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Belcoda logo"
 msgstr "Logo Belcoda"
 
@@ -6198,7 +6211,8 @@ msgid "Favourite"
 msgstr "Favori"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte
 msgid "Favourites only"
 msgstr "Favoris uniquement"
 
@@ -6289,7 +6303,7 @@ msgstr "Impossible de mettre à jour la note"
 #. 0: inviterName; 1: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
-msgstr "{0} vous a invité à rejoindre {1} sur Belcoda. Cliquez sur le bouton ci-dessous pour accepter l’invitation et commencer."
+msgstr "{0} vous a invité à rejoindre {1} sur Belcoda. Cliquez sur le bouton ci-dessous pour accepter l'invitation et commencer."
 
 #. 0: organizationName
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
@@ -6331,6 +6345,49 @@ msgstr "{0} vous a mentionné dans une note."
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "View note"
 msgstr "Voir la note"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No favourite people"
+msgstr "Aucune personne favorite"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Favourite a person using the star in their header to see them here."
+msgstr "Ajoutez une personne aux favoris à l'aide de l'étoile dans son en-tête pour la voir ici."
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Show all people"
+msgstr "Afficher toutes les personnes"
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
+msgstr "Nous avons reçu une demande de réinitialisation de votre mot de passe. Si c'était bien vous, cliquez sur le bouton ci-dessous pour en créer un nouveau. Sinon, vous pouvez ignorer cet e-mail en toute sécurité — votre compte restera protégé."
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "Click below to create a new password. If you didn't request this, just ignore this email."
+msgstr "Cliquez ci-dessous pour créer un nouveau mot de passe. Si vous n'avez pas fait cette demande, ignorez simplement cet e-mail."
+
+#~ msgid "Reset Password"
+#~ msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Security verification"
+msgstr "Vérification de sécurité"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
+msgstr "Veuillez vérifier votre adresse e-mail pour des raisons de sécurité. Cliquez sur le bouton ci-dessous pour vérifier votre adresse e-mail."
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes"
+msgstr "Veuillez vérifier votre adresse e-mail pour des raisons de sécurité"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify email"
+msgstr "Vérifier l'e-mail"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify your email address"
+msgstr "Vérifiez votre adresse e-mail"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
