@@ -15,6 +15,7 @@ import {
 	primaryKey,
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
+import { geographyPoint } from '$lib/schema/custom-types/geography';
 
 import type {
 	OrganizationSchema,
@@ -916,6 +917,9 @@ export const event = pgTable(
 		locality: text('locality'),
 		region: text('region'),
 		postcode: text('postcode'),
+		// PostGIS geography(Point,4326) stored as { x: longitude, y: latitude }.
+		// Nullable: online-only events (and legacy rows) have no coordinates.
+		location: geographyPoint('location'),
 
 		country: text('country').$type<CountryCode>().notNull(),
 		timezone: text('timezone').notNull(),
@@ -936,7 +940,10 @@ export const event = pgTable(
 		archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
 		cancelledAt: timestamp('cancelled_at', { withTimezone: true, mode: 'date' })
 	},
-	(table) => [unique('event_slug_unique').on(table.organizationId, table.slug)]
+	(table) => [
+		unique('event_slug_unique').on(table.organizationId, table.slug),
+		index('event_location_gist').using('gist', table.location)
+	]
 );
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
 type EventValibotMatchesDrizzle = IsTrue<
