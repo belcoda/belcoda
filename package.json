@@ -57,7 +57,7 @@
 		"@types/papaparse": "^5.5.2",
 		"@vitest/browser": "^4.1.10",
 		"@vitest/browser-playwright": "^4.1.10",
-		"bits-ui": "^2.18.1",
+		"bits-ui": "^2.19.0",
 		"clsx": "^2.1.1",
 		"concurrently": "^10.0.4",
 		"cve-lite-cli": "^1.25.0",
