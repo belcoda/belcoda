@@ -41,10 +41,7 @@ export const shortStringEmpty = v.pipe(
 export const longitude = v.pipe(
 	v.number(),
 	v.minValue(-180, 'Longitude must be between -180 and 180'),
-	v.maxValue(180, 'Longitude must be between -180 and 180'),
-	v.number(),
-	v.minValue(-90, 'Latitude must be between -90 and 90'),
-	v.maxValue(90, 'Latitude must be between -90 and 90')
+	v.maxValue(180, 'Longitude must be between -180 and 180')
 );
 export const latitude = v.pipe(
 	v.number(),
