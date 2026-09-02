@@ -15,6 +15,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import ImageUpload from '$lib/components/ui/file-upload/ImageUpload.svelte';
+	import { MAX_IMAGE_UPLOAD_BYTES } from '$lib/components/ui/file-upload/helpers';
 	import { templateFragments, type TemplateFragmentHelper } from '$lib/utils/string/handlebars';
 	import { cn } from '$lib/utils.js';
 	import { t } from '$lib/index.svelte';
@@ -49,10 +50,6 @@
 	// explicit prop, otherwise use the active app org (null-safe: hides the
 	// image button when there is no org context rather than throwing).
 	const resolvedOrganizationId = $derived(organizationId ?? appState.optionalOrganizationId);
-
-	// Max size for editor image uploads. Enforced client-side before upload
-	// (the Tigris client-upload handshake exposes no server-side size hook).
-	const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB
 
 	let editorState = $state<{ editor: Editor | null }>({ editor: null });
 
