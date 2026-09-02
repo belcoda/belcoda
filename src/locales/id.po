@@ -85,6 +85,7 @@ msgstr "Warna aksen untuk status berhasil dan elemen sekunder di halaman publik.
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -302,6 +303,7 @@ msgstr "Nama tampilan"
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
@@ -980,6 +982,7 @@ msgstr "Tambah"
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Phone number"
 msgstr "Nomor telepon"
 
@@ -2730,11 +2733,13 @@ msgstr "dari target"
 #~ msgid "Return to petition"
 #~ msgstr ""
 
-#~ msgid "First name"
-#~ msgstr ""
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "First name"
+msgstr "Nama depan"
 
-#~ msgid "Last name"
-#~ msgstr ""
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Last name"
+msgstr "Nama belakang"
 
 #~ msgid "your@email.com"
 #~ msgstr ""
@@ -3395,6 +3400,7 @@ msgstr "Anda yakin ingin menghapus tanda tangan ini?"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Organization name"
 msgstr "Nama organisasi"
@@ -4219,6 +4225,8 @@ msgstr "Tidak dapat memperbarui foto profil. Silakan coba lagi."
 msgid "Import started successfully"
 msgstr "Impor berhasil dimulai"
 
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
 msgstr "Pengunggahan gagal. Silakan coba lagi."
@@ -4955,6 +4963,7 @@ msgstr "Petisi"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Organization slug"
 msgstr "Slug organisasi"
 
@@ -6348,15 +6357,15 @@ msgstr ""
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
-msgstr ""
+msgstr "Tidak ada orang favorit"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Favourite a person using the star in their header to see them here."
-msgstr ""
+msgstr "Jadikan seseorang favorit menggunakan bintang di headernya untuk melihatnya di sini."
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Show all people"
-msgstr ""
+msgstr "Tampilkan semua orang"
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
@@ -6388,7 +6397,6 @@ msgstr ""
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
 msgstr ""
-
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
 msgstr "Bawaan"
@@ -6469,3 +6477,73 @@ msgstr "Daftar bernomor"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Text color"
 msgstr "Warna teks"
+
+#~ msgid "New editor (preview)"
+#~ msgstr ""
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Insert image"
+msgstr "Sisipkan gambar"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Insert fragment"
+msgstr "Sisipkan fragmen"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing."
+msgstr "Sisipkan placeholder yang terisi dengan detail setiap penerima. Teks cadangan digunakan saat detail tersebut tidak tersedia."
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Fragment"
+msgstr "Fragmen"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Select a fragment"
+msgstr "Pilih fragmen"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Backup text"
+msgstr "Teks cadangan"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "e.g. friend"
+msgstr "mis. teman"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Preview"
+msgstr "Pratinjau"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Insert"
+msgstr "Sisipkan"
+
+#~ msgid "Image is too large. Please choose a file under {0}."
+#~ msgstr ""
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Cover preview"
+msgstr "Pratinjau sampul"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Change image"
+msgstr "Ubah gambar"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Click to upload an image"
+msgstr "Klik untuk mengunggah gambar"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "PNG, JPG, or WebP"
+msgstr "PNG, JPG, atau WebP"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Uploading…"
+msgstr "Mengunggah…"
+
+#. 0: limitLabel
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Image is too large. Please choose a file no larger than {0}."
+msgstr "Gambar terlalu besar. Silakan pilih file yang tidak lebih besar dari {0}."
