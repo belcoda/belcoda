@@ -42,7 +42,7 @@
 				<p class="mt-1 text-sm text-muted-foreground">{dateLabel}</p>
 			</div>
 			<div class="flex items-center gap-2">
-				<!-- <NotificationBell /> -->
+				<NotificationBell />
 				<Button href="/events/new" size="sm">
 					<PlusIcon class="size-4" />
 					New event

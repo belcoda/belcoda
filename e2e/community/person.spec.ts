@@ -493,8 +493,10 @@ test.describe.serial('Community and person pages', () => {
 
 		await loginAsAdmin(page, PROJECT);
 		await page.goto('/dashboard');
-		await page.getByRole('button', { name: 'Open notifications' }).click();
-		const inbox = page.locator('[data-slot="sheet-content"]');
+		const notificationsBell = page.getByTestId('notifications-bell');
+		await expect(notificationsBell).toBeVisible({ timeout: 15_000 });
+		await notificationsBell.click();
+		const inbox = page.getByTestId('notifications-inbox');
 		await expect(inbox.getByText('Note mention')).toBeVisible({ timeout: 15_000 });
 		await expect(inbox.getByText(`${noteAuthor.name} mentioned you in a note`)).toBeVisible();
 		const viewNote = inbox.getByRole('link', { name: 'View note' });

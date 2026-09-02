@@ -24,6 +24,7 @@
 				size="icon"
 				class={cn('relative', className)}
 				aria-label={t`Open notifications`}
+				data-testid="notifications-bell"
 			>
 				<BellIcon class="size-5" />
 				{#if unreadCount > 0}
@@ -36,7 +37,7 @@
 			</Button>
 		{/snippet}
 	</Sheet.Trigger>
-	<Sheet.Content side="right" class="w-full p-0 sm:max-w-md">
+	<Sheet.Content side="right" class="w-full p-0 sm:max-w-md" data-testid="notifications-inbox">
 		<NotificationInbox />
 	</Sheet.Content>
 </Sheet.Root>
