@@ -53,6 +53,8 @@ import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
 import type { SerializedEditorState } from 'lexical';
+import type { PetitionSchema } from '$lib/schema/petition/petition';
+import type { PetitionSignatureSchema } from '$lib/schema/petition/petition-signature';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
@@ -900,6 +902,7 @@ export const event = pgTable(
 		title: text('title').notNull(),
 		shortDescription: text('short_description').notNull(),
 		description: jsonb('description').$type<SerializedEditorState>(),
+		pageHtml: text('page_html'),
 
 		published: boolean('published').notNull(),
 
@@ -1042,6 +1045,7 @@ export const petition = pgTable('petition', {
 	title: text('title').notNull(),
 	description: jsonb('description'),
 	shortDescription: text('short_description').notNull(),
+	pageHtml: text('page_html'),
 
 	published: boolean('published').notNull(),
 
@@ -1057,6 +1061,13 @@ export const petition = pgTable('petition', {
 	archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
 	deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
 });
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type PetitionValibotMatchesDrizzle = IsTrue<
+	PetitionSchema extends typeof petition.$inferSelect ? true : false
+>;
+type PetitionDrizzleMatchesValibot = IsTrue<
+	typeof petition.$inferSelect extends PetitionSchema ? true : false
+>;
 
 export const petitionSignature = pgTable(
 	'petition_signature',
@@ -1085,6 +1096,13 @@ export const petitionSignature = pgTable(
 	},
 	(table) => [unique('petition_signature_unique').on(table.petitionId, table.personId)]
 );
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type PetitionSignatureValibotMatchesDrizzle = IsTrue<
+	PetitionSignatureSchema extends typeof petitionSignature.$inferSelect ? true : false
+>;
+type PetitionSignatureDrizzleMatchesValibot = IsTrue<
+	typeof petitionSignature.$inferSelect extends PetitionSignatureSchema ? true : false
+>;
 
 export const actionCode = pgTable(
 	'action_code',

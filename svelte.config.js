@@ -47,6 +47,8 @@ const config = {
 					'https://cloud.umami.is', // Umami Cloud script host
 					'https://api-gateway.umami.dev', // Umami Cloud event ingestion API
 					'https://*.s3.amazonaws.com', // Global S3 endpoint (left-most wildcard is valid)
+					'https://*.t3.storage.dev', // Tigris object storage direct browser PUT uploads (virtual-hosted style: bucket is the left-most label)
+					'https://t3.storage.dev', // Tigris object storage apex (path-style uploads: bucket is the first path segment)
 					'https://api.country.is' // IP geolocation during new organization creation
 					// Regional S3 upload host and Zero sync added at runtime in hooks.server.ts
 				],

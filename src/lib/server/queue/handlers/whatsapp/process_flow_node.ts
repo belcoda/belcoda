@@ -153,11 +153,26 @@ export async function processFlowNodeAction({
 			}
 		}
 	});
+	// A message/templateMessage node that has buttons renders per-button handles and
+	// no bottom handle, so its ONLY valid continuations are button-press edges
+	// (fired from incoming_message on a button reply). A handleless edge from such a
+	// node is an orphan left over from before it had buttons; auto-following it here
+	// would send the buttoned message AND advance the flow, then advance again on the
+	// button press — a double advance (BEL-1058). Defensive against flows already
+	// persisted in that state, since the editor-side prune only fixes edits going
+	// forward. Read `buttons` defensively: it only exists on message/templateMessage.
+	const sourceButtons = (node.data as { buttons?: unknown } | null | undefined)?.buttons;
+	const sourceHasButtons = Array.isArray(sourceButtons) && sourceButtons.length > 0;
 	//check edges for any nodes with source of message id
 	const followUpNodes = thread.flow.edges.filter((edge) => edge.source === nodeId);
 	for (const followUpNode of followUpNodes) {
-		if (followUpNode.sourceHandle) {
+		if (followUpNode.sourceHandle != null) {
 			//this means it's a button action, so we don't want to trigger it automatically for those nodes, right? Only on incoming button press
+			//Nullish (`!= null`) test matches the prune helpers' definition of "handleless".
+			continue;
+		}
+		if (sourceHasButtons) {
+			// Handleless edge from a buttoned node — orphaned, never an auto-continuation.
 			continue;
 		}
 		const followUpNodeData = thread.flow.nodes.find((node) => node.id === followUpNode.target);

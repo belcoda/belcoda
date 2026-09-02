@@ -22,7 +22,11 @@
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
 	import TemplateVariablePicker from '$lib/components/templates/TemplateVariablePicker.svelte';
 	import { t } from '$lib/index.svelte';
-	import { taint, pruneEdgesForButtons } from '$lib/components/flow/flow_state.svelte';
+	import {
+		taint,
+		pruneEdgesForButtons,
+		pruneHandlelessEdgesForButtons
+	} from '$lib/components/flow/flow_state.svelte';
 	import Combobox from './template/Combobox.svelte';
 	import { parseTemplate } from './template/parseTemplate';
 	import { z } from '$lib/zero.svelte';
@@ -89,6 +93,13 @@
 		// fresh ids, and a shrunk template truncates them. Scoped to this node's
 		// button handles, so a param-only edit (button set unchanged) is a no-op.
 		pruneEdgesForButtons(id, payload.buttons ?? []);
+		// Swapping a no-buttons template for one WITH buttons removes this node's
+		// bottom source handle, orphaning any handleless continuation edge drawn
+		// earlier. Drop it too, or the runtime double-advances (BEL-1058). No-op
+		// (no handleless edges to drop) while the selected template has no buttons.
+		if ((payload.buttons?.length ?? 0) > 0) {
+			pruneHandlelessEdgesForButtons(id);
+		}
 	}
 
 	const template = $derived.by(() => z.createQuery(queries.whatsappTemplate.read({ templateId })));

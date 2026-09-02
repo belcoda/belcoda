@@ -85,6 +85,7 @@ msgstr "Couleur d’accentuation des états de réussite et des éléments secon
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -302,6 +303,7 @@ msgstr "Nom d’affichage"
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/EditModal.svelte
 #: src/routes/(app)/settings/email/send_signatures/_components/SystemSignature.svelte
@@ -980,6 +982,7 @@ msgstr "Ajouter"
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
 #: src/lib/components/ui/custom-select/phone-number/phone-number.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Phone number"
 msgstr "Numéro de téléphone"
 
@@ -2105,6 +2108,8 @@ msgstr "Saisissez votre adresse e-mail pour réinitialiser votre mot de passe"
 msgid "Enter your email to reset your password"
 msgstr "Réinitialiser le mot de passe"
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset password"
@@ -2546,6 +2551,7 @@ msgstr "Créer un nouvel e-mail"
 msgid "Reset token is missing. Please use the link from your email."
 msgstr "Le jeton de réinitialisation est manquant. Utilisez le lien reçu par e-mail."
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset your password"
@@ -2727,11 +2733,13 @@ msgstr "sur l’objectif"
 #~ msgid "Return to petition"
 #~ msgstr ""
 
-#~ msgid "First name"
-#~ msgstr ""
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "First name"
+msgstr "Prénom"
 
-#~ msgid "Last name"
-#~ msgstr ""
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Last name"
+msgstr "Nom de famille"
 
 #~ msgid "your@email.com"
 #~ msgstr ""
@@ -3392,6 +3400,7 @@ msgstr "Voulez-vous vraiment supprimer cette signature ?"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Organization name"
 msgstr "Nom de l’organisation"
@@ -3524,6 +3533,7 @@ msgstr "Premiers pas avec Belcoda"
 msgid "Decline invitation"
 msgstr "Refuser l’invitation"
 
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Accept invitation"
 msgstr "Accepter l’invitation"
@@ -4077,27 +4087,37 @@ msgstr "Soumettre"
 msgid ""
 "By clicking continue, you agree to our <a href=\"https://www.belcoda.com/terms-of-service\">Terms of Service</a>\n"
 "\t\tand <a href=\"https://www.belcoda.com/privacy\">Privacy Policy</a>."
-msgstr "En cliquant sur Continuer, vous acceptez nos <a href=\"https://www.belcoda.com/terms-of-service\">Conditions d’utilisation</a>\n\t\tet notre <a href=\"https://www.belcoda.com/privacy\">Politique de confidentialité</a>."
+msgstr ""
+"En cliquant sur Continuer, vous acceptez nos <a href=\"https://www.belcoda.com/terms-of-service\">Conditions d’utilisation</a>\n"
+"\t\tet notre <a href=\"https://www.belcoda.com/privacy\">Politique de confidentialité</a>."
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid ""
 "If the person is subscribed, they will be able to receive notifications\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\tand messages."
-msgstr "Si la personne est abonnée, elle pourra recevoir des notifications\n\t\t\t\t\t\t\t\t\t\t\t\t\tet des messages."
+msgstr ""
+"Si la personne est abonnée, elle pourra recevoir des notifications\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tet des messages."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid ""
 "This is a URL-friendly identifier for the event and is part of the event link.\n"
 "\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Il s’agit d’un identifiant compatible avec les URL pour l’événement, qui fait partie du lien de l’événement.\n\t\t\t\t\t\t\t\t\t\t\tIl doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
+msgstr ""
+"Il s’agit d’un identifiant compatible avec les URL pour l’événement, qui fait partie du lien de l’événement.\n"
+"\t\t\t\t\t\t\t\t\t\t\tIl doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n"
+"\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid ""
 "This is a URL-friendly identifier for the petition and is part of the petition\n"
 "\t\t\t\t\t\t\t\t\t\t\tlink. It must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Il s’agit d’un identifiant compatible avec les URL pour la pétition, qui fait partie du lien\n\t\t\t\t\t\t\t\t\t\t\tde la pétition. Il doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
+msgstr ""
+"Il s’agit d’un identifiant compatible avec les URL pour la pétition, qui fait partie du lien\n"
+"\t\t\t\t\t\t\t\t\t\t\tde la pétition. Il doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n"
+"\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
@@ -4109,7 +4129,10 @@ msgid ""
 "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Il s’agit d’un identifiant compatible avec les URL pour l’organisation, qui peut être utilisé dans les liens vers des événements, pétitions et autres pages.\n\t\t\t\t\t\t\t\t\t\t\t\t\tIl doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n\t\t\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
+msgstr ""
+"Il s’agit d’un identifiant compatible avec les URL pour l’organisation, qui peut être utilisé dans les liens vers des événements, pétitions et autres pages.\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tIl doit être unique et ne peut contenir que des lettres minuscules, des chiffres et\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tdes traits d’union."
 
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Failed to update petition"
@@ -4186,7 +4209,9 @@ msgstr "Impossible de supprimer le webhook"
 msgid ""
 "Personal details may differ the responses provided by the attendee if their recorded personal\n"
 "\t\t\tinformation in Belcoda has been modified or updated since they signed up for the event."
-msgstr "Les informations personnelles peuvent différer des réponses fournies par la personne participante si ses informations personnelles\n\t\t\tenregistrées dans Belcoda ont été modifiées ou mises à jour depuis son inscription à l’événement."
+msgstr ""
+"Les informations personnelles peuvent différer des réponses fournies par la personne participante si ses informations personnelles\n"
+"\t\t\tenregistrées dans Belcoda ont été modifiées ou mises à jour depuis son inscription à l’événement."
 
 #: src/lib/components/widgets/communications/recipients/getOptions.svelte.ts
 msgid "No show (ever)"
@@ -4200,6 +4225,8 @@ msgstr "Impossible de mettre à jour la photo de profil. Veuillez réessayer."
 msgid "Import started successfully"
 msgstr "Import démarré"
 
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
 msgstr "Échec du téléversement. Veuillez réessayer."
@@ -4244,13 +4271,17 @@ msgstr "Impossible de lancer le paiement Stripe"
 msgid ""
 "A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
 "\t\t\t\tone by clicking the button below."
-msgstr "Un compte WhatsApp Business est nécessaire pour utiliser les fonctionnalités de messagerie WhatsApp. Vous pouvez en créer\n\t\t\t\tun en cliquant sur le bouton ci-dessous."
+msgstr ""
+"Un compte WhatsApp Business est nécessaire pour utiliser les fonctionnalités de messagerie WhatsApp. Vous pouvez en créer\n"
+"\t\t\t\tun en cliquant sur le bouton ci-dessous."
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
 "When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
 "\t\t\t\tand create a WhatsApp Business Account."
-msgstr "Lorsque vous lancerez l’inscription WhatsApp, vous devrez vous connecter à votre compte Facebook\n\t\t\t\tet créer un compte WhatsApp Business."
+msgstr ""
+"Lorsque vous lancerez l’inscription WhatsApp, vous devrez vous connecter à votre compte Facebook\n"
+"\t\t\t\tet créer un compte WhatsApp Business."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email signature verification status updated"
@@ -4281,7 +4312,10 @@ msgid ""
 "Email from signatures are the names and email addresses that are used to send emails on behalf\n"
 "  of the organization. You can add as many as you want, but they must be attached to a\n"
 "  non-public email address that you control."
-msgstr "Les signatures d’expéditeur correspondent aux noms et adresses e-mail utilisés pour envoyer des e-mails au nom\n  de l’organisation. Vous pouvez en ajouter autant que vous le souhaitez, mais elles doivent être associées à une\n  adresse e-mail non publique que vous contrôlez."
+msgstr ""
+"Les signatures d’expéditeur correspondent aux noms et adresses e-mail utilisés pour envoyer des e-mails au nom\n"
+"  de l’organisation. Vous pouvez en ajouter autant que vous le souhaitez, mais elles doivent être associées à une\n"
+"  adresse e-mail non publique que vous contrôlez."
 
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
 msgid "Cancelled"
@@ -4431,7 +4465,13 @@ msgid "View petition"
 msgstr "Voir la pétition"
 
 #. 0: petitionUrl
+#. 0: url
+#. 0: url
+#. 0: url
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copy and paste the following link into your browser {0}"
 msgstr "Copiez et collez le lien suivant dans votre navigateur : {0}"
 
@@ -4440,11 +4480,18 @@ msgid "Belcoda"
 msgstr "Belcoda"
 
 #. 0: String(year)
+#. 0: new Date().getFullYear().toString()
+#. 0: new Date().getFullYear().toString()
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copyright {0} Belcoda"
 msgstr "Copyright {0} Belcoda"
 
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Belcoda logo"
 msgstr "Logo Belcoda"
 
@@ -4916,6 +4963,7 @@ msgstr "Pétition"
 
 #: src/lib/components/flow/nodes/template-message-form.ts
 #: src/lib/components/templates/TemplateVariablePicker.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Organization slug"
 msgstr "Slug de l’organisation"
 
@@ -5957,8 +6005,9 @@ msgstr "Impossible d’envoyer le message WhatsApp"
 #~ msgid "Notify"
 #~ msgstr ""
 
-#~ msgid "A teammate"
-#~ msgstr ""
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr "Un membre de l’équipe"
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6171,7 +6220,8 @@ msgid "Favourite"
 msgstr "Favori"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte
 msgid "Favourites only"
 msgstr "Favoris uniquement"
 
@@ -6258,3 +6308,242 @@ msgstr "Note mise à jour"
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 msgid "Failed to update note"
 msgstr "Impossible de mettre à jour la note"
+
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
+msgstr "{0} vous a invité à rejoindre {1} sur Belcoda. Cliquez sur le bouton ci-dessous pour accepter l'invitation et commencer."
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Join {0}"
+msgstr "Rejoindre {0}"
+
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda"
+msgstr "{0} vous a invité à rejoindre {1} sur Belcoda"
+
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Copyright {0} {1}"
+msgstr "Copyright {0} {1}"
+
+#~ msgid "{0} {1}"
+#~ msgstr ""
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Invitation to join {0}"
+msgstr "Invitation à rejoindre {0}"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Note mention"
+msgstr "Mention dans une note"
+
+#. 0: authorName; 1: personName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note about {1}."
+msgstr "{0} vous a mentionné dans une note à propos de {1}."
+
+#. 0: authorName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note."
+msgstr "{0} vous a mentionné dans une note."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View note"
+msgstr "Voir la note"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No favourite people"
+msgstr "Aucune personne favorite"
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Favourite a person using the star in their header to see them here."
+msgstr "Ajoutez une personne à vos favoris à l'aide de l'étoile dans son en-tête pour la voir ici."
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Show all people"
+msgstr "Afficher toutes les personnes"
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
+msgstr "Nous avons reçu une demande de réinitialisation de votre mot de passe. Si c'était bien vous, cliquez sur le bouton ci-dessous pour en créer un nouveau. Sinon, vous pouvez ignorer cet e-mail en toute sécurité — votre compte restera protégé."
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "Click below to create a new password. If you didn't request this, just ignore this email."
+msgstr "Cliquez ci-dessous pour créer un nouveau mot de passe. Si vous n'avez pas fait cette demande, ignorez simplement cet e-mail."
+
+#~ msgid "Reset Password"
+#~ msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Security verification"
+msgstr "Vérification de sécurité"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
+msgstr "Veuillez vérifier votre adresse e-mail pour des raisons de sécurité. Cliquez sur le bouton ci-dessous pour vérifier votre adresse e-mail."
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes"
+msgstr "Veuillez vérifier votre adresse e-mail pour des raisons de sécurité"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify email"
+msgstr "Vérifier l'e-mail"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify your email address"
+msgstr "Vérifiez votre adresse e-mail"
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Default"
+msgstr "Par défaut"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Slate"
+msgstr "Ardoise"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Red"
+msgstr "Rouge"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Orange"
+msgstr "Orange"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Amber"
+msgstr "Ambre"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Green"
+msgstr "Vert"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Teal"
+msgstr "Sarcelle"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Blue"
+msgstr "Bleu"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Violet"
+msgstr "Violet"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Pink"
+msgstr "Rose"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 1"
+msgstr "Titre 1"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 2"
+msgstr "Titre 2"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Heading 3"
+msgstr "Titre 3"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Bold"
+msgstr "Gras"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Italic"
+msgstr "Italique"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Underline"
+msgstr "Souligné"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Strikethrough"
+msgstr "Barré"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Bullet list"
+msgstr "Liste à puces"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Numbered list"
+msgstr "Liste numérotée"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Text color"
+msgstr "Couleur du texte"
+
+#~ msgid "New editor (preview)"
+#~ msgstr ""
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Insert image"
+msgstr "Insérer une image"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Insert fragment"
+msgstr "Insérer un fragment"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing."
+msgstr "Insérez un espace réservé qui se remplit avec les informations de chaque destinataire. Le texte de secours est utilisé lorsque cette information est manquante."
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Fragment"
+msgstr "Fragment"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Select a fragment"
+msgstr "Sélectionner un fragment"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Backup text"
+msgstr "Texte de secours"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "e.g. friend"
+msgstr "p. ex. ami"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Preview"
+msgstr "Aperçu"
+
+#: src/lib/components/ui/wysiwyg/TipTap.svelte
+msgid "Insert"
+msgstr "Insérer"
+
+#~ msgid "Image is too large. Please choose a file under {0}."
+#~ msgstr ""
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Cover preview"
+msgstr "Aperçu de la couverture"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Change image"
+msgstr "Changer l'image"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Click to upload an image"
+msgstr "Cliquez pour téléverser une image"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "PNG, JPG, or WebP"
+msgstr "PNG, JPG ou WebP"
+
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Uploading…"
+msgstr "Téléversement…"
+
+#. 0: limitLabel
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
+msgid "Image is too large. Please choose a file no larger than {0}."
+msgstr "L'image est trop volumineuse. Veuillez choisir un fichier ne dépassant pas {0}."
