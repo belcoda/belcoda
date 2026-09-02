@@ -5662,7 +5662,7 @@ msgstr "Hindi naipadala ang mensahe sa WhatsApp"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "A teammate"
-msgstr ""
+msgstr "Isang kasamahan"
 
 #: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
 #: src/routes/(app)/settings/whatsapp/_accounts/[id]/+page.svelte
@@ -6057,18 +6057,18 @@ msgstr "I-save ang lokasyon"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Note mention"
-msgstr ""
+msgstr "Pagbanggit sa tala"
 
 #. 0: authorName; 1: personName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note about {1}."
-msgstr ""
+msgstr "{0} ay nagbanggit sa iyo sa isang tala tungkol sa {1}."
 
 #. 0: authorName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note."
-msgstr ""
+msgstr "{0} ay nagbanggit sa iyo sa isang tala."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "View note"
-msgstr ""
+msgstr "Tingnan ang tala"
