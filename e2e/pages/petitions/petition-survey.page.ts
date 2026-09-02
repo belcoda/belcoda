@@ -1,5 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
+type StandardSurveyField = 'address' | 'gender' | 'dob' | 'workplace' | 'position';
+
 export class PetitionSurveyPage {
 	readonly page: Page;
 	readonly addQuestionTrigger: Locator;
@@ -9,13 +11,13 @@ export class PetitionSurveyPage {
 		this.addQuestionTrigger = page.getByTestId('survey-add-question-trigger');
 	}
 
-	standardFieldCheckbox(field: 'address' | 'gender' | 'dob' | 'workplace' | 'position') {
+	standardFieldCheckbox(field: StandardSurveyField) {
 		return this.page
 			.getByTestId(`standard-information-${field}`)
 			.or(this.page.locator(`#standard-information-${field}`));
 	}
 
-	async checkStandardField(field: 'address' | 'gender' | 'dob' | 'workplace' | 'position') {
+	async checkStandardField(field: StandardSurveyField) {
 		const checkbox = this.standardFieldCheckbox(field);
 		await checkbox.waitFor({ state: 'visible', timeout: 10_000 });
 		await checkbox.scrollIntoViewIfNeeded();
@@ -37,10 +39,7 @@ export class PetitionSurveyPage {
 		}).toPass({ timeout: 10_000 });
 	}
 
-	async expectStandardFieldChecked(
-		field: 'address' | 'gender' | 'dob' | 'workplace' | 'position',
-		options?: { timeout?: number }
-	) {
+	async expectStandardFieldChecked(field: StandardSurveyField, options?: { timeout?: number }) {
 		await expect(this.standardFieldCheckbox(field)).toHaveAttribute(
 			'aria-checked',
 			'true',

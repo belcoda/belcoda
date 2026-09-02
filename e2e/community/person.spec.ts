@@ -3,7 +3,7 @@ import { PersonCreatePage } from '../pages/community/person-create.page';
 import { PersonProfilePage } from '../pages/community/person-profile.page';
 import { TagsPage } from '../pages/settings/tags.page';
 import { TeamsPage } from '../pages/settings/teams.page';
-import { loginAsAdmin, loginAsOwner } from '../helpers/login';
+import { loginAsOwner } from '../helpers/login';
 import { CommunityPage } from '../pages/community/community.page';
 import { BASE_URL, getOrgSlug } from '../helpers/config';
 import { getTestUsers } from '../helpers/auth';
@@ -457,63 +457,12 @@ test.describe.serial('Community and person pages', () => {
 		await expect(liveInlineNote.locator('strong[data-note-mention]')).toHaveCount(0);
 	});
 
-	// Skipped: this spec opens NotificationInbox via the dashboard notification bell
-	// ("Note mention", "View note"). NotificationBell is currently commented out on
-	// the dashboard, desktop sidebar, and mobile top nav, so that inbox is not
-	// mounted. Re-enable when the bell is shown again. Mention authoring itself is
-	// covered by "owner can create, display, and edit user mentions in notes".
-	test.skip('mentioned users can open a note notification from the dashboard', async ({
-		page,
-		request
-	}) => {
-		const suffix = `${Date.now()}`;
-		const noteAuthor = getTestUsers(PROJECT).owner;
-		const mentionedUser = getTestUsers(PROJECT).admin;
-		const notePrefix = `Notification mention ${suffix}`;
-
-		await loginAsOwner(page, PROJECT);
-		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-persons`, {
-			data: { count: 1, organizationSlug: getOrgSlug(PROJECT) }
-		});
-		expect(seedResponse.ok()).toBeTruthy();
-		const seedResult = (await seedResponse.json()) as { personIds: string[] };
-		const personId = seedResult.personIds[0];
-		expect(personId).toBeTruthy();
-		await page.goto(`/community/${personId}`);
-		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible({ timeout: 15_000 });
-
-		const composer = page.getByTestId('conversation-composer');
-		await composer.getByTestId('composer-mode-note').click();
-		const textarea = composer.getByTestId('note-form-textarea');
-		await textarea.fill(`${notePrefix}: @${mentionedUser.name.slice(0, -2)}`);
-		await composer
-			.getByTestId('note-mention-picker')
-			.getByRole('option', { name: new RegExp(mentionedUser.name) })
-			.click();
-		await composer.getByTestId('note-form-submit').click();
-		await expect(page.getByTestId('inline-note').filter({ hasText: notePrefix })).toBeVisible({
-			timeout: 10_000
-		});
-
-		await loginAsAdmin(page, PROJECT);
-		await page.goto('/dashboard');
-		const notificationsBell = page.getByTestId('notifications-bell');
-		await expect(notificationsBell).toBeVisible({ timeout: 15_000 });
-
-		const inbox = page.getByTestId('notifications-inbox');
-		const mentionItem = inbox.locator('li').filter({ hasText: notePrefix });
-		await expect(async () => {
-			if (!(await inbox.isVisible().catch(() => false))) {
-				await notificationsBell.click();
-			}
-			await expect(mentionItem).toBeVisible({ timeout: 5_000 });
-		}).toPass({ timeout: 20_000 });
-
-		await expect(mentionItem.getByText('Note mention')).toBeVisible();
-		await expect(mentionItem.getByText(`${noteAuthor.name} mentioned you in a note`)).toBeVisible();
-		const viewNote = mentionItem.getByRole('link', { name: 'View note' });
-		await expect(viewNote).toHaveAttribute('href', new RegExp(`/community/${personId}#note-`));
-	});
+	// Skipped: this spec opened NotificationInbox via the dashboard notification
+	// bell ("Note mention", "View note"). NotificationBell is commented out on the
+	// dashboard, desktop sidebar, and mobile top nav, so that inbox is not mounted.
+	// Restore the previous inbox assertions from git history when the bell returns.
+	// Mention authoring stays covered by the notes-mention spec above.
+	test.skip('mentioned users can open a note notification from the dashboard', async () => {});
 
 	test('composer mode resets to message after navigating away and back', async ({ page }) => {
 		await loginAsOwner(page, PROJECT);
