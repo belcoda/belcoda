@@ -457,22 +457,21 @@ test.describe.serial('Community and person pages', () => {
 		await expect(liveInlineNote.locator('strong[data-note-mention]')).toHaveCount(0);
 	});
 
-	test('mentioned users can open a note notification from the dashboard', async ({ page }) => {
+	test('mentioned users can open a note notification from the dashboard', async ({
+		page,
+		request
+	}) => {
 		const suffix = `${Date.now()}`;
 		const noteAuthor = getTestUsers(PROJECT).owner;
 		const mentionedUser = getTestUsers(PROJECT).admin;
 		const notePrefix = `Notification mention ${suffix}`;
 
 		await loginAsOwner(page, PROJECT);
-		const seedResult = await page.evaluate(async () => {
-			const response = await fetch('/api/e2e/seed-persons', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ count: 1 })
-			});
-			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
-			return (await response.json()) as { personIds: string[] };
+		const seedResponse = await request.post(`${BASE_URL}/api/e2e/seed-persons`, {
+			data: { count: 1, organizationSlug: getOrgSlug(PROJECT) }
 		});
+		expect(seedResponse.ok()).toBeTruthy();
+		const seedResult = (await seedResponse.json()) as { personIds: string[] };
 		const personId = seedResult.personIds[0];
 		expect(personId).toBeTruthy();
 		await page.goto(`/community/${personId}`);
