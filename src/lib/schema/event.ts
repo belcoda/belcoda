@@ -13,6 +13,7 @@ export const eventSchema = v.object({
 	title: helpers.mediumString,
 	shortDescription: helpers.mediumString, //500 chars
 	description: v.nullable(v.any()),
+	pageHtml: v.nullable(helpers.longStringEmpty),
 
 	published: v.boolean(),
 
@@ -49,7 +50,7 @@ export const eventSchema = v.object({
 export type EventSchema = v.InferOutput<typeof eventSchema>;
 
 export const eventApiSchema = v.object({
-	...v.omit(eventSchema, ['organizationId']).entries,
+	...v.omit(eventSchema, ['organizationId', 'pageHtml']).entries,
 	startsAt: helpers.dateToString,
 	endsAt: helpers.dateToString,
 	reminderSentAt: v.nullable(helpers.dateToString),
@@ -61,7 +62,7 @@ export const eventApiSchema = v.object({
 });
 
 export const readEventZero = v.object({
-	...eventSchema.entries,
+	...v.omit(eventSchema, ['pageHtml']).entries,
 	startsAt: helpers.unixTimestamp,
 	endsAt: helpers.unixTimestamp,
 	reminderSentAt: v.nullable(helpers.unixTimestamp),
