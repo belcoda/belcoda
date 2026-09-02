@@ -17,7 +17,3 @@ export function getUploadPath(organizationId: string, fileName: string) {
 	});
 	return `uploads/${organizationId}/${dateString}/${uuidv7()}-${fileName}`;
 }
-
-export function getOrgIdFromPath(path: string) {
-	return path.split('/')[1];
-}

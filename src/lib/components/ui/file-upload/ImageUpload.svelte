@@ -5,7 +5,6 @@
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import { cn } from '$lib/utils.js';
 	import { useId } from 'bits-ui';
-	import { getUploadPath } from './helpers';
 	import { t } from '$lib/index.svelte';
 
 	let {
@@ -61,12 +60,10 @@
 
 		status = 'uploading';
 
-		// Key includes the organizationId and a uuidv7. The server authorizes the
-		// request against this key and signs a short-lived upload URL for it.
-		const key = getUploadPath(organizationId, file.name);
-
+		// The object key is generated server-side (including the organizationId
+		// and a uuidv7) so a client can't overwrite an existing object by
+		// supplying its key. We only send the file name and content type.
 		console.debug('[ImageUpload] requesting signed upload', {
-			key,
 			fileName: file.name,
 			fileType: file.type,
 			fileSize: file.size
@@ -77,7 +74,7 @@
 			const response = await fetch(`/api/utils/upload/${organizationId}/tigris`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ name: key, contentType: file.type })
+				body: JSON.stringify({ fileName: file.name, contentType: file.type })
 			});
 			if (!response.ok) {
 				// Read the body so the real reason (incl. the server's dev-only `detail`)

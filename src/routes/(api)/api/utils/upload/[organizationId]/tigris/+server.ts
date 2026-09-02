@@ -4,12 +4,17 @@ import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 import pino from '$lib/pino';
 import { _listOrganizationMembershipsByUserIdUnsafe } from '$lib/server/api/data/organization';
-import { getOrgIdFromPath, MAX_IMAGE_UPLOAD_BYTES } from '$lib/components/ui/file-upload/helpers';
+import { getUploadPath, MAX_IMAGE_UPLOAD_BYTES } from '$lib/components/ui/file-upload/helpers';
 const log = pino(import.meta.url);
 
 // Signed upload URLs are short-lived: the client requests one and uploads
 // immediately after, so a 5-minute window is ample.
 const SIGNED_UPLOAD_EXPIRY_SECONDS = 300;
+
+// Only these image MIME types may be signed for upload. Mirrors the
+// `imageupload` extension allowlist in `$lib/server/utils/upload-keys` — SVG
+// is deliberately excluded (stored-XSS risk on a publicly-served bucket).
+const ALLOWED_IMAGE_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'] as const;
 
 // pino has no error serializer configured, so pull the useful fields off the
 // error ourselves rather than logging an opaque `{}`.
@@ -37,21 +42,37 @@ export async function POST(event) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	let key: string;
+	let fileName: string;
 	let contentType: string | undefined;
 	try {
 		const body = await event.request.json();
-		key = body.name;
+		fileName = body.fileName;
 		contentType = typeof body.contentType === 'string' ? body.contentType : undefined;
-		// The client generates the object key, but the org segment in it must match
-		// the authorized organization so a member can't write into another org's space.
-		if (typeof key !== 'string' || getOrgIdFromPath(key) !== organizationId) {
-			return json({ error: 'Unauthorized' }, { status: 401 });
+		if (typeof fileName !== 'string' || fileName.length === 0) {
+			return json({ error: 'Invalid request body' }, { status: 400 });
 		}
 	} catch (error) {
 		log.error({ error }, 'Failed to parse upload request body');
 		return json({ error: 'Invalid request body' }, { status: 400 });
 	}
+
+	// Only sign uploads for an allowlisted set of image MIME types. The client
+	// cannot be trusted to self-report a safe type (stored-XSS / arbitrary
+	// public file hosting otherwise), so this is the actual security boundary.
+	if (
+		!contentType ||
+		!ALLOWED_IMAGE_CONTENT_TYPES.includes(
+			contentType as (typeof ALLOWED_IMAGE_CONTENT_TYPES)[number]
+		)
+	) {
+		log.error({ contentType, fileName }, 'Rejected upload request with unsupported content type');
+		return json({ error: 'Unsupported file type' }, { status: 400 });
+	}
+
+	// The object key is always generated server-side — never trust a
+	// client-supplied key, which would let a member overwrite any existing
+	// object in the org's upload space.
+	const key = getUploadPath(organizationId, fileName);
 
 	// Surface config problems early with a clear signal (never log the secrets
 	// themselves — only whether each is present).
@@ -64,6 +85,7 @@ export async function POST(event) {
 	log.info(
 		{
 			key,
+			fileName,
 			contentType,
 			maxSize: MAX_IMAGE_UPLOAD_BYTES,
 			endpoint: config.endpoint,
