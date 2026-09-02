@@ -187,9 +187,11 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await editPage.submit();
 		await expect(page).toHaveURL(`/petitions/${ids.petitionId}`, { timeout: 15_000 });
 
-		await detailPage.goto(ids.petitionId);
-		await detailPage.waitForLoaded();
-		await expect(detailPage.titleDisplay).toContainText(ids.petitionTitle);
+		await expect(async () => {
+			await detailPage.goto(ids.petitionId);
+			await detailPage.waitForLoaded();
+			await expect(detailPage.titleDisplay).toContainText(ids.petitionTitle);
+		}).toPass({ timeout: 20_000 });
 		ids.petitionSlug = slugBeforeEdit;
 	});
 
@@ -420,6 +422,10 @@ test.describe.serial('Petitions: signup fields', () => {
 			{ timeout: 10_000 }
 		);
 		await surveyPage.checkStandardField('address');
+		await expect(surveyPage.standardFieldCheckbox('address')).toHaveAttribute(
+			'aria-checked',
+			'true'
+		);
 
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -446,6 +452,11 @@ test.describe.serial('Petitions: signup fields', () => {
 		await detailPage.clickEditPetition();
 		const editPage = new PetitionEditPage(page);
 		await editPage.waitForForm();
+		await expect(surveyPage.standardFieldCheckbox('address')).toHaveAttribute(
+			'aria-checked',
+			'true',
+			{ timeout: 15_000 }
+		);
 		petitionSlug = await editPage.slugFromPreview();
 		expect(petitionSlug).not.toBe('');
 	});

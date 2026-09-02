@@ -10,7 +10,9 @@ export class PetitionSurveyPage {
 	}
 
 	standardFieldCheckbox(field: 'address' | 'gender' | 'dob' | 'workplace' | 'position') {
-		return this.page.locator(`#standard-information-${field}`);
+		return this.page
+			.getByTestId(`standard-information-${field}`)
+			.or(this.page.locator(`#standard-information-${field}`));
 	}
 
 	async checkStandardField(field: 'address' | 'gender' | 'dob' | 'workplace' | 'position') {
@@ -19,13 +21,19 @@ export class PetitionSurveyPage {
 		await checkbox.scrollIntoViewIfNeeded();
 
 		await expect(async () => {
-			const isChecked = await checkbox.isChecked().catch(async () => {
-				return (await checkbox.getAttribute('aria-checked')) === 'true';
-			});
+			const isChecked =
+				(await checkbox.getAttribute('aria-checked')) === 'true' ||
+				(await checkbox.getAttribute('data-state')) === 'checked' ||
+				(await checkbox.isChecked().catch(() => false));
 			if (!isChecked) {
-				await checkbox.click();
+				const label = this.page.locator(`label[for="standard-information-${field}"]`);
+				if (await label.isVisible().catch(() => false)) {
+					await label.click();
+				} else {
+					await checkbox.click();
+				}
 			}
-			await expect(checkbox).toBeChecked({ timeout: 1_000 });
+			await expect(checkbox).toHaveAttribute('aria-checked', 'true', { timeout: 1_000 });
 		}).toPass({ timeout: 10_000 });
 	}
 
@@ -66,7 +74,10 @@ export class PetitionSurveyPage {
 				await newTrigger.click();
 			}
 			await labelInput.waitFor({ state: 'visible', timeout: 2_000 });
-			await labelInput.fill(label, { timeout: 2_000 });
+			await labelInput.click();
+			await labelInput.fill('');
+			await labelInput.pressSequentially(label, { delay: 15 });
+			await labelInput.blur();
 			await expect(labelInput).toHaveValue(label, { timeout: 2_000 });
 		}).toPass({ timeout: 15_000 });
 	}
