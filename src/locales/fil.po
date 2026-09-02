@@ -2105,6 +2105,8 @@ msgstr "Tinatanggal..."
 msgid "Enter your email to reset your password"
 msgstr "Ilagay ang iyong email para i-reset ang iyong password"
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset password"
@@ -2546,6 +2548,7 @@ msgstr "Gumawa ng bagong email"
 msgid "Reset token is missing. Please use the link from your email."
 msgstr "Wala ang reset token. Gamitin ang link mula sa iyong email."
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset your password"
@@ -3524,6 +3527,7 @@ msgstr "Pagsisimula sa Belcoda"
 msgid "Decline invitation"
 msgstr "Tanggihan ang imbitasyon"
 
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Accept invitation"
 msgstr "Tanggapin ang imbitasyon"
@@ -4077,27 +4081,37 @@ msgstr "Isumite"
 msgid ""
 "By clicking continue, you agree to our <a href=\"https://www.belcoda.com/terms-of-service\">Terms of Service</a>\n"
 "\t\tand <a href=\"https://www.belcoda.com/privacy\">Privacy Policy</a>."
-msgstr "Sa pag-click sa magpatuloy, sumasang-ayon ka sa aming <a href=\"https://www.belcoda.com/terms-of-service\">Mga Tuntunin ng Serbisyo</a>\n\t\tat <a href=\"https://www.belcoda.com/privacy\">Patakaran sa Privacy</a>."
+msgstr ""
+"Sa pag-click sa magpatuloy, sumasang-ayon ka sa aming <a href=\"https://www.belcoda.com/terms-of-service\">Mga Tuntunin ng Serbisyo</a>\n"
+"\t\tat <a href=\"https://www.belcoda.com/privacy\">Patakaran sa Privacy</a>."
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 msgid ""
 "If the person is subscribed, they will be able to receive notifications\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\tand messages."
-msgstr "Kung naka-subscribe ang tao, makakatanggap siya ng mga notification\n\t\t\t\t\t\t\t\t\t\t\t\t\tat mensahe."
+msgstr ""
+"Kung naka-subscribe ang tao, makakatanggap siya ng mga notification\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tat mensahe."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid ""
 "This is a URL-friendly identifier for the event and is part of the event link.\n"
 "\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Ito ay URL-friendly na identifier para sa event at bahagi ng link ng event.\n\t\t\t\t\t\t\t\t\t\t\tDapat natatangi ito at maaari lamang maglaman ng maliliit na titik, numero, at\n\t\t\t\t\t\t\t\t\t\t\tgitling."
+msgstr ""
+"Ito ay URL-friendly na identifier para sa event at bahagi ng link ng event.\n"
+"\t\t\t\t\t\t\t\t\t\t\tDapat natatangi ito at maaari lamang maglaman ng maliliit na titik, numero, at\n"
+"\t\t\t\t\t\t\t\t\t\t\tgitling."
 
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 msgid ""
 "This is a URL-friendly identifier for the petition and is part of the petition\n"
 "\t\t\t\t\t\t\t\t\t\t\tlink. It must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Ito ay URL-friendly na identifier para sa petisyon at bahagi ng link ng\n\t\t\t\t\t\t\t\t\t\t\tpetisyon. Dapat natatangi ito at maaari lamang maglaman ng maliliit na titik, numero, at\n\t\t\t\t\t\t\t\t\t\t\tgitling."
+msgstr ""
+"Ito ay URL-friendly na identifier para sa petisyon at bahagi ng link ng\n"
+"\t\t\t\t\t\t\t\t\t\t\tpetisyon. Dapat natatangi ito at maaari lamang maglaman ng maliliit na titik, numero, at\n"
+"\t\t\t\t\t\t\t\t\t\t\tgitling."
 
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
@@ -4109,7 +4123,10 @@ msgid ""
 "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
 "\t\t\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr "Ito ay URL-friendly na identifier para sa organisasyon na magagamit sa mga link para sa mga event, petisyon, at iba pang pahina.\n\t\t\t\t\t\t\t\t\t\t\t\t\tDapat natatangi ito at maaari lamang maglaman ng maliliit na titik, numero, at\n\t\t\t\t\t\t\t\t\t\t\t\t\tgitling."
+msgstr ""
+"Ito ay URL-friendly na identifier para sa organisasyon na magagamit sa mga link para sa mga event, petisyon, at iba pang pahina.\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tDapat natatangi ito at maaari lamang maglaman ng maliliit na titik, numero, at\n"
+"\t\t\t\t\t\t\t\t\t\t\t\t\tgitling."
 
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Failed to update petition"
@@ -4186,7 +4203,9 @@ msgstr "Hindi tinanggal ang webhook"
 msgid ""
 "Personal details may differ the responses provided by the attendee if their recorded personal\n"
 "\t\t\tinformation in Belcoda has been modified or updated since they signed up for the event."
-msgstr "Maaaring iba ang mga personal na detalye sa mga sagot na ibinigay ng dadalo kung ang kanyang naitalang personal na\n\t\t\timpormasyon sa Belcoda ay binago o na-update mula nang magparehistro siya sa event."
+msgstr ""
+"Maaaring iba ang mga personal na detalye sa mga sagot na ibinigay ng dadalo kung ang kanyang naitalang personal na\n"
+"\t\t\timpormasyon sa Belcoda ay binago o na-update mula nang magparehistro siya sa event."
 
 #: src/lib/components/widgets/communications/recipients/getOptions.svelte.ts
 msgid "No show (ever)"
@@ -4244,13 +4263,17 @@ msgstr "Hindi masimulan ang Stripe checkout"
 msgid ""
 "A whatsapp business account is required to use WhatsApp messaging features. You can create\n"
 "\t\t\t\tone by clicking the button below."
-msgstr "Kailangan ng WhatsApp Business account upang magamit ang mga feature sa pagmemensahe ng WhatsApp. Maaari kang gumawa\n\t\t\t\tng isa sa pamamagitan ng pag-click sa button sa ibaba."
+msgstr ""
+"Kailangan ng WhatsApp Business account upang magamit ang mga feature sa pagmemensahe ng WhatsApp. Maaari kang gumawa\n"
+"\t\t\t\tng isa sa pamamagitan ng pag-click sa button sa ibaba."
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
 "When you launch the WhatsApp signup, you will be required to login to your Facebook account\n"
 "\t\t\t\tand create a WhatsApp Business Account."
-msgstr "Kapag sinimulan mo ang WhatsApp signup, kakailanganin mong mag-login sa iyong Facebook account\n\t\t\t\tat gumawa ng WhatsApp Business Account."
+msgstr ""
+"Kapag sinimulan mo ang WhatsApp signup, kakailanganin mong mag-login sa iyong Facebook account\n"
+"\t\t\t\tat gumawa ng WhatsApp Business Account."
 
 #: src/routes/(app)/settings/email/send_signatures/+page.svelte
 msgid "Email signature verification status updated"
@@ -4281,7 +4304,10 @@ msgid ""
 "Email from signatures are the names and email addresses that are used to send emails on behalf\n"
 "  of the organization. You can add as many as you want, but they must be attached to a\n"
 "  non-public email address that you control."
-msgstr "Ang mga pirma ng nagpadala ng email ay ang mga pangalan at email address na ginagamit sa pagpapadala ng mga email para sa\n  organisasyon. Maaari kang magdagdag ng kahit ilan, ngunit kailangang nakakabit ang mga ito sa isang\n  hindi pampublikong email address na kontrolado mo."
+msgstr ""
+"Ang mga pirma ng nagpadala ng email ay ang mga pangalan at email address na ginagamit sa pagpapadala ng mga email para sa\n"
+"  organisasyon. Maaari kang magdagdag ng kahit ilan, ngunit kailangang nakakabit ang mga ito sa isang\n"
+"  hindi pampublikong email address na kontrolado mo."
 
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
 msgid "Cancelled"
@@ -4431,7 +4457,13 @@ msgid "View petition"
 msgstr "Tingnan ang petisyon"
 
 #. 0: petitionUrl
+#. 0: url
+#. 0: url
+#. 0: url
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copy and paste the following link into your browser {0}"
 msgstr "Kopyahin at i-paste ang sumusunod na link sa iyong browser {0}"
 
@@ -4440,11 +4472,18 @@ msgid "Belcoda"
 msgstr "Belcoda"
 
 #. 0: String(year)
+#. 0: new Date().getFullYear().toString()
+#. 0: new Date().getFullYear().toString()
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copyright {0} Belcoda"
 msgstr "Copyright {0} Belcoda"
 
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Belcoda logo"
 msgstr "Logo ng Belcoda"
 
@@ -5957,8 +5996,9 @@ msgstr "Hindi naipadala ang mensahe sa WhatsApp"
 #~ msgid "Notify"
 #~ msgstr ""
 
-#~ msgid "A teammate"
-#~ msgstr ""
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr ""
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6171,7 +6211,8 @@ msgid "Favourite"
 msgstr "Paborito"
 
 #: src/lib/components/layouts/app/sidebars/events/filter/EventFilterControl.svelte
-#: src/lib/components/widgets/person/filter/display/DisplayEventFavouriteFilter.svelte
+#: src/lib/components/widgets/person/filter/FilterControls.svelte
+#: src/lib/components/widgets/person/filter/display/DisplayFavouriteFilter.svelte
 msgid "Favourites only"
 msgstr "Mga paborito lamang"
 
@@ -6258,6 +6299,95 @@ msgstr "Na-update ang tala"
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 msgid "Failed to update note"
 msgstr "Hindi na-update ang tala"
+
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
+msgstr "Inimbitahan ka ni {0} na sumali sa {1} sa Belcoda. I-click ang button sa ibaba para tanggapin ang imbitasyon at magsimula."
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Join {0}"
+msgstr "Sumali sa {0}"
+
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda"
+msgstr "Inimbitahan ka ni {0} na sumali sa {1} sa Belcoda"
+
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Copyright {0} {1}"
+msgstr "Copyright {0} {1}"
+
+#~ msgid "{0} {1}"
+#~ msgstr ""
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Invitation to join {0}"
+msgstr "Imbitasyon na sumali sa {0}"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Note mention"
+msgstr ""
+
+#. 0: authorName; 1: personName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note about {1}."
+msgstr ""
+
+#. 0: authorName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note."
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View note"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "No favourite people"
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Favourite a person using the star in their header to see them here."
+msgstr ""
+
+#: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
+msgid "Show all people"
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "Click below to create a new password. If you didn't request this, just ignore this email."
+msgstr ""
+
+#~ msgid "Reset Password"
+#~ msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Security verification"
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes"
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify email"
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify your email address"
+msgstr ""
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
