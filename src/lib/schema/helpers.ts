@@ -38,6 +38,24 @@ export const shortStringEmpty = v.pipe(
 	v.maxLength(SHORT_STRING_MAX_LENGTH, `Maximum length is ${SHORT_STRING_MAX_LENGTH} characters`)
 );
 
+export const longitude = v.pipe(
+	v.number(),
+	v.minValue(-180, 'Longitude must be between -180 and 180'),
+	v.maxValue(180, 'Longitude must be between -180 and 180'),
+	v.number(),
+	v.minValue(-90, 'Latitude must be between -90 and 90'),
+	v.maxValue(90, 'Latitude must be between -90 and 90')
+);
+export const latitude = v.pipe(
+	v.number(),
+	v.minValue(-90, 'Latitude must be between -90 and 90'),
+	v.maxValue(90, 'Latitude must be between -90 and 90')
+);
+export const geographyPoint = v.object({
+	x: longitude,
+	y: latitude
+});
+
 export const mediumString = v.pipe(
 	v.string(),
 	v.trim(),
