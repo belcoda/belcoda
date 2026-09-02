@@ -390,6 +390,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			locality: true,
 			region: true,
 			postcode: true,
+			location: false,
 			country: true,
 			timezone: true,
 
