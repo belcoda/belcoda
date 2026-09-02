@@ -3173,19 +3173,19 @@ msgstr "Eliminar inscrição"
 
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Add User"
-msgstr ""
+msgstr "Adicionar usuário"
 
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Select organization members to add to the team."
-msgstr ""
+msgstr "Selecione os membros da organização para adicionar à equipe."
 
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Error loading users."
-msgstr ""
+msgstr "Erro ao carregar usuários."
 
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "No users available to add."
-msgstr ""
+msgstr "Nenhum usuário disponível para adicionar."
 
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Organization configuration updated successfully"
@@ -3217,7 +3217,7 @@ msgstr "URL para o ícone da organização. Será usado no menu e em outras pág
 
 #: src/routes/(app)/settings/organization/configuration/+page.svelte
 msgid "Are you sure you want to cancel?"
-msgstr ""
+msgstr "Tem certeza de que deseja cancelar?"
 
 #: src/routes/(app)/settings/teams/[teamId]/+page.svelte
 msgid "Team not found."
@@ -3265,7 +3265,7 @@ msgstr "Carregando equipe..."
 
 #: src/routes/(app)/communications/email/drafts/[id]/+page.svelte
 msgid "Email saved"
-msgstr ""
+msgstr "E-mail salvo"
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
@@ -3340,7 +3340,7 @@ msgstr "Escaneie com seu celular para assinar via WhatsApp"
 #: src/lib/components/widgets/event/share/EmbedCode.svelte
 #: src/lib/components/widgets/petition/share/EmbedCode.svelte
 msgid "Default layout"
-msgstr ""
+msgstr "Layout padrão"
 
 #: src/lib/components/widgets/petition/share/SharePetition.svelte
 msgid "Share this petition with your audience"
@@ -3742,7 +3742,7 @@ msgstr "Criar rascunho de WhatsApp"
 #: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectSingle.svelte
 msgid "Select a tag..."
-msgstr ""
+msgstr "Selecione uma tag..."
 
 #: src/lib/components/flow/nodes/tag_add/Combobox.svelte
 #: src/lib/components/ui/custom-select/tag/TagSelectMulti.svelte
@@ -3870,7 +3870,7 @@ msgstr "Você só pode adicionar até 10 botões por modelo."
 
 #: src/routes/(app)/settings/whatsapp/accounts/+page.svelte
 msgid "WhatsApp Business Account"
-msgstr ""
+msgstr "Conta do WhatsApp Business"
 
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
@@ -3953,7 +3953,7 @@ msgstr "Iniciar cadastro no WhatsApp"
 
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 msgid "Compose email"
-msgstr ""
+msgstr "Escrever e-mail"
 
 #: src/lib/components/layouts/app/sidebars/communications/FoldersSidebar.svelte
 msgid "Compose WhatsApp"
@@ -3969,7 +3969,7 @@ msgstr "Nenhuma conversa do WhatsApp encontrada"
 
 #: src/routes/(app)/settings/whatsapp/templates/new/+page.svelte
 msgid "New WhatsApp template"
-msgstr ""
+msgstr "Novo modelo do WhatsApp"
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "Are you sure you want to send this WhatsApp draft?"
@@ -3977,7 +3977,7 @@ msgstr "Tem certeza de que deseja enviar este rascunho do WhatsApp?"
 
 #: src/routes/(app)/settings/whatsapp/templates/[id]/+page.svelte
 msgid "Edit WhatsApp template"
-msgstr ""
+msgstr "Editar modelo do WhatsApp"
 
 #: src/routes/(app)/settings/tags/EditTag.svelte
 msgid "Delete tag"
@@ -4208,12 +4208,13 @@ msgstr "Não compareceu (nunca)"
 
 #: src/routes/(app)/community/[personId]/profile/ProfilePicture.svelte
 msgid "Could not update profile picture. Please try again."
-msgstr ""
+msgstr "Não foi possível atualizar a foto do perfil. Tente novamente."
 
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Import started successfully"
 msgstr "Importação iniciada com sucesso"
 
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
@@ -4300,7 +4301,7 @@ msgstr "As assinaturas de e-mail são os nomes e endereços de e-mail usados par
 
 #: src/lib/components/widgets/person/filter/display/DisplayEventStatusFilter.svelte
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelado"
 
 #: src/routes/(app)/settings/email/send_signatures/_components/CreateModal.svelte
 msgid "Email signature created successfully"
@@ -4329,7 +4330,7 @@ msgstr "Falha ao atualizar a assinatura de e-mail"
 #: src/routes/(app)/community/[personId]/profile/rows/form/Email.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Name.svelte
 msgid "Could not update email address. Please check that the email address does not belong to another person."
-msgstr ""
+msgstr "Não foi possível atualizar o endereço de e-mail. Verifique se o endereço de e-mail não pertence a outra pessoa."
 
 #: src/routes/(app)/community/[personId]/profile/rows/form/Phone.svelte
 msgid "Could not update phone number. Please check that the phone number is valid and does not belong to another person."
@@ -4337,15 +4338,15 @@ msgstr "Não foi possível atualizar o número de telefone. Por favor, verifique
 
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
 msgid "Could not update address. Please check that the address is valid."
-msgstr ""
+msgstr "Não foi possível atualizar o endereço. Verifique se o endereço é válido."
 
 #: src/routes/(app)/community/[personId]/profile/rows/form/Workplace.svelte
 msgid "Could not update workplace or position. Please try again."
-msgstr ""
+msgstr "Não foi possível atualizar o local de trabalho ou o cargo. Tente novamente."
 
 #: src/routes/(app)/community/[personId]/profile/rows/form/PersonalInfo.svelte
 msgid "Could not update personal information. Please try again."
-msgstr ""
+msgstr "Não foi possível atualizar as informações pessoais. Tente novamente."
 
 #: src/lib/components/flow/WhatsAppFlowStatePanels.svelte
 msgid "WhatsApp draft sent successfully"
@@ -4603,11 +4604,11 @@ msgstr "Início"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the audio tag."
-msgstr ""
+msgstr "Seu navegador não suporta a tag de áudio."
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "WhatsApp sticker"
-msgstr ""
+msgstr "Figurinha do WhatsApp"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 #: src/lib/components/widgets/activity/OutgoingWhatsAppMessage.svelte
@@ -4618,7 +4619,7 @@ msgstr "Mensagem de WhatsApp"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "No captions available"
-msgstr ""
+msgstr "Nenhuma legenda disponível"
 
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the video tag."
@@ -5096,63 +5097,63 @@ msgstr "Carregar mais"
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Enter an amount in USD to continue in Stripe checkout."
-msgstr ""
+msgstr "Insira um valor em USD para continuar no checkout do Stripe."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Amount (USD)"
-msgstr ""
+msgstr "Valor (USD)"
 
 #~ msgid "Minimum purchase: US${0}"
 #~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Continue to checkout"
-msgstr ""
+msgstr "Continuar para o checkout"
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Or choose a preset amount:"
-msgstr ""
+msgstr "Ou escolha um valor predefinido:"
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Payment completed. Your balance will update shortly."
-msgstr ""
+msgstr "Pagamento concluído. Seu saldo será atualizado em breve."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Payment was cancelled."
-msgstr ""
+msgstr "O pagamento foi cancelado."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "You don't have permission to add funds. Only organization owners can access this page."
-msgstr ""
+msgstr "Você não tem permissão para adicionar fundos. Apenas os proprietários da organização podem acessar esta página."
 
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Account balance"
-msgstr ""
+msgstr "Saldo da conta"
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Add funds to your balance with Stripe."
-msgstr ""
+msgstr "Adicione fundos ao seu saldo com o Stripe."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Add funds"
-msgstr ""
+msgstr "Adicionar fundos"
 
 #. 0: formatUsdAmount(parsedPurchaseAmount, locale.current)
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Add {0}"
-msgstr ""
+msgstr "Adicionar {0}"
 
 #. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Enter a valid amount. Minimum purchase is {0}."
-msgstr ""
+msgstr "Insira um valor válido. A compra mínima é de {0}."
 
 #. 0: formatUsdAmount(BALANCE_TOP_UP_MIN_USD, locale.current)
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Minimum purchase: {0}"
-msgstr ""
+msgstr "Compra mínima: {0}"
 
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
 #: src/lib/components/widgets/billing/FreeEmailQuotaCard.svelte
@@ -5391,23 +5392,23 @@ msgstr "O valor de reserva será usado se não tivermos {0} registrado."
 
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "Templates with quick reply buttons cannot be sent as individual messages."
-msgstr ""
+msgstr "Modelos com botões de resposta rápida não podem ser enviados como mensagens individuais."
 
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "Button templates can still be used for bulk sending in the Communications module."
-msgstr ""
+msgstr "Modelos com botões ainda podem ser usados para envio em massa no módulo de Comunicações."
 
 #: src/lib/components/widgets/communications/send_wa_msg/SendBusinessApiTemplateMessage.svelte
 msgid "WhatsApp requires pre-approved templates for messages sent outside the 24-hour window after a customer's last message, to protect users from spam."
-msgstr ""
+msgstr "O WhatsApp exige modelos pré-aprovados para mensagens enviadas fora da janela de 24 horas após a última mensagem do cliente, para proteger os usuários contra spam."
 
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "Your approved templates include quick reply buttons, which cannot be used for individual messages. Use templates without buttons here, or send button templates via the bulk Communications module."
-msgstr ""
+msgstr "Seus modelos aprovados incluem botões de resposta rápida, que não podem ser usados para mensagens individuais. Use modelos sem botões aqui ou envie modelos com botões pelo módulo de Comunicações em massa."
 
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved WhatsApp templates yet."
-msgstr ""
+msgstr "Ainda não há modelos do WhatsApp aprovados."
 
 #: src/lib/components/widgets/notifications/NotificationBell.svelte
 msgid "Open notifications"
@@ -5510,7 +5511,7 @@ msgstr "Não há notificações para mostrar neste momento."
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "About is required and cannot be empty"
-msgstr ""
+msgstr "O campo Sobre é obrigatório e não pode ficar vazio"
 
 #~ msgid "WABA ID"
 #~ msgstr ""
@@ -5673,27 +5674,27 @@ msgstr "Falha ao salvar preferências de notificação"
 
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 msgid "Search for a template variable to insert."
-msgstr ""
+msgstr "Pesquise uma variável de modelo para inserir."
 
 #: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 msgid "WhatsApp thread copied to a new draft"
-msgstr ""
+msgstr "Conversa do WhatsApp copiada para um novo rascunho"
 
 #: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 msgid "Failed to copy WhatsApp thread"
-msgstr ""
+msgstr "Falha ao copiar a conversa do WhatsApp"
 
 #: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 msgid "This creates a new draft with a copy of this thread's messages and steps. The copy always starts as an unsent draft."
-msgstr ""
+msgstr "Isso cria um novo rascunho com uma cópia das mensagens e etapas desta conversa. A cópia sempre começa como um rascunho não enviado."
 
 #: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 msgid "Clone"
-msgstr ""
+msgstr "Clonar"
 
 #: src/lib/components/flow/whatsapp/CloneThreadModal.svelte
 msgid "Copying…"
-msgstr ""
+msgstr "Copiando…"
 
 #~ msgid "Hello! Choose an option"
 #~ msgstr ""
@@ -5703,11 +5704,11 @@ msgstr ""
 
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Message:"
-msgstr ""
+msgstr "Mensagem:"
 
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Type your message..."
-msgstr ""
+msgstr "Digite sua mensagem..."
 
 #~ msgid "Failed to load notification preferences"
 #~ msgstr ""
@@ -5718,7 +5719,7 @@ msgstr "Ainda não há nada aqui"
 
 #: src/lib/components/widgets/activity/AccountSelector.svelte
 msgid "Timeline"
-msgstr ""
+msgstr "Linha do tempo"
 
 #: src/lib/components/widgets/notes/ConversationComposer.svelte
 msgid "WhatsApp is not onboarded for this organization. Please create a WhatsApp Business Account in settings."
@@ -6254,27 +6255,27 @@ msgstr "Falha ao salvar a nota"
 
 #: src/lib/components/widgets/notes/MentionTextarea.svelte
 msgid "Mention a user"
-msgstr ""
+msgstr "Mencionar um usuário"
 
 #: src/lib/components/widgets/notes/MentionTextarea.svelte
 msgid "Unable to load organization members."
-msgstr ""
+msgstr "Não foi possível carregar os membros da organização."
 
 #: src/lib/components/widgets/notes/MentionTextarea.svelte
 msgid "Loading users..."
-msgstr ""
+msgstr "Carregando usuários..."
 
 #: src/lib/components/widgets/notes/MentionTextarea.svelte
 msgid "No users found."
-msgstr ""
+msgstr "Nenhum usuário encontrado."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 msgid "Note updated"
-msgstr ""
+msgstr "Nota atualizada"
 
 #: src/lib/components/layouts/app/action-menus/person/notes/EditNote.svelte
 msgid "Failed to update note"
-msgstr ""
+msgstr "Falha ao atualizar a nota"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
@@ -6375,66 +6376,66 @@ msgstr "Cor do texto"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert image"
-msgstr ""
+msgstr "Inserir imagem"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert fragment"
-msgstr ""
+msgstr "Inserir fragmento"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing."
-msgstr ""
+msgstr "Insira um marcador de posição que é preenchido com os detalhes de cada destinatário. O texto de backup é usado quando esse detalhe está ausente."
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Fragment"
-msgstr ""
+msgstr "Fragmento"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Select a fragment"
-msgstr ""
+msgstr "Selecione um fragmento"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Backup text"
-msgstr ""
+msgstr "Texto de backup"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "e.g. friend"
-msgstr ""
+msgstr "ex. amigo"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Preview"
-msgstr ""
+msgstr "Pré-visualização"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert"
-msgstr ""
+msgstr "Inserir"
 
 #~ msgid "Image is too large. Please choose a file under {0}."
 #~ msgstr ""
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Cover preview"
-msgstr ""
+msgstr "Pré-visualização da capa"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Change image"
-msgstr ""
+msgstr "Alterar imagem"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Click to upload an image"
-msgstr ""
+msgstr "Clique para enviar uma imagem"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "PNG, JPG, or WebP"
-msgstr ""
+msgstr "PNG, JPG ou WebP"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Uploading…"
-msgstr ""
+msgstr "Carregando…"
 
 #. 0: limitLabel
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Image is too large. Please choose a file no larger than {0}."
-msgstr ""
+msgstr "A imagem é muito grande. Escolha um arquivo não maior que {0}."

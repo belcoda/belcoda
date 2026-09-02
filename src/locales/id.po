@@ -2732,11 +2732,11 @@ msgstr "dari target"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "First name"
-msgstr ""
+msgstr "Nama depan"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Last name"
-msgstr ""
+msgstr "Nama belakang"
 
 #~ msgid "your@email.com"
 #~ msgstr ""
@@ -4221,6 +4221,7 @@ msgstr "Tidak dapat memperbarui foto profil. Silakan coba lagi."
 msgid "Import started successfully"
 msgstr "Impor berhasil dimulai"
 
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
@@ -6292,15 +6293,15 @@ msgstr "Gagal memperbarui catatan"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
-msgstr ""
+msgstr "Tidak ada orang favorit"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Favourite a person using the star in their header to see them here."
-msgstr ""
+msgstr "Jadikan seseorang favorit menggunakan bintang di headernya untuk melihatnya di sini."
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Show all people"
-msgstr ""
+msgstr "Tampilkan semua orang"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
@@ -6389,66 +6390,66 @@ msgstr "Warna teks"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert image"
-msgstr ""
+msgstr "Sisipkan gambar"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert fragment"
-msgstr ""
+msgstr "Sisipkan fragmen"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing."
-msgstr ""
+msgstr "Sisipkan placeholder yang terisi dengan detail setiap penerima. Teks cadangan digunakan saat detail tersebut tidak tersedia."
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Fragment"
-msgstr ""
+msgstr "Fragmen"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Select a fragment"
-msgstr ""
+msgstr "Pilih fragmen"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Backup text"
-msgstr ""
+msgstr "Teks cadangan"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "e.g. friend"
-msgstr ""
+msgstr "mis. teman"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Preview"
-msgstr ""
+msgstr "Pratinjau"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert"
-msgstr ""
+msgstr "Sisipkan"
 
 #~ msgid "Image is too large. Please choose a file under {0}."
 #~ msgstr ""
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Cover preview"
-msgstr ""
+msgstr "Pratinjau sampul"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Change image"
-msgstr ""
+msgstr "Ubah gambar"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Click to upload an image"
-msgstr ""
+msgstr "Klik untuk mengunggah gambar"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "PNG, JPG, or WebP"
-msgstr ""
+msgstr "PNG, JPG, atau WebP"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Uploading…"
-msgstr ""
+msgstr "Mengunggah…"
 
 #. 0: limitLabel
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Image is too large. Please choose a file no larger than {0}."
-msgstr ""
+msgstr "Gambar terlalu besar. Silakan pilih file yang tidak lebih besar dari {0}."

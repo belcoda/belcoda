@@ -2732,11 +2732,11 @@ msgstr "sur l’objectif"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "First name"
-msgstr ""
+msgstr "Prénom"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Last name"
-msgstr ""
+msgstr "Nom de famille"
 
 #~ msgid "your@email.com"
 #~ msgstr ""
@@ -4221,6 +4221,7 @@ msgstr "Impossible de mettre à jour la photo de profil. Veuillez réessayer."
 msgid "Import started successfully"
 msgstr "Import démarré"
 
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
@@ -6292,15 +6293,15 @@ msgstr "Impossible de mettre à jour la note"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
-msgstr ""
+msgstr "Aucune personne favorite"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Favourite a person using the star in their header to see them here."
-msgstr ""
+msgstr "Ajoutez une personne à vos favoris à l'aide de l'étoile dans son en-tête pour la voir ici."
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Show all people"
-msgstr ""
+msgstr "Afficher toutes les personnes"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
@@ -6389,66 +6390,66 @@ msgstr "Couleur du texte"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert image"
-msgstr ""
+msgstr "Insérer une image"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert fragment"
-msgstr ""
+msgstr "Insérer un fragment"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing."
-msgstr ""
+msgstr "Insérez un espace réservé qui se remplit avec les informations de chaque destinataire. Le texte de secours est utilisé lorsque cette information est manquante."
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Fragment"
-msgstr ""
+msgstr "Fragment"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Select a fragment"
-msgstr ""
+msgstr "Sélectionner un fragment"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Backup text"
-msgstr ""
+msgstr "Texte de secours"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "e.g. friend"
-msgstr ""
+msgstr "p. ex. ami"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Preview"
-msgstr ""
+msgstr "Aperçu"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert"
-msgstr ""
+msgstr "Insérer"
 
 #~ msgid "Image is too large. Please choose a file under {0}."
 #~ msgstr ""
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Cover preview"
-msgstr ""
+msgstr "Aperçu de la couverture"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Change image"
-msgstr ""
+msgstr "Changer l'image"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Click to upload an image"
-msgstr ""
+msgstr "Cliquez pour téléverser une image"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "PNG, JPG, or WebP"
-msgstr ""
+msgstr "PNG, JPG ou WebP"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Uploading…"
-msgstr ""
+msgstr "Téléversement…"
 
 #. 0: limitLabel
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Image is too large. Please choose a file no larger than {0}."
-msgstr ""
+msgstr "L'image est trop volumineuse. Veuillez choisir un fichier ne dépassant pas {0}."

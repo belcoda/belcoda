@@ -4207,6 +4207,7 @@ msgid "Import started successfully"
 msgstr ""
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
 msgstr ""

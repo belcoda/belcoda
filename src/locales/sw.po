@@ -2732,11 +2732,11 @@ msgstr "za lengo"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "First name"
-msgstr ""
+msgstr "Jina la kwanza"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Last name"
-msgstr ""
+msgstr "Jina la mwisho"
 
 #~ msgid "your@email.com"
 #~ msgstr ""
@@ -4221,6 +4221,7 @@ msgstr "Imeshindwa kusasisha picha ya wasifu. Tafadhali jaribu tena."
 msgid "Import started successfully"
 msgstr "Uingizaji umeanzishwa"
 
+#: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Upload failed. Please try again."
@@ -6292,15 +6293,15 @@ msgstr "Imeshindwa kusasisha maelezo"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
-msgstr ""
+msgstr "Hakuna watu pendwa"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Favourite a person using the star in their header to see them here."
-msgstr ""
+msgstr "Mpe mtu alama ya pendwa kwa kutumia nyota kwenye kichwa chake ili kumwona hapa."
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Show all people"
-msgstr ""
+msgstr "Onyesha watu wote"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
@@ -6389,66 +6390,66 @@ msgstr "Rangi ya maandishi"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert image"
-msgstr ""
+msgstr "Ingiza picha"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert fragment"
-msgstr ""
+msgstr "Ingiza kipande"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing."
-msgstr ""
+msgstr "Ingiza kishika-nafasi kinachojazwa na maelezo ya kila mpokeaji. Maandishi mbadala hutumika wakati maelezo hayo hayapo."
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Fragment"
-msgstr ""
+msgstr "Kipande"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Select a fragment"
-msgstr ""
+msgstr "Chagua kipande"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Backup text"
-msgstr ""
+msgstr "Maandishi mbadala"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "e.g. friend"
-msgstr ""
+msgstr "k.m. rafiki"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Preview"
-msgstr ""
+msgstr "Onyesho la awali"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Insert"
-msgstr ""
+msgstr "Ingiza"
 
 #~ msgid "Image is too large. Please choose a file under {0}."
 #~ msgstr ""
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Cover preview"
-msgstr ""
+msgstr "Onyesho la awali la jalada"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Change image"
-msgstr ""
+msgstr "Badilisha picha"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Click to upload an image"
-msgstr ""
+msgstr "Bofya ili kupakia picha"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "PNG, JPG, or WebP"
-msgstr ""
+msgstr "PNG, JPG, au WebP"
 
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Uploading…"
-msgstr ""
+msgstr "Inapakia…"
 
 #. 0: limitLabel
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Image is too large. Please choose a file no larger than {0}."
-msgstr ""
+msgstr "Picha ni kubwa mno. Tafadhali chagua faili lisilozidi {0}."
