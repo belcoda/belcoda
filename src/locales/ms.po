@@ -2108,6 +2108,8 @@ msgstr "Log log masukkan e-mel Anda untuk menetapkan semula kata laluan"
 msgid "Enter your email to reset your password"
 msgstr "Tetapkan semula kata laluan"
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset password"
@@ -2549,6 +2551,7 @@ msgstr "Cipta E-mel Baharu"
 msgid "Reset token is missing. Please use the link from your email."
 msgstr "Token tetapan ulang tiada. Gunakan pautan dari e-mel Anda."
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset your password"
@@ -3530,6 +3533,7 @@ msgstr "Memulai dengan Belcoda"
 msgid "Decline invitation"
 msgstr "Tolak undangan"
 
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Accept invitation"
 msgstr "Terima undangan"
@@ -4461,7 +4465,13 @@ msgid "View petition"
 msgstr "Lihat petisi"
 
 #. 0: petitionUrl
+#. 0: url
+#. 0: url
+#. 0: url
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copy and paste the following link into your browser {0}"
 msgstr "Salin dan tempel pautan berikut ke browser Anda {0}"
 
@@ -4470,11 +4480,18 @@ msgid "Belcoda"
 msgstr "Belcoda"
 
 #. 0: String(year)
+#. 0: new Date().getFullYear().toString()
+#. 0: new Date().getFullYear().toString()
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copyright {0} Belcoda"
 msgstr "Hak Cipta {0} Belcoda"
 
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Belcoda logo"
 msgstr "Logo Belcoda"
 
@@ -5988,8 +6005,9 @@ msgstr "Gagal menghantar mesej WhatsApp"
 #~ msgid "Notify"
 #~ msgstr ""
 
-#~ msgid "A teammate"
-#~ msgstr ""
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr ""
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6291,6 +6309,52 @@ msgstr "Catatan dikemas kini"
 msgid "Failed to update note"
 msgstr "Gagal memkemas kini catatan"
 
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
+msgstr "{0} telah mengundang anda untuk menyertai {1} di Belcoda. Klik butang di bawah untuk menerima undangan dan bermula."
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Join {0}"
+msgstr "Sertai {0}"
+
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda"
+msgstr "{0} telah mengundang anda untuk menyertai {1} di Belcoda"
+
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Copyright {0} {1}"
+msgstr "Hak Cipta {0} {1}"
+
+#~ msgid "{0} {1}"
+#~ msgstr ""
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Invitation to join {0}"
+msgstr "Undangan untuk menyertai {0}"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Note mention"
+msgstr ""
+
+#. 0: authorName; 1: personName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note about {1}."
+msgstr ""
+
+#. 0: authorName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note."
+msgstr ""
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View note"
+msgstr ""
+
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
 msgstr "Tiada orang kegemaran"
@@ -6302,6 +6366,37 @@ msgstr "Jadikan seseorang sebagai kegemaran menggunakan bintang di pengepalanya 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "Show all people"
 msgstr "Tunjukkan semua orang"
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "Click below to create a new password. If you didn't request this, just ignore this email."
+msgstr ""
+
+#~ msgid "Reset Password"
+#~ msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Security verification"
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes"
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify email"
+msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify your email address"
+msgstr ""
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"

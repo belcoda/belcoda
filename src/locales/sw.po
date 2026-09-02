@@ -2108,6 +2108,8 @@ msgstr "Inafuta..."
 msgid "Enter your email to reset your password"
 msgstr "Weka barua pepe yako ili kuweka upya nenosiri lako"
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset password"
@@ -2549,6 +2551,7 @@ msgstr "Unda barua pepe mpya"
 msgid "Reset token is missing. Please use the link from your email."
 msgstr "Tokeni ya kuweka upya haipo. Tafadhali tumia kiungo kutoka kwenye barua pepe yako."
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset your password"
@@ -3530,6 +3533,7 @@ msgstr "Kuanza kutumia Belcoda"
 msgid "Decline invitation"
 msgstr "Kataa mwaliko"
 
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Accept invitation"
 msgstr "Kubali mwaliko"
@@ -4461,7 +4465,13 @@ msgid "View petition"
 msgstr "Angalia ombi"
 
 #. 0: petitionUrl
+#. 0: url
+#. 0: url
+#. 0: url
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copy and paste the following link into your browser {0}"
 msgstr "Nakili na ubandike kiungo kifuatacho kwenye kivinjari chako {0}"
 
@@ -4470,11 +4480,18 @@ msgid "Belcoda"
 msgstr "Belcoda"
 
 #. 0: String(year)
+#. 0: new Date().getFullYear().toString()
+#. 0: new Date().getFullYear().toString()
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Copyright {0} Belcoda"
 msgstr "Hakimiliki {0} Belcoda"
 
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Belcoda logo"
 msgstr "Nembo ya Belcoda"
 
@@ -5988,8 +6005,9 @@ msgstr "Imeshindwa kutuma ujumbe wa WhatsApp"
 #~ msgid "Notify"
 #~ msgstr ""
 
-#~ msgid "A teammate"
-#~ msgstr ""
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "A teammate"
+msgstr "Mwenzako"
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6291,6 +6309,52 @@ msgstr "Maelezo yamesasishwa"
 msgid "Failed to update note"
 msgstr "Imeshindwa kusasisha maelezo"
 
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda. Click the button below to accept the invitation and get started."
+msgstr "{0} amekualika ujiunge na {1} kwenye Belcoda. Bofya kitufe kilicho hapa chini ili kukubali mwaliko na kuanza."
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Join {0}"
+msgstr "Jiunge na {0}"
+
+#. 0: inviterName; 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "{0} has invited you to join {1} on Belcoda"
+msgstr "{0} amekualika ujiunge na {1} kwenye Belcoda"
+
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Copyright {0} {1}"
+msgstr "Copyright {0} {1}"
+
+#~ msgid "{0} {1}"
+#~ msgstr ""
+
+#. 0: organizationName
+#: src/lib/server/utils/email/transactional/send_organization_invite.ts
+msgid "Invitation to join {0}"
+msgstr "Mwaliko wa kujiunga na {0}"
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "Note mention"
+msgstr "Kutajwa katika maelezo"
+
+#. 0: authorName; 1: personName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note about {1}."
+msgstr "{0} amekutaja katika maelezo kuhusu {1}."
+
+#. 0: authorName
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "{0} mentioned you in a note."
+msgstr "{0} amekutaja katika maelezo."
+
+#: src/lib/components/widgets/notifications/NotificationInbox.svelte
+msgid "View note"
+msgstr "Angalia maelezo"
+
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
 msgstr "Hakuna watu pendwa"
@@ -6303,6 +6367,36 @@ msgstr "Mpe mtu alama ya pendwa kwa kutumia nyota kwenye kichwa chake ili kumwon
 msgid "Show all people"
 msgstr "Onyesha watu wote"
 
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
+msgstr "Tumepokea ombi la kuweka upya nenosiri lako. Ikiwa ulikuwa wewe, bofya kitufe hapa chini ili kuunda nenosiri jipya. Ikiwa sivyo, unaweza kupuuza barua pepe hii kwa usalama—akaunti yako itabaki salama."
+
+#: src/lib/server/utils/email/transactional/send_password_reset.ts
+msgid "Click below to create a new password. If you didn't request this, just ignore this email."
+msgstr "Bofya hapa chini ili kuunda nenosiri jipya. Ikiwa hukuomba hili, puuza tu barua pepe hii."
+
+#~ msgid "Reset Password"
+#~ msgstr ""
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Security verification"
+msgstr "Uthibitishaji wa usalama"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
+msgstr "Tafadhali thibitisha anwani yako ya barua pepe kwa madhumuni ya usalama. Bofya kitufe hapa chini ili kuthibitisha anwani yako ya barua pepe."
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Please verify your email address for security purposes"
+msgstr "Tafadhali thibitisha anwani yako ya barua pepe kwa madhumuni ya usalama"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify email"
+msgstr "Thibitisha barua pepe"
+
+#: src/lib/server/utils/email/transactional/send_email_verification.ts
+msgid "Verify your email address"
+msgstr "Thibitisha anwani yako ya barua pepe"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
 msgstr "Chaguomsingi"
