@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { upload } from '@tigrisdata/storage/client';
+	import { uploadToSignedUrl, type SignedUploadUrlResponse } from '@tigrisdata/storage/client';
 	import ImagePlusIcon from '@lucide/svelte/icons/image-plus';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import { Progress } from '$lib/components/ui/progress/index.js';
@@ -45,6 +45,9 @@
 			return;
 		}
 
+		// Client-side size check for immediate feedback only. The real boundary is
+		// the server's signed-upload policy (`maxSize`); this just avoids starting a
+		// round-trip that the server would reject.
 		if (maxSizeBytes && file.size > maxSizeBytes) {
 			status = 'error';
 			const limitLabel =
@@ -58,12 +61,48 @@
 
 		status = 'uploading';
 
-		// rename the file to include the organizationId and a uuidv7
-		const result = await upload(getUploadPath(organizationId, file.name), file, {
-			url: `/api/utils/upload/${organizationId}/tigris`,
-			access: 'public',
-			multipart: true,
-			partSize: 10 * 1024 * 1024, // 10 MiB parts
+		// Key includes the organizationId and a uuidv7. The server authorizes the
+		// request against this key and signs a short-lived upload URL for it.
+		const key = getUploadPath(organizationId, file.name);
+
+		console.debug('[ImageUpload] requesting signed upload', {
+			key,
+			fileName: file.name,
+			fileType: file.type,
+			fileSize: file.size
+		});
+
+		let signedUpload: SignedUploadUrlResponse;
+		try {
+			const response = await fetch(`/api/utils/upload/${organizationId}/tigris`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name: key, contentType: file.type })
+			});
+			if (!response.ok) {
+				// Read the body so the real reason (incl. the server's dev-only `detail`)
+				// is visible in the console instead of just a status code.
+				const body = await response.text();
+				console.error('[ImageUpload] signing request failed', { status: response.status, body });
+				throw new Error(`Signing request failed with status ${response.status}`);
+			}
+			signedUpload = (await response.json()).data;
+			console.debug('[ImageUpload] received signed upload', {
+				method: signedUpload?.method,
+				url: signedUpload?.url
+			});
+		} catch (error) {
+			input.value = '';
+			status = 'error';
+			// The technical detail is for developers, not users; show a localized
+			// fallback and log the raw error separately.
+			console.error('[ImageUpload] failed to request a signed upload URL', error);
+			errorMessage = t`Upload failed. Please try again.`;
+			return;
+		}
+
+		const result = await uploadToSignedUrl(file.name, file, signedUpload, {
+			contentType: file.type,
 			onUploadProgress: ({ percentage }) => {
 				status = 'uploading';
 				progress = percentage;
@@ -74,15 +113,25 @@
 
 		if (result.error) {
 			status = 'error';
-			errorMessage = result.error.message || t`Upload failed. Please try again.`;
+			// Tigris SDK error messages are technical and untranslated. Log the
+			// detail for developers and show the user a localized fallback. The
+			// message distinguishes an HTTP rejection ("... status: 403") from a
+			// blocked request ("... network error", usually CORS on the bucket).
+			console.error('[ImageUpload] Tigris upload failed', {
+				method: signedUpload?.method,
+				uploadUrl: signedUpload?.url,
+				message: result.error?.message,
+				error: result.error
+			});
+			errorMessage = t`Upload failed. Please try again.`;
 			return;
 		}
 
 		status = 'idle';
-		// The SDK returns a time-limited presigned GET URL (expires in ~1h). The
-		// bucket is public, so the object is permanently reachable at the same URL
-		// without the signature — strip the query string to get a durable URL that
-		// won't rot inside stored content.
+		console.debug('[ImageUpload] upload succeeded', { url: result?.data?.url });
+		// The bucket is public, so the object is permanently reachable at its plain
+		// URL. Strip any presigned query string so a durable URL is what gets stored
+		// (defensive: the signed-POST flow already returns an unsigned object URL).
 		url = toDurableUrl(result?.data?.url ?? null);
 		if (url) onUpload?.(url);
 	};
