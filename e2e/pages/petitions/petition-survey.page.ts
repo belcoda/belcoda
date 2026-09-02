@@ -33,8 +33,19 @@ export class PetitionSurveyPage {
 					await checkbox.click();
 				}
 			}
-			await expect(checkbox).toHaveAttribute('aria-checked', 'true', { timeout: 1_000 });
+			await this.expectStandardFieldChecked(field, { timeout: 1_000 });
 		}).toPass({ timeout: 10_000 });
+	}
+
+	async expectStandardFieldChecked(
+		field: 'address' | 'gender' | 'dob' | 'workplace' | 'position',
+		options?: { timeout?: number }
+	) {
+		await expect(this.standardFieldCheckbox(field)).toHaveAttribute(
+			'aria-checked',
+			'true',
+			options
+		);
 	}
 
 	async addShortTextQuestion(label: string) {

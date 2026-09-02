@@ -422,10 +422,7 @@ test.describe.serial('Petitions: signup fields', () => {
 			{ timeout: 10_000 }
 		);
 		await surveyPage.checkStandardField('address');
-		await expect(surveyPage.standardFieldCheckbox('address')).toHaveAttribute(
-			'aria-checked',
-			'true'
-		);
+		await surveyPage.expectStandardFieldChecked('address');
 
 		await createPage.submit();
 		await createPage.waitForModal();
@@ -452,11 +449,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		await detailPage.clickEditPetition();
 		const editPage = new PetitionEditPage(page);
 		await editPage.waitForForm();
-		await expect(surveyPage.standardFieldCheckbox('address')).toHaveAttribute(
-			'aria-checked',
-			'true',
-			{ timeout: 15_000 }
-		);
+		await surveyPage.expectStandardFieldChecked('address', { timeout: 15_000 });
 		petitionSlug = await editPage.slugFromPreview();
 		expect(petitionSlug).not.toBe('');
 	});
