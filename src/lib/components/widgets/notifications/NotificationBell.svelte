@@ -24,7 +24,6 @@
 				size="icon"
 				class={cn('relative', className)}
 				aria-label={t`Open notifications`}
-				data-testid="notifications-bell"
 			>
 				<BellIcon class="size-5" />
 				{#if unreadCount > 0}

@@ -457,7 +457,12 @@ test.describe.serial('Community and person pages', () => {
 		await expect(liveInlineNote.locator('strong[data-note-mention]')).toHaveCount(0);
 	});
 
-	test('mentioned users can open a note notification from the dashboard', async ({
+	// Skipped: this spec opens NotificationInbox via the dashboard notification bell
+	// ("Note mention", "View note"). NotificationBell is currently commented out on
+	// the dashboard, desktop sidebar, and mobile top nav, so that inbox is not
+	// mounted. Re-enable when the bell is shown again. Mention authoring itself is
+	// covered by "owner can create, display, and edit user mentions in notes".
+	test.skip('mentioned users can open a note notification from the dashboard', async ({
 		page,
 		request
 	}) => {
