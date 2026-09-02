@@ -70,6 +70,7 @@ export default async function sendHtmlEmail(options: SendHtmlEmailOptions): Prom
 		}
 	} else {
 		log.error({ ...logContext, status: result.status }, 'Failed to send email');
+		await result.body?.cancel();
 		throw new Error('Failed to send email');
 	}
 
