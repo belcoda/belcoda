@@ -50,6 +50,11 @@ function parsePointEWKB(hex: string): PointXY {
 
 	const x = view.getFloat64(offset, littleEndian);
 	const y = view.getFloat64(offset + 8, littleEndian);
+	// PostGIS encodes an empty point's coordinates as NaN; surface that as a clear
+	// domain error rather than returning a non-finite { x, y }.
+	if (!Number.isFinite(x) || !Number.isFinite(y)) {
+		throw new Error('Received a POINT with non-finite coordinates (e.g. POINT EMPTY)');
+	}
 	return { x, y };
 }
 
