@@ -37,7 +37,7 @@
 			</Button>
 		{/snippet}
 	</Sheet.Trigger>
-	<Sheet.Content side="right" class="w-full p-0 sm:max-w-md" data-testid="notifications-inbox">
+	<Sheet.Content side="right" class="w-full p-0 sm:max-w-md">
 		<NotificationInbox />
 	</Sheet.Content>
 </Sheet.Root>

@@ -495,11 +495,19 @@ test.describe.serial('Community and person pages', () => {
 		await page.goto('/dashboard');
 		const notificationsBell = page.getByTestId('notifications-bell');
 		await expect(notificationsBell).toBeVisible({ timeout: 15_000 });
-		await notificationsBell.click();
+
 		const inbox = page.getByTestId('notifications-inbox');
-		await expect(inbox.getByText('Note mention')).toBeVisible({ timeout: 15_000 });
-		await expect(inbox.getByText(`${noteAuthor.name} mentioned you in a note`)).toBeVisible();
-		const viewNote = inbox.getByRole('link', { name: 'View note' });
+		const mentionItem = inbox.locator('li').filter({ hasText: notePrefix });
+		await expect(async () => {
+			if (!(await inbox.isVisible().catch(() => false))) {
+				await notificationsBell.click();
+			}
+			await expect(mentionItem).toBeVisible({ timeout: 5_000 });
+		}).toPass({ timeout: 20_000 });
+
+		await expect(mentionItem.getByText('Note mention')).toBeVisible();
+		await expect(mentionItem.getByText(`${noteAuthor.name} mentioned you in a note`)).toBeVisible();
+		const viewNote = mentionItem.getByRole('link', { name: 'View note' });
 		await expect(viewNote).toHaveAttribute('href', new RegExp(`/community/${personId}#note-`));
 	});
 
