@@ -27,6 +27,7 @@ export const eventSchema = v.object({
 	locality: v.nullable(helpers.mediumString),
 	region: v.nullable(helpers.mediumString),
 	postcode: v.nullable(helpers.shortString),
+	location: v.nullable(helpers.geographyPoint),
 
 	country: helpers.countryCode,
 	timezone: helpers.shortString,
@@ -50,7 +51,9 @@ export const eventSchema = v.object({
 export type EventSchema = v.InferOutput<typeof eventSchema>;
 
 export const eventApiSchema = v.object({
-	...v.omit(eventSchema, ['organizationId', 'pageHtml']).entries,
+	// `location` is excluded from Zero sync (see drizzle-zero.config.ts), so rows
+	// sourced from Zero queries do not carry it — omit it here to avoid parse errors.
+	...v.omit(eventSchema, ['organizationId', 'pageHtml', 'location']).entries,
 	startsAt: helpers.dateToString,
 	endsAt: helpers.dateToString,
 	reminderSentAt: v.nullable(helpers.dateToString),
@@ -62,7 +65,9 @@ export const eventApiSchema = v.object({
 });
 
 export const readEventZero = v.object({
-	...v.omit(eventSchema, ['pageHtml']).entries,
+	// `location` is excluded from Zero sync (see drizzle-zero.config.ts), so Zero
+	// query results do not carry it — omit it here to avoid parse errors.
+	...v.omit(eventSchema, ['pageHtml', 'location']).entries,
 	startsAt: helpers.unixTimestamp,
 	endsAt: helpers.unixTimestamp,
 	reminderSentAt: v.nullable(helpers.unixTimestamp),
