@@ -32,12 +32,12 @@
 		const location = hasInitialCoords ? null : await getLocation();
 		// Guard: the component may have been destroyed while awaiting geolocation.
 		if (destroyed) return;
-		if (location?.coords.latitude || location?.coords.longitude === 0) {
-			// 0 is a valid longitude value, and would otherwise be falsy, so we need to check for it specifically
+		// Assign independently so 0 (equator / prime meridian) is kept, and a
+		// missing axis does not block the other.
+		if (location?.coords.latitude != null) {
 			latitude = location.coords.latitude;
 		}
-		if (location?.coords.longitude === 0) {
-			// 0 is a valid longitude value, and would otherwise be falsy, so we need to check for it specifically
+		if (location?.coords.longitude != null) {
 			longitude = location.coords.longitude;
 		}
 		const hasCoords = latitude != null && longitude != null;
