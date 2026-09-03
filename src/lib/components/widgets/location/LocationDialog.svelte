@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
 	import MapPinnedIcon from '@lucide/svelte/icons/map-pinned';
 	import XIcon from '@lucide/svelte/icons/x';
@@ -7,6 +7,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { cn } from '$lib/utils.js';
 	import { type CountryCode } from '$lib/utils/country';
+	import { formatNumber } from '$lib/utils/number';
 	import Map from './Map.svelte';
 	import StaticMap from './StaticMap.svelte';
 
@@ -32,7 +33,9 @@
 	const hasDraft = $derived(draftLatitude != null && draftLongitude != null);
 
 	function formatCoords(lat: number, lng: number) {
-		return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+		const coordinateOptions = { minimumFractionDigits: 5, maximumFractionDigits: 5 };
+		// Middle dot stays distinct from locale decimal/grouping separators.
+		return `${formatNumber(lat, locale.current, coordinateOptions)} · ${formatNumber(lng, locale.current, coordinateOptions)}`;
 	}
 
 	function openDialog() {

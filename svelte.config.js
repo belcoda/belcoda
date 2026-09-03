@@ -14,6 +14,7 @@ const config = {
 				'default-src': ["'self'"],
 				'script-src': [
 					"'self'",
+					"'wasm-unsafe-eval'", // Mapbox GL JS / Mapbox Standard style WebAssembly
 					'https://www.googletagmanager.com', // Google Tag Manager / gtag.js bootstrap
 					'https://cloud.umami.is', // Umami Cloud analytics script
 					'https://connect.facebook.net', // Facebook SDK for WhatsApp embedded signup
