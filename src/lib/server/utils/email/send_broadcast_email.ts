@@ -5,8 +5,6 @@ import Broadcast from '$lib/emails/templates/Broadcast.svelte';
 import type { Props as BroadcastProps } from '$lib/emails/templates/Broadcast.svelte';
 import { t } from '$lib/index.svelte';
 import { runWithLocale } from 'wuchale/load-utils/server';
-import { type ReadPersonZero } from '$lib/schema/person';
-import { type ReadOrganizationZero } from '$lib/schema/organization';
 import {
 	renderHandlebarsTemplate,
 	type TemplatePerson,
@@ -60,7 +58,7 @@ export async function sendBroadcastEmail({
 			from: `${sendSignatureName} <${sendSignatureEmail}>`,
 			html: htmlEmailRendered,
 			subject: subjectRendered || null,
-			stream: 'outbound',
+			stream: 'broadcast',
 			replyTo: replyToEmail
 		});
 	});
