@@ -54,7 +54,10 @@ function createTransaction() {
 		}
 	]);
 	const where = vi.fn(() => ({ returning }));
-	const set = vi.fn((_values: { settings: SQL }) => ({ where }));
+	const set = vi.fn((values: { settings: SQL }) => {
+		void values;
+		return { where };
+	});
 	const update = vi.fn(() => ({ set }));
 	const tx = {
 		dbTransaction: {

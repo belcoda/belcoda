@@ -21,7 +21,8 @@ describe('organization onboarding settings', () => {
 	});
 
 	it('keeps legacy organization settings valid and already onboarded', () => {
-		const { onboarding: _onboarding, ...legacySettings } = defaultOrganizationSettings();
+		const legacySettings = defaultOrganizationSettings();
+		delete legacySettings.onboarding;
 		const settings = v.parse(organizationSettingsSchema, legacySettings);
 
 		expect(settings.onboarding).toBeUndefined();

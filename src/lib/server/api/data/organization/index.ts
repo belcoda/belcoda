@@ -56,11 +56,11 @@ export async function updateOrganization({
 		throw new Error('Failed to update organization');
 	}
 
-	const { id: _omitId, ...orgWebhookData } = updated;
+	const { id, ...orgWebhookData } = updated;
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: updated.id,
+			organizationId: id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationApiSchema, orgWebhookData)
@@ -120,11 +120,11 @@ export async function updateOrganizationWhatsappSettings({
 	if (!updated) {
 		throw new Error('Failed to update organization whatsapp settings');
 	}
-	const { id: _omitId, ...orgWebhookData } = updated;
+	const { id, ...orgWebhookData } = updated;
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: updated.id,
+			organizationId: id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationApiSchema, orgWebhookData)
@@ -173,11 +173,11 @@ export async function updateTheme({
 	if (!updated) {
 		throw new Error('Failed to update theme');
 	}
-	const { id: _omitId, ...orgWebhookData } = updated;
+	const { id, ...orgWebhookData } = updated;
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: updated.id,
+			organizationId: id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationApiSchema, orgWebhookData)
@@ -223,11 +223,11 @@ export async function updateOrganizationOnboarding({
 		throw new Error('Failed to update organization onboarding settings');
 	}
 
-	const { id: _omitId, ...orgWebhookData } = updated;
+	const { id, ...orgWebhookData } = updated;
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: updated.id,
+			organizationId: id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationApiSchema, orgWebhookData)
