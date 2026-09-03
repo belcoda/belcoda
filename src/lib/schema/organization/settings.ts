@@ -59,11 +59,49 @@ export function defaultEmailOrganizationSettings(): EmailOrganizationSettingsSch
 	};
 }
 
+export const organizationOnboardingStatusSchema = v.picklist(['pending', 'skipped', 'complete']);
+
+export type OrganizationOnboardingStatusSchema = v.InferOutput<
+	typeof organizationOnboardingStatusSchema
+>;
+
+export const organizationOnboardingSettingsSchema = v.object({
+	whatsappAccount: organizationOnboardingStatusSchema,
+	event: organizationOnboardingStatusSchema,
+	publishEvent: organizationOnboardingStatusSchema,
+	other: organizationOnboardingStatusSchema,
+	advanced: organizationOnboardingStatusSchema
+});
+
+export type OrganizationOnboardingSettingsSchema = v.InferOutput<
+	typeof organizationOnboardingSettingsSchema
+>;
+
+export function defaultOrganizationOnboardingSettings(
+	status: OrganizationOnboardingStatusSchema = 'pending'
+): OrganizationOnboardingSettingsSchema {
+	return {
+		whatsappAccount: status,
+		event: status,
+		publishEvent: status,
+		other: status,
+		advanced: status
+	};
+}
+
+export function organizationNeedsOnboarding(
+	settings: OrganizationOnboardingSettingsSchema | undefined
+): boolean {
+	return settings ? Object.values(settings).some((status) => status === 'pending') : false;
+}
+
 export const organizationSettingsSchema = v.object({
 	whatsApp: whatsappOrganizationSettingsSchema,
 	email: emailOrganizationSettingsSchema,
 	theme: themeSettingsSchema,
-	website: websiteOrganizationSettingsSchema
+	website: websiteOrganizationSettingsSchema,
+	// Organizations created before onboarding was introduced do not have this field.
+	onboarding: v.optional(organizationOnboardingSettingsSchema)
 });
 
 export type OrganizationSettingsSchema = v.InferOutput<typeof organizationSettingsSchema>;
@@ -80,7 +118,8 @@ export function defaultOrganizationSettings(): OrganizationSettingsSchema {
 		theme: defaultThemeSettings(),
 		website: {
 			homepageUrl: null
-		}
+		},
+		onboarding: defaultOrganizationOnboardingSettings()
 	};
 }
 
