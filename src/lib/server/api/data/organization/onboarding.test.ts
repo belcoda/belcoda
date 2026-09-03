@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { updateOrganizationOnboarding } from '$lib/server/api/data/organization';
 import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
 import { getQueue } from '$lib/server/queue';
+import { PgDialect } from 'drizzle-orm/pg-core';
+import type { SQL } from 'drizzle-orm';
 
 vi.mock('$lib/server/queue', () => ({
 	getQueue: vi.fn(),
@@ -45,19 +47,14 @@ function createOrganizationRecord() {
 function createTransaction() {
 	const organizationRecord = createOrganizationRecord();
 	const findFirst = vi.fn(async () => organizationRecord);
-	let settings = organizationRecord.settings;
 	const returning = vi.fn(async () => [
 		{
 			...organizationRecord,
-			settings,
 			updatedAt: new Date('2026-01-02T00:00:00.000Z')
 		}
 	]);
 	const where = vi.fn(() => ({ returning }));
-	const set = vi.fn((values: { settings: typeof settings }) => {
-		settings = values.settings;
-		return { where };
-	});
+	const set = vi.fn((_values: { settings: SQL }) => ({ where }));
 	const update = vi.fn(() => ({ set }));
 	const tx = {
 		dbTransaction: {
@@ -77,7 +74,7 @@ describe('updateOrganizationOnboarding', () => {
 		vi.mocked(getQueue).mockResolvedValue({ triggerWebhook: vi.fn() } as never);
 	});
 
-	it('authorizes against and merges with the persisted organization settings', async () => {
+	it('authorizes and applies the onboarding patch as an atomic JSONB merge', async () => {
 		const { tx, set } = createTransaction();
 		const staleClientSettings = defaultOrganizationSettings();
 		staleClientSettings.theme.primaryColor = '#abcdef';
@@ -97,17 +94,14 @@ describe('updateOrganizationOnboarding', () => {
 			}
 		});
 
-		expect(set).toHaveBeenCalledWith(
-			expect.objectContaining({
-				settings: expect.objectContaining({
-					theme: expect.objectContaining({ primaryColor: '#123456' }),
-					onboarding: expect.objectContaining({
-						event: 'complete',
-						whatsappAccount: 'pending'
-					})
-				})
-			})
-		);
+		const updateValues = set.mock.calls[0]?.[0];
+		expect(updateValues).toBeDefined();
+		if (!updateValues) throw new Error('Expected organization settings update');
+		const query = new PgDialect().sqlToQuery(updateValues.settings);
+		expect(query.sql).toContain('"organization"."settings"');
+		expect(query.sql).toMatch(/jsonb_build_object\(\s*'onboarding'/);
+		expect(query.params).toContain(JSON.stringify({ event: 'complete' }));
+		expect(query.params).not.toContain('#abcdef');
 	});
 
 	it('does not access or update an organization outside the admin and owner scope', async () => {
