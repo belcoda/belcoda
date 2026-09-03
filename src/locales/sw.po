@@ -6335,6 +6335,8 @@ msgid "{0} has invited you to join {1} on Belcoda"
 msgstr "{0} amekualika ujiunge na {1} kwenye Belcoda"
 
 #. 0: new Date().getFullYear().toString(); 1: organizationName
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/send_broadcast_email.ts
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copyright {0} {1}"
 msgstr "Copyright {0} {1}"
@@ -6407,6 +6409,7 @@ msgstr "Thibitisha barua pepe"
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
 msgstr "Thibitisha anwani yako ya barua pepe"
+
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
 msgstr "Chaguomsingi"
