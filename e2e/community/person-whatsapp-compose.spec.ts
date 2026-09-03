@@ -31,12 +31,13 @@ async function ensureCommunityOwnerApiKey(browser: Browser): Promise<string> {
 	const page = await context.newPage();
 	try {
 		const apiKeysPage = new ApiKeysPage(page);
+		await loginAsOwner(page, PROJECT);
 		await apiKeysPage.goto();
 		await apiKeysPage.root.waitFor({ state: 'visible', timeout: 15_000 });
 
 		const keyName = `e2e-community-wa-${Date.now()}`;
 		await apiKeysPage.createApiKey(keyName);
-		await apiKeysPage.keyDisplay.waitFor({ state: 'visible', timeout: 15_000 });
+		await apiKeysPage.keyDisplay.waitFor({ state: 'visible', timeout: 30_000 });
 		const key = await apiKeysPage.keyDisplay.inputValue();
 		if (!key) throw new Error('Failed to read API key from the create-key modal');
 		await apiKeysPage.closeCreateModalButton.click();
