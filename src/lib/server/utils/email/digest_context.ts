@@ -1,4 +1,5 @@
 import type { NotificationPayload } from '$lib/schema/notification/payload';
+import { t } from '$lib/index.svelte';
 
 export type DigestItem = {
 	title: string;
@@ -92,12 +93,13 @@ function groupNotifications(notifications: NotificationRow[]): GroupedNotificati
 	return [...map.values()];
 }
 
-function formatPeople(people: { name: string }[], verb: string): string {
-	if (people.length === 0) return `New ${verb}`;
-	if (people.length === 1) return `${people[0].name} ${verb}`;
-	if (people.length === 2) return `${people[0].name} and ${people[1].name} ${verb}`;
+function formatPeopleList(people: { name: string }[]): string {
+	if (people.length === 1) return people[0].name;
+	if (people.length === 2) return t`${people[0].name} and ${people[1].name}`;
 	const extra = people.length - 2;
-	return `${people[0].name}, ${people[1].name}, and ${extra} other${extra === 1 ? '' : 's'} ${verb}`;
+	return extra === 1
+		? t`${people[0].name}, ${people[1].name}, and 1 other`
+		: t`${people[0].name}, ${people[1].name}, and ${extra.toString()} others`;
 }
 
 function buildAppUrl(appUrl: string, path: string, organizationId: string): string {
@@ -126,20 +128,24 @@ export function buildDigestContext(options: {
 		switch (group.type) {
 			case 'event_signup': {
 				sectionKey = 'event_signup';
-				sectionLabel = 'Event signups';
+				sectionLabel = t`Event signups`;
 				item = {
-					title: group.subjectTitle ?? 'Event',
-					detail: formatPeople(group.people, 'signed up'),
+					title: group.subjectTitle ?? t`Event`,
+					detail: group.people.length
+						? t`${formatPeopleList(group.people)} signed up`
+						: t`New signups`,
 					url: buildAppUrl(appUrl, `/events/${group.referenceId}`, organizationId)
 				};
 				break;
 			}
 			case 'petition_signup': {
 				sectionKey = 'petition_signup';
-				sectionLabel = 'Petition signatures';
+				sectionLabel = t`Petition signatures`;
 				item = {
-					title: group.subjectTitle ?? 'Petition',
-					detail: formatPeople(group.people, 'signed'),
+					title: group.subjectTitle ?? t`Petition`,
+					detail: group.people.length
+						? t`${formatPeopleList(group.people)} signed`
+						: t`New signatures`,
 					url: buildAppUrl(appUrl, `/petitions/${group.referenceId}`, organizationId)
 				};
 				break;
@@ -147,39 +153,44 @@ export function buildDigestContext(options: {
 			case 'whatsapp_message':
 			case 'whatsapp_unread': {
 				sectionKey = 'whatsapp';
-				sectionLabel = 'WhatsApp messages';
+				sectionLabel = t`WhatsApp messages`;
 				const person = group.people[0];
 				const personId = person?.id ?? group.personId;
 				const personUrl = personId
 					? buildAppUrl(appUrl, `/community/${personId}`, organizationId)
 					: buildAppUrl(appUrl, '/notifications', organizationId);
+				const messageCount = group.count.toString();
 				item = {
-					title: person?.name ?? 'WhatsApp contact',
-					detail: `${group.count} new message${group.count === 1 ? '' : 's'}`,
+					title: person?.name ?? t`WhatsApp contact`,
+					detail:
+						group.count === 1 ? t`${messageCount} new message` : t`${messageCount} new messages`,
 					url: personUrl
 				};
 				break;
 			}
 			case 'person_note_mention': {
 				sectionKey = 'person_note_mention';
-				sectionLabel = 'Note mentions';
+				sectionLabel = t`Note mentions`;
 				const person = group.people[0];
 				const personId = person?.id ?? group.personId;
 				const personUrl = personId
 					? buildAppUrl(appUrl, `/community/${personId}#note-${group.referenceId}`, organizationId)
 					: buildAppUrl(appUrl, '/notifications', organizationId);
+				const author = group.noteAuthorName ?? t`A teammate`;
 				item = {
-					title: person?.name ?? 'Note mention',
-					detail: `${group.noteAuthorName ?? 'A teammate'} mentioned you in a note${group.notePreview ? `: ${group.notePreview}` : ''}`,
+					title: person?.name ?? t`Note mention`,
+					detail: group.notePreview
+						? t`${author} mentioned you in a note: ${group.notePreview}`
+						: t`${author} mentioned you in a note`,
 					url: personUrl
 				};
 				break;
 			}
 			default: {
 				sectionKey = 'other';
-				sectionLabel = 'Notifications';
+				sectionLabel = t`Notifications`;
 				item = {
-					title: group.subjectTitle ?? 'Notification',
+					title: group.subjectTitle ?? t`Notification`,
 					detail: '',
 					url: buildAppUrl(appUrl, '/notifications', organizationId)
 				};
