@@ -77,7 +77,7 @@ describe('updateOrganizationOnboarding', () => {
 		vi.mocked(getQueue).mockResolvedValue({ triggerWebhook: vi.fn() } as never);
 	});
 
-	it('authorizes and applies the onboarding patch as an atomic JSONB merge', async () => {
+	it('preserves unrelated settings while atomically applying the onboarding patch', async () => {
 		const { tx, set } = createTransaction();
 		const staleClientSettings = defaultOrganizationSettings();
 		staleClientSettings.theme.primaryColor = '#abcdef';
@@ -101,8 +101,12 @@ describe('updateOrganizationOnboarding', () => {
 		expect(updateValues).toBeDefined();
 		if (!updateValues) throw new Error('Expected organization settings update');
 		const query = new PgDialect().sqlToQuery(updateValues.settings);
-		expect(query.sql).toContain('"organization"."settings"');
-		expect(query.sql).toMatch(/jsonb_build_object\(\s*'onboarding'/);
+		expect(query.sql).toMatch(
+			/"organization"\."settings"\s*\|\|\s*jsonb_build_object\(\s*'onboarding'/
+		);
+		expect(query.sql).toMatch(
+			/COALESCE\("organization"\."settings"->'onboarding',[\s\S]*\)\s*\|\|\s*\$2::jsonb/
+		);
 		expect(query.params).toContain(JSON.stringify({ event: 'complete' }));
 		expect(query.params).not.toContain('#abcdef');
 	});
