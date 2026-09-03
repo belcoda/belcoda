@@ -3380,16 +3380,16 @@ msgstr "Laman web (opsional)"
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select an option"
-msgstr "Pilih opsi"
+msgstr "Pilih opsyen"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Search engine"
-msgstr "Mesin pencari"
+msgstr "Enjin carian"
 
 #: src/lib/utils/person/gender/render.ts
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
-msgstr "Lainnya"
+msgstr "Lain-lain"
 
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 msgid "Getting started with Belcoda"

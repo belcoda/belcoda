@@ -5727,7 +5727,7 @@ msgstr "Imeshindwa kutuma ujumbe wa WhatsApp"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "A teammate"
-msgstr "Mwenzako wa timu"
+msgstr "Mwanatimu"
 
 #~ msgid "this person"
 #~ msgstr ""

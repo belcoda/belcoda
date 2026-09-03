@@ -6089,34 +6089,34 @@ msgstr "Ipakita ang lahat ng tao"
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
-msgstr ""
+msgstr "Nakatanggap kami ng kahilingan na i-reset ang iyong password. Kung ikaw ito, i-click ang button sa ibaba para gumawa ng bago. Kung hindi, maaari mong balewalain ang email na ito nang ligtas—mananatiling secure ang iyong account."
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Click below to create a new password. If you didn't request this, just ignore this email."
-msgstr ""
+msgstr "I-click sa ibaba para gumawa ng bagong password. Kung hindi mo ito hiniling, balewalain mo na lang ang email na ito."
 
 #~ msgid "Reset Password"
 #~ msgstr ""
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Security verification"
-msgstr ""
+msgstr "Pag-verify ng seguridad"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
-msgstr ""
+msgstr "Paki-verify ang iyong email address para sa mga layuning pangseguridad. I-click ang button sa ibaba para i-verify ang iyong email address."
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Please verify your email address for security purposes"
-msgstr ""
+msgstr "Paki-verify ang iyong email address para sa mga layuning pangseguridad"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify email"
-msgstr ""
+msgstr "I-verify ang email"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
-msgstr ""
+msgstr "I-verify ang iyong email address"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
