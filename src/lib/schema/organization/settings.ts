@@ -142,3 +142,15 @@ export const updateWhatsappOrganizationSettingsZeroMutatorSchema = v.object({
 export type UpdateWhatsappOrganizationSettingsZeroMutatorSchema = v.InferOutput<
 	typeof updateWhatsappOrganizationSettingsZeroMutatorSchema
 >;
+
+export const updateOrganizationOnboardingZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid,
+		existingSettings: organizationSettingsSchema
+	}),
+	input: v.partial(organizationOnboardingSettingsSchema)
+});
+
+export type UpdateOrganizationOnboardingZeroMutatorSchema = v.InferOutput<
+	typeof updateOrganizationOnboardingZeroMutatorSchema
+>;
