@@ -39,14 +39,7 @@ export class PetitionPublicPage {
 		await this.page.goto(`/page/${orgSlug}/petitions/${petitionSlug}`, {
 			waitUntil: 'domcontentloaded'
 		});
-		await this.dismissCookieBannerIfPresent();
-	}
-
-	private async dismissCookieBannerIfPresent() {
-		const acceptAll = this.page.getByRole('button', { name: 'Accept all' });
-		if (await acceptAll.isVisible().catch(() => false)) {
-			await acceptAll.click();
-		}
+		await this.givenNameInput.waitFor({ state: 'visible', timeout: 30_000 });
 	}
 
 	customFieldInput(fieldId: string): Locator {
