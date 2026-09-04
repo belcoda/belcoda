@@ -9,5 +9,6 @@ export default defineConfig({
 	extensionsFilters: ['postgis'],
 
 	verbose: true,
+	extensionsFilters: ['postgis'],
 	strict: true
 });
