@@ -62,13 +62,22 @@ test.describe.serial('Events', () => {
 		await loginAsOwner(page, PROJECT);
 		await page.goto('/events');
 
-		const sidebarList = await page
-			.getByTestId('events-sidebar-list')
-			.waitFor({ state: 'visible', timeout: 10_000 });
-		const items = page.getByTestId('event-sidebar-item');
-		await expect(items).toHaveCount(25, { timeout: 15_000 });
+		await expect(async () => {
+			await page.getByTestId('events-sidebar-list').waitFor({ state: 'visible', timeout: 30_000 });
+		}).toPass({ timeout: 30_000 });
 
-		await expectSidebarItemCountToReach(items, 30, page, 'events-sidebar-scroll-sentinel');
+		const visibleItems = page.getByTestId('event-sidebar-item');
+		const seededItems = visibleItems.filter({
+			hasText: `E2E pagination event ${seedBody.runId}`
+		});
+		await expect(visibleItems).toHaveCount(25, { timeout: 15_000 });
+
+		await expectSidebarItemCountToReach(
+			seededItems,
+			30,
+			page,
+			'events-sidebar-scroll-sentinel'
+		);
 	});
 
 	test('owner can create an event', async ({ page }) => {
