@@ -101,7 +101,7 @@
 					};
 					const parsed = parse(createMutatorSchemaZero, toCreate);
 					const input = z.mutate(mutators.person.create(parsed));
-					await input.client;
+					await input.server;
 					toast.success(t`Person created successfully`);
 					form.tainted.set(undefined);
 					await onCreated?.(personId);
