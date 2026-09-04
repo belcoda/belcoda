@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class OrgConfigPage {
 	readonly page: Page;
@@ -21,6 +21,12 @@ export class OrgConfigPage {
 
 	get cancelButton(): Locator {
 		return this.page.getByTestId('org-config-cancel');
+	}
+
+	async expectLoaded() {
+		await expect(async () => {
+			await expect(this.configCard).toBeVisible();
+		}).toPass({ timeout: 30_000 });
 	}
 }
 
@@ -45,5 +51,11 @@ export class OrgThemesPage {
 
 	get cancelButton(): Locator {
 		return this.page.getByTestId('org-themes-cancel');
+	}
+
+	async expectLoaded() {
+		await expect(async () => {
+			await expect(this.themesForm).toBeVisible();
+		}).toPass({ timeout: 30_000 });
 	}
 }

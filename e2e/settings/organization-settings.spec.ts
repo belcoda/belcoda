@@ -25,7 +25,7 @@ test.describe('Settings: Organization Configuration', () => {
 		const configPage = new OrgConfigPage(page);
 		await loginAsAdmin(page, PROJECT);
 		await configPage.goto();
-		await expect(configPage.configCard).toBeVisible({ timeout: 15_000 });
+		await configPage.expectLoaded();
 	});
 
 	test('owner can save configuration and return to /settings', async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe('Settings: Organization Themes', () => {
 		const themesPage = new OrgThemesPage(page);
 		await loginAsAdmin(page, PROJECT);
 		await themesPage.goto();
-		await expect(themesPage.themesForm).toBeVisible({ timeout: 15_000 });
+		await themesPage.expectLoaded();
 	});
 
 	test('owner can save themes and return to /settings', async ({ page }) => {

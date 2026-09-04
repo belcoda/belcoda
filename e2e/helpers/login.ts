@@ -1,7 +1,9 @@
-import { expect, type Page } from '@playwright/test';
+import fs from 'node:fs';
+import { expect, type BrowserContext, type Page } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
 import { CommunityPage } from '../pages/community/community.page';
 import { getTestUsers, type UserRole } from './auth';
+import { authStoragePath } from './auth-storage';
 import type { E2EProject } from './config';
 
 const NAVIGATION_TIMEOUT = 60_000;
@@ -68,10 +70,25 @@ export async function loginAsOwner(page: Page, project: E2EProject) {
 	await ensureAuthenticated(page, project, 'owner', false);
 }
 
+async function applyRoleStorageState(page: Page, project: E2EProject, role: UserRole) {
+	const storagePath = authStoragePath(project, role);
+	if (!fs.existsSync(storagePath)) {
+		throw new Error(`Missing e2e auth storage at ${storagePath}. Run global setup first.`);
+	}
+	const storage = JSON.parse(fs.readFileSync(storagePath, 'utf-8')) as {
+		cookies: Parameters<BrowserContext['addCookies']>[0];
+	};
+	await page.context().clearCookies();
+	if (storage.cookies.length > 0) {
+		await page.context().addCookies(storage.cookies);
+	}
+}
+
 export async function loginAsAdmin(page: Page, project: E2EProject) {
-	const { admin } = getTestUsers(project);
-	await signOut(page);
-	await loginViaForm(page, admin.email, admin.password, true);
+	await applyRoleStorageState(page, project, 'admin');
+	const communityPage = new CommunityPage(page);
+	await page.goto('/community', { waitUntil: 'commit', timeout: NAVIGATION_TIMEOUT });
+	await communityPage.expectLoaded();
 }
 
 export async function loginAsMember(page: Page, project: E2EProject) {
