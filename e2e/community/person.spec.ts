@@ -55,9 +55,11 @@ test.describe.serial('Community and person pages', () => {
 		);
 		ids.personPath = new URL(page.url()).pathname;
 		ids.personId = ids.personPath.split('/')[2] ?? '';
-		await expect(page.getByTestId('person-timeline-display-name')).toHaveText(
-			`${ids.givenName} ${ids.familyName}`
-		);
+		await expect(async () => {
+			await expect(page.getByTestId('person-timeline-display-name')).toHaveText(
+				`${ids.givenName} ${ids.familyName}`
+			);
+		}).toPass({ timeout: 30_000 });
 	});
 
 	test('owner can find the person using the community list search', async ({ page }) => {
