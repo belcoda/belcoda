@@ -59,10 +59,12 @@ function parsePointEWKB(hex: string): PointXY {
 }
 
 /**
- * Reusable Drizzle column type for a PostGIS `geography(Point, 4326)` column.
+ * Reusable Drizzle column type for a PostGIS geography point.
  *
- * - Stored in PostgreSQL as `geography(Point,4326)`.
- * - Exposed to application code as an ergonomic `{ x: longitude, y: latitude }`.
+ * - Production migrations declare `geography(Point,4326)` (see drizzle/0029).
+ * - `dataType()` is the bare type name only: drizzle-kit push quotes the entire
+ *   string, so `geography(Point,4326)` becomes type `"geography(Point,4326)"`.
+ * - Exposed to application code as `{ x: longitude, y: latitude }`.
  * - Serialises to EWKT (`SRID=4326;POINT(lon lat)`) on write — assignment-cast
  *   to `geography` by PostgreSQL — and parses the hex EWKB it returns on read.
  *
@@ -74,7 +76,7 @@ export const geographyPoint = customType<{
 	driverData: string;
 }>({
 	dataType() {
-		return `geography(Point,${SRID})`;
+		return 'geography';
 	},
 	toDriver(value: PointXY): string {
 		// x = longitude, y = latitude — do NOT swap the axes.
