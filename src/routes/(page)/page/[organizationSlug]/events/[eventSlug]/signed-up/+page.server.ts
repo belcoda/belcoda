@@ -28,10 +28,14 @@ export async function load({ locals, params, url }) {
 		params.organizationSlug
 	);
 
-	const renderedDescription = await renderSanitizedDescription({
-		description: eventObj.description,
-		logContext: { eventId: eventObj.id }
-	});
+	// When pageHtml (TipTap) exists it is rendered directly (already sanitized at
+	// write time), so skip the legacy Lexical render entirely.
+	const renderedDescription = eventObj.pageHtml
+		? null
+		: await renderSanitizedDescription({
+				description: eventObj.description,
+				logContext: { eventId: eventObj.id }
+			});
 
 	return {
 		event: { ...eventObj, description: renderedDescription },
