@@ -19,6 +19,7 @@ export const createEvent = defineMutator(
 			title: args.input.title,
 			shortDescription: args.input.shortDescription,
 			description: args.input.description,
+			pageHtml: args.input.pageHtml,
 			published: false,
 			startsAt: args.input.startsAt,
 			endsAt: args.input.endsAt,

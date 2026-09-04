@@ -63,7 +63,7 @@ function parsePointEWKB(hex: string): PointXY {
  *
  * - Production migrations declare `geography(Point,4326)` (see drizzle/0029).
  * - `dataType()` is the bare type name only: drizzle-kit push quotes the entire
- *   string and schema-qualifies it as `"undefined"."geography(Point,4326)"`.
+ *   string, so `geography(Point,4326)` becomes type `"geography(Point,4326)"`.
  * - Exposed to application code as `{ x: longitude, y: latitude }`.
  * - Serialises to EWKT (`SRID=4326;POINT(lon lat)`) on write — assignment-cast
  *   to `geography` by PostgreSQL — and parses the hex EWKB it returns on read.
