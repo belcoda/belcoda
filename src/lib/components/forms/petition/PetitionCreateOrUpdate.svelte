@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import SvelteLexical from '$lib/components/ui/wysiwyg/SvelteLexical.svelte';
+	import TipTap from '$lib/components/ui/wysiwyg/TipTap.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
@@ -89,6 +90,24 @@
 		$data.petitionText = null;
 	}
 
+	// Decide which editor backs the "Petition page" content, based on the initial
+	// record only (so we never swap editors mid-edit):
+	//   - pageHtml present                      -> TipTap (HTML, in pageHtml)
+	//   - no pageHtml but a Lexical description -> legacy SvelteLexical (description)
+	//   - neither (incl. brand-new petitions)   -> TipTap (HTML, in pageHtml)
+	function hasLexicalContent(description: unknown): boolean {
+		return !!(description as { root?: { children?: unknown[] } })?.root?.children?.length;
+	}
+	// Snapshot the initial record on purpose — the editor choice must not change
+	// as the user types.
+	/* svelte-ignore state_referenced_locally */
+	const useTipTap = !!petition?.pageHtml || !hasLexicalContent(petition?.description);
+	// TipTap is a controlled string editor; seed a non-null value so mounting an
+	// empty editor doesn't taint the form by pushing null -> ''.
+	if (useTipTap && ($data.pageHtml === null || $data.pageHtml === undefined)) {
+		$data.pageHtml = '';
+	}
+
 	let dangerOpen = $state(false);
 	let confirmArchiveOpen = $state(false);
 	let confirmDeleteOpen = $state(false);
@@ -166,7 +185,11 @@
 			<Card.Title>{t`Petition page`}</Card.Title>
 		</Card.Header>
 		<Card.Content class="space-y-6">
-			<SvelteLexical bind:value={$data.description} />
+			{#if useTipTap}
+				<TipTap bind:value={$data.pageHtml as string} organizationId={appState.organizationId} />
+			{:else}
+				<SvelteLexical bind:value={$data.description} />
+			{/if}
 		</Card.Content>
 	</Card.Root>
 
