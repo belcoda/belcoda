@@ -2,9 +2,11 @@
 set -euo pipefail
 
 # Shared setup for cloud coding agents (Cursor background agents, Codex cloud, etc).
-# Installs Postgres configured for Zero, creates the dev DB, then installs deps
-# and seeds the database. Runs during the agent's build/setup phase, where the
-# network is available — the app itself must be able to run offline afterwards.
+# Installs Postgres (wal_level=logical) and PostGIS, creates the dev DB, enables
+# the postgis extension, then installs deps and seeds. drizzle-kit push does not
+# run drizzle/*.sql, so CREATE EXTENSION must happen before schema push.
+# Runs during the agent's build/setup phase, where the network is available —
+# the app itself must be able to run offline afterwards.
 #
 # Called by:
 #   - .cursor/setup.sh          (Cursor `install` step)
@@ -43,8 +45,11 @@ as_postgres() {
 . "$(dirname "$0")/agent-postgres-lib.sh"
 
 # --- Postgres (Zero needs wal_level=logical for logical replication) ---
+# PostGIS is required for event.location (geography); drizzle-kit push does
+# not run CREATE EXTENSION from drizzle/*.sql, so install it here.
 $SUDO apt-get update
 $SUDO apt-get install -y postgresql postgresql-contrib
+install_postgis_packages
 # apt postinst often skips service starts under policy-rc.d in agent containers;
 # start explicitly before the first readiness wait. Restart later still applies
 # wal_level changes.
