@@ -7047,3 +7047,13 @@ msgstr ""
 #: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 msgid "Eventually"
 msgstr ""
+
+#. 0: formatPeopleList(group.people)
+#: src/lib/server/utils/email/digest_context.ts
+msgid "{0} have signed up"
+msgstr "{0} se sont inscrit(e)s"
+
+#. 0: formatPeopleList(group.people)
+#: src/lib/server/utils/email/digest_context.ts
+msgid "{0} have signed"
+msgstr "{0} ont signé"

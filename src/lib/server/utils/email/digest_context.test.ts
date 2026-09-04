@@ -41,6 +41,15 @@ function eventSignups(names: string[]): NotificationInput[] {
 	}));
 }
 
+function petitionSignatures(names: string[]): NotificationInput[] {
+	return names.map((personName, i) => ({
+		id: `petition-${i}`,
+		type: 'petition_signup',
+		referenceId: 'petition-1',
+		payload: { subjectTitle: 'Safer streets', personName, personId: `person-${i}` }
+	}));
+}
+
 describe('buildDigestContext', () => {
 	it('links a note mention to its person when the person has no display name', () => {
 		const noteId = '95c0dd4a-85e4-4712-a47c-ce19c7b6118f';
@@ -81,13 +90,13 @@ describe('buildDigestContext', () => {
 		const two = await runWithLocale('en', async () =>
 			buildContext(eventSignups(['Alex Chen', 'Bianca Rossi']))
 		);
-		expect(two.sections[0]?.items[0]?.detail).toBe('Alex Chen and Bianca Rossi signed up');
+		expect(two.sections[0]?.items[0]?.detail).toBe('Alex Chen and Bianca Rossi have signed up');
 
 		const four = await runWithLocale('en', async () =>
 			buildContext(eventSignups(['Alex Chen', 'Bianca Rossi', 'Cai Wu', 'Dev Patel']))
 		);
 		expect(four.sections[0]?.items[0]?.detail).toBe(
-			'Alex Chen, Bianca Rossi, and 2 others signed up'
+			'Alex Chen, Bianca Rossi, and 2 others have signed up'
 		);
 	});
 
@@ -95,5 +104,22 @@ describe('buildDigestContext', () => {
 		const context = await runWithLocale('fr', async () => buildContext(whatsappMessages(2)));
 		expect(context.sections[0]?.label).toBe('Messages WhatsApp');
 		expect(context.sections[0]?.items[0]?.detail).toBe('2 nouveaux messages');
+	});
+
+	it.each([
+		['es', 'Alex Chen y Bianca Rossi se inscribieron', 'Alex Chen y Bianca Rossi firmaron'],
+		['fr', 'Alex Chen et Bianca Rossi se sont inscrit(e)s', 'Alex Chen et Bianca Rossi ont signé'],
+		['pt', 'Alex Chen e Bianca Rossi inscreveram-se', 'Alex Chen e Bianca Rossi assinaram'],
+		['sw', 'Alex Chen na Bianca Rossi wamejisajili', 'Alex Chen na Bianca Rossi wametia saini']
+	])('uses plural agreement for grouped people in %s', async (locale, signup, signature) => {
+		const eventContext = await runWithLocale(locale, async () =>
+			buildContext(eventSignups(['Alex Chen', 'Bianca Rossi']))
+		);
+		expect(eventContext.sections[0]?.items[0]?.detail).toBe(signup);
+
+		const petitionContext = await runWithLocale(locale, async () =>
+			buildContext(petitionSignatures(['Alex Chen', 'Bianca Rossi']))
+		);
+		expect(petitionContext.sections[0]?.items[0]?.detail).toBe(signature);
 	});
 });

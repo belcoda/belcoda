@@ -12,13 +12,19 @@ type DigestFrequency = 'daily' | 'weekly';
 
 // A daily digest covers a single day, a weekly one the trailing 7-day window,
 // so the period label (used in the header and subject) must match the cadence.
-function formatDigestPeriod(locale: Locale, frequency: DigestFrequency): string {
-	const now = new Date();
+export function formatDigestPeriod(
+	locale: Locale,
+	frequency: DigestFrequency,
+	now = new Date()
+): string {
 	const fmt = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' });
 	if (frequency === 'daily') {
 		return `${fmt.format(now)}, ${now.getFullYear()}`;
 	}
 	const start = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
+	if (start.getFullYear() !== now.getFullYear()) {
+		return `${fmt.format(start)}, ${start.getFullYear()} – ${fmt.format(now)}, ${now.getFullYear()}`;
+	}
 	return `${fmt.format(start)} – ${fmt.format(now)}, ${now.getFullYear()}`;
 }
 

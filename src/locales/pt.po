@@ -6346,7 +6346,7 @@ msgstr "Convite para participar de {0}"
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 #: src/lib/server/utils/email/digest_context.ts
 msgid "Note mention"
-msgstr ""
+msgstr "Menção em nota"
 
 #. 0: authorName; 1: personName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
@@ -6622,7 +6622,7 @@ msgstr "Menções em notas"
 #. 0: author; 1: group.notePreview
 #: src/lib/server/utils/email/digest_context.ts
 msgid "{0} mentioned you in a note: {1}"
-msgstr "{0} mencionou-o numa nota: {1}"
+msgstr "{0} mencionou você numa nota: {1}"
 
 #. 0: author
 #: src/lib/server/utils/email/digest_context.ts
@@ -7033,3 +7033,13 @@ msgstr ""
 #: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 msgid "Eventually"
 msgstr ""
+
+#. 0: formatPeopleList(group.people)
+#: src/lib/server/utils/email/digest_context.ts
+msgid "{0} have signed up"
+msgstr "{0} inscreveram-se"
+
+#. 0: formatPeopleList(group.people)
+#: src/lib/server/utils/email/digest_context.ts
+msgid "{0} have signed"
+msgstr "{0} assinaram"

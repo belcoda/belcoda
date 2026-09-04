@@ -6025,7 +6025,7 @@ msgstr "Hindi naipadala ang mensahe sa WhatsApp"
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 #: src/lib/server/utils/email/digest_context.ts
 msgid "A teammate"
-msgstr ""
+msgstr "Isang kasamahan sa koponan"
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6360,7 +6360,7 @@ msgstr "Imbitasyon na sumali sa {0}"
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 #: src/lib/server/utils/email/digest_context.ts
 msgid "Note mention"
-msgstr ""
+msgstr "Pagbanggit sa tala"
 
 #. 0: authorName; 1: personName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
@@ -7047,3 +7047,13 @@ msgstr ""
 #: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 msgid "Eventually"
 msgstr ""
+
+#. 0: formatPeopleList(group.people)
+#: src/lib/server/utils/email/digest_context.ts
+msgid "{0} have signed up"
+msgstr "Nag-sign up sina {0}"
+
+#. 0: formatPeopleList(group.people)
+#: src/lib/server/utils/email/digest_context.ts
+msgid "{0} have signed"
+msgstr "Pumirma sina {0}"

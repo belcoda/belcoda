@@ -7049,3 +7049,13 @@ msgstr "you can do the rest anytime"
 #: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 msgid "Eventually"
 msgstr "Eventually"
+
+#. 0: formatPeopleList(group.people)
+#: src/lib/server/utils/email/digest_context.ts
+msgid "{0} have signed up"
+msgstr "{0} have signed up"
+
+#. 0: formatPeopleList(group.people)
+#: src/lib/server/utils/email/digest_context.ts
+msgid "{0} have signed"
+msgstr "{0} have signed"

@@ -131,9 +131,12 @@ export function buildDigestContext(options: {
 				sectionLabel = t`Event signups`;
 				item = {
 					title: group.subjectTitle ?? t`Event`,
-					detail: group.people.length
-						? t`${formatPeopleList(group.people)} signed up`
-						: t`New signups`,
+					detail:
+						group.people.length === 0
+							? t`New signups`
+							: group.people.length === 1
+								? t`${formatPeopleList(group.people)} signed up`
+								: t`${formatPeopleList(group.people)} have signed up`,
 					url: buildAppUrl(appUrl, `/events/${group.referenceId}`, organizationId)
 				};
 				break;
@@ -143,9 +146,12 @@ export function buildDigestContext(options: {
 				sectionLabel = t`Petition signatures`;
 				item = {
 					title: group.subjectTitle ?? t`Petition`,
-					detail: group.people.length
-						? t`${formatPeopleList(group.people)} signed`
-						: t`New signatures`,
+					detail:
+						group.people.length === 0
+							? t`New signatures`
+							: group.people.length === 1
+								? t`${formatPeopleList(group.people)} signed`
+								: t`${formatPeopleList(group.people)} have signed`,
 					url: buildAppUrl(appUrl, `/petitions/${group.referenceId}`, organizationId)
 				};
 				break;
