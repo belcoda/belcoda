@@ -8,11 +8,17 @@ import { t } from '$lib/index.svelte';
 import { runWithLocale } from 'wuchale/load-utils/server';
 
 type DigestNotifications = Parameters<typeof buildDigestContext>[0]['notifications'];
+type DigestFrequency = 'daily' | 'weekly';
 
-function formatDigestPeriod(locale: Locale): string {
+// A daily digest covers a single day, a weekly one the trailing 7-day window,
+// so the period label (used in the header and subject) must match the cadence.
+function formatDigestPeriod(locale: Locale, frequency: DigestFrequency): string {
 	const now = new Date();
-	const start = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
 	const fmt = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' });
+	if (frequency === 'daily') {
+		return `${fmt.format(now)}, ${now.getFullYear()}`;
+	}
+	const start = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
 	return `${fmt.format(start)} – ${fmt.format(now)}, ${now.getFullYear()}`;
 }
 
@@ -21,6 +27,7 @@ export async function sendNotificationDigestEmail({
 	from,
 	replyTo,
 	locale,
+	frequency,
 	notifications,
 	organizationName,
 	organizationId,
@@ -30,13 +37,14 @@ export async function sendNotificationDigestEmail({
 	from: string;
 	replyTo?: string;
 	locale: Locale;
+	frequency: DigestFrequency;
 	notifications: DigestNotifications;
 	organizationName: string;
 	organizationId: string;
 	appUrl: string;
 }) {
 	return await runWithLocale(locale, async () => {
-		const weekOf = formatDigestPeriod(locale);
+		const weekOf = formatDigestPeriod(locale, frequency);
 		const context = buildDigestContext({
 			notifications,
 			organizationName,

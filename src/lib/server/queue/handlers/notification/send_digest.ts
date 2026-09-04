@@ -32,7 +32,8 @@ export async function sendDigest({
 			totals,
 			await sendDigestForUser({
 				targetUser,
-				appUrl
+				appUrl,
+				frequency
 			})
 		);
 	}
@@ -74,10 +75,12 @@ type DigestUser = Awaited<ReturnType<typeof listDigestUsers>>[number];
 
 async function sendDigestForUser({
 	targetUser,
-	appUrl
+	appUrl,
+	frequency
 }: {
 	targetUser: DigestUser;
 	appUrl: string;
+	frequency: DigestFrequency;
 }): Promise<DigestCounts> {
 	let sent = 0;
 
@@ -98,7 +101,8 @@ async function sendDigestForUser({
 				digest,
 				to: targetUser.email,
 				appUrl,
-				locale
+				locale,
+				frequency
 			});
 			sent++;
 		}
@@ -153,12 +157,14 @@ async function sendOrganizationDigest({
 	digest,
 	to,
 	appUrl,
-	locale
+	locale,
+	frequency
 }: {
 	digest: OrganizationDigest;
 	to: string;
 	appUrl: string;
 	locale: Locale;
+	frequency: DigestFrequency;
 }) {
 	const { org, notifications } = digest;
 	const emailSignature = await getEmailSignature({
@@ -171,6 +177,7 @@ async function sendOrganizationDigest({
 		from: `${emailSignature.name} <${emailSignature.emailAddress}>`,
 		replyTo: emailSignature.replyTo ?? undefined,
 		locale,
+		frequency,
 		notifications,
 		organizationName: org.name,
 		organizationId: org.id,
