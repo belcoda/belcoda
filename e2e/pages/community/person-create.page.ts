@@ -19,7 +19,11 @@ export class PersonCreatePage {
 
 	async goto() {
 		await this.page.goto('/community/person/new');
-		await this.form.waitFor({ state: 'visible' });
+		await this.page.getByTestId('person-create-heading').waitFor({
+			state: 'visible',
+			timeout: 30_000
+		});
+		await this.form.waitFor({ state: 'visible', timeout: 30_000 });
 	}
 
 	async fillRequiredFields(givenName: string, familyName: string, email: string) {
