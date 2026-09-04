@@ -982,7 +982,7 @@
         },
         "location": {
           "name": "location",
-          "type": "geography(Point,4326)",
+          "type": "geography",
           "primaryKey": false,
           "notNull": false
         },
