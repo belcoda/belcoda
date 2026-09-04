@@ -53,7 +53,9 @@ export type EventSchema = v.InferOutput<typeof eventSchema>;
 export const eventApiSchema = v.object({
 	// `location` is excluded from Zero sync (see drizzle-zero.config.ts), so rows
 	// sourced from Zero queries do not carry it — omit it here to avoid parse errors.
-	...v.omit(eventSchema, ['organizationId', 'pageHtml', 'location']).entries,
+	// `pageHtml` (TipTap page body, sanitized at write time) IS exposed via the REST
+	// API and webhook payloads so integrations can read back the canonical content.
+	...v.omit(eventSchema, ['organizationId', 'location']).entries,
 	startsAt: helpers.dateToString,
 	endsAt: helpers.dateToString,
 	reminderSentAt: v.nullable(helpers.dateToString),

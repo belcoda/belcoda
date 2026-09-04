@@ -31,7 +31,9 @@ export const petitionSchema = v.object({
 export type PetitionSchema = v.InferOutput<typeof petitionSchema>;
 
 export const petitionApiSchema = v.object({
-	...v.omit(petitionSchema, ['organizationId', 'pageHtml']).entries,
+	// `pageHtml` (TipTap page body, sanitized at write time) IS exposed via the REST
+	// API and webhook payloads so integrations can read back the canonical content.
+	...v.omit(petitionSchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString,
 	deletedAt: v.nullable(helpers.dateToString),
