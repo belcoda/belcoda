@@ -374,7 +374,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			title: true,
 			description: true,
 			shortDescription: true,
-			pageHtml: false,
+			pageHtml: true,
 
 			startsAt: true,
 			endsAt: true,
@@ -430,7 +430,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			title: true,
 			description: true,
 			shortDescription: true,
-			pageHtml: false,
+			pageHtml: true,
 
 			published: true,
 
