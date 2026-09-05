@@ -325,7 +325,7 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const permissionsPolicies = [
 		'camera=()',
 		'microphone=()',
-		'geolocation=()',
+		'geolocation=(self)',
 		'payment=()',
 		'usb=()',
 		'magnetometer=()',
