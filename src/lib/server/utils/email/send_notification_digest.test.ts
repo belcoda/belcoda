@@ -26,4 +26,14 @@ describe('formatDigestPeriod', () => {
 			'Dec 25 – Dec 31, 2025'
 		);
 	});
+
+	it('keeps six local calendar days across the spring DST boundary', () => {
+		// America/New_York springs forward on 2026-03-08 (02:00 → 03:00).
+		// 2026-03-10T04:30:00Z is 00:30 EDT on Mar 10. Six calendar days earlier
+		// is Mar 4; 144 elapsed hours would land on Mar 3.
+		const now = new Date('2026-03-10T04:30:00Z');
+		expect(formatDigestPeriod('en', 'weekly', now, 'America/New_York')).toBe(
+			'Mar 4 – Mar 10, 2026'
+		);
+	});
 });

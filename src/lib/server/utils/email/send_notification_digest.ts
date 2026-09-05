@@ -6,6 +6,7 @@ import { buildDigestContext } from './digest_context';
 import { type Locale } from '$lib/utils/language';
 import { t } from '$lib/index.svelte';
 import { runWithLocale } from 'wuchale/load-utils/server';
+import { fromDate } from '@internationalized/date';
 
 type DigestNotifications = Parameters<typeof buildDigestContext>[0]['notifications'];
 type DigestFrequency = 'daily' | 'weekly';
@@ -34,7 +35,11 @@ export function formatDigestPeriod(
 	if (frequency === 'daily') {
 		return format(dayMonthYear, now);
 	}
-	const start = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
+	// Six calendar days in the org zone (not 144 elapsed hours) so DST
+	// transitions do not shift the local start date.
+	const start = fromDate(now, timeZone ?? 'UTC')
+		.subtract({ days: 6 })
+		.toDate();
 	if (yearInZone(start) !== yearInZone(now)) {
 		return `${format(dayMonthYear, start)} – ${format(dayMonthYear, now)}`;
 	}
