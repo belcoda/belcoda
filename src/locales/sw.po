@@ -19,6 +19,7 @@ msgstr "Tarehe na saa"
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
 #: src/routes/(app)/settings/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
@@ -420,6 +421,7 @@ msgid "Invite?"
 msgstr "Alika?"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -427,6 +429,8 @@ msgid "Admin"
 msgstr "Msimamizi"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -434,6 +438,7 @@ msgid "Member"
 msgstr "Mwanachama"
 
 #: src/lib/components/layouts/app/navigation/OrgMenu.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
@@ -1513,6 +1518,7 @@ msgstr "Msimbo wa posta"
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/public/event/EventSignupForm.svelte
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
 #: src/routes/(app)/settings/organization/configuration/OrgConfigForm.svelte
 msgid "Country"
 msgstr "Nchi"
@@ -2077,6 +2083,7 @@ msgstr "Acha tupu kwa ufunguo usioisha muda wake"
 msgid "Creating..."
 msgstr "Inaunda..."
 
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
 #: src/routes/(app)/settings/teams/NewTeam.svelte
@@ -2928,6 +2935,7 @@ msgstr "Wanachama"
 msgid "Users who are part of this organization."
 msgstr "Watumiaji ambao ni sehemu ya shirika hili."
 
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
@@ -2976,6 +2984,7 @@ msgstr "Alika mtumiaji"
 msgid "Send an invitation to join your organization."
 msgstr "Tuma mwaliko wa kujiunga na shirika lako."
 
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
 #: src/routes/(app)/settings/users/InviteUserModal.svelte
 msgid "Invite"
 msgstr "Alika"
@@ -4331,6 +4340,7 @@ msgstr "Belcoda"
 msgid "Copyright {0} Belcoda"
 msgstr "Hakimiliki {0} Belcoda"
 
+#: src/lib/components/widgets/organization-onboarding/OnboardingLayout.svelte
 #: src/lib/server/utils/email/context/transactional/petition_signature_confirmation.ts
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
@@ -6045,6 +6055,8 @@ msgid "{0} has invited you to join {1} on Belcoda"
 msgstr "{0} amekualika ujiunge na {1} kwenye Belcoda"
 
 #. 0: new Date().getFullYear().toString(); 1: organizationName
+#. 0: new Date().getFullYear().toString(); 1: organizationName
+#: src/lib/server/utils/email/send_broadcast_email.ts
 #: src/lib/server/utils/email/transactional/send_organization_invite.ts
 msgid "Copyright {0} {1}"
 msgstr "Copyright {0} {1}"

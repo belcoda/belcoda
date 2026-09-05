@@ -46,7 +46,8 @@ const config = {
 					'https://googleads.g.doubleclick.net', // Google Ads conversion pixels
 					'https://pagead2.googlesyndication.com', // Google Ads remarketing / conversion
 					'https://cloud.umami.is', // Umami Cloud script host
-					'https://api-gateway.umami.dev', // Umami Cloud event ingestion API
+					'https://gateway.umami.is', // Umami Cloud event ingestion API
+					'https://api-gateway.umami.dev', // Umami Cloud event ingestion API (legacy)
 					'https://*.s3.amazonaws.com', // Global S3 endpoint (left-most wildcard is valid)
 					'https://api.country.is', // IP geolocation during new organization creation
 					'https://api.mapbox.com', // Mapbox styles, tiles, sprites, glyphs

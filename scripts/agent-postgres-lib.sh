@@ -1,5 +1,9 @@
 # Shared Postgres bootstrap helpers for agent setup scripts.
 # Expects callers to define as_postgres() before sourcing.
+#
+# PostGIS: event.location is geography(Point,4326). Agent setups run
+# `drizzle-kit push`, which does not execute drizzle/*.sql migrations, so the
+# extension must be installed and CREATE EXTENSION'd before schema push.
 
 # Parse user / password from postgres:// or postgresql:// URLs (percent-decoded).
 pg_uri_user() {
@@ -201,4 +205,27 @@ bootstrap_postgres_roles() {
 			"GRANT $(sql_ident "$app_user") TO $(sql_ident "$upstream_user");"
 	fi
 	ensure_database "$app_db" "$app_user"
+	enable_postgis "$app_db"
+}
+
+# Install the PostGIS packages matching the on-disk Postgres major version.
+# Safe to re-run. Uses ${SUDO:-} so root callers (agent-setup-web.sh) work.
+# Postgres does not need to be running; files land under /usr/lib/postgresql.
+install_postgis_packages() {
+	local pg_major
+	pg_major=$(ls /usr/lib/postgresql 2>/dev/null | sort -n | tail -1)
+	if [ -z "$pg_major" ]; then
+		echo "Could not determine PostgreSQL major version (expected /usr/lib/postgresql/<major>)" >&2
+		exit 1
+	fi
+	${SUDO:-} apt-get update
+	${SUDO:-} apt-get install -y "postgresql-${pg_major}-postgis-3"
+}
+
+# Enable PostGIS in the given database. Superuser required (uses as_postgres).
+# Idempotent. Must run after the database exists and the packages are installed.
+enable_postgis() {
+	local dbname="$1"
+	as_postgres psql -d "$dbname" -v ON_ERROR_STOP=1 -c \
+		"CREATE EXTENSION IF NOT EXISTS postgis;"
 }

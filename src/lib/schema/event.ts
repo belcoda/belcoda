@@ -27,6 +27,7 @@ export const eventSchema = v.object({
 	locality: v.nullable(helpers.mediumString),
 	region: v.nullable(helpers.mediumString),
 	postcode: v.nullable(helpers.shortString),
+	location: v.nullable(helpers.geographyPoint),
 
 	country: helpers.countryCode,
 	timezone: helpers.shortString,
@@ -50,7 +51,11 @@ export const eventSchema = v.object({
 export type EventSchema = v.InferOutput<typeof eventSchema>;
 
 export const eventApiSchema = v.object({
-	...v.omit(eventSchema, ['organizationId', 'pageHtml']).entries,
+	// `location` is excluded from Zero sync (see drizzle-zero.config.ts), so rows
+	// sourced from Zero queries do not carry it — omit it here to avoid parse errors.
+	// `pageHtml` (TipTap page body, sanitized at write time) IS exposed via the REST
+	// API and webhook payloads so integrations can read back the canonical content.
+	...v.omit(eventSchema, ['organizationId', 'location']).entries,
 	startsAt: helpers.dateToString,
 	endsAt: helpers.dateToString,
 	reminderSentAt: v.nullable(helpers.dateToString),
@@ -62,7 +67,10 @@ export const eventApiSchema = v.object({
 });
 
 export const readEventZero = v.object({
-	...v.omit(eventSchema, ['pageHtml']).entries,
+	// `location` is excluded from Zero sync (see drizzle-zero.config.ts), so Zero
+	// query results do not carry it — omit it here to avoid parse errors. `pageHtml`
+	// IS synced (it backs the TipTap editor), so it stays in the read schema.
+	...v.omit(eventSchema, ['location']).entries,
 	startsAt: helpers.unixTimestamp,
 	endsAt: helpers.unixTimestamp,
 	reminderSentAt: v.nullable(helpers.unixTimestamp),
@@ -79,6 +87,9 @@ export const createEvent = v.object({
 	slug: eventSchema.entries.slug,
 	shortDescription: eventSchema.entries.shortDescription,
 	description: v.optional(eventSchema.entries.description, null),
+	// HTML authored in the TipTap editor. Sanitized with DOMPurify on the server
+	// (see src/lib/server/api/data/event/event.ts) before it is persisted.
+	pageHtml: v.optional(eventSchema.entries.pageHtml, null),
 	startsAt: eventSchema.entries.startsAt,
 	endsAt: eventSchema.entries.endsAt,
 	onlineLink: v.optional(eventSchema.entries.onlineLink, null),
