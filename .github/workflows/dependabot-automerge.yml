@@ -41,7 +41,9 @@ jobs:
   # Trusted job: does not checkout or execute PR code, so a compromised
   # dependency can never run with DEPENDABOT_PAT in scope. After verify passes,
   # it approves the PR with the trusted PAT (satisfying the develop ruleset's
-  # required review) and enables auto-merge. Required status checks are NOT
+  # required review) and enables auto-merge. Approval and merge are both pinned
+  # to the exact head SHA that verify built, so a commit pushed to the PR
+  # mid-run cannot inherit the approval. Required status checks are NOT
   # bypassed — auto-merge still waits for them, and we never use --admin.
   merge:
     needs: verify
@@ -52,21 +54,27 @@ jobs:
       pull-requests: write
     steps:
       - name: Approve and auto-merge Dependabot PRs that build successfully
-        # Approve only if the PAT user has not already approved (keeps re-runs
-        # idempotent); --auto is a no-op when auto-merge is already enabled.
+        # Approve the exact head SHA that verify built (commit_id), and refuse
+        # to merge if the head moved since (--match-head-commit). Skip approval
+        # when the PAT user has already approved THIS SHA — paginating the
+        # reviews API so the check holds on long-lived PRs — which keeps re-runs
+        # idempotent; --auto is a no-op when auto-merge is already enabled.
         run: |
           set -euo pipefail
           pat_user=$(gh api /user --jq .login)
-          already_approved=$(gh api "/repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews" \
-            --jq "[.[] | select(.user.login == \"${pat_user}\" and .state == \"APPROVED\")] | length")
-          if [ "$already_approved" -eq 0 ]; then
-            gh pr review "$PR_URL" --approve
+          approvals=$(gh api --paginate "/repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews" --jq '.[]' \
+            | jq -s --arg u "$pat_user" --arg sha "$PR_HEAD_SHA" \
+                '[.[] | select(.user.login == $u and .state == "APPROVED" and .commit_id == $sha)] | length')
+          if [ "$approvals" -eq 0 ]; then
+            gh api --method POST "/repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews" \
+              -f "commit_id=${PR_HEAD_SHA}" -f event=APPROVE
           else
-            echo "PR already approved by ${pat_user}; skipping approval."
+            echo "Head ${PR_HEAD_SHA} already approved by ${pat_user}; skipping approval."
           fi
-          gh pr merge "$PR_URL" --squash --delete-branch --auto
+          gh pr merge "$PR_URL" --squash --delete-branch --auto --match-head-commit "$PR_HEAD_SHA"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.DEPENDABOT_PAT }}
