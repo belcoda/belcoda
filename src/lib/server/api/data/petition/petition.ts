@@ -25,6 +25,7 @@ import type { InferOutput } from 'valibot';
 import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
+import { sanitizePageHtml } from '$lib/server/utils/html/sanitize_page_html';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
@@ -116,6 +117,8 @@ export async function createPetition({
 		organizationId: parsed.metadata.organizationId,
 		slug: uniqueSlug,
 		title: uniqueTitle,
+		// Always sanitize TipTap HTML at the input boundary.
+		pageHtml: sanitizePageHtml(parsed.input.pageHtml),
 		published: false,
 		createdAt: new Date(),
 		updatedAt: new Date()
@@ -170,6 +173,9 @@ export async function updatePetition({
 		.update(petition)
 		.set({
 			...parsed.input,
+			// Always sanitize TipTap HTML at the input boundary. Only touch the
+			// column when pageHtml is part of this update.
+			...('pageHtml' in parsed.input ? { pageHtml: sanitizePageHtml(parsed.input.pageHtml) } : {}),
 			updatedAt: new Date()
 		})
 		.where(

@@ -10,7 +10,7 @@ type SendHtmlEmailOptions = {
 	to: string;
 	from: string;
 	html: string;
-	subject: string;
+	subject?: string | null;
 	stream: 'broadcast' | 'outbound';
 	replyTo?: string;
 	//returnPath: string;

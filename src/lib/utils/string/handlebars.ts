@@ -2,7 +2,13 @@ import Handlebars from 'handlebars';
 import { type ReadPersonZero } from '$lib/schema/person';
 import { type ReadOrganizationZero } from '$lib/schema/organization';
 
-type MergeContext = { person: ReadPersonZero; organization: ReadOrganizationZero };
+export type TemplatePerson = Pick<
+	ReadPersonZero,
+	'givenName' | 'familyName' | 'emailAddress' | 'phoneNumber'
+>;
+export type TemplateOrganization = Pick<ReadOrganizationZero, 'name' | 'slug'>;
+
+type MergeContext = { person: TemplatePerson; organization: TemplateOrganization };
 
 /**
  * The template fragments authors can merge into a handlebars template. This is
@@ -31,8 +37,8 @@ export function renderHandlebarsTemplate({
 	organization
 }: {
 	template: string;
-	person: ReadPersonZero;
-	organization: ReadOrganizationZero;
+	person: TemplatePerson;
+	organization: TemplateOrganization;
 }): string {
 	const hb = Handlebars.create();
 
@@ -53,9 +59,18 @@ export function renderHandlebarsTemplate({
 		});
 	}
 
+	//Required because the current template insert component gives us snake_case keys for person fields. This means both modes will be supported (snake_case and camelCase)
+	const extendedPerson = {
+		...person,
+		given_name: person.givenName,
+		family_name: person.familyName,
+		email_address: person.emailAddress,
+		phone_number: person.phoneNumber
+	};
+
 	const compiled = hb.compile(template);
 	return compiled({
-		person,
+		person: extendedPerson,
 		organization
 	});
 }
