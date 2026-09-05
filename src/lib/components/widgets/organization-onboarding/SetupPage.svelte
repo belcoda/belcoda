@@ -133,7 +133,9 @@
 
 			<div class="flex flex-wrap items-center gap-3 border-t pt-6">
 				<Button onclick={() => goto(resolve('/dashboard'))}>{t`Save & go to dashboard`}</Button>
-				<Button variant="ghost" onclick={() => goto(resolve('/dashboard'))}>{t`Skip for now`}</Button>
+				<Button variant="ghost" onclick={() => goto(resolve('/dashboard'))}
+					>{t`Skip for now`}</Button
+				>
 			</div>
 		</div>
 
