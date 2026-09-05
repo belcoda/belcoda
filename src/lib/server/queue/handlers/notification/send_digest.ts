@@ -2,20 +2,12 @@ import pino from '$lib/pino';
 import { drizzle } from '$lib/server/db';
 import { notification, user, organization, member } from '$lib/schema/drizzle';
 import { and, eq, isNull, or, sql } from 'drizzle-orm';
-import { buildDigestContext } from '$lib/server/utils/email/digest_context';
-import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
-import { env } from '$env/dynamic/private';
+import { sendNotificationDigestEmail } from '$lib/server/utils/email/send_notification_digest';
 import { env as publicEnv } from '$env/dynamic/public';
 import { getEmailSignature } from '$lib/server/utils/email/signature';
+import { clampLocale, type Locale } from '$lib/utils/language';
 
 const log = pino(import.meta.url);
-
-function weekOf(): string {
-	const now = new Date();
-	const start = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
-	const fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
-	return `${fmt.format(start)} – ${fmt.format(now)}, ${now.getFullYear()}`;
-}
 
 type DigestFrequency = 'daily' | 'weekly';
 type DigestCounts = { sent: number; skipped: number; failed: number };
@@ -25,12 +17,9 @@ export async function sendDigest({
 }: {
 	frequency?: DigestFrequency;
 } = {}) {
-	const { POSTMARK_DIGEST_TEMPLATE_ALIAS } = env;
 	const { PUBLIC_HOST } = publicEnv;
 
-	const template = POSTMARK_DIGEST_TEMPLATE_ALIAS ?? 'notification-digest';
 	const appUrl = PUBLIC_HOST.replace(/\/$/, '');
-	const periodLabel = weekOf();
 
 	const targetUsers = await listDigestUsers(frequency);
 
@@ -43,9 +32,8 @@ export async function sendDigest({
 			totals,
 			await sendDigestForUser({
 				targetUser,
-				template,
 				appUrl,
-				periodLabel
+				frequency
 			})
 		);
 	}
@@ -61,7 +49,13 @@ function addCounts(totals: DigestCounts, update: DigestCounts) {
 
 async function listDigestUsers(frequency: DigestFrequency) {
 	const eligibleUsers = await drizzle
-		.select({ id: user.id, email: user.email, name: user.name, settings: member.settings })
+		.select({
+			id: user.id,
+			email: user.email,
+			name: user.name,
+			preferredLanguage: user.preferredLanguage,
+			settings: member.settings
+		})
 		.from(member)
 		.innerJoin(user, eq(member.userId, user.id))
 		.where(
@@ -81,14 +75,12 @@ type DigestUser = Awaited<ReturnType<typeof listDigestUsers>>[number];
 
 async function sendDigestForUser({
 	targetUser,
-	template,
 	appUrl,
-	periodLabel
+	frequency
 }: {
 	targetUser: DigestUser;
-	template: string;
 	appUrl: string;
-	periodLabel: string;
+	frequency: DigestFrequency;
 }): Promise<DigestCounts> {
 	let sent = 0;
 
@@ -102,13 +94,15 @@ async function sendDigestForUser({
 			return { sent, skipped: 1, failed: 0 };
 		}
 
+		const locale = clampLocale(targetUser.preferredLanguage ?? 'en');
+
 		for (const digest of groupNotificationsByOrganization(rows)) {
 			await sendOrganizationDigest({
 				digest,
 				to: targetUser.email,
-				template,
 				appUrl,
-				periodLabel
+				locale,
+				frequency
 			});
 			sent++;
 		}
@@ -162,35 +156,32 @@ function groupNotificationsByOrganization(rows: UnreadDigestRow[]): Organization
 async function sendOrganizationDigest({
 	digest,
 	to,
-	template,
 	appUrl,
-	periodLabel
+	locale,
+	frequency
 }: {
 	digest: OrganizationDigest;
 	to: string;
-	template: string;
 	appUrl: string;
-	periodLabel: string;
+	locale: Locale;
+	frequency: DigestFrequency;
 }) {
 	const { org, notifications } = digest;
 	const emailSignature = await getEmailSignature({
 		emailFromSignatureId: org.settings?.email?.defaultFromSignatureId,
 		organization: org
 	});
-	const context = buildDigestContext({
+
+	await sendNotificationDigestEmail({
+		emailAddress: to,
+		from: `${emailSignature.name} <${emailSignature.emailAddress}>`,
+		replyTo: emailSignature.replyTo ?? undefined,
+		locale,
+		frequency,
+		timeZone: org.defaultTimezone,
 		notifications,
 		organizationName: org.name,
 		organizationId: org.id,
-		weekOf: periodLabel,
 		appUrl
-	});
-
-	await sendTemplateEmail({
-		to,
-		from: `${emailSignature.name} <${emailSignature.emailAddress}>`,
-		template,
-		stream: 'broadcast',
-		context,
-		replyTo: emailSignature.replyTo ?? undefined
 	});
 }
