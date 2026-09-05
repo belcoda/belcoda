@@ -110,7 +110,7 @@
 				]
 			}
 		],
-		allNotificationsUrl = 'https://example.com/notifications',
+		allNotificationsUrl = 'https://example.com/dashboard',
 		ctaText = 'View all notifications',
 		viewText = 'View',
 		unsubscribeText = "You're receiving this because you have unread notifications in Belcoda.",

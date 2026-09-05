@@ -178,6 +178,7 @@ async function sendOrganizationDigest({
 		replyTo: emailSignature.replyTo ?? undefined,
 		locale,
 		frequency,
+		timeZone: org.defaultTimezone,
 		notifications,
 		organizationName: org.name,
 		organizationId: org.id,

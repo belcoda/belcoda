@@ -12,20 +12,33 @@ type DigestFrequency = 'daily' | 'weekly';
 
 // A daily digest covers a single day, a weekly one the trailing 7-day window,
 // so the period label (used in the header and subject) must match the cadence.
+// `timeZone` (the organization's default zone) anchors the calendar date and
+// year, so a digest sent near midnight isn't labelled with the server's date.
 export function formatDigestPeriod(
 	locale: Locale,
 	frequency: DigestFrequency,
-	now = new Date()
+	now = new Date(),
+	timeZone?: string
 ): string {
-	const fmt = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' });
+	const dayMonth: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', timeZone };
+	const dayMonthYear: Intl.DateTimeFormatOptions = {
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+		timeZone
+	};
+	const format = (options: Intl.DateTimeFormatOptions, date: Date) =>
+		new Intl.DateTimeFormat(locale, options).format(date);
+	const yearInZone = (date: Date) => format({ year: 'numeric', timeZone }, date);
+
 	if (frequency === 'daily') {
-		return `${fmt.format(now)}, ${now.getFullYear()}`;
+		return format(dayMonthYear, now);
 	}
 	const start = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
-	if (start.getFullYear() !== now.getFullYear()) {
-		return `${fmt.format(start)}, ${start.getFullYear()} – ${fmt.format(now)}, ${now.getFullYear()}`;
+	if (yearInZone(start) !== yearInZone(now)) {
+		return `${format(dayMonthYear, start)} – ${format(dayMonthYear, now)}`;
 	}
-	return `${fmt.format(start)} – ${fmt.format(now)}, ${now.getFullYear()}`;
+	return `${format(dayMonth, start)} – ${format(dayMonthYear, now)}`;
 }
 
 export async function sendNotificationDigestEmail({
@@ -34,6 +47,7 @@ export async function sendNotificationDigestEmail({
 	replyTo,
 	locale,
 	frequency,
+	timeZone,
 	notifications,
 	organizationName,
 	organizationId,
@@ -44,13 +58,14 @@ export async function sendNotificationDigestEmail({
 	replyTo?: string;
 	locale: Locale;
 	frequency: DigestFrequency;
+	timeZone: string;
 	notifications: DigestNotifications;
 	organizationName: string;
 	organizationId: string;
 	appUrl: string;
 }) {
 	return await runWithLocale(locale, async () => {
-		const weekOf = formatDigestPeriod(locale, frequency);
+		const weekOf = formatDigestPeriod(locale, frequency, new Date(), timeZone);
 		const context = buildDigestContext({
 			notifications,
 			organizationName,
@@ -71,7 +86,7 @@ export async function sendNotificationDigestEmail({
 			organizationName,
 			weekOf,
 			sections,
-			allNotificationsUrl: `${appUrl}/notifications`,
+			allNotificationsUrl: `${appUrl}/dashboard?org=${organizationId}`,
 			ctaText: t`View all notifications`,
 			viewText: t`View`,
 			previewText: t`${heading} from ${organizationName}`,

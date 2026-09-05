@@ -164,7 +164,7 @@ export function buildDigestContext(options: {
 				const personId = person?.id ?? group.personId;
 				const personUrl = personId
 					? buildAppUrl(appUrl, `/community/${personId}`, organizationId)
-					: buildAppUrl(appUrl, '/notifications', organizationId);
+					: buildAppUrl(appUrl, '/dashboard', organizationId);
 				const messageCount = group.count.toString();
 				item = {
 					title: person?.name ?? t`WhatsApp contact`,
@@ -181,7 +181,7 @@ export function buildDigestContext(options: {
 				const personId = person?.id ?? group.personId;
 				const personUrl = personId
 					? buildAppUrl(appUrl, `/community/${personId}#note-${group.referenceId}`, organizationId)
-					: buildAppUrl(appUrl, '/notifications', organizationId);
+					: buildAppUrl(appUrl, '/dashboard', organizationId);
 				const author = group.noteAuthorName ?? t`A teammate`;
 				item = {
 					title: person?.name ?? t`Note mention`,
@@ -198,7 +198,7 @@ export function buildDigestContext(options: {
 				item = {
 					title: group.subjectTitle ?? t`Notification`,
 					detail: '',
-					url: buildAppUrl(appUrl, '/notifications', organizationId)
+					url: buildAppUrl(appUrl, '/dashboard', organizationId)
 				};
 			}
 		}
