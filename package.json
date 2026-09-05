@@ -45,7 +45,7 @@
 		"@iconify-json/lucide": "^1.2.117",
 		"@iconify/json": "^2.2.487",
 		"@iconify/tailwind4": "^1.2.3",
-		"@internationalized/date": "^3.12.2",
+		"@internationalized/date": "^3.12.3",
 		"@lucide/svelte": "^1.27.0",
 		"@playwright/test": "^1.61.0",
 		"@sveltejs/adapter-node": "^5.5.7",
