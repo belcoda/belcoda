@@ -38,8 +38,11 @@ jobs:
       - name: Check sveltekit and typescript issues
         run: npm run check
 
-  # Trusted job: does not checkout or execute PR code. Only merges after verify
-  # succeeds. --admin bypasses branch protection since verify is the gating check.
+  # Trusted job: does not checkout or execute PR code, so a compromised
+  # dependency can never run with DEPENDABOT_PAT in scope. After verify passes,
+  # it approves the PR with the trusted PAT (satisfying the develop ruleset's
+  # required review) and enables auto-merge. Required status checks are NOT
+  # bypassed — auto-merge still waits for them, and we never use --admin.
   merge:
     needs: verify
     runs-on: ubuntu-latest
@@ -48,8 +51,22 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Auto-merge Dependabot PRs that build successfully
-        run: gh pr merge --squash --delete-branch --auto "$PR_URL"
+      - name: Approve and auto-merge Dependabot PRs that build successfully
+        # Approve only if the PAT user has not already approved (keeps re-runs
+        # idempotent); --auto is a no-op when auto-merge is already enabled.
+        run: |
+          set -euo pipefail
+          pat_user=$(gh api /user --jq .login)
+          already_approved=$(gh api "/repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews" \
+            --jq "[.[] | select(.user.login == \"${pat_user}\" and .state == \"APPROVED\")] | length")
+          if [ "$already_approved" -eq 0 ]; then
+            gh pr review "$PR_URL" --approve
+          else
+            echo "PR already approved by ${pat_user}; skipping approval."
+          fi
+          gh pr merge "$PR_URL" --squash --delete-branch --auto
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.DEPENDABOT_PAT }}
