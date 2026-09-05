@@ -52,10 +52,14 @@ export async function load({ locals, params, url }) {
 		valibot(surveySchema)
 	);
 
-	const renderedDescription = await renderSanitizedDescription({
-		description: eventObj.description,
-		logContext: { eventId: eventObj.id }
-	});
+	// When pageHtml (TipTap) exists it is rendered directly (already sanitized at
+	// write time), so skip the legacy Lexical render entirely.
+	const renderedDescription = eventObj.pageHtml
+		? null
+		: await renderSanitizedDescription({
+				description: eventObj.description,
+				logContext: { eventId: eventObj.id }
+			});
 
 	const renderedEvent = {
 		...eventObj,

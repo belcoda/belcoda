@@ -87,6 +87,7 @@ msgstr "Warna aksen untuk status berhasil dan elemen sekunder di halaman publik.
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -402,9 +403,6 @@ msgstr "Kesalahan saat memuat orang"
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Selected"
 msgstr "Dipilih"
-
-#~ msgid "Preferences"
-#~ msgstr ""
 
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
 msgid "Log out"
@@ -771,9 +769,6 @@ msgstr "Tidak ada catatan yang ditemukan"
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 msgid "Add a note to share information with the team"
 msgstr "Tambahkan catatan untuk berbagi informasi dengan tim"
-
-#~ msgid "Add a note or comment..."
-#~ msgstr ""
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/lib/components/widgets/activity/InlineNote.svelte
@@ -1284,9 +1279,6 @@ msgstr "Atau lanjutkan dengan"
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Invited by {0}"
 msgstr "Diundang oleh {0}"
-
-#~ msgid "Error loading invitation: {0}"
-#~ msgstr ""
 
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Welcome to Belcoda"
@@ -2551,9 +2543,6 @@ msgstr "Pilih email dari daftar untuk melihat detail dan statistiknya."
 msgid "Create New Email"
 msgstr "Buat Email Baru"
 
-#~ msgid "Belcoda icon"
-#~ msgstr ""
-
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
 msgstr "Token pengaturan ulang tidak ada. Gunakan tautan dari email Anda."
@@ -2801,9 +2790,6 @@ msgstr "Impor"
 msgid "Exports"
 msgstr "Ekspor"
 
-#~ msgid "Credit balance"
-#~ msgstr ""
-
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "API keys"
 msgstr "Kunci API"
@@ -2868,12 +2854,6 @@ msgstr "Tidak ada langganan berbayar aktif"
 msgid "Current period ends"
 msgstr "Periode saat ini berakhir"
 
-#~ msgid "Opening Stripe..."
-#~ msgstr ""
-
-#~ msgid "Manage in Stripe"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Need a different plan?"
 msgstr "Butuh paket lain?"
@@ -2890,27 +2870,9 @@ msgstr "Hubungi kami untuk tingkat Supported"
 msgid "Contact us for Enterprise tier"
 msgstr "Hubungi kami untuk tingkat Enterprise"
 
-#~ msgid "Credit purchase completed. Your balance will update shortly."
-#~ msgstr ""
-
-#~ msgid "Credit purchase was cancelled."
-#~ msgstr ""
-
-#~ msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "This balance belongs to your organization and is shared across your workspace."
 msgstr "Saldo ini milik organisasi Anda dan dibagikan di seluruh ruang kerja."
-
-#~ msgid "Purchase additional credit with Stripe using one of the preset amounts below."
-#~ msgstr ""
-
-#~ msgid "Buy more credit"
-#~ msgstr ""
-
-#~ msgid "Select a preset amount to continue in Stripe checkout."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 #: src/routes/(app)/settings/billing/credit/+page.svelte
@@ -2924,12 +2886,6 @@ msgstr "Semua orang dan tim Anda di satu tempat."
 #: src/routes/(app)/community/+page.svelte
 msgid "Learn more about Belcoda's community module"
 msgstr "Pelajari lebih lanjut tentang modul komunitas Belcoda"
-
-#~ msgid "Edit workspace settings"
-#~ msgstr ""
-
-#~ msgid "Manage your workspace settings, including branding, email settings, and more."
-#~ msgstr ""
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later."
@@ -3430,109 +3386,19 @@ msgstr "Logo organisasi Anda. Harus berbentuk persegi dan berukuran kurang dari 
 msgid "Website (optional)"
 msgstr "Situs web (opsional)"
 
-#~ msgid "Community organization or charity"
-#~ msgstr ""
-
-#~ msgid "Business or corporation"
-#~ msgstr ""
-
-#~ msgid "Advocacy or policy campaign"
-#~ msgstr ""
-
-#~ msgid "Political party & election campaign"
-#~ msgstr ""
-
-#~ msgid "What is your organization's focus?"
-#~ msgstr ""
-
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select an option"
 msgstr "Pilih opsi"
 
-#~ msgid "1-10 employees"
-#~ msgstr ""
-
-#~ msgid "11-50 employees"
-#~ msgstr ""
-
-#~ msgid "50-500 employees"
-#~ msgstr ""
-
-#~ msgid "500+ employees"
-#~ msgstr ""
-
-#~ msgid "How many people are in your organization?"
-#~ msgstr ""
-
-#~ msgid "Only include staff or core volunteers who are actively involved in the organization's main operations."
-#~ msgstr ""
-
-#~ msgid "Please provide some additional details about your organization to help us better understand your needs."
-#~ msgstr ""
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Search engine"
 msgstr "Mesin pencari"
-
-#~ msgid "Referral"
-#~ msgstr ""
-
-#~ msgid "Training or conference"
-#~ msgstr ""
-
-#~ msgid "Resources"
-#~ msgstr ""
-
-#~ msgid "How did you discover Belcoda?"
-#~ msgstr ""
-
-#~ msgid "Select all that apply"
-#~ msgstr ""
-
-#~ msgid "Storing member or supporter data"
-#~ msgstr ""
-
-#~ msgid "Sending WhatsApp messages to members or supporters"
-#~ msgstr ""
-
-#~ msgid "Sending emails to members or supporters"
-#~ msgstr ""
-
-#~ msgid "Running events"
-#~ msgstr ""
-
-#~ msgid "Running policy campaigns with online petitions"
-#~ msgstr ""
-
-#~ msgid "Making sure all data is synced and up to date"
-#~ msgstr ""
 
 #: src/lib/utils/person/gender/render.ts
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
 msgstr "Lainnya"
-
-#~ msgid "Other (detail)"
-#~ msgstr ""
-
-#~ msgid "What will you use Belcoda for?"
-#~ msgstr ""
-
-#~ msgid "Growing your list of supporters or members"
-#~ msgstr ""
-
-#~ msgid "Hit the ground running"
-#~ msgstr ""
-
-#~ msgid "Book a time to talk with our team, we'll give recommendations on how to make the most out of Belcoda."
-#~ msgstr ""
-
-#~ msgid "Continue to your organization"
-#~ msgstr ""
-
-#~ msgid "If you prefer, you can continue to your organization without first booking a time."
-#~ msgstr ""
 
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 msgid "Getting started with Belcoda"
@@ -3768,9 +3634,6 @@ msgstr "Cari tag..."
 msgid "Search templates..."
 msgstr "Cari templat..."
 
-#~ msgid "No templates found."
-#~ msgstr ""
-
 #: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 msgid "Select an event..."
 msgstr "Pilih acara..."
@@ -3942,12 +3805,6 @@ msgstr "Pendaftaran WhatsApp dibatalkan. Jika ingin mencoba lagi, klik tombol di
 msgid "WhatsApp Business Account Activated"
 msgstr "Akun WhatsApp Business Diaktifkan"
 
-#~ msgid "Your WhatsApp Business Account number is {0}"
-#~ msgstr ""
-
-#~ msgid "Your WhatsApp Business Account ID is {0}"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Activate WhatsApp Business Account"
 msgstr "Aktifkan Akun WhatsApp Business"
@@ -4018,12 +3875,6 @@ msgstr "Anda harus menjadi admin atau pemilik organisasi untuk mengakses halaman
 #: src/routes/(app)/settings/+layout.svelte
 msgid "Go to dashboard"
 msgstr "Ke dasbor"
-
-#~ msgid "User preferences"
-#~ msgstr ""
-
-#~ msgid "Manage your user preferences, including language"
-#~ msgstr ""
 
 #: src/lib/components/flow/DisplaySavedState.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
@@ -4264,17 +4115,9 @@ msgstr "Gagal menyimpan pengaturan tema"
 msgid "Failed to load subscription"
 msgstr "Gagal memuat langganan"
 
-#~ msgid "Unable to open Stripe billing portal"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Unable to start Stripe checkout"
 msgstr "Tidak dapat memulai pembayaran Stripe"
-
-#~ msgid ""
-#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-#~ "\t\t\t\tmessaging features."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
@@ -4637,12 +4480,6 @@ msgstr "Coba lagi"
 msgid "Home"
 msgstr "Beranda"
 
-#~ msgid "Loading activities..."
-#~ msgstr ""
-
-#~ msgid "No activities yet"
-#~ msgstr ""
-
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the audio tag."
 msgstr "Browser Anda tidak mendukung tag audio."
@@ -4665,15 +4502,6 @@ msgstr "Tidak ada teks layar yang tersedia"
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the video tag."
 msgstr "Browser Anda tidak mendukung tag video."
-
-#~ msgid "Whatsapp message"
-#~ msgstr ""
-
-#~ msgid "loading_activities"
-#~ msgstr ""
-
-#~ msgid "no_activities_yet"
-#~ msgstr ""
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "View event page"
@@ -4714,9 +4542,6 @@ msgstr "Kirim email percobaan"
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
 msgstr "Semua orang"
-
-#~ msgid "Snapshot"
-#~ msgstr ""
 
 #: src/lib/components/flow/AppendNode.svelte
 msgid "Add Node"
@@ -4791,24 +4616,9 @@ msgstr "Rahasia dikirim bersama setiap pengiriman dalam header X-Webhook-Secret 
 msgid "View secret"
 msgstr "Lihat rahasia"
 
-#~ msgid "Target URL is required"
-#~ msgstr ""
-
-#~ msgid "Webhook URL updated successfully"
-#~ msgstr ""
-
-#~ msgid "Failed to update webhook URL"
-#~ msgstr ""
-
-#~ msgid "Edit target URL"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Delete webhook"
 msgstr "Hapus webhook"
-
-#~ msgid "Change the endpoint where this webhook receives events."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Please fill in all required fields"
@@ -4843,12 +4653,6 @@ msgstr "Rahasia disalin ke papan klip"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not copy the secret to the clipboard. Try selecting it manually."
 msgstr "Tidak dapat menyalin rahasia ke papan klip. Coba pilih secara manual."
-
-#~ msgid "The secret is sent with each delivery in the "
-#~ msgstr ""
-
-#~ msgid "header so your endpoint can verify the request came from Belcoda."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Webhook secret"
@@ -5025,9 +4829,6 @@ msgstr "Tidak ada variabel yang ditemukan."
 msgid "Add fallback text for recipients without this value."
 msgstr "Tambahkan teks cadangan untuk penerima yang tidak memiliki nilai ini."
 
-#~ msgid "[Name unknown]"
-#~ msgstr ""
-
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved templates found."
@@ -5130,12 +4931,6 @@ msgstr "{0} ditampilkan"
 msgid "Load more"
 msgstr "Muat lebih banyak"
 
-#~ msgid "Enter a valid amount. Minimum purchase is US${0}."
-#~ msgstr ""
-
-#~ msgid "Purchase additional credit with Stripe."
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Enter an amount in USD to continue in Stripe checkout."
 msgstr "Masukkan jumlah dalam USD untuk melanjutkan ke pembayaran Stripe."
@@ -5143,9 +4938,6 @@ msgstr "Masukkan jumlah dalam USD untuk melanjutkan ke pembayaran Stripe."
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Amount (USD)"
 msgstr "Jumlah (USD)"
-
-#~ msgid "Minimum purchase: US${0}"
-#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Continue to checkout"
@@ -5234,12 +5026,6 @@ msgstr "Anda yakin ingin membuang draf WhatsApp ini?"
 msgid "Changes not saved"
 msgstr "Perubahan belum disimpan"
 
-#~ msgid "Failed to save draft"
-#~ msgstr ""
-
-#~ msgid "Failed to persist draft flow"
-#~ msgstr ""
-
 #. 0: derivedTimeAgoFormatter.format(lastSavedAt())
 #: src/lib/components/flow/DisplaySavedState.svelte
 msgid "Saved {0}"
@@ -5316,12 +5102,6 @@ msgstr "Gagal menyimpan profil bisnis WhatsApp"
 msgid "Business profile"
 msgstr "Profil bisnis"
 
-#~ msgid "Manage how your business appears on WhatsApp. Some fields are set by Meta and cannot be edited here."
-#~ msgstr ""
-
-#~ msgid "Loading business profile…"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Verified name"
 msgstr "Nama terverifikasi"
@@ -5333,9 +5113,6 @@ msgstr "Status nama"
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Profile picture"
 msgstr "Foto profil"
-
-#~ msgid "WhatsApp business profile"
-#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "About"
@@ -5409,18 +5186,9 @@ msgstr "Nama tampilan organisasi Anda disembunyikan dari penerima pesan sampai p
 msgid "Complete verification"
 msgstr "Selesaikan verifikasi"
 
-#~ msgid "Business account details and verification status are shown below."
-#~ msgstr ""
-
-#~ msgid "Failed to load WhatsApp business account details"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 msgstr "Akun WhatsApp Business Anda terhubung. Tinjau detail verifikasi dan akun di bawah."
-
-#~ msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-#~ msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
@@ -5554,15 +5322,9 @@ msgstr "Tidak ada notifikasi untuk ditampilkan saat ini."
 msgid "About is required and cannot be empty"
 msgstr "Tentang wajib diisi dan tidak boleh kosong"
 
-#~ msgid "WABA ID"
-#~ msgstr ""
-
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "View event"
 msgstr "Lihat acara"
-
-#~ msgid "View signups"
-#~ msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Sent a WhatsApp message"
@@ -5600,12 +5362,6 @@ msgstr "Belum ada notifikasi"
 msgid "and"
 msgstr "dan"
 
-#~ msgid "others"
-#~ msgstr ""
-
-#~ msgid "other"
-#~ msgstr ""
-
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up"
 msgstr "mendaftar"
@@ -5617,9 +5373,6 @@ msgstr "Pendaftaran baru"
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "Email all"
 msgstr "Email semua"
-
-#~ msgid "signed"
-#~ msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "New signature"
@@ -5737,12 +5490,6 @@ msgstr "Kloning"
 msgid "Copying…"
 msgstr "Menyalin…"
 
-#~ msgid "Hello! Choose an option"
-#~ msgstr ""
-
-#~ msgid "WhatsApp message:"
-#~ msgstr ""
-
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Message:"
 msgstr "Pesan:"
@@ -5750,9 +5497,6 @@ msgstr "Pesan:"
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Type your message..."
 msgstr "Ketik pesan Anda..."
-
-#~ msgid "Failed to load notification preferences"
-#~ msgstr ""
 
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Nothing here yet"
@@ -5831,9 +5575,6 @@ msgstr "Orang tidak ditemukan"
 msgid "This person may have been removed from the organization."
 msgstr "Orang ini mungkin telah dihapus dari organisasi."
 
-#~ msgid "Overview"
-#~ msgstr ""
-
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Member since"
 msgstr "Anggota sejak"
@@ -5848,9 +5589,6 @@ msgstr "Kontak"
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "+{0} more"
 msgstr "+{0} lainnya"
-
-#~ msgid "Latest note"
-#~ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "This person should not receive communications."
@@ -5971,24 +5709,6 @@ msgstr "Tidak dapat memperbarui favorit. Silakan coba lagi."
 msgid "Account"
 msgstr "Akun"
 
-#~ msgid "Just you"
-#~ msgstr ""
-
-#~ msgid "Workspace"
-#~ msgstr ""
-
-#~ msgid "Everyone in {0}"
-#~ msgstr ""
-
-#~ msgid "Everyone in your workspace"
-#~ msgstr ""
-
-#~ msgid "Only affects you. Other teammates keep their own settings."
-#~ msgstr ""
-
-#~ msgid "Affects everyone in your workspace. Admin only."
-#~ msgstr ""
-
 #: src/routes/(app)/settings/+page.svelte
 msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
 msgstr "Kelola preferensi akun pribadi dan, jika Anda admin, pengaturan ruang kerja Anda."
@@ -6017,7 +5737,7 @@ msgstr "Gagal mengirim pesan WhatsApp"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "A teammate"
-msgstr ""
+msgstr "Seorang rekan tim"
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6351,21 +6071,21 @@ msgstr "Undangan untuk bergabung dengan {0}"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Note mention"
-msgstr ""
+msgstr "Sebutan di catatan"
 
 #. 0: authorName; 1: personName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note about {1}."
-msgstr ""
+msgstr "{0} menyebut Anda dalam catatan tentang {1}."
 
 #. 0: authorName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note."
-msgstr ""
+msgstr "{0} menyebut Anda dalam catatan."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "View note"
-msgstr ""
+msgstr "Lihat catatan"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
@@ -6490,6 +6210,31 @@ msgstr "Daftar bernomor"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Text color"
 msgstr "Warna teks"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Remove location"
+msgstr "Hapus lokasi"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Change"
+msgstr "Ubah"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Select location"
+msgstr "Pilih lokasi"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Click the map to drop a pin, then drag it to fine-tune the exact spot."
+msgstr "Klik peta untuk menjatuhkan pin, lalu seret untuk menyesuaikan titik yang tepat."
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "No location selected yet"
+msgstr "Belum ada lokasi yang dipilih"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Save location"
+msgstr "Simpan lokasi"
 
 #~ msgid "New editor (preview)"
 #~ msgstr ""

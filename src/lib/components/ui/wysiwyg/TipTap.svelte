@@ -38,11 +38,19 @@
 	let {
 		value = $bindable(''),
 		organizationId,
+		enableTemplateFragments = false,
 		class: className = undefined
 	}: {
 		value?: string;
 		/** Owner of uploaded images. Falls back to the active app organization. */
 		organizationId?: string;
+		/**
+		 * Show the "insert fragment" (handlebars) toolbar button. Only enable this
+		 * in contexts that merge the tokens per-recipient at send time (e.g. email).
+		 * Contexts that render the stored HTML directly (event/petition pages) must
+		 * leave this off, otherwise a token like `{{givenName}}` is published verbatim.
+		 */
+		enableTemplateFragments?: boolean;
 		class?: string;
 	} = $props();
 
@@ -296,68 +304,70 @@
 				</Popover.Content>
 			</Popover.Root>
 
-			<Separator orientation="vertical" class="mx-1 h-6" />
+			{#if enableTemplateFragments}
+				<Separator orientation="vertical" class="mx-1 h-6" />
 
-			<Dialog.Root bind:open={fragmentDialogOpen}>
-				<Dialog.Trigger>
-					{#snippet child({ props })}
-						<Button
-							type="button"
-							{...props}
-							variant="ghost"
-							size="icon-sm"
-							aria-label={t`Insert fragment`}
-							title={t`Insert fragment`}
-						>
-							<BracesIcon aria-hidden="true" />
-						</Button>
-					{/snippet}
-				</Dialog.Trigger>
-				<Dialog.Content class="sm:max-w-[425px]">
-					<Dialog.Header>
-						<Dialog.Title>{t`Insert fragment`}</Dialog.Title>
-						<Dialog.Description>
-							{t`Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing.`}
-						</Dialog.Description>
-					</Dialog.Header>
-					<div class="grid gap-4 py-2">
-						<div class="grid gap-2">
-							<Label for="fragment-type">{t`Fragment`}</Label>
-							<Select.Root type="single" bind:value={selectedFragment}>
-								<Select.Trigger id="fragment-type" class="w-full justify-between font-medium">
-									{selectedFragmentLabel || t`Select a fragment`}
-								</Select.Trigger>
-								<Select.Content>
-									{#each fragmentOptions as option (option.value)}
-										<Select.Item value={option.value} label={option.label} />
-									{/each}
-								</Select.Content>
-							</Select.Root>
+				<Dialog.Root bind:open={fragmentDialogOpen}>
+					<Dialog.Trigger>
+						{#snippet child({ props })}
+							<Button
+								type="button"
+								{...props}
+								variant="ghost"
+								size="icon-sm"
+								aria-label={t`Insert fragment`}
+								title={t`Insert fragment`}
+							>
+								<BracesIcon aria-hidden="true" />
+							</Button>
+						{/snippet}
+					</Dialog.Trigger>
+					<Dialog.Content class="sm:max-w-[425px]">
+						<Dialog.Header>
+							<Dialog.Title>{t`Insert fragment`}</Dialog.Title>
+							<Dialog.Description>
+								{t`Insert a placeholder that fills in with each recipient's details. The backup text is used when that detail is missing.`}
+							</Dialog.Description>
+						</Dialog.Header>
+						<div class="grid gap-4 py-2">
+							<div class="grid gap-2">
+								<Label for="fragment-type">{t`Fragment`}</Label>
+								<Select.Root type="single" bind:value={selectedFragment}>
+									<Select.Trigger id="fragment-type" class="w-full justify-between font-medium">
+										{selectedFragmentLabel || t`Select a fragment`}
+									</Select.Trigger>
+									<Select.Content>
+										{#each fragmentOptions as option (option.value)}
+											<Select.Item value={option.value} label={option.label} />
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							</div>
+							<div class="grid gap-2">
+								<Label for="fragment-fallback">{t`Backup text`}</Label>
+								<Input
+									id="fragment-fallback"
+									bind:value={fragmentFallback}
+									placeholder={t`e.g. friend`}
+								/>
+							</div>
+							{#if fragmentPreview}
+								<p class="text-muted-foreground text-sm">
+									{t`Preview`}: <code class="font-mono">{fragmentPreview}</code>
+								</p>
+							{/if}
 						</div>
-						<div class="grid gap-2">
-							<Label for="fragment-fallback">{t`Backup text`}</Label>
-							<Input
-								id="fragment-fallback"
-								bind:value={fragmentFallback}
-								placeholder={t`e.g. friend`}
-							/>
-						</div>
-						{#if fragmentPreview}
-							<p class="text-muted-foreground text-sm">
-								{t`Preview`}: <code class="font-mono">{fragmentPreview}</code>
-							</p>
-						{/if}
-					</div>
-					<Dialog.Footer>
-						<Dialog.Close class={cn(buttonVariants({ variant: 'outline' }))}>
-							{t`Cancel`}
-						</Dialog.Close>
-						<Button type="button" disabled={!selectedFragment} onclick={insertFragment}>
-							{t`Insert`}
-						</Button>
-					</Dialog.Footer>
-				</Dialog.Content>
-			</Dialog.Root>
+						<Dialog.Footer>
+							<Dialog.Close class={cn(buttonVariants({ variant: 'outline' }))}>
+								{t`Cancel`}
+							</Dialog.Close>
+							<Button type="button" disabled={!selectedFragment} onclick={insertFragment}>
+								{t`Insert`}
+							</Button>
+						</Dialog.Footer>
+					</Dialog.Content>
+				</Dialog.Root>
+			{/if}
 
 			{#if resolvedOrganizationId}
 				<Separator orientation="vertical" class="mx-1 h-6" />

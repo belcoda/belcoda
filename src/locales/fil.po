@@ -87,6 +87,7 @@ msgstr "Kulay ng accent para sa mga matagumpay na estado at pangalawang elemento
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -402,9 +403,6 @@ msgstr "Nagkaroon ng error sa pag-load ng mga tao"
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Selected"
 msgstr "Napili"
-
-#~ msgid "Preferences"
-#~ msgstr ""
 
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
 msgid "Log out"
@@ -771,9 +769,6 @@ msgstr "Walang nakitang tala"
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 msgid "Add a note to share information with the team"
 msgstr "Magdagdag ng tala upang magbahagi ng impormasyon sa team"
-
-#~ msgid "Add a note or comment..."
-#~ msgstr ""
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/lib/components/widgets/activity/InlineNote.svelte
@@ -1284,9 +1279,6 @@ msgstr "O magpatuloy gamit ang"
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Invited by {0}"
 msgstr "Inimbitahan ni {0}"
-
-#~ msgid "Error loading invitation: {0}"
-#~ msgstr ""
 
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Welcome to Belcoda"
@@ -2551,9 +2543,6 @@ msgstr "Pumili ng email mula sa listahan upang tingnan ang mga detalye at istati
 msgid "Create New Email"
 msgstr "Gumawa ng bagong email"
 
-#~ msgid "Belcoda icon"
-#~ msgstr ""
-
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
 msgstr "Wala ang reset token. Gamitin ang link mula sa iyong email."
@@ -2801,9 +2790,6 @@ msgstr "Mga import"
 msgid "Exports"
 msgstr "Mga export"
 
-#~ msgid "Credit balance"
-#~ msgstr ""
-
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "API keys"
 msgstr "Mga API key"
@@ -2868,12 +2854,6 @@ msgstr "Walang aktibong bayad na subscription"
 msgid "Current period ends"
 msgstr "Magtatapos ang kasalukuyang panahon"
 
-#~ msgid "Opening Stripe..."
-#~ msgstr ""
-
-#~ msgid "Manage in Stripe"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Need a different plan?"
 msgstr "Kailangan ng ibang plan?"
@@ -2890,27 +2870,9 @@ msgstr "Kontakin kami para sa Supported tier"
 msgid "Contact us for Enterprise tier"
 msgstr "Kontakin kami para sa Enterprise tier"
 
-#~ msgid "Credit purchase completed. Your balance will update shortly."
-#~ msgstr ""
-
-#~ msgid "Credit purchase was cancelled."
-#~ msgstr ""
-
-#~ msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "This balance belongs to your organization and is shared across your workspace."
 msgstr "Pag-aari ng iyong organisasyon ang balanseng ito at ibinabahagi ito sa buong workspace mo."
-
-#~ msgid "Purchase additional credit with Stripe using one of the preset amounts below."
-#~ msgstr ""
-
-#~ msgid "Buy more credit"
-#~ msgstr ""
-
-#~ msgid "Select a preset amount to continue in Stripe checkout."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 #: src/routes/(app)/settings/billing/credit/+page.svelte
@@ -2924,12 +2886,6 @@ msgstr "Lahat ng iyong tao at team sa iisang lugar."
 #: src/routes/(app)/community/+page.svelte
 msgid "Learn more about Belcoda's community module"
 msgstr "Alamin pa ang tungkol sa community module ng Belcoda"
-
-#~ msgid "Edit workspace settings"
-#~ msgstr ""
-
-#~ msgid "Manage your workspace settings, including branding, email settings, and more."
-#~ msgstr ""
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later."
@@ -3430,109 +3386,19 @@ msgstr "Logo ng iyong organisasyon. Dapat parisukat ito at mas mababa sa 2MB"
 msgid "Website (optional)"
 msgstr "Website (opsyonal)"
 
-#~ msgid "Community organization or charity"
-#~ msgstr ""
-
-#~ msgid "Business or corporation"
-#~ msgstr ""
-
-#~ msgid "Advocacy or policy campaign"
-#~ msgstr ""
-
-#~ msgid "Political party & election campaign"
-#~ msgstr ""
-
-#~ msgid "What is your organization's focus?"
-#~ msgstr ""
-
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select an option"
 msgstr "Pumili ng opsyon"
 
-#~ msgid "1-10 employees"
-#~ msgstr ""
-
-#~ msgid "11-50 employees"
-#~ msgstr ""
-
-#~ msgid "50-500 employees"
-#~ msgstr ""
-
-#~ msgid "500+ employees"
-#~ msgstr ""
-
-#~ msgid "How many people are in your organization?"
-#~ msgstr ""
-
-#~ msgid "Only include staff or core volunteers who are actively involved in the organization's main operations."
-#~ msgstr ""
-
-#~ msgid "Please provide some additional details about your organization to help us better understand your needs."
-#~ msgstr ""
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Search engine"
 msgstr "Search engine"
-
-#~ msgid "Referral"
-#~ msgstr ""
-
-#~ msgid "Training or conference"
-#~ msgstr ""
-
-#~ msgid "Resources"
-#~ msgstr ""
-
-#~ msgid "How did you discover Belcoda?"
-#~ msgstr ""
-
-#~ msgid "Select all that apply"
-#~ msgstr ""
-
-#~ msgid "Storing member or supporter data"
-#~ msgstr ""
-
-#~ msgid "Sending WhatsApp messages to members or supporters"
-#~ msgstr ""
-
-#~ msgid "Sending emails to members or supporters"
-#~ msgstr ""
-
-#~ msgid "Running events"
-#~ msgstr ""
-
-#~ msgid "Running policy campaigns with online petitions"
-#~ msgstr ""
-
-#~ msgid "Making sure all data is synced and up to date"
-#~ msgstr ""
 
 #: src/lib/utils/person/gender/render.ts
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
 msgstr "Iba pa"
-
-#~ msgid "Other (detail)"
-#~ msgstr ""
-
-#~ msgid "What will you use Belcoda for?"
-#~ msgstr ""
-
-#~ msgid "Growing your list of supporters or members"
-#~ msgstr ""
-
-#~ msgid "Hit the ground running"
-#~ msgstr ""
-
-#~ msgid "Book a time to talk with our team, we'll give recommendations on how to make the most out of Belcoda."
-#~ msgstr ""
-
-#~ msgid "Continue to your organization"
-#~ msgstr ""
-
-#~ msgid "If you prefer, you can continue to your organization without first booking a time."
-#~ msgstr ""
 
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 msgid "Getting started with Belcoda"
@@ -3768,9 +3634,6 @@ msgstr "Maghanap ng tag..."
 msgid "Search templates..."
 msgstr "Maghanap ng mga template..."
 
-#~ msgid "No templates found."
-#~ msgstr ""
-
 #: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 msgid "Select an event..."
 msgstr "Pumili ng event..."
@@ -3942,12 +3805,6 @@ msgstr "Kinansela ang WhatsApp signup. Kung gusto mong subukang muli, i-click an
 msgid "WhatsApp Business Account Activated"
 msgstr "Na-activate ang WhatsApp Business Account"
 
-#~ msgid "Your WhatsApp Business Account number is {0}"
-#~ msgstr ""
-
-#~ msgid "Your WhatsApp Business Account ID is {0}"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Activate WhatsApp Business Account"
 msgstr "I-activate ang WhatsApp Business Account"
@@ -4018,12 +3875,6 @@ msgstr "Kailangan mong maging admin o may-ari ng organisasyon upang i-access ang
 #: src/routes/(app)/settings/+layout.svelte
 msgid "Go to dashboard"
 msgstr "Pumunta sa dashboard"
-
-#~ msgid "User preferences"
-#~ msgstr ""
-
-#~ msgid "Manage your user preferences, including language"
-#~ msgstr ""
 
 #: src/lib/components/flow/DisplaySavedState.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
@@ -4264,17 +4115,9 @@ msgstr "Hindi na-save ang mga setting ng tema"
 msgid "Failed to load subscription"
 msgstr "Hindi na-load ang subscription"
 
-#~ msgid "Unable to open Stripe billing portal"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Unable to start Stripe checkout"
 msgstr "Hindi masimulan ang Stripe checkout"
-
-#~ msgid ""
-#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-#~ "\t\t\t\tmessaging features."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
@@ -4637,12 +4480,6 @@ msgstr "Subukang muli"
 msgid "Home"
 msgstr "Home"
 
-#~ msgid "Loading activities..."
-#~ msgstr ""
-
-#~ msgid "No activities yet"
-#~ msgstr ""
-
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the audio tag."
 msgstr "Hindi sinusuportahan ng iyong browser ang audio tag."
@@ -4665,15 +4502,6 @@ msgstr "Walang available na caption"
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the video tag."
 msgstr "Hindi sinusuportahan ng iyong browser ang video tag."
-
-#~ msgid "Whatsapp message"
-#~ msgstr ""
-
-#~ msgid "loading_activities"
-#~ msgstr ""
-
-#~ msgid "no_activities_yet"
-#~ msgstr ""
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "View event page"
@@ -4714,9 +4542,6 @@ msgstr "Magpadala ng test email"
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
 msgstr "Lahat"
-
-#~ msgid "Snapshot"
-#~ msgstr ""
 
 #: src/lib/components/flow/AppendNode.svelte
 msgid "Add Node"
@@ -4791,24 +4616,9 @@ msgstr "Ipinapadala ang secret sa bawat delivery sa X-Webhook-Secret header upan
 msgid "View secret"
 msgstr "Tingnan ang secret"
 
-#~ msgid "Target URL is required"
-#~ msgstr ""
-
-#~ msgid "Webhook URL updated successfully"
-#~ msgstr ""
-
-#~ msgid "Failed to update webhook URL"
-#~ msgstr ""
-
-#~ msgid "Edit target URL"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Delete webhook"
 msgstr "Tanggalin ang webhook"
-
-#~ msgid "Change the endpoint where this webhook receives events."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Please fill in all required fields"
@@ -4843,12 +4653,6 @@ msgstr "Nakopya sa clipboard ang secret"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not copy the secret to the clipboard. Try selecting it manually."
 msgstr "Hindi nakopya ang secret sa clipboard. Subukang piliin ito nang manu-mano."
-
-#~ msgid "The secret is sent with each delivery in the "
-#~ msgstr ""
-
-#~ msgid "header so your endpoint can verify the request came from Belcoda."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Webhook secret"
@@ -5025,9 +4829,6 @@ msgstr "Walang nakitang variable."
 msgid "Add fallback text for recipients without this value."
 msgstr "Magdagdag ng fallback na teksto para sa mga tatanggap na walang value na ito."
 
-#~ msgid "[Name unknown]"
-#~ msgstr ""
-
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved templates found."
@@ -5130,12 +4931,6 @@ msgstr "{0} ang ipinapakita"
 msgid "Load more"
 msgstr "Mag-load pa"
 
-#~ msgid "Enter a valid amount. Minimum purchase is US${0}."
-#~ msgstr ""
-
-#~ msgid "Purchase additional credit with Stripe."
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Enter an amount in USD to continue in Stripe checkout."
 msgstr "Maglagay ng halaga sa USD upang magpatuloy sa Stripe checkout."
@@ -5143,9 +4938,6 @@ msgstr "Maglagay ng halaga sa USD upang magpatuloy sa Stripe checkout."
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Amount (USD)"
 msgstr "Halaga (USD)"
-
-#~ msgid "Minimum purchase: US${0}"
-#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Continue to checkout"
@@ -5234,12 +5026,6 @@ msgstr "Sigurado ka bang gusto mong itapon ang draft sa WhatsApp na ito?"
 msgid "Changes not saved"
 msgstr "Hindi na-save ang mga pagbabago"
 
-#~ msgid "Failed to save draft"
-#~ msgstr ""
-
-#~ msgid "Failed to persist draft flow"
-#~ msgstr ""
-
 #. 0: derivedTimeAgoFormatter.format(lastSavedAt())
 #: src/lib/components/flow/DisplaySavedState.svelte
 msgid "Saved {0}"
@@ -5316,12 +5102,6 @@ msgstr "Hindi na-save ang WhatsApp business profile"
 msgid "Business profile"
 msgstr "Business profile"
 
-#~ msgid "Manage how your business appears on WhatsApp. Some fields are set by Meta and cannot be edited here."
-#~ msgstr ""
-
-#~ msgid "Loading business profile…"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Verified name"
 msgstr "Na-verify na pangalan"
@@ -5333,9 +5113,6 @@ msgstr "Katayuan ng pangalan"
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Profile picture"
 msgstr "Profile picture"
-
-#~ msgid "WhatsApp business profile"
-#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "About"
@@ -5409,18 +5186,9 @@ msgstr "Nakatago sa mga tatanggap ng mensahe ang display name ng iyong organisas
 msgid "Complete verification"
 msgstr "Kumpletuhin ang pag-verify"
 
-#~ msgid "Business account details and verification status are shown below."
-#~ msgstr ""
-
-#~ msgid "Failed to load WhatsApp business account details"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 msgstr "Nakakonekta ang iyong WhatsApp Business Account. Suriin ang pag-verify at mga detalye ng account sa ibaba."
-
-#~ msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-#~ msgstr ""
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
@@ -5554,15 +5322,9 @@ msgstr "Walang notification na maipapakita ngayon."
 msgid "About is required and cannot be empty"
 msgstr "Kailangan ang Tungkol at hindi ito maaaring walang laman"
 
-#~ msgid "WABA ID"
-#~ msgstr ""
-
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "View event"
 msgstr "Tingnan ang event"
-
-#~ msgid "View signups"
-#~ msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Sent a WhatsApp message"
@@ -5600,12 +5362,6 @@ msgstr "Wala pang notification"
 msgid "and"
 msgstr "at"
 
-#~ msgid "others"
-#~ msgstr ""
-
-#~ msgid "other"
-#~ msgstr ""
-
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up"
 msgstr "nagparehistro"
@@ -5617,9 +5373,6 @@ msgstr "Bagong pagpaparehistro"
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "Email all"
 msgstr "Mag-email sa lahat"
-
-#~ msgid "signed"
-#~ msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "New signature"
@@ -5737,12 +5490,6 @@ msgstr "I-clone"
 msgid "Copying…"
 msgstr "Kinokopya…"
 
-#~ msgid "Hello! Choose an option"
-#~ msgstr ""
-
-#~ msgid "WhatsApp message:"
-#~ msgstr ""
-
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Message:"
 msgstr "Mensahe:"
@@ -5750,9 +5497,6 @@ msgstr "Mensahe:"
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Type your message..."
 msgstr "I-type ang iyong mensahe..."
-
-#~ msgid "Failed to load notification preferences"
-#~ msgstr ""
 
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Nothing here yet"
@@ -5831,9 +5575,6 @@ msgstr "Hindi nakita ang tao"
 msgid "This person may have been removed from the organization."
 msgstr "Maaaring inalis ang taong ito sa organisasyon."
 
-#~ msgid "Overview"
-#~ msgstr ""
-
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Member since"
 msgstr "Miyembro mula noong"
@@ -5848,9 +5589,6 @@ msgstr "Contact"
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "+{0} more"
 msgstr "+{0} pa"
-
-#~ msgid "Latest note"
-#~ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "This person should not receive communications."
@@ -5971,24 +5709,6 @@ msgstr "Hindi na-update ang mga paborito. Pakisubukang muli."
 msgid "Account"
 msgstr "Account"
 
-#~ msgid "Just you"
-#~ msgstr ""
-
-#~ msgid "Workspace"
-#~ msgstr ""
-
-#~ msgid "Everyone in {0}"
-#~ msgstr ""
-
-#~ msgid "Everyone in your workspace"
-#~ msgstr ""
-
-#~ msgid "Only affects you. Other teammates keep their own settings."
-#~ msgstr ""
-
-#~ msgid "Affects everyone in your workspace. Admin only."
-#~ msgstr ""
-
 #: src/routes/(app)/settings/+page.svelte
 msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
 msgstr "Pamahalaan ang mga kagustuhan ng iyong personal na account at, kung admin ka, ang mga setting ng iyong workspace."
@@ -6017,7 +5737,7 @@ msgstr "Hindi naipadala ang mensahe sa WhatsApp"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "A teammate"
-msgstr ""
+msgstr "Isang kasamahan"
 
 #~ msgid "this person"
 #~ msgstr ""
@@ -6351,21 +6071,21 @@ msgstr "Imbitasyon na sumali sa {0}"
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "Note mention"
-msgstr ""
+msgstr "Pagbanggit sa tala"
 
 #. 0: authorName; 1: personName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note about {1}."
-msgstr ""
+msgstr "{0} ay nagbanggit sa iyo sa isang tala tungkol sa {1}."
 
 #. 0: authorName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note."
-msgstr ""
+msgstr "{0} ay nagbanggit sa iyo sa isang tala."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "View note"
-msgstr ""
+msgstr "Tingnan ang tala"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
@@ -6381,34 +6101,34 @@ msgstr "Ipakita ang lahat ng tao"
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
-msgstr ""
+msgstr "Nakatanggap kami ng kahilingan na i-reset ang iyong password. Kung ikaw ito, i-click ang button sa ibaba para gumawa ng bago. Kung hindi, maaari mong balewalain ang email na ito nang ligtas—mananatiling secure ang iyong account."
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Click below to create a new password. If you didn't request this, just ignore this email."
-msgstr ""
+msgstr "I-click sa ibaba para gumawa ng bagong password. Kung hindi mo ito hiniling, balewalain mo na lang ang email na ito."
 
 #~ msgid "Reset Password"
 #~ msgstr ""
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Security verification"
-msgstr ""
+msgstr "Pag-verify ng seguridad"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
-msgstr ""
+msgstr "Paki-verify ang iyong email address para sa mga layuning pangseguridad. I-click ang button sa ibaba para i-verify ang iyong email address."
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Please verify your email address for security purposes"
-msgstr ""
+msgstr "Paki-verify ang iyong email address para sa mga layuning pangseguridad"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify email"
-msgstr ""
+msgstr "I-verify ang email"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
-msgstr ""
+msgstr "I-verify ang iyong email address"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
@@ -6490,6 +6210,31 @@ msgstr "Listahang may numero"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Text color"
 msgstr "Kulay ng teksto"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Remove location"
+msgstr "Alisin ang lokasyon"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Change"
+msgstr "Palitan"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Select location"
+msgstr "Pumili ng lokasyon"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Click the map to drop a pin, then drag it to fine-tune the exact spot."
+msgstr "I-click ang mapa para maglagay ng pin, pagkatapos i-drag ito para ayusin ang eksaktong lugar."
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "No location selected yet"
+msgstr "Wala pang napiling lokasyon"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Save location"
+msgstr "I-save ang lokasyon"
 
 #~ msgid "New editor (preview)"
 #~ msgstr ""

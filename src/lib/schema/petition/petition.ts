@@ -31,7 +31,9 @@ export const petitionSchema = v.object({
 export type PetitionSchema = v.InferOutput<typeof petitionSchema>;
 
 export const petitionApiSchema = v.object({
-	...v.omit(petitionSchema, ['organizationId', 'pageHtml']).entries,
+	// `pageHtml` (TipTap page body, sanitized at write time) IS exposed via the REST
+	// API and webhook payloads so integrations can read back the canonical content.
+	...v.omit(petitionSchema, ['organizationId']).entries,
 	createdAt: helpers.dateToString,
 	updatedAt: helpers.dateToString,
 	deletedAt: v.nullable(helpers.dateToString),
@@ -39,7 +41,9 @@ export const petitionApiSchema = v.object({
 });
 
 export const readPetitionZero = v.object({
-	...v.omit(petitionSchema, ['pageHtml']).entries,
+	// `pageHtml` IS synced via Zero (it backs the TipTap editor), so it stays in
+	// the read schema.
+	...petitionSchema.entries,
 	createdAt: helpers.unixTimestamp,
 	updatedAt: helpers.unixTimestamp,
 	deletedAt: v.nullable(helpers.unixTimestamp),
@@ -52,6 +56,9 @@ export const createPetition = v.object({
 	slug: petitionSchema.entries.slug,
 	shortDescription: petitionSchema.entries.shortDescription,
 	description: v.optional(petitionSchema.entries.description, null),
+	// HTML authored in the TipTap editor. Sanitized with DOMPurify on the server
+	// (see src/lib/server/api/data/petition/petition.ts) before it is persisted.
+	pageHtml: v.optional(petitionSchema.entries.pageHtml, null),
 	published: petitionSchema.entries.published,
 	petitionTarget: v.optional(petitionSchema.entries.petitionTarget, null),
 	petitionText: v.optional(petitionSchema.entries.petitionText, null),
