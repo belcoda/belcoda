@@ -97,7 +97,7 @@
 		"vitest-browser-svelte": "^2.1.1"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.1070.0",
+		"@aws-sdk/client-s3": "^3.1121.0",
 		"@aws-sdk/s3-request-presigner": "^3.1087.0",
 		"@better-auth/api-key": "^1.6.23",
 		"@better-auth/stripe": "^1.6.23",
