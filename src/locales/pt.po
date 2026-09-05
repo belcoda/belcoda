@@ -87,6 +87,7 @@ msgstr "Cor de destaque para estados de sucesso e elementos secundários em pág
 #: src/lib/components/ui/image-upload/CroppedImageUpload.svelte
 #: src/lib/components/ui/image-upload/ImageUploadNew.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 #: src/lib/components/widgets/petition/signatures/SignatureTableRow.svelte
 #: src/routes/(app)/community/[personId]/profile/rows/form/Address.svelte
@@ -402,9 +403,6 @@ msgstr "Erro ao carregar pessoas"
 #: src/lib/components/widgets/user/add_modal/AddUserModal.svelte
 msgid "Selected"
 msgstr "Selecionado"
-
-#~ msgid "Preferences"
-#~ msgstr "Preferências"
 
 #: src/lib/components/layouts/app/navigation/UserMenu.svelte
 msgid "Log out"
@@ -771,9 +769,6 @@ msgstr "Nenhuma nota encontrada"
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNotesDrawer.svelte
 msgid "Add a note to share information with the team"
 msgstr "Adicione uma nota para compartilhar informações com a equipe"
-
-#~ msgid "Add a note or comment..."
-#~ msgstr "Adicione uma nota ou comentário..."
 
 #: src/lib/components/layouts/app/action-menus/person/notes/PersonNote.svelte
 #: src/lib/components/widgets/activity/InlineNote.svelte
@@ -1284,9 +1279,6 @@ msgstr "Ou continue com"
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Invited by {0}"
 msgstr "Convidado por {0}"
-
-#~ msgid "Error loading invitation: {0}"
-#~ msgstr "Erro ao carregar convite: {0}"
 
 #: src/routes/(auth)/signup/+page.svelte
 msgid "Welcome to Belcoda"
@@ -2551,9 +2543,6 @@ msgstr "Escolha um e-mail da lista para ver seus detalhes e estatísticas."
 msgid "Create New Email"
 msgstr "Criar novo e-mail"
 
-#~ msgid "Belcoda icon"
-#~ msgstr "Ícone do Belcoda"
-
 #: src/routes/(auth)/login/forgot_password/reset_password/+page.svelte
 msgid "Reset token is missing. Please use the link from your email."
 msgstr "Token de redefinição ausente. Por favor use o link do seu e-mail."
@@ -2801,9 +2790,6 @@ msgstr "Importações"
 msgid "Exports"
 msgstr "Exportações"
 
-#~ msgid "Credit balance"
-#~ msgstr "Saldo de créditos"
-
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "API keys"
 msgstr "Chaves API"
@@ -2868,12 +2854,6 @@ msgstr "Nenhuma assinatura paga ativa"
 msgid "Current period ends"
 msgstr "O período atual termina em"
 
-#~ msgid "Opening Stripe..."
-#~ msgstr "Abrindo o Stripe..."
-
-#~ msgid "Manage in Stripe"
-#~ msgstr "Gerenciar no Stripe"
-
 #: src/routes/(app)/settings/billing/subscription/+page.svelte
 msgid "Need a different plan?"
 msgstr "Precisa de um plano diferente?"
@@ -2890,27 +2870,9 @@ msgstr "Entre em contato conosco para o nível Supported"
 msgid "Contact us for Enterprise tier"
 msgstr "Entre em contato conosco para o nível Enterprise"
 
-#~ msgid "Credit purchase completed. Your balance will update shortly."
-#~ msgstr "Compra de crédito concluída. Seu saldo será atualizado em breve."
-
-#~ msgid "Credit purchase was cancelled."
-#~ msgstr "A compra de crédito foi cancelada."
-
-#~ msgid "You don't have permission to manage credit purchases. Only organization owners can access this page."
-#~ msgstr "Você não tem permissão para gerenciar compras de crédito. Apenas os proprietários da organização podem acessar esta página."
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "This balance belongs to your organization and is shared across your workspace."
 msgstr "Este saldo pertence à sua organização e é compartilhado em todo o seu workspace."
-
-#~ msgid "Purchase additional credit with Stripe using one of the preset amounts below."
-#~ msgstr "Compre crédito adicional com o Stripe usando um dos valores predefinidos abaixo."
-
-#~ msgid "Buy more credit"
-#~ msgstr "Comprar mais crédito"
-
-#~ msgid "Select a preset amount to continue in Stripe checkout."
-#~ msgstr "Selecione um valor predefinido para continuar no checkout do Stripe."
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 #: src/routes/(app)/settings/billing/credit/+page.svelte
@@ -2924,12 +2886,6 @@ msgstr "Todas as suas pessoas e equipas num só lugar."
 #: src/routes/(app)/community/+page.svelte
 msgid "Learn more about Belcoda's community module"
 msgstr "Saiba mais sobre o módulo de comunidade da Belcoda"
-
-#~ msgid "Edit workspace settings"
-#~ msgstr "Editar configurações do espaço de trabalho"
-
-#~ msgid "Manage your workspace settings, including branding, email settings, and more."
-#~ msgstr "Gerencie as configurações do seu espaço de trabalho, incluindo marca, configurações de e-mail e muito mais."
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 msgid "Archive this event. It will be hidden from the public and signups will be closed. You can unarchive it later."
@@ -3430,109 +3386,19 @@ msgstr "O logotipo da sua organização. Deve ser quadrado e ter menos de 2MB"
 msgid "Website (optional)"
 msgstr "Website (opcional)"
 
-#~ msgid "Community organization or charity"
-#~ msgstr "Organização comunitária ou caridade"
-
-#~ msgid "Business or corporation"
-#~ msgstr "Empresa ou corporação"
-
-#~ msgid "Advocacy or policy campaign"
-#~ msgstr "Campanha de advocacia ou política"
-
-#~ msgid "Political party & election campaign"
-#~ msgstr "Partido político e campanha eleitoral"
-
-#~ msgid "What is your organization's focus?"
-#~ msgstr "Qual é o foco da sua organização?"
-
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select an option"
 msgstr "Selecione uma opção"
 
-#~ msgid "1-10 employees"
-#~ msgstr "1-10 funcionários"
-
-#~ msgid "11-50 employees"
-#~ msgstr "11-50 funcionários"
-
-#~ msgid "50-500 employees"
-#~ msgstr "50-500 funcionários"
-
-#~ msgid "500+ employees"
-#~ msgstr "Mais de 500 funcionários"
-
-#~ msgid "How many people are in your organization?"
-#~ msgstr "Quantas pessoas há na sua organização?"
-
-#~ msgid "Only include staff or core volunteers who are actively involved in the organization's main operations."
-#~ msgstr "Inclua apenas funcionários ou voluntários principais que estejam ativamente envolvidos nas operações principais da organização."
-
-#~ msgid "Please provide some additional details about your organization to help us better understand your needs."
-#~ msgstr "Forneça alguns detalhes adicionais sobre sua organização para nos ajudar a entender melhor suas necessidades."
-
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Search engine"
 msgstr "Mecanismo de busca"
-
-#~ msgid "Referral"
-#~ msgstr "Indicação"
-
-#~ msgid "Training or conference"
-#~ msgstr "Treinamento ou conferência"
-
-#~ msgid "Resources"
-#~ msgstr "Recursos"
-
-#~ msgid "How did you discover Belcoda?"
-#~ msgstr "Como você descobriu a Belcoda?"
-
-#~ msgid "Select all that apply"
-#~ msgstr "Selecione todas as opções que se aplicam"
-
-#~ msgid "Storing member or supporter data"
-#~ msgstr "Armazenar dados de membros ou apoiadores"
-
-#~ msgid "Sending WhatsApp messages to members or supporters"
-#~ msgstr "Enviar mensagens de WhatsApp para membros ou apoiadores"
-
-#~ msgid "Sending emails to members or supporters"
-#~ msgstr "Enviar e-mails para membros ou apoiadores"
-
-#~ msgid "Running events"
-#~ msgstr "Realizar eventos"
-
-#~ msgid "Running policy campaigns with online petitions"
-#~ msgstr "Executar campanhas políticas com petições online"
-
-#~ msgid "Making sure all data is synced and up to date"
-#~ msgstr "Garantir que todos os dados estejam sincronizados e atualizados"
 
 #: src/lib/utils/person/gender/render.ts
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
 msgstr "Outro"
-
-#~ msgid "Other (detail)"
-#~ msgstr "Outro (detalhe)"
-
-#~ msgid "What will you use Belcoda for?"
-#~ msgstr "Para que você usará a Belcoda?"
-
-#~ msgid "Growing your list of supporters or members"
-#~ msgstr "Aumentar sua lista de apoiadores ou membros"
-
-#~ msgid "Hit the ground running"
-#~ msgstr ""
-
-#~ msgid "Book a time to talk with our team, we'll give recommendations on how to make the most out of Belcoda."
-#~ msgstr ""
-
-#~ msgid "Continue to your organization"
-#~ msgstr ""
-
-#~ msgid "If you prefer, you can continue to your organization without first booking a time."
-#~ msgstr ""
 
 #: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
 msgid "Getting started with Belcoda"
@@ -3768,9 +3634,6 @@ msgstr "Pesquisar tag..."
 msgid "Search templates..."
 msgstr "Pesquisar modelos..."
 
-#~ msgid "No templates found."
-#~ msgstr "Nenhum modelo encontrado."
-
 #: src/lib/components/flow/nodes/event_signup/Combobox.svelte
 msgid "Select an event..."
 msgstr "Selecione um evento..."
@@ -3942,12 +3805,6 @@ msgstr "O cadastro no WhatsApp foi cancelado. Se quiser tentar novamente, clique
 msgid "WhatsApp Business Account Activated"
 msgstr "Conta do WhatsApp Business ativada"
 
-#~ msgid "Your WhatsApp Business Account number is {0}"
-#~ msgstr "O número da sua Conta do WhatsApp Business é {0}"
-
-#~ msgid "Your WhatsApp Business Account ID is {0}"
-#~ msgstr "O ID da sua Conta do WhatsApp Business é {0}"
-
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid "Activate WhatsApp Business Account"
 msgstr "Ativar Conta do WhatsApp Business"
@@ -4018,12 +3875,6 @@ msgstr "Você precisa ser um administrador ou proprietário da organização par
 #: src/routes/(app)/settings/+layout.svelte
 msgid "Go to dashboard"
 msgstr "Ir para o painel"
-
-#~ msgid "User preferences"
-#~ msgstr "Preferências do usuário"
-
-#~ msgid "Manage your user preferences, including language"
-#~ msgstr "Gerencie suas preferências de usuário, incluindo o idioma"
 
 #: src/lib/components/flow/DisplaySavedState.svelte
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
@@ -4257,17 +4108,9 @@ msgstr "Falha ao salvar configurações de tema"
 msgid "Failed to load subscription"
 msgstr "Falha ao carregar a assinatura"
 
-#~ msgid "Unable to open Stripe billing portal"
-#~ msgstr "Não foi possível abrir o portal de faturamento da Stripe"
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Unable to start Stripe checkout"
 msgstr "Não foi possível iniciar o checkout do Stripe"
-
-#~ msgid ""
-#~ "Your WhatsApp Business Account has been created successfully. You can now use WhatsApp\n"
-#~ "\t\t\t\tmessaging features."
-#~ msgstr "Sua Conta do WhatsApp Business foi criada com sucesso. Agora você pode usar os recursos de mensagens do WhatsApp."
 
 #: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
 msgid ""
@@ -4626,12 +4469,6 @@ msgstr "Tentar novamente"
 msgid "Home"
 msgstr "Início"
 
-#~ msgid "Loading activities..."
-#~ msgstr "Carregando atividades..."
-
-#~ msgid "No activities yet"
-#~ msgstr "Ainda não há atividades"
-
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the audio tag."
 msgstr "Seu navegador não suporta a tag de áudio."
@@ -4654,15 +4491,6 @@ msgstr "Nenhuma legenda disponível"
 #: src/lib/components/widgets/activity/IncomingWhatsAppMessage.svelte
 msgid "Your browser does not support the video tag."
 msgstr "Seu navegador não suporta o elemento de vídeo."
-
-#~ msgid "Whatsapp message"
-#~ msgstr ""
-
-#~ msgid "loading_activities"
-#~ msgstr ""
-
-#~ msgid "no_activities_yet"
-#~ msgstr ""
 
 #: src/routes/(app)/events/[eventId]/EventActionButton.svelte
 msgid "View event page"
@@ -4703,9 +4531,6 @@ msgstr "Enviar e-mail de teste"
 #: src/lib/components/widgets/communications/recipients/RecipientBox.svelte
 msgid "Everyone"
 msgstr "Todos"
-
-#~ msgid "Snapshot"
-#~ msgstr "Instantâneo"
 
 #: src/lib/components/flow/AppendNode.svelte
 msgid "Add Node"
@@ -4780,24 +4605,9 @@ msgstr "O segredo é enviado em cada entrega no cabeçalho X-Webhook-Secret para
 msgid "View secret"
 msgstr "Ver segredo"
 
-#~ msgid "Target URL is required"
-#~ msgstr ""
-
-#~ msgid "Webhook URL updated successfully"
-#~ msgstr ""
-
-#~ msgid "Failed to update webhook URL"
-#~ msgstr ""
-
-#~ msgid "Edit target URL"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/webhooks/+page.svelte
 msgid "Delete webhook"
 msgstr "Eliminar webhook"
-
-#~ msgid "Change the endpoint where this webhook receives events."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookEditModal.svelte
 msgid "Please fill in all required fields"
@@ -4832,12 +4642,6 @@ msgstr "Segredo copiado para a área de transferência"
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Could not copy the secret to the clipboard. Try selecting it manually."
 msgstr "Não foi possível copiar o segredo para a área de transferência. Tente selecioná-lo manualmente."
-
-#~ msgid "The secret is sent with each delivery in the "
-#~ msgstr ""
-
-#~ msgid "header so your endpoint can verify the request came from Belcoda."
-#~ msgstr ""
 
 #: src/routes/(app)/settings/webhooks/WebhookSecretModal.svelte
 msgid "Webhook secret"
@@ -5016,9 +4820,6 @@ msgstr "Nenhuma variável encontrada."
 msgid "Add fallback text for recipients without this value."
 msgstr "Adicione um texto alternativo para destinatários sem este valor."
 
-#~ msgid "[Name unknown]"
-#~ msgstr "[Nome desconhecido]"
-
 #: src/lib/components/flow/nodes/template/Combobox.svelte
 #: src/lib/components/widgets/communications/send_wa_msg/BusinessApiTemplateMessageFrame.svelte
 msgid "No approved templates found."
@@ -5121,12 +4922,6 @@ msgstr "{0} exibidos"
 msgid "Load more"
 msgstr "Carregar mais"
 
-#~ msgid "Enter a valid amount. Minimum purchase is US${0}."
-#~ msgstr ""
-
-#~ msgid "Purchase additional credit with Stripe."
-#~ msgstr ""
-
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Enter an amount in USD to continue in Stripe checkout."
 msgstr "Insira um valor em USD para continuar no checkout do Stripe."
@@ -5134,9 +4929,6 @@ msgstr "Insira um valor em USD para continuar no checkout do Stripe."
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Amount (USD)"
 msgstr "Valor (USD)"
-
-#~ msgid "Minimum purchase: US${0}"
-#~ msgstr ""
 
 #: src/routes/(app)/settings/billing/credit/+page.svelte
 msgid "Continue to checkout"
@@ -5225,12 +5017,6 @@ msgstr "Tem a certeza de que deseja descartar este rascunho WhatsApp?"
 msgid "Changes not saved"
 msgstr "Alterações não guardadas"
 
-#~ msgid "Failed to save draft"
-#~ msgstr ""
-
-#~ msgid "Failed to persist draft flow"
-#~ msgstr ""
-
 #. 0: derivedTimeAgoFormatter.format(lastSavedAt())
 #: src/lib/components/flow/DisplaySavedState.svelte
 msgid "Saved {0}"
@@ -5307,12 +5093,6 @@ msgstr "Falha ao salvar o perfil comercial do WhatsApp"
 msgid "Business profile"
 msgstr "Perfil comercial"
 
-#~ msgid "Manage how your business appears on WhatsApp. Some fields are set by Meta and cannot be edited here."
-#~ msgstr ""
-
-#~ msgid "Loading business profile…"
-#~ msgstr ""
-
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Verified name"
 msgstr "Nome verificado"
@@ -5324,9 +5104,6 @@ msgstr "Status do nome"
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "Profile picture"
 msgstr "Foto do perfil"
-
-#~ msgid "WhatsApp business profile"
-#~ msgstr ""
 
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessProfile.svelte
 msgid "About"
@@ -5400,18 +5177,9 @@ msgstr "O nome de exibição da sua organização fica oculto para os destinatá
 msgid "Complete verification"
 msgstr "Concluir verificação"
 
-#~ msgid "Business account details and verification status are shown below."
-#~ msgstr ""
-
-#~ msgid "Failed to load WhatsApp business account details"
-#~ msgstr "Falha ao carregar os detalhes da conta comercial do WhatsApp"
-
 #: src/routes/(app)/settings/whatsapp/accounts/BusinessAccountActivated.svelte
 msgid "Your WhatsApp Business Account is connected. Review verification and account details below."
 msgstr "Sua conta comercial do WhatsApp está conectada. Revise a verificação e os detalhes da conta abaixo."
-
-#~ msgid "WhatsApp is not onboarded for this organization. Please contact support to onboard."
-#~ msgstr "O WhatsApp não está configurado para esta organização. Por favor, contacte o suporte para proceder à ativação."
 
 #: src/lib/components/flow/nodes/TemplateMessage.svelte
 msgid "Fallback"
@@ -5547,15 +5315,9 @@ msgstr "Não há notificações para mostrar neste momento."
 msgid "About is required and cannot be empty"
 msgstr "O campo Sobre é obrigatório e não pode ficar vazio"
 
-#~ msgid "WABA ID"
-#~ msgstr ""
-
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "View event"
 msgstr "Ver evento"
-
-#~ msgid "View signups"
-#~ msgstr ""
 
 #: src/lib/components/widgets/notifications/NotificationGroupWhatsApp.svelte
 msgid "Sent a WhatsApp message"
@@ -5593,12 +5355,6 @@ msgstr "Sem notificações ainda"
 msgid "and"
 msgstr "e"
 
-#~ msgid "others"
-#~ msgstr "outros"
-
-#~ msgid "other"
-#~ msgstr "outro"
-
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "signed up"
 msgstr "inscreveu-se"
@@ -5610,9 +5366,6 @@ msgstr "Nova inscrição"
 #: src/lib/components/widgets/notifications/NotificationGroupEvent.svelte
 msgid "Email all"
 msgstr "Enviar email a todos"
-
-#~ msgid "signed"
-#~ msgstr "assinou"
 
 #: src/lib/components/widgets/notifications/NotificationGroupPetition.svelte
 msgid "New signature"
@@ -5730,12 +5483,6 @@ msgstr "Clonar"
 msgid "Copying…"
 msgstr "Copiando…"
 
-#~ msgid "Hello! Choose an option"
-#~ msgstr ""
-
-#~ msgid "WhatsApp message:"
-#~ msgstr ""
-
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Message:"
 msgstr "Mensagem:"
@@ -5743,9 +5490,6 @@ msgstr "Mensagem:"
 #: src/lib/components/flow/nodes/Message.svelte
 msgid "Type your message..."
 msgstr "Digite sua mensagem..."
-
-#~ msgid "Failed to load notification preferences"
-#~ msgstr ""
 
 #: src/lib/components/widgets/activity/ActivityTimeline.svelte
 msgid "Nothing here yet"
@@ -5824,9 +5568,6 @@ msgstr "Pessoa não encontrada"
 msgid "This person may have been removed from the organization."
 msgstr "Esta pessoa pode ter sido removida da organização."
 
-#~ msgid "Overview"
-#~ msgstr ""
-
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "Member since"
 msgstr "Membro desde"
@@ -5841,9 +5582,6 @@ msgstr "Contacto"
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "+{0} more"
 msgstr "+{0} mais"
-
-#~ msgid "Latest note"
-#~ msgstr ""
 
 #: src/lib/components/widgets/person/context/PersonContextDetails.svelte
 msgid "This person should not receive communications."
@@ -5963,24 +5701,6 @@ msgstr "Não foi possível atualizar os favoritos. Tente novamente."
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 msgid "Account"
 msgstr "Conta"
-
-#~ msgid "Just you"
-#~ msgstr "Só você"
-
-#~ msgid "Workspace"
-#~ msgstr "Espaço de trabalho"
-
-#~ msgid "Everyone in {0}"
-#~ msgstr "Todos em {0}"
-
-#~ msgid "Everyone in your workspace"
-#~ msgstr "Todos no seu espaço de trabalho"
-
-#~ msgid "Only affects you. Other teammates keep their own settings."
-#~ msgstr "Afeta apenas você. O restante da equipe mantém suas próprias configurações."
-
-#~ msgid "Affects everyone in your workspace. Admin only."
-#~ msgstr "Afeta todos no seu espaço de trabalho. Somente administradores."
 
 #: src/routes/(app)/settings/+page.svelte
 msgid "Manage your personal account preferences and, if you're an admin, your workspace settings."
@@ -6351,16 +6071,16 @@ msgstr "Menção em nota"
 #. 0: authorName; 1: personName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note about {1}."
-msgstr ""
+msgstr "{0} mencionou você em uma nota sobre {1}."
 
 #. 0: authorName
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "{0} mentioned you in a note."
-msgstr ""
+msgstr "{0} mencionou você em uma nota."
 
 #: src/lib/components/widgets/notifications/NotificationInbox.svelte
 msgid "View note"
-msgstr ""
+msgstr "Ver nota"
 
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
 msgid "No favourite people"
@@ -6376,34 +6096,34 @@ msgstr "Mostrar todas as pessoas"
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "We received a request to reset your password. If this was you, click the button below to create a new one. If not, you can safely ignore this email—your account will stay secure."
-msgstr ""
+msgstr "Recebemos uma solicitação para redefinir sua senha. Se foi você, clique no botão abaixo para criar uma nova. Caso contrário, você pode ignorar este e-mail com segurança—sua conta permanecerá protegida."
 
 #: src/lib/server/utils/email/transactional/send_password_reset.ts
 msgid "Click below to create a new password. If you didn't request this, just ignore this email."
-msgstr ""
+msgstr "Clique abaixo para criar uma nova senha. Se você não solicitou isso, apenas ignore este e-mail."
 
 #~ msgid "Reset Password"
 #~ msgstr ""
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Security verification"
-msgstr ""
+msgstr "Verificação de segurança"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Please verify your email address for security purposes. Click the button below to verify your email address."
-msgstr ""
+msgstr "Por favor, verifique seu endereço de e-mail por motivos de segurança. Clique no botão abaixo para verificar seu endereço de e-mail."
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Please verify your email address for security purposes"
-msgstr ""
+msgstr "Por favor, verifique seu endereço de e-mail por motivos de segurança"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify email"
-msgstr ""
+msgstr "Verificar e-mail"
 
 #: src/lib/server/utils/email/transactional/send_email_verification.ts
 msgid "Verify your email address"
-msgstr ""
+msgstr "Verifique seu endereço de e-mail"
 
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Default"
@@ -6485,6 +6205,31 @@ msgstr "Lista numerada"
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 msgid "Text color"
 msgstr "Cor do texto"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Remove location"
+msgstr "Remover localização"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Change"
+msgstr "Alterar"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Select location"
+msgstr "Selecionar localização"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Click the map to drop a pin, then drag it to fine-tune the exact spot."
+msgstr "Clique no mapa para colocar um marcador e depois arraste-o para ajustar o ponto exato."
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "No location selected yet"
+msgstr "Nenhuma localização selecionada ainda"
+
+#: src/lib/components/widgets/location/LocationDialog.svelte
+msgid "Save location"
+msgstr "Salvar localização"
 
 #~ msgid "New editor (preview)"
 #~ msgstr ""

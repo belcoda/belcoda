@@ -1,18 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
-	interface Window {
-		gtag?: (
-			command: 'event',
-			action: string,
-			parameters: {
-				send_to: string;
-				value?: number;
-				currency?: string;
-			}
-		) => void;
-	}
-
 	namespace App {
 		interface Error {
 			message: string;
