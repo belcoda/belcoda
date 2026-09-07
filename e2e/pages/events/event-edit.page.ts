@@ -45,10 +45,7 @@ export class EventEditPage {
 	async archiveEvent(page: Page) {
 		page.on('dialog', (dialog) => void dialog.accept());
 		await this.archiveButton.scrollIntoViewIfNeeded();
-		await Promise.all([
-			page.waitForEvent('dialog').then((dialog) => dialog.accept()),
-			this.archiveButton.click()
-		]);
+		await this.archiveButton.click();
 		await expect(page).toHaveURL('/events', { timeout: 30_000 });
 	}
 
