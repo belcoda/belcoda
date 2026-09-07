@@ -50,8 +50,9 @@ export class EventEditPage {
 	}
 
 	async deleteEvent(page: Page) {
-		page.once('dialog', (d) => d.accept());
-		await this.deleteButton.click({ delay: 500 });
-		await page.waitForURL('/events', { timeout: 10_000 });
+		page.on('dialog', (dialog) => void dialog.accept());
+		await this.deleteButton.scrollIntoViewIfNeeded();
+		await this.deleteButton.click();
+		await expect(page).toHaveURL('/events', { timeout: 30_000 });
 	}
 }
