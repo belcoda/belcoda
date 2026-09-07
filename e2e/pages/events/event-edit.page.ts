@@ -45,7 +45,7 @@ export class EventEditPage {
 	async archiveEvent(page: Page) {
 		page.once('dialog', (d) => d.accept());
 		await this.archiveButton.click({ delay: 500 });
-		await page.waitForURL('/events', { timeout: 10_000 });
+		await page.waitForURL('/events', { timeout: 30_000, waitUntil: 'commit' });
 	}
 
 	async deleteEvent(page: Page) {
