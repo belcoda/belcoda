@@ -48,47 +48,27 @@ export class PetitionSurveyPage {
 	}
 
 	async addShortTextQuestion(label: string) {
-		const triggers = this.page.locator('[data-testid^="survey-question-trigger-"]');
-		const labelInputs = this.page.locator('[data-testid^="survey-custom-question-label-"]');
-		const countBefore = await triggers.count();
-
 		await expect(this.addQuestionTrigger).toBeVisible({ timeout: 15_000 });
 		await this.addQuestionTrigger.scrollIntoViewIfNeeded();
 
-		let added = false;
-		for (let attempt = 0; attempt < 3; attempt += 1) {
+		await expect(async () => {
 			await this.addQuestionTrigger.click();
 			const shortTextOption = this.page
 				.getByTestId('survey-add-short-text')
 				.or(this.page.getByRole('menuitem', { name: 'Short text' }));
 			await shortTextOption.waitFor({ state: 'visible', timeout: 5_000 });
 			await shortTextOption.click();
-
-			try {
-				await expect(triggers).toHaveCount(countBefore + 1, { timeout: 5_000 });
-				added = true;
-				break;
-			} catch {
-				await this.page.keyboard.press('Escape');
-			}
-		}
-
-		if (!added) {
-			throw new Error('Failed to add short text survey question after 3 attempts');
-		}
-
-		const newTrigger = triggers.nth(countBefore);
-		await expect(async () => {
-			const labelInput = labelInputs.last();
-			if (!(await labelInput.isVisible())) {
-				await newTrigger.click();
-			}
-			await labelInput.waitFor({ state: 'visible', timeout: 2_000 });
-			await labelInput.click();
-			await labelInput.fill('');
-			await labelInput.pressSequentially(label, { delay: 15 });
-			await labelInput.blur();
-			await expect(labelInput).toHaveValue(label, { timeout: 2_000 });
+			await expect(this.page.locator('[data-testid^="survey-question-trigger-"]')).toHaveCount(1, {
+				timeout: 5_000
+			});
 		}).toPass({ timeout: 15_000 });
+
+		const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
+		await expect(labelInput).toBeVisible({ timeout: 10_000 });
+		await labelInput.click();
+		await labelInput.fill('');
+		await labelInput.pressSequentially(label, { delay: 15 });
+		await labelInput.blur();
+		await expect(labelInput).toHaveValue(label, { timeout: 5_000 });
 	}
 }
