@@ -1,4 +1,4 @@
-import type { Page, Locator } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class EventEditPage {
 	readonly page: Page;
@@ -43,9 +43,13 @@ export class EventEditPage {
 	}
 
 	async archiveEvent(page: Page) {
-		page.once('dialog', (d) => d.accept());
-		await this.archiveButton.click({ delay: 500 });
-		await page.waitForURL('/events', { timeout: 30_000, waitUntil: 'commit' });
+		page.on('dialog', (dialog) => void dialog.accept());
+		await this.archiveButton.scrollIntoViewIfNeeded();
+		await Promise.all([
+			page.waitForEvent('dialog').then((dialog) => dialog.accept()),
+			this.archiveButton.click()
+		]);
+		await expect(page).toHaveURL('/events', { timeout: 30_000 });
 	}
 
 	async deleteEvent(page: Page) {
