@@ -55,13 +55,13 @@ export class PetitionEditPage {
 		await this.ensureDangerZoneExpanded(this.archiveButton);
 		await this.archiveButton.click();
 		await this.page.getByTestId('petition-confirm-archive').click();
-		await this.page.waitForURL('/petitions', { timeout: 15_000 });
+		await this.page.waitForURL('/petitions', { timeout: 30_000, waitUntil: 'commit' });
 	}
 
 	async deletePetition() {
 		await this.ensureDangerZoneExpanded(this.deleteButton);
 		await this.deleteButton.click();
 		await this.page.getByTestId('petition-confirm-delete').click();
-		await this.page.waitForURL('/petitions', { timeout: 15_000 });
+		await this.page.waitForURL('/petitions', { timeout: 30_000, waitUntil: 'commit' });
 	}
 }
