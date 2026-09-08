@@ -6,6 +6,10 @@ vi.mock('$lib/server/db', () => ({
 	db: { transaction: vi.fn() }
 }));
 
+vi.mock('$lib/server/analytics', () => ({
+	trackServerAnalyticsEvent: vi.fn()
+}));
+
 vi.mock('$lib/schema/drizzle', () => ({
 	whatsappThread: {}
 }));
