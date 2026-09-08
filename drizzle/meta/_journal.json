@@ -211,6 +211,13 @@
       "when": 1788335614099,
       "tag": "0029_aromatic_blizzard",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1788871943320,
+      "tag": "0030_misty_hobgoblin",
+      "breakpoints": true
     }
   ]
 }

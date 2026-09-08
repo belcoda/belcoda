@@ -1,0 +1,1 @@
+ALTER TABLE "flow" ALTER COLUMN "description" DROP NOT NULL;

@@ -1426,7 +1426,7 @@ export const flow = pgTable(
 			.references(() => organization.id),
 		teamId: uuid('team_id').references(() => team.id),
 		name: text('name').notNull(),
-		description: text('description').notNull(),
+		description: text('description'),
 		flowDocumentId: uuid('flow_document_id')
 			.notNull()
 			.references((): AnyPgColumn => flowDocument.id),

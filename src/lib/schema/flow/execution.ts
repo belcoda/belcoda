@@ -24,6 +24,16 @@ export const flowExecutionSchema = v.object({
 });
 export type FlowExecutionSchema = v.InferOutput<typeof flowExecutionSchema>;
 
+// Zero read schema (read-only synced table): timestamps arrive as unix millis, not JS Dates.
+// The execution engine writes these rows via raw drizzle; Zero replicates them to clients.
+export const readFlowExecutionZero = v.object({
+	...flowExecutionSchema.entries,
+	createdAt: h.unixTimestamp,
+	startedAt: h.unixTimestamp,
+	completedAt: v.nullable(h.unixTimestamp)
+});
+export type ReadFlowExecutionZero = v.InferOutput<typeof readFlowExecutionZero>;
+
 export const createFlowExecutionSchema = v.object({
 	id: v.optional(h.uuid),
 	organizationId: h.uuid,

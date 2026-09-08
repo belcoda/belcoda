@@ -44,3 +44,80 @@ export const updateFlowDocumentSchema = v.partial(
 );
 export type UpdateFlowDocumentSchema = v.InferOutput<typeof updateFlowDocumentSchema>;
 export type UpdateFlowDocumentSchemaInput = v.InferInput<typeof updateFlowDocumentSchema>;
+
+// ---------------------------------------------------------------------------
+// Zero schemas
+// ---------------------------------------------------------------------------
+
+// Zero read schema: timestamps arrive from Zero as unix millis, not JS Dates.
+export const readFlowDocumentZero = v.object({
+	...flowDocumentSchema.entries,
+	createdAt: h.unixTimestamp,
+	updatedAt: h.unixTimestamp,
+	deletedAt: v.nullable(h.unixTimestamp),
+	retiredAt: v.nullable(h.unixTimestamp)
+});
+export type ReadFlowDocumentZero = v.InferOutput<typeof readFlowDocumentZero>;
+
+export const flowDocumentMutatorMetadata = v.object({
+	organizationId: h.uuid,
+	flowDocumentId: h.uuid
+});
+export type FlowDocumentMutatorMetadata = v.InferOutput<typeof flowDocumentMutatorMetadata>;
+
+// Draft save: the editor sends the whole graph plus the revision it started from, so the server
+// can compare-and-swap on draftRevision (reject + reload if someone else saved in the meantime).
+export const updateFlowDocumentDraftZero = v.object({
+	draftFlowDefinition: flowSchema,
+	expectedDraftRevision: h.integer
+});
+export type UpdateFlowDocumentDraftZero = v.InferOutput<typeof updateFlowDocumentDraftZero>;
+
+export const updateFlowDocumentDraftZeroMutatorSchema = v.object({
+	input: updateFlowDocumentDraftZero,
+	metadata: flowDocumentMutatorMetadata
+});
+export type UpdateFlowDocumentDraftZeroMutatorSchema = v.InferInput<
+	typeof updateFlowDocumentDraftZeroMutatorSchema
+>;
+export type UpdateFlowDocumentDraftZeroMutatorSchemaOutput = v.InferOutput<
+	typeof updateFlowDocumentDraftZeroMutatorSchema
+>;
+
+// Publish: the new flow_version id is generated client-side and carried in metadata so the
+// optimistic flow_document update (activeVersionId/executionEnabled) matches what the server writes.
+export const publishFlowDocumentMutatorMetadata = v.object({
+	organizationId: h.uuid,
+	flowDocumentId: h.uuid,
+	flowVersionId: h.uuid
+});
+export type PublishFlowDocumentMutatorMetadata = v.InferOutput<
+	typeof publishFlowDocumentMutatorMetadata
+>;
+
+export const publishFlowDocumentZeroMutatorSchema = v.object({
+	metadata: publishFlowDocumentMutatorMetadata
+});
+export type PublishFlowDocumentZeroMutatorSchema = v.InferInput<
+	typeof publishFlowDocumentZeroMutatorSchema
+>;
+export type PublishFlowDocumentZeroMutatorSchemaOutput = v.InferOutput<
+	typeof publishFlowDocumentZeroMutatorSchema
+>;
+
+// Rollback: repoint activeVersionId at an existing (already-published) flow_version.
+export const rollbackFlowDocumentZero = v.object({
+	flowVersionId: h.uuid
+});
+export type RollbackFlowDocumentZero = v.InferOutput<typeof rollbackFlowDocumentZero>;
+
+export const rollbackFlowDocumentZeroMutatorSchema = v.object({
+	input: rollbackFlowDocumentZero,
+	metadata: flowDocumentMutatorMetadata
+});
+export type RollbackFlowDocumentZeroMutatorSchema = v.InferInput<
+	typeof rollbackFlowDocumentZeroMutatorSchema
+>;
+export type RollbackFlowDocumentZeroMutatorSchemaOutput = v.InferOutput<
+	typeof rollbackFlowDocumentZeroMutatorSchema
+>;
