@@ -6305,3 +6305,9 @@ msgstr "Memuat naik…"
 #: src/lib/components/ui/file-upload/ImageUpload.svelte
 msgid "Image is too large. Please choose a file no larger than {0}."
 msgstr "Imej terlalu besar. Sila pilih fail yang tidak lebih besar daripada {0}."
+
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/DesktopNavSidebar.svelte
+#: src/lib/components/layouts/app/navigation/MobileBottomNav.svelte
+msgid "Flow"
+msgstr ""
