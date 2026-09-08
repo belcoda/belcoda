@@ -10,6 +10,7 @@
 	import { MediaQuery } from 'svelte/reactivity';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import queries from '$lib/zero/query/index';
 	import { appState } from '$lib/state.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
@@ -39,6 +40,10 @@
 	} = $props();
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
+	const persistedEvent = $derived.by(() =>
+		z.createQuery(queries.event.read({ eventId: event.id }))
+	);
+	const published = $derived(persistedEvent.data?.published ?? event.published);
 
 	function updatePublished(checked: boolean) {
 		const response = z.mutate(
@@ -55,7 +60,6 @@
 		void response.server
 			.then((result) => {
 				if (result.type === 'error') {
-					if (event.published === checked) event.published = !checked;
 					toast.error(t`Failed to update event`);
 					console.error('Error updating event published status:', result.error);
 					return;
@@ -68,7 +72,6 @@
 				}
 			})
 			.catch((error) => {
-				if (event.published === checked) event.published = !checked;
 				toast.error(t`Failed to update event`);
 				console.error('Error updating event published status:', error);
 			});
@@ -77,7 +80,6 @@
 	function handlePublishChange(checked: boolean) {
 		try {
 			updatePublished(checked);
-			event.published = checked;
 		} catch (error) {
 			toast.error(t`Failed to update event`);
 			console.error('Error updating event published status:', error);
@@ -227,9 +229,9 @@
 {#snippet actionButtons()}
 	<div class="flex w-full flex-col gap-2 sm:flex-row sm:justify-between">
 		<div class="flex items-center gap-3 px-4 py-2">
-			<Switch id="publish-toggle" checked={event.published} onCheckedChange={handlePublishChange} />
+			<Switch id="publish-toggle" checked={published} onCheckedChange={handlePublishChange} />
 			<Label for="publish-toggle" class="cursor-pointer">
-				{event.published ? t`Published` : t`Publish event`}
+				{published ? t`Published` : t`Publish event`}
 			</Label>
 		</div>
 
