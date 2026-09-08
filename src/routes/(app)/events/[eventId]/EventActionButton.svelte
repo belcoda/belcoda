@@ -20,9 +20,8 @@
 	import { appState } from '$lib/state.svelte';
 	import EventMakeACopy from './EventMakeACopy.svelte';
 	import { trackEventPublished } from '$lib/utils/event/analytics';
-	let updatingPublished = $state(false);
 
-	async function updatePublished(checked: boolean) {
+	function updatePublished(checked: boolean) {
 		const response = z.mutate(
 			mutators.event.update({
 				metadata: {
@@ -34,29 +33,32 @@
 				}
 			})
 		);
-		const result = await response.server;
-		if (result.type === 'error') {
-			throw new Error(result.error.message);
-		}
+		void response.server
+			.then((result) => {
+				if (result.type === 'error') {
+					toast.error(t`Failed to update event`);
+					console.error('Error updating event published status:', result.error);
+					return;
+				}
+				if (checked) {
+					trackEventPublished(event);
+					toast.success(t`Event published`);
+				} else {
+					toast.success(t`Event unpublished`);
+				}
+			})
+			.catch((error) => {
+				toast.error(t`Failed to update event`);
+				console.error('Error updating event published status:', error);
+			});
 	}
 
-	async function handlePublishChange(checked: boolean) {
-		if (updatingPublished) return;
-
-		updatingPublished = true;
+	function handlePublishChange(checked: boolean) {
 		try {
-			await updatePublished(checked);
-			if (checked) {
-				trackEventPublished(event);
-				toast.success(t`Event published`);
-			} else {
-				toast.success(t`Event unpublished`);
-			}
+			updatePublished(checked);
 		} catch (error) {
 			toast.error(t`Failed to update event`);
 			console.error('Error updating event published status:', error);
-		} finally {
-			updatingPublished = false;
 		}
 	}
 </script>
@@ -83,7 +85,6 @@
 							<Switch
 								id={`${id}-switch`}
 								checked={event.published}
-								disabled={updatingPublished}
 								onCheckedChange={handlePublishChange}
 							/>
 							<Label for={`${id}-switch`}>{t`Published`}</Label>
