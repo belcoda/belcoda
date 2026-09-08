@@ -19,6 +19,8 @@ import * as whatsappTemplate from '$lib/server/api/mutate/whatsapp_template';
 import * as whatsappThread from '$lib/server/api/mutate/whatsapp_thread';
 import * as whatsappMessage from '$lib/server/api/mutate/whatsapp_message';
 import * as whatsappAccount from '$lib/server/api/mutate/whatsapp_account';
+import * as flow from '$lib/server/api/mutate/flow';
+import * as flowDocument from '$lib/server/api/mutate/flow_document';
 
 export const mutators = defineMutators({
 	favourite: {
@@ -128,5 +130,16 @@ export const mutators = defineMutators({
 		delete: whatsappAccount.deleteWhatsappAccount,
 		unlink: whatsappAccount.unlinkWhatsappAccount,
 		updateMetadata: whatsappAccount.updateWhatsappAccountMetadata
+	},
+	flow: {
+		create: flow.createFlow,
+		update: flow.updateFlow,
+		archive: flow.archiveFlow,
+		delete: flow.deleteFlow
+	},
+	flowDocument: {
+		updateDraft: flowDocument.updateDraft,
+		publish: flowDocument.publish,
+		rollback: flowDocument.rollback
 	}
 });

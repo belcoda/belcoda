@@ -2,13 +2,16 @@ import { flowDocument, flowTriggerRegistration, flowVersion, team } from '$lib/s
 import { drizzle } from '$lib/server/db';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { eq, or, isNull, lte, sql, and } from 'drizzle-orm';
-import { type QueryContext } from '$lib/zero/schema';
+import { type QueryContext, builder } from '$lib/zero/schema';
 import { v7 as uuidv7 } from 'uuid';
 import { parse } from 'valibot';
 import {
 	createFlowDocumentSchema,
-	type CreateFlowDocumentSchemaInput
+	type CreateFlowDocumentSchemaInput,
+	updateFlowDocumentDraftZeroMutatorSchema,
+	type UpdateFlowDocumentDraftZeroMutatorSchema
 } from '$lib/schema/flow/document';
+import { flowDocumentReadPermissions } from '$lib/zero/query/flow_document/permissions';
 
 import {
 	createFlowVersionSchema,
@@ -46,7 +49,9 @@ export async function createFlowDocument({
 			throw new Error('Team not found for this organization');
 		}
 	}
-	const id = uuidv7();
+	// Honour a caller-provided id (the flow resource create + optimistic client mutator both pass a
+	// pre-generated flow_document id so client and server agree); otherwise generate one.
+	const id = parsed.id ?? uuidv7();
 	const flowToCreate: typeof flowDocument.$inferInsert = {
 		...parsed,
 		id,
@@ -61,6 +66,63 @@ export async function createFlowDocument({
 		throw new Error('Failed to create flow document');
 	}
 	return flow;
+}
+
+// Thrown when a draft save is rejected because someone else saved first (the row's draftRevision no
+// longer matches what the editor started from). The client mutator surfaces this as a reject+reload.
+export class FlowDraftRevisionConflictError extends Error {
+	constructor(message = 'This flow was changed elsewhere. Reload to get the latest version.') {
+		super(message);
+		this.name = 'FlowDraftRevisionConflictError';
+	}
+}
+
+// Save the editor's draft graph with an optimistic-lock compare-and-swap on draftRevision: the
+// update only lands if the row is still at the revision the editor started from, otherwise a
+// concurrent save has happened and we reject (Zero rolls back the optimistic client mutation).
+export async function updateFlowDocumentDraft({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateFlowDocumentDraftZeroMutatorSchema;
+}) {
+	const parsed = parse(updateFlowDocumentDraftZeroMutatorSchema, args);
+
+	const flowDocumentRecord = await tx.run(
+		builder.flowDocument
+			.where('id', '=', parsed.metadata.flowDocumentId)
+			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where((expr) => flowDocumentReadPermissions(expr, ctx))
+			.one()
+	);
+	if (!flowDocumentRecord) {
+		throw new Error('Flow document not found');
+	}
+
+	const [result] = await tx.dbTransaction.wrappedTransaction
+		.update(flowDocument)
+		.set({
+			draftFlowDefinition: parsed.input.draftFlowDefinition,
+			draftRevision: sql`${flowDocument.draftRevision} + 1`,
+			updatedAt: new Date()
+		})
+		.where(
+			and(
+				eq(flowDocument.id, parsed.metadata.flowDocumentId),
+				eq(flowDocument.organizationId, parsed.metadata.organizationId),
+				eq(flowDocument.draftRevision, parsed.input.expectedDraftRevision)
+			)
+		)
+		.returning();
+
+	if (!result) {
+		// The document exists (read above succeeded) but the CAS matched no row → revision moved on.
+		throw new FlowDraftRevisionConflictError();
+	}
+	return result;
 }
 
 export async function publishFlowDocument({
@@ -82,7 +144,9 @@ export async function publishFlowDocument({
 		throw new Error('A user must be authenticated to publish a flow document');
 	}
 
-	const newFlowVersionId = uuidv7();
+	// Honour a caller-provided version id (the optimistic client publish mutator pre-generates it and
+	// passes it via metadata so client and server point flow_document.activeVersionId at the same id).
+	const newFlowVersionId = parsed.id ?? uuidv7();
 
 	// Bump the version counter first so the new version can take its number. We deliberately do NOT
 	// set activeVersionId in this update: flow_document.active_version_id has a non-deferrable FK to
