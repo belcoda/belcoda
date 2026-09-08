@@ -19,8 +19,11 @@
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
 	import EventMakeACopy from './EventMakeACopy.svelte';
-	function updatePublished(checked: boolean) {
-		z.mutate(
+	import { trackEventPublished } from '$lib/utils/event/analytics';
+	let updatingPublished = $state(false);
+
+	async function updatePublished(checked: boolean) {
+		const response = z.mutate(
 			mutators.event.update({
 				metadata: {
 					eventId: event.id,
@@ -31,6 +34,30 @@
 				}
 			})
 		);
+		const result = await response.server;
+		if (result.type === 'error') {
+			throw new Error(result.error.message);
+		}
+	}
+
+	async function handlePublishChange(checked: boolean) {
+		if (updatingPublished) return;
+
+		updatingPublished = true;
+		try {
+			await updatePublished(checked);
+			if (checked) {
+				trackEventPublished(event);
+				toast.success(t`Event published`);
+			} else {
+				toast.success(t`Event unpublished`);
+			}
+		} catch (error) {
+			toast.error(t`Failed to update event`);
+			console.error('Error updating event published status:', error);
+		} finally {
+			updatingPublished = false;
+		}
 	}
 </script>
 
@@ -56,14 +83,8 @@
 							<Switch
 								id={`${id}-switch`}
 								checked={event.published}
-								onCheckedChange={(checked) => {
-									updatePublished(checked);
-									if (checked) {
-										toast.success('Event published');
-									} else {
-										toast.success('Event unpublished');
-									}
-								}}
+								disabled={updatingPublished}
+								onCheckedChange={handlePublishChange}
 							/>
 							<Label for={`${id}-switch`}>{t`Published`}</Label>
 						</div>

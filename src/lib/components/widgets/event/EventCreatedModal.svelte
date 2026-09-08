@@ -22,6 +22,7 @@
 	import { renderAddress } from '$lib/utils/string/address';
 	import { locale } from '$lib/index.svelte';
 	import { getLocalTimeZone } from '@internationalized/date';
+	import { trackEventPublished } from '$lib/utils/event/analytics';
 
 	let {
 		event,
@@ -38,9 +39,10 @@
 	} = $props();
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
+	let updatingPublished = $state(false);
 
 	async function updatePublished(checked: boolean) {
-		await z.mutate(
+		const response = z.mutate(
 			mutators.event.update({
 				metadata: {
 					eventId: event.id,
@@ -51,19 +53,30 @@
 				}
 			})
 		);
+		const result = await response.server;
+		if (result.type === 'error') {
+			throw new Error(result.error.message);
+		}
 	}
 
 	async function handlePublishChange(checked: boolean) {
+		if (updatingPublished) return;
+
+		updatingPublished = true;
 		try {
 			await updatePublished(checked);
+			event.published = checked;
 			if (checked) {
-				toast.success('Event published');
+				trackEventPublished(event);
+				toast.success(t`Event published`);
 			} else {
-				toast.success('Event unpublished');
+				toast.success(t`Event unpublished`);
 			}
 		} catch (error) {
-			toast.error('Failed to update event');
+			toast.error(t`Failed to update event`);
 			console.error('Error updating event published status:', error);
+		} finally {
+			updatingPublished = false;
 		}
 	}
 
@@ -210,7 +223,12 @@
 {#snippet actionButtons()}
 	<div class="flex w-full flex-col gap-2 sm:flex-row sm:justify-between">
 		<div class="flex items-center gap-3 px-4 py-2">
-			<Switch id="publish-toggle" checked={event.published} onCheckedChange={handlePublishChange} />
+			<Switch
+				id="publish-toggle"
+				checked={event.published}
+				disabled={updatingPublished}
+				onCheckedChange={handlePublishChange}
+			/>
 			<Label for="publish-toggle" class="cursor-pointer">
 				{event.published ? t`Published` : t`Publish event`}
 			</Label>
