@@ -51,20 +51,19 @@ export class PetitionSurveyPage {
 		await expect(this.addQuestionTrigger).toBeVisible({ timeout: 15_000 });
 		await this.addQuestionTrigger.scrollIntoViewIfNeeded();
 
+		const triggers = this.page.locator('[data-testid^="survey-question-trigger-"]');
+		const initialCount = await triggers.count();
+
+		await this.page.keyboard.press('Escape');
+		await this.addQuestionTrigger.click();
+		const shortTextOption = this.page
+			.getByTestId('survey-add-short-text')
+			.or(this.page.getByRole('menuitem', { name: 'Short text' }));
+		await shortTextOption.waitFor({ state: 'visible', timeout: 5_000 });
+		await shortTextOption.click();
+		await expect(triggers).toHaveCount(initialCount + 1, { timeout: 5_000 });
+
 		await expect(async () => {
-			const triggers = this.page.locator('[data-testid^="survey-question-trigger-"]');
-			if ((await triggers.count()) === 0) {
-				await this.page.keyboard.press('Escape');
-				await this.addQuestionTrigger.click();
-				const shortTextOption = this.page
-					.getByTestId('survey-add-short-text')
-					.or(this.page.getByRole('menuitem', { name: 'Short text' }));
-				await shortTextOption.waitFor({ state: 'visible', timeout: 5_000 });
-				await shortTextOption.click();
-			}
-
-			await expect(triggers).toHaveCount(1, { timeout: 5_000 });
-
 			const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
 			await expect(labelInput).toBeVisible({ timeout: 5_000 });
 			await labelInput.scrollIntoViewIfNeeded();
