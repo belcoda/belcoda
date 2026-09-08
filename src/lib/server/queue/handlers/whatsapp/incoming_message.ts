@@ -79,7 +79,7 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 			return await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
 		});
 		if (analyticsEvent) {
-			await trackServerAnalyticsEvent(analyticsEvent.name, analyticsEvent.data);
+			void trackServerAnalyticsEvent(analyticsEvent.name, analyticsEvent.data);
 		}
 	} catch (err) {
 		log.error(err, 'Failed to process incoming message');
