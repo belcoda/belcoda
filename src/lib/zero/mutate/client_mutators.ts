@@ -17,6 +17,8 @@ import * as whatsappTemplate from '$lib/zero/mutate/whatsapp/template';
 import * as whatsappThread from '$lib/zero/mutate/whatsapp/thread';
 import * as whatsappMessage from '$lib/zero/mutate/whatsapp/message';
 import * as whatsappAccount from '$lib/zero/mutate/whatsapp/account';
+import * as flow from '$lib/zero/mutate/flow';
+import * as flowDocument from '$lib/zero/mutate/flow_document';
 import { defineMutators } from '@rocicorp/zero';
 
 export const mutators = defineMutators({
@@ -127,5 +129,16 @@ export const mutators = defineMutators({
 		delete: whatsappAccount.deleteWhatsappAccount,
 		unlink: whatsappAccount.unlinkWhatsappAccount,
 		updateMetadata: whatsappAccount.updateWhatsappAccountMetadata
+	},
+	flow: {
+		create: flow.createFlow,
+		update: flow.updateFlow,
+		archive: flow.archiveFlow,
+		delete: flow.deleteFlow
+	},
+	flowDocument: {
+		updateDraft: flowDocument.updateDraft,
+		publish: flowDocument.publish,
+		rollback: flowDocument.rollback
 	}
 });
