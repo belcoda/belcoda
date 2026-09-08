@@ -26,7 +26,7 @@
 			{#if displayNewFlow}
 				<a href="/flow" class={navClass}>
 					<div class="text-center">
-						<div class="icon-[flowbite--messages-outline] size-6">&nbsp;</div>
+						<div class="icon-[lucide--workflow] size-6">&nbsp;</div>
 						<div class="text-body group-hover:text-fg-brand mt-1 text-xs">{t`Flow`}</div>
 					</div>
 				</a>

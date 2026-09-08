@@ -67,7 +67,7 @@
 									{#if displayNewFlow}
 										<a href="/flow" {...props}
 											><span
-												class="mt-0.5 icon-[flowbite--messages-outline] size-7 text-sidebar-primary-foreground"
+												class="mt-0.5 icon-[lucide--workflow] size-7 text-sidebar-primary-foreground"
 											></span>
 											<span class="sr-only">{t`Flow`}</span></a
 										>
