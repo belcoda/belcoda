@@ -93,12 +93,16 @@
 							{/if}
 						</div>
 
-						{#if data.petition.description}
+						{#if data.petition.pageHtml || data.petition.description}
 							<div class="border-t border-gray-200 pt-8">
 								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`About this petition`}</h2>
 								<div class="prose decorate-links space-y-4 text-gray-700">
-									<!-- Sanitized using dompurify on the server -->
-									{@html data.petition.description}
+									<!--
+										pageHtml (TipTap) is sanitized with dompurify at write time; the legacy
+										Lexical description is sanitized on the server at read time. When pageHtml
+										exists it wins and the description is ignored.
+									-->
+									{@html data.petition.pageHtml || data.petition.description}
 								</div>
 							</div>
 						{/if}

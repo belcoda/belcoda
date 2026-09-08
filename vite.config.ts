@@ -58,6 +58,23 @@ export default defineConfig({
 				config.build.cssMinify = 'esbuild';
 			}
 		},
+		// @better-svelte-email/server uses postcss at runtime to inline email CSS.
+		// postcss (CJS) does `require('nanoid/non-secure')`, but nanoid v5+ is pure ESM
+		// and its /non-secure has no default export. Left external, adapter-node's
+		// commonjs pass rewrites that require into `import x from 'nanoid/non-secure'`,
+		// which Node rejects at load time ("does not provide an export named 'default'"),
+		// crash-looping the server. Inlining postcss makes Vite resolve the interop at
+		// build time instead. Only during `build`: forcing it in dev breaks Vite's SSR
+		// module runner with "require is not defined" inside postcss. See
+		// https://github.com/Konixy/better-svelte-email/issues/85 (and #33).
+		{
+			name: 'postcss-noexternal-on-build',
+			config(_config, { command }) {
+				if (command === 'build') {
+					return { ssr: { noExternal: ['postcss'] } };
+				}
+			}
+		},
 		tailwindcss(),
 		wuchale({ configPath: 'wuchale.config.js' }),
 		devtoolsJson()

@@ -15,6 +15,11 @@ import {
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 
 import {
+	defaultOrganizationOnboardingSettings,
+	defaultThemeSettings,
+	defaultWhatsappOrganizationSettings,
+	type UpdateOrganizationOnboardingZeroMutatorSchema,
+	updateOrganizationOnboardingZeroMutatorSchema,
 	type UpdateThemeZeroMutatorSchema,
 	updateThemeZeroMutatorSchema
 } from '$lib/schema/organization/settings';
@@ -51,11 +56,11 @@ export async function updateOrganization({
 		throw new Error('Failed to update organization');
 	}
 
-	const { id: _omitId, ...orgWebhookData } = updated;
+	const { id, ...orgWebhookData } = updated;
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: updated.id,
+			organizationId: id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationApiSchema, orgWebhookData)
@@ -79,16 +84,10 @@ export async function updateOrganizationWhatsappSettings({
 	const parsed = parse(updateOrganizationWhatsappSettingsMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
 
-	const currentOrg = await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
 	//number is actually a phone_number_id that needs to be exchanged for a phone number using ycloud api
 
-	const updatedSettings = {
-		...currentOrg.settings,
-		whatsApp: {
-			...currentOrg.settings?.whatsApp,
-			...parsed.input
-		}
-	};
+	const whatsappPatch = { ...parsed.input };
 	const { number, wabaId } = parsed.input;
 	if (number && wabaId) {
 		// calling this function (which calls an external API) during the transaction is far from ideal, but refactoring it would be a pain right now...
@@ -97,13 +96,22 @@ export async function updateOrganizationWhatsappSettings({
 			wabaId,
 			phoneNumberId: number
 		});
-		updatedSettings.whatsApp.number = phoneNumber;
+		whatsappPatch.number = phoneNumber;
 	}
+	const defaultWhatsappSettings = JSON.stringify(defaultWhatsappOrganizationSettings());
+	const serializedWhatsappPatch = JSON.stringify(whatsappPatch);
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({
-			settings: updatedSettings,
+			settings: sql`
+				${organization.settings}
+				|| jsonb_build_object(
+					'whatsApp',
+					COALESCE(${organization.settings}->'whatsApp', ${defaultWhatsappSettings}::jsonb)
+					|| ${serializedWhatsappPatch}::jsonb
+				)
+			`,
 			updatedAt: new Date()
 		})
 		.where(eq(organization.id, organizationId))
@@ -112,11 +120,11 @@ export async function updateOrganizationWhatsappSettings({
 	if (!updated) {
 		throw new Error('Failed to update organization whatsapp settings');
 	}
-	const { id: _omitId, ...orgWebhookData } = updated;
+	const { id, ...orgWebhookData } = updated;
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: updated.id,
+			organizationId: id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationApiSchema, orgWebhookData)
@@ -138,22 +146,25 @@ export async function updateTheme({
 }) {
 	const parsed = parse(updateThemeZeroMutatorSchema, args);
 
-	const orgRecord = await getOrganizationByIdForAdminOrOwner({
+	await getOrganizationByIdForAdminOrOwner({
 		tx,
 		ctx,
 		organizationId: parsed.metadata.organizationId
 	});
 
+	const defaultTheme = JSON.stringify(defaultThemeSettings());
+	const themePatch = JSON.stringify(parsed.input);
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
 		.set({
-			settings: {
-				...orgRecord.settings,
-				theme: {
-					...orgRecord.settings.theme,
-					...parsed.input
-				}
-			},
+			settings: sql`
+				${organization.settings}
+				|| jsonb_build_object(
+					'theme',
+					COALESCE(${organization.settings}->'theme', ${defaultTheme}::jsonb)
+					|| ${themePatch}::jsonb
+				)
+			`,
 			updatedAt: new Date()
 		})
 		.where(eq(organization.id, parsed.metadata.organizationId))
@@ -162,11 +173,11 @@ export async function updateTheme({
 	if (!updated) {
 		throw new Error('Failed to update theme');
 	}
-	const { id: _omitId, ...orgWebhookData } = updated;
+	const { id, ...orgWebhookData } = updated;
 	const queue = await getQueue();
 	await queue.triggerWebhook(
 		{
-			organizationId: updated.id,
+			organizationId: id,
 			payload: {
 				type: 'organization.updated',
 				data: parse(organizationApiSchema, orgWebhookData)
@@ -174,6 +185,57 @@ export async function updateTheme({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	return updated;
+}
+
+export async function updateOrganizationOnboarding({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateOrganizationOnboardingZeroMutatorSchema;
+}) {
+	const parsed = parse(updateOrganizationOnboardingZeroMutatorSchema, args);
+	const organizationId = parsed.metadata.organizationId;
+	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
+	const onboardingPatch = JSON.stringify(parsed.input);
+
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(organization)
+		.set({
+			settings: sql`
+				${organization.settings}
+				|| jsonb_build_object(
+					'onboarding',
+					COALESCE(${organization.settings}->'onboarding', ${defaultOnboarding}::jsonb)
+					|| ${onboardingPatch}::jsonb
+				)
+			`,
+			updatedAt: new Date()
+		})
+		.where(eq(organization.id, organizationId))
+		.returning();
+
+	if (!updated) {
+		throw new Error('Failed to update organization onboarding settings');
+	}
+
+	const { id, ...orgWebhookData } = updated;
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
+			organizationId: id,
+			payload: {
+				type: 'organization.updated',
+				data: parse(organizationApiSchema, orgWebhookData)
+			}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
+
 	return updated;
 }
 

@@ -184,3 +184,14 @@ export async function renderEmailMessage({
 		})
 	};
 }
+
+//converts Lexical JSON to HTML
+export async function renderBroadcastEmailBody(body: unknown) {
+	//if the body is already a string, return it (it's probably already HTML)
+	if (typeof body === 'string') {
+		return body;
+	}
+	const lexicalRenderer = new LexicalHtmlRenderer();
+	const html = body ? await renderLexicalBody(lexicalRenderer, body) : '';
+	return html;
+}

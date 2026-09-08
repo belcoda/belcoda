@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import { goto } from '$app/navigation';
-	import { tick } from 'svelte';
 	import ContentLayout from '$lib/components/layouts/app/ContentLayout.svelte';
 	import { appState } from '$lib/state.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -19,6 +18,8 @@
 
 	const organization = appState.activeOrganization;
 
+	let navigateAfterSave = false;
+
 	let { form, data, helpers } = $state(
 		createForm({
 			schema: themeSettingsSchema,
@@ -27,6 +28,7 @@
 				defaultThemeSettings(),
 			validateOnLoad: false,
 			onSubmit: async (formData) => {
+				navigateAfterSave = false;
 				try {
 					if (!organization.data?.settings) {
 						toast.error(t`Organization settings not found`);
@@ -47,10 +49,14 @@
 					);
 
 					toast.success(t`Theme settings saved successfully.`);
-					await tick();
-					await goto(`/settings`);
+					navigateAfterSave = true;
 				} catch (err) {
 					toast.error(err instanceof Error ? err.message : t`Failed to save theme settings`);
+				}
+			},
+			onSubmitComplete: async () => {
+				if (navigateAfterSave) {
+					await goto('/settings');
 				}
 			}
 		})

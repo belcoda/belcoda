@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class ApiKeysPage {
 	readonly page: Page;
@@ -47,7 +47,10 @@ export class ApiKeysPage {
 
 	async createApiKey(name: string) {
 		await this.newApiKeyTrigger.click();
+		await this.keyNameInput.waitFor({ state: 'visible', timeout: 10_000 });
 		await this.keyNameInput.fill(name);
+		await expect(this.keyNameInput).toHaveValue(name);
+		await expect(this.createButton).toBeEnabled();
 		await this.createButton.click();
 	}
 

@@ -37,6 +37,7 @@ import { eventDeletedWebhookSchema } from '$lib/schema/webhook';
 import { parse } from 'valibot';
 import { _insertActionCodeUnsafe } from '$lib/server/api/data/action/insert';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
+import { sanitizePageHtml } from '$lib/server/utils/html/sanitize_page_html';
 
 export async function createEvent({
 	tx,
@@ -77,6 +78,8 @@ export async function createEvent({
 		...(parsedInput.input.teamId ? { teamId: parsedInput.input.teamId } : {}),
 		id: parsedInput.metadata.eventId,
 		organizationId: parsedInput.metadata.organizationId,
+		// Always sanitize TipTap HTML at the input boundary.
+		pageHtml: sanitizePageHtml(parsedInput.input.pageHtml),
 		published: false,
 		startsAt: new Date(parsedInput.input.startsAt),
 		endsAt: new Date(parsedInput.input.endsAt),
@@ -183,6 +186,9 @@ export async function updateEvent({
 			...parsed.input,
 			startsAt: parsed.input.startsAt ? new Date(parsed.input.startsAt) : undefined,
 			endsAt: parsed.input.endsAt ? new Date(parsed.input.endsAt) : undefined,
+			// Always sanitize TipTap HTML at the input boundary. Only touch the
+			// column when pageHtml is part of this update.
+			...('pageHtml' in parsed.input ? { pageHtml: sanitizePageHtml(parsed.input.pageHtml) } : {}),
 			updatedAt: new Date()
 		})
 		.where(

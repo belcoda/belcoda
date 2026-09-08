@@ -95,10 +95,14 @@ export async function load({ params, locals }) {
 		isAdmin = adminOwnerOrgs.admin.includes(org.id) || adminOwnerOrgs.owner.includes(org.id);
 	}
 
-	const renderedDescription = await renderSanitizedDescription({
-		description: petitionData.description as SerializedEditorState | null,
-		logContext: { petitionId: petitionData.id }
-	});
+	// When pageHtml (TipTap) exists it is rendered directly (already sanitized at
+	// write time), so skip the legacy Lexical render entirely.
+	const renderedDescription = petitionData.pageHtml
+		? null
+		: await renderSanitizedDescription({
+				description: petitionData.description as SerializedEditorState | null,
+				logContext: { petitionId: petitionData.id }
+			});
 
 	// Serialize dates to avoid serialization issues
 	const serializedPetition = {

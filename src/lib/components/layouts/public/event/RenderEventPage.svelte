@@ -79,12 +79,16 @@
 							{/if}
 						</div>
 
-						{#if event.description}
+						{#if event.pageHtml || event.description}
 							<div class="border-t border-gray-200 pt-8">
 								<h2 class="mb-4 text-xl font-semibold text-gray-900">{t`What to Expect:`}</h2>
 								<div class="prose decorate-links space-y-4 text-gray-700">
-									<!-- Sanitized using dompurify on the server -->
-									{@html event.description}
+									<!--
+										pageHtml (TipTap) is sanitized with dompurify at write time; the legacy
+										Lexical description is sanitized on the server at read time. When pageHtml
+										exists it wins and the description is ignored.
+									-->
+									{@html event.pageHtml || event.description}
 								</div>
 							</div>
 						{/if}

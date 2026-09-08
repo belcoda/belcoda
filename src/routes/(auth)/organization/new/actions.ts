@@ -13,7 +13,8 @@ import { getLocalTimeZone } from '@internationalized/date';
 import { httpsifyUrl } from '$lib/utils/string/domain';
 import { post } from '$lib/utils/http';
 import { object, boolean } from 'valibot';
-import { safeSessionStorage } from '$lib/utils/storage';
+import { safeLocalStorage, safeSessionStorage } from '$lib/utils/storage';
+import { organizationNeedsOnboardingStorageKey } from '$lib/utils/organization-onboarding';
 export async function getCurrentCountry(): Promise<CountryCode> {
 	try {
 		//get the country from the IP address of the user
@@ -62,6 +63,7 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 	if (error) {
 		throw new Error(error.message);
 	}
+	safeLocalStorage.setItem(organizationNeedsOnboardingStorageKey(data.id), 'true');
 
 	const [active] = await Promise.all([
 		authClient.organization.setActive({

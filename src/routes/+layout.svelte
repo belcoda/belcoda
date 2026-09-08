@@ -7,8 +7,6 @@
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { locale } from '$lib/index.svelte';
 	import { Tooltip as TooltipPrimitive } from 'bits-ui';
-	import { cookieConsent } from '$lib/state/cookieConsent.svelte.js';
-	import CookieBanner from '$lib/components/widgets/CookieBanner.svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { updated } from '$app/state';
 	import { dev } from '$app/environment';
@@ -27,20 +25,7 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<title>Belcoda</title>
-	{#if cookieConsent.accepted}
-		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17963790839"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag('js', new Date());
-			gtag('config', 'AW-17963790839');
-		</script>
-	{/if}
 	{#if !dev}
-		<!-- umami doesn't require cookie consent, because it's a privacy-focused analytics tool -->
 		<script
 			defer
 			src="https://cloud.umami.is/script.js"
@@ -64,7 +49,6 @@
 		<TooltipPrimitive.Provider>
 			<Toaster position="top-center" />
 			{@render children?.()}
-			<CookieBanner />
 		</TooltipPrimitive.Provider>
 	{/await}
 </main>

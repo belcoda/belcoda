@@ -3,7 +3,7 @@ import { PersonCreatePage } from '../pages/community/person-create.page';
 import { PersonProfilePage } from '../pages/community/person-profile.page';
 import { TagsPage } from '../pages/settings/tags.page';
 import { TeamsPage } from '../pages/settings/teams.page';
-import { loginAsAdmin, loginAsOwner } from '../helpers/login';
+import { loginAsOwner } from '../helpers/login';
 import { CommunityPage } from '../pages/community/community.page';
 import { BASE_URL, getOrgSlug } from '../helpers/config';
 import { getTestUsers } from '../helpers/auth';
@@ -457,49 +457,11 @@ test.describe.serial('Community and person pages', () => {
 		await expect(liveInlineNote.locator('strong[data-note-mention]')).toHaveCount(0);
 	});
 
-	test('mentioned users can open a note notification from the dashboard', async ({ page }) => {
-		const suffix = `${Date.now()}`;
-		const noteAuthor = getTestUsers(PROJECT).owner;
-		const mentionedUser = getTestUsers(PROJECT).admin;
-		const notePrefix = `Notification mention ${suffix}`;
-
-		await loginAsOwner(page, PROJECT);
-		const seedResult = await page.evaluate(async () => {
-			const response = await fetch('/api/e2e/seed-persons', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ count: 1 })
-			});
-			if (!response.ok) throw new Error(`Failed to seed person: ${response.status}`);
-			return (await response.json()) as { personIds: string[] };
-		});
-		const personId = seedResult.personIds[0];
-		expect(personId).toBeTruthy();
-		await page.goto(`/community/${personId}`);
-		await expect(page.getByTestId('person-timeline-display-name')).toBeVisible({ timeout: 15_000 });
-
-		const composer = page.getByTestId('conversation-composer');
-		await composer.getByTestId('composer-mode-note').click();
-		const textarea = composer.getByTestId('note-form-textarea');
-		await textarea.fill(`${notePrefix}: @${mentionedUser.name.slice(0, -2)}`);
-		await composer
-			.getByTestId('note-mention-picker')
-			.getByRole('option', { name: new RegExp(mentionedUser.name) })
-			.click();
-		await composer.getByTestId('note-form-submit').click();
-		await expect(page.getByTestId('inline-note').filter({ hasText: notePrefix })).toBeVisible({
-			timeout: 10_000
-		});
-
-		await loginAsAdmin(page, PROJECT);
-		await page.goto('/dashboard');
-		await page.getByRole('button', { name: 'Open notifications' }).click();
-		const inbox = page.locator('[data-slot="sheet-content"]');
-		await expect(inbox.getByText('Note mention')).toBeVisible({ timeout: 15_000 });
-		await expect(inbox.getByText(`${noteAuthor.name} mentioned you in a note`)).toBeVisible();
-		const viewNote = inbox.getByRole('link', { name: 'View note' });
-		await expect(viewNote).toHaveAttribute('href', new RegExp(`/community/${personId}#note-`));
-	});
+	// Dashboard mention-inbox e2e is omitted while NotificationBell is commented
+	// out on the dashboard, desktop sidebar, and mobile top nav. The inbox UI
+	// ("Note mention", "View note") only mounts via that bell. Restore the
+	// previous spec from git history when the bell is shown again. Mention
+	// authoring stays covered by the notes-mention spec above.
 
 	test('composer mode resets to message after navigating away and back', async ({ page }) => {
 		await loginAsOwner(page, PROJECT);

@@ -4,12 +4,18 @@
 # sudo/apt). The primary path is .cursor/setup.sh, which apt-installs Postgres.
 # Where that isn't possible, bring this up instead: `docker compose up -d`.
 #
+# PostGIS is required: event.location is geography(Point,4326). drizzle-kit push
+# does not run drizzle/*.sql, so the image must ship PostGIS and the extension
+# must exist before db:push. The postgis image enables it in POSTGRES_DB on
+# first init; if this volume was created from a plain postgres:16 image, run
+# `CREATE EXTENSION IF NOT EXISTS postgis;` before db:push.
+#
 # `wal_level=logical` (+ replication slots/senders) is required: Zero replicates
 # from this upstream via logical replication and zero-cache won't start without it.
 # Used by cloud agents (Cursor / Codex / Claude) and local docker
 services:
   postgres:
-    image: postgres:16
+    image: postgis/postgis:16-3.5
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app

@@ -406,11 +406,14 @@ Belcoda serves organizations across multiple locales (en, es, pt, etc), so featu
 ## Cloud Agent Environments
 
 Cloud coding agents (Cursor background agents, Codex cloud) need a working install:
-Postgres, Zero (`zero-cache-dev`), and the app. Setup logic is shared in
-[`scripts/agent-setup.sh`](scripts/agent-setup.sh): it apt-installs Postgres with
-`wal_level=logical` (required — Zero replicates via logical replication and
-`zero-cache` won't start without it), creates the `app`/`belcoda` role and DB,
-then runs `npm ci` → `db:push` → `db:seed`.
+Postgres **with PostGIS**, Zero (`zero-cache-dev`), and the app. Setup logic is
+shared in [`scripts/agent-setup.sh`](scripts/agent-setup.sh): it apt-installs
+Postgres with `wal_level=logical` (required — Zero replicates via logical
+replication and `zero-cache` won't start without it) and PostGIS (`event.location`
+is `geography(Point,4326)`), creates the `app`/`belcoda` role and DB, runs
+`CREATE EXTENSION postgis`, then `npm ci` → `db:push` → `db:seed`.
+`db:push` does not execute `drizzle/*.sql` migrations, so the extension must
+exist before Drizzle creates the geography column.
 
 Secrets are **not** committed. Set them in each platform's dashboard: at minimum
 `DATABASE_URL` and `ZERO_UPSTREAM_DB` (both `postgres://app:app@localhost:5432/belcoda`),
@@ -424,9 +427,10 @@ Committed config drives it:
 
 - [`.cursor/environment.json`](.cursor/environment.json) — `install` runs
   `.cursor/setup.sh` (→ shared `scripts/agent-setup.sh`: apt-installs Postgres with
-  `wal_level=logical`, then `npm ci` → `db:push` → `db:seed`) and installs Playwright
-  Chromium; `start` runs `sudo service postgresql start`; an `app-zero` terminal
-  ensures `.env` exists and runs `npm run dev`.
+  `wal_level=logical` and PostGIS, enables the extension, then `npm ci` → `db:push`
+  → `db:seed`) and installs Playwright Chromium; `start` runs
+  `sudo service postgresql start`; an `app-zero` terminal ensures `.env` exists
+  and runs `npm run dev`.
 
 ### Codex
 
@@ -449,13 +453,15 @@ To run the app during a task: `nohup npm run dev > /tmp/belcoda-dev.log 2>&1 &`
 Configured in the cloud environment UI at [claude.ai/code](https://claude.ai/code)
 (setup script + env vars + network level), but the per-session startup is
 committed to the repo as a SessionStart hook. The base image already ships
-**PostgreSQL 16** and Node (via nvm), so setup only configures/seeds Postgres and
-installs Node 24 — it does not apt-install Postgres.
+**PostgreSQL 16** and Node (via nvm), so setup does not apt-install Postgres.
+It does apt-install PostGIS for that cluster (plain Postgres cannot create
+`geography` columns), then configures and seeds the database and installs Node 24.
 
 - **Setup script** (paste into the environment's "Setup script" field, cached):
-  `bash scripts/agent-setup-web.sh` — installs Node 24, enables `wal_level=logical`
-  on the pre-installed Postgres, creates the `app`/`belcoda` role and DB, then
-  `npm ci` → `db:push` → `db:seed`.
+  `bash scripts/agent-setup-web.sh` — installs Node 24, installs PostGIS on the
+  pre-installed Postgres, enables `wal_level=logical`, creates the `app`/`belcoda`
+  role and DB, runs `CREATE EXTENSION postgis`, then `npm ci` → `db:push` →
+  `db:seed`.
 - **Per-session start:** [`scripts/agent-start.sh`](scripts/agent-start.sh), wired
   as a `SessionStart` hook in [`.claude/settings.json`](.claude/settings.json). The
   cache stores files, not processes, so it restarts Postgres each session. It is
@@ -468,9 +474,12 @@ installs Node 24 — it does not apt-install Postgres.
 
 ### Fallback (no sudo/apt)
 
-[`docker-compose.yaml`](docker-compose.yaml) brings up Postgres with
-`wal_level=logical` for agent containers that can't install it directly. Swap the
-install/setup step to `docker compose up -d && npm ci --include=dev && npm run db:push && npm run db:seed`.
+[`docker-compose.yaml`](docker-compose.yaml) brings up **PostGIS** (`postgis/postgis:16-3.5`)
+with `wal_level=logical` for agent containers that can't install Postgres
+directly. Swap the install/setup step to `bash scripts/agent-setup-docker.sh`
+(compose up, `CREATE EXTENSION postgis`, then `npm ci` → `db:push` → `db:seed`).
+The image enables PostGIS in `POSTGRES_DB` on first init; the script still runs
+`CREATE EXTENSION` so volumes created from a plain `postgres:16` image work.
 
 ---
 

@@ -12,6 +12,8 @@ set -euo pipefail
 #
 # Unlike Cursor/Codex, the base image already ships PostgreSQL 16 and Node (via
 # nvm), so we don't apt-install Postgres — we just configure and seed it.
+# We do apt-install PostGIS: event.location is geography(Point,4326) and
+# drizzle-kit push does not run CREATE EXTENSION from drizzle/*.sql.
 #
 # Secrets (DATABASE_URL, ZERO_UPSTREAM_DB, ZERO_*, BETTER_AUTH_*, OWNER_*,
 # MOCK_EXTERNAL_SERVICES=true, ...) come from the environment's variables, set in
@@ -63,8 +65,11 @@ as_postgres() {
 }
 
 # shellcheck source=agent-postgres-lib.sh
-# Provides wait_for_postgres, bootstrap_postgres_roles, and helpers.
+# Provides wait_for_postgres, bootstrap_postgres_roles, install_postgis_packages.
 . "$(dirname "$0")/agent-postgres-lib.sh"
+
+# --- PostGIS for the pre-installed Postgres (needed before drizzle-kit push) ---
+install_postgis_packages
 
 # --- Configure the pre-installed Postgres for Zero (needs wal_level=logical) ---
 # Idempotent: only append once so cache rebuilds don't accumulate duplicate lines.

@@ -42,7 +42,10 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 
-	function toggleStandardInformation(field: SurveyQuestionType, checked: boolean | 'indeterminate') {
+	function toggleStandardInformation(
+		field: SurveyQuestionType,
+		checked: boolean | 'indeterminate'
+	) {
 		if (!$data.settings?.survey) return;
 		if (checked === true) {
 			$data.settings.survey = addFieldTypeToSurvey($data.settings.survey, field, locale.current);
@@ -152,6 +155,7 @@
 			<div class="flex items-center gap-3">
 				<Checkbox
 					id="standard-information-address"
+					data-testid="standard-information-address"
 					checked={isChecked('person.address')}
 					onCheckedChange={(checked) => toggleStandardInformation('person.address', checked)}
 				/>

@@ -18,6 +18,7 @@ export const createPetition = defineMutator(
 			title: args.input.title,
 			shortDescription: args.input.shortDescription,
 			description: args.input.description,
+			pageHtml: args.input.pageHtml,
 			published: false,
 			petitionTarget: args.input.petitionTarget,
 			petitionText: args.input.petitionText,

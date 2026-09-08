@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
 	import SvelteLexical from '$lib/components/ui/wysiwyg/SvelteLexical.svelte';
+	import TipTap from '$lib/components/ui/wysiwyg/TipTap.svelte';
 
 	import { useDebounce } from 'runed';
 	import { slugify } from '$lib/utils/slug';
@@ -85,6 +86,24 @@
 	}
 	if ($data.settings.survey === undefined) {
 		$data.settings.survey = defaultEventSettings().survey;
+	}
+
+	// Decide which editor backs the "Event page" content, based on the initial
+	// record only (so we never swap editors mid-edit):
+	//   - pageHtml present                      -> TipTap (HTML, in pageHtml)
+	//   - no pageHtml but a Lexical description -> legacy SvelteLexical (description)
+	//   - neither (incl. brand-new events)      -> TipTap (HTML, in pageHtml)
+	function hasLexicalContent(description: unknown): boolean {
+		return !!(description as { root?: { children?: unknown[] } })?.root?.children?.length;
+	}
+	// Snapshot the initial record on purpose — the editor choice must not change
+	// as the user types.
+	/* svelte-ignore state_referenced_locally */
+	const useTipTap = !!event?.pageHtml || !hasLexicalContent(event?.description);
+	// TipTap is a controlled string editor; seed a non-null value so mounting an
+	// empty editor doesn't taint the form by pushing null -> ''.
+	if (useTipTap && ($data.pageHtml === null || $data.pageHtml === undefined)) {
+		$data.pageHtml = '';
 	}
 	import * as Form from '$lib/components/ui/form/index.js';
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
@@ -184,7 +203,11 @@
 			<Card.Title>{t`Event page`}</Card.Title>
 		</Card.Header>
 		<Card.Content class="space-y-6">
-			<SvelteLexical bind:value={$data.description} />
+			{#if useTipTap}
+				<TipTap bind:value={$data.pageHtml as string} organizationId={appState.organizationId} />
+			{:else}
+				<SvelteLexical bind:value={$data.description} />
+			{/if}
 		</Card.Content>
 	</Card.Root>
 	{#if $data.settings && $data.settings.survey}

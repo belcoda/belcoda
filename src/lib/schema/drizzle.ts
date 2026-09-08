@@ -15,6 +15,7 @@ import {
 	primaryKey,
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
+import { geographyPoint } from '$lib/schema/custom-types/geography';
 
 import type {
 	OrganizationSchema,
@@ -53,6 +54,8 @@ import type { EventSignupSchema } from '$lib/schema/event-signup';
 import type { PersonNoteSchema } from '$lib/schema/person-note';
 import type { ActionCodeSchema, ActionCodeType } from '$lib/schema/action-code';
 import type { SerializedEditorState } from 'lexical';
+import type { PetitionSchema } from '$lib/schema/petition/petition';
+import type { PetitionSignatureSchema } from '$lib/schema/petition/petition-signature';
 
 import { type CountryCode } from '$lib/utils/country';
 import { type LanguageCode, type Locale } from '$lib/utils/language';
@@ -900,6 +903,7 @@ export const event = pgTable(
 		title: text('title').notNull(),
 		shortDescription: text('short_description').notNull(),
 		description: jsonb('description').$type<SerializedEditorState>(),
+		pageHtml: text('page_html'),
 
 		published: boolean('published').notNull(),
 
@@ -913,6 +917,9 @@ export const event = pgTable(
 		locality: text('locality'),
 		region: text('region'),
 		postcode: text('postcode'),
+		// PostGIS geography(Point,4326) stored as { x: longitude, y: latitude }.
+		// Nullable: online-only events (and legacy rows) have no coordinates.
+		location: geographyPoint('location'),
 
 		country: text('country').$type<CountryCode>().notNull(),
 		timezone: text('timezone').notNull(),
@@ -933,7 +940,10 @@ export const event = pgTable(
 		archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
 		cancelledAt: timestamp('cancelled_at', { withTimezone: true, mode: 'date' })
 	},
-	(table) => [unique('event_slug_unique').on(table.organizationId, table.slug)]
+	(table) => [
+		unique('event_slug_unique').on(table.organizationId, table.slug),
+		index('event_location_gist').using('gist', table.location)
+	]
 );
 // will throw a type error if the drizzle schema definition does not match the base valibot schema
 type EventValibotMatchesDrizzle = IsTrue<
@@ -1042,6 +1052,7 @@ export const petition = pgTable('petition', {
 	title: text('title').notNull(),
 	description: jsonb('description'),
 	shortDescription: text('short_description').notNull(),
+	pageHtml: text('page_html'),
 
 	published: boolean('published').notNull(),
 
@@ -1057,6 +1068,13 @@ export const petition = pgTable('petition', {
 	archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'date' }),
 	deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'date' })
 });
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type PetitionValibotMatchesDrizzle = IsTrue<
+	PetitionSchema extends typeof petition.$inferSelect ? true : false
+>;
+type PetitionDrizzleMatchesValibot = IsTrue<
+	typeof petition.$inferSelect extends PetitionSchema ? true : false
+>;
 
 export const petitionSignature = pgTable(
 	'petition_signature',
@@ -1085,6 +1103,13 @@ export const petitionSignature = pgTable(
 	},
 	(table) => [unique('petition_signature_unique').on(table.petitionId, table.personId)]
 );
+// will throw a type error if the drizzle schema definition does not match the base valibot schema
+type PetitionSignatureValibotMatchesDrizzle = IsTrue<
+	PetitionSignatureSchema extends typeof petitionSignature.$inferSelect ? true : false
+>;
+type PetitionSignatureDrizzleMatchesValibot = IsTrue<
+	typeof petitionSignature.$inferSelect extends PetitionSignatureSchema ? true : false
+>;
 
 export const actionCode = pgTable(
 	'action_code',

@@ -1,4 +1,4 @@
-import { chromium, request } from '@playwright/test';
+import { request } from '@playwright/test';
 import { getTestUsers, signUpUser, verifyUserEmail, type UserRole } from '../helpers/auth';
 import { AUTH_DIR, authStoragePath } from '../helpers/auth-storage';
 import {
@@ -20,7 +20,7 @@ const PROJECTS_WITH_AUTH_STORAGE: E2EProject[] = [
 	'whatsapp-accounts'
 ];
 
-export const STORAGE_STATE_PATH = path.join(import.meta.dirname, '../.auth/cookie-consent.json');
+export const STORAGE_STATE_PATH = path.join(import.meta.dirname, '../.auth/empty-state.json');
 
 async function readJsonResponse<T = unknown>(response: Response, action: string): Promise<T> {
 	const contentType = response.headers.get('content-type') ?? '';
@@ -90,27 +90,9 @@ async function createOrganization(
 	return readJsonResponse<{ id: string }>(response, 'Create organization');
 }
 
-async function saveCookieConsentState() {
-	const browser = await chromium.launch();
-	const context = await browser.newContext();
-	const url = new URL(BASE_URL);
-	const useBelcodaDomain =
-		url.hostname.endsWith('belcoda.com') && !url.hostname.includes('localhost');
-	const consentDomains = useBelcodaDomain ? ['.belcoda.com'] : [url.hostname, `.${url.hostname}`];
-	await context.addCookies(
-		consentDomains.map((domain) => ({
-			name: 'belcoda_cookie_consent',
-			value: 'accepted',
-			domain,
-			path: '/',
-			sameSite: 'Lax' as const,
-			secure: url.protocol === 'https:',
-			httpOnly: false
-		}))
-	);
+function saveEmptyStorageState() {
 	ensureAuthDir();
-	await context.storageState({ path: STORAGE_STATE_PATH });
-	await browser.close();
+	fs.writeFileSync(STORAGE_STATE_PATH, JSON.stringify({ cookies: [], origins: [] }));
 }
 
 function ensureAuthDir() {
@@ -191,7 +173,7 @@ async function runE2eGlobalSetup() {
 		console.log(`  ✓ Organization created: ${org.id} (${orgName})`);
 	}
 
-	await saveCookieConsentState();
+	saveEmptyStorageState();
 	await saveAuthStorageStates();
 
 	console.log('\n✅ Setup complete!\n');

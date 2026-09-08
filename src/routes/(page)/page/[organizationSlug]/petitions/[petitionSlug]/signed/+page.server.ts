@@ -61,10 +61,14 @@ export async function load({ params }) {
 		.orderBy(desc(petitionSignature.createdAt))
 		.limit(10);
 
-	const renderedDescription = await renderSanitizedDescription({
-		description: petitionData.description as SerializedEditorState | null,
-		logContext: { petitionId: petitionData.id }
-	});
+	// When pageHtml (TipTap) exists it is rendered directly (already sanitized at
+	// write time), so skip the legacy Lexical render entirely.
+	const renderedDescription = petitionData.pageHtml
+		? null
+		: await renderSanitizedDescription({
+				description: petitionData.description as SerializedEditorState | null,
+				logContext: { petitionId: petitionData.id }
+			});
 
 	const serializedPetition = {
 		...petitionData,

@@ -1,12 +1,8 @@
 import pino from '$lib/pino';
 import { getQueue } from '$lib/server/queue';
 const log = pino(import.meta.url);
-import sendTemplateEmail from '$lib/server/utils/email/send_template_email';
-import { env } from '$env/dynamic/private';
-const { POSTMARK_MESSAGE_TEMPLATE_ALIAS } = env;
 import { getEmailSignature } from '$lib/server/utils/email/signature';
-import { renderEmailMessage } from '$lib/server/utils/email/render_email_message';
-
+import { clampLocale } from '$lib/utils/language';
 import {
 	emailMessage,
 	person,
@@ -20,6 +16,8 @@ import {
 	DEFAULT_EMAIL_COST_IN_HUNDREDTHS_OF_CENTS
 } from '$lib/server/api/data/ledger';
 import { _reduceFreeEmailMessageCredits } from '$lib/server/api/data/organization';
+import { sendBroadcastEmail } from '$lib/server/utils/email/send_broadcast_email';
+import { renderBroadcastEmailBody } from '$lib/server/utils/email/render_email_message';
 
 export async function sendEmailMessage({
 	emailMessageId,
@@ -106,27 +104,19 @@ export async function sendEmailMessage({
 				throw new Error('Recipient do not contact, not sending email' + output.recipient.id);
 			}
 
-			// For now, we use a simple template. In the future, we could use
-			// a custom template based on the email body (stored as Lexical JSON)
-			const renderedEmail = await renderEmailMessage({
+			await sendBroadcastEmail({
+				emailAddress: output.recipient.emailAddress,
+				organizationName: output.organization.name,
 				subject: output.emailMessage.subject,
-				body: output.emailMessage.body,
+				sendSignatureName: output.signature.name,
+				sendSignatureEmail: output.signature.emailAddress,
 				personObject: output.recipient,
-				organization: output.organization,
-				sender: output.sender
-			});
-
-			await sendTemplateEmail({
-				to: output.recipient.emailAddress,
-				from: `${output.signature.name} <${output.signature.emailAddress}>`,
-				replyTo: output.signature.replyTo || undefined,
-				template: POSTMARK_MESSAGE_TEMPLATE_ALIAS,
-				stream: 'broadcast',
-				context: {
-					subject: renderedEmail.subject,
-					body: renderedEmail.body,
-					organizationName: output.organization.name
-				}
+				organizationObject: output.organization,
+				replyToEmail: output.signature.replyTo || undefined,
+				htmlBody: await renderBroadcastEmailBody(output.emailMessage.body),
+				locale: clampLocale(
+					output.recipient.preferredLanguage || output.organization.defaultLanguage || 'en'
+				)
 			});
 
 			// Billing after delivery must not fail the send path (successfulRecipientCount).
