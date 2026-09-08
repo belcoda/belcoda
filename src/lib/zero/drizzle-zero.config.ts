@@ -520,13 +520,71 @@ export default drizzleZeroConfig(drizzleSchema, {
 			deletedAt: true
 		},
 		whatsappLog: false,
-		// flow/automation tables are server-side only and are not synced to Zero
-		flowDocument: false,
+		// The user-facing flow resource and its editable document sync to Zero (read + optimistic
+		// mutators). Execution + execution step rows sync read-only for in-app run reporting; they
+		// are written by the execution engine via raw drizzle and replicated by Zero.
+		flow: {
+			id: true,
+			organizationId: true,
+			teamId: true,
+			name: true,
+			description: true,
+			flowDocumentId: true,
+			createdAt: true,
+			updatedAt: true,
+			archivedAt: true,
+			deletedAt: true
+		},
+		flowDocument: {
+			id: true,
+			organizationId: true,
+			teamId: true,
+			draftFlowDefinition: true,
+			draftRevision: true,
+			schemaVersion: true,
+			versionCounter: true,
+			activeVersionId: true,
+			executionEnabled: true,
+			createdAt: true,
+			updatedAt: true,
+			deletedAt: true,
+			retiredAt: true
+		},
+		flowExecution: {
+			id: true,
+			organizationId: true,
+			flowDocumentId: true,
+			flowVersionId: true,
+			triggerNodeId: true,
+			sourceReferenceId: true,
+			idempotencyKey: true,
+			personId: true,
+			status: true,
+			input: true,
+			error: true,
+			createdAt: true,
+			startedAt: true,
+			completedAt: true
+		},
+		flowExecutionStep: {
+			id: true,
+			flowExecutionId: true,
+			nodeId: true,
+			invocationId: true,
+			attemptNumber: true,
+			status: true,
+			input: true,
+			output: true,
+			error: true,
+			scheduledAt: true,
+			createdAt: true,
+			startedAt: true,
+			completedAt: true,
+			updatedAt: true
+		},
+		// flow_version and flow_trigger_registration stay server-side only (not synced to Zero).
 		flowVersion: false,
-		flowTriggerRegistration: false,
-		flowExecution: false,
-		flowExecutionStep: false,
-		flow: false
+		flowTriggerRegistration: false
 	},
 	manyToMany: {
 		tag: {
