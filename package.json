@@ -55,7 +55,7 @@
 		"@tailwindcss/vite": "^4.3.2",
 		"@types/node": "^25",
 		"@types/papaparse": "^5.5.2",
-		"@vitest/browser": "^4.1.10",
+		"@vitest/browser": "^4.1.11",
 		"@vitest/browser-playwright": "^4.1.10",
 		"bits-ui": "^2.18.1",
 		"clsx": "^2.1.1",
@@ -94,7 +94,7 @@
 		"vite-node": "^6.0.0",
 		"vite-plugin-devtools-json": "^1.0.0",
 		"vitest": "^4.1.10",
-		"vitest-browser-svelte": "^2.1.1"
+		"vitest-browser-svelte": "^3.0.0"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.1070.0",
