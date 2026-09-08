@@ -178,7 +178,7 @@
 		{/if}
 
 		<div class="mb-6 lg:hidden">
-			<WhatsAppSignup directLink {whatsAppSignupLink} />
+			<WhatsAppSignup directLink {whatsAppSignupLink} {layout} />
 		</div>
 
 		<form use:form.enhance class="space-y-4" method="POST">
@@ -538,7 +538,7 @@
 					{t`Sign up now`}</Button
 				>
 				<div class="hidden lg:block">
-					<WhatsAppSignup {whatsAppSignupLink} />
+					<WhatsAppSignup {whatsAppSignupLink} {layout} />
 				</div>
 				<Button
 					type="submit"
