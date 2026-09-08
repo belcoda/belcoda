@@ -52,23 +52,26 @@ export class PetitionSurveyPage {
 		await this.addQuestionTrigger.scrollIntoViewIfNeeded();
 
 		await expect(async () => {
-			await this.addQuestionTrigger.click();
-			const shortTextOption = this.page
-				.getByTestId('survey-add-short-text')
-				.or(this.page.getByRole('menuitem', { name: 'Short text' }));
-			await shortTextOption.waitFor({ state: 'visible', timeout: 5_000 });
-			await shortTextOption.click();
-			await expect(this.page.locator('[data-testid^="survey-question-trigger-"]')).toHaveCount(1, {
-				timeout: 5_000
-			});
-		}).toPass({ timeout: 15_000 });
+			const triggers = this.page.locator('[data-testid^="survey-question-trigger-"]');
+			if ((await triggers.count()) === 0) {
+				await this.page.keyboard.press('Escape');
+				await this.addQuestionTrigger.click();
+				const shortTextOption = this.page
+					.getByTestId('survey-add-short-text')
+					.or(this.page.getByRole('menuitem', { name: 'Short text' }));
+				await shortTextOption.waitFor({ state: 'visible', timeout: 5_000 });
+				await shortTextOption.click();
+			}
 
-		const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
-		await expect(labelInput).toBeVisible({ timeout: 10_000 });
-		await labelInput.click();
-		await labelInput.fill('');
-		await labelInput.pressSequentially(label, { delay: 15 });
-		await labelInput.blur();
-		await expect(labelInput).toHaveValue(label, { timeout: 5_000 });
+			await expect(triggers).toHaveCount(1, { timeout: 5_000 });
+
+			const labelInput = this.page.locator('[data-testid^="survey-custom-question-label-"]').last();
+			await expect(labelInput).toBeVisible({ timeout: 5_000 });
+			await labelInput.scrollIntoViewIfNeeded();
+			await labelInput.fill('');
+			await labelInput.pressSequentially(label, { delay: 15 });
+			await labelInput.blur();
+			await expect(labelInput).toHaveValue(label, { timeout: 2_000 });
+		}).toPass({ timeout: 30_000 });
 	}
 }
