@@ -39,9 +39,8 @@
 	} = $props();
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
-	let updatingPublished = $state(false);
 
-	async function updatePublished(checked: boolean) {
+	function updatePublished(checked: boolean) {
 		const response = z.mutate(
 			mutators.event.update({
 				metadata: {
@@ -53,30 +52,35 @@
 				}
 			})
 		);
-		const result = await response.server;
-		if (result.type === 'error') {
-			throw new Error(result.error.message);
-		}
+		void response.server
+			.then((result) => {
+				if (result.type === 'error') {
+					if (event.published === checked) event.published = !checked;
+					toast.error(t`Failed to update event`);
+					console.error('Error updating event published status:', result.error);
+					return;
+				}
+				if (checked) {
+					trackEventPublished(event);
+					toast.success(t`Event published`);
+				} else {
+					toast.success(t`Event unpublished`);
+				}
+			})
+			.catch((error) => {
+				if (event.published === checked) event.published = !checked;
+				toast.error(t`Failed to update event`);
+				console.error('Error updating event published status:', error);
+			});
 	}
 
-	async function handlePublishChange(checked: boolean) {
-		if (updatingPublished) return;
-
-		updatingPublished = true;
+	function handlePublishChange(checked: boolean) {
 		try {
-			await updatePublished(checked);
+			updatePublished(checked);
 			event.published = checked;
-			if (checked) {
-				trackEventPublished(event);
-				toast.success(t`Event published`);
-			} else {
-				toast.success(t`Event unpublished`);
-			}
 		} catch (error) {
 			toast.error(t`Failed to update event`);
 			console.error('Error updating event published status:', error);
-		} finally {
-			updatingPublished = false;
 		}
 	}
 
@@ -223,12 +227,7 @@
 {#snippet actionButtons()}
 	<div class="flex w-full flex-col gap-2 sm:flex-row sm:justify-between">
 		<div class="flex items-center gap-3 px-4 py-2">
-			<Switch
-				id="publish-toggle"
-				checked={event.published}
-				disabled={updatingPublished}
-				onCheckedChange={handlePublishChange}
-			/>
+			<Switch id="publish-toggle" checked={event.published} onCheckedChange={handlePublishChange} />
 			<Label for="publish-toggle" class="cursor-pointer">
 				{event.published ? t`Published` : t`Publish event`}
 			</Label>
