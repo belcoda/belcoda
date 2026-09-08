@@ -1,4 +1,4 @@
-import { flow, flowDocument } from '$lib/schema/drizzle';
+import { flow, flowDocument, team } from '$lib/schema/drizzle';
 import type { ServerTransaction } from '@rocicorp/zero';
 import { and, eq } from 'drizzle-orm';
 import { type QueryContext, builder } from '$lib/zero/schema';
@@ -84,6 +84,21 @@ export async function updateFlowResource({
 		throw new Error('Flow not found');
 	}
 
+	// if a team is supplied, verify it belongs to this organization — the FK only enforces that the
+	// team exists, not that it's in the same tenant, so an unscoped teamId could cross organizations
+	// (a null teamId is a deliberate unassign and needs no such check).
+	if ('teamId' in parsed.input && parsed.input.teamId) {
+		const teamRecord = await tx.dbTransaction.wrappedTransaction.query.team.findFirst({
+			where: and(
+				eq(team.id, parsed.input.teamId),
+				eq(team.organizationId, parsed.metadata.organizationId)
+			)
+		});
+		if (!teamRecord) {
+			throw new Error('Team not found for this organization');
+		}
+	}
+
 	const [result] = await tx.dbTransaction.wrappedTransaction
 		.update(flow)
 		.set({
@@ -100,6 +115,21 @@ export async function updateFlowResource({
 	if (!result) {
 		throw new Error('Unable to update flow');
 	}
+
+	// Keep the backing flow_document's teamId in sync: flow_document read permissions key off its own
+	// teamId, not the flow's, so letting them diverge would leave the document visible to the old team.
+	if ('teamId' in parsed.input) {
+		await tx.dbTransaction.wrappedTransaction
+			.update(flowDocument)
+			.set({ teamId: parsed.input.teamId, updatedAt: new Date() })
+			.where(
+				and(
+					eq(flowDocument.id, flowRecord.flowDocumentId),
+					eq(flowDocument.organizationId, parsed.metadata.organizationId)
+				)
+			);
+	}
+
 	return result;
 }
 

@@ -27,10 +27,15 @@ function listFlowExecutionsQueryBase({
 	let q = builder.flowExecution
 		.where((expr) => flowExecutionReadPermissions(expr, ctx))
 		.where('organizationId', '=', input.organizationId)
-		.where((expr) => whereClause(expr, { filter: input }))
 		.orderBy('createdAt', 'desc')
 		.orderBy('id', 'desc')
 		.limit(limit);
+	// flowExecution has no always-present column (e.g. deletedAt) to seed filterArr with, so — unlike
+	// sibling list queries — only apply the optional filters when at least one was actually supplied,
+	// rather than calling and() with zero conditions.
+	if (input.flowDocumentId || input.personId || input.status) {
+		q = q.where((expr) => whereClause(expr, { filter: input }));
+	}
 	if (input.cursor) {
 		const cursor = decodeFlowListCursor(input.cursor);
 		if (cursor) {

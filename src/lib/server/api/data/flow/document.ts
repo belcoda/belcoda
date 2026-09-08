@@ -95,6 +95,7 @@ export async function updateFlowDocumentDraft({
 		builder.flowDocument
 			.where('id', '=', parsed.metadata.flowDocumentId)
 			.where('organizationId', '=', parsed.metadata.organizationId)
+			.where('deletedAt', 'IS', null)
 			.where((expr) => flowDocumentReadPermissions(expr, ctx))
 			.one()
 	);
