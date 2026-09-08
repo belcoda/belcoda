@@ -1,6 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getEventPublishingAnalytics, trackEventPublished } from './analytics';
+import {
+	eventHasSurvey,
+	getEventPublishingAnalytics,
+	trackEventDeclineCompleted,
+	trackEventPublished,
+	trackEventSignupCompleted,
+	trackEventWhatsAppHandoffOpened
+} from './analytics';
 
 afterEach(() => {
 	vi.unstubAllGlobals();
@@ -71,6 +78,70 @@ describe('getEventPublishingAnalytics', () => {
 			has_image: false,
 			has_location: true,
 			has_survey: false
+		});
+	});
+});
+
+describe('public event analytics', () => {
+	it('detects a survey only when at least one question exists', () => {
+		expect(
+			eventHasSurvey({
+				settings: {
+					survey: {
+						collections: [{ questions: [] }, { questions: [{ type: 'text' }] }]
+					}
+				}
+			})
+		).toBe(true);
+		expect(eventHasSurvey({})).toBe(false);
+	});
+
+	it('defines the completed form signup event', () => {
+		const track = vi.fn();
+		vi.stubGlobal('window', { umami: { track } });
+
+		trackEventSignupCompleted({
+			signup_channel: 'form',
+			has_survey: true,
+			layout: 'embed'
+		});
+
+		expect(track).toHaveBeenCalledWith('event_signup_completed', {
+			signup_channel: 'form',
+			has_survey: true,
+			layout: 'embed'
+		});
+	});
+
+	it('defines decline completion separately from signup completion', () => {
+		const track = vi.fn();
+		vi.stubGlobal('window', { umami: { track } });
+
+		trackEventDeclineCompleted({
+			response_channel: 'form',
+			has_survey: false,
+			layout: 'default'
+		});
+
+		expect(track).toHaveBeenCalledWith('event_decline_completed', {
+			response_channel: 'form',
+			has_survey: false,
+			layout: 'default'
+		});
+	});
+
+	it('defines only a direct-link WhatsApp handoff event', () => {
+		const track = vi.fn();
+		vi.stubGlobal('window', { umami: { track } });
+
+		trackEventWhatsAppHandoffOpened({
+			method: 'direct_link',
+			layout: 'default'
+		});
+
+		expect(track).toHaveBeenCalledWith('event_whatsapp_handoff_opened', {
+			method: 'direct_link',
+			layout: 'default'
 		});
 	});
 });
