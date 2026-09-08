@@ -107,7 +107,7 @@
 		"@lexical/html": "0.40.0",
 		"@openapi-contrib/json-schema-to-openapi-schema": "^4.3.4",
 		"@rocicorp/zero": "1.8.0",
-		"@scalar/sveltekit": "^0.3.10",
+		"@scalar/sveltekit": "^0.3.17",
 		"@sentry/sveltekit": "^10.58.0",
 		"@tigrisdata/storage": "^3.18.0",
 		"@tiptap/core": "^3.29.2",
