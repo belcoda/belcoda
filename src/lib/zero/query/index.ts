@@ -89,6 +89,15 @@ import { listWhatsappThreads } from '$lib/zero/query/whatsapp_thread/list';
 import { readWhatsappMessage } from '$lib/zero/query/whatsapp_message/read';
 import { readWhatsappAccount } from '$lib/zero/query/whatsapp_account/read';
 import { listWhatsappAccounts } from '$lib/zero/query/whatsapp_account/list';
+
+// flow
+import { listFlows } from '$lib/zero/query/flow/list';
+import { readFlow } from '$lib/zero/query/flow/read';
+import { readFlowDocument } from '$lib/zero/query/flow_document/read';
+import { listFlowExecutions } from '$lib/zero/query/flow_execution/list';
+import { readFlowExecution } from '$lib/zero/query/flow_execution/read';
+import { listFlowExecutionSteps } from '$lib/zero/query/flow_execution_step/list';
+import { readFlowExecutionStep } from '$lib/zero/query/flow_execution_step/read';
 // Re-export all queries
 export {
 	// activity
@@ -161,7 +170,15 @@ export {
 	readWhatsappMessage,
 	// whatsapp account
 	readWhatsappAccount,
-	listWhatsappAccounts
+	listWhatsappAccounts,
+	// flow
+	listFlows,
+	readFlow,
+	readFlowDocument,
+	listFlowExecutions,
+	readFlowExecution,
+	listFlowExecutionSteps,
+	readFlowExecutionStep
 };
 
 export default defineQueries({
@@ -261,5 +278,20 @@ export default defineQueries({
 	},
 	webhookLog: {
 		list: listWebhookLogs
+	},
+	flow: {
+		list: listFlows,
+		read: readFlow
+	},
+	flowDocument: {
+		read: readFlowDocument
+	},
+	flowExecution: {
+		list: listFlowExecutions,
+		read: readFlowExecution
+	},
+	flowExecutionStep: {
+		list: listFlowExecutionSteps,
+		read: readFlowExecutionStep
 	}
 });
