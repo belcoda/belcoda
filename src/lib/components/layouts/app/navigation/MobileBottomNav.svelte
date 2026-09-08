@@ -2,6 +2,8 @@
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
 	import { t } from '$lib/index.svelte';
+	import { env as publicEnv } from '$env/dynamic/public';
+	const displayNewFlow = publicEnv.PUBLIC_DISPLAY_NEW_FLOW === 'true';
 	const navClass = cn(
 		buttonVariants({ variant: 'ghost', size: 'default' }),
 		'h-full w-full justify-center rounded-none'
@@ -21,12 +23,21 @@
 			</div>
 		</a>
 		{#if appState.isAdminOrOwner}
-			<a href="/communications" class={navClass}>
-				<div class="text-center">
-					<div class="icon-[flowbite--messages-outline] size-6">&nbsp;</div>
-					<div class="text-body group-hover:text-fg-brand mt-1 text-xs">{t`Communications`}</div>
-				</div>
-			</a>
+			{#if displayNewFlow}
+				<a href="/flow" class={navClass}>
+					<div class="text-center">
+						<div class="icon-[flowbite--messages-outline] size-6">&nbsp;</div>
+						<div class="text-body group-hover:text-fg-brand mt-1 text-xs">{t`Flow`}</div>
+					</div>
+				</a>
+			{:else}
+				<a href="/communications" class={navClass}>
+					<div class="text-center">
+						<div class="icon-[flowbite--messages-outline] size-6">&nbsp;</div>
+						<div class="text-body group-hover:text-fg-brand mt-1 text-xs">{t`Communications`}</div>
+					</div>
+				</a>
+			{/if}
 		{/if}
 		<a href="/events" class={navClass}>
 			<div class="text-center">

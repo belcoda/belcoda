@@ -6,6 +6,8 @@
 	import OrgMenu from '$lib/components/layouts/app/navigation/OrgMenu.svelte';
 	import { t } from '$lib/index.svelte';
 	import { appState } from '$lib/state.svelte';
+	import { env as publicEnv } from '$env/dynamic/public';
+	const displayNewFlow = publicEnv.PUBLIC_DISPLAY_NEW_FLOW === 'true';
 	// import NotificationBell from '$lib/components/widgets/notifications/NotificationBell.svelte';
 </script>
 
@@ -55,15 +57,28 @@
 								class="flex size-12 items-center justify-center transition-transform hover:scale-110 hover:bg-gray-700 data-[state=open]:scale-110"
 							>
 								{#snippet tooltipContent()}
-									<span class="text-base">{t`Communications`}</span>
+									{#if displayNewFlow}
+										<span class="text-base">{t`Flow`}</span>
+									{:else}
+										<span class="text-base">{t`Communications`}</span>
+									{/if}
 								{/snippet}
 								{#snippet child({ props })}
-									<a href="/communications" {...props}
-										><span
-											class="mt-0.5 icon-[flowbite--messages-outline] size-7 text-sidebar-primary-foreground"
-										></span>
-										<span class="sr-only">{t`Communications`}</span></a
-									>
+									{#if displayNewFlow}
+										<a href="/flow" {...props}
+											><span
+												class="mt-0.5 icon-[flowbite--messages-outline] size-7 text-sidebar-primary-foreground"
+											></span>
+											<span class="sr-only">{t`Flow`}</span></a
+										>
+									{:else}
+										<a href="/communications" {...props}
+											><span
+												class="mt-0.5 icon-[flowbite--messages-outline] size-7 text-sidebar-primary-foreground"
+											></span>
+											<span class="sr-only">{t`Communications`}</span></a
+										>
+									{/if}
 								{/snippet}
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
