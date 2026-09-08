@@ -444,17 +444,7 @@ export async function createIncompleteEventSignupByPersonId({
 	return inserted;
 }
 
-export async function completeEventSignupHelper({
-	eventId,
-	teamId,
-	tx,
-	personAction,
-	signupDetails,
-	organizationId,
-	defaultEventSignupId,
-	whatsappIdentity,
-	whatsappContextWamidId
-}: {
+type CompleteEventSignupHelperArgs = {
 	tx: ServerTransaction;
 	eventId: string;
 	personAction: PersonActionHelper;
@@ -464,7 +454,24 @@ export async function completeEventSignupHelper({
 	defaultEventSignupId?: string;
 	whatsappIdentity?: WhatsappIdentityLookup;
 	whatsappContextWamidId?: string;
-}) {
+};
+
+export async function completeEventSignupHelper(args: CompleteEventSignupHelperArgs) {
+	const { eventSignup } = await completeEventSignupHelperWithResult(args);
+	return eventSignup;
+}
+
+export async function completeEventSignupHelperWithResult({
+	eventId,
+	teamId,
+	tx,
+	personAction,
+	signupDetails,
+	organizationId,
+	defaultEventSignupId,
+	whatsappIdentity,
+	whatsappContextWamidId
+}: CompleteEventSignupHelperArgs) {
 	const parsedActionHelper = parse(personActionHelper, personAction);
 	const eventSignupId = defaultEventSignupId || uuidv7();
 	const personRecord = await findOrCreatePerson({
@@ -481,7 +488,7 @@ export async function completeEventSignupHelper({
 		whatsappContextWamidId
 	});
 
-	return await completeEventSignupByPersonId({
+	return await completeEventSignupByPersonIdWithResult({
 		eventId,
 		tx,
 		personId: personRecord.id,
@@ -492,6 +499,32 @@ export async function completeEventSignupHelper({
 }
 
 export async function completeEventSignupByPersonId({
+	eventId,
+	tx,
+	personId,
+	organizationId,
+	signupDetails,
+	defaultEventSignupId
+}: {
+	tx: ServerTransaction;
+	eventId: string;
+	personId: string;
+	organizationId: string;
+	signupDetails: EventSignupDetails;
+	defaultEventSignupId?: string;
+}) {
+	const { eventSignup } = await completeEventSignupByPersonIdWithResult({
+		eventId,
+		tx,
+		personId,
+		organizationId,
+		signupDetails,
+		defaultEventSignupId
+	});
+	return eventSignup;
+}
+
+async function completeEventSignupByPersonIdWithResult({
 	eventId,
 	tx,
 	personId,
@@ -588,7 +621,7 @@ export async function completeEventSignupByPersonId({
 		result
 	);
 
-	return result;
+	return { eventSignup: result, transitionedToComplete };
 }
 
 // the actual process of signing up for an event, broken off into its own function
