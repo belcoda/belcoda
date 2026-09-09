@@ -64,7 +64,9 @@
 			}}
 		/>
 		{#if appState.isAdminOrOwner}
-			<InviteTeammatesDrawer bind:open={inviteOpen} />
+			{#key appState.organizationId}
+				<InviteTeammatesDrawer bind:open={inviteOpen} />
+			{/key}
 		{/if}
 
 		<DashboardMetrics />
