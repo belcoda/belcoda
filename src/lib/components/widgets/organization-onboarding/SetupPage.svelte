@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib/index.svelte';
+	import { locale, t } from '$lib/index.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -15,33 +15,62 @@
 	import UserPlusIcon from '@lucide/svelte/icons/user-plus';
 	import CheckCircleIcon from '@lucide/svelte/icons/circle-check-big';
 
+	import { untrack } from 'svelte';
+	import { type ReadOrganizationZero, updateOrganization } from '$lib/schema/organization';
+	import { parse } from 'valibot';
+	import { renderLocalizedCountryName } from '$lib/utils/country';
+	import { formatTimezone } from '$lib/components/ui/custom-select/timezone/actions';
+	import { saveOrganizationProfile } from './save-profile';
+	import { toast } from 'svelte-sonner';
+
 	let {
-		orgName = 'Riverside Tenants Union',
-		orgIcon,
+		organization,
 		oninvite
 	}: {
-		orgName?: string;
-		orgIcon?: string;
+		organization: Pick<
+			ReadOrganizationZero,
+			'id' | 'name' | 'icon' | 'country' | 'defaultLanguage' | 'defaultTimezone' | 'settings'
+		>;
 		oninvite?: () => void;
 	} = $props();
 
-	let country = $state('GB');
-	let language = $state('en');
-	let timezone = $state('Europe/London');
+	const orgName = $derived(organization.name);
+	const orgIcon = $derived(organization.icon ?? undefined);
+	let country = $state<string>(untrack(() => organization.country));
+	let language = $state<string>(untrack(() => organization.defaultLanguage));
+	let timezone = $state(untrack(() => organization.defaultTimezone));
 	let teamName = $state('');
+	let saving = $state(false);
+	let saveError = $state('');
 
-	const profileDone = $derived(!!country && !!timezone);
-	const teamDone = $derived(teamName.trim().length > 0);
-	const essentialsDone = $derived(profileDone && teamDone);
-
-	const profileMeta = $derived(
-		[
-			country === 'GB' ? t`United Kingdom` : country,
-			timezone === 'Europe/London' ? t`Europe / London` : timezone
-		]
-			.filter(Boolean)
-			.join(' · ')
+	const profileDone = $derived(
+		organization.settings.onboarding?.profile === 'complete' && !saving && !saveError
 	);
+	const teamDone = $derived(organization.settings.onboarding?.team === 'complete');
+	const essentialsDone = $derived(profileDone && teamDone);
+	const profileMeta = $derived(
+		`${renderLocalizedCountryName(organization.country, locale.current)} · ${formatTimezone(organization.defaultTimezone, locale.current)}`
+	);
+
+	async function saveProfile() {
+		if (saving) return;
+		saving = true;
+		saveError = '';
+		try {
+			const input = parse(updateOrganization, {
+				country,
+				defaultLanguage: language,
+				defaultTimezone: timezone
+			});
+			await saveOrganizationProfile(organization, input);
+			toast.success(t`Organization profile saved`);
+			await goto(resolve('/dashboard'));
+		} catch {
+			saveError = t`We couldn't save your profile. Your entries are still here. Please try again.`;
+		} finally {
+			saving = false;
+		}
+	}
 
 	const steps = $derived<SetupStep[]>([
 		{ id: 'org', label: t`Organization created`, status: 'done' },
@@ -85,7 +114,7 @@
 			{/if}
 
 			<section class="flex flex-col gap-3">
-				<h2 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+				<h2 class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					{t`Do now`}
 				</h2>
 
@@ -94,7 +123,9 @@
 					description={t`Sets defaults for dates, language and messaging.`}
 				>
 					{#snippet icon()}<BuildingIcon class="size-4" />{/snippet}
-					<OrganizationProfileForm bind:country bind:language bind:timezone />
+					<fieldset disabled={saving} class="min-w-0">
+						<OrganizationProfileForm bind:country bind:language bind:timezone />
+					</fieldset>
 				</SetupTaskCard>
 
 				<SetupTaskCard
@@ -108,7 +139,7 @@
 			</section>
 
 			<section class="flex flex-col gap-3">
-				<h2 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+				<h2 class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					{t`When you're ready`}
 				</h2>
 
@@ -132,7 +163,10 @@
 			</section>
 
 			<div class="flex flex-wrap items-center gap-3 border-t pt-6">
-				<Button onclick={() => goto(resolve('/dashboard'))}>{t`Save & go to dashboard`}</Button>
+				{#if saveError}<p role="alert" class="w-full text-sm text-destructive">{saveError}</p>{/if}
+				<Button onclick={saveProfile} disabled={saving}>
+					{saving ? t`Saving…` : t`Save profile & go to dashboard`}
+				</Button>
 				<Button variant="ghost" onclick={() => goto(resolve('/dashboard'))}
 					>{t`Skip for now`}</Button
 				>
