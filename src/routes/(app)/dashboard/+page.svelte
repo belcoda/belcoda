@@ -3,13 +3,15 @@
 	import RecentNotifications from '$lib/components/widgets/notifications/RecentNotifications.svelte';
 	import NextEventCard from '$lib/components/widgets/event/NextEventCard.svelte';
 	import UpcomingEventsList from '$lib/components/widgets/event/UpcomingEventsList.svelte';
-	import DashboardMetrics from '$lib/components/widgets/dashboard/DashboardMetrics.svelte';
+	import GettingStartedActions from '$lib/components/widgets/dashboard/GettingStartedActions.svelte';
 	import FinishSettingUpCard from '$lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte';
 	import InviteTeammatesDrawer from '$lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte';
 	import PlusIcon from '@lucide/svelte/icons/plus';
-	import { appState } from '$lib/state.svelte';
+	import { appState, getListFilter } from '$lib/state.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import queries from '$lib/zero/query';
+	import { z } from '$lib/zero.svelte';
 
 	let inviteOpen = $state(false);
 
@@ -22,6 +24,26 @@
 	})();
 
 	const userName = $derived(appState.user.data?.name?.split(' ')[0] ?? '');
+	const firstPeople = $derived.by(() =>
+		z.createQuery(queries.person.list(getListFilter(appState.organizationId, { pageSize: 1 })))
+	);
+	const firstEvents = $derived.by(() =>
+		z.createQuery(queries.event.list(getListFilter(appState.organizationId, { pageSize: 1 })))
+	);
+	const firstPetitions = $derived.by(() =>
+		z.createQuery(queries.petition.list(getListFilter(appState.organizationId, { pageSize: 1 })))
+	);
+	const workspaceStateReady = $derived(
+		firstPeople.details.type !== 'unknown' &&
+			firstEvents.details.type !== 'unknown' &&
+			firstPetitions.details.type !== 'unknown'
+	);
+	const isNewWorkspace = $derived(
+		workspaceStateReady &&
+			!firstPeople.data?.length &&
+			!firstEvents.data?.length &&
+			!firstPetitions.data?.length
+	);
 
 	import { locale } from '$lib/index.svelte';
 
@@ -46,12 +68,14 @@
 				</h1>
 				<p class="mt-1 text-sm text-muted-foreground">{dateLabel}</p>
 			</div>
-			<div class="flex items-center gap-2">
-				<Button href="/events/new" size="sm">
-					<PlusIcon class="size-4" />
-					New event
-				</Button>
-			</div>
+			{#if workspaceStateReady && !isNewWorkspace}
+				<div class="flex items-center gap-2">
+					<Button href="/events/new" size="sm">
+						<PlusIcon class="size-4" />
+						New event
+					</Button>
+				</div>
+			{/if}
 		</header>
 
 		{#if appState.activeOrganization.data}
@@ -73,13 +97,15 @@
 			{/key}
 		{/if}
 
-		<DashboardMetrics />
+		{#if isNewWorkspace}
+			<GettingStartedActions />
+		{:else if workspaceStateReady}
+			<NextEventCard />
 
-		<NextEventCard />
-
-		<section class="grid gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-			<UpcomingEventsList />
-			<RecentNotifications />
-		</section>
+			<section class="grid gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+				<UpcomingEventsList />
+				<RecentNotifications />
+			</section>
+		{/if}
 	</div>
 </div>
