@@ -4,12 +4,15 @@
 	import ResponsiveModal from '$lib/components/ui/responsive-modal/responsive-modal.svelte';
 	import QrCode from '@lucide/svelte/icons/qr-code';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
+	import type { PublicEventLayout } from '$lib/utils/event/analytics';
+	import { trackEventWhatsAppHandoffOpened } from '$lib/utils/event/analytics';
 
 	type Props = {
 		directLink?: boolean;
 		whatsAppSignupLink: string;
+		layout: PublicEventLayout;
 	};
-	const { directLink = false, whatsAppSignupLink }: Props = $props();
+	const { directLink = false, whatsAppSignupLink, layout }: Props = $props();
 
 	let showQRModal = $state(false);
 	let qrCodeDataUrl = $state('');
@@ -32,7 +35,13 @@
 
 	function handleDirectLink() {
 		if (whatsappUrl) {
-			window.open(whatsappUrl, '_blank');
+			const openedWindow = window.open(whatsappUrl, '_blank');
+			if (openedWindow) {
+				trackEventWhatsAppHandoffOpened({
+					method: 'direct_link',
+					layout
+				});
+			}
 		}
 	}
 	import { Button } from '$lib/components/ui/button/index.js';

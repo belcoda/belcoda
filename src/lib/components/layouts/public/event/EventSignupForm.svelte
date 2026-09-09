@@ -91,6 +91,11 @@
 	import PhoneNumberInput from '$lib/components/ui/custom-select/phone-number/phone-number.svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index';
 	import InputDate from '$lib/components/ui/custom-input/date-jsdateinput.svelte';
+	import {
+		eventHasSurvey,
+		trackEventDeclineCompleted,
+		trackEventSignupCompleted
+	} from '$lib/utils/event/analytics';
 
 	//icons
 	import AlertTriangle from '@lucide/svelte/icons/alert-triangle';
@@ -104,6 +109,14 @@
 
 	/* svelte-ignore state_referenced_locally */
 	const surveySchema = getSurveySchema(event);
+	function getRedirectPathname(location: string): string | null {
+		try {
+			return new URL(location, page.url).pathname;
+		} catch {
+			return null;
+		}
+	}
+
 	/* svelte-ignore state_referenced_locally */
 	const form = superForm(formProp, {
 		validators: valibot(surveySchema),
@@ -111,6 +124,25 @@
 		delayMs: 200,
 		timeoutMs: 12000,
 		onResult: ({ result }) => {
+			if (result.type === 'redirect') {
+				const redirectPathname = getRedirectPathname(result.location);
+				const hasSurvey = eventHasSurvey(event);
+
+				if (redirectPathname?.endsWith('/signed-up')) {
+					trackEventSignupCompleted({
+						signup_channel: 'form',
+						has_survey: hasSurvey,
+						layout
+					});
+				} else if (redirectPathname?.endsWith('/declined')) {
+					trackEventDeclineCompleted({
+						response_channel: 'form',
+						has_survey: hasSurvey,
+						layout
+					});
+				}
+			}
+
 			if (result.type === 'failure' && result.data && typeof result.data === 'object') {
 				const err = (result.data as { error?: unknown }).error;
 				if (typeof err === 'string') {
@@ -146,7 +178,7 @@
 		{/if}
 
 		<div class="mb-6 lg:hidden">
-			<WhatsAppSignup directLink {whatsAppSignupLink} />
+			<WhatsAppSignup directLink {whatsAppSignupLink} {layout} />
 		</div>
 
 		<form use:form.enhance class="space-y-4" method="POST">
@@ -506,7 +538,7 @@
 					{t`Sign up now`}</Button
 				>
 				<div class="hidden lg:block">
-					<WhatsAppSignup {whatsAppSignupLink} />
+					<WhatsAppSignup {whatsAppSignupLink} {layout} />
 				</div>
 				<Button
 					type="submit"
