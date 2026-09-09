@@ -19,6 +19,17 @@ const baseForm: NewOrganizationFromWebsiteForm = {
 };
 
 describe('newOrganizationFromWebsiteForm', () => {
+	it('accepts just a name and generated address without inventing discovery details', () => {
+		const parsed = v.parse(newOrganizationFromWebsiteForm, {
+			name: 'Community Builders',
+			slug: 'community-builders'
+		});
+
+		expect(parsed.icon).toBeNull();
+		expect(parsed.website).toBeNull();
+		expect(buildOrganizationOnboardingMetadata(parsed)).toEqual({});
+	});
+
 	it('accepts the current discovery source options', () => {
 		const parsed = v.parse(newOrganizationFromWebsiteForm, {
 			...baseForm,
