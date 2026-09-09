@@ -32,9 +32,8 @@ test.describe('Settings: Organization Configuration', () => {
 		const configPage = new OrgConfigPage(page);
 		await loginAsOwner(page, PROJECT);
 		await configPage.goto();
-		await expect(configPage.configCard).toBeVisible({ timeout: 15_000 });
-		await configPage.saveButton.click();
-		await expect(page).toHaveURL('/settings', { timeout: 15_000 });
+		await configPage.expectLoaded();
+		await configPage.saveAndExpectSettingsRedirect();
 	});
 });
 

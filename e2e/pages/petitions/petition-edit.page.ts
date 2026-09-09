@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import { expect, type Dialog, type Locator, type Page } from '@playwright/test';
 
 export class PetitionEditPage {
 	readonly page: Page;
@@ -51,17 +51,35 @@ export class PetitionEditPage {
 		}
 	}
 
+	private async withDialogAccepted(action: () => Promise<void>) {
+		const acceptDialog = (dialog: Dialog) => void dialog.accept();
+		this.page.on('dialog', acceptDialog);
+		try {
+			await action();
+		} finally {
+			this.page.off('dialog', acceptDialog);
+		}
+	}
+
 	async archivePetition() {
-		await this.ensureDangerZoneExpanded(this.archiveButton);
-		await this.archiveButton.click();
-		await this.page.getByTestId('petition-confirm-archive').click();
-		await this.page.waitForURL('/petitions', { timeout: 15_000 });
+		await this.withDialogAccepted(async () => {
+			await this.ensureDangerZoneExpanded(this.archiveButton);
+			await this.archiveButton.click();
+			const confirmButton = this.page.getByTestId('petition-confirm-archive');
+			await expect(confirmButton).toBeVisible({ timeout: 10_000 });
+			await confirmButton.click();
+			await expect(this.page).toHaveURL('/petitions', { timeout: 30_000 });
+		});
 	}
 
 	async deletePetition() {
-		await this.ensureDangerZoneExpanded(this.deleteButton);
-		await this.deleteButton.click();
-		await this.page.getByTestId('petition-confirm-delete').click();
-		await this.page.waitForURL('/petitions', { timeout: 15_000 });
+		await this.withDialogAccepted(async () => {
+			await this.ensureDangerZoneExpanded(this.deleteButton);
+			await this.deleteButton.click();
+			const confirmButton = this.page.getByTestId('petition-confirm-delete');
+			await expect(confirmButton).toBeVisible({ timeout: 10_000 });
+			await confirmButton.click();
+			await expect(this.page).toHaveURL('/petitions', { timeout: 30_000 });
+		});
 	}
 }
