@@ -54,15 +54,19 @@
 			</div>
 		</header>
 
-		<FinishSettingUpCard
-			canInvite={appState.isAdminOrOwner}
-			onaction={(action) => {
-				if (action === 'whatsapp') goto(resolve('/setup/whatsapp'));
-				else if (action === 'invite' && appState.isAdminOrOwner) inviteOpen = true;
-				else if (action === 'team') goto(resolve('/settings/teams'));
-				else if (action === 'people') goto(resolve('/community/person/new'));
-			}}
-		/>
+		{#if appState.activeOrganization.data}
+			<FinishSettingUpCard
+				organization={appState.activeOrganization.data}
+				canInvite={appState.isAdminOrOwner}
+				onaction={(action) => {
+					if (action === 'profile') goto(resolve('/setup'));
+					else if (action === 'whatsapp') goto(resolve('/settings/whatsapp/accounts'));
+					else if (action === 'invite' && appState.isAdminOrOwner) inviteOpen = true;
+					else if (action === 'team') goto(resolve('/settings/teams'));
+					else if (action === 'people') goto(resolve('/community/person/new'));
+				}}
+			/>
+		{/if}
 		{#if appState.isAdminOrOwner}
 			{#key appState.organizationId}
 				<InviteTeammatesDrawer bind:open={inviteOpen} />
