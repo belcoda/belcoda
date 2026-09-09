@@ -44,9 +44,9 @@
 	const steps: SetupStep[] = [
 		{ id: 'org', label: t`Organization created`, status: 'done' },
 		{ id: 'profile', label: t`Organization profile`, status: 'done' },
-		{ id: 'team', label: t`First team`, status: 'done' },
-		{ id: 'whatsapp', label: t`Connect WhatsApp`, status: 'active' },
-		{ id: 'invite', label: t`Invite team later`, status: 'todo' }
+		{ id: 'team', label: t`First team`, optional: true, status: 'done' },
+		{ id: 'whatsapp', label: t`Connect WhatsApp`, optional: true, status: 'active' },
+		{ id: 'invite', label: t`Invite teammates`, optional: true, status: 'todo' }
 	];
 </script>
 
@@ -78,7 +78,7 @@
 			</div>
 
 			<section class="flex flex-col gap-4">
-				<h2 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+				<h2 class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					{t`Due now`}
 				</h2>
 				<div class="flex flex-col gap-2">
@@ -92,7 +92,7 @@
 			</section>
 
 			<section class="flex flex-col gap-3">
-				<h2 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+				<h2 class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					{t`Deferred — after you're verified`}
 				</h2>
 				<ul class="flex flex-col gap-2">
@@ -117,7 +117,8 @@
 		</div>
 
 		<div class="order-first lg:order-none">
-			<SetupProgressChecklist {steps} class="lg:sticky lg:top-24" />
+			<SetupProgressChecklist {steps} compact class="lg:hidden" />
+			<SetupProgressChecklist {steps} class="hidden lg:sticky lg:top-24 lg:block" />
 		</div>
 	</div>
 </OnboardingLayout>

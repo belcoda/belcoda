@@ -44,12 +44,16 @@
 	let saveError = $state('');
 
 	const profileDone = $derived(
-		organization.settings.onboarding?.profile === 'complete' && !saving && !saveError
+		organization.settings.onboarding?.profile === 'complete' &&
+			country === organization.country &&
+			language === organization.defaultLanguage &&
+			timezone === organization.defaultTimezone &&
+			!saving &&
+			!saveError
 	);
 	const teamDone = $derived(
 		!!createdTeamName || organization.settings.onboarding?.team === 'complete'
 	);
-	const essentialsDone = $derived(profileDone);
 	const profileMeta = $derived(
 		`${renderLocalizedCountryName(organization.country, locale.current)} · ${formatTimezone(organization.defaultTimezone, locale.current)}`
 	);
@@ -84,32 +88,43 @@
 		},
 		{
 			id: 'team',
-			label: t`First team`,
-			status: teamDone ? 'done' : profileDone ? 'active' : 'todo',
+			label: t`Create a team`,
+			optional: true,
+			status: teamDone ? 'done' : 'todo',
 			meta: teamDone ? createdTeamName || undefined : undefined
 		},
-		{ id: 'whatsapp', label: t`WhatsApp later`, status: 'todo' },
-		{ id: 'invite', label: t`Invite team later`, status: 'todo' }
+		{
+			id: 'whatsapp',
+			label: t`Connect WhatsApp`,
+			optional: true,
+			status: organization.settings.onboarding?.whatsappAccount === 'complete' ? 'done' : 'todo'
+		},
+		{
+			id: 'invite',
+			label: t`Invite teammates`,
+			optional: true,
+			status: organization.settings.onboarding?.invitations === 'complete' ? 'done' : 'todo'
+		}
 	]);
 </script>
 
 <OnboardingLayout {orgName} {orgIcon} exitHref={resolve('/dashboard')}>
-	<div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-		<div class="flex flex-col gap-8">
-			<header class="flex flex-col gap-1">
-				<h1 class="text-2xl font-semibold tracking-tight">{t`Set up ${orgName}`}</h1>
-				<p class="text-muted-foreground">
-					{t`Do the essentials now; the rest is here whenever you come back.`}
-				</p>
-			</header>
+	<header class="flex flex-col gap-1">
+		<h1 class="text-2xl font-semibold tracking-tight">{t`Set up ${orgName}`}</h1>
+		<p class="text-muted-foreground">
+			{t`Check your defaults, then start using Belcoda. Everything else can wait.`}
+		</p>
+	</header>
 
-			{#if essentialsDone}
+	<div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-8">
+		<div class="flex flex-col gap-8">
+			{#if profileDone}
 				<div class="flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
 					<CheckCircleIcon class="mt-0.5 size-5 text-primary" />
 					<div class="flex flex-col gap-0.5">
-						<p class="font-medium">{t`You're all set`}</p>
+						<p class="font-medium">{t`You’re ready to get started`}</p>
 						<p class="text-sm text-muted-foreground">
-							{t`The essentials are done. You can head into Belcoda — the rest is waiting on your dashboard.`}
+							{t`Your defaults are confirmed. You can leave the optional tasks for later.`}
 						</p>
 					</div>
 				</div>
@@ -117,12 +132,12 @@
 
 			<section class="flex flex-col gap-3">
 				<h2 class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-					{t`Do now`}
+					{t`Your defaults`}
 				</h2>
 
 				<SetupTaskCard
-					title={t`Organization profile`}
-					description={t`Sets defaults for dates, language and messaging.`}
+					title={t`Confirm your defaults`}
+					description={t`These settings are already filled in. Change them if needed.`}
 				>
 					{#snippet icon()}<BuildingIcon class="size-4" />{/snippet}
 					<fieldset disabled={saving} class="min-w-0">
@@ -131,10 +146,23 @@
 				</SetupTaskCard>
 			</section>
 
+			<div class="flex flex-wrap items-center gap-3 border-t pt-6">
+				{#if saveError}<p role="alert" class="w-full text-sm text-destructive">{saveError}</p>{/if}
+				<Button onclick={saveProfile} disabled={saving}>
+					{saving ? t`Saving…` : t`Save and continue`}
+				</Button>
+				<Button variant="ghost" disabled={saving} onclick={() => goto(resolve('/dashboard'))}
+					>{t`Skip for now`}</Button
+				>
+			</div>
+
 			<section class="flex flex-col gap-3">
 				<h2 class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-					{t`When you're ready`}
+					{t`Optional setup`}
 				</h2>
+				<p class="text-sm text-muted-foreground">
+					{t`You can do these now or return to them from your dashboard.`}
+				</p>
 
 				<SetupTaskCard
 					title={t`Create a first team`}
@@ -160,6 +188,7 @@
 
 				<SetupTaskCard
 					title={t`Connect WhatsApp`}
+					badge={t`optional`}
 					description={t`Needs a business number + verification. Has ban risk — we guide you.`}
 					actionLabel={t`Set up`}
 					actionHref={resolve('/setup/whatsapp')}
@@ -169,6 +198,7 @@
 
 				<SetupTaskCard
 					title={t`Invite your team`}
+					badge={t`optional`}
 					description={t`Optional — you can run Belcoda solo and invite anyone later.`}
 					actionLabel={t`Invite`}
 					onAction={oninvite}
@@ -176,20 +206,11 @@
 					{#snippet icon()}<UserPlusIcon class="size-4" />{/snippet}
 				</SetupTaskCard>
 			</section>
-
-			<div class="flex flex-wrap items-center gap-3 border-t pt-6">
-				{#if saveError}<p role="alert" class="w-full text-sm text-destructive">{saveError}</p>{/if}
-				<Button onclick={saveProfile} disabled={saving}>
-					{saving ? t`Saving…` : t`Save profile & go to dashboard`}
-				</Button>
-				<Button variant="ghost" onclick={() => goto(resolve('/dashboard'))}
-					>{t`Skip for now`}</Button
-				>
-			</div>
 		</div>
 
 		<div class="order-first lg:order-none">
-			<SetupProgressChecklist {steps} class="lg:sticky lg:top-24" />
+			<SetupProgressChecklist {steps} compact class="lg:hidden" />
+			<SetupProgressChecklist {steps} class="hidden lg:sticky lg:top-24 lg:block" />
 		</div>
 	</div>
 </OnboardingLayout>
