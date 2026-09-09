@@ -39,15 +39,17 @@
 	let country = $state<string>(untrack(() => organization.country));
 	let language = $state<string>(untrack(() => organization.defaultLanguage));
 	let timezone = $state(untrack(() => organization.defaultTimezone));
-	let teamName = $state('');
+	let createdTeamName = $state('');
 	let saving = $state(false);
 	let saveError = $state('');
 
 	const profileDone = $derived(
 		organization.settings.onboarding?.profile === 'complete' && !saving && !saveError
 	);
-	const teamDone = $derived(organization.settings.onboarding?.team === 'complete');
-	const essentialsDone = $derived(profileDone && teamDone);
+	const teamDone = $derived(
+		!!createdTeamName || organization.settings.onboarding?.team === 'complete'
+	);
+	const essentialsDone = $derived(profileDone);
 	const profileMeta = $derived(
 		`${renderLocalizedCountryName(organization.country, locale.current)} · ${formatTimezone(organization.defaultTimezone, locale.current)}`
 	);
@@ -84,7 +86,7 @@
 			id: 'team',
 			label: t`First team`,
 			status: teamDone ? 'done' : profileDone ? 'active' : 'todo',
-			meta: teamDone ? teamName.trim() : undefined
+			meta: teamDone ? createdTeamName || undefined : undefined
 		},
 		{ id: 'whatsapp', label: t`WhatsApp later`, status: 'todo' },
 		{ id: 'invite', label: t`Invite team later`, status: 'todo' }
@@ -127,21 +129,34 @@
 						<OrganizationProfileForm bind:country bind:language bind:timezone />
 					</fieldset>
 				</SetupTaskCard>
-
-				<SetupTaskCard
-					title={t`Create a first team`}
-					description={t`A team is where your organisers and their work live.`}
-					badge={t`recommended`}
-				>
-					{#snippet icon()}<UsersIcon class="size-4" />{/snippet}
-					<FirstTeamForm bind:teamName />
-				</SetupTaskCard>
 			</section>
 
 			<section class="flex flex-col gap-3">
 				<h2 class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					{t`When you're ready`}
 				</h2>
+
+				<SetupTaskCard
+					title={t`Create a first team`}
+					description={t`Group organisers and their work by location or project. You can do this later.`}
+					badge={t`optional`}
+				>
+					{#snippet icon()}<UsersIcon class="size-4" />{/snippet}
+					{#if teamDone}
+						<p role="status" class="text-sm">
+							{createdTeamName
+								? t`Team created: ${createdTeamName}`
+								: t`Your first team is created.`}
+						</p>
+					{:else}
+						<FirstTeamForm
+							{organization}
+							oncreated={(name) => {
+								createdTeamName = name;
+							}}
+						/>
+					{/if}
+				</SetupTaskCard>
 
 				<SetupTaskCard
 					title={t`Connect WhatsApp`}
