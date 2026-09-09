@@ -189,9 +189,9 @@
 				<SetupTaskCard
 					title={t`Connect WhatsApp`}
 					badge={t`optional`}
-					description={t`Needs a business number + verification. Has ban risk — we guide you.`}
+					description={t`Send updates and reminders, and receive replies from your community.`}
 					actionLabel={t`Set up`}
-					actionHref={resolve('/setup/whatsapp')}
+					actionHref={resolve('/settings/whatsapp/accounts')}
 				>
 					{#snippet icon()}<MessageCircleIcon class="size-4" />{/snippet}
 				</SetupTaskCard>

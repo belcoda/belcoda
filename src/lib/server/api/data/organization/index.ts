@@ -100,6 +100,14 @@ export async function updateOrganizationWhatsappSettings({
 	}
 	const defaultWhatsappSettings = JSON.stringify(defaultWhatsappOrganizationSettings());
 	const serializedWhatsappPatch = JSON.stringify(whatsappPatch);
+	const connectedOnboarding =
+		number && wabaId && whatsappPatch.number
+			? sql`jsonb_build_object('onboarding',
+			COALESCE(${organization.settings}->'onboarding', ${JSON.stringify({
+				...defaultOrganizationOnboardingSettings(),
+				initialSetup: 'complete'
+			})}::jsonb) || ${JSON.stringify({ whatsappAccount: 'complete' })}::jsonb)`
+			: sql`'{}'::jsonb`;
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
@@ -110,7 +118,7 @@ export async function updateOrganizationWhatsappSettings({
 					'whatsApp',
 					COALESCE(${organization.settings}->'whatsApp', ${defaultWhatsappSettings}::jsonb)
 					|| ${serializedWhatsappPatch}::jsonb
-				)
+				) || ${connectedOnboarding}
 			`,
 			updatedAt: new Date()
 		})
