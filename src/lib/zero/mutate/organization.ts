@@ -60,7 +60,8 @@ export const updateOrganizationOnboarding = defineMutator(
 			settings: {
 				...args.metadata.existingSettings,
 				onboarding: {
-					...defaultOrganizationOnboardingSettings('complete'),
+					...defaultOrganizationOnboardingSettings(),
+					initialSetup: 'complete',
 					...args.metadata.existingSettings.onboarding,
 					...args.input
 				}

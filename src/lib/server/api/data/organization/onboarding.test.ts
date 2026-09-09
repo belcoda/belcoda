@@ -93,7 +93,7 @@ describe('updateOrganizationOnboarding', () => {
 			},
 			args: {
 				metadata: { organizationId, existingSettings: staleClientSettings },
-				input: { event: 'complete' }
+				input: { initialSetup: 'skipped', whatsappAccount: 'not_needed' }
 			}
 		});
 
@@ -107,7 +107,9 @@ describe('updateOrganizationOnboarding', () => {
 		expect(query.sql).toMatch(
 			/COALESCE\("organization"\."settings"->'onboarding',[\s\S]*\)\s*\|\|\s*\$2::jsonb/
 		);
-		expect(query.params).toContain(JSON.stringify({ event: 'complete' }));
+		expect(query.params).toContain(
+			JSON.stringify({ initialSetup: 'skipped', whatsappAccount: 'not_needed' })
+		);
 		expect(query.params).not.toContain('#abcdef');
 	});
 
@@ -129,7 +131,7 @@ describe('updateOrganizationOnboarding', () => {
 						organizationId,
 						existingSettings: defaultOrganizationSettings()
 					},
-					input: { event: 'complete' }
+					input: { initialSetup: 'complete' }
 				}
 			})
 		).rejects.toThrow('not authorized');
