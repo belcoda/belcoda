@@ -1,9 +1,11 @@
+import { createOnboardingTeam as saveOnboardingTeam } from '$lib/server/api/data/team/onboarding';
 import * as teamData from '$lib/server/api/data/team/team';
 import * as teamMemberData from '$lib/server/api/data/team/member';
 import { defineMutator } from '@rocicorp/zero';
 import {
 	updateMutatorSchema,
 	createMutatorSchema,
+	createOnboardingTeamSchema,
 	addUserToTeamMutatorSchema,
 	removeUserFromTeamMutatorSchema
 } from '$lib/schema/team';
@@ -39,5 +41,14 @@ export const removeUserFromTeam = defineMutator(
 			throw new Error('removeUserFromTeam can only be called from the server');
 		}
 		await teamMemberData.removeUserFromTeam({ tx, ctx, args });
+	}
+);
+
+export const createOnboardingTeam = defineMutator(
+	createOnboardingTeamSchema,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server')
+			throw new Error('createOnboardingTeam can only be called from the server');
+		await saveOnboardingTeam({ tx, args, ctx });
 	}
 );

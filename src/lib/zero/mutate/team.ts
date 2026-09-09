@@ -1,6 +1,7 @@
 import { defineMutator } from '@rocicorp/zero';
 import {
 	createMutatorSchema,
+	createOnboardingTeamSchema,
 	updateMutatorSchema,
 	addUserToTeamMutatorSchema,
 	removeUserFromTeamMutatorSchema
@@ -49,3 +50,5 @@ export const removeUserFromTeam = defineMutator(
 		// teamMember has primary key id only, so we cannot do optimistic delete by teamId+userId here.
 	}
 );
+
+export const createOnboardingTeam = defineMutator(createOnboardingTeamSchema, async () => {});

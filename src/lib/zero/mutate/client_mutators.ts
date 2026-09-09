@@ -101,6 +101,7 @@ export const mutators = defineMutators({
 	},
 	team: {
 		create: team.createTeam,
+		createForOnboarding: team.createOnboardingTeam,
 		update: team.updateTeam,
 		addUserToTeam: team.addUserToTeam,
 		removeUserFromTeam: team.removeUserFromTeam
