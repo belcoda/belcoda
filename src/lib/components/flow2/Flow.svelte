@@ -2,13 +2,13 @@
 	import '@xyflow/svelte/dist/style.css';
 	import { SvelteFlowProvider, type Node, type Edge } from '@xyflow/svelte';
 	const {
-		backButtonUrl,
+		flowDocumentId,
 		disabled = false,
 		loadFlowFunction
 	}: {
-		backButtonUrl?: string;
+		flowDocumentId: string;
 		disabled?: boolean;
-		loadFlowFunction: () => Promise<{ nodes: Node[]; edges: Edge[] }>;
+		loadFlowFunction: () => Promise<{ nodes: Node[]; edges: Edge[]; draftRevision: number }>;
 	} = $props();
 
 	import FlowStateManager from '$lib/components/flow2/StateManager.svelte';
@@ -17,7 +17,7 @@
 
 <div class="h-full w-full">
 	<SvelteFlowProvider>
-		<FlowStateManager {loadFlowFunction} />
+		<FlowStateManager {flowDocumentId} {loadFlowFunction} />
 		<FlowCanvas {disabled} />
 	</SvelteFlowProvider>
 </div>

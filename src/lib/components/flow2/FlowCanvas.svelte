@@ -1,10 +1,9 @@
 <script lang="ts">
 	import '@xyflow/svelte/dist/style.css';
-	import { t } from '$lib/index.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import {
 		SvelteFlow,
 		Background,
-		Panel,
 		type EdgeTypes,
 		type NodeTypes,
 		type OnConnectEnd,
@@ -13,12 +12,10 @@
 		useEdges
 	} from '@xyflow/svelte';
 	import AppendNode from '$lib/components/flow/AppendNode.svelte';
-	import { getNodes, getEdges, setNodes, setEdges } from '$lib/components/flow/flow_state.svelte';
+	import { getNodes, getEdges, setNodes, setEdges } from '$lib/components/flow2/flow_state.svelte';
 	const {
-		backButtonUrl,
 		disabled = false
 	}: {
-		backButtonUrl?: string;
 		disabled?: boolean;
 	} = $props();
 	//nodes
@@ -142,7 +139,7 @@
 		};
 	});
 
-	import { onbeforedelete } from '$lib/components/flow/flow_state.svelte';
+	import { onbeforedelete } from '$lib/components/flow2/flow_state.svelte';
 </script>
 
 <SvelteFlow
@@ -167,5 +164,84 @@
 	{edgeTypes}
 	defaultEdgeOptions={{ type: 'edge' }}
 >
+	{#if !disabled}
+		<AppendNode />
+	{/if}
 	<Background />
 </SvelteFlow>
+
+{#if menuVisible}
+	<div
+		style:top={menuPosition.y + 'px'}
+		style:left={menuPosition.x + 'px'}
+		style:position="absolute"
+		role="menu"
+		onclick={(e) => e.stopPropagation()}
+		onpointerdown={(e) => e.stopPropagation()}
+		class="z-20 rounded-md border bg-white shadow-xl"
+		onkeydown={(e) => {
+			if (e.key === 'Escape') {
+				menuVisible = false;
+			}
+		}}
+		tabindex="-1"
+	>
+		<div class="space-y-px" role="group">
+			<Button
+				tabindex={0}
+				variant="ghost"
+				class="relative flex w-full items-center rounded-sm px-2 py-1.5 text-sm text-neutral-700 transition-colors outline-none select-none hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 disabled:pointer-events-none disabled:opacity-50"
+				role="menuitem"
+				onclick={() => {
+					addNodeToFlow('message');
+				}}
+			>
+				<span class="flex-1 text-left">Message</span>
+			</Button>
+			<Button
+				tabindex={0}
+				variant="ghost"
+				class="relative flex w-full items-center rounded-sm px-2 py-1.5 text-sm text-neutral-700 transition-colors outline-none select-none hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 disabled:pointer-events-none disabled:opacity-50"
+				role="menuitem"
+				onclick={() => {
+					addNodeToFlow('eventSignup');
+				}}
+			>
+				<span class="flex-1 text-left">Event Signup</span>
+			</Button>
+			<Button
+				tabindex={0}
+				variant="ghost"
+				class="relative flex w-full items-center rounded-sm px-2 py-1.5 text-sm text-neutral-700 transition-colors outline-none select-none hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 disabled:pointer-events-none disabled:opacity-50"
+				role="menuitem"
+				onclick={() => {
+					addNodeToFlow('petitionSignup');
+				}}
+			>
+				<span class="flex-1 text-left">Petition Signup</span>
+			</Button>
+			<Button
+				tabindex={0}
+				variant="ghost"
+				class="relative flex w-full items-center rounded-sm px-2 py-1.5 text-sm text-neutral-700 transition-colors outline-none select-none hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 disabled:pointer-events-none disabled:opacity-50"
+				role="menuitem"
+				onclick={() => {
+					addNodeToFlow('tagAdd');
+				}}
+			>
+				<span class="flex-1 text-left">Tag Add</span>
+			</Button>
+			<Button
+				tabindex={0}
+				variant="ghost"
+				class="relative flex w-full items-center rounded-sm px-2 py-1.5 text-sm text-neutral-700 transition-colors outline-none select-none hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 disabled:pointer-events-none disabled:opacity-50"
+				role="menuitem"
+				onclick={() => {
+					addNodeToFlow('teamAdd');
+				}}
+			>
+				<span class="flex-1 text-left">Team Add</span>
+			</Button>
+		</div>
+	</div>
+{/if}

@@ -1,33 +1,52 @@
 <script lang="ts">
 	//*
-	// This component is responsible for making sure that the flow state is updated with the context in which the parent component is called changes, but the component doesn't get remounted.
-	// For example, if the Flow is being used in a page, and the user navigates to the same page with different params, the FlowStateManager should update the flow state with the new context, even though the component itself doesn't get remounted.
+	// Owns the lifecycle wiring between the editor page and the flow2 store: it points the store at the
+	// flow_document to save to, seeds the canvas from the loaded draft, and registers the reload used
+	// after a save conflict. Kept as a component (not a load function) so it can update state as the
+	// page context changes without the editor being remounted.
 	// */
-	import { setNodes, setEdges } from '$lib/components/flow/flow_state.svelte';
+	import {
+		configureFlowDocument,
+		registerReload,
+		seedFromDoc,
+		resetFlowState
+	} from '$lib/components/flow2/flow_state.svelte';
+	import { appState } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 	import type { Node, Edge } from '@xyflow/svelte';
+
 	const {
+		flowDocumentId,
 		loadFlowFunction
-	}: { loadFlowFunction: () => Promise<{ nodes: Node[]; edges: Edge[] }> } = $props();
+	}: {
+		flowDocumentId: string;
+		loadFlowFunction: () => Promise<{ nodes: Node[]; edges: Edge[]; draftRevision: number }>;
+	} = $props();
+
 	onMount(() => {
 		let cancelled = false;
+		configureFlowDocument({ flowDocumentId, organizationId: appState.organizationId });
+		// Re-seed the canvas from the latest loaded document (used after a save conflict). loadFlowFunction
+		// reads the page's live query, so this always pulls the freshest graph + revision.
+		registerReload(async () => {
+			const doc = await loadFlowFunction();
+			if (cancelled) return;
+			seedFromDoc(doc);
+		});
 		(async () => {
 			try {
-				const { nodes, edges } = await loadFlowFunction();
+				const doc = await loadFlowFunction();
 				if (cancelled) return;
-				setNodes(nodes, false);
-				setEdges(edges, false);
+				seedFromDoc(doc);
 			} catch (error) {
 				if (cancelled) return;
 				console.error(error);
-				setNodes([], false);
-				setEdges([], false);
+				seedFromDoc({ nodes: [], edges: [], draftRevision: 0 });
 			}
 		})();
 		return () => {
 			cancelled = true;
-			setNodes([], false);
-			setEdges([], false);
+			resetFlowState();
 		};
 	});
 </script>
