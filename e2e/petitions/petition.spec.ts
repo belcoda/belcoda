@@ -91,15 +91,21 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await loginAsOwner(page, PROJECT);
 		await page.goto(`/petitions/${petitionId}`);
 
-		await page
+		await page.getByTestId('petition-signature-table').waitFor({ state: 'visible', timeout: 15_000 });
+		const seededItems = page
 			.getByTestId('petition-signatures-list')
-			.waitFor({ state: 'visible', timeout: 10_000 });
-		const items = page.getByTestId('petition-signature-item');
-		await expect(items).toHaveCount(25, { timeout: 15_000 });
+			.getByTestId('petition-signature-item')
+			.filter({ hasText: seedBody.runId });
 
-		await page.getByTestId('petition-signatures-scroll-sentinel').scrollIntoViewIfNeeded();
+		await expect(seededItems.first()).toBeVisible({ timeout: 15_000 });
+		await expect(seededItems).toHaveCount(25, { timeout: 15_000 });
 
-		await expect(items).toHaveCount(30, { timeout: 30_000 });
+		await expectSidebarItemCountToReach(
+			seededItems,
+			30,
+			page,
+			'petition-signatures-scroll-sentinel'
+		);
 	});
 
 	test('owner can load more petitions in the sidebar', async ({ page, request }) => {
