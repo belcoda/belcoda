@@ -10,6 +10,7 @@
 	import queries from '$lib/zero/query';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+	import { snapshotOrganizationSettings } from '$lib/utils/organization-onboarding';
 
 	type DashboardTask = {
 		id: 'profile' | 'team' | 'people' | 'invitations' | 'whatsappAccount';
@@ -21,7 +22,11 @@
 
 	type Organization = Pick<ReadOrganizationZero, 'id' | 'settings'>;
 
-	let { organization, canInvite = true, onaction }: {
+	let {
+		organization,
+		canInvite = true,
+		onaction
+	}: {
 		organization: Organization;
 		canInvite?: boolean;
 		onaction?: (action: string) => void;
@@ -102,7 +107,7 @@
 				mutators.organization.updateOnboarding({
 					metadata: {
 						organizationId: organization.id,
-						existingSettings: organization.settings
+						existingSettings: snapshotOrganizationSettings(organization.settings)
 					},
 					input: { [task.id]: 'not_needed' }
 				})
@@ -153,13 +158,19 @@
 
 			{#if otherTasks.length}
 				<details class="group">
-					<summary class="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground">
+					<summary
+						class="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground"
+					>
 						{t`More setup suggestions (${String(otherTasks.length)})`}
 					</summary>
 					<div class="mt-2 flex flex-col divide-y rounded-lg border px-3">
 						{#each otherTasks as task (task.id)}
 							<div class="flex items-center gap-2 py-3">
-								<button type="button" class="min-w-0 flex-1 text-left" onclick={() => runAction(task)}>
+								<button
+									type="button"
+									class="min-w-0 flex-1 text-left"
+									onclick={() => runAction(task)}
+								>
 									<p class="text-sm font-medium">{task.title}</p>
 									<p class="text-xs text-muted-foreground">{task.description}</p>
 								</button>
@@ -187,7 +198,9 @@
 					</summary>
 					<div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
 						{#each completedTasks as task (task.id)}
-							<span class="inline-flex items-center gap-1"><CheckIcon class="size-3 text-primary" />{task.title}</span>
+							<span class="inline-flex items-center gap-1"
+								><CheckIcon class="size-3 text-primary" />{task.title}</span
+							>
 						{/each}
 					</div>
 				</details>

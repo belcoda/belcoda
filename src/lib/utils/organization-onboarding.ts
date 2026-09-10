@@ -1,5 +1,13 @@
+import type { OrganizationSettingsSchema } from '$lib/schema/organization/settings';
+
 export function organizationNeedsOnboardingStorageKey(organizationId: string): string {
 	return `state:organizationNeedsOnboarding:${organizationId}`;
+}
+
+export function snapshotOrganizationSettings(
+	settings: OrganizationSettingsSchema
+): OrganizationSettingsSchema {
+	return JSON.parse(JSON.stringify(settings));
 }
 
 export function shouldRedirectToOrganizationSetup({

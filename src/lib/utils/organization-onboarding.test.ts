@@ -1,5 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { shouldRedirectToOrganizationSetup } from './organization-onboarding';
+import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
+import {
+	shouldRedirectToOrganizationSetup,
+	snapshotOrganizationSettings
+} from './organization-onboarding';
+
+describe('organization settings snapshots', () => {
+	it('creates a detached copy for mutation arguments', () => {
+		const settings = defaultOrganizationSettings();
+		const snapshot = snapshotOrganizationSettings(settings);
+
+		expect(snapshot).toEqual(settings);
+		expect(snapshot).not.toBe(settings);
+		expect(snapshot.onboarding).not.toBe(settings.onboarding);
+	});
+});
 
 describe('organization onboarding routing', () => {
 	it('sends organization managers with unfinished initial setup to setup', () => {

@@ -10,6 +10,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { v7 as uuidv7 } from 'uuid';
+	import { snapshotOrganizationSettings } from '$lib/utils/organization-onboarding';
 
 	let {
 		organization,
@@ -38,7 +39,7 @@
 					metadata: {
 						organizationId: organization.id,
 						teamId: uuidv7(),
-						existingSettings: organization.settings
+						existingSettings: snapshotOrganizationSettings(organization.settings)
 					},
 					input: parsed.output
 				})

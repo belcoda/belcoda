@@ -25,6 +25,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { snapshotOrganizationSettings } from '$lib/utils/organization-onboarding';
 
 	let {
 		organization,
@@ -91,7 +92,7 @@
 				mutators.organization.updateOnboarding({
 					metadata: {
 						organizationId: organization.id,
-						existingSettings: organization.settings
+						existingSettings: snapshotOrganizationSettings(organization.settings)
 					},
 					input: { initialSetup: 'skipped' }
 				})

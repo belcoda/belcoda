@@ -3,6 +3,7 @@ import type { UserRole } from '$lib/schema/user';
 import type { ReadOrganizationZero } from '$lib/schema/organization';
 import { z } from '$lib/zero.svelte';
 import { mutators } from '$lib/zero/mutate/client_mutators';
+import { snapshotOrganizationSettings } from '$lib/utils/organization-onboarding';
 
 export type InvitationOrganization = Pick<ReadOrganizationZero, 'id' | 'settings'>;
 
@@ -20,7 +21,10 @@ export function parseInvitationEmails(value: string) {
 export async function recordInvitationProgress(organization: InvitationOrganization) {
 	const result = await z.mutate(
 		mutators.organization.updateOnboarding({
-			metadata: { organizationId: organization.id, existingSettings: organization.settings },
+			metadata: {
+				organizationId: organization.id,
+				existingSettings: snapshotOrganizationSettings(organization.settings)
+			},
 			input: { invitations: 'complete' }
 		})
 	).server;
