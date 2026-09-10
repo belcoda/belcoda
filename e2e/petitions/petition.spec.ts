@@ -120,7 +120,14 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		});
 		await expect(visibleItems).toHaveCount(25, { timeout: 15_000 });
 
-		await expectSidebarItemCountToReach(seededItems, 30, page, 'petitions-sidebar-scroll-sentinel');
+		await expectSidebarItemCountToReach(
+			seededItems,
+			30,
+			page,
+			'petitions-sidebar-scroll-sentinel',
+			30_000,
+			'petitions-sidebar-list'
+		);
 	});
 
 	test('owner can add a petition and it is saved as draft', async ({ page }) => {
