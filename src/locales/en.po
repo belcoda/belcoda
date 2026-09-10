@@ -786,6 +786,7 @@ msgstr "Note deleted"
 #: src/routes/(app)/community/[personId]/profile/rows/Name.svelte
 #: src/routes/(app)/settings/whatsapp/_accounts/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Edit"
 msgstr "Edit"
 
@@ -1411,7 +1412,6 @@ msgstr "This image will be displayed on the petition page and in shared links."
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Title"
 msgstr "Title"
 
@@ -1421,7 +1421,6 @@ msgstr "Edit petition link"
 
 #: src/lib/components/forms/event/EventCreateOrUpdate.svelte
 #: src/lib/components/forms/petition/PetitionCreateOrUpdate.svelte
-#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Slug"
 msgstr "Slug"
 
@@ -1774,7 +1773,6 @@ msgid "Gender"
 msgstr "Gender"
 
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
-#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Social media"
 msgstr "Social media"
 
@@ -2083,7 +2081,6 @@ msgstr "Leave empty for a key that never expires"
 msgid "Creating..."
 msgstr "Creating..."
 
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
 #: src/routes/(app)/settings/api-keys/+page.svelte
 #: src/routes/(app)/settings/tags/NewTag.svelte
 #: src/routes/(app)/settings/teams/NewTeam.svelte
@@ -2179,13 +2176,11 @@ msgstr "My Webhook"
 msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Create a new organization to get started"
-msgstr "Create a new organization to get started"
+#~ msgid "Create a new organization to get started"
+#~ msgstr "Create a new organization to get started"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Create Organization"
-msgstr "Create Organization"
+#~ msgid "Create Organization"
+#~ msgstr "Create Organization"
 
 #: src/lib/components/layouts/public/event/AddToCalendarDropdown.svelte
 msgid "Add To Calendar"
@@ -2935,7 +2930,6 @@ msgstr "Members"
 msgid "Users who are part of this organization."
 msgstr "Users who are part of this organization."
 
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/+page.svelte
 #: src/routes/(app)/settings/users/EditMemberRoleModal.svelte
@@ -3367,12 +3361,12 @@ msgstr "Are you sure you want to delete this signature?"
 #: src/lib/components/templates/TemplateVariablePicker.svelte
 #: src/lib/components/ui/wysiwyg/TipTap.svelte
 #: src/routes/(auth)/organization/new/+page.svelte
+#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Organization name"
 msgstr "Organization name"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Edit organization slug"
-msgstr "Edit organization slug"
+#~ msgid "Edit organization slug"
+#~ msgstr "Edit organization slug"
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Organization logo (optional)"
@@ -3387,16 +3381,13 @@ msgid "Website (optional)"
 msgstr "Website (optional)"
 
 #: src/lib/components/layouts/public/petition/PetitionSignupForm.svelte
-#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Select an option"
 msgstr "Select an option"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Search engine"
-msgstr "Search engine"
+#~ msgid "Search engine"
+#~ msgstr "Search engine"
 
 #: src/lib/utils/person/gender/render.ts
-#: src/routes/(auth)/organization/new/+page.svelte
 msgid "Other"
 msgstr "Other"
 
@@ -3873,6 +3864,7 @@ msgstr "You need to be an organization admin or owner to access this page."
 
 #: src/routes/(app)/communications/+layout.svelte
 #: src/routes/(app)/settings/+layout.svelte
+#: src/routes/(app)/setup/+page.svelte
 msgid "Go to dashboard"
 msgstr "Go to dashboard"
 
@@ -3984,15 +3976,14 @@ msgstr ""
 msgid "An unknown error occurred"
 msgstr "An unknown error occurred"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid ""
-"This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
-"\t\t\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
-"\t\t\t\t\t\t\t\t\t\t\t\t\thyphens."
-msgstr ""
-"This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
-"\t\t\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
-"\t\t\t\t\t\t\t\t\t\t\t\t\thyphens."
+#~ msgid ""
+#~ "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
+#~ "\t\t\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
+#~ "\t\t\t\t\t\t\t\t\t\t\t\t\thyphens."
+#~ msgstr ""
+#~ "This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.\n"
+#~ "\t\t\t\t\t\t\t\t\t\t\t\t\tIt must be unique and can only contain lowercase letters, numbers, and\n"
+#~ "\t\t\t\t\t\t\t\t\t\t\t\t\thyphens."
 
 #: src/lib/components/widgets/petition/PetitionCreatedModal.svelte
 msgid "Failed to update petition"
@@ -5646,37 +5637,29 @@ msgstr "Add note"
 msgid "No notes yet."
 msgstr "No notes yet."
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Friend or colleague"
-msgstr "Friend or colleague"
+#~ msgid "Friend or colleague"
+#~ msgstr "Friend or colleague"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Event or webinar"
-msgstr "Event or webinar"
+#~ msgid "Event or webinar"
+#~ msgstr "Event or webinar"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Partner organization"
-msgstr "Partner organization"
+#~ msgid "Partner organization"
+#~ msgstr "Partner organization"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Community group"
-msgstr "Community group"
+#~ msgid "Community group"
+#~ msgstr "Community group"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Belcoda resources"
-msgstr "Belcoda resources"
+#~ msgid "Belcoda resources"
+#~ msgstr "Belcoda resources"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "How did you hear about Belcoda?"
-msgstr "How did you hear about Belcoda?"
+#~ msgid "How did you hear about Belcoda?"
+#~ msgstr "How did you hear about Belcoda?"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Tell us where you heard about Belcoda"
-msgstr "Tell us where you heard about Belcoda"
+#~ msgid "Tell us where you heard about Belcoda"
+#~ msgstr "Tell us where you heard about Belcoda"
 
-#: src/routes/(auth)/organization/new/+page.svelte
-msgid "Maximum 500 characters."
-msgstr "Maximum 500 characters."
+#~ msgid "Maximum 500 characters."
+#~ msgstr "Maximum 500 characters."
 
 #. 0: formatNumber(unreadMessageCount, locale.current)
 #: src/lib/components/layouts/app/sidebars/community/CommunitySidebar.svelte
@@ -6315,6 +6298,342 @@ msgstr "Uploading…"
 msgid "Image is too large. Please choose a file no larger than {0}."
 msgstr "Image is too large. Please choose a file no larger than {0}."
 
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Message templates & approval"
+msgstr "Message templates & approval"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Draft the messages Meta must approve before you can broadcast."
+msgstr "Draft the messages Meta must approve before you can broadcast."
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Opt-in collection flow"
+msgstr "Opt-in collection flow"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Collect consent from people before you message them."
+msgstr "Collect consent from people before you message them."
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Number warm-up"
+msgstr "Number warm-up"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Ramp up sending volume gradually to protect your number."
+msgstr "Ramp up sending volume gradually to protect your number."
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Organization created"
+msgstr "Organization created"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Organization profile"
+msgstr "Organization profile"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "First team"
+msgstr "First team"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+#: src/routes/(auth)/setup/whatsapp/+page.svelte
+msgid "Connect WhatsApp"
+msgstr "Connect WhatsApp"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Invite team later"
+msgstr "Invite team later"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Back to setup"
+msgstr "Back to setup"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "High-barrier — only what's needed right now."
+msgstr "High-barrier — only what's needed right now."
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Ban risk"
+msgstr "Ban risk"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Messaging people who never opted in can get your number suspended by Meta. We collect consent and warm the number up before any broadcast."
+msgstr "Messaging people who never opted in can get your number suspended by Meta. We collect consent and warm the number up before any broadcast."
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Due now"
+msgstr "Due now"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Business phone number"
+msgstr "Business phone number"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "WhatsApp Business Account (WABA) ID"
+msgstr "WhatsApp Business Account (WABA) ID"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Deferred — after you're verified"
+msgstr "Deferred — after you're verified"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+msgid "Verify number"
+msgstr "Verify number"
+
+#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Do this later"
+msgstr "Do this later"
+
+#~ msgid "Set your time zone & language"
+#~ msgstr "Set your time zone & language"
+
+#~ msgid "So dates and messages behave correctly"
+#~ msgstr "So dates and messages behave correctly"
+
+#~ msgid "30 sec"
+#~ msgstr "30 sec"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Create your first team"
+msgstr "Create your first team"
+
+#~ msgid "Where your organisers live"
+#~ msgstr "Where your organisers live"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Add your first people"
+msgstr "Add your first people"
+
+#~ msgid "or import a list"
+#~ msgstr "or import a list"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Invite teammates"
+msgstr "Invite teammates"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "optional"
+msgstr "optional"
+
+#~ msgid "has ban risk"
+#~ msgstr "has ban risk"
+
+#~ msgid "Finish setting up"
+#~ msgstr "Finish setting up"
+
+#. 0: String(doneCount); 1: String(steps.length)
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "{0} of {1} done"
+msgstr "{0} of {1} done"
+
+#~ msgid "you can do the rest anytime"
+#~ msgstr "you can do the rest anytime"
+
+#~ msgid "Eventually"
+#~ msgstr "Eventually"
+
+#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
+msgid "Team name"
+msgstr "Team name"
+
+#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
+msgid "e.g. Field organisers"
+msgstr "e.g. Field organisers"
+
+#: src/lib/components/widgets/organization-onboarding/OnboardingLayout.svelte
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Skip for now"
+msgstr "Skip for now"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "United Kingdom"
+msgstr "United Kingdom"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "United States"
+msgstr "United States"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Kenya"
+msgstr "Kenya"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "South Africa"
+msgstr "South Africa"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "India"
+msgstr "India"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "English"
+msgstr "English"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Spanish"
+msgstr "Spanish"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Portuguese"
+msgstr "Portuguese"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Europe / London (GMT+1)"
+msgstr "Europe / London (GMT+1)"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "America / New York (GMT-4)"
+msgstr "America / New York (GMT-4)"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Africa / Nairobi (GMT+3)"
+msgstr "Africa / Nairobi (GMT+3)"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Asia / Kolkata (GMT+5:30)"
+msgstr "Asia / Kolkata (GMT+5:30)"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Select"
+msgstr "Select"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Time zone"
+msgstr "Time zone"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "1 invitation sent"
+msgstr "1 invitation sent"
+
+#. 0: String(result.sent.length)
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "{0} invitations sent"
+msgstr "{0} invitations sent"
+
+#~ msgid "1 invitation could not be sent"
+#~ msgstr "1 invitation could not be sent"
+
+#~ msgid "{0} invitations could not be sent"
+#~ msgstr "{0} invitations could not be sent"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Optional. Run Belcoda solo and add people whenever."
+msgstr "Optional. Run Belcoda solo and add people whenever."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Email addresses"
+msgstr "Email addresses"
+
+#. 0: email
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Remove {0}"
+msgstr "Remove {0}"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "add another…"
+msgstr "add another…"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "name@example.org"
+msgstr "name@example.org"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Sending…"
+msgstr "Sending…"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send 1 invitation"
+msgstr "Send 1 invitation"
+
+#. 0: String(invitationCount)
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send {0} invitations"
+msgstr "Send {0} invitations"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Send invitations"
+msgstr "Send invitations"
+
+#~ msgid "Skip — I'll do this later"
+#~ msgstr "Skip — I'll do this later"
+
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "Your progress"
+msgstr "Your progress"
+
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "saved as you go"
+msgstr "saved as you go"
+
+#~ msgid "Europe / London"
+#~ msgstr "Europe / London"
+
+#~ msgid "WhatsApp later"
+#~ msgstr "WhatsApp later"
+
+#. 0: orgName
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Set up {0}"
+msgstr "Set up {0}"
+
+#~ msgid "Do the essentials now; the rest is here whenever you come back."
+#~ msgstr "Do the essentials now; the rest is here whenever you come back."
+
+#~ msgid "You're all set"
+#~ msgstr "You're all set"
+
+#~ msgid "The essentials are done. You can head into Belcoda — the rest is waiting on your dashboard."
+#~ msgstr "The essentials are done. You can head into Belcoda — the rest is waiting on your dashboard."
+
+#~ msgid "Do now"
+#~ msgstr "Do now"
+
+#~ msgid "Sets defaults for dates, language and messaging."
+#~ msgstr "Sets defaults for dates, language and messaging."
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Create a first team"
+msgstr "Create a first team"
+
+#~ msgid "A team is where your organisers and their work live."
+#~ msgstr "A team is where your organisers and their work live."
+
+#~ msgid "recommended"
+#~ msgstr "recommended"
+
+#~ msgid "When you're ready"
+#~ msgstr "When you're ready"
+
+#~ msgid "Needs a business number + verification. Has ban risk — we guide you."
+#~ msgstr "Needs a business number + verification. Has ban risk — we guide you."
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Set up"
+msgstr "Set up"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Invite your team"
+msgstr "Invite your team"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Optional — you can run Belcoda solo and invite anyone later."
+msgstr "Optional — you can run Belcoda solo and invite anyone later."
+
+#~ msgid "Save & go to dashboard"
+#~ msgstr "Save & go to dashboard"
+
 #. 0: people[0].name; 1: people[1].name
 #: src/lib/server/utils/email/digest_context.ts
 msgid "{0} and {1}"
@@ -6428,371 +6747,6 @@ msgstr "Unsubscribe"
 msgid "Your {0} digest"
 msgstr "Your {0} digest"
 
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Message templates & approval"
-msgstr "Message templates & approval"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Draft the messages Meta must approve before you can broadcast."
-msgstr "Draft the messages Meta must approve before you can broadcast."
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Opt-in collection flow"
-msgstr "Opt-in collection flow"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Collect consent from people before you message them."
-msgstr "Collect consent from people before you message them."
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Number warm-up"
-msgstr "Number warm-up"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Ramp up sending volume gradually to protect your number."
-msgstr "Ramp up sending volume gradually to protect your number."
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Organization created"
-msgstr "Organization created"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Organization profile"
-msgstr "Organization profile"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "First team"
-msgstr "First team"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-#: src/routes/(auth)/setup/whatsapp/+page.svelte
-msgid "Connect WhatsApp"
-msgstr "Connect WhatsApp"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Invite team later"
-msgstr "Invite team later"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Back to setup"
-msgstr "Back to setup"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "High-barrier — only what's needed right now."
-msgstr "High-barrier — only what's needed right now."
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Ban risk"
-msgstr "Ban risk"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Messaging people who never opted in can get your number suspended by Meta. We collect consent and warm the number up before any broadcast."
-msgstr "Messaging people who never opted in can get your number suspended by Meta. We collect consent and warm the number up before any broadcast."
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "Due now"
-msgstr "Due now"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Business phone number"
-msgstr "Business phone number"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "WhatsApp Business Account (WABA) ID"
-msgstr "WhatsApp Business Account (WABA) ID"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Deferred — after you're verified"
-msgstr "Deferred — after you're verified"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Verify number"
-msgstr "Verify number"
-
-#: src/lib/components/widgets/organization-onboarding/ConnectWhatsAppSetup.svelte
-msgid "Do this later"
-msgstr "Do this later"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "1 invitation sent"
-msgstr "1 invitation sent"
-
-#. 0: String(sentEmails.length)
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "{0} invitations sent"
-msgstr "{0} invitations sent"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "1 invitation could not be sent"
-msgstr "1 invitation could not be sent"
-
-#. 0: String(failedEmails.length)
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "{0} invitations could not be sent"
-msgstr "{0} invitations could not be sent"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Invite teammates"
-msgstr "Invite teammates"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Optional. Run Belcoda solo and add people whenever."
-msgstr "Optional. Run Belcoda solo and add people whenever."
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Email addresses"
-msgstr "Email addresses"
-
-#. 0: email
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Remove {0}"
-msgstr "Remove {0}"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "add another…"
-msgstr "add another…"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "name@example.org"
-msgstr "name@example.org"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Sending…"
-msgstr "Sending…"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Send 1 invitation"
-msgstr "Send 1 invitation"
-
-#. 0: String(emails.length)
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Send {0} invitations"
-msgstr "Send {0} invitations"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Send invitations"
-msgstr "Send invitations"
-
-#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
-msgid "Skip — I'll do this later"
-msgstr "Skip — I'll do this later"
-
-#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
-msgid "Team name"
-msgstr "Team name"
-
-#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
-msgid "e.g. Field organisers"
-msgstr "e.g. Field organisers"
-
-#: src/lib/components/widgets/organization-onboarding/OnboardingLayout.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Skip for now"
-msgstr "Skip for now"
-
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "Your progress"
-msgstr "Your progress"
-
-#. 0: String(doneCount); 1: String(visibleTasks.length)
-#. 0: String(doneCount); 1: String(steps.length)
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "{0} of {1} done"
-msgstr "{0} of {1} done"
-
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "saved as you go"
-msgstr "saved as you go"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "United Kingdom"
-msgstr "United Kingdom"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "United States"
-msgstr "United States"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Kenya"
-msgstr "Kenya"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "South Africa"
-msgstr "South Africa"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "India"
-msgstr "India"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "English"
-msgstr "English"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Spanish"
-msgstr "Spanish"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Portuguese"
-msgstr "Portuguese"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Europe / London (GMT+1)"
-msgstr "Europe / London (GMT+1)"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "America / New York (GMT-4)"
-msgstr "America / New York (GMT-4)"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Africa / Nairobi (GMT+3)"
-msgstr "Africa / Nairobi (GMT+3)"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Asia / Kolkata (GMT+5:30)"
-msgstr "Asia / Kolkata (GMT+5:30)"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Select"
-msgstr "Select"
-
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Time zone"
-msgstr "Time zone"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Europe / London"
-msgstr "Europe / London"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "WhatsApp later"
-msgstr "WhatsApp later"
-
-#. 0: orgName
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Set up {0}"
-msgstr "Set up {0}"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Do the essentials now; the rest is here whenever you come back."
-msgstr "Do the essentials now; the rest is here whenever you come back."
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "You're all set"
-msgstr "You're all set"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "The essentials are done. You can head into Belcoda — the rest is waiting on your dashboard."
-msgstr "The essentials are done. You can head into Belcoda — the rest is waiting on your dashboard."
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Do now"
-msgstr "Do now"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Sets defaults for dates, language and messaging."
-msgstr "Sets defaults for dates, language and messaging."
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Create a first team"
-msgstr "Create a first team"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "A team is where your organisers and their work live."
-msgstr "A team is where your organisers and their work live."
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "recommended"
-msgstr "recommended"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "When you're ready"
-msgstr "When you're ready"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Needs a business number + verification. Has ban risk — we guide you."
-msgstr "Needs a business number + verification. Has ban risk — we guide you."
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Set up"
-msgstr "Set up"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Invite your team"
-msgstr "Invite your team"
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Optional — you can run Belcoda solo and invite anyone later."
-msgstr "Optional — you can run Belcoda solo and invite anyone later."
-
-#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
-msgid "Save & go to dashboard"
-msgstr "Save & go to dashboard"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "Set your time zone & language"
-msgstr "Set your time zone & language"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "So dates and messages behave correctly"
-msgstr "So dates and messages behave correctly"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "30 sec"
-msgstr "30 sec"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "Create your first team"
-msgstr "Create your first team"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "Where your organisers live"
-msgstr "Where your organisers live"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "Add your first people"
-msgstr "Add your first people"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "or import a list"
-msgstr "or import a list"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "optional"
-msgstr "optional"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "has ban risk"
-msgstr "has ban risk"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "Finish setting up"
-msgstr "Finish setting up"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "you can do the rest anytime"
-msgstr "you can do the rest anytime"
-
-#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
-msgid "Eventually"
-msgstr "Eventually"
-
 #. 0: formatPeopleList(group.people)
 #: src/lib/server/utils/email/digest_context.ts
 msgid "{0} have signed up"
@@ -6802,3 +6756,356 @@ msgstr "{0} have signed up"
 #: src/lib/server/utils/email/digest_context.ts
 msgid "{0} have signed"
 msgstr "{0} have signed"
+
+#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
+msgid "Default language"
+msgstr "Default language"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "We couldn't save your profile. Your entries are still here. Please try again."
+msgstr "We couldn't save your profile. Your entries are still here. Please try again."
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Saving…"
+msgstr "Saving…"
+
+#~ msgid "Save profile & go to dashboard"
+#~ msgstr "Save profile & go to dashboard"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Organization profile saved"
+msgstr "Organization profile saved"
+
+#~ msgid "Enter a team name between 1 and 200 characters."
+#~ msgstr "Enter a team name between 1 and 200 characters."
+
+#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
+msgid "We couldn't create your team. Please try again, or use a different name if this team already exists."
+msgstr "We couldn't create your team. Please try again, or use a different name if this team already exists."
+
+#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
+msgid "Creating team…"
+msgstr "Creating team…"
+
+#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
+msgid "Create team"
+msgstr "Create team"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Group organisers and their work by location or project. You can do this later."
+msgstr "Group organisers and their work by location or project. You can do this later."
+
+#. 0: createdTeamName
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Team created: {0}"
+msgstr "Team created: {0}"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Your first team is created."
+msgstr "Your first team is created."
+
+#. 0: String(SHORT_STRING_MAX_LENGTH)
+#: src/lib/components/widgets/organization-onboarding/FirstTeamForm.svelte
+msgid "Enter a team name between 1 and {0} characters."
+msgstr "Enter a team name between 1 and {0} characters."
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Create a team"
+msgstr "Create a team"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Check your defaults, then start using Belcoda. Everything else can wait."
+msgstr "Check your defaults, then start using Belcoda. Everything else can wait."
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "You’re ready to get started"
+msgstr "You’re ready to get started"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Your defaults are confirmed. You can leave the optional tasks for later."
+msgstr "Your defaults are confirmed. You can leave the optional tasks for later."
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Your defaults"
+msgstr "Your defaults"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Confirm your defaults"
+msgstr "Confirm your defaults"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "These settings are already filled in. Change them if needed."
+msgstr "These settings are already filled in. Change them if needed."
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Save and continue"
+msgstr "Save and continue"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Optional setup"
+msgstr "Optional setup"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "You can do these now or return to them from your dashboard."
+msgstr "You can do these now or return to them from your dashboard."
+
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "Setup overview"
+msgstr "Setup overview"
+
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "Basics confirmed"
+msgstr "Basics confirmed"
+
+#. 0: String(doneCount); 1: String(basics.length)
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "{0} of {1} basics confirmed"
+msgstr "{0} of {1} basics confirmed"
+
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "Getting started"
+msgstr "Getting started"
+
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
+msgid "Optional — whenever you're ready"
+msgstr "Optional — whenever you're ready"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Works with the people and activities in their assigned teams."
+msgstr "Works with the people and activities in their assigned teams."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Manages organization settings, teams, and invitations."
+msgstr "Manages organization settings, teams, and invitations."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Has full control of the organization, including managing owners."
+msgstr "Has full control of the organization, including managing owners."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Check this email address. Remove it and enter the corrected address."
+msgstr "Check this email address. Remove it and enter the corrected address."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Invitation could not be sent. Check the address or try again."
+msgstr "Invitation could not be sent. Check the address or try again."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Your invitations were sent, but progress could not be saved. Please try again."
+msgstr "Your invitations were sent, but progress could not be saved. Please try again."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Separate addresses with commas, semicolons, or new lines. Press Enter to add an address."
+msgstr "Separate addresses with commas, semicolons, or new lines. Press Enter to add an address."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Your invitations were sent. We couldn’t save your setup progress."
+msgstr "Your invitations were sent. We couldn’t save your setup progress."
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Retry saving progress"
+msgstr "Retry saving progress"
+
+#: src/lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte
+msgid "Role for these teammates"
+msgstr "Role for these teammates"
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "Send updates and reminders, and receive replies from your community."
+msgstr "Send updates and reminders, and receive replies from your community."
+
+#~ msgid "Send updates and reminders, and receive replies from your community. Connecting WhatsApp is optional."
+#~ msgstr "Send updates and reminders, and receive replies from your community. Connecting WhatsApp is optional."
+
+#~ msgid "Before you start"
+#~ msgstr "Before you start"
+
+#~ msgid "Have your Facebook sign-in and business phone details ready. Meta will guide you through selecting or creating a WhatsApp Business Account and authorizing Belcoda to send and receive messages."
+#~ msgstr "Have your Facebook sign-in and business phone details ready. Meta will guide you through selecting or creating a WhatsApp Business Account and authorizing Belcoda to send and receive messages."
+
+#~ msgid "Message people who have agreed to hear from you"
+#~ msgstr "Message people who have agreed to hear from you"
+
+#~ msgid "Collect permission before sending messages. Unwanted messages can lead to restrictions on your WhatsApp account."
+#~ msgstr "Collect permission before sending messages. Unwanted messages can lead to restrictions on your WhatsApp account."
+
+#~ msgid "What happens after connecting?"
+#~ msgstr "What happens after connecting?"
+
+#~ msgid "Review your account status in settings, then prepare your message templates and audience. Connecting an account does not send any messages."
+#~ msgstr "Review your account status in settings, then prepare your message templates and audience. Connecting an account does not send any messages."
+
+#~ msgid "View WhatsApp settings"
+#~ msgstr "View WhatsApp settings"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "WhatsApp connection is unavailable right now. Please try again later."
+msgstr "WhatsApp connection is unavailable right now. Please try again later."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "We couldn't save your WhatsApp connection. Please try again."
+msgstr "We couldn't save your WhatsApp connection. Please try again."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "We couldn't connect WhatsApp. Please try again."
+msgstr "We couldn't connect WhatsApp. Please try again."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Connection not completed"
+msgstr "Connection not completed"
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Connection cancelled"
+msgstr "Connection cancelled"
+
+#~ msgid "WhatsApp connected"
+#~ msgstr "WhatsApp connected"
+
+#~ msgid "Your account is connected. You can review its status in WhatsApp settings."
+#~ msgstr "Your account is connected. You can review its status in WhatsApp settings."
+
+#~ msgid "Connect with Meta"
+#~ msgstr "Connect with Meta"
+
+#~ msgid "A Meta window will open to guide you through the connection. You can cancel and return to setup at any time."
+#~ msgstr "A Meta window will open to guide you through the connection. You can cancel and return to setup at any time."
+
+#: src/routes/(app)/settings/whatsapp/accounts/EmbeddedFlow.svelte
+msgid "Saving connection…"
+msgstr "Saving connection…"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Review organization defaults"
+msgstr "Review organization defaults"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Confirm your time zone and language"
+msgstr "Confirm your time zone and language"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Organize the people who work together"
+msgstr "Organize the people who work together"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Add one person or import a list"
+msgstr "Add one person or import a list"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Bring other organizers into Belcoda"
+msgstr "Bring other organizers into Belcoda"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Send updates and receive replies from your community"
+msgstr "Send updates and receive replies from your community"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Unable to save that choice"
+msgstr "Unable to save that choice"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Keep building your workspace"
+msgstr "Keep building your workspace"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Start with one small step. The rest can wait."
+msgstr "Start with one small step. The rest can wait."
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Continue"
+msgstr "Continue"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Not needed"
+msgstr "Not needed"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "Later"
+msgstr "Later"
+
+#. 0: String(otherTasks.length)
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "More setup suggestions ({0})"
+msgstr "More setup suggestions ({0})"
+
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "s"
+msgstr "s"
+
+#. 0: String(completedTasks.length); 1: completedTasks.length === 1 ? '' \\: 's'
+#: src/lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte
+msgid "{0} setup task{1} complete"
+msgstr "{0} setup task{1} complete"
+
+#: src/lib/components/widgets/dashboard/GettingStartedActions.svelte
+msgid "Add people"
+msgstr "Add people"
+
+#: src/lib/components/widgets/dashboard/GettingStartedActions.svelte
+msgid "Keep contact details, notes, and activity in one place."
+msgstr "Keep contact details, notes, and activity in one place."
+
+#: src/lib/components/widgets/dashboard/GettingStartedActions.svelte
+msgid "Create an event"
+msgstr "Create an event"
+
+#: src/lib/components/widgets/dashboard/GettingStartedActions.svelte
+msgid "Publish an event and manage signups from one place."
+msgstr "Publish an event and manage signups from one place."
+
+#: src/lib/components/widgets/dashboard/GettingStartedActions.svelte
+msgid "Start a petition"
+msgstr "Start a petition"
+
+#: src/lib/components/widgets/dashboard/GettingStartedActions.svelte
+msgid "Collect support and add signers to your community."
+msgstr "Collect support and add signers to your community."
+
+#: src/lib/components/widgets/dashboard/GettingStartedActions.svelte
+msgid "What would you like to do first?"
+msgstr "What would you like to do first?"
+
+#: src/lib/components/widgets/dashboard/GettingStartedActions.svelte
+msgid "Choose one starting point. You can explore everything else later."
+msgstr "Choose one starting point. You can explore everything else later."
+
+#: src/lib/components/widgets/organization-onboarding/SetupPage.svelte
+msgid "We couldn't save your choice. Please try again."
+msgstr "We couldn't save your choice. Please try again."
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Start with your organization’s name. You can add more details later."
+msgstr "Start with your organization’s name. You can add more details later."
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Edit public web address"
+msgstr "Edit public web address"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Public web address"
+msgstr "Public web address"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "your-organization"
+msgstr "your-organization"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "This address is used for your public event and petition pages. Use lowercase letters, numbers, and hyphens. Each organization needs a unique address."
+msgstr "This address is used for your public event and petition pages. Use lowercase letters, numbers, and hyphens. Each organization needs a unique address."
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Add website or logo (optional)"
+msgstr "Add website or logo (optional)"
+
+#: src/routes/(auth)/organization/new/+page.svelte
+msgid "Create organization"
+msgstr "Create organization"
+
+#: src/routes/(app)/setup/+page.svelte
+msgid "Set up your organization"
+msgstr "Set up your organization"
+
+#: src/routes/(app)/setup/+page.svelte
+msgid "An organization admin or owner can update these settings."
+msgstr "An organization admin or owner can update these settings."
