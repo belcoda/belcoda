@@ -7,7 +7,7 @@ import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.p
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
 import { BASE_URL, getMockWabaId, getOrgSlug, slugifyTitle } from '../helpers/config';
 import { expectSidebarItemCountToReach } from '../helpers/infinite-scroll';
-import { loginAsOwner } from '../helpers/login';
+import { loginAsOwner, signOut } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
 	getE2EDefaultWhatsAppNumber,
@@ -298,6 +298,8 @@ test.describe.serial('Petitions: public page', () => {
 	test('anonymous visitor does not see the edit navbar on the public petition page', async ({
 		page
 	}) => {
+		await signOut(page);
+
 		const publicPage = new PetitionPublicPage(page);
 		await publicPage.goto(ORG_SLUG, publicTestIds.petitionSlug);
 
