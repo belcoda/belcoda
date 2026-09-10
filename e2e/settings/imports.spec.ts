@@ -103,31 +103,17 @@ test.describe.serial('Settings: People Imports', () => {
 	test('owner can upload a CSV and import starts', async ({ page }) => {
 		const importsPage = new ImportsPage(page);
 		const csvFile = createSampleCsvFile();
-		const corsHeaders = {
-			'Access-Control-Allow-Origin': '*',
-			'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
-			'Access-Control-Allow-Headers': '*'
-		};
 
 		await page.route('**/api/utils/upload**', async (route) => {
 			const origin = new URL(route.request().url()).origin;
 			await route.fulfill({
 				status: 200,
 				contentType: 'application/json',
-				headers: corsHeaders,
 				body: JSON.stringify({
 					key: 'e2e/test.csv',
-					signedUrl: `${origin}/__e2e__/s3-upload/test.csv`
+					signedUrl: `${origin}/api/e2e/s3-upload/test.csv`
 				})
 			});
-		});
-
-		await page.route('**/__e2e__/s3-upload**', async (route) => {
-			if (route.request().method() === 'OPTIONS') {
-				await route.fulfill({ status: 204, headers: corsHeaders });
-				return;
-			}
-			await route.fulfill({ status: 200, headers: corsHeaders });
 		});
 
 		await loginAsOwner(page, PROJECT);
@@ -138,10 +124,29 @@ test.describe.serial('Settings: People Imports', () => {
 
 		await importsPage.csvFileInput.setInputFiles(csvFile);
 		await expect(page.getByTestId('imports-selected-file')).toBeVisible({ timeout: 5_000 });
-		await importsPage.uploadSubmitButton.click();
 
-		await expect(page.getByText('Import started successfully')).toBeVisible({ timeout: 15_000 });
-		await expect(importsPage.csvFileInput).not.toBeVisible({ timeout: 5_000 });
+		const uploadPut = page.waitForResponse(
+			(response) =>
+				response.request().method() === 'PUT' &&
+				response.url().includes('/api/e2e/s3-upload/') &&
+				response.ok()
+		);
+		const firstZeroPush = page.waitForResponse(
+			(response) => response.url().includes('/api/utils/zero/push') && response.ok()
+		);
+		const secondZeroPush = page.waitForResponse(
+			(response) => response.url().includes('/api/utils/zero/push') && response.ok()
+		);
+		await importsPage.uploadSubmitButton.click();
+		await uploadPut;
+		await firstZeroPush;
+		await secondZeroPush;
+
+		await expect(importsPage.csvFileInput).not.toBeVisible({ timeout: 15_000 });
+		await expect(page.locator('[data-sonner-toast][data-type="success"]')).toContainText(
+			'Import started successfully',
+			{ timeout: 10_000 }
+		);
 
 		fs.unlinkSync(csvFile);
 	});
