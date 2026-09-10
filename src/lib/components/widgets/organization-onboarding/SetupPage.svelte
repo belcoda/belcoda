@@ -22,6 +22,9 @@
 	import { formatTimezone } from '$lib/components/ui/custom-select/timezone/actions';
 	import { saveOrganizationProfile } from './save-profile';
 	import { toast } from 'svelte-sonner';
+	import { appState } from '$lib/state.svelte';
+	import { z } from '$lib/zero.svelte';
+	import { mutators } from '$lib/zero/mutate/client_mutators';
 
 	let {
 		organization,
@@ -69,10 +72,35 @@
 				defaultTimezone: timezone
 			});
 			await saveOrganizationProfile(organization, input);
+			appState.clearOrganizationNeedsOnboardingFlag();
 			toast.success(t`Organization profile saved`);
 			await goto(resolve('/dashboard'));
 		} catch {
 			saveError = t`We couldn't save your profile. Your entries are still here. Please try again.`;
+		} finally {
+			saving = false;
+		}
+	}
+
+	async function skipSetup() {
+		if (saving) return;
+		saving = true;
+		saveError = '';
+		try {
+			const result = await z.mutate(
+				mutators.organization.updateOnboarding({
+					metadata: {
+						organizationId: organization.id,
+						existingSettings: organization.settings
+					},
+					input: { initialSetup: 'skipped' }
+				})
+			).server;
+			if (result.type === 'error') throw new Error(result.error.message);
+			appState.clearOrganizationNeedsOnboardingFlag();
+			await goto(resolve('/dashboard'));
+		} catch {
+			saveError = t`We couldn't save your choice. Please try again.`;
 		} finally {
 			saving = false;
 		}
@@ -108,7 +136,13 @@
 	]);
 </script>
 
-<OnboardingLayout {orgName} {orgIcon} exitHref={resolve('/dashboard')}>
+<OnboardingLayout
+	{orgName}
+	{orgIcon}
+	exitHref={resolve('/dashboard')}
+	exitDisabled={saving}
+	onexit={skipSetup}
+>
 	<header class="flex flex-col gap-1">
 		<h1 class="text-2xl font-semibold tracking-tight">{t`Set up ${orgName}`}</h1>
 		<p class="text-muted-foreground">
@@ -151,9 +185,7 @@
 				<Button onclick={saveProfile} disabled={saving}>
 					{saving ? t`Saving…` : t`Save and continue`}
 				</Button>
-				<Button variant="ghost" disabled={saving} onclick={() => goto(resolve('/dashboard'))}
-					>{t`Skip for now`}</Button
-				>
+				<Button variant="ghost" disabled={saving} onclick={skipSetup}>{t`Skip for now`}</Button>
 			</div>
 
 			<section class="flex flex-col gap-3">

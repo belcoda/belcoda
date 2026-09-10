@@ -18,6 +18,8 @@
 		orgIcon,
 		exitHref = '/dashboard',
 		exitLabel = t`Skip for now`,
+		exitDisabled = false,
+		onexit,
 		showExit = true,
 		children
 	}: {
@@ -25,6 +27,8 @@
 		orgIcon?: string;
 		exitHref?: string;
 		exitLabel?: string;
+		exitDisabled?: boolean;
+		onexit?: () => void | Promise<void>;
 		showExit?: boolean;
 		children: Snippet;
 	} = $props();
@@ -60,9 +64,22 @@
 				</div>
 			{/if}
 			{#if showExit}
-				<Button href={exitHref} variant="ghost" size="sm" class="text-muted-foreground">
-					{exitLabel}
-				</Button>
+				{#if onexit}
+					<Button
+						type="button"
+						variant="ghost"
+						size="sm"
+						class="text-muted-foreground"
+						disabled={exitDisabled}
+						onclick={onexit}
+					>
+						{exitLabel}
+					</Button>
+				{:else}
+					<Button href={exitHref} variant="ghost" size="sm" class="text-muted-foreground">
+						{exitLabel}
+					</Button>
+				{/if}
 			{/if}
 		</div>
 	</header>
