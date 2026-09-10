@@ -17,7 +17,7 @@
 			try {
 				loading = true;
 				await createOrganization(formData);
-				await goto('/');
+				await goto('/setup');
 			} catch (err) {
 				console.error(`Error creating organization: ${err}`);
 				error = err instanceof Error ? err.message : t`An unknown error occurred`;
