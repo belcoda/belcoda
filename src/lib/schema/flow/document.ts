@@ -3,6 +3,12 @@ import * as h from '$lib/schema/helpers';
 import { schemaVersion, schemaVersionOptions } from '$lib/schema/flow';
 import { flowSchema } from '$lib/schema/flow/node';
 
+// Shared between the server (thrown FlowDraftRevisionConflictError) and the client editor store,
+// which matches on it to trigger the reject-and-reload path. Kept here so the client never imports
+// from $lib/server.
+export const FLOW_DRAFT_REVISION_CONFLICT_MESSAGE =
+	'This flow was changed elsewhere. Reload to get the latest version.';
+
 export const flowDocumentSchema = v.object({
 	id: h.uuid,
 	organizationId: h.uuid,

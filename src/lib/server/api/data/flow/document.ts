@@ -9,7 +9,8 @@ import {
 	createFlowDocumentSchema,
 	type CreateFlowDocumentSchemaInput,
 	updateFlowDocumentDraftZeroMutatorSchema,
-	type UpdateFlowDocumentDraftZeroMutatorSchema
+	type UpdateFlowDocumentDraftZeroMutatorSchema,
+	FLOW_DRAFT_REVISION_CONFLICT_MESSAGE
 } from '$lib/schema/flow/document';
 import { flowDocumentReadPermissions } from '$lib/zero/query/flow_document/permissions';
 
@@ -71,7 +72,7 @@ export async function createFlowDocument({
 // Thrown when a draft save is rejected because someone else saved first (the row's draftRevision no
 // longer matches what the editor started from). The client mutator surfaces this as a reject+reload.
 export class FlowDraftRevisionConflictError extends Error {
-	constructor(message = 'This flow was changed elsewhere. Reload to get the latest version.') {
+	constructor(message = FLOW_DRAFT_REVISION_CONFLICT_MESSAGE) {
 		super(message);
 		this.name = 'FlowDraftRevisionConflictError';
 	}
