@@ -18,6 +18,7 @@
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import { page } from '$app/state';
 	import { renderName } from '$lib/utils/name';
+	import { trackTeamMemberAddedWhenConfirmed } from '$lib/utils/team/analytics';
 
 	const teamId = $derived(page.params.teamId ?? '');
 
@@ -40,7 +41,7 @@
 
 	function handleAddPeople(personIds: string[]) {
 		for (const personId of personIds) {
-			z.mutate(
+			const response = z.mutate(
 				mutators.person.addToTeam({
 					metadata: {
 						organizationId: appState.organizationId,
@@ -49,12 +50,13 @@
 					}
 				})
 			);
+			void trackTeamMemberAddedWhenConfirmed(response.server, 'person');
 		}
 	}
 
 	function handleAddUsers(userIds: string[]) {
 		for (const userId of userIds) {
-			z.mutate(
+			const response = z.mutate(
 				mutators.team.addUserToTeam({
 					metadata: {
 						organizationId: appState.organizationId,
@@ -63,6 +65,7 @@
 					}
 				})
 			);
+			void trackTeamMemberAddedWhenConfirmed(response.server, 'user');
 		}
 	}
 
