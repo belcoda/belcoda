@@ -7,7 +7,7 @@ import { PetitionSignaturesPage } from '../pages/petitions/petition-signatures.p
 import { PetitionSurveyPage } from '../pages/petitions/petition-survey.page';
 import { BASE_URL, getMockWabaId, getOrgSlug, slugifyTitle } from '../helpers/config';
 import { expectSidebarItemCountToReach } from '../helpers/infinite-scroll';
-import { loginAsOwner } from '../helpers/login';
+import { loginAsOwner, signOut } from '../helpers/login';
 import {
 	buildWhatsAppInboundFlowReplyWebhook,
 	getE2EDefaultWhatsAppNumber,
@@ -91,15 +91,21 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		await loginAsOwner(page, PROJECT);
 		await page.goto(`/petitions/${petitionId}`);
 
-		await page
+		await page.getByTestId('petition-signature-table').waitFor({ state: 'visible', timeout: 15_000 });
+		const seededItems = page
 			.getByTestId('petition-signatures-list')
-			.waitFor({ state: 'visible', timeout: 10_000 });
-		const items = page.getByTestId('petition-signature-item');
-		await expect(items).toHaveCount(25, { timeout: 15_000 });
+			.getByTestId('petition-signature-item')
+			.filter({ hasText: seedBody.runId });
 
-		await page.getByTestId('petition-signatures-scroll-sentinel').scrollIntoViewIfNeeded();
+		await expect(seededItems.first()).toBeVisible({ timeout: 15_000 });
+		await expect(seededItems).toHaveCount(25, { timeout: 15_000 });
 
-		await expect(items).toHaveCount(30, { timeout: 30_000 });
+		await expectSidebarItemCountToReach(
+			seededItems,
+			30,
+			page,
+			'petition-signatures-scroll-sentinel'
+		);
 	});
 
 	test('owner can load more petitions in the sidebar', async ({ page, request }) => {
@@ -120,7 +126,14 @@ test.describe.serial('Petitions: create, edit, publish, admin', () => {
 		});
 		await expect(visibleItems).toHaveCount(25, { timeout: 15_000 });
 
-		await expectSidebarItemCountToReach(seededItems, 30, page, 'petitions-sidebar-scroll-sentinel');
+		await expectSidebarItemCountToReach(
+			seededItems,
+			30,
+			page,
+			'petitions-sidebar-scroll-sentinel',
+			30_000,
+			'petitions-sidebar-list'
+		);
 	});
 
 	test('owner can add a petition and it is saved as draft', async ({ page }) => {
@@ -285,6 +298,8 @@ test.describe.serial('Petitions: public page', () => {
 	test('anonymous visitor does not see the edit navbar on the public petition page', async ({
 		page
 	}) => {
+		await signOut(page);
+
 		const publicPage = new PetitionPublicPage(page);
 		await publicPage.goto(ORG_SLUG, publicTestIds.petitionSlug);
 
