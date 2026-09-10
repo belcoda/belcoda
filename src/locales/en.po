@@ -5021,6 +5021,7 @@ msgid "Are you sure you want to discard this WhatsApp draft?"
 msgstr "Are you sure you want to discard this WhatsApp draft?"
 
 #: src/lib/components/flow/flow_state.svelte.ts
+#: src/lib/components/flow2/flow_state.svelte.ts
 msgid "Changes not saved"
 msgstr "Changes not saved"
 
@@ -6701,3 +6702,27 @@ msgstr "Your progress"
 #: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
 msgid "saved as you go"
 msgstr "saved as you go"
+
+#: src/routes/(app)/flow/new/+page.svelte
+msgid "Could not create flow"
+msgstr "Could not create flow"
+
+#: src/routes/(app)/flow/new/+page.svelte
+msgid "Creating flow…"
+msgstr "Creating flow…"
+
+#: src/routes/(app)/flow/[id]/+page.svelte
+msgid "Flow not found"
+msgstr "Flow not found"
+
+#: src/routes/(app)/flow/[id]/+page.svelte
+msgid "This flow doesn't exist or you don't have access to it."
+msgstr "This flow doesn't exist or you don't have access to it."
+
+#: src/routes/(app)/flow/[id]/+page.svelte
+msgid "Back to flows"
+msgstr "Back to flows"
+
+#: src/lib/components/flow2/flow_state.svelte.ts
+msgid "This flow was changed elsewhere. Reloading the latest version."
+msgstr "This flow was changed elsewhere. Reloading the latest version."
