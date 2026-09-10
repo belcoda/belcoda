@@ -9,7 +9,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { appState } from '$lib/state.svelte';
-	import { trackTeamCreated } from '$lib/utils/team/analytics';
+	import { trackTeamCreatedWhenConfirmed } from '$lib/utils/team/analytics';
 	import { v7 as uuidv7 } from 'uuid';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 
@@ -27,11 +27,7 @@
 					input: data
 				})
 			);
-			void response.server
-				.then((result) => {
-					if (result.type !== 'error') trackTeamCreated();
-				})
-				.catch(() => undefined);
+			void trackTeamCreatedWhenConfirmed(response.server);
 			isOpen = false;
 			onCreated?.();
 		}
