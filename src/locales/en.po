@@ -4466,6 +4466,7 @@ msgstr "Reference"
 msgid "Debug details"
 msgstr "Debug details"
 
+#: src/routes/(app)/dashboard/+page.svelte
 #: src/routes/+error.svelte
 msgid "Try again"
 msgstr "Try again"
@@ -7090,8 +7091,11 @@ msgstr "Set up your organization"
 #: src/routes/(app)/setup/+page.svelte
 msgid "An organization admin or owner can update these settings."
 msgstr "An organization admin or owner can update these settings."
-Set up your organization"
 
-#: src/routes/(app)/setup/+page.svelte
-msgid "An organization admin or owner can update these settings."
-msgstr "An organization admin or owner can update these settings."
+#: src/routes/(app)/dashboard/+page.svelte
+msgid "We couldn't load your dashboard activity."
+msgstr "We couldn't load your dashboard activity."
+
+#: src/routes/(app)/dashboard/+page.svelte
+msgid "Check your connection and try again."
+msgstr "Check your connection and try again."

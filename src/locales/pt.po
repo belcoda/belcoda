@@ -4452,6 +4452,7 @@ msgstr "Referência"
 msgid "Debug details"
 msgstr "Detalhes de depuração"
 
+#: src/routes/(app)/dashboard/+page.svelte
 #: src/routes/+error.svelte
 msgid "Try again"
 msgstr "Tentar novamente"
@@ -7077,10 +7078,10 @@ msgstr ""
 msgid "An organization admin or owner can update these settings."
 msgstr ""
 
-#: src/routes/(app)/setup/+page.svelte
-msgid "Set up your organization"
+#: src/routes/(app)/dashboard/+page.svelte
+msgid "We couldn't load your dashboard activity."
 msgstr ""
 
-#: src/routes/(app)/setup/+page.svelte
-msgid "An organization admin or owner can update these settings."
+#: src/routes/(app)/dashboard/+page.svelte
+msgid "Check your connection and try again."
 msgstr ""

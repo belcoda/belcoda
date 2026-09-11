@@ -12,6 +12,7 @@
 	import { resolve } from '$app/paths';
 	import queries from '$lib/zero/query';
 	import { z } from '$lib/zero.svelte';
+	import { locale, t } from '$lib/index.svelte';
 
 	let inviteOpen = $state(false);
 
@@ -34,9 +35,14 @@
 		z.createQuery(queries.petition.list(getListFilter(appState.organizationId, { pageSize: 1 })))
 	);
 	const workspaceStateReady = $derived(
-		firstPeople.details.type !== 'unknown' &&
-			firstEvents.details.type !== 'unknown' &&
-			firstPetitions.details.type !== 'unknown'
+		firstPeople.details.type === 'complete' &&
+			firstEvents.details.type === 'complete' &&
+			firstPetitions.details.type === 'complete'
+	);
+	const workspaceStateError = $derived(
+		firstPeople.details.type === 'error' ||
+			firstEvents.details.type === 'error' ||
+			firstPetitions.details.type === 'error'
 	);
 	const isNewWorkspace = $derived(
 		workspaceStateReady &&
@@ -45,7 +51,9 @@
 			!firstPetitions.data?.length
 	);
 
-	import { locale } from '$lib/index.svelte';
+	function retryWorkspaceState() {
+		document.location.reload();
+	}
 
 	const dateLabel = today.toLocaleDateString(locale.current, {
 		weekday: 'long',
@@ -97,7 +105,17 @@
 			{/key}
 		{/if}
 
-		{#if isNewWorkspace}
+		{#if workspaceStateError}
+			<div class="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center">
+				<div class="min-w-0 flex-1">
+					<p class="text-sm font-medium">{t`We couldn't load your dashboard activity.`}</p>
+					<p class="mt-0.5 text-sm text-muted-foreground">
+						{t`Check your connection and try again.`}
+					</p>
+				</div>
+				<Button variant="outline" size="sm" onclick={retryWorkspaceState}>{t`Try again`}</Button>
+			</div>
+		{:else if isNewWorkspace}
 			<GettingStartedActions />
 		{:else if workspaceStateReady}
 			<NextEventCard />
