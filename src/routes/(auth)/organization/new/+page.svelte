@@ -6,6 +6,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import createForm from '$lib/form.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	let loading = $state(false);
 	let error: string | undefined = $state(undefined);
 	import { createOrganization } from './actions';
@@ -17,7 +18,7 @@
 			try {
 				loading = true;
 				const created = await createOrganization(formData);
-				await goto(`${resolve('/setup')}?org=${encodeURIComponent(created.id)}`);
+				await goto(resolve(`/setup?org=${encodeURIComponent(created.id)}`));
 			} catch (err) {
 				console.error(`Error creating organization: ${err}`);
 				error = err instanceof Error ? err.message : t`An unknown error occurred`;
