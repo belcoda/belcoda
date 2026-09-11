@@ -25,7 +25,7 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<title>Belcoda</title>
-	{#if dev}
+	{#if !dev}
 		<script
 			defer
 			src="https://cloud.umami.is/script.js"
