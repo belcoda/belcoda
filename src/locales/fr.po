@@ -3390,10 +3390,6 @@ msgstr "Sélectionner une option"
 msgid "Other"
 msgstr "Autre"
 
-#: src/lib/components/widgets/tutorial/onboarding/OnboardingVideo.svelte
-msgid "Getting started with Belcoda"
-msgstr "Premiers pas avec Belcoda"
-
 #: src/routes/(auth)/organization/RenderInvitation.svelte
 msgid "Decline invitation"
 msgstr "Refuser l’invitation"
