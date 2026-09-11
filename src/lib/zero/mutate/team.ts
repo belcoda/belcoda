@@ -6,6 +6,7 @@ import {
 	addUserToTeamMutatorSchema,
 	removeUserFromTeamMutatorSchema
 } from '$lib/schema/team';
+import { defaultOrganizationOnboardingSettings } from '$lib/schema/organization/settings';
 
 export const createTeam = defineMutator(createMutatorSchema, async ({ tx, args, ctx }) => {
 	const now = Date.now();
@@ -51,4 +52,30 @@ export const removeUserFromTeam = defineMutator(
 	}
 );
 
-export const createOnboardingTeam = defineMutator(createOnboardingTeamSchema, async () => {});
+export const createOnboardingTeam = defineMutator(
+	createOnboardingTeamSchema,
+	async ({ tx, args }) => {
+		const now = Date.now();
+		tx.mutate.team.insert({
+			id: args.metadata.teamId,
+			organizationId: args.metadata.organizationId,
+			name: args.input.name,
+			parentTeamId: args.input.parentTeamId ?? null,
+			createdAt: now,
+			updatedAt: now,
+			deletedAt: null
+		});
+		tx.mutate.organization.update({
+			id: args.metadata.organizationId,
+			settings: {
+				...args.metadata.existingSettings,
+				onboarding: {
+					...defaultOrganizationOnboardingSettings('complete'),
+					...args.metadata.existingSettings.onboarding,
+					team: 'complete'
+				}
+			},
+			updatedAt: now
+		});
+	}
+);
