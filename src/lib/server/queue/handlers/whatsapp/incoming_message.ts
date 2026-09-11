@@ -51,6 +51,12 @@ import { convertIncomingWhatsAppMessage } from '$lib/server/queue/handlers/whats
 import { v7 as uuidv7 } from 'uuid';
 import { createNotification } from '$lib/server/api/data/notification/notification';
 import { isWhatsappOptOutMessage } from '$lib/server/utils/whatsapp/opt_out';
+import { trackServerAnalyticsEvent } from '$lib/server/analytics';
+import {
+	petitionAnalyticsEventNames,
+	petitionHasSurvey,
+	type PetitionWhatsAppSignatureCompletedAnalyticsData
+} from '$lib/utils/petition/analytics';
 export async function handleIncomingMessage(incomingMessage: unknown) {
 	let parsed: IncomingMessage;
 	try {
@@ -69,9 +75,12 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 
 	const insertedWhatsAppMessageId: string = uuidv7();
 	try {
-		await db.transaction(async (tx) => {
-			await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
+		const analyticsEvent = await db.transaction(async (tx) => {
+			return await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
 		});
+		if (analyticsEvent) {
+			void trackServerAnalyticsEvent(analyticsEvent.name, analyticsEvent.data);
+		}
 	} catch (err) {
 		log.error(err, 'Failed to process incoming message');
 		throw err;
@@ -235,6 +244,8 @@ async function processIncomingMessageInTransaction(
 			}
 		});
 	}
+
+	return routingResult.analyticsEvent;
 }
 
 type WhatsappIdentity = { wabaId: string; bsuid: string } | undefined;
@@ -255,7 +266,25 @@ type MessageRoutingResult = {
 	organizationId?: string;
 	logActivity?: boolean;
 	contactPreferenceAction?: 'opt_out';
+	analyticsEvent?: WhatsAppAnalyticsEvent;
 };
+
+type WhatsAppAnalyticsEvent = {
+	name: typeof petitionAnalyticsEventNames.signatureCompleted;
+	data: PetitionWhatsAppSignatureCompletedAnalyticsData;
+};
+
+function getWhatsAppPetitionSignatureAnalyticsEvent(
+	hasSurvey: boolean
+): MessageRoutingResult['analyticsEvent'] {
+	return {
+		name: petitionAnalyticsEventNames.signatureCompleted,
+		data: {
+			signature_channel: 'whatsapp',
+			has_survey: hasSurvey
+		}
+	};
+}
 
 type TextMessage = Extract<IncomingMessageObject, { type: 'text' }>;
 type ButtonMessage = Extract<IncomingMessageObject, { type: 'button' }>;
@@ -484,7 +513,11 @@ async function handlePetitionSignedActionCode(
 	return {
 		personId: outcome.personId,
 		organizationId: petitionRecord.organizationId,
-		logActivity: false
+		logActivity: false,
+		analyticsEvent:
+			!outcome.flowSent && outcome.transitionedToComplete
+				? getWhatsAppPetitionSignatureAnalyticsEvent(petitionHasSurvey(petitionRecord))
+				: undefined
 	};
 }
 
@@ -558,7 +591,8 @@ async function handleInteractiveMessage(
 		return {
 			logActivity: false,
 			personId: flowResult.personId,
-			organizationId: flowResult.organizationId
+			organizationId: flowResult.organizationId,
+			analyticsEvent: flowResult.analyticsEvent
 		};
 	}
 	return {};

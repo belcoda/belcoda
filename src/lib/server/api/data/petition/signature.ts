@@ -318,17 +318,7 @@ export async function getPetitionSignaturesByPetitionIdUnsafe({
 	return petitionSignatures;
 }
 
-export async function signPetitionHelper({
-	petitionId,
-	teamId,
-	tx,
-	personAction,
-	signatureDetails,
-	organizationId,
-	skipNotifications = false,
-	whatsappIdentity,
-	whatsappContextWamidId
-}: {
+type SignPetitionHelperArgs = {
 	tx: ServerTransaction;
 	petitionId: string;
 	personAction: PersonActionHelper;
@@ -338,7 +328,24 @@ export async function signPetitionHelper({
 	skipNotifications?: boolean;
 	whatsappIdentity?: WhatsappIdentityLookup;
 	whatsappContextWamidId?: string;
-}) {
+};
+
+export async function signPetitionHelper(args: SignPetitionHelperArgs) {
+	const { petitionSignature } = await signPetitionHelperWithResult(args);
+	return petitionSignature;
+}
+
+export async function signPetitionHelperWithResult({
+	petitionId,
+	teamId,
+	tx,
+	personAction,
+	signatureDetails,
+	organizationId,
+	skipNotifications = false,
+	whatsappIdentity,
+	whatsappContextWamidId
+}: SignPetitionHelperArgs) {
 	const parsedSignatureDetails = parse(petitionSignatureDetails, signatureDetails);
 	const parsedActionHelper = parse(personActionHelper, personAction);
 	const petitionResult = await getPetitionByIdUnsafe({ petitionId, organizationId, tx });
@@ -369,7 +376,7 @@ export async function signPetitionHelper({
 
 	const organizationRecord = await getOrganizationByIdUnsafe({ organizationId, tx });
 
-	const petitionSignatureResult = await signPetitionUnsafe({
+	return await signPetitionUnsafeWithResult({
 		tx,
 		petitionSignatureId,
 		petitionRecord: petitionResult,
@@ -378,7 +385,6 @@ export async function signPetitionHelper({
 		details: parsedSignatureDetails,
 		skipNotifications
 	});
-	return petitionSignatureResult;
 }
 
 export async function signPetitionWithId({
@@ -420,7 +426,22 @@ export async function signPetitionWithId({
 	});
 }
 
-export async function signPetitionUnsafe({
+type SignPetitionUnsafeArgs = {
+	tx: ServerTransaction;
+	petitionSignatureId?: string;
+	petitionRecord: typeof petition.$inferSelect;
+	personRecord: typeof person.$inferSelect;
+	organizationRecord: typeof organization.$inferSelect;
+	details: PetitionSignatureDetails;
+	skipNotifications?: boolean;
+};
+
+export async function signPetitionUnsafe(args: SignPetitionUnsafeArgs) {
+	const { petitionSignature } = await signPetitionUnsafeWithResult(args);
+	return petitionSignature;
+}
+
+async function signPetitionUnsafeWithResult({
 	petitionSignatureId,
 	petitionRecord,
 	personRecord,
@@ -428,15 +449,7 @@ export async function signPetitionUnsafe({
 	tx,
 	details,
 	skipNotifications = false
-}: {
-	petitionSignatureId?: string;
-	tx: ServerTransaction;
-	petitionRecord: typeof petition.$inferSelect;
-	personRecord: typeof person.$inferSelect;
-	organizationRecord: typeof organization.$inferSelect;
-	details: PetitionSignatureDetails;
-	skipNotifications?: boolean;
-}) {
+}: SignPetitionUnsafeArgs) {
 	const id = petitionSignatureId || uuidv7();
 
 	// A soft-deleted signature may still occupy the (petitionId, personId) unique slot (the
@@ -558,10 +571,18 @@ export async function signPetitionUnsafe({
 		queueSendOptionsFromTransaction(tx)
 	);
 
-	return insertedPetitionSignature;
+	return {
+		petitionSignature: insertedPetitionSignature,
+		transitionedToComplete: !hasActiveSignature
+	};
 }
 
-export async function completePetitionSignatureHelper({
+export async function completePetitionSignatureHelper(args: SignPetitionHelperArgs) {
+	const { petitionSignature } = await completePetitionSignatureHelperWithResult(args);
+	return petitionSignature;
+}
+
+export async function completePetitionSignatureHelperWithResult({
 	petitionId,
 	teamId,
 	tx,
@@ -571,18 +592,8 @@ export async function completePetitionSignatureHelper({
 	skipNotifications = true,
 	whatsappIdentity,
 	whatsappContextWamidId
-}: {
-	tx: ServerTransaction;
-	petitionId: string;
-	personAction: PersonActionHelper;
-	signatureDetails: PetitionSignatureDetails;
-	organizationId: string;
-	teamId?: string;
-	skipNotifications?: boolean;
-	whatsappIdentity?: WhatsappIdentityLookup;
-	whatsappContextWamidId?: string;
-}) {
-	const result = await signPetitionHelper({
+}: SignPetitionHelperArgs) {
+	const result = await signPetitionHelperWithResult({
 		petitionId,
 		teamId,
 		tx,
@@ -596,10 +607,10 @@ export async function completePetitionSignatureHelper({
 	const queue = await getQueue();
 	await queue.insertActivity({
 		organizationId,
-		personId: result.personId,
+		personId: result.petitionSignature.personId,
 		userId: undefined,
 		type: 'petition_signed',
-		referenceId: result.id,
+		referenceId: result.petitionSignature.id,
 		unread: false
 	});
 	return result;
@@ -681,31 +692,43 @@ export async function createIncompletePetitionSignatureHelper({
 			});
 			return { flowSent: true as const, personId: personRecord.id };
 		} catch {
-			return await completePetitionSignatureHelper({
-				petitionId,
-				teamId,
-				tx,
-				personAction,
-				signatureDetails: parsedSignatureDetails,
-				organizationId,
-				skipNotifications: true,
-				whatsappIdentity,
-				whatsappContextWamidId
-			});
+			const { petitionSignature, transitionedToComplete } =
+				await completePetitionSignatureHelperWithResult({
+					petitionId,
+					teamId,
+					tx,
+					personAction,
+					signatureDetails: parsedSignatureDetails,
+					organizationId,
+					skipNotifications: true,
+					whatsappIdentity,
+					whatsappContextWamidId
+				});
+			return {
+				flowSent: false as const,
+				personId: petitionSignature.personId,
+				transitionedToComplete
+			};
 		}
 	}
 
-	return await completePetitionSignatureHelper({
-		petitionId,
-		teamId,
-		tx,
-		personAction,
-		signatureDetails: parsedSignatureDetails,
-		organizationId,
-		skipNotifications: true,
-		whatsappIdentity,
-		whatsappContextWamidId
-	});
+	const { petitionSignature, transitionedToComplete } =
+		await completePetitionSignatureHelperWithResult({
+			petitionId,
+			teamId,
+			tx,
+			personAction,
+			signatureDetails: parsedSignatureDetails,
+			organizationId,
+			skipNotifications: true,
+			whatsappIdentity,
+			whatsappContextWamidId
+		});
+	return {
+		flowSent: false as const,
+		personId: petitionSignature.personId,
+		transitionedToComplete
+	};
 }
 
 export async function deletePetitionSignature({
