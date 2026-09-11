@@ -19,7 +19,6 @@ msgstr "Date and time"
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
 #: src/routes/(app)/settings/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
@@ -4082,6 +4081,7 @@ msgstr "Import started successfully"
 msgid "Upload failed. Please try again."
 msgstr "Upload failed. Please try again."
 
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Completed"
 msgstr "Completed"
@@ -6431,10 +6431,8 @@ msgstr "optional"
 #~ msgid "Finish setting up"
 #~ msgstr "Finish setting up"
 
-#. 0: String(doneCount); 1: String(steps.length)
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "{0} of {1} done"
-msgstr "{0} of {1} done"
+#~ msgid "{0} of {1} done"
+#~ msgstr "{0} of {1} done"
 
 #~ msgid "you can do the rest anytime"
 #~ msgstr "you can do the rest anytime"
@@ -6455,59 +6453,44 @@ msgstr "e.g. Field organisers"
 msgid "Skip for now"
 msgstr "Skip for now"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "United Kingdom"
-msgstr "United Kingdom"
+#~ msgid "United Kingdom"
+#~ msgstr "United Kingdom"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "United States"
-msgstr "United States"
+#~ msgid "United States"
+#~ msgstr "United States"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Kenya"
-msgstr "Kenya"
+#~ msgid "Kenya"
+#~ msgstr "Kenya"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "South Africa"
-msgstr "South Africa"
+#~ msgid "South Africa"
+#~ msgstr "South Africa"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "India"
-msgstr "India"
+#~ msgid "India"
+#~ msgstr "India"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "English"
-msgstr "English"
+#~ msgid "English"
+#~ msgstr "English"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Spanish"
-msgstr "Spanish"
+#~ msgid "Spanish"
+#~ msgstr "Spanish"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Portuguese"
-msgstr "Portuguese"
+#~ msgid "Portuguese"
+#~ msgstr "Portuguese"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Europe / London (GMT+1)"
-msgstr "Europe / London (GMT+1)"
+#~ msgid "Europe / London (GMT+1)"
+#~ msgstr "Europe / London (GMT+1)"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "America / New York (GMT-4)"
-msgstr "America / New York (GMT-4)"
+#~ msgid "America / New York (GMT-4)"
+#~ msgstr "America / New York (GMT-4)"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Africa / Nairobi (GMT+3)"
-msgstr "Africa / Nairobi (GMT+3)"
+#~ msgid "Africa / Nairobi (GMT+3)"
+#~ msgstr "Africa / Nairobi (GMT+3)"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Asia / Kolkata (GMT+5:30)"
-msgstr "Asia / Kolkata (GMT+5:30)"
+#~ msgid "Asia / Kolkata (GMT+5:30)"
+#~ msgstr "Asia / Kolkata (GMT+5:30)"
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Select"
-msgstr "Select"
+#~ msgid "Select"
+#~ msgstr "Select"
 
 #: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
 msgid "Time zone"
@@ -6569,13 +6552,11 @@ msgstr "Send invitations"
 #~ msgid "Skip — I'll do this later"
 #~ msgstr "Skip — I'll do this later"
 
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "Your progress"
-msgstr "Your progress"
+#~ msgid "Your progress"
+#~ msgstr "Your progress"
 
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "saved as you go"
-msgstr "saved as you go"
+#~ msgid "saved as you go"
+#~ msgstr "saved as you go"
 
 #~ msgid "Europe / London"
 #~ msgstr "Europe / London"
@@ -7105,6 +7086,11 @@ msgstr "Create organization"
 #: src/routes/(app)/setup/+page.svelte
 msgid "Set up your organization"
 msgstr "Set up your organization"
+
+#: src/routes/(app)/setup/+page.svelte
+msgid "An organization admin or owner can update these settings."
+msgstr "An organization admin or owner can update these settings."
+Set up your organization"
 
 #: src/routes/(app)/setup/+page.svelte
 msgid "An organization admin or owner can update these settings."

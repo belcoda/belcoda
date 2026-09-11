@@ -19,7 +19,6 @@ msgstr "Tanggal dan waktu"
 #: src/lib/components/forms/person/PersonCreateOrUpdate.svelte
 #: src/lib/components/layouts/app/sidebars/settings/items.ts
 #: src/lib/components/widgets/communications/recipients/Option.svelte
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
 #: src/routes/(app)/settings/language/+page.svelte
 #: src/routes/(app)/settings/whatsapp/templates/+page.svelte
 msgid "Language"
@@ -4082,6 +4081,7 @@ msgstr "Impor berhasil dimulai"
 msgid "Upload failed. Please try again."
 msgstr "Pengunggahan gagal. Silakan coba lagi."
 
+#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
 #: src/routes/(app)/settings/people/imports/+page.svelte
 msgid "Completed"
 msgstr "Selesai"
@@ -6431,10 +6431,8 @@ msgstr ""
 #~ msgid "Finish setting up"
 #~ msgstr ""
 
-#. 0: String(doneCount); 1: String(steps.length)
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "{0} of {1} done"
-msgstr ""
+#~ msgid "{0} of {1} done"
+#~ msgstr ""
 
 #~ msgid "you can do the rest anytime"
 #~ msgstr ""
@@ -6455,59 +6453,44 @@ msgstr ""
 msgid "Skip for now"
 msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "United Kingdom"
-msgstr ""
+#~ msgid "United Kingdom"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "United States"
-msgstr ""
+#~ msgid "United States"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Kenya"
-msgstr ""
+#~ msgid "Kenya"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "South Africa"
-msgstr ""
+#~ msgid "South Africa"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "India"
-msgstr ""
+#~ msgid "India"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "English"
-msgstr ""
+#~ msgid "English"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Spanish"
-msgstr ""
+#~ msgid "Spanish"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Portuguese"
-msgstr ""
+#~ msgid "Portuguese"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Europe / London (GMT+1)"
-msgstr ""
+#~ msgid "Europe / London (GMT+1)"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "America / New York (GMT-4)"
-msgstr ""
+#~ msgid "America / New York (GMT-4)"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Africa / Nairobi (GMT+3)"
-msgstr ""
+#~ msgid "Africa / Nairobi (GMT+3)"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Asia / Kolkata (GMT+5:30)"
-msgstr ""
+#~ msgid "Asia / Kolkata (GMT+5:30)"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-#: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
-msgid "Select"
-msgstr ""
+#~ msgid "Select"
+#~ msgstr ""
 
 #: src/lib/components/widgets/organization-onboarding/OrganizationProfileForm.svelte
 msgid "Time zone"
@@ -6569,13 +6552,11 @@ msgstr ""
 #~ msgid "Skip — I'll do this later"
 #~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "Your progress"
-msgstr ""
+#~ msgid "Your progress"
+#~ msgstr ""
 
-#: src/lib/components/widgets/organization-onboarding/SetupProgressChecklist.svelte
-msgid "saved as you go"
-msgstr ""
+#~ msgid "saved as you go"
+#~ msgstr ""
 
 #~ msgid "Europe / London"
 #~ msgstr ""
@@ -7100,6 +7081,14 @@ msgstr ""
 
 #: src/routes/(auth)/organization/new/+page.svelte
 msgid "Create organization"
+msgstr ""
+
+#: src/routes/(app)/setup/+page.svelte
+msgid "Set up your organization"
+msgstr ""
+
+#: src/routes/(app)/setup/+page.svelte
+msgid "An organization admin or owner can update these settings."
 msgstr ""
 
 #: src/routes/(app)/setup/+page.svelte
