@@ -145,19 +145,17 @@
 
 					<Form.Field {form} name="icon" class="w-full">
 						<Form.Control>
-							{#snippet children()}
-								<Form.Label>{t`Organization logo (optional)`}</Form.Label>
-								<Form.Description
-									>{t`Your organization's logo. It should be square and less than 2MB`}</Form.Description
-								>
-								<CroppedImageUpload
-									class="aspect-square"
-									aspectRatio={1 / 1}
-									onUpload={(url) => {
-										$data.icon = url;
-									}}
-								/>
-							{/snippet}
+							<Form.Label>{t`Organization logo (optional)`}</Form.Label>
+							<Form.Description
+								>{t`Your organization's logo. It should be square and less than 2MB`}</Form.Description
+							>
+							<CroppedImageUpload
+								class="aspect-square"
+								aspectRatio={1 / 1}
+								onUpload={(url) => {
+									$data.icon = url;
+								}}
+							/>
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
