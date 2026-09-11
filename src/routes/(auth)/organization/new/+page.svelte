@@ -144,7 +144,7 @@
 
 					<Form.Field {form} name="icon" class="w-full">
 						<Form.Control>
-							{#snippet children({ props })}
+							{#snippet children()}
 								<Form.Label>{t`Organization logo (optional)`}</Form.Label>
 								<Form.Description
 									>{t`Your organization's logo. It should be square and less than 2MB`}</Form.Description
