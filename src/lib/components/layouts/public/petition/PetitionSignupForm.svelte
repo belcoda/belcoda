@@ -33,7 +33,7 @@
 	import type { OrganizationSchema } from '$lib/schema/organization';
 	import type { Snippet } from 'svelte';
 	import {
-		petitionHasSurvey,
+		getPetitionFormSignatureCompletedAnalytics,
 		trackPetitionSignatureCompleted
 	} from '$lib/utils/petition/analytics';
 
@@ -97,14 +97,6 @@
 
 	/* svelte-ignore state_referenced_locally */
 	const surveySchema = getSurveySchema({ settings: petition.settings });
-	function getRedirectPathname(location: string): string | null {
-		try {
-			return new URL(location, page.url).pathname;
-		} catch {
-			return null;
-		}
-	}
-
 	/* svelte-ignore state_referenced_locally */
 	const petitionForm = superForm(form ?? defaults(valibot(surveySchema)), {
 		validators: valibot(surveySchema),
@@ -112,17 +104,16 @@
 		delayMs: 200,
 		timeoutMs: 12000,
 		onResult: ({ result }) => {
-			if (
-				result.type === 'redirect' &&
-				!isAdmin &&
-				getRedirectPathname(result.location)?.endsWith('/signed')
-			) {
-				trackPetitionSignatureCompleted({
-					signature_channel: 'form',
-					has_survey: petitionHasSurvey(petition),
-					layout
-				});
-			}
+			if (result.type !== 'redirect') return;
+
+			const analytics = getPetitionFormSignatureCompletedAnalytics({
+				redirectLocation: result.location,
+				baseUrl: page.url,
+				isAdmin,
+				petition,
+				layout
+			});
+			if (analytics) trackPetitionSignatureCompleted(analytics);
 		}
 	});
 	const { form: dataForm, submitting, delayed, allErrors } = $derived(petitionForm);

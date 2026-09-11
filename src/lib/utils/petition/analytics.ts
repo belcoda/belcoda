@@ -36,6 +36,14 @@ export type PetitionWhatsAppHandoffAnalyticsData = {
 	layout: PublicPetitionLayout;
 };
 
+type PetitionFormSignatureAnalyticsInput = {
+	redirectLocation: string;
+	baseUrl: URL;
+	isAdmin: boolean;
+	petition: PetitionAnalyticsSource;
+	layout: PublicPetitionLayout;
+};
+
 export function petitionHasSurvey(petition: PetitionAnalyticsSource): boolean {
 	return Boolean(
 		petition.settings?.survey?.collections?.some((collection) => collection.questions?.length)
@@ -48,6 +56,34 @@ export function getPetitionPublishingAnalytics(petition: PetitionAnalyticsSource
 		has_target: Boolean(petition.petitionTarget),
 		has_survey: petitionHasSurvey(petition)
 	};
+}
+
+export function getPetitionFormSignatureCompletedAnalytics({
+	redirectLocation,
+	baseUrl,
+	isAdmin,
+	petition,
+	layout
+}: PetitionFormSignatureAnalyticsInput): PetitionFormSignatureCompletedAnalyticsData | null {
+	if (isAdmin) return null;
+
+	try {
+		if (!new URL(redirectLocation, baseUrl).pathname.endsWith('/signed')) return null;
+	} catch {
+		return null;
+	}
+
+	return {
+		signature_channel: 'form',
+		has_survey: petitionHasSurvey(petition),
+		layout
+	};
+}
+
+export function petitionSignatureTransitionedToComplete(existingSignature?: {
+	deletedAt?: Date | null;
+}): boolean {
+	return !existingSignature || existingSignature.deletedAt != null;
 }
 
 export function trackPetitionPublished(petition: PetitionAnalyticsSource): void {

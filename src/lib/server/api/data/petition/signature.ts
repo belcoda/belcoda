@@ -47,6 +47,7 @@ import type { InferOutput } from 'valibot';
 import { sendFlowMessage } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 import { createWhatsAppMessage } from '../whatsapp/message';
 import { createNotification } from '$lib/server/api/data/notification/notification';
+import { petitionSignatureTransitionedToComplete } from '$lib/utils/petition/analytics';
 
 async function applyPetitionTagsToPersonUnsafe({
 	tx,
@@ -573,7 +574,7 @@ async function signPetitionUnsafeWithResult({
 
 	return {
 		petitionSignature: insertedPetitionSignature,
-		transitionedToComplete: !hasActiveSignature
+		transitionedToComplete: petitionSignatureTransitionedToComplete(existingPetitionSignature)
 	};
 }
 
