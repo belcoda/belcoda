@@ -6,7 +6,10 @@ import {
 	updateOrganizationWhatsappSettings
 } from '$lib/server/api/data/organization';
 import { bindPhoneNumberToWaba } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
-import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
+import {
+	defaultOrganizationOnboardingSettings,
+	defaultOrganizationSettings
+} from '$lib/schema/organization/settings';
 import { getQueue } from '$lib/server/queue';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import type { SQL } from 'drizzle-orm';
@@ -106,6 +109,9 @@ describe('updateOrganizationOnboarding', () => {
 			])
 		);
 		expect(query.params).toContain(JSON.stringify({ whatsappAccount: 'complete' }));
+		expect(query.params).toContain(
+			JSON.stringify(defaultOrganizationOnboardingSettings('complete'))
+		);
 		expect(query.sql).toContain('COALESCE("organization"."settings"->\'onboarding\'');
 	});
 

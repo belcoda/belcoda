@@ -157,10 +157,9 @@ export async function updateOrganizationWhatsappSettings({
 	const connectedOnboarding =
 		number && wabaId && whatsappPatch.number
 			? sql`jsonb_build_object('onboarding',
-			COALESCE(${organization.settings}->'onboarding', ${JSON.stringify({
-				...defaultOrganizationOnboardingSettings(),
-				initialSetup: 'complete'
-			})}::jsonb) || ${JSON.stringify({ whatsappAccount: 'complete' })}::jsonb)`
+			COALESCE(${organization.settings}->'onboarding', ${JSON.stringify(
+				defaultOrganizationOnboardingSettings('complete')
+			)}::jsonb) || ${JSON.stringify({ whatsappAccount: 'complete' })}::jsonb)`
 			: sql`'{}'::jsonb`;
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
