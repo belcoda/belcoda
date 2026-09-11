@@ -18,45 +18,25 @@ const input = {
 describe('saving the onboarding profile', () => {
 	beforeEach(() => vi.mocked(z.mutate).mockReset());
 
-	it('waits for the profile save before recording completion', async () => {
-		let confirmSave!: (value: { type: 'success' }) => void;
-		vi.mocked(z.mutate)
-			.mockReturnValueOnce({
-				server: new Promise((resolve) => {
-					confirmSave = resolve;
-				})
-			} as never)
-			.mockReturnValueOnce({ server: Promise.resolve({ type: 'success' }) } as never);
+	it('saves the profile and onboarding completion in one mutation', async () => {
+		vi.mocked(z.mutate).mockReturnValueOnce({
+			server: Promise.resolve({ type: 'success' })
+		} as never);
 
-		const saving = saveOrganizationProfile(organization, input);
+		await saveOrganizationProfile(organization, input);
+
 		expect(z.mutate).toHaveBeenCalledTimes(1);
-		confirmSave({ type: 'success' });
-		await saving;
-		expect(z.mutate).toHaveBeenCalledTimes(2);
-		expect(vi.mocked(z.mutate).mock.calls[1][0].args.input).toEqual({
-			initialSetup: 'complete',
-			profile: 'complete'
-		});
+		expect(vi.mocked(z.mutate).mock.calls[0][0].mutator.mutatorName).toBe(
+			'organization.updateProfileOnboarding'
+		);
 	});
 
-	it('does not record completion when saving the profile fails', async () => {
+	it('reports a failed profile and completion update', async () => {
 		vi.mocked(z.mutate).mockReturnValueOnce({
 			server: Promise.resolve({ type: 'error', error: { message: 'Save failed' } })
 		} as never);
 
 		await expect(saveOrganizationProfile(organization, input)).rejects.toThrow('Save failed');
 		expect(z.mutate).toHaveBeenCalledTimes(1);
-	});
-
-	it('reports a failed completion update so the user can retry', async () => {
-		vi.mocked(z.mutate)
-			.mockReturnValueOnce({ server: Promise.resolve({ type: 'success' }) } as never)
-			.mockReturnValueOnce({
-				server: Promise.resolve({ type: 'error', error: { message: 'Confirmation failed' } })
-			} as never);
-
-		await expect(saveOrganizationProfile(organization, input)).rejects.toThrow(
-			'Confirmation failed'
-		);
 	});
 });

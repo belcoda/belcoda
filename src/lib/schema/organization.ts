@@ -152,6 +152,17 @@ export type UpdateOrganizationZeroMutatorSchema = v.InferOutput<
 	typeof updateOrganizationZeroMutatorSchema
 >;
 
+export const updateOrganizationProfileOnboardingZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid,
+		existingSettings: organizationSettingsSchema
+	}),
+	input: updateOrganization
+});
+export type UpdateOrganizationProfileOnboardingZeroMutatorSchema = v.InferOutput<
+	typeof updateOrganizationProfileOnboardingZeroMutatorSchema
+>;
+
 export const updateOrganizationWhatsappSettings = v.partial(whatsappOrganizationSettingsSchema);
 export type UpdateOrganizationWhatsappSettings = v.InferInput<
 	typeof updateOrganizationWhatsappSettings

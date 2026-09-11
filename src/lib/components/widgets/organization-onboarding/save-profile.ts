@@ -8,21 +8,13 @@ export async function saveOrganizationProfile(
 	input: UpdateOrganization
 ) {
 	const saved = await z.mutate(
-		mutators.organization.update({
-			metadata: { organizationId: organization.id },
-			input
-		})
-	).server;
-	if (saved.type === 'error') throw new Error(saved.error.message);
-
-	const confirmed = await z.mutate(
-		mutators.organization.updateOnboarding({
+		mutators.organization.updateProfileOnboarding({
 			metadata: {
 				organizationId: organization.id,
 				existingSettings: snapshotOrganizationSettings(organization.settings)
 			},
-			input: { initialSetup: 'complete', profile: 'complete' }
+			input
 		})
 	).server;
-	if (confirmed.type === 'error') throw new Error(confirmed.error.message);
+	if (saved.type === 'error') throw new Error(saved.error.message);
 }

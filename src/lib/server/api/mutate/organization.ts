@@ -3,6 +3,7 @@ import {
 	updateThemeZeroMutatorSchema
 } from '$lib/schema/organization/settings';
 import {
+	updateOrganizationProfileOnboardingZeroMutatorSchema,
 	updateOrganizationZeroMutatorSchema,
 	updateOrganizationWhatsappSettingsMutatorSchema
 } from '$lib/schema/organization';
@@ -16,6 +17,16 @@ export const updateOrganization = defineMutator(
 			throw new Error('updateOrganization can only be called from the server');
 		}
 		await dataFunctions.updateOrganization({ tx, ctx, args });
+	}
+);
+
+export const updateOrganizationProfileOnboarding = defineMutator(
+	updateOrganizationProfileOnboardingZeroMutatorSchema,
+	async ({ tx, args, ctx }) => {
+		if (tx.location !== 'server') {
+			throw new Error('updateOrganizationProfileOnboarding can only be called from the server');
+		}
+		await dataFunctions.updateOrganizationProfileOnboarding({ tx, ctx, args });
 	}
 );
 

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
 	updateOrganizationOnboarding,
+	updateOrganizationProfileOnboarding,
 	updateOrganizationWhatsappSettings
 } from '$lib/server/api/data/organization';
 import { bindPhoneNumberToWaba } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
@@ -106,6 +107,35 @@ describe('updateOrganizationOnboarding', () => {
 		);
 		expect(query.params).toContain(JSON.stringify({ whatsappAccount: 'complete' }));
 		expect(query.sql).toContain('COALESCE("organization"."settings"->\'onboarding\'');
+	});
+
+	it('saves profile defaults and onboarding completion together', async () => {
+		const { tx, set } = createTransaction();
+		await updateOrganizationProfileOnboarding({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: {
+					country: 'US',
+					defaultLanguage: 'en',
+					defaultTimezone: 'America/New_York'
+				}
+			}
+		});
+
+		expect(set).toHaveBeenCalledTimes(1);
+		expect(set.mock.calls[0][0]).toEqual(
+			expect.objectContaining({
+				country: 'US',
+				defaultLanguage: 'en',
+				defaultTimezone: 'America/New_York'
+			})
+		);
+		const query = new PgDialect().sqlToQuery(set.mock.calls[0][0].settings);
+		expect(query.params).toContain(
+			JSON.stringify({ initialSetup: 'complete', profile: 'complete' })
+		);
 	});
 
 	it('does not save a connection or mark onboarding complete when binding fails', async () => {
