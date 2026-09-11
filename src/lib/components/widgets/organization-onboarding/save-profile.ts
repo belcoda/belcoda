@@ -21,7 +21,7 @@ export async function saveOrganizationProfile(
 				organizationId: organization.id,
 				existingSettings: snapshotOrganizationSettings(organization.settings)
 			},
-			input: { profile: 'complete' }
+			input: { initialSetup: 'complete', profile: 'complete' }
 		})
 	).server;
 	if (confirmed.type === 'error') throw new Error(confirmed.error.message);

@@ -33,6 +33,10 @@ describe('saving the onboarding profile', () => {
 		confirmSave({ type: 'success' });
 		await saving;
 		expect(z.mutate).toHaveBeenCalledTimes(2);
+		expect(vi.mocked(z.mutate).mock.calls[1][0].args.input).toEqual({
+			initialSetup: 'complete',
+			profile: 'complete'
+		});
 	});
 
 	it('does not record completion when saving the profile fails', async () => {
