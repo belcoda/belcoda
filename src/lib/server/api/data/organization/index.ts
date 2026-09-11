@@ -86,7 +86,7 @@ export async function updateOrganizationProfileOnboarding({
 	const parsed = parse(updateOrganizationProfileOnboardingZeroMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
 	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
-	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings());
+	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify({ initialSetup: 'complete', profile: 'complete' });
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
@@ -261,10 +261,7 @@ export async function updateOrganizationOnboarding({
 	const parsed = parse(updateOrganizationOnboardingZeroMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
 	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
-	const defaultOnboarding = JSON.stringify({
-		...defaultOrganizationOnboardingSettings(),
-		initialSetup: 'complete'
-	});
+	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify(parsed.input);
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
