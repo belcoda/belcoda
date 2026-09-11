@@ -17,7 +17,7 @@
 			try {
 				loading = true;
 				const created = await createOrganization(formData);
-				await goto(`/setup?org=${encodeURIComponent(created.id)}`);
+				await goto(`${resolve('/setup')}?org=${encodeURIComponent(created.id)}`);
 			} catch (err) {
 				console.error(`Error creating organization: ${err}`);
 				error = err instanceof Error ? err.message : t`An unknown error occurred`;
