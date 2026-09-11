@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { t } from '$lib/index.svelte';
 	import CalendarPlusIcon from '@lucide/svelte/icons/calendar-plus';
@@ -25,7 +26,7 @@
 			href: '/petitions/new',
 			icon: MegaphoneIcon
 		}
-	]);
+	] as const);
 </script>
 
 <Card.Root>
@@ -38,7 +39,7 @@
 	<Card.Content class="grid gap-3 md:grid-cols-3">
 		{#each actions as action (action.href)}
 			<a
-				href={action.href}
+				href={resolve(action.href)}
 				class="group flex items-start gap-3 rounded-lg border p-4 no-underline transition-colors hover:bg-muted/50"
 			>
 				<span
