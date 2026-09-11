@@ -32,6 +32,10 @@
 	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
 	import type { OrganizationSchema } from '$lib/schema/organization';
 	import type { Snippet } from 'svelte';
+	import {
+		petitionHasSurvey,
+		trackPetitionSignatureCompleted
+	} from '$lib/utils/petition/analytics';
 
 	type PetitionSignupFormPetition = Pick<
 		ReadPetitionZero,
@@ -46,6 +50,7 @@
 		whatsAppSignupLink,
 		form,
 		layout = 'default',
+		isAdmin = false,
 		success = false,
 		shareCard
 	}: {
@@ -55,6 +60,7 @@
 		whatsAppSignupLink?: string | null;
 		form?: SuperValidated<SurveySchema>;
 		layout?: 'default' | 'embed';
+		isAdmin?: boolean;
 		success?: boolean;
 		shareCard?: Snippet;
 	} = $props();
@@ -91,12 +97,33 @@
 
 	/* svelte-ignore state_referenced_locally */
 	const surveySchema = getSurveySchema({ settings: petition.settings });
+	function getRedirectPathname(location: string): string | null {
+		try {
+			return new URL(location, page.url).pathname;
+		} catch {
+			return null;
+		}
+	}
+
 	/* svelte-ignore state_referenced_locally */
 	const petitionForm = superForm(form ?? defaults(valibot(surveySchema)), {
 		validators: valibot(surveySchema),
 		dataType: 'json',
 		delayMs: 200,
-		timeoutMs: 12000
+		timeoutMs: 12000,
+		onResult: ({ result }) => {
+			if (
+				result.type === 'redirect' &&
+				!isAdmin &&
+				getRedirectPathname(result.location)?.endsWith('/signed')
+			) {
+				trackPetitionSignatureCompleted({
+					signature_channel: 'form',
+					has_survey: petitionHasSurvey(petition),
+					layout
+				});
+			}
+		}
 	});
 	const { form: dataForm, submitting, delayed, allErrors } = $derived(petitionForm);
 
