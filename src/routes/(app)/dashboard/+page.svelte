@@ -6,6 +6,7 @@
 	import GettingStartedActions from '$lib/components/widgets/dashboard/GettingStartedActions.svelte';
 	import FinishSettingUpCard from '$lib/components/widgets/organization-onboarding/FinishSettingUpCard.svelte';
 	import InviteTeammatesDrawer from '$lib/components/widgets/organization-onboarding/InviteTeammatesDrawer.svelte';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	import { goto } from '$app/navigation';
@@ -124,6 +125,14 @@
 				<UpcomingEventsList />
 				<RecentNotifications />
 			</section>
+		{:else}
+			<div class="flex flex-col gap-4" aria-busy="true">
+				<Skeleton class="h-32 w-full rounded-lg" />
+				<div class="grid gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+					<Skeleton class="h-64 w-full rounded-lg" />
+					<Skeleton class="h-64 w-full rounded-lg" />
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>
