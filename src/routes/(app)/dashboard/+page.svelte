@@ -89,7 +89,7 @@
 		{#if appState.activeOrganization.data}
 			<FinishSettingUpCard
 				organization={appState.activeOrganization.data}
-				canInvite={appState.isAdminOrOwner}
+				canManageOrganization={appState.isAdminOrOwner}
 				onaction={(action) => {
 					if (action === 'profile') goto(resolve('/setup'));
 					else if (action === 'whatsapp') goto(resolve('/settings/whatsapp/accounts'));

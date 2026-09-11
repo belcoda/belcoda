@@ -24,11 +24,11 @@
 
 	let {
 		organization,
-		canInvite = true,
+		canManageOrganization = true,
 		onaction
 	}: {
 		organization: Organization;
-		canInvite?: boolean;
+		canManageOrganization?: boolean;
 		onaction?: (action: string) => void;
 	} = $props();
 
@@ -84,7 +84,7 @@
 
 	const visibleTasks = $derived(
 		allTasks.filter(
-			(task) => (canInvite || task.id !== 'invitations') && taskStatus(task) !== 'not_needed'
+			(task) => (canManageOrganization || task.id === 'people') && taskStatus(task) !== 'not_needed'
 		)
 	);
 	const completedTasks = $derived(visibleTasks.filter((task) => taskStatus(task) === 'complete'));
