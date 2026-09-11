@@ -1,9 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '$lib/server/db';
 import { handleIncomingMessage } from './incoming_message';
+import { trackServerAnalyticsEvent } from '$lib/server/analytics';
 
 vi.mock('$lib/server/db', () => ({
 	db: { transaction: vi.fn() }
+}));
+
+vi.mock('$lib/server/analytics', () => ({
+	trackServerAnalyticsEvent: vi.fn()
 }));
 
 vi.mock('$lib/schema/drizzle', () => ({
@@ -113,6 +118,7 @@ const inboundTextMessage = {
 describe('incoming WhatsApp message processing', () => {
 	beforeEach(() => {
 		vi.mocked(db.transaction).mockReset();
+		vi.mocked(trackServerAnalyticsEvent).mockReset();
 	});
 
 	it('rethrows transaction failures so the queue can retry the message', async () => {
@@ -125,5 +131,24 @@ describe('incoming WhatsApp message processing', () => {
 	it('acknowledges malformed payloads without starting a transaction', async () => {
 		await expect(handleIncomingMessage({ type: 'invalid' })).resolves.toBeUndefined();
 		expect(db.transaction).not.toHaveBeenCalled();
+	});
+
+	it('dispatches committed analytics without waiting for Umami', async () => {
+		let finishAnalytics!: () => void;
+		vi.mocked(db.transaction).mockResolvedValueOnce({
+			name: 'petition_signature_completed',
+			data: { signature_channel: 'whatsapp', has_survey: true }
+		});
+		vi.mocked(trackServerAnalyticsEvent).mockImplementationOnce(
+			() => new Promise<void>((resolve) => (finishAnalytics = resolve))
+		);
+
+		await expect(handleIncomingMessage(inboundTextMessage)).resolves.toBeUndefined();
+		expect(trackServerAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			'petition_signature_completed',
+			{ signature_channel: 'whatsapp', has_survey: true }
+		);
+
+		finishAnalytics();
 	});
 });

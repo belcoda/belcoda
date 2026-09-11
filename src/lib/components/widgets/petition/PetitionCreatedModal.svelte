@@ -9,6 +9,7 @@
 	import { MediaQuery } from 'svelte/reactivity';
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import queries from '$lib/zero/query/index';
 	import { appState } from '$lib/state.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
@@ -16,6 +17,7 @@
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 	import TargetIcon from '@lucide/svelte/icons/target';
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
+	import { trackPetitionPublished } from '$lib/utils/petition/analytics';
 
 	let {
 		petition,
@@ -30,8 +32,12 @@
 	} = $props();
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
+	const persistedPetition = $derived.by(() =>
+		z.createQuery(queries.petition.read({ petitionId: petition.id }))
+	);
+	const published = $derived(persistedPetition.data?.published ?? petition.published);
 
-	async function handlePublishChange(checked: boolean) {
+	function handlePublishChange(checked: boolean) {
 		try {
 			const response = z.mutate(
 				mutators.petition.update({
@@ -44,9 +50,18 @@
 					}
 				})
 			);
-			await response.server;
-			petition.published = checked;
-			toast.success(checked ? t`Petition published` : t`Petition unpublished`);
+			void response.server
+				.then((result) => {
+					if (result.type === 'error') {
+						toast.error(t`Failed to update petition`);
+						return;
+					}
+					if (checked) trackPetitionPublished(petition);
+					toast.success(checked ? t`Petition published` : t`Petition unpublished`);
+				})
+				.catch(() => {
+					toast.error(t`Failed to update petition`);
+				});
 		} catch {
 			toast.error(t`Failed to update petition`);
 		}
@@ -104,7 +119,7 @@
 
 {#snippet petitionPreview()}
 	<div class="space-y-4">
-		{#if !petition.published}
+		{#if !published}
 			<div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
 				<div class="flex items-start gap-3">
 					<div
@@ -181,12 +196,12 @@
 		<div class="flex items-center gap-3 px-4 py-2">
 			<Switch
 				id="publish-toggle"
-				checked={petition.published}
+				checked={published}
 				onCheckedChange={handlePublishChange}
 				data-testid="petition-publish-toggle"
 			/>
 			<Label for="publish-toggle" class="cursor-pointer">
-				{petition.published ? t`Published` : t`Publish petition`}
+				{published ? t`Published` : t`Publish petition`}
 			</Label>
 		</div>
 

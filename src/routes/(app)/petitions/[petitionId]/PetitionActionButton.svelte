@@ -17,12 +17,13 @@
 	import { appState } from '$lib/state.svelte';
 	import PetitionMakeACopy from './PetitionMakeACopy.svelte';
 	import PetitionShareModal from '$lib/components/widgets/petition/share/PetitionShareModal.svelte';
+	import { trackPetitionPublished } from '$lib/utils/petition/analytics';
 
 	let openShareModal = $state(false);
 	let openMakeACopyModal = $state(false);
 
 	function updatePublished(checked: boolean) {
-		z.mutate(
+		const response = z.mutate(
 			mutators.petition.update({
 				metadata: {
 					petitionId: petition.id,
@@ -33,6 +34,18 @@
 				}
 			})
 		);
+		void response.server
+			.then((result) => {
+				if (result.type === 'error') {
+					toast.error(t`Failed to update petition`);
+					return;
+				}
+				if (checked) trackPetitionPublished(petition);
+				toast.success(checked ? t`Petition published` : t`Petition unpublished`);
+			})
+			.catch(() => {
+				toast.error(t`Failed to update petition`);
+			});
 	}
 </script>
 
@@ -57,14 +70,7 @@
 								id={`${id}-switch`}
 								checked={petition.published}
 								data-testid="petition-action-publish-switch"
-								onCheckedChange={(checked) => {
-									updatePublished(checked);
-									if (checked) {
-										toast.success(t`Petition published`);
-									} else {
-										toast.success(t`Petition unpublished`);
-									}
-								}}
+								onCheckedChange={updatePublished}
 							/>
 							<Label for={`${id}-switch`}>{t`Published`}</Label>
 						</div>

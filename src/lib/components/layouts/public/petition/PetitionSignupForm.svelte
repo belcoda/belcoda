@@ -32,6 +32,10 @@
 	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
 	import type { OrganizationSchema } from '$lib/schema/organization';
 	import type { Snippet } from 'svelte';
+	import {
+		getPetitionFormSignatureCompletedAnalytics,
+		trackPetitionSignatureCompleted
+	} from '$lib/utils/petition/analytics';
 
 	type PetitionSignupFormPetition = Pick<
 		ReadPetitionZero,
@@ -46,6 +50,7 @@
 		whatsAppSignupLink,
 		form,
 		layout = 'default',
+		isAdmin = false,
 		success = false,
 		shareCard
 	}: {
@@ -55,6 +60,7 @@
 		whatsAppSignupLink?: string | null;
 		form?: SuperValidated<SurveySchema>;
 		layout?: 'default' | 'embed';
+		isAdmin?: boolean;
 		success?: boolean;
 		shareCard?: Snippet;
 	} = $props();
@@ -96,7 +102,19 @@
 		validators: valibot(surveySchema),
 		dataType: 'json',
 		delayMs: 200,
-		timeoutMs: 12000
+		timeoutMs: 12000,
+		onResult: ({ result }) => {
+			if (result.type !== 'redirect') return;
+
+			const analytics = getPetitionFormSignatureCompletedAnalytics({
+				redirectLocation: result.location,
+				baseUrl: page.url,
+				isAdmin,
+				petition,
+				layout
+			});
+			if (analytics) trackPetitionSignatureCompleted(analytics);
+		}
 	});
 	const { form: dataForm, submitting, delayed, allErrors } = $derived(petitionForm);
 
@@ -581,7 +599,7 @@
 						<span class="text-xs text-muted-foreground">{t`or`}</span>
 						<div class="h-px flex-1 bg-gray-200"></div>
 					</div>
-					<WhatsAppPetitionSignup {whatsAppSignupLink} />
+					<WhatsAppPetitionSignup {whatsAppSignupLink} {layout} />
 				{/if}
 
 				<p class="text-xs text-muted-foreground">
