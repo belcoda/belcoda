@@ -1,7 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { updateOrganizationOnboarding } from '$lib/server/api/data/organization';
-import { defaultOrganizationSettings } from '$lib/schema/organization/settings';
+import {
+	updateOrganizationOnboarding,
+	updateOrganizationProfileOnboarding,
+	updateOrganizationWhatsappSettings
+} from '$lib/server/api/data/organization';
+import { bindPhoneNumberToWaba } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
+import {
+	defaultOrganizationOnboardingSettings,
+	defaultOrganizationSettings
+} from '$lib/schema/organization/settings';
 import { getQueue } from '$lib/server/queue';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import type { SQL } from 'drizzle-orm';
@@ -9,6 +17,10 @@ import type { SQL } from 'drizzle-orm';
 vi.mock('$lib/server/queue', () => ({
 	getQueue: vi.fn(),
 	queueSendOptionsFromTransaction: vi.fn(() => ({ tx: true }))
+}));
+
+vi.mock('$lib/server/utils/whatsapp/ycloud/ycloud_api', () => ({
+	bindPhoneNumberToWaba: vi.fn()
 }));
 
 const organizationId = '11111111-1111-4111-8111-111111111111';
@@ -73,8 +85,79 @@ function createTransaction() {
 
 describe('updateOrganizationOnboarding', () => {
 	beforeEach(() => {
+		vi.mocked(bindPhoneNumberToWaba).mockReset();
 		vi.mocked(getQueue).mockReset();
 		vi.mocked(getQueue).mockResolvedValue({ triggerWebhook: vi.fn() } as never);
+	});
+
+	it('saves a confirmed WhatsApp connection and onboarding completion together', async () => {
+		const { tx, set } = createTransaction();
+		vi.mocked(bindPhoneNumberToWaba).mockResolvedValue('+254712345678');
+		await updateOrganizationWhatsappSettings({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId },
+				input: { number: '123456789', wabaId: '987654321' }
+			}
+		});
+		expect(set).toHaveBeenCalledTimes(1);
+		const query = new PgDialect().sqlToQuery(set.mock.calls[0][0].settings);
+		expect(query.params.map((value) => JSON.parse(String(value)))).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ number: '+254712345678', wabaId: '987654321' })
+			])
+		);
+		expect(query.params).toContain(JSON.stringify({ whatsappAccount: 'complete' }));
+		expect(query.params).toContain(
+			JSON.stringify(defaultOrganizationOnboardingSettings('complete'))
+		);
+		expect(query.sql).toContain('COALESCE("organization"."settings"->\'onboarding\'');
+	});
+
+	it('saves profile defaults and onboarding completion together', async () => {
+		const { tx, set } = createTransaction();
+		await updateOrganizationProfileOnboarding({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: {
+					country: 'US',
+					defaultLanguage: 'en',
+					defaultTimezone: 'America/New_York'
+				}
+			}
+		});
+
+		expect(set).toHaveBeenCalledTimes(1);
+		expect(set.mock.calls[0][0]).toEqual(
+			expect.objectContaining({
+				country: 'US',
+				defaultLanguage: 'en',
+				defaultTimezone: 'America/New_York'
+			})
+		);
+		const query = new PgDialect().sqlToQuery(set.mock.calls[0][0].settings);
+		expect(query.params).toContain(
+			JSON.stringify({ initialSetup: 'complete', profile: 'complete' })
+		);
+	});
+
+	it('does not save a connection or mark onboarding complete when binding fails', async () => {
+		const { tx, update } = createTransaction();
+		vi.mocked(bindPhoneNumberToWaba).mockRejectedValue(new Error('Connection rejected'));
+		await expect(
+			updateOrganizationWhatsappSettings({
+				tx: tx as never,
+				ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+				args: {
+					metadata: { organizationId },
+					input: { number: '123456789', wabaId: '987654321' }
+				}
+			})
+		).rejects.toThrow('Connection rejected');
+		expect(update).not.toHaveBeenCalled();
 	});
 
 	it('preserves unrelated settings while atomically applying the onboarding patch', async () => {
@@ -93,7 +176,7 @@ describe('updateOrganizationOnboarding', () => {
 			},
 			args: {
 				metadata: { organizationId, existingSettings: staleClientSettings },
-				input: { event: 'complete' }
+				input: { initialSetup: 'skipped', whatsappAccount: 'not_needed' }
 			}
 		});
 
@@ -107,7 +190,9 @@ describe('updateOrganizationOnboarding', () => {
 		expect(query.sql).toMatch(
 			/COALESCE\("organization"\."settings"->'onboarding',[\s\S]*\)\s*\|\|\s*\$2::jsonb/
 		);
-		expect(query.params).toContain(JSON.stringify({ event: 'complete' }));
+		expect(query.params).toContain(
+			JSON.stringify({ initialSetup: 'skipped', whatsappAccount: 'not_needed' })
+		);
 		expect(query.params).not.toContain('#abcdef');
 	});
 
@@ -129,7 +214,7 @@ describe('updateOrganizationOnboarding', () => {
 						organizationId,
 						existingSettings: defaultOrganizationSettings()
 					},
-					input: { event: 'complete' }
+					input: { initialSetup: 'complete' }
 				}
 			})
 		).rejects.toThrow('not authorized');

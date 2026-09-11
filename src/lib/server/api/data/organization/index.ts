@@ -5,8 +5,10 @@ import { eq, or, isNull, lte, sql, and } from 'drizzle-orm';
 import { type QueryContext } from '$lib/zero/schema';
 import {
 	updateOrganizationZeroMutatorSchema,
+	updateOrganizationProfileOnboardingZeroMutatorSchema,
 	updateOrganizationWhatsappSettingsMutatorSchema,
 	type UpdateOrganizationMutatorSchema,
+	type UpdateOrganizationProfileOnboardingZeroMutatorSchema,
 	type UpdateOrganizationWhatsappSettingsMutatorSchema,
 	organizationApiSchema,
 	organizationPlanSupported
@@ -72,6 +74,58 @@ export async function updateOrganization({
 	return updated;
 }
 
+export async function updateOrganizationProfileOnboarding({
+	tx,
+	ctx,
+	args
+}: {
+	tx: ServerTransaction;
+	ctx: QueryContext;
+	args: UpdateOrganizationProfileOnboardingZeroMutatorSchema;
+}) {
+	const parsed = parse(updateOrganizationProfileOnboardingZeroMutatorSchema, args);
+	const organizationId = parsed.metadata.organizationId;
+	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
+	const onboardingPatch = JSON.stringify({ initialSetup: 'complete', profile: 'complete' });
+
+	const [updated] = await tx.dbTransaction.wrappedTransaction
+		.update(organization)
+		.set({
+			...parsed.input,
+			settings: sql`
+				${organization.settings}
+				|| jsonb_build_object(
+					'onboarding',
+					COALESCE(${organization.settings}->'onboarding', ${defaultOnboarding}::jsonb)
+					|| ${onboardingPatch}::jsonb
+				)
+			`,
+			updatedAt: new Date()
+		})
+		.where(eq(organization.id, organizationId))
+		.returning();
+
+	if (!updated) {
+		throw new Error('Failed to update organization profile');
+	}
+
+	const { id, ...orgWebhookData } = updated;
+	const queue = await getQueue();
+	await queue.triggerWebhook(
+		{
+			organizationId: id,
+			payload: {
+				type: 'organization.updated',
+				data: parse(organizationApiSchema, orgWebhookData)
+			}
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
+
+	return updated;
+}
+
 export async function updateOrganizationWhatsappSettings({
 	tx,
 	ctx,
@@ -100,6 +154,13 @@ export async function updateOrganizationWhatsappSettings({
 	}
 	const defaultWhatsappSettings = JSON.stringify(defaultWhatsappOrganizationSettings());
 	const serializedWhatsappPatch = JSON.stringify(whatsappPatch);
+	const connectedOnboarding =
+		number && wabaId && whatsappPatch.number
+			? sql`jsonb_build_object('onboarding',
+			COALESCE(${organization.settings}->'onboarding', ${JSON.stringify(
+				defaultOrganizationOnboardingSettings('complete')
+			)}::jsonb) || ${JSON.stringify({ whatsappAccount: 'complete' })}::jsonb)`
+			: sql`'{}'::jsonb`;
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
@@ -110,7 +171,7 @@ export async function updateOrganizationWhatsappSettings({
 					'whatsApp',
 					COALESCE(${organization.settings}->'whatsApp', ${defaultWhatsappSettings}::jsonb)
 					|| ${serializedWhatsappPatch}::jsonb
-				)
+				) || ${connectedOnboarding}
 			`,
 			updatedAt: new Date()
 		})

@@ -106,14 +106,18 @@ export const newOrganizationFromWebsiteForm = v.object({
 	slug: organizationSchema.entries.slug,
 	icon: v.optional(organizationSchema.entries.icon, null),
 	website: v.optional(v.nullable(helpers.domainNameOrUrl), null),
-	additionalDetails: v.object({
-		howDidYouDiscover: organizationDiscoverySource,
-		howDidYouDiscoverDetail: v.optional(helpers.mediumStringEmpty, '')
-	})
+	additionalDetails: v.optional(
+		v.object({
+			howDidYouDiscover: v.optional(organizationDiscoverySource),
+			howDidYouDiscoverDetail: v.optional(helpers.mediumStringEmpty, '')
+		}),
+		{}
+	)
 });
 export type NewOrganizationFromWebsiteForm = v.InferOutput<typeof newOrganizationFromWebsiteForm>;
 
 export function buildOrganizationOnboardingMetadata(org: NewOrganizationFromWebsiteForm) {
+	if (!org.additionalDetails.howDidYouDiscover) return {} satisfies OrganizationMetadataSchema;
 	const discoverySourceDetail = org.additionalDetails.howDidYouDiscoverDetail.trim();
 
 	return {
@@ -146,6 +150,17 @@ export const updateOrganizationZeroMutatorSchema = v.object({
 });
 export type UpdateOrganizationZeroMutatorSchema = v.InferOutput<
 	typeof updateOrganizationZeroMutatorSchema
+>;
+
+export const updateOrganizationProfileOnboardingZeroMutatorSchema = v.object({
+	metadata: v.object({
+		organizationId: helpers.uuid,
+		existingSettings: organizationSettingsSchema
+	}),
+	input: updateOrganization
+});
+export type UpdateOrganizationProfileOnboardingZeroMutatorSchema = v.InferOutput<
+	typeof updateOrganizationProfileOnboardingZeroMutatorSchema
 >;
 
 export const updateOrganizationWhatsappSettings = v.partial(whatsappOrganizationSettingsSchema);

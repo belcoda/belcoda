@@ -16,18 +16,21 @@
 
 	let { mockExternalServices = false }: { mockExternalServices?: boolean } = $props();
 
-	let FB: any;
+	let signupOrganizationId: string | null = null;
 	let error: string | null = $state(null);
 	let cancelled = $state(false);
+	let saving = $state(false);
 
 	onMount(() => {
+		const account = appState.activeOrganization.data?.settings.whatsApp;
+		if (account?.wabaId && account.number) return;
 		if (!mockExternalServices) {
 			if (
 				!env.PUBLIC_WHATSAPP_APP_ID ||
 				!env.PUBLIC_WHATSAPP_CONFIG_ID ||
 				!env.PUBLIC_WHATSAPP_SOLUTION_ID
 			) {
-				error = 'WhatsApp configuration invalid';
+				error = t`WhatsApp connection is unavailable right now. Please try again later.`;
 				console.error(
 					'WhatsApp configuration invalid',
 					env.PUBLIC_WHATSAPP_APP_ID,
@@ -74,36 +77,42 @@
 	});
 
 	async function persistWhatsappSettingsFromEmbedded(number: string, wabaId: string) {
+		if (saving) return;
 		const organizationId = appState.optionalOrganizationId;
 		const existingSettings = appState.activeOrganization.data?.settings;
-		if (!organizationId || !existingSettings) {
+		if (
+			!organizationId ||
+			!existingSettings ||
+			(signupOrganizationId && signupOrganizationId !== organizationId)
+		) {
 			throw new Error('Organization is not ready');
 		}
-		const result = z.mutate(
-			mutators.organization.updateWhatsappSettings({
-				metadata: {
-					organizationId,
-					existingSettings: $state.snapshot(existingSettings)
-				},
-				input: {
-					number,
-					wabaId
-				}
-			})
-		);
-		await result.server;
+		if (!number || !wabaId) throw new Error('WhatsApp account details are missing');
+		saving = true;
+		try {
+			const result = await z.mutate(
+				mutators.organization.updateWhatsappSettings({
+					metadata: { organizationId, existingSettings: $state.snapshot(existingSettings) },
+					input: { number, wabaId }
+				})
+			).server;
+			if (result.type === 'error') throw new Error(result.error.message);
+		} finally {
+			saving = false;
+		}
 	}
 
 	const sessionInfoListener = async (event: MessageEvent) => {
-		error = null;
-		if (!event.origin?.endsWith('facebook.com')) return;
+		if (event.origin !== 'https://www.facebook.com' && event.origin !== 'https://web.facebook.com')
+			return;
 		try {
 			const data = JSON.parse(event.data);
-			if (data.type !== 'WA_EMBEDDED_SIGNUP') return;
+			if (data.type !== 'WA_EMBEDDED_SIGNUP' || saving) return;
+			error = null;
+			cancelled = false;
 
 			if (data.event === 'FINISH') {
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				const { phone_number_id, waba_id, business_id } = data.data;
+				const { phone_number_id, waba_id } = data.data;
 				await persistWhatsappSettingsFromEmbedded(phone_number_id, waba_id);
 				document.location.reload();
 			} else if (data.event === 'ERROR') {
@@ -112,19 +121,23 @@
 				cancelled = true;
 			}
 		} catch {
-			error = 'An error occurred while processing the WhatsApp signup';
+			error = t`We couldn't save your WhatsApp connection. Please try again.`;
 		}
 	};
 
 	// --- Launch signup ---
 	async function launchWhatsAppSignup() {
+		if (saving) return;
+		error = null;
+		cancelled = false;
+		signupOrganizationId = appState.organizationId;
 		if (mockExternalServices) {
 			try {
 				await persistWhatsappSettingsFromEmbedded(MOCK_PHONE_NUMBER_ID, MOCK_WABA_ID);
 				document.location.reload();
 			} catch (e) {
 				console.error('Error launching signup:', e);
-				error = 'Failed to start WhatsApp signup';
+				error = t`We couldn't connect WhatsApp. Please try again.`;
 			}
 			return;
 		}
@@ -146,21 +159,21 @@
 			);
 		} catch (e) {
 			console.error('Error launching signup:', e);
-			error = 'Failed to start WhatsApp signup';
+			error = t`We couldn't connect WhatsApp. Please try again.`;
 		}
 	}
 </script>
 
 {#if error}
-	<Alert title="Error" variant="destructive" class="mb-4">{error}</Alert>
+	<Alert title={t`Connection not completed`} variant="destructive" class="mb-4">{error}</Alert>
 {/if}
 {#if cancelled}
-	<Alert title="Cancelled" variant="default" class="mb-4">
+	<Alert title={t`Connection cancelled`} variant="default" class="mb-4">
 		{t`The WhatsApp signup was cancelled. If you want to try again, click the button below.`}
 	</Alert>
 {/if}
 
-{#if appState.activeOrganization?.data?.settings.whatsApp.wabaId && appState.activeOrganization?.data?.settings.whatsApp.number}
+{#if !saving && !error && appState.activeOrganization?.data?.settings.whatsApp.wabaId && appState.activeOrganization?.data?.settings.whatsApp.number}
 	<BusinessAccountActivated />
 {:else}
 	<Card.Root data-testid="whatsapp-accounts-activate-card">
@@ -186,9 +199,11 @@
 		<Card.Footer>
 			<Button
 				onclick={launchWhatsAppSignup}
+				disabled={saving}
 				variant="default"
 				size="sm"
-				data-testid="whatsapp-accounts-launch-signup">{t`Launch WhatsApp signup`}</Button
+				data-testid="whatsapp-accounts-launch-signup"
+				>{saving ? t`Saving connection…` : t`Launch WhatsApp signup`}</Button
 			>
 		</Card.Footer>
 	</Card.Root>
