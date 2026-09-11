@@ -89,6 +89,9 @@
 	);
 	const completedTasks = $derived(visibleTasks.filter((task) => taskStatus(task) === 'complete'));
 	const outstandingTasks = $derived(visibleTasks.filter((task) => taskStatus(task) !== 'complete'));
+	const usesCurrentOnboarding = $derived(
+		organization.settings.onboarding?.initialSetup !== undefined
+	);
 	const nextTask = $derived(
 		outstandingTasks.find((task) => task.id !== deferredTaskId) ?? outstandingTasks[0]
 	);
@@ -121,7 +124,7 @@
 	}
 </script>
 
-{#if organization.settings.onboarding && outstandingTasks.length}
+{#if usesCurrentOnboarding && outstandingTasks.length}
 	<Card.Root>
 		<Card.Header class="gap-1">
 			<Card.Title class="text-base">{t`Keep building your workspace`}</Card.Title>
