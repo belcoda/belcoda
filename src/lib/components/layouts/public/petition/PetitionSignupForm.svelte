@@ -32,10 +32,6 @@
 	import type { ReadPetitionZero } from '$lib/schema/petition/petition';
 	import type { OrganizationSchema } from '$lib/schema/organization';
 	import type { Snippet } from 'svelte';
-	import {
-		getPetitionFormSignatureCompletedAnalytics,
-		trackPetitionSignatureCompleted
-	} from '$lib/utils/petition/analytics';
 
 	type PetitionSignupFormPetition = Pick<
 		ReadPetitionZero,
@@ -102,19 +98,7 @@
 		validators: valibot(surveySchema),
 		dataType: 'json',
 		delayMs: 200,
-		timeoutMs: 12000,
-		onResult: ({ result }) => {
-			if (result.type !== 'redirect') return;
-
-			const analytics = getPetitionFormSignatureCompletedAnalytics({
-				redirectLocation: result.location,
-				baseUrl: page.url,
-				isAdmin,
-				petition,
-				layout
-			});
-			if (analytics) trackPetitionSignatureCompleted(analytics);
-		}
+		timeoutMs: 12000
 	});
 	const { form: dataForm, submitting, delayed, allErrors } = $derived(petitionForm);
 

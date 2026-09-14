@@ -43,8 +43,7 @@ type PetitionWhatsAppHandoffAnalyticsInput = {
 };
 
 type PetitionFormSignatureAnalyticsInput = {
-	redirectLocation: string;
-	baseUrl: URL;
+	transitionedToComplete: boolean;
 	isAdmin: boolean;
 	petition: PetitionAnalyticsSource;
 	layout: PublicPetitionLayout;
@@ -72,19 +71,12 @@ export function petitionTransitionedToPublished(
 }
 
 export function getPetitionFormSignatureCompletedAnalytics({
-	redirectLocation,
-	baseUrl,
+	transitionedToComplete,
 	isAdmin,
 	petition,
 	layout
 }: PetitionFormSignatureAnalyticsInput): PetitionFormSignatureCompletedAnalyticsData | null {
-	if (isAdmin) return null;
-
-	try {
-		if (!new URL(redirectLocation, baseUrl).pathname.endsWith('/signed')) return null;
-	} catch {
-		return null;
-	}
+	if (!transitionedToComplete || isAdmin) return null;
 
 	return {
 		signature_channel: 'form',
@@ -110,14 +102,6 @@ export function getPetitionWhatsAppHandoffAnalytics({
 		method: 'direct_link',
 		layout
 	};
-}
-
-export function trackPetitionSignatureCompleted(
-	data:
-		| PetitionFormSignatureCompletedAnalyticsData
-		| PetitionWhatsAppSignatureCompletedAnalyticsData
-): void {
-	trackAnalyticsEvent(petitionAnalyticsEventNames.signatureCompleted, data);
 }
 
 export function trackPetitionWhatsAppHandoffOpened(

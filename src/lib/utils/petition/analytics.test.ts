@@ -36,8 +36,7 @@ describe('petition analytics', () => {
 	it('describes a successful public form signature', () => {
 		expect(
 			getPetitionFormSignatureCompletedAnalytics({
-				redirectLocation: '/page/example/petitions/example/signed?layout=embed',
-				baseUrl: new URL('https://example.com/page/example/petitions/example'),
+				transitionedToComplete: true,
 				isAdmin: false,
 				petition: petitionWithSurvey,
 				layout: 'embed'
@@ -49,10 +48,9 @@ describe('petition analytics', () => {
 		});
 	});
 
-	it('excludes administrator previews and unrelated redirects', () => {
+	it('excludes administrator previews and repeat form signatures', () => {
 		const input = {
-			redirectLocation: '/page/example/petitions/example/signed',
-			baseUrl: new URL('https://example.com/page/example/petitions/example'),
+			transitionedToComplete: true,
 			petition: petitionWithSurvey,
 			layout: 'default' as const
 		};
@@ -62,7 +60,7 @@ describe('petition analytics', () => {
 			getPetitionFormSignatureCompletedAnalytics({
 				...input,
 				isAdmin: false,
-				redirectLocation: '/login'
+				transitionedToComplete: false
 			})
 		).toBeNull();
 	});
