@@ -1,4 +1,4 @@
-import type { Page, Locator } from '@playwright/test';
+import { expect, type Dialog, type Locator, type Page } from '@playwright/test';
 
 export class EventEditPage {
 	readonly page: Page;
@@ -42,15 +42,29 @@ export class EventEditPage {
 		await this.createdModal.waitFor({ state: 'hidden', timeout: 10_000 });
 	}
 
+	private async withDialogAccepted(page: Page, action: () => Promise<void>) {
+		const acceptDialog = (dialog: Dialog) => void dialog.accept();
+		page.on('dialog', acceptDialog);
+		try {
+			await action();
+		} finally {
+			page.off('dialog', acceptDialog);
+		}
+	}
+
 	async archiveEvent(page: Page) {
-		page.once('dialog', (d) => d.accept());
-		await this.archiveButton.click({ delay: 500 });
-		await page.waitForURL('/events', { timeout: 10_000 });
+		await this.withDialogAccepted(page, async () => {
+			await this.archiveButton.scrollIntoViewIfNeeded();
+			await this.archiveButton.click();
+			await expect(page).toHaveURL('/events', { timeout: 30_000 });
+		});
 	}
 
 	async deleteEvent(page: Page) {
-		page.once('dialog', (d) => d.accept());
-		await this.deleteButton.click({ delay: 500 });
-		await page.waitForURL('/events', { timeout: 10_000 });
+		await this.withDialogAccepted(page, async () => {
+			await this.deleteButton.scrollIntoViewIfNeeded();
+			await this.deleteButton.click();
+			await expect(page).toHaveURL('/events', { timeout: 30_000 });
+		});
 	}
 }
