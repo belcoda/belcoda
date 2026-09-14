@@ -38,8 +38,13 @@ jobs:
       - name: Check sveltekit and typescript issues
         run: npm run check
 
-  # Trusted job: does not checkout or execute PR code. Only merges after verify
-  # succeeds. --admin bypasses branch protection since verify is the gating check.
+  # Trusted job: does not checkout or execute PR code, so a compromised
+  # dependency can never run with DEPENDABOT_PAT in scope. After verify passes,
+  # it approves the PR with the trusted PAT (satisfying the develop ruleset's
+  # required review) and enables auto-merge. Approval and merge are both pinned
+  # to the exact head SHA that verify built, so a commit pushed to the PR
+  # mid-run cannot inherit the approval. Required status checks are NOT
+  # bypassed — auto-merge still waits for them, and we never use --admin.
   merge:
     needs: verify
     runs-on: ubuntu-latest
@@ -48,8 +53,28 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Auto-merge Dependabot PRs that build successfully
-        run: gh pr merge --squash --delete-branch --auto "$PR_URL"
+      - name: Approve and auto-merge Dependabot PRs that build successfully
+        # Approve the exact head SHA that verify built (commit_id), and refuse
+        # to merge if the head moved since (--match-head-commit). Skip approval
+        # when the PAT user has already approved THIS SHA — paginating the
+        # reviews API so the check holds on long-lived PRs — which keeps re-runs
+        # idempotent; --auto is a no-op when auto-merge is already enabled.
+        run: |
+          set -euo pipefail
+          pat_user=$(gh api /user --jq .login)
+          approvals=$(gh api --paginate "/repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews" --jq '.[]' \
+            | jq -s --arg u "$pat_user" --arg sha "$PR_HEAD_SHA" \
+                '[.[] | select(.user.login == $u and .state == "APPROVED" and .commit_id == $sha)] | length')
+          if [ "$approvals" -eq 0 ]; then
+            gh api --method POST "/repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews" \
+              -f "commit_id=${PR_HEAD_SHA}" -f event=APPROVE
+          else
+            echo "Head ${PR_HEAD_SHA} already approved by ${pat_user}; skipping approval."
+          fi
+          gh pr merge "$PR_URL" --squash --delete-branch --auto --match-head-commit "$PR_HEAD_SHA"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.DEPENDABOT_PAT }}
