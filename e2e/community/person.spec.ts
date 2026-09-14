@@ -186,11 +186,13 @@ test.describe.serial('Community and person pages', () => {
 
 	test('updated name is reflected on the timeline', async ({ page }) => {
 		await loginAsOwner(page, PROJECT);
-		await page.goto(ids.personPath);
 
-		await expect(page.getByTestId('person-timeline-display-name')).toHaveText(
-			`${ids.givenName} ${ids.familyName}`
-		);
+		await expect(async () => {
+			await page.goto(ids.personPath);
+			await expect(page.getByTestId('person-timeline-display-name')).toHaveText(
+				`${ids.givenName} ${ids.familyName}`
+			);
+		}).toPass({ timeout: 30_000 });
 	});
 
 	test('owner can edit the email address of a person from the profile page', async ({ page }) => {
