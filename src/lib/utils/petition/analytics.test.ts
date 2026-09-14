@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	getPetitionFormSignatureCompletedAnalytics,
 	getPetitionPublishingAnalytics,
+	getPetitionWhatsAppHandoffAnalytics,
 	petitionSignatureTransitionedToComplete,
 	petitionTransitionedToPublished
 } from './analytics';
@@ -63,6 +64,15 @@ describe('petition analytics', () => {
 				isAdmin: false,
 				redirectLocation: '/login'
 			})
+		).toBeNull();
+	});
+
+	it('excludes WhatsApp handoffs from administrator previews', () => {
+		expect(
+			getPetitionWhatsAppHandoffAnalytics({ opened: true, isAdmin: false, layout: 'default' })
+		).toEqual({ method: 'direct_link', layout: 'default' });
+		expect(
+			getPetitionWhatsAppHandoffAnalytics({ opened: true, isAdmin: true, layout: 'default' })
 		).toBeNull();
 	});
 

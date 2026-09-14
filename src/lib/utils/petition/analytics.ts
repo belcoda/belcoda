@@ -36,6 +36,12 @@ export type PetitionWhatsAppHandoffAnalyticsData = {
 	layout: PublicPetitionLayout;
 };
 
+type PetitionWhatsAppHandoffAnalyticsInput = {
+	opened: boolean;
+	isAdmin: boolean;
+	layout: PublicPetitionLayout;
+};
+
 type PetitionFormSignatureAnalyticsInput = {
 	redirectLocation: string;
 	baseUrl: URL;
@@ -91,6 +97,19 @@ export function petitionSignatureTransitionedToComplete(existingSignature?: {
 	deletedAt?: Date | null;
 }): boolean {
 	return !existingSignature || existingSignature.deletedAt != null;
+}
+
+export function getPetitionWhatsAppHandoffAnalytics({
+	opened,
+	isAdmin,
+	layout
+}: PetitionWhatsAppHandoffAnalyticsInput): PetitionWhatsAppHandoffAnalyticsData | null {
+	if (!opened || isAdmin) return null;
+
+	return {
+		method: 'direct_link',
+		layout
+	};
 }
 
 export function trackPetitionSignatureCompleted(

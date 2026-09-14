@@ -599,7 +599,7 @@
 						<span class="text-xs text-muted-foreground">{t`or`}</span>
 						<div class="h-px flex-1 bg-gray-200"></div>
 					</div>
-					<WhatsAppPetitionSignup {whatsAppSignupLink} {layout} />
+					<WhatsAppPetitionSignup {whatsAppSignupLink} {layout} {isAdmin} />
 				{/if}
 
 				<p class="text-xs text-muted-foreground">

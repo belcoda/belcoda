@@ -5,14 +5,18 @@
 	import QrCode from '@lucide/svelte/icons/qr-code';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import type { PublicPetitionLayout } from '$lib/utils/petition/analytics';
-	import { trackPetitionWhatsAppHandoffOpened } from '$lib/utils/petition/analytics';
+	import {
+		getPetitionWhatsAppHandoffAnalytics,
+		trackPetitionWhatsAppHandoffOpened
+	} from '$lib/utils/petition/analytics';
 
 	type Props = {
 		directLink?: boolean;
 		whatsAppSignupLink: string;
 		layout: PublicPetitionLayout;
+		isAdmin?: boolean;
 	};
-	const { directLink = false, whatsAppSignupLink, layout }: Props = $props();
+	const { directLink = false, whatsAppSignupLink, layout, isAdmin = false }: Props = $props();
 
 	let showQRModal = $state(false);
 	let qrCodeDataUrl = $state('');
@@ -35,12 +39,12 @@
 	function handleDirectLink() {
 		if (whatsappUrl) {
 			const openedWindow = window.open(whatsappUrl, '_blank');
-			if (openedWindow) {
-				trackPetitionWhatsAppHandoffOpened({
-					method: 'direct_link',
-					layout
-				});
-			}
+			const analytics = getPetitionWhatsAppHandoffAnalytics({
+				opened: Boolean(openedWindow),
+				isAdmin,
+				layout
+			});
+			if (analytics) trackPetitionWhatsAppHandoffOpened(analytics);
 		}
 	}
 	import { Button } from '$lib/components/ui/button/index.js';
