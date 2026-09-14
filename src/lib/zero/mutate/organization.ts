@@ -1,5 +1,8 @@
 import { defineMutator } from '@rocicorp/zero';
-import { updateOrganizationZeroMutatorSchema } from '$lib/schema/organization';
+import {
+	updateOrganizationProfileOnboardingZeroMutatorSchema,
+	updateOrganizationZeroMutatorSchema
+} from '$lib/schema/organization';
 import {
 	defaultOrganizationOnboardingSettings,
 	updateOrganizationOnboardingZeroMutatorSchema,
@@ -13,6 +16,26 @@ export const updateOrganization = defineMutator(
 		tx.mutate.organization.update({
 			id: args.metadata.organizationId,
 			...args.input,
+			updatedAt: Date.now()
+		});
+	}
+);
+
+export const updateOrganizationProfileOnboarding = defineMutator(
+	updateOrganizationProfileOnboardingZeroMutatorSchema,
+	async ({ tx, args }) => {
+		tx.mutate.organization.update({
+			id: args.metadata.organizationId,
+			...args.input,
+			settings: {
+				...args.metadata.existingSettings,
+				onboarding: {
+					...defaultOrganizationOnboardingSettings(),
+					...args.metadata.existingSettings.onboarding,
+					initialSetup: 'complete',
+					profile: 'complete'
+				}
+			},
 			updatedAt: Date.now()
 		});
 	}
@@ -60,7 +83,8 @@ export const updateOrganizationOnboarding = defineMutator(
 			settings: {
 				...args.metadata.existingSettings,
 				onboarding: {
-					...defaultOrganizationOnboardingSettings('complete'),
+					...defaultOrganizationOnboardingSettings(),
+					initialSetup: 'complete',
 					...args.metadata.existingSettings.onboarding,
 					...args.input
 				}

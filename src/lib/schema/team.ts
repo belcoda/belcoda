@@ -1,3 +1,4 @@
+import { organizationSettingsSchema } from '$lib/schema/organization/settings';
 import * as v from 'valibot';
 import * as helpers from '$lib/schema/helpers';
 
@@ -101,3 +102,9 @@ export const removeUserFromTeamMutatorSchema = v.object({
 	metadata: teamMemberMutatorMetadata
 });
 export type RemoveUserFromTeamMutatorSchema = v.InferInput<typeof removeUserFromTeamMutatorSchema>;
+
+export const createOnboardingTeamSchema = v.object({
+	input: createTeam,
+	metadata: v.object({ ...mutatorMetadata.entries, existingSettings: organizationSettingsSchema })
+});
+export type CreateOnboardingTeam = v.InferOutput<typeof createOnboardingTeamSchema>;

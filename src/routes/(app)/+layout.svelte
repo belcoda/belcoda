@@ -7,6 +7,10 @@
 	import { zero } from '$lib/zero.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import DeploymentRecoveryReset from '$lib/utils/DeploymentRecoveryReset.svelte';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { shouldRedirectToOrganizationSetup } from '$lib/utils/organization-onboarding';
 
 	const { children, data } = $props();
 
@@ -16,6 +20,15 @@
 	}
 
 	let initialized = $state(false);
+	const redirectToSetup = $derived(
+		initialized &&
+			appState.layoutBootstrapComplete &&
+			shouldRedirectToOrganizationSetup({
+				pathname: page.url.pathname,
+				canManageOrganization: appState.isAdminOrOwner,
+				needsOnboarding: appState.organizationNeedsOnboarding
+			})
+	);
 
 	$effect.pre(() => {
 		if (initialized) return;
@@ -52,6 +65,10 @@
 		authClient.organization.setActive({ organizationId });
 	});
 
+	$effect(() => {
+		if (redirectToSetup) void goto(resolve('/setup'), { replaceState: true });
+	});
+
 	onMount(async () => {
 		try {
 			await authClient.organization.setActive({
@@ -67,7 +84,7 @@
 	});
 </script>
 
-{#if zero.hasInstance && appState.layoutBootstrapComplete}
+{#if zero.hasInstance && appState.layoutBootstrapComplete && !redirectToSetup}
 	<DeploymentRecoveryReset />
 	{@render children()}
 {:else}
