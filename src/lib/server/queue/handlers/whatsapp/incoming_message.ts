@@ -57,6 +57,11 @@ import {
 	eventHasSurvey,
 	type EventWhatsAppSignupCompletedAnalyticsData
 } from '$lib/utils/event/analytics';
+import {
+	petitionAnalyticsEventNames,
+	petitionHasSurvey,
+	type PetitionWhatsAppSignatureCompletedAnalyticsData
+} from '$lib/utils/petition/analytics';
 export async function handleIncomingMessage(incomingMessage: unknown) {
 	let parsed: IncomingMessage;
 	try {
@@ -79,7 +84,11 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 			return await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
 		});
 		if (analyticsEvent) {
-			void trackServerAnalyticsEvent(analyticsEvent.name, analyticsEvent.data);
+			const url =
+				analyticsEvent.name === eventAnalyticsEventNames.signupCompleted
+					? '/events/whatsapp-signup'
+					: '/petitions/whatsapp-signature';
+			void trackServerAnalyticsEvent(analyticsEvent.name, analyticsEvent.data, url);
 		}
 	} catch (err) {
 		log.error(err, 'Failed to process incoming message');
@@ -269,10 +278,27 @@ type MessageRoutingResult = {
 	analyticsEvent?: WhatsAppAnalyticsEvent;
 };
 
-type WhatsAppAnalyticsEvent = {
-	name: typeof eventAnalyticsEventNames.signupCompleted;
-	data: EventWhatsAppSignupCompletedAnalyticsData;
-};
+type WhatsAppAnalyticsEvent =
+	| {
+			name: typeof petitionAnalyticsEventNames.signatureCompleted;
+			data: PetitionWhatsAppSignatureCompletedAnalyticsData;
+	  }
+	| {
+			name: typeof eventAnalyticsEventNames.signupCompleted;
+			data: EventWhatsAppSignupCompletedAnalyticsData;
+	  };
+
+function getWhatsAppPetitionSignatureAnalyticsEvent(
+	hasSurvey: boolean
+): MessageRoutingResult['analyticsEvent'] {
+	return {
+		name: petitionAnalyticsEventNames.signatureCompleted,
+		data: {
+			signature_channel: 'whatsapp',
+			has_survey: hasSurvey
+		}
+	};
+}
 
 function getWhatsAppSignupAnalyticsEvent(
 	hasSurvey: boolean
@@ -529,7 +555,11 @@ async function handlePetitionSignedActionCode(
 	return {
 		personId: outcome.personId,
 		organizationId: petitionRecord.organizationId,
-		logActivity: false
+		logActivity: false,
+		analyticsEvent:
+			!outcome.flowSent && outcome.transitionedToComplete
+				? getWhatsAppPetitionSignatureAnalyticsEvent(petitionHasSurvey(petitionRecord))
+				: undefined
 	};
 }
 

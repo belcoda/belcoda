@@ -32,6 +32,7 @@
 			petition: SerializedPublicPetition;
 			organization: OrganizationSchema;
 			signatureCount: number;
+			isAdmin?: boolean;
 			recentSignatures?: RecentSignaturePreview[];
 			whatsAppSignupLink?: string | null;
 		};
@@ -159,6 +160,7 @@
 						whatsAppSignupLink={data.whatsAppSignupLink}
 						{form}
 						{layout}
+						isAdmin={data.isAdmin ?? false}
 						{success}
 						{shareCard}
 					/>
@@ -175,6 +177,7 @@
 			whatsAppSignupLink={data.whatsAppSignupLink}
 			{form}
 			{layout}
+			isAdmin={data.isAdmin ?? false}
 			{success}
 		/>
 	</div>

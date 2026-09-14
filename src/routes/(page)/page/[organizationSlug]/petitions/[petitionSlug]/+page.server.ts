@@ -3,7 +3,7 @@ import { db, drizzle } from '$lib/server/db';
 import { petition, petitionSignature, organization, person } from '$lib/schema/drizzle';
 import { eq, and, isNull, count, desc } from 'drizzle-orm';
 import pino from '$lib/pino';
-import { signPetitionHelper } from '$lib/server/api/data/petition/signature';
+import { signPetitionHelperWithResult } from '$lib/server/api/data/petition/signature';
 import { getAdminOwnerOrgs } from '$lib/server/api/utils/auth/permissions';
 import { _getPetitionActionCodeUnsafe } from '$lib/server/api/data/petition/check';
 import { generateWhatsAppPetitionLink } from '$lib/utils/petitions/link';
@@ -14,6 +14,11 @@ import { getSurveySchema } from '$lib/schema/survey/questions';
 import { checkPublicActionRateLimit } from '$lib/server/api/utils/public-action-rate-limit';
 import { getClientIpFromRequest } from '$lib/server/utils/client-ip';
 import { renderSanitizedDescription } from '$lib/server/utils/lexical/render_sanitized_description';
+import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
+import {
+	getPetitionFormSignatureCompletedAnalytics,
+	petitionAnalyticsEventNames
+} from '$lib/utils/petition/analytics';
 const log = pino(import.meta.url);
 
 export async function load({ params, locals }) {
@@ -135,7 +140,7 @@ export async function load({ params, locals }) {
 }
 
 export const actions = {
-	sign: async ({ request, params, getClientAddress, setHeaders }) => {
+	sign: async ({ request, params, getClientAddress, setHeaders, locals }) => {
 		const { organizationSlug, petitionSlug } = params;
 
 		const [org] = await drizzle
@@ -147,6 +152,11 @@ export const actions = {
 		if (!org) {
 			return fail(404, { error: 'Organization not found', success: false });
 		}
+		const userId = locals.session?.user?.id;
+		const adminOwnerOrgs = userId ? await getAdminOwnerOrgs(userId) : null;
+		const isAdmin = Boolean(
+			adminOwnerOrgs?.admin.includes(org.id) || adminOwnerOrgs?.owner.includes(org.id)
+		);
 
 		const [petitionData] = await drizzle
 			.select()
@@ -192,7 +202,7 @@ export const actions = {
 
 		try {
 			await db.transaction(async (tx) => {
-				await signPetitionHelper({
+				const { transitionedToComplete } = await signPetitionHelperWithResult({
 					tx,
 					petitionId: petitionData.id,
 					organizationId: org.id,
@@ -221,6 +231,23 @@ export const actions = {
 						customFields: form.data.customFields
 					}
 				});
+				const analytics = getPetitionFormSignatureCompletedAnalytics({
+					transitionedToComplete,
+					isAdmin,
+					petition: petitionData,
+					layout: layoutParam === 'embed' ? 'embed' : 'default'
+				});
+				if (analytics) {
+					const queue = await getQueue();
+					await queue.sendAnalyticsEvent(
+						{
+							name: petitionAnalyticsEventNames.signatureCompleted,
+							data: analytics,
+							url: '/petitions/form-signature'
+						},
+						queueSendOptionsFromTransaction(tx)
+					);
+				}
 			});
 
 			const layoutQuery =

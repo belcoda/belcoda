@@ -46,6 +46,7 @@
 		whatsAppSignupLink,
 		form,
 		layout = 'default',
+		isAdmin = false,
 		success = false,
 		shareCard
 	}: {
@@ -55,6 +56,7 @@
 		whatsAppSignupLink?: string | null;
 		form?: SuperValidated<SurveySchema>;
 		layout?: 'default' | 'embed';
+		isAdmin?: boolean;
 		success?: boolean;
 		shareCard?: Snippet;
 	} = $props();
@@ -581,7 +583,7 @@
 						<span class="text-xs text-muted-foreground">{t`or`}</span>
 						<div class="h-px flex-1 bg-gray-200"></div>
 					</div>
-					<WhatsAppPetitionSignup {whatsAppSignupLink} />
+					<WhatsAppPetitionSignup {whatsAppSignupLink} {layout} {isAdmin} />
 				{/if}
 
 				<p class="text-xs text-muted-foreground">

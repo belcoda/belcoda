@@ -15,7 +15,10 @@ import {
 	completeEventSignupHelperWithResult
 } from '$lib/server/api/data/event/signup';
 import { _getPetitionByIdUnsafeNoTenantCheck } from '$lib/server/api/data/petition/petition';
-import { completePetitionSignatureHelper } from '$lib/server/api/data/petition/signature';
+import {
+	completePetitionSignatureHelper,
+	completePetitionSignatureHelperWithResult
+} from '$lib/server/api/data/petition/signature';
 import {
 	getInternationalPhoneNumber,
 	isValidInternationalPhoneNumber,
@@ -30,6 +33,7 @@ import {
 import type { FlowResponses } from '$lib/schema/whatsapp/flows/responses';
 import type { WhatsappIdentityLookup } from '$lib/server/api/data/person/findOrCreate';
 import { eventAnalyticsEventNames, eventHasSurvey } from '$lib/utils/event/analytics';
+import { petitionAnalyticsEventNames, petitionHasSurvey } from '$lib/utils/petition/analytics';
 
 const log = pino(import.meta.url);
 const isMockExternalServices = privateEnv.MOCK_EXTERNAL_SERVICES === 'true';
@@ -386,20 +390,21 @@ export async function handleFlowResponse({
 				const parsedCustomFields = safeParse(personActionHelperCustomFieldsOnly, responseJson);
 				const customFields = parsedCustomFields.success ? parsedCustomFields.output : {};
 				log.debug({ parsedPersonAction }, 'Signing petition with personAction from WhatsApp flow');
-				const petitionSignature = await completePetitionSignatureHelper({
-					petitionId: petition.id,
-					teamId: petition.teamId ?? undefined,
-					tx,
-					personAction: parsedPersonAction,
-					signatureDetails: {
-						channel: { type: 'whatsapp' },
-						customFields: customFields
-					},
-					organizationId: petition.organizationId,
-					skipNotifications: true,
-					whatsappIdentity,
-					whatsappContextWamidId
-				});
+				const { petitionSignature, transitionedToComplete } =
+					await completePetitionSignatureHelperWithResult({
+						petitionId: petition.id,
+						teamId: petition.teamId ?? undefined,
+						tx,
+						personAction: parsedPersonAction,
+						signatureDetails: {
+							channel: { type: 'whatsapp' },
+							customFields: customFields
+						},
+						organizationId: petition.organizationId,
+						skipNotifications: true,
+						whatsappIdentity,
+						whatsappContextWamidId
+					});
 
 				await sendPetitionConfirmationMessage({
 					from,
@@ -410,7 +415,16 @@ export async function handleFlowResponse({
 
 				return {
 					personId: petitionSignature.personId,
-					organizationId: petition.organizationId
+					organizationId: petition.organizationId,
+					analyticsEvent: transitionedToComplete
+						? {
+								name: petitionAnalyticsEventNames.signatureCompleted,
+								data: {
+									signature_channel: 'whatsapp' as const,
+									has_survey: petitionHasSurvey(petition)
+								}
+							}
+						: undefined
 				};
 			}
 

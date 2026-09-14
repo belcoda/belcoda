@@ -7,7 +7,8 @@ const UMAMI_EVENT_ENDPOINT = 'https://gateway.umami.is/api/send';
 
 export async function trackServerAnalyticsEvent(
 	eventName: string,
-	data?: AnalyticsEventData
+	data?: AnalyticsEventData,
+	url = '/petitions/whatsapp-signature'
 ): Promise<void> {
 	const websiteId = env.PUBLIC_UMAMI_WEBSITE_ID;
 	if (!websiteId) {
@@ -31,7 +32,7 @@ export async function trackServerAnalyticsEvent(
 				payload: {
 					website: websiteId,
 					hostname,
-					url: '/events/whatsapp-signup',
+					url,
 					name: eventName,
 					data
 				}
