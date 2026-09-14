@@ -17,7 +17,6 @@
 	import { appState } from '$lib/state.svelte';
 	import PetitionMakeACopy from './PetitionMakeACopy.svelte';
 	import PetitionShareModal from '$lib/components/widgets/petition/share/PetitionShareModal.svelte';
-	import { trackPetitionPublished } from '$lib/utils/petition/analytics';
 
 	let openShareModal = $state(false);
 	let openMakeACopyModal = $state(false);
@@ -40,7 +39,6 @@
 					toast.error(t`Failed to update petition`);
 					return;
 				}
-				if (checked) trackPetitionPublished(petition);
 				toast.success(checked ? t`Petition published` : t`Petition unpublished`);
 			})
 			.catch(() => {

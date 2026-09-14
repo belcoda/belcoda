@@ -17,7 +17,6 @@
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 	import TargetIcon from '@lucide/svelte/icons/target';
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
-	import { trackPetitionPublished } from '$lib/utils/petition/analytics';
 
 	let {
 		petition,
@@ -56,7 +55,6 @@
 						toast.error(t`Failed to update petition`);
 						return;
 					}
-					if (checked) trackPetitionPublished(petition);
 					toast.success(checked ? t`Petition published` : t`Petition unpublished`);
 				})
 				.catch(() => {

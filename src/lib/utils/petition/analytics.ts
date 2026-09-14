@@ -58,6 +58,13 @@ export function getPetitionPublishingAnalytics(petition: PetitionAnalyticsSource
 	};
 }
 
+export function petitionTransitionedToPublished(
+	previouslyPublished: boolean,
+	published: boolean
+): boolean {
+	return !previouslyPublished && published;
+}
+
 export function getPetitionFormSignatureCompletedAnalytics({
 	redirectLocation,
 	baseUrl,
@@ -84,13 +91,6 @@ export function petitionSignatureTransitionedToComplete(existingSignature?: {
 	deletedAt?: Date | null;
 }): boolean {
 	return !existingSignature || existingSignature.deletedAt != null;
-}
-
-export function trackPetitionPublished(petition: PetitionAnalyticsSource): void {
-	trackAnalyticsEvent(
-		petitionAnalyticsEventNames.published,
-		getPetitionPublishingAnalytics(petition)
-	);
 }
 
 export function trackPetitionSignatureCompleted(

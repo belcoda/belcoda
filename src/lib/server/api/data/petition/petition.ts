@@ -26,6 +26,11 @@ import { _insertActionCodeUnsafe } from '../action/insert';
 import { petitionReadPermissions } from '$lib/zero/query/petition/permissions';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
 import { sanitizePageHtml } from '$lib/server/utils/html/sanitize_page_html';
+import {
+	getPetitionPublishingAnalytics,
+	petitionAnalyticsEventNames,
+	petitionTransitionedToPublished
+} from '$lib/utils/petition/analytics';
 import pino from '$lib/pino';
 const log = pino(import.meta.url);
 
@@ -193,6 +198,10 @@ export async function updatePetition({
 		petitionRecord.title !== updatedPetition.title ||
 		JSON.stringify(petitionRecord.settings) !== JSON.stringify(updatedPetition.settings);
 	const publishedStatusChanged = petitionRecord.published !== updatedPetition.published;
+	const transitionedToPublished = petitionTransitionedToPublished(
+		petitionRecord.published,
+		updatedPetition.published
+	);
 
 	if (updatedPetition?.published && (structureChanged || publishedStatusChanged)) {
 		try {
@@ -218,6 +227,16 @@ export async function updatePetition({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	if (transitionedToPublished) {
+		await queue.sendAnalyticsEvent(
+			{
+				name: petitionAnalyticsEventNames.published,
+				data: getPetitionPublishingAnalytics(updatedPetition),
+				url: '/petitions/published'
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	}
 }
 
 export async function archivePetition({

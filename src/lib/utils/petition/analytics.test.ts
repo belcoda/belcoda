@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	getPetitionFormSignatureCompletedAnalytics,
 	getPetitionPublishingAnalytics,
-	petitionSignatureTransitionedToComplete
+	petitionSignatureTransitionedToComplete,
+	petitionTransitionedToPublished
 } from './analytics';
 
 const petitionWithSurvey = {
@@ -22,6 +23,13 @@ describe('petition analytics', () => {
 			has_target: true,
 			has_survey: true
 		});
+	});
+
+	it('counts only a change from unpublished to published as a publication', () => {
+		expect(petitionTransitionedToPublished(false, true)).toBe(true);
+		expect(petitionTransitionedToPublished(true, true)).toBe(false);
+		expect(petitionTransitionedToPublished(true, false)).toBe(false);
+		expect(petitionTransitionedToPublished(false, false)).toBe(false);
 	});
 
 	it('describes a successful public form signature', () => {
