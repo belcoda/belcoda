@@ -6,6 +6,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import createForm from '$lib/form.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	let loading = $state(false);
 	let error: string | undefined = $state(undefined);
 	import { createOrganization } from './actions';
@@ -16,8 +17,8 @@
 		onSubmit: async (formData) => {
 			try {
 				loading = true;
-				await createOrganization(formData);
-				await goto('/');
+				const created = await createOrganization(formData);
+				await goto(resolve(`/setup?org=${encodeURIComponent(created.id)}`));
 			} catch (err) {
 				console.error(`Error creating organization: ${err}`);
 				error = err instanceof Error ? err.message : t`An unknown error occurred`;
@@ -37,14 +38,12 @@
 	import { dev } from '$app/environment';
 	import { env } from '$env/dynamic/public';
 	import CroppedImageUpload from '$lib/components/ui/image-upload/CroppedImageUpload.svelte';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import { Textarea } from '$lib/components/ui/textarea/index.js';
 </script>
 
 <AuthLayout
 	link="/organization"
 	title={t`Create a new organization`}
-	description={t`Create a new organization to get started`}
+	description={t`Start with your organization’s name. You can add more details later.`}
 >
 	{#if loading}
 		<div class="my-12 flex justify-center">
@@ -59,7 +58,7 @@
 			<Form.Field {form} name="name" class="w-full">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>{t`Title`}</Form.Label>
+						<Form.Label>{t`Organization name`}</Form.Label>
 						<InputGroup.Root>
 							<InputGroup.Input
 								bind:value={$data.name}
@@ -86,26 +85,25 @@
 										<LinkIcon class="size-4" /><span class="font-mono text-xs"
 											>http{dev ? '' : 's'}://{$data.slug}.{env.PUBLIC_ROOT_DOMAIN}</span
 										>
-										<ResponsiveModal title={t`Edit organization slug`} bind:open={editSlugOpen}>
+										<ResponsiveModal title={t`Edit public web address`} bind:open={editSlugOpen}>
 											{#snippet trigger()}
-												<InputGroup.Button type="button">Edit</InputGroup.Button>
+												<InputGroup.Button type="button">{t`Edit`}</InputGroup.Button>
 											{/snippet}
 
 											<Form.Field {form} name="slug">
 												<Form.Control>
 													{#snippet children({ props })}
+														<Form.Label>{t`Public web address`}</Form.Label>
 														<Input
 															bind:value={$data.slug}
 															{...props}
 															class="font-mono"
-															placeholder={t`Slug`}
+															placeholder={t`your-organization`}
 														/>
 													{/snippet}
 												</Form.Control>
 												<Form.Description>
-													{t`This is a URL-friendly identifier for the organization that can be used in links for events, petitions and other pages.
-													It must be unique and can only contain lowercase letters, numbers, and
-													hyphens.`}
+													{t`This address is used for your public event and petition pages. Use lowercase letters, numbers, and hyphens. Each organization needs a unique address.`}
 												</Form.Description>
 												<Form.FieldErrors />
 											</Form.Field>
@@ -131,37 +129,40 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Field {form} name="website" class="w-full">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>{t`Website (optional)`}</Form.Label>
-						<Input {...props} name="website" bind:value={$data.website} />
-					{/snippet}
-				</Form.Control>
-			</Form.Field>
+			<details class="rounded-lg border p-4">
+				<summary class="cursor-pointer text-sm font-medium"
+					>{t`Add website or logo (optional)`}</summary
+				>
+				<div class="mt-4 flex flex-col gap-4">
+					<Form.Field {form} name="website" class="w-full">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{t`Website (optional)`}</Form.Label>
+								<Input {...props} name="website" bind:value={$data.website} />
+							{/snippet}
+						</Form.Control>
+					</Form.Field>
 
-			<Form.Field {form} name="icon" class="w-full">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>{t`Organization logo (optional)`}</Form.Label>
-						<Form.Description
-							>{t`Your organization's logo. It should be square and less than 2MB`}</Form.Description
-						>
-						<CroppedImageUpload
-							class="aspect-square"
-							aspectRatio={1 / 1}
-							onUpload={(url) => {
-								$data.icon = url;
-							}}
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
+					<Form.Field {form} name="icon" class="w-full">
+						<Form.Control>
+							<Form.Label>{t`Organization logo (optional)`}</Form.Label>
+							<Form.Description
+								>{t`Your organization's logo. It should be square and less than 2MB`}</Form.Description
+							>
+							<CroppedImageUpload
+								class="aspect-square"
+								aspectRatio={1 / 1}
+								onUpload={(url) => {
+									$data.icon = url;
+								}}
+							/>
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
+			</details>
 
-			{@render howDidYouDiscover()}
-
-			<Button type="submit" class="w-auto">{t`Create Organization`}</Button>
+			<Button type="submit" class="w-full">{t`Create organization`}</Button>
 			<Debug {data} />
 		</form>
 	{/if}
@@ -170,59 +171,3 @@
 			<Button type="button" href="/organization" variant="ghost" class="w-auto">{t`Back`}</Button>
 		</div>{/snippet}
 </AuthLayout>
-
-{#snippet howDidYouDiscover()}
-	{@const options = [
-		{
-			value: 'search-engine',
-			label: t`Search engine`
-		},
-		{ value: 'social-media', label: t`Social media` },
-		{ value: 'friend-or-colleague', label: t`Friend or colleague` },
-		{ value: 'event-or-webinar', label: t`Event or webinar` },
-		{ value: 'partner', label: t`Partner organization` },
-		{ value: 'community-group', label: t`Community group` },
-		{ value: 'belcoda-resources', label: t`Belcoda resources` },
-		{ value: 'other', label: t`Other` }
-	]}
-	<Form.Field {form} name="additionalDetails.howDidYouDiscover" class="w-full">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>{t`How did you hear about Belcoda?`}</Form.Label>
-
-				<Select.Root
-					type="single"
-					bind:value={$data.additionalDetails.howDidYouDiscover}
-					{...props}
-				>
-					<Select.Trigger class="w-full">
-						{options.find((option) => option.value === $data.additionalDetails.howDidYouDiscover)
-							?.label ?? t`Select an option`}
-					</Select.Trigger>
-					<Select.Content>
-						{#each options as option}
-							<Select.Item value={option.value} label={option.label} />
-						{/each}
-					</Select.Content>
-				</Select.Root>
-			{/snippet}
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
-	{#if $data.additionalDetails.howDidYouDiscover === 'other'}
-		<Form.Field {form} name="additionalDetails.howDidYouDiscoverDetail" class="w-full">
-			<Form.Control>
-				{#snippet children({ props })}
-					<Form.Label>{t`Tell us where you heard about Belcoda`}</Form.Label>
-					<Textarea
-						{...props}
-						maxlength={500}
-						bind:value={$data.additionalDetails.howDidYouDiscoverDetail}
-					/>
-					<Form.Description>{t`Maximum 500 characters.`}</Form.Description>
-				{/snippet}
-			</Form.Control>
-			<Form.FieldErrors />
-		</Form.Field>
-	{/if}
-{/snippet}

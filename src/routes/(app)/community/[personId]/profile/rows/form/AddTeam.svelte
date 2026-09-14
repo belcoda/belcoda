@@ -22,12 +22,11 @@
 
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
+	import { trackTeamMemberAddedWhenConfirmed } from '$lib/utils/team/analytics';
 	import queries from '$lib/zero/query/index';
 	import { appState, getListFilter } from '$lib/state.svelte';
 	const teamsListFilter: ListFilter = $state(getListFilter(appState.organizationId));
-	const teamList = $derived.by(() =>
-		z.createQuery(queries.team.list({ ...teamsListFilter }))
-	);
+	const teamList = $derived.by(() => z.createQuery(queries.team.list({ ...teamsListFilter })));
 	const personTeamList = $derived.by(() =>
 		z.createQuery(
 			queries.team.list({
@@ -59,15 +58,16 @@
 								keywords={[team.name]}
 								value={team.id}
 								onSelect={() => {
-								z.mutate(
-									mutators.person.addToTeam({
-										metadata: {
-											organizationId: appState.organizationId,
-											personId: personId,
-											teamId: team.id
-										}
-									})
-								);
+									const response = z.mutate(
+										mutators.person.addToTeam({
+											metadata: {
+												organizationId: appState.organizationId,
+												personId: personId,
+												teamId: team.id
+											}
+										})
+									);
+									void trackTeamMemberAddedWhenConfirmed(response.server, 'person');
 									closeAndFocusTrigger();
 								}}
 							>

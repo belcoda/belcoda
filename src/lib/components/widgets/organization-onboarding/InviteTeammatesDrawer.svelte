@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { t } from '$lib/index.svelte';
-	import { authClient } from '$lib/auth-client';
 	import { appState } from '$lib/state.svelte';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
@@ -8,6 +7,14 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { toast } from 'svelte-sonner';
+	import { safeParse } from 'valibot';
+	import { email as emailSchema } from '$lib/schema/helpers';
+	import {
+		parseInvitationEmails,
+		sendInvitations,
+		recordInvitationProgress,
+		type InvitationOrganization
+	} from './send-invitations';
 	import XIcon from '@lucide/svelte/icons/x';
 
 	type Role = 'member' | 'admin' | 'owner';
@@ -26,75 +33,117 @@
 	let draft = $state('');
 	let role = $state<Role>('member');
 	let submitting = $state(false);
+	let addressErrors = $state<Record<string, string>>({});
+	let progressPending = $state<InvitationOrganization | null>(null);
+	const invitationCount = $derived(new Set([...emails, ...parseInvitationEmails(draft)]).size);
 
-	const roles: { value: Role; label: string }[] = [
-		{ value: 'member', label: t`Member` },
-		{ value: 'admin', label: t`Admin` },
-		{ value: 'owner', label: t`Owner` }
+	const roles: { value: Role; label: string; description: string }[] = [
+		{
+			value: 'member',
+			label: t`Member`,
+			description: t`Works with the people and activities in their assigned teams.`
+		},
+		{
+			value: 'admin',
+			label: t`Admin`,
+			description: t`Manages organization settings, teams, and invitations.`
+		},
+		{
+			value: 'owner',
+			label: t`Owner`,
+			description: t`Has full control of the organization, including managing owners.`
+		}
 	];
+	const roleDescription = $derived(roles.find((r) => r.value === role)?.description);
+	const availableRoles = $derived(
+		appState.isOwner ? roles : roles.filter((r) => r.value !== 'owner')
+	);
 	const roleLabel = $derived(roles.find((r) => r.value === role)?.label ?? t`Member`);
 
 	function commitDraft() {
-		const value = draft.trim().replace(/,$/, '').trim();
-		if (value && !emails.includes(value)) emails = [...emails, value];
+		if (submitting) return;
+		emails = [...new Set([...emails, ...parseInvitationEmails(draft)])];
 		draft = '';
 	}
 
 	function onKeydown(event: KeyboardEvent) {
-		if (event.key === 'Enter' || event.key === ',') {
+		if (event.key === 'Enter' || event.key === ',' || event.key === ';') {
 			event.preventDefault();
 			commitDraft();
 		} else if (event.key === 'Backspace' && draft === '' && emails.length) {
-			emails = emails.slice(0, -1);
+			removeEmail(emails[emails.length - 1]);
 		}
 	}
 
 	function removeEmail(email: string) {
 		emails = emails.filter((e) => e !== email);
+		delete addressErrors[email];
+	}
+
+	function onPaste(event: ClipboardEvent) {
+		const text = event.clipboardData?.getData('text');
+		if (!text || !/[\s,;]/.test(text)) return;
+		event.preventDefault();
+		commitDraft();
+		emails = [...new Set([...emails, ...parseInvitationEmails(text)])];
 	}
 
 	async function send() {
+		if (submitting || !appState.isAdminOrOwner) return;
 		commitDraft();
-		if (emails.length === 0) return;
-
-		const pending = [...emails];
+		addressErrors = {};
+		for (const email of emails) {
+			if (!safeParse(emailSchema, email).success)
+				addressErrors[email] =
+					t`Check this email address. Remove it and enter the corrected address.`;
+		}
+		if (!emails.length || Object.keys(addressErrors).length) return;
+		const organization = appState.activeOrganization.data;
+		if (!organization) return;
 		submitting = true;
-		// Better Auth invites one member per call, so fan the chips out in parallel.
-		const results = await Promise.allSettled(
-			pending.map((email) =>
-				authClient.organization
-					.inviteMember({ email, role, organizationId: appState.organizationId })
-					.then((result) => {
-						if (result.error) throw new Error(result.error.message ?? email);
-					})
-			)
-		);
-		submitting = false;
-
-		const sentEmails = pending.filter((_, i) => results[i].status === 'fulfilled');
-		const failedEmails = pending.filter((_, i) => results[i].status === 'rejected');
-
-		if (sentEmails.length > 0) {
-			toast.success(
-				sentEmails.length === 1
-					? t`1 invitation sent`
-					: t`${String(sentEmails.length)} invitations sent`
+		try {
+			const result = await sendInvitations(organization, [...emails], role);
+			if (appState.organizationId !== organization.id) return;
+			emails = result.failed;
+			addressErrors = Object.fromEntries(
+				result.failed.map((email) => [
+					email,
+					t`Invitation could not be sent. Check the address or try again.`
+				])
 			);
-			onsent?.(sentEmails);
+			if (result.sent.length) {
+				toast.success(
+					result.sent.length === 1
+						? t`1 invitation sent`
+						: t`${String(result.sent.length)} invitations sent`
+				);
+				onsent?.(result.sent);
+				progressPending = result.progressSaved ? null : organization;
+			}
+			if (!result.failed.length && !progressPending) {
+				role = 'member';
+				open = false;
+			}
+		} finally {
+			submitting = false;
 		}
-		if (failedEmails.length > 0) {
+	}
+
+	async function retryProgress() {
+		if (!progressPending || submitting) return;
+		const organization = progressPending;
+		submitting = true;
+		try {
+			await recordInvitationProgress(organization);
+			if (appState.organizationId !== organization.id) return;
+			progressPending = null;
+			if (!emails.length && !draft.trim()) open = false;
+		} catch {
 			toast.error(
-				failedEmails.length === 1
-					? t`1 invitation could not be sent`
-					: t`${String(failedEmails.length)} invitations could not be sent`
+				t`Your invitations were sent, but progress could not be saved. Please try again.`
 			);
-		}
-
-		// Keep only the addresses that failed, so a retry does not re-invite the successful ones.
-		emails = failedEmails;
-		if (failedEmails.length === 0) {
-			role = 'member';
-			open = false;
+		} finally {
+			submitting = false;
 		}
 	}
 
@@ -106,7 +155,7 @@
 
 <Drawer.Root bind:open>
 	<Drawer.Content>
-		<div class="mx-auto w-full max-w-md">
+		<div class="mx-auto max-h-[85svh] w-full max-w-md overflow-y-auto">
 			<Drawer.Header>
 				<Drawer.Title>{t`Invite teammates`}</Drawer.Title>
 				<Drawer.Description>
@@ -114,7 +163,7 @@
 				</Drawer.Description>
 			</Drawer.Header>
 
-			<div class="flex flex-col gap-4 px-4">
+			<fieldset disabled={submitting} class="flex min-w-0 flex-col gap-4 px-4">
 				<div class="flex flex-col gap-2">
 					<Label for="invite-emails">{t`Email addresses`}</Label>
 					<div
@@ -137,8 +186,13 @@
 						{/each}
 						<input
 							id="invite-emails"
+							inputmode="email"
+							autocapitalize="none"
+							spellcheck={false}
+							aria-describedby="invite-email-help"
 							bind:value={draft}
 							onkeydown={onKeydown}
+							onpaste={onPaste}
 							onblur={commitDraft}
 							placeholder={emails.length ? t`add another…` : t`name@example.org`}
 							class="min-w-[8rem] flex-1 bg-transparent px-1 py-0.5 text-sm outline-none"
@@ -146,20 +200,41 @@
 					</div>
 				</div>
 
+				<p id="invite-email-help" class="text-sm text-muted-foreground">
+					{t`Separate addresses with commas, semicolons, or new lines. Press Enter to add an address.`}
+				</p>
+				{#if Object.keys(addressErrors).length}
+					<ul role="alert" class="space-y-2 text-sm text-destructive">
+						{#each Object.entries(addressErrors) as [email, message] (email)}
+							<li><strong class="break-all">{email}</strong>: {message}</li>
+						{/each}
+					</ul>
+				{/if}
+				{#if progressPending}
+					<div role="status" class="rounded-lg border p-3 text-sm">
+						<p>{t`Your invitations were sent. We couldn’t save your setup progress.`}</p>
+						<Button variant="outline" class="mt-2" onclick={retryProgress}
+							>{t`Retry saving progress`}</Button
+						>
+					</div>
+				{/if}
 				<div class="flex flex-col gap-2">
-					<Label>{t`Role`}</Label>
+					<Label for="invite-role">{t`Role for these teammates`}</Label>
 					<Select.Root type="single" bind:value={role}>
-						<Select.Trigger class="w-full">{roleLabel}</Select.Trigger>
+						<Select.Trigger id="invite-role" aria-describedby="invite-role-help" class="w-full"
+							>{roleLabel}</Select.Trigger
+						>
 						<Select.Content>
-							{#each roles as option (option.value)}
+							{#each availableRoles as option (option.value)}
 								<Select.Item value={option.value} label={option.label} />
 							{/each}
 						</Select.Content>
 					</Select.Root>
+					<p id="invite-role-help" class="text-sm text-muted-foreground">{roleDescription}</p>
 				</div>
-			</div>
+			</fieldset>
 
-			<Drawer.Footer class="flex-row items-center gap-3">
+			<Drawer.Footer class="flex-col gap-3 sm:flex-row sm:items-center">
 				<Button
 					class="flex-1"
 					onclick={send}
@@ -168,16 +243,16 @@
 					{#if submitting}
 						<Spinner class="mr-2 size-4" />
 						{t`Sending…`}
-					{:else if emails.length === 1}
+					{:else if invitationCount === 1}
 						{t`Send 1 invitation`}
-					{:else if emails.length > 1}
-						{t`Send ${String(emails.length)} invitations`}
+					{:else if invitationCount > 1}
+						{t`Send ${String(invitationCount)} invitations`}
 					{:else}
 						{t`Send invitations`}
 					{/if}
 				</Button>
 				<Button variant="ghost" onclick={skip} disabled={submitting}>
-					{t`Skip — I'll do this later`}
+					{t`Do this later`}
 				</Button>
 			</Drawer.Footer>
 		</div>

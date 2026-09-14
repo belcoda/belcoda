@@ -65,24 +65,15 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 	}
 	safeLocalStorage.setItem(organizationNeedsOnboardingStorageKey(data.id), 'true');
 
-	const [active] = await Promise.all([
-		authClient.organization.setActive({
-			organizationId: data.id
+	await post({
+		path: `/api/utils/organization-created`,
+		schema: object({
+			success: boolean()
 		}),
-		post({
-			path: `/api/utils/organization-created`,
-			schema: object({
-				success: boolean()
-			}),
-			body: org
-		}).catch((err) => {
-			console.log(err);
-		})
-	]);
-
-	if (active.error) {
-		throw new Error(active.error.message);
-	}
+		body: org
+	}).catch((err) => {
+		console.log(err);
+	});
 
 	safeSessionStorage.setItem('state:organizationId', data.id);
 
