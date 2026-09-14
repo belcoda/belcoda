@@ -86,6 +86,7 @@ export const mutators = defineMutators({
 	},
 	organization: {
 		update: organization.updateOrganization,
+		updateProfileOnboarding: organization.updateOrganizationProfileOnboarding,
 		updateOnboarding: organization.updateOrganizationOnboarding,
 		updateWhatsappSettings: organization.updateOrganizationWhatsappSettings,
 		updateTheme: organization.updateTheme
@@ -102,6 +103,7 @@ export const mutators = defineMutators({
 	},
 	team: {
 		create: team.createTeam,
+		createForOnboarding: team.createOnboardingTeam,
 		update: team.updateTeam,
 		addUserToTeam: team.addUserToTeam,
 		removeUserFromTeam: team.removeUserFromTeam

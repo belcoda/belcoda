@@ -5,6 +5,7 @@ export interface SetupStep {
 	id: string;
 	label: string;
 	status: SetupTaskStatus;
+	optional?: boolean;
 	/** Optional short meta shown under a completed/active step, e.g. "United Kingdom · Europe / London". */
 	meta?: string;
 }

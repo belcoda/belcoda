@@ -65,8 +65,20 @@ export type OrganizationOnboardingStatusSchema = v.InferOutput<
 	typeof organizationOnboardingStatusSchema
 >;
 
+export const organizationOnboardingTaskStatusSchema = v.picklist([
+	'pending',
+	'skipped',
+	'complete',
+	'not_needed'
+]);
+
 export const organizationOnboardingSettingsSchema = v.object({
-	whatsappAccount: organizationOnboardingStatusSchema,
+	initialSetup: v.optional(organizationOnboardingStatusSchema),
+	profile: v.optional(organizationOnboardingTaskStatusSchema),
+	team: v.optional(organizationOnboardingTaskStatusSchema),
+	people: v.optional(organizationOnboardingTaskStatusSchema),
+	invitations: v.optional(organizationOnboardingTaskStatusSchema),
+	whatsappAccount: organizationOnboardingTaskStatusSchema,
 	event: organizationOnboardingStatusSchema,
 	publishEvent: organizationOnboardingStatusSchema,
 	other: organizationOnboardingStatusSchema,
@@ -81,6 +93,11 @@ export function defaultOrganizationOnboardingSettings(
 	status: OrganizationOnboardingStatusSchema = 'pending'
 ): OrganizationOnboardingSettingsSchema {
 	return {
+		initialSetup: status,
+		profile: status,
+		team: status,
+		people: status,
+		invitations: status,
 		whatsappAccount: status,
 		event: status,
 		publishEvent: status,
@@ -92,7 +109,7 @@ export function defaultOrganizationOnboardingSettings(
 export function organizationNeedsOnboarding(
 	settings: OrganizationOnboardingSettingsSchema | undefined
 ): boolean {
-	return settings ? Object.values(settings).some((status) => status === 'pending') : false;
+	return settings?.initialSetup === 'pending';
 }
 
 export const organizationSettingsSchema = v.object({
