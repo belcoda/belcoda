@@ -12,6 +12,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { toast } from 'svelte-sonner';
 	import { t } from '$lib/index.svelte';
+	import { trackTeamMemberAddedWhenConfirmed } from '$lib/utils/team/analytics';
 	const {
 		person,
 		currentPage
@@ -199,7 +200,7 @@
 												keywords={[team.name]}
 												value={team.id}
 												onSelect={() => {
-													z.mutate(
+													const response = z.mutate(
 														mutators.person.addToTeam({
 															metadata: {
 																organizationId: appState.organizationId,
@@ -208,6 +209,7 @@
 															}
 														})
 													);
+													void trackTeamMemberAddedWhenConfirmed(response.server, 'person');
 													closeAndFocusTrigger();
 													toast.success(t`Person added to team`);
 												}}

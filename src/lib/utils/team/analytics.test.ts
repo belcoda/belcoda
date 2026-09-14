@@ -7,7 +7,11 @@ const { trackAnalyticsEvent } = vi.hoisted(() => ({
 
 vi.mock('$lib/utils/analytics', () => ({ trackAnalyticsEvent }));
 
-import { teamAnalyticsEventNames, trackTeamCreatedWhenConfirmed } from './analytics';
+import {
+	teamAnalyticsEventNames,
+	trackTeamCreatedWhenConfirmed,
+	trackTeamMemberAddedWhenConfirmed
+} from './analytics';
 
 function deferred<T>() {
 	let resolve!: (value: T) => void;
@@ -56,5 +60,14 @@ describe('trackTeamCreatedWhenConfirmed', () => {
 			trackTeamCreatedWhenConfirmed(Promise.reject(new Error('Connection failed')))
 		).resolves.toBeUndefined();
 		expect(trackAnalyticsEvent).not.toHaveBeenCalled();
+	});
+
+	it('tracks a person added to a team after server confirmation', async () => {
+		await trackTeamMemberAddedWhenConfirmed(Promise.resolve({ type: 'success' }), 'person');
+
+		expect(trackAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			teamAnalyticsEventNames.memberAdded,
+			{ member_type: 'person' }
+		);
 	});
 });
