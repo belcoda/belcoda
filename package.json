@@ -101,7 +101,7 @@
 		"@aws-sdk/s3-request-presigner": "^3.1087.0",
 		"@better-auth/api-key": "^1.6.23",
 		"@better-auth/stripe": "^1.6.23",
-		"@better-svelte-email/components": "^2.1.1",
+		"@better-svelte-email/components": "^2.3.0",
 		"@better-svelte-email/server": "^2.1.1",
 		"@emoji-mart/data": "^1.2.1",
 		"@lexical/html": "0.40.0",
