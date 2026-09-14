@@ -1,4 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 export class OrgConfigPage {
 	readonly page: Page;
@@ -21,6 +22,20 @@ export class OrgConfigPage {
 
 	get cancelButton(): Locator {
 		return this.page.getByTestId('org-config-cancel');
+	}
+
+	async expectLoaded() {
+		await expect(async () => {
+			await expect(this.configCard).toBeVisible();
+			await expect(this.page.getByTestId('org-config-form')).toBeVisible();
+		}).toPass({ timeout: 30_000 });
+	}
+
+	async saveAndExpectSettingsRedirect() {
+		await this.saveButton.click();
+		await expect(async () => {
+			await expect(this.page).toHaveURL('/settings');
+		}).toPass({ timeout: 30_000 });
 	}
 }
 

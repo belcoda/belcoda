@@ -474,7 +474,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publicPage.goto(ORG_SLUG, petitionSlug);
 
 		await expect(publicPage.petitionTitle).toBeVisible({ timeout: 15_000 });
-		await expect(page.getByText(CUSTOM_QUESTION_LABEL, { exact: true })).toBeVisible({
+		await expect(page.getByLabel(CUSTOM_QUESTION_LABEL)).toBeVisible({
 			timeout: 15_000
 		});
 		await expect(publicPage.customQuestionField).toBeVisible({ timeout: 15_000 });
@@ -496,7 +496,7 @@ test.describe.serial('Petitions: signup fields', () => {
 		await publicPage.addressRegionInput.fill('Petition State');
 		await publicPage.addressPostcodeInput.fill('77777');
 
-		await publicPage.customQuestionField.fill('Housing affordability');
+		await page.getByLabel(CUSTOM_QUESTION_LABEL).fill('Housing affordability');
 
 		await publicPage.submitSignup();
 
