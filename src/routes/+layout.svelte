@@ -10,6 +10,7 @@
 	import { beforeNavigate } from '$app/navigation';
 	import { updated } from '$app/state';
 	import { dev } from '$app/environment';
+	import { env } from '$env/dynamic/public';
 
 	const { data, children } = $props();
 	/* svelte-ignore state_referenced_locally */
@@ -29,7 +30,7 @@
 		<script
 			defer
 			src="https://cloud.umami.is/script.js"
-			data-website-id="5678fa17-8b31-4017-bcee-5c723cad11bc"
+			data-website-id={env.PUBLIC_UMAMI_WEBSITE_ID}
 			data-exclude-search="true"
 			data-performance="true"
 			data-exclude-hash="true"
