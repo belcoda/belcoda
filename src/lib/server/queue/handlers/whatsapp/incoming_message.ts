@@ -33,7 +33,7 @@ import {
 import { createActivityWhatsAppMessageIncoming } from '$lib/server/api/data/activity/activity';
 import {
 	attendedEventHelper,
-	completeEventSignupHelper,
+	completeEventSignupHelperWithResult,
 	createIncompleteEventSignupHelper
 } from '$lib/server/api/data/event/signup';
 import {
@@ -52,6 +52,11 @@ import { v7 as uuidv7 } from 'uuid';
 import { createNotification } from '$lib/server/api/data/notification/notification';
 import { isWhatsappOptOutMessage } from '$lib/server/utils/whatsapp/opt_out';
 import { trackServerAnalyticsEvent } from '$lib/server/analytics';
+import {
+	eventAnalyticsEventNames,
+	eventHasSurvey,
+	type EventWhatsAppSignupCompletedAnalyticsData
+} from '$lib/utils/event/analytics';
 import {
 	petitionAnalyticsEventNames,
 	petitionHasSurvey,
@@ -79,7 +84,11 @@ export async function handleIncomingMessage(incomingMessage: unknown) {
 			return await processIncomingMessageInTransaction(parsed, insertedWhatsAppMessageId, tx);
 		});
 		if (analyticsEvent) {
-			void trackServerAnalyticsEvent(analyticsEvent.name, analyticsEvent.data);
+			const url =
+				analyticsEvent.name === eventAnalyticsEventNames.signupCompleted
+					? '/events/whatsapp-signup'
+					: '/petitions/whatsapp-signature';
+			void trackServerAnalyticsEvent(analyticsEvent.name, analyticsEvent.data, url);
 		}
 	} catch (err) {
 		log.error(err, 'Failed to process incoming message');
@@ -118,7 +127,7 @@ async function processIncomingMessageInTransaction(
 	parsed: IncomingMessage,
 	insertedWhatsAppMessageId: string,
 	tx: ServerTransaction
-) {
+): Promise<WhatsAppAnalyticsEvent | undefined> {
 	const senderPhone = parsed.whatsappInboundMessage.from;
 	const senderDisplayName =
 		parsed.whatsappInboundMessage.customerProfile?.name ??
@@ -269,10 +278,15 @@ type MessageRoutingResult = {
 	analyticsEvent?: WhatsAppAnalyticsEvent;
 };
 
-type WhatsAppAnalyticsEvent = {
-	name: typeof petitionAnalyticsEventNames.signatureCompleted;
-	data: PetitionWhatsAppSignatureCompletedAnalyticsData;
-};
+type WhatsAppAnalyticsEvent =
+	| {
+			name: typeof petitionAnalyticsEventNames.signatureCompleted;
+			data: PetitionWhatsAppSignatureCompletedAnalyticsData;
+	  }
+	| {
+			name: typeof eventAnalyticsEventNames.signupCompleted;
+			data: EventWhatsAppSignupCompletedAnalyticsData;
+	  };
 
 function getWhatsAppPetitionSignatureAnalyticsEvent(
 	hasSurvey: boolean
@@ -281,6 +295,18 @@ function getWhatsAppPetitionSignatureAnalyticsEvent(
 		name: petitionAnalyticsEventNames.signatureCompleted,
 		data: {
 			signature_channel: 'whatsapp',
+			has_survey: hasSurvey
+		}
+	};
+}
+
+function getWhatsAppSignupAnalyticsEvent(
+	hasSurvey: boolean
+): MessageRoutingResult['analyticsEvent'] {
+	return {
+		name: eventAnalyticsEventNames.signupCompleted,
+		data: {
+			signup_channel: 'whatsapp',
 			has_survey: hasSurvey
 		}
 	};
@@ -392,47 +418,63 @@ async function handleEventSignupActionCode(
 			return { organizationId, personId: eventSignup.personId, logActivity: false };
 		} catch (error) {
 			log.error(error, 'Failed to send flow message for event registration');
-			const completedSignup = await completeEventSignupHelper({
-				eventId: event.id,
-				personAction: {
-					subscribed: true,
-					country: countryCode,
-					phoneNumber: senderPhone,
-					givenName: senderDisplayName
-				},
-				signupDetails: {
-					channel: { type: 'whatsapp' },
-					customFields: {}
-				},
-				organizationId: event.organizationId,
-				tx,
-				defaultEventSignupId: eventSignup.id,
-				whatsappIdentity,
-				whatsappContextWamidId
-			});
-			return { organizationId, personId: completedSignup.personId, logActivity: false };
+			const { eventSignup: completedSignup, transitionedToComplete } =
+				await completeEventSignupHelperWithResult({
+					eventId: event.id,
+					personAction: {
+						subscribed: true,
+						country: countryCode,
+						phoneNumber: senderPhone,
+						givenName: senderDisplayName
+					},
+					signupDetails: {
+						channel: { type: 'whatsapp' },
+						customFields: {}
+					},
+					organizationId: event.organizationId,
+					tx,
+					defaultEventSignupId: eventSignup.id,
+					whatsappIdentity,
+					whatsappContextWamidId
+				});
+			return {
+				organizationId,
+				personId: completedSignup.personId,
+				logActivity: false,
+				analyticsEvent: transitionedToComplete
+					? getWhatsAppSignupAnalyticsEvent(eventHasSurvey(event))
+					: undefined
+			};
 		}
 	}
 	log.warn({ eventId: event.id }, 'No flow deployed for event, registering immediately');
-	const completedSignup = await completeEventSignupHelper({
-		eventId: event.id,
-		personAction: {
-			subscribed: true,
-			country: countryCode,
-			phoneNumber: senderPhone,
-			givenName: senderDisplayName
-		},
-		signupDetails: {
-			channel: { type: 'whatsapp' },
-			customFields: {}
-		},
-		organizationId: event.organizationId,
-		tx,
-		defaultEventSignupId: eventSignup.id,
-		whatsappIdentity,
-		whatsappContextWamidId
-	});
-	return { organizationId, personId: completedSignup.personId, logActivity: false };
+	const { eventSignup: completedSignup, transitionedToComplete } =
+		await completeEventSignupHelperWithResult({
+			eventId: event.id,
+			personAction: {
+				subscribed: true,
+				country: countryCode,
+				phoneNumber: senderPhone,
+				givenName: senderDisplayName
+			},
+			signupDetails: {
+				channel: { type: 'whatsapp' },
+				customFields: {}
+			},
+			organizationId: event.organizationId,
+			tx,
+			defaultEventSignupId: eventSignup.id,
+			whatsappIdentity,
+			whatsappContextWamidId
+		});
+	return {
+		organizationId,
+		personId: completedSignup.personId,
+		logActivity: false,
+		analyticsEvent: transitionedToComplete
+			? getWhatsAppSignupAnalyticsEvent(eventHasSurvey(event))
+			: undefined
+	};
 }
 
 async function handleEventAttendedActionCode(

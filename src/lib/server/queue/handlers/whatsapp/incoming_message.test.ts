@@ -146,7 +146,8 @@ describe('incoming WhatsApp message processing', () => {
 		await expect(handleIncomingMessage(inboundTextMessage)).resolves.toBeUndefined();
 		expect(trackServerAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
 			'petition_signature_completed',
-			{ signature_channel: 'whatsapp', has_survey: true }
+			{ signature_channel: 'whatsapp', has_survey: true },
+			'/petitions/whatsapp-signature'
 		);
 
 		finishAnalytics();
