@@ -1,12 +1,16 @@
 import type { NewOrganizationFromWebsiteForm } from '$lib/schema/organization';
-import type { OrganizationOnboardingSettingsSchema } from '$lib/schema/organization/settings';
+import type {
+	OrganizationOnboardingSettingsSchema,
+	OrganizationSettingsSchema
+} from '$lib/schema/organization/settings';
 import { trackAnalyticsEvent, type AnalyticsEventData } from '$lib/utils/analytics';
 
 export const organizationAnalyticsEventNames = {
 	created: 'organization_created',
 	onboardingStepStarted: 'onboarding_step_started',
 	onboardingStepCompleted: 'onboarding_step_completed',
-	onboardingDeferred: 'onboarding_deferred'
+	onboardingDeferred: 'onboarding_deferred',
+	onboardingCompleted: 'onboarding_completed'
 } as const;
 
 export type OnboardingAnalyticsStep = 'profile' | 'team' | 'people' | 'invite' | 'whatsapp';
@@ -86,5 +90,28 @@ export function getOnboardingDeferredAnalytics(
 		scope: 'onboarding',
 		next_step: nextStep ?? 'none',
 		required_steps_completed: previous?.profile === 'complete' ? 1 : 0
+	};
+}
+
+export function getOnboardingCompletedAnalytics(
+	previousSettings: OrganizationSettingsSchema,
+	updates: Partial<OrganizationOnboardingSettingsSchema>
+): AnalyticsEventData | undefined {
+	const previousOnboarding = previousSettings.onboarding;
+	const nextOnboarding = { ...previousOnboarding, ...updates };
+	if (
+		previousOnboarding?.initialSetup === 'complete' ||
+		updates.initialSetup !== 'complete' ||
+		nextOnboarding.profile !== 'complete'
+	) {
+		return;
+	}
+
+	return {
+		completion_path: previousOnboarding?.initialSetup === 'skipped' ? 'dashboard' : 'setup',
+		invited_teammates: nextOnboarding.invitations === 'complete',
+		whatsapp_connected: Boolean(
+			previousSettings.whatsApp.wabaId && previousSettings.whatsApp.number
+		)
 	};
 }

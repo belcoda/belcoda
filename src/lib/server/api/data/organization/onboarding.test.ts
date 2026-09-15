@@ -135,6 +135,25 @@ describe('updateOrganizationOnboarding', () => {
 		);
 	});
 
+	it('does not track onboarding completion again after it is complete', async () => {
+		const { tx } = createTransaction({ initialSetup: 'complete', profile: 'complete' });
+
+		await updateOrganizationProfileOnboarding({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: {
+					country: 'US',
+					defaultLanguage: 'en',
+					defaultTimezone: 'America/New_York'
+				}
+			}
+		});
+
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
+	});
+
 	it('saves profile defaults and onboarding completion together', async () => {
 		const { tx, set } = createTransaction();
 		await updateOrganizationProfileOnboarding({
@@ -162,7 +181,8 @@ describe('updateOrganizationOnboarding', () => {
 		expect(query.params).toContain(
 			JSON.stringify({ initialSetup: 'complete', profile: 'complete' })
 		);
-		expect(sendAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+		expect(sendAnalyticsEvent).toHaveBeenNthCalledWith(
+			1,
 			{
 				name: organizationAnalyticsEventNames.onboardingStepCompleted,
 				data: { step: 'profile' },
@@ -170,6 +190,20 @@ describe('updateOrganizationOnboarding', () => {
 			},
 			{ tx: true }
 		);
+		expect(sendAnalyticsEvent).toHaveBeenNthCalledWith(
+			2,
+			{
+				name: organizationAnalyticsEventNames.onboardingCompleted,
+				data: {
+					completion_path: 'setup',
+					invited_teammates: false,
+					whatsapp_connected: false
+				},
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+		expect(sendAnalyticsEvent).toHaveBeenCalledTimes(2);
 	});
 
 	it('tracks only a new onboarding task completion', async () => {

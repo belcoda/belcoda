@@ -30,8 +30,10 @@ import { parse } from 'valibot';
 import { bindPhoneNumberToWaba } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 
 import pino from '$lib/pino';
+import type { AnalyticsEventData } from '$lib/utils/analytics';
 import {
 	getNewlyCompletedOnboardingSteps,
+	getOnboardingCompletedAnalytics,
 	getOnboardingDeferredAnalytics,
 	organizationAnalyticsEventNames,
 	type OnboardingAnalyticsStep
@@ -57,6 +59,26 @@ async function queueOnboardingStepCompletions({
 			queueSendOptionsFromTransaction(tx)
 		);
 	}
+}
+
+async function queueOnboardingCompletion({
+	queue,
+	tx,
+	data
+}: {
+	queue: Awaited<ReturnType<typeof getQueue>>;
+	tx: ServerTransaction;
+	data: AnalyticsEventData | undefined;
+}) {
+	if (!data) return;
+	await queue.sendAnalyticsEvent(
+		{
+			name: organizationAnalyticsEventNames.onboardingCompleted,
+			data,
+			url: '/onboarding'
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
 }
 
 export async function updateOrganization({
@@ -121,6 +143,10 @@ export async function updateOrganizationProfileOnboarding({
 		existingOrganization.settings.onboarding,
 		{ profile: 'complete' }
 	);
+	const onboardingCompletedAnalytics = getOnboardingCompletedAnalytics(
+		existingOrganization.settings,
+		{ initialSetup: 'complete', profile: 'complete' }
+	);
 	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify({ initialSetup: 'complete', profile: 'complete' });
 
@@ -158,6 +184,7 @@ export async function updateOrganizationProfileOnboarding({
 		queueSendOptionsFromTransaction(tx)
 	);
 	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
+	await queueOnboardingCompletion({ queue, tx, data: onboardingCompletedAnalytics });
 
 	return updated;
 }
@@ -318,6 +345,10 @@ export async function updateOrganizationOnboarding({
 		existingOrganization.settings.onboarding,
 		parsed.input
 	);
+	const onboardingCompletedAnalytics = getOnboardingCompletedAnalytics(
+		existingOrganization.settings,
+		parsed.input
+	);
 	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify(parsed.input);
 
@@ -354,6 +385,7 @@ export async function updateOrganizationOnboarding({
 		queueSendOptionsFromTransaction(tx)
 	);
 	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
+	await queueOnboardingCompletion({ queue, tx, data: onboardingCompletedAnalytics });
 	if (deferredAnalytics) {
 		await queue.sendAnalyticsEvent(
 			{
