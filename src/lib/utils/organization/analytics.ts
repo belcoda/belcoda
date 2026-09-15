@@ -12,7 +12,8 @@ export const organizationAnalyticsEventNames = {
 	onboardingStepCompleted: 'onboarding_step_completed',
 	onboardingDeferred: 'onboarding_deferred',
 	onboardingCompleted: 'onboarding_completed',
-	onboardingInvitesSent: 'onboarding_invites_sent'
+	onboardingInvitesSent: 'onboarding_invites_sent',
+	onboardingWhatsAppConnectionCompleted: 'onboarding_whatsapp_connection_completed'
 } as const;
 
 export type OnboardingAnalyticsStep = 'profile' | 'team' | 'people' | 'invite' | 'whatsapp';

@@ -3,7 +3,8 @@ import * as helpers from '$lib/schema/helpers';
 import {
 	organizationSettingsSchema,
 	defaultOrganizationSettings,
-	whatsappOrganizationSettingsSchema
+	whatsappOrganizationSettingsSchema,
+	organizationOnboardingEntryPointSchema
 } from '$lib/schema/organization/settings';
 import { organizationNameSchema, organizationSlugSchema } from '$lib/schema/organization/names';
 import { userRole } from '$lib/schema/user';
@@ -180,7 +181,10 @@ export type UpdateOrganizationMutatorSchema = v.InferOutput<typeof updateOrganiz
 
 export const updateOrganizationWhatsappSettingsMutatorSchema = v.object({
 	input: updateOrganizationWhatsappSettings,
-	metadata: organizationMutatorMetadata
+	metadata: v.object({
+		...organizationMutatorMetadata.entries,
+		onboardingEntryPoint: v.optional(organizationOnboardingEntryPointSchema)
+	})
 });
 export type UpdateOrganizationWhatsappSettingsMutatorSchema = v.InferOutput<
 	typeof updateOrganizationWhatsappSettingsMutatorSchema

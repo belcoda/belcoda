@@ -89,6 +89,11 @@ export type OrganizationOnboardingSettingsSchema = v.InferOutput<
 	typeof organizationOnboardingSettingsSchema
 >;
 
+export const organizationOnboardingEntryPointSchema = v.picklist(['setup', 'dashboard']);
+export type OrganizationOnboardingEntryPointSchema = v.InferOutput<
+	typeof organizationOnboardingEntryPointSchema
+>;
+
 export function defaultOrganizationOnboardingSettings(
 	status: OrganizationOnboardingStatusSchema = 'pending'
 ): OrganizationOnboardingSettingsSchema {
@@ -152,7 +157,8 @@ export type UpdateThemeZeroMutatorSchema = v.InferOutput<typeof updateThemeZeroM
 export const updateWhatsappOrganizationSettingsZeroMutatorSchema = v.object({
 	metadata: v.object({
 		organizationId: helpers.uuid,
-		existingSettings: organizationSettingsSchema
+		existingSettings: organizationSettingsSchema,
+		onboardingEntryPoint: v.optional(organizationOnboardingEntryPointSchema)
 	}),
 	input: whatsappOrganizationSettingsSchema
 });

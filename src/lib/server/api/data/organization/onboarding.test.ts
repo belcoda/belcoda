@@ -60,13 +60,18 @@ function createOrganizationRecord() {
 }
 
 function createTransaction(
-	onboarding: Partial<ReturnType<typeof defaultOrganizationOnboardingSettings>> = {}
+	onboarding: Partial<ReturnType<typeof defaultOrganizationOnboardingSettings>> = {},
+	whatsApp: Partial<ReturnType<typeof defaultOrganizationSettings>['whatsApp']> = {}
 ) {
 	const organizationRecord = createOrganizationRecord();
 	organizationRecord.settings.onboarding = {
 		...defaultOrganizationOnboardingSettings(),
 		...organizationRecord.settings.onboarding,
 		...onboarding
+	};
+	organizationRecord.settings.whatsApp = {
+		...organizationRecord.settings.whatsApp,
+		...whatsApp
 	};
 	const findFirst = vi.fn(async () => organizationRecord);
 	const returning = vi.fn(async () => [
@@ -109,7 +114,7 @@ describe('updateOrganizationOnboarding', () => {
 			tx: tx as never,
 			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
 			args: {
-				metadata: { organizationId },
+				metadata: { organizationId, onboardingEntryPoint: 'setup' },
 				input: { number: '123456789', wabaId: '987654321' }
 			}
 		});
@@ -125,7 +130,8 @@ describe('updateOrganizationOnboarding', () => {
 			JSON.stringify(defaultOrganizationOnboardingSettings('complete'))
 		);
 		expect(query.sql).toContain('COALESCE("organization"."settings"->\'onboarding\'');
-		expect(sendAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+		expect(sendAnalyticsEvent).toHaveBeenNthCalledWith(
+			1,
 			{
 				name: organizationAnalyticsEventNames.onboardingStepCompleted,
 				data: { step: 'whatsapp' },
@@ -133,6 +139,35 @@ describe('updateOrganizationOnboarding', () => {
 			},
 			{ tx: true }
 		);
+		expect(sendAnalyticsEvent).toHaveBeenNthCalledWith(
+			2,
+			{
+				name: organizationAnalyticsEventNames.onboardingWhatsAppConnectionCompleted,
+				data: { entry_point: 'setup' },
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+		expect(sendAnalyticsEvent).toHaveBeenCalledTimes(2);
+	});
+
+	it('does not track an onboarding connection when WhatsApp was already connected', async () => {
+		const { tx } = createTransaction(
+			{ whatsappAccount: 'complete' },
+			{ number: '+254700000000', wabaId: 'existing-waba' }
+		);
+		vi.mocked(bindPhoneNumberToWaba).mockResolvedValue('+254712345678');
+
+		await updateOrganizationWhatsappSettings({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, onboardingEntryPoint: 'dashboard' },
+				input: { number: '123456789', wabaId: '987654321' }
+			}
+		});
+
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
 	});
 
 	it('does not track onboarding completion again after it is complete', async () => {

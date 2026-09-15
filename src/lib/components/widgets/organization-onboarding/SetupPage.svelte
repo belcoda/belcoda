@@ -225,7 +225,7 @@
 					badge={t`optional`}
 					description={t`Send updates and reminders, and receive replies from your community.`}
 					actionLabel={t`Set up`}
-					actionHref={resolve('/settings/whatsapp/accounts')}
+					actionHref={resolve('/settings/whatsapp/accounts?onboarding=setup')}
 					onAction={() => trackOnboardingStepStarted('whatsapp', 'setup')}
 				>
 					{#snippet icon()}<MessageCircleIcon class="size-4" />{/snippet}

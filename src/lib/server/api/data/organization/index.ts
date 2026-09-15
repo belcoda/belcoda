@@ -210,6 +210,9 @@ export async function updateOrganizationWhatsappSettings({
 
 	const whatsappPatch = { ...parsed.input };
 	const { number, wabaId } = parsed.input;
+	const wasConnected = Boolean(
+		existingOrganization.settings.whatsApp.wabaId && existingOrganization.settings.whatsApp.number
+	);
 	if (number && wabaId) {
 		// calling this function (which calls an external API) during the transaction is far from ideal, but refactoring it would be a pain right now...
 		// it's not a function which is called very often at all, so we can leave it as it is for now.
@@ -265,6 +268,20 @@ export async function updateOrganizationWhatsappSettings({
 		queueSendOptionsFromTransaction(tx)
 	);
 	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
+	if (
+		!wasConnected &&
+		completedSteps.includes('whatsapp') &&
+		parsed.metadata.onboardingEntryPoint
+	) {
+		await queue.sendAnalyticsEvent(
+			{
+				name: organizationAnalyticsEventNames.onboardingWhatsAppConnectionCompleted,
+				data: { entry_point: parsed.metadata.onboardingEntryPoint },
+				url: '/onboarding'
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	}
 	return updated;
 }
 
