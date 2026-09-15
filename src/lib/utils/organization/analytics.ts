@@ -73,8 +73,9 @@ export function getNewlyCompletedOnboardingSteps(
 	previous: OrganizationOnboardingSettingsSchema | undefined,
 	updates: Partial<OrganizationOnboardingSettingsSchema>
 ): OnboardingAnalyticsStep[] {
+	if (!previous) return [];
 	return trackedOnboardingSteps
-		.filter(([setting]) => previous?.[setting] !== 'complete' && updates[setting] === 'complete')
+		.filter(([setting]) => previous[setting] !== 'complete' && updates[setting] === 'complete')
 		.map(([, step]) => step);
 }
 
@@ -82,7 +83,8 @@ export function getOnboardingDeferredAnalytics(
 	previous: OrganizationOnboardingSettingsSchema | undefined,
 	updates: Partial<OrganizationOnboardingSettingsSchema>
 ): AnalyticsEventData | undefined {
-	if (previous?.initialSetup === 'skipped' || updates.initialSetup !== 'skipped') return;
+	if (!previous || previous.initialSetup === 'skipped' || updates.initialSetup !== 'skipped')
+		return;
 
 	const nextState = { ...previous, ...updates };
 	const nextStep = suggestedOnboardingSteps.find(
@@ -101,9 +103,10 @@ export function getOnboardingCompletedAnalytics(
 	updates: Partial<OrganizationOnboardingSettingsSchema>
 ): AnalyticsEventData | undefined {
 	const previousOnboarding = previousSettings.onboarding;
+	if (!previousOnboarding) return;
 	const nextOnboarding = { ...previousOnboarding, ...updates };
 	if (
-		previousOnboarding?.initialSetup === 'complete' ||
+		previousOnboarding.initialSetup === 'complete' ||
 		updates.initialSetup !== 'complete' ||
 		nextOnboarding.profile !== 'complete'
 	) {
@@ -111,7 +114,7 @@ export function getOnboardingCompletedAnalytics(
 	}
 
 	return {
-		completion_path: previousOnboarding?.initialSetup === 'skipped' ? 'dashboard' : 'setup',
+		completion_path: previousOnboarding.initialSetup === 'skipped' ? 'dashboard' : 'setup',
 		invited_teammates: nextOnboarding.invitations === 'complete',
 		whatsapp_connected: Boolean(
 			previousSettings.whatsApp.wabaId && previousSettings.whatsApp.number

@@ -60,15 +60,19 @@ function createOrganizationRecord() {
 }
 
 function createTransaction(
-	onboarding: Partial<ReturnType<typeof defaultOrganizationOnboardingSettings>> = {},
+	onboarding: Partial<ReturnType<typeof defaultOrganizationOnboardingSettings>> | null = {},
 	whatsApp: Partial<ReturnType<typeof defaultOrganizationSettings>['whatsApp']> = {}
 ) {
 	const organizationRecord = createOrganizationRecord();
-	organizationRecord.settings.onboarding = {
-		...defaultOrganizationOnboardingSettings(),
-		...organizationRecord.settings.onboarding,
-		...onboarding
-	};
+	if (onboarding === null) {
+		delete organizationRecord.settings.onboarding;
+	} else {
+		organizationRecord.settings.onboarding = {
+			...defaultOrganizationOnboardingSettings(),
+			...organizationRecord.settings.onboarding,
+			...onboarding
+		};
+	}
 	organizationRecord.settings.whatsApp = {
 		...organizationRecord.settings.whatsApp,
 		...whatsApp
@@ -186,6 +190,34 @@ describe('updateOrganizationOnboarding', () => {
 			}
 		});
 
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
+	});
+
+	it('does not track onboarding transitions for legacy organizations', async () => {
+		const profileUpdate = createTransaction(null);
+		await updateOrganizationProfileOnboarding({
+			tx: profileUpdate.tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: {
+					country: 'US',
+					defaultLanguage: 'en',
+					defaultTimezone: 'America/New_York'
+				}
+			}
+		});
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
+
+		const deferredUpdate = createTransaction(null);
+		await updateOrganizationOnboarding({
+			tx: deferredUpdate.tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: { initialSetup: 'skipped' }
+			}
+		});
 		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
 	});
 
