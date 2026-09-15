@@ -2,8 +2,12 @@ import type { NewOrganizationFromWebsiteForm } from '$lib/schema/organization';
 import { trackAnalyticsEvent, type AnalyticsEventData } from '$lib/utils/analytics';
 
 export const organizationAnalyticsEventNames = {
-	created: 'organization_created'
+	created: 'organization_created',
+	onboardingStepStarted: 'onboarding_step_started'
 } as const;
+
+export type OnboardingAnalyticsStep = 'profile' | 'team' | 'people' | 'invite' | 'whatsapp';
+export type OnboardingAnalyticsEntryPoint = 'setup' | 'dashboard';
 
 export function getOrganizationCreatedAnalytics(
 	organization: NewOrganizationFromWebsiteForm
@@ -22,4 +26,14 @@ export function trackOrganizationCreated(organization: NewOrganizationFromWebsit
 		organizationAnalyticsEventNames.created,
 		getOrganizationCreatedAnalytics(organization)
 	);
+}
+
+export function trackOnboardingStepStarted(
+	step: OnboardingAnalyticsStep,
+	entryPoint: OnboardingAnalyticsEntryPoint
+): void {
+	trackAnalyticsEvent(organizationAnalyticsEventNames.onboardingStepStarted, {
+		step,
+		entry_point: entryPoint
+	});
 }
