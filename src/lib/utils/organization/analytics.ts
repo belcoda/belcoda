@@ -1,4 +1,5 @@
 import type { NewOrganizationFromWebsiteForm } from '$lib/schema/organization';
+import type { UserRole } from '$lib/schema/user';
 import type {
 	OrganizationOnboardingSettingsSchema,
 	OrganizationSettingsSchema
@@ -10,7 +11,8 @@ export const organizationAnalyticsEventNames = {
 	onboardingStepStarted: 'onboarding_step_started',
 	onboardingStepCompleted: 'onboarding_step_completed',
 	onboardingDeferred: 'onboarding_deferred',
-	onboardingCompleted: 'onboarding_completed'
+	onboardingCompleted: 'onboarding_completed',
+	onboardingInvitesSent: 'onboarding_invites_sent'
 } as const;
 
 export type OnboardingAnalyticsStep = 'profile' | 'team' | 'people' | 'invite' | 'whatsapp';
@@ -114,4 +116,19 @@ export function getOnboardingCompletedAnalytics(
 			previousSettings.whatsApp.wabaId && previousSettings.whatsApp.number
 		)
 	};
+}
+
+export function trackOnboardingInvitesSent(
+	sentCount: number,
+	failedCount: number,
+	role: UserRole
+): void {
+	if (sentCount < 1) return;
+
+	const countBand = sentCount === 1 ? 'one' : sentCount <= 5 ? 'two_to_five' : 'six_plus';
+	trackAnalyticsEvent(organizationAnalyticsEventNames.onboardingInvitesSent, {
+		count_band: countBand,
+		role,
+		partial_failure: failedCount > 0
+	});
 }

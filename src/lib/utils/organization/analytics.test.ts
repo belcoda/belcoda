@@ -6,7 +6,11 @@ const { trackAnalyticsEvent } = vi.hoisted(() => ({
 
 vi.mock('$lib/utils/analytics', () => ({ trackAnalyticsEvent }));
 
-import { organizationAnalyticsEventNames, trackOrganizationCreated } from './analytics';
+import {
+	organizationAnalyticsEventNames,
+	trackOnboardingInvitesSent,
+	trackOrganizationCreated
+} from './analytics';
 
 describe('organization analytics', () => {
 	beforeEach(() => {
@@ -33,5 +37,24 @@ describe('organization analytics', () => {
 				discovery_source: 'other'
 			}
 		);
+	});
+
+	it('tracks confirmed invitation results without including addresses', () => {
+		trackOnboardingInvitesSent(6, 2, 'admin');
+
+		expect(trackAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			organizationAnalyticsEventNames.onboardingInvitesSent,
+			{
+				count_band: 'six_plus',
+				role: 'admin',
+				partial_failure: true
+			}
+		);
+	});
+
+	it('does not track when no invitation was sent', () => {
+		trackOnboardingInvitesSent(0, 3, 'member');
+
+		expect(trackAnalyticsEvent).not.toHaveBeenCalled();
 	});
 });
