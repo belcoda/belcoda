@@ -7,10 +7,12 @@ const { trackAnalyticsEvent } = vi.hoisted(() => ({
 vi.mock('$lib/utils/analytics', () => ({ trackAnalyticsEvent }));
 
 import {
+	getNewlyCompletedOnboardingSteps,
 	organizationAnalyticsEventNames,
 	trackOnboardingInvitesSent,
 	trackOrganizationCreated
 } from './analytics';
+import { defaultOrganizationOnboardingSettings } from '$lib/schema/organization/settings';
 
 describe('organization analytics', () => {
 	beforeEach(() => {
@@ -56,5 +58,13 @@ describe('organization analytics', () => {
 		trackOnboardingInvitesSent(0, 3, 'member');
 
 		expect(trackAnalyticsEvent).not.toHaveBeenCalled();
+	});
+
+	it('recognizes the first completed people step', () => {
+		expect(
+			getNewlyCompletedOnboardingSteps(defaultOrganizationOnboardingSettings(), {
+				people: 'complete'
+			})
+		).toEqual(['people']);
 	});
 });

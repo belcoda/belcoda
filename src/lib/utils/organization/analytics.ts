@@ -22,6 +22,7 @@ export type OnboardingAnalyticsEntryPoint = 'setup' | 'dashboard';
 const trackedOnboardingSteps = [
 	['profile', 'profile'],
 	['team', 'team'],
+	['people', 'people'],
 	['invitations', 'invite'],
 	['whatsappAccount', 'whatsapp']
 ] as const satisfies readonly (readonly [
