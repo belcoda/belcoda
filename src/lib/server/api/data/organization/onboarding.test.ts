@@ -13,6 +13,7 @@ import {
 import { getQueue } from '$lib/server/queue';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import type { SQL } from 'drizzle-orm';
+import { organizationAnalyticsEventNames } from '$lib/utils/organization/analytics';
 
 vi.mock('$lib/server/queue', () => ({
 	getQueue: vi.fn(),
@@ -25,6 +26,8 @@ vi.mock('$lib/server/utils/whatsapp/ycloud/ycloud_api', () => ({
 
 const organizationId = '11111111-1111-4111-8111-111111111111';
 const userId = '22222222-2222-4222-8222-222222222222';
+const triggerWebhook = vi.fn();
+const sendAnalyticsEvent = vi.fn();
 
 function createOrganizationRecord() {
 	return {
@@ -56,8 +59,15 @@ function createOrganizationRecord() {
 	};
 }
 
-function createTransaction() {
+function createTransaction(
+	onboarding: Partial<ReturnType<typeof defaultOrganizationOnboardingSettings>> = {}
+) {
 	const organizationRecord = createOrganizationRecord();
+	organizationRecord.settings.onboarding = {
+		...defaultOrganizationOnboardingSettings(),
+		...organizationRecord.settings.onboarding,
+		...onboarding
+	};
 	const findFirst = vi.fn(async () => organizationRecord);
 	const returning = vi.fn(async () => [
 		{
@@ -87,7 +97,9 @@ describe('updateOrganizationOnboarding', () => {
 	beforeEach(() => {
 		vi.mocked(bindPhoneNumberToWaba).mockReset();
 		vi.mocked(getQueue).mockReset();
-		vi.mocked(getQueue).mockResolvedValue({ triggerWebhook: vi.fn() } as never);
+		triggerWebhook.mockReset();
+		sendAnalyticsEvent.mockReset();
+		vi.mocked(getQueue).mockResolvedValue({ triggerWebhook, sendAnalyticsEvent } as never);
 	});
 
 	it('saves a confirmed WhatsApp connection and onboarding completion together', async () => {
@@ -113,6 +125,14 @@ describe('updateOrganizationOnboarding', () => {
 			JSON.stringify(defaultOrganizationOnboardingSettings('complete'))
 		);
 		expect(query.sql).toContain('COALESCE("organization"."settings"->\'onboarding\'');
+		expect(sendAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step: 'whatsapp' },
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
 	});
 
 	it('saves profile defaults and onboarding completion together', async () => {
@@ -142,6 +162,48 @@ describe('updateOrganizationOnboarding', () => {
 		expect(query.params).toContain(
 			JSON.stringify({ initialSetup: 'complete', profile: 'complete' })
 		);
+		expect(sendAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step: 'profile' },
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+	});
+
+	it('tracks only a new onboarding task completion', async () => {
+		const firstCompletion = createTransaction();
+		await updateOrganizationOnboarding({
+			tx: firstCompletion.tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: { team: 'complete' }
+			}
+		});
+
+		expect(sendAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step: 'team' },
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+
+		sendAnalyticsEvent.mockClear();
+		const repeatedCompletion = createTransaction({ team: 'complete' });
+		await updateOrganizationOnboarding({
+			tx: repeatedCompletion.tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: { team: 'complete' }
+			}
+		});
+
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
 	});
 
 	it('does not save a connection or mark onboarding complete when binding fails', async () => {

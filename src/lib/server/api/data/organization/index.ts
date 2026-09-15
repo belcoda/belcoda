@@ -30,7 +30,33 @@ import { parse } from 'valibot';
 import { bindPhoneNumberToWaba } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 
 import pino from '$lib/pino';
+import {
+	getNewlyCompletedOnboardingSteps,
+	organizationAnalyticsEventNames,
+	type OnboardingAnalyticsStep
+} from '$lib/utils/organization/analytics';
 const log = pino(import.meta.url);
+
+async function queueOnboardingStepCompletions({
+	queue,
+	tx,
+	steps
+}: {
+	queue: Awaited<ReturnType<typeof getQueue>>;
+	tx: ServerTransaction;
+	steps: OnboardingAnalyticsStep[];
+}) {
+	for (const step of steps) {
+		await queue.sendAnalyticsEvent(
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step },
+				url: '/onboarding'
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	}
+}
 
 export async function updateOrganization({
 	tx,
@@ -85,7 +111,15 @@ export async function updateOrganizationProfileOnboarding({
 }) {
 	const parsed = parse(updateOrganizationProfileOnboardingZeroMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
-	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const existingOrganization = await getOrganizationByIdForAdminOrOwner({
+		tx,
+		ctx,
+		organizationId
+	});
+	const completedSteps = getNewlyCompletedOnboardingSteps(
+		existingOrganization.settings.onboarding,
+		{ profile: 'complete' }
+	);
 	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify({ initialSetup: 'complete', profile: 'complete' });
 
@@ -122,6 +156,7 @@ export async function updateOrganizationProfileOnboarding({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
 
 	return updated;
 }
@@ -138,7 +173,11 @@ export async function updateOrganizationWhatsappSettings({
 	const parsed = parse(updateOrganizationWhatsappSettingsMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
 
-	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const existingOrganization = await getOrganizationByIdForAdminOrOwner({
+		tx,
+		ctx,
+		organizationId
+	});
 	//number is actually a phone_number_id that needs to be exchanged for a phone number using ycloud api
 
 	const whatsappPatch = { ...parsed.input };
@@ -161,6 +200,10 @@ export async function updateOrganizationWhatsappSettings({
 				defaultOrganizationOnboardingSettings('complete')
 			)}::jsonb) || ${JSON.stringify({ whatsappAccount: 'complete' })}::jsonb)`
 			: sql`'{}'::jsonb`;
+	const completedSteps = getNewlyCompletedOnboardingSteps(
+		existingOrganization.settings.onboarding,
+		number && wabaId && whatsappPatch.number ? { whatsappAccount: 'complete' } : {}
+	);
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
@@ -193,6 +236,7 @@ export async function updateOrganizationWhatsappSettings({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
 	return updated;
 }
 
@@ -260,7 +304,15 @@ export async function updateOrganizationOnboarding({
 }) {
 	const parsed = parse(updateOrganizationOnboardingZeroMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
-	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const existingOrganization = await getOrganizationByIdForAdminOrOwner({
+		tx,
+		ctx,
+		organizationId
+	});
+	const completedSteps = getNewlyCompletedOnboardingSteps(
+		existingOrganization.settings.onboarding,
+		parsed.input
+	);
 	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify(parsed.input);
 
@@ -296,6 +348,7 @@ export async function updateOrganizationOnboarding({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
 
 	return updated;
 }
