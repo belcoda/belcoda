@@ -32,6 +32,7 @@ import { bindPhoneNumberToWaba } from '$lib/server/utils/whatsapp/ycloud/ycloud_
 import pino from '$lib/pino';
 import {
 	getNewlyCompletedOnboardingSteps,
+	getOnboardingDeferredAnalytics,
 	organizationAnalyticsEventNames,
 	type OnboardingAnalyticsStep
 } from '$lib/utils/organization/analytics';
@@ -313,6 +314,10 @@ export async function updateOrganizationOnboarding({
 		existingOrganization.settings.onboarding,
 		parsed.input
 	);
+	const deferredAnalytics = getOnboardingDeferredAnalytics(
+		existingOrganization.settings.onboarding,
+		parsed.input
+	);
 	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify(parsed.input);
 
@@ -349,6 +354,16 @@ export async function updateOrganizationOnboarding({
 		queueSendOptionsFromTransaction(tx)
 	);
 	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
+	if (deferredAnalytics) {
+		await queue.sendAnalyticsEvent(
+			{
+				name: organizationAnalyticsEventNames.onboardingDeferred,
+				data: deferredAnalytics,
+				url: '/onboarding'
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	}
 
 	return updated;
 }

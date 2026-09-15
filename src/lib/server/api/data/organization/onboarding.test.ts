@@ -256,6 +256,33 @@ describe('updateOrganizationOnboarding', () => {
 			JSON.stringify({ initialSetup: 'skipped', whatsappAccount: 'not_needed' })
 		);
 		expect(query.params).not.toContain('#abcdef');
+		expect(sendAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			{
+				name: organizationAnalyticsEventNames.onboardingDeferred,
+				data: {
+					scope: 'onboarding',
+					next_step: 'profile',
+					required_steps_completed: 0
+				},
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+	});
+
+	it('does not track an already-deferred initial setup again', async () => {
+		const { tx } = createTransaction({ initialSetup: 'skipped' });
+
+		await updateOrganizationOnboarding({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: { initialSetup: 'skipped' }
+			}
+		});
+
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
 	});
 
 	it('does not access or update an organization outside the admin and owner scope', async () => {

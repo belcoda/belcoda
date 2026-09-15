@@ -5,7 +5,8 @@ import { trackAnalyticsEvent, type AnalyticsEventData } from '$lib/utils/analyti
 export const organizationAnalyticsEventNames = {
 	created: 'organization_created',
 	onboardingStepStarted: 'onboarding_step_started',
-	onboardingStepCompleted: 'onboarding_step_completed'
+	onboardingStepCompleted: 'onboarding_step_completed',
+	onboardingDeferred: 'onboarding_deferred'
 } as const;
 
 export type OnboardingAnalyticsStep = 'profile' | 'team' | 'people' | 'invite' | 'whatsapp';
@@ -14,6 +15,17 @@ export type OnboardingAnalyticsEntryPoint = 'setup' | 'dashboard';
 const trackedOnboardingSteps = [
 	['profile', 'profile'],
 	['team', 'team'],
+	['invitations', 'invite'],
+	['whatsappAccount', 'whatsapp']
+] as const satisfies readonly (readonly [
+	keyof OrganizationOnboardingSettingsSchema,
+	OnboardingAnalyticsStep
+])[];
+
+const suggestedOnboardingSteps = [
+	['profile', 'profile'],
+	['team', 'team'],
+	['people', 'people'],
 	['invitations', 'invite'],
 	['whatsappAccount', 'whatsapp']
 ] as const satisfies readonly (readonly [
@@ -57,4 +69,22 @@ export function getNewlyCompletedOnboardingSteps(
 	return trackedOnboardingSteps
 		.filter(([setting]) => previous?.[setting] !== 'complete' && updates[setting] === 'complete')
 		.map(([, step]) => step);
+}
+
+export function getOnboardingDeferredAnalytics(
+	previous: OrganizationOnboardingSettingsSchema | undefined,
+	updates: Partial<OrganizationOnboardingSettingsSchema>
+): AnalyticsEventData | undefined {
+	if (previous?.initialSetup === 'skipped' || updates.initialSetup !== 'skipped') return;
+
+	const nextState = { ...previous, ...updates };
+	const nextStep = suggestedOnboardingSteps.find(
+		([setting]) => !['complete', 'not_needed'].includes(nextState[setting] ?? 'pending')
+	)?.[1];
+
+	return {
+		scope: 'onboarding',
+		next_step: nextStep ?? 'none',
+		required_steps_completed: previous?.profile === 'complete' ? 1 : 0
+	};
 }
