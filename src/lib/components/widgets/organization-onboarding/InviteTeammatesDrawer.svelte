@@ -15,6 +15,7 @@
 		recordInvitationProgress,
 		type InvitationOrganization
 	} from './send-invitations';
+	import { trackOnboardingInvitesSent } from '$lib/utils/organization/analytics';
 	import XIcon from '@lucide/svelte/icons/x';
 
 	type Role = 'member' | 'admin' | 'owner';
@@ -104,6 +105,7 @@
 		try {
 			const result = await sendInvitations(organization, [...emails], role);
 			if (appState.organizationId !== organization.id) return;
+			trackOnboardingInvitesSent(result.sent.length, result.failed.length, role);
 			emails = result.failed;
 			addressErrors = Object.fromEntries(
 				result.failed.map((email) => [

@@ -15,6 +15,7 @@ import { post } from '$lib/utils/http';
 import { object, boolean } from 'valibot';
 import { safeLocalStorage, safeSessionStorage } from '$lib/utils/storage';
 import { organizationNeedsOnboardingStorageKey } from '$lib/utils/organization-onboarding';
+import { trackOrganizationCreated } from '$lib/utils/organization/analytics';
 export async function getCurrentCountry(): Promise<CountryCode> {
 	try {
 		//get the country from the IP address of the user
@@ -63,6 +64,7 @@ export async function createOrganization(org: NewOrganizationFromWebsiteForm) {
 	if (error) {
 		throw new Error(error.message);
 	}
+	trackOrganizationCreated(org);
 	safeLocalStorage.setItem(organizationNeedsOnboardingStorageKey(data.id), 'true');
 
 	await post({

@@ -93,7 +93,8 @@
 				canManageOrganization={appState.isAdminOrOwner}
 				onaction={(action) => {
 					if (action === 'profile') goto(resolve('/setup'));
-					else if (action === 'whatsapp') goto(resolve('/settings/whatsapp/accounts'));
+					else if (action === 'whatsapp')
+						goto(resolve('/settings/whatsapp/accounts?onboarding=dashboard'));
 					else if (action === 'invite' && appState.isAdminOrOwner) inviteOpen = true;
 					else if (action === 'team') goto(resolve('/settings/teams'));
 					else if (action === 'people') goto(resolve('/community/person/new'));

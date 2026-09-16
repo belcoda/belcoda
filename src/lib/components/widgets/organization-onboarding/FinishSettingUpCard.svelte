@@ -11,12 +11,16 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 	import { snapshotOrganizationSettings } from '$lib/utils/organization-onboarding';
+	import {
+		trackOnboardingStepStarted,
+		type OnboardingAnalyticsStep
+	} from '$lib/utils/organization/analytics';
 
 	type DashboardTask = {
 		id: 'profile' | 'team' | 'people' | 'invitations' | 'whatsappAccount';
 		title: string;
 		description: string;
-		action: string;
+		action: OnboardingAnalyticsStep;
 		canBeNotNeeded?: boolean;
 	};
 
@@ -29,7 +33,7 @@
 	}: {
 		organization: Organization;
 		canManageOrganization?: boolean;
-		onaction?: (action: string) => void;
+		onaction?: (action: OnboardingAnalyticsStep) => void;
 	} = $props();
 
 	let deferredTaskId = $state<string | null>(null);
@@ -99,6 +103,7 @@
 
 	function runAction(task: DashboardTask) {
 		error = null;
+		trackOnboardingStepStarted(task.action, 'dashboard');
 		onaction?.(task.action);
 	}
 

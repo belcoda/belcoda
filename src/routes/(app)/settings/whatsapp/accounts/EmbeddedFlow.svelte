@@ -10,6 +10,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { appState } from '$lib/state.svelte';
+	import { page } from '$app/state';
 
 	const MOCK_PHONE_NUMBER_ID = '15551234567';
 	const MOCK_WABA_ID = 'mock-waba-embedded-signup';
@@ -20,6 +21,10 @@
 	let error: string | null = $state(null);
 	let cancelled = $state(false);
 	let saving = $state(false);
+	const onboardingEntryPoint = $derived.by(() => {
+		const value = page.url.searchParams.get('onboarding');
+		return value === 'setup' || value === 'dashboard' ? value : undefined;
+	});
 
 	onMount(() => {
 		const account = appState.activeOrganization.data?.settings.whatsApp;
@@ -92,7 +97,11 @@
 		try {
 			const result = await z.mutate(
 				mutators.organization.updateWhatsappSettings({
-					metadata: { organizationId, existingSettings: $state.snapshot(existingSettings) },
+					metadata: {
+						organizationId,
+						existingSettings: $state.snapshot(existingSettings),
+						onboardingEntryPoint
+					},
 					input: { number, wabaId }
 				})
 			).server;

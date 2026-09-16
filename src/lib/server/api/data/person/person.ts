@@ -1,7 +1,7 @@
 import type { ServerTransaction } from '@rocicorp/zero';
 import { type QueryContext, builder } from '$lib/zero/schema';
-import { eq, and, isNull, or, ilike, count } from 'drizzle-orm';
-import { person, team } from '$lib/schema/drizzle';
+import { eq, and, isNull, or, ilike, count, sql } from 'drizzle-orm';
+import { organization, person, team } from '$lib/schema/drizzle';
 import { personReadPermissions } from '$lib/zero/query/person/permissions';
 import { getOrganizationByIdUnsafe } from '$lib/server/api/data/organization';
 import { getQueue, queueSendOptionsFromTransaction } from '$lib/server/queue';
@@ -20,6 +20,7 @@ import { addPersonToTeam } from '$lib/server/api/data/person/team';
 import { listPersonsQuery } from '$lib/zero/query/person/list';
 
 import pino from '$lib/pino';
+import { organizationAnalyticsEventNames } from '$lib/utils/organization/analytics';
 const log = pino(import.meta.url);
 
 export async function createPerson({
@@ -60,6 +61,16 @@ export async function createPerson({
 		}
 	}
 
+	const completesPeopleOnboarding =
+		parsed.metadata.addedFrom.type === 'added_manually' &&
+		organizationRecord.settings.onboarding !== undefined &&
+		organizationRecord.settings.onboarding.people !== 'complete' &&
+		(await _countPersons({
+			organizationId: parsed.metadata.organizationId,
+			searchString: null,
+			tx
+		})) === 0;
+
 	const personToImport: typeof person.$inferInsert = {
 		...args.input,
 		dateOfBirth: args.input.dateOfBirth ? new Date(args.input.dateOfBirth) : null,
@@ -77,6 +88,31 @@ export async function createPerson({
 		.returning();
 	if (!result) {
 		throw new Error('Unable to create person');
+	}
+
+	let peopleOnboardingCompleted = false;
+	if (completesPeopleOnboarding) {
+		const [completed] = await tx.dbTransaction.wrappedTransaction
+			.update(organization)
+			.set({
+				settings: sql`
+					${organization.settings}
+					|| jsonb_build_object(
+						'onboarding',
+						${organization.settings}->'onboarding' || ${JSON.stringify({ people: 'complete' })}::jsonb
+					)
+				`,
+				updatedAt: new Date()
+			})
+			.where(
+				and(
+					eq(organization.id, parsed.metadata.organizationId),
+					sql`${organization.settings}->'onboarding' IS NOT NULL`,
+					sql`${organization.settings}->'onboarding'->>'people' IS DISTINCT FROM 'complete'`
+				)
+			)
+			.returning({ id: organization.id });
+		peopleOnboardingCompleted = Boolean(completed);
 	}
 
 	if (args.metadata.teamId) {
@@ -104,6 +140,16 @@ export async function createPerson({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	if (peopleOnboardingCompleted) {
+		await queue.sendAnalyticsEvent(
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step: 'people', method: 'manual' },
+				url: '/onboarding'
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	}
 	return result;
 }
 

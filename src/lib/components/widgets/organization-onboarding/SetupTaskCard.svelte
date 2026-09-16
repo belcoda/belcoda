@@ -54,7 +54,7 @@
 
 			{#if actionLabel && !children}
 				{#if actionHref}
-					<Button href={actionHref} variant="outline" size="sm" class="shrink-0"
+					<Button href={actionHref} onclick={onAction} variant="outline" size="sm" class="shrink-0"
 						>{actionLabel}</Button
 					>
 				{:else}

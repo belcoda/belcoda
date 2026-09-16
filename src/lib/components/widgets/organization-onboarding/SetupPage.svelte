@@ -26,6 +26,7 @@
 	import { z } from '$lib/zero.svelte';
 	import { mutators } from '$lib/zero/mutate/client_mutators';
 	import { snapshotOrganizationSettings } from '$lib/utils/organization-onboarding';
+	import { trackOnboardingStepStarted } from '$lib/utils/organization/analytics';
 
 	let {
 		organization,
@@ -224,7 +225,8 @@
 					badge={t`optional`}
 					description={t`Send updates and reminders, and receive replies from your community.`}
 					actionLabel={t`Set up`}
-					actionHref={resolve('/settings/whatsapp/accounts')}
+					actionHref={resolve('/settings/whatsapp/accounts?onboarding=setup')}
+					onAction={() => trackOnboardingStepStarted('whatsapp', 'setup')}
 				>
 					{#snippet icon()}<MessageCircleIcon class="size-4" />{/snippet}
 				</SetupTaskCard>
@@ -234,7 +236,10 @@
 					badge={t`optional`}
 					description={t`Optional — you can run Belcoda solo and invite anyone later.`}
 					actionLabel={t`Invite`}
-					onAction={oninvite}
+					onAction={() => {
+						trackOnboardingStepStarted('invite', 'setup');
+						oninvite?.();
+					}}
 				>
 					{#snippet icon()}<UserPlusIcon class="size-4" />{/snippet}
 				</SetupTaskCard>

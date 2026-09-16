@@ -30,7 +30,56 @@ import { parse } from 'valibot';
 import { bindPhoneNumberToWaba } from '$lib/server/utils/whatsapp/ycloud/ycloud_api';
 
 import pino from '$lib/pino';
+import type { AnalyticsEventData } from '$lib/utils/analytics';
+import {
+	getNewlyCompletedOnboardingSteps,
+	getOnboardingCompletedAnalytics,
+	getOnboardingDeferredAnalytics,
+	organizationAnalyticsEventNames,
+	type OnboardingAnalyticsStep
+} from '$lib/utils/organization/analytics';
 const log = pino(import.meta.url);
+
+async function queueOnboardingStepCompletions({
+	queue,
+	tx,
+	steps
+}: {
+	queue: Awaited<ReturnType<typeof getQueue>>;
+	tx: ServerTransaction;
+	steps: OnboardingAnalyticsStep[];
+}) {
+	for (const step of steps) {
+		await queue.sendAnalyticsEvent(
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step },
+				url: '/onboarding'
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	}
+}
+
+async function queueOnboardingCompletion({
+	queue,
+	tx,
+	data
+}: {
+	queue: Awaited<ReturnType<typeof getQueue>>;
+	tx: ServerTransaction;
+	data: AnalyticsEventData | undefined;
+}) {
+	if (!data) return;
+	await queue.sendAnalyticsEvent(
+		{
+			name: organizationAnalyticsEventNames.onboardingCompleted,
+			data,
+			url: '/onboarding'
+		},
+		queueSendOptionsFromTransaction(tx)
+	);
+}
 
 export async function updateOrganization({
 	tx,
@@ -85,7 +134,19 @@ export async function updateOrganizationProfileOnboarding({
 }) {
 	const parsed = parse(updateOrganizationProfileOnboardingZeroMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
-	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const existingOrganization = await getOrganizationByIdForAdminOrOwner({
+		tx,
+		ctx,
+		organizationId
+	});
+	const completedSteps = getNewlyCompletedOnboardingSteps(
+		existingOrganization.settings.onboarding,
+		{ profile: 'complete' }
+	);
+	const onboardingCompletedAnalytics = getOnboardingCompletedAnalytics(
+		existingOrganization.settings,
+		{ initialSetup: 'complete', profile: 'complete' }
+	);
 	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify({ initialSetup: 'complete', profile: 'complete' });
 
@@ -122,6 +183,8 @@ export async function updateOrganizationProfileOnboarding({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
+	await queueOnboardingCompletion({ queue, tx, data: onboardingCompletedAnalytics });
 
 	return updated;
 }
@@ -138,11 +201,18 @@ export async function updateOrganizationWhatsappSettings({
 	const parsed = parse(updateOrganizationWhatsappSettingsMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
 
-	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const existingOrganization = await getOrganizationByIdForAdminOrOwner({
+		tx,
+		ctx,
+		organizationId
+	});
 	//number is actually a phone_number_id that needs to be exchanged for a phone number using ycloud api
 
 	const whatsappPatch = { ...parsed.input };
 	const { number, wabaId } = parsed.input;
+	const wasConnected = Boolean(
+		existingOrganization.settings.whatsApp.wabaId && existingOrganization.settings.whatsApp.number
+	);
 	if (number && wabaId) {
 		// calling this function (which calls an external API) during the transaction is far from ideal, but refactoring it would be a pain right now...
 		// it's not a function which is called very often at all, so we can leave it as it is for now.
@@ -161,6 +231,10 @@ export async function updateOrganizationWhatsappSettings({
 				defaultOrganizationOnboardingSettings('complete')
 			)}::jsonb) || ${JSON.stringify({ whatsappAccount: 'complete' })}::jsonb)`
 			: sql`'{}'::jsonb`;
+	const completedSteps = getNewlyCompletedOnboardingSteps(
+		existingOrganization.settings.onboarding,
+		number && wabaId && whatsappPatch.number ? { whatsappAccount: 'complete' } : {}
+	);
 
 	const [updated] = await tx.dbTransaction.wrappedTransaction
 		.update(organization)
@@ -193,6 +267,21 @@ export async function updateOrganizationWhatsappSettings({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
+	if (
+		!wasConnected &&
+		completedSteps.includes('whatsapp') &&
+		parsed.metadata.onboardingEntryPoint
+	) {
+		await queue.sendAnalyticsEvent(
+			{
+				name: organizationAnalyticsEventNames.onboardingWhatsAppConnectionCompleted,
+				data: { entry_point: parsed.metadata.onboardingEntryPoint },
+				url: '/onboarding'
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	}
 	return updated;
 }
 
@@ -260,7 +349,23 @@ export async function updateOrganizationOnboarding({
 }) {
 	const parsed = parse(updateOrganizationOnboardingZeroMutatorSchema, args);
 	const organizationId = parsed.metadata.organizationId;
-	await getOrganizationByIdForAdminOrOwner({ tx, ctx, organizationId });
+	const existingOrganization = await getOrganizationByIdForAdminOrOwner({
+		tx,
+		ctx,
+		organizationId
+	});
+	const completedSteps = getNewlyCompletedOnboardingSteps(
+		existingOrganization.settings.onboarding,
+		parsed.input
+	);
+	const deferredAnalytics = getOnboardingDeferredAnalytics(
+		existingOrganization.settings.onboarding,
+		parsed.input
+	);
+	const onboardingCompletedAnalytics = getOnboardingCompletedAnalytics(
+		existingOrganization.settings,
+		parsed.input
+	);
 	const defaultOnboarding = JSON.stringify(defaultOrganizationOnboardingSettings('complete'));
 	const onboardingPatch = JSON.stringify(parsed.input);
 
@@ -296,6 +401,18 @@ export async function updateOrganizationOnboarding({
 		},
 		queueSendOptionsFromTransaction(tx)
 	);
+	await queueOnboardingStepCompletions({ queue, tx, steps: completedSteps });
+	await queueOnboardingCompletion({ queue, tx, data: onboardingCompletedAnalytics });
+	if (deferredAnalytics) {
+		await queue.sendAnalyticsEvent(
+			{
+				name: organizationAnalyticsEventNames.onboardingDeferred,
+				data: deferredAnalytics,
+				url: '/onboarding'
+			},
+			queueSendOptionsFromTransaction(tx)
+		);
+	}
 
 	return updated;
 }

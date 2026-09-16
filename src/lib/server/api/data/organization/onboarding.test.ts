@@ -13,6 +13,7 @@ import {
 import { getQueue } from '$lib/server/queue';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import type { SQL } from 'drizzle-orm';
+import { organizationAnalyticsEventNames } from '$lib/utils/organization/analytics';
 
 vi.mock('$lib/server/queue', () => ({
 	getQueue: vi.fn(),
@@ -25,6 +26,8 @@ vi.mock('$lib/server/utils/whatsapp/ycloud/ycloud_api', () => ({
 
 const organizationId = '11111111-1111-4111-8111-111111111111';
 const userId = '22222222-2222-4222-8222-222222222222';
+const triggerWebhook = vi.fn();
+const sendAnalyticsEvent = vi.fn();
 
 function createOrganizationRecord() {
 	return {
@@ -56,8 +59,24 @@ function createOrganizationRecord() {
 	};
 }
 
-function createTransaction() {
+function createTransaction(
+	onboarding: Partial<ReturnType<typeof defaultOrganizationOnboardingSettings>> | null = {},
+	whatsApp: Partial<ReturnType<typeof defaultOrganizationSettings>['whatsApp']> = {}
+) {
 	const organizationRecord = createOrganizationRecord();
+	if (onboarding === null) {
+		delete organizationRecord.settings.onboarding;
+	} else {
+		organizationRecord.settings.onboarding = {
+			...defaultOrganizationOnboardingSettings(),
+			...organizationRecord.settings.onboarding,
+			...onboarding
+		};
+	}
+	organizationRecord.settings.whatsApp = {
+		...organizationRecord.settings.whatsApp,
+		...whatsApp
+	};
 	const findFirst = vi.fn(async () => organizationRecord);
 	const returning = vi.fn(async () => [
 		{
@@ -87,7 +106,9 @@ describe('updateOrganizationOnboarding', () => {
 	beforeEach(() => {
 		vi.mocked(bindPhoneNumberToWaba).mockReset();
 		vi.mocked(getQueue).mockReset();
-		vi.mocked(getQueue).mockResolvedValue({ triggerWebhook: vi.fn() } as never);
+		triggerWebhook.mockReset();
+		sendAnalyticsEvent.mockReset();
+		vi.mocked(getQueue).mockResolvedValue({ triggerWebhook, sendAnalyticsEvent } as never);
 	});
 
 	it('saves a confirmed WhatsApp connection and onboarding completion together', async () => {
@@ -97,7 +118,7 @@ describe('updateOrganizationOnboarding', () => {
 			tx: tx as never,
 			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
 			args: {
-				metadata: { organizationId },
+				metadata: { organizationId, onboardingEntryPoint: 'setup' },
 				input: { number: '123456789', wabaId: '987654321' }
 			}
 		});
@@ -113,6 +134,91 @@ describe('updateOrganizationOnboarding', () => {
 			JSON.stringify(defaultOrganizationOnboardingSettings('complete'))
 		);
 		expect(query.sql).toContain('COALESCE("organization"."settings"->\'onboarding\'');
+		expect(sendAnalyticsEvent).toHaveBeenNthCalledWith(
+			1,
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step: 'whatsapp' },
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+		expect(sendAnalyticsEvent).toHaveBeenNthCalledWith(
+			2,
+			{
+				name: organizationAnalyticsEventNames.onboardingWhatsAppConnectionCompleted,
+				data: { entry_point: 'setup' },
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+		expect(sendAnalyticsEvent).toHaveBeenCalledTimes(2);
+	});
+
+	it('does not track an onboarding connection when WhatsApp was already connected', async () => {
+		const { tx } = createTransaction(
+			{ whatsappAccount: 'complete' },
+			{ number: '+254700000000', wabaId: 'existing-waba' }
+		);
+		vi.mocked(bindPhoneNumberToWaba).mockResolvedValue('+254712345678');
+
+		await updateOrganizationWhatsappSettings({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, onboardingEntryPoint: 'dashboard' },
+				input: { number: '123456789', wabaId: '987654321' }
+			}
+		});
+
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
+	});
+
+	it('does not track onboarding completion again after it is complete', async () => {
+		const { tx } = createTransaction({ initialSetup: 'complete', profile: 'complete' });
+
+		await updateOrganizationProfileOnboarding({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: {
+					country: 'US',
+					defaultLanguage: 'en',
+					defaultTimezone: 'America/New_York'
+				}
+			}
+		});
+
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
+	});
+
+	it('does not track onboarding transitions for legacy organizations', async () => {
+		const profileUpdate = createTransaction(null);
+		await updateOrganizationProfileOnboarding({
+			tx: profileUpdate.tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: {
+					country: 'US',
+					defaultLanguage: 'en',
+					defaultTimezone: 'America/New_York'
+				}
+			}
+		});
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
+
+		const deferredUpdate = createTransaction(null);
+		await updateOrganizationOnboarding({
+			tx: deferredUpdate.tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: { initialSetup: 'skipped' }
+			}
+		});
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
 	});
 
 	it('saves profile defaults and onboarding completion together', async () => {
@@ -142,6 +248,63 @@ describe('updateOrganizationOnboarding', () => {
 		expect(query.params).toContain(
 			JSON.stringify({ initialSetup: 'complete', profile: 'complete' })
 		);
+		expect(sendAnalyticsEvent).toHaveBeenNthCalledWith(
+			1,
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step: 'profile' },
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+		expect(sendAnalyticsEvent).toHaveBeenNthCalledWith(
+			2,
+			{
+				name: organizationAnalyticsEventNames.onboardingCompleted,
+				data: {
+					completion_path: 'setup',
+					invited_teammates: false,
+					whatsapp_connected: false
+				},
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+		expect(sendAnalyticsEvent).toHaveBeenCalledTimes(2);
+	});
+
+	it('tracks only a new onboarding task completion', async () => {
+		const firstCompletion = createTransaction();
+		await updateOrganizationOnboarding({
+			tx: firstCompletion.tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: { team: 'complete' }
+			}
+		});
+
+		expect(sendAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			{
+				name: organizationAnalyticsEventNames.onboardingStepCompleted,
+				data: { step: 'team' },
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+
+		sendAnalyticsEvent.mockClear();
+		const repeatedCompletion = createTransaction({ team: 'complete' });
+		await updateOrganizationOnboarding({
+			tx: repeatedCompletion.tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: { team: 'complete' }
+			}
+		});
+
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
 	});
 
 	it('does not save a connection or mark onboarding complete when binding fails', async () => {
@@ -194,6 +357,33 @@ describe('updateOrganizationOnboarding', () => {
 			JSON.stringify({ initialSetup: 'skipped', whatsappAccount: 'not_needed' })
 		);
 		expect(query.params).not.toContain('#abcdef');
+		expect(sendAnalyticsEvent).toHaveBeenCalledExactlyOnceWith(
+			{
+				name: organizationAnalyticsEventNames.onboardingDeferred,
+				data: {
+					scope: 'onboarding',
+					next_step: 'profile',
+					required_steps_completed: 0
+				},
+				url: '/onboarding'
+			},
+			{ tx: true }
+		);
+	});
+
+	it('does not track an already-deferred initial setup again', async () => {
+		const { tx } = createTransaction({ initialSetup: 'skipped' });
+
+		await updateOrganizationOnboarding({
+			tx: tx as never,
+			ctx: { userId, authTeams: [], adminOrgs: [organizationId], ownerOrgs: [], otherOrgs: [] },
+			args: {
+				metadata: { organizationId, existingSettings: defaultOrganizationSettings() },
+				input: { initialSetup: 'skipped' }
+			}
+		});
+
+		expect(sendAnalyticsEvent).not.toHaveBeenCalled();
 	});
 
 	it('does not access or update an organization outside the admin and owner scope', async () => {
