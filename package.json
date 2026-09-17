@@ -147,7 +147,7 @@
 		"qr": "^0.7.0",
 		"stripe": "^22.3.0",
 		"svelte-easy-crop": "^5.0.1",
-		"svelte-lexical": "^0.6.4",
+		"svelte-lexical": "^0.6.5",
 		"svelte-multiselect": "^11.8.0",
 		"valibot": "^1.4.1",
 		"wuchale": "^0.25.4",
