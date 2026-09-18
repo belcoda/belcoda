@@ -102,7 +102,7 @@
 		"@better-auth/api-key": "^1.6.23",
 		"@better-auth/stripe": "^1.6.23",
 		"@better-svelte-email/components": "^2.3.0",
-		"@better-svelte-email/server": "^2.1.1",
+		"@better-svelte-email/server": "^2.3.0",
 		"@emoji-mart/data": "^1.2.1",
 		"@lexical/html": "0.40.0",
 		"@openapi-contrib/json-schema-to-openapi-schema": "^4.3.4",
